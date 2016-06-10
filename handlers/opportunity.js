@@ -256,7 +256,7 @@ var Module = function (models, event) {
         var ids = body.ids;
 
         async.each(ids, function (id, cb) {
-            Opportunity.remove({_id: id}, function (err, result) {
+            Opportunity.findByIdAndRemove(id, function (err, result) {
                 if (err) {
                     return err(err);
                 }

@@ -15,9 +15,11 @@ module.exports = function (models, event) {
 
     router.get('/', handler.getForDd);
     router.get('/getExpenses', handler.getExpenses);
+
     router.post('/', handler.create);
-    router.delete('/:id', handler.remove);
     router.put('/:id', handler.update);
+
+    router.delete('/:id', handler.remove);
 
     return router;
 };

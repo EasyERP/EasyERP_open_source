@@ -1,11 +1,11 @@
-var bonusTypeHandler = require('../handlers/bonusType');
+var BonusTypeHandler = require('../handlers/bonusType');
 var express = require('express');
 var router = express.Router();
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
 module.exports = function (models) {
-    var handler = new bonusTypeHandler(models);
+    var handler = new BonusTypeHandler(models);
     var moduleId = MODULES.BONUSTYPE;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 

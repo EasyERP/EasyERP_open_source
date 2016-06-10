@@ -32,11 +32,11 @@ define([
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
             'click .details'                                   : 'toggleDetails',
-            'keydown'                                          : 'keydownHandler',
+            keydown                                            : 'keydownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .current-selected'                          : 'showNewSelect',
-            'click'                                            : 'hideNewSelect'
+            click                                              : 'hideNewSelect'
         },
 
         hideNewSelect: function () {
@@ -100,17 +100,7 @@ define([
         toggleDetails: function () {
             $('#details-dialog').toggle();
         },
-
-        /* switchTab: function (e) {
-         e.preventDefault();
-         var link = this.$('#tabList a');
-         if (link.hasClass("selected")) {
-         link.removeClass("selected");
-         }
-         var index = link.index($(e.target).addClass("selected"));
-         this.$(".tab").hide().eq(index).show();
-         },*/
-
+        
         showEdit: function () {
             $('.upload').animate({
                 height : '20px',

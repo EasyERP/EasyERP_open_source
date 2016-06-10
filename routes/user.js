@@ -20,10 +20,11 @@ module.exports = function (event, models) {
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/login', handler.login);
     router.post('/current', authStackMiddleware, accessStackMiddleware, handler.putchModel);
-
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
     router.patch('/current/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
+    
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
+    router.delete('/', authStackMiddleware, accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

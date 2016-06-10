@@ -13,14 +13,13 @@ module.exports = function (models, event) {
     router.use(accessStackMiddleware);
 
     router.get('/', handler.getForView);
-    //router.get('/:byType/', handler.getForView);
     router.get('/amountLeftCalc', handler.amountLeftCalc);
     router.get('/getForProject', handler.getForProject);
 
     router.post('/', handler.create);
     router.post('/supplier', handler.createPayOut);
     router.post('/salary', handler.salaryPayOut);
-    router.patch('/:byType', handler.putchBulk);
+    // router.patch('/:byType', handler.putchBulk);
 
     router.delete('/:id', handler.remove);
     router.delete('/', handler.bulkRemove);

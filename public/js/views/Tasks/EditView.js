@@ -16,14 +16,13 @@
         contentType: 'Tasks',
         template   : _.template(EditTemplate),
         responseObj: {},
-        
+
         events: {
             'click #tabList a'                                 : 'switchTab',
             'keydown'                                          : 'keydownHandler',
             'click .current-selected'                          : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click'                                            : 'hideNewSelect',
-            // 'click #projectTopName'                            : 'hideDialog',
             'keypress #logged, #estimated'                     : 'isNumberKey',
             'click #projectTopName'                            : 'useProjectFilter'
         },
@@ -51,7 +50,7 @@
         useProjectFilter: function (e) {
             var project;
             var filter;
-            
+
             e.preventDefault();
             project = this.currentModel.get('project')._id;
             filter = {
@@ -68,7 +67,7 @@
 
         isNumberKey: function (evt) {
             var charCode = (evt.which) ? evt.which : event.keyCode;
-            
+
             return !(charCode > 31 && (charCode < 48 || charCode > 57));
         },
 
@@ -83,7 +82,7 @@
         chooseOption: function (e) {
             var target = $(e.target);
             var endElem = target.parents('dd').find('.current-selected');
-            
+
             endElem.text(target.text()).attr('data-id', target.attr('id'));
             endElem.attr('data-shortdesc', target.data('level'));
         },
@@ -102,16 +101,6 @@
             $('.edit-dialog').remove();
         },
 
-        /* switchTab: function (e) {
-         e.preventDefault();
-         var link = this.$("#tabList a");
-         if (link.hasClass("selected")) {
-         link.removeClass("selected");
-         }
-         var index = link.index($(e.target).addClass("selected"));
-         this.$(".tab").hide().eq(index).show();
-         },*/
-
         saveItem: function (event) {
             var self = this;
             var viewType;
@@ -129,9 +118,9 @@
             var data;
             var currentWorkflow;
             var currentProject;
-            
+
             event.preventDefault();
-            
+
             viewType = custom.getCurrentVT();
             holder = this.$el;
             mid = 39;
@@ -139,20 +128,20 @@
             project = holder.find('#projectDd').data('id');
             assignedTo = holder.find('#assignedToDd').data('id');
             tags = $.trim(holder.find('#tags').val()).split(',');
-            
+
             if (!tags.length) {
                 tags = null;
             }
 
             sequence = $.trim(holder.find('#sequence').val());
-            
+
             if (!sequence) {
                 sequence = null;
             }
-            
+
             workflow = holder.find('#workflowsDd').data('id');
             estimated = parseInt($.trim(holder.find('#estimated').val()), 10);
-            
+
             if ($.trim(estimated) === '') {
                 estimated = 0;
             }
@@ -173,15 +162,15 @@
                 logged       : logged,
                 sequenceStart: this.currentModel.toJSON().sequence
             };
-            
+
             currentWorkflow = this.currentModel.get('workflow');
-            
+
             if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
                 data.workflow = workflow;
                 data.sequence = -1;
                 data.workflowStart = this.currentModel.toJSON().workflow._id;
             }
-            
+
             currentProject = this.currentModel.get('project');
 
             if (currentProject && currentProject._id && (currentProject._id !== project)) {
@@ -216,67 +205,67 @@
                     common.getImages(ids, '/employees/getEmployeesImages');
                     result = res.result;
                     self.hideDialog();
-                    
+
                     switch (viewType) {
                         case 'list':
-                            {
-                                $trHolder = $("tr[data-id='" + model._id + "'] td");
-                                $trHolder.eq(3).text(summary);
-                                $trHolder.eq(4).find('a').data('id', project).text(editHolder.find('#projectDd').text());
-                                $trHolder.eq(5).find('a').text(editHolder.find('#workflowsDd').text());
-                                $trHolder.eq(6).text(editHolder.find('#assignedToDd').text());
-                                newEstimated = parseInt(editHolder.find('#estimated').val() || 0, 10);
-                                newLogged = parseInt(editHolder.find('#logged').val() || 0, 10);
-                                progress = Math.round(newLogged / newEstimated * 100);
-                                
-                                if ((progress === Infinity) || !progress) {
-                                    progress = 0;
-                                }
-                                
-                                $trHolder.eq(7).text(newEstimated);
-                                $trHolder.eq(8).text(newLogged);
-                                $trHolder.eq(9).find('a').text(editHolder.find('#type').text());
-                                $trHolder.eq(10).find('progress').val(progress);
-                                
-                                if (data.workflow || currentProject._id !== project) { // added condition if changed project, taskId need refresh
-                                    Backbone.history.fragment = '';
-                                    Backbone.history.navigate(window.location.hash.replace('#', ''), {trigger: true});
-                                }
+                        {
+                            $trHolder = $("tr[data-id='" + model._id + "'] td");
+                            $trHolder.eq(3).text(summary);
+                            $trHolder.eq(4).find('a').data('id', project).text(editHolder.find('#projectDd').text());
+                            $trHolder.eq(5).find('a').text(editHolder.find('#workflowsDd').text());
+                            $trHolder.eq(6).text(editHolder.find('#assignedToDd').text());
+                            newEstimated = parseInt(editHolder.find('#estimated').val() || 0, 10);
+                            newLogged = parseInt(editHolder.find('#logged').val() || 0, 10);
+                            progress = Math.round(newLogged / newEstimated * 100);
+
+                            if ((progress === Infinity) || !progress) {
+                                progress = 0;
                             }
+
+                            $trHolder.eq(7).text(newEstimated);
+                            $trHolder.eq(8).text(newLogged);
+                            $trHolder.eq(9).find('a').text(editHolder.find('#type').text());
+                            $trHolder.eq(10).find('progress').val(progress);
+
+                            if (data.workflow || currentProject._id !== project) { // added condition if changed project, taskId need refresh
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(window.location.hash.replace('#', ''), {trigger: true});
+                            }
+                        }
                             break;
                         case 'kanban':
-                            {
-                                $kanbanHolder = $('#' + model._id);
-                                $kanbanHolder.find('#priority_' + model._id).data('id', priority).text(priority);
-                                $kanbanHolder.find('#shortDesc' + model._id).text(editHolder.find('#projectDd').data('shortdesc'));
-                                $kanbanHolder.find('#summary' + model._id).text(summary);
-                                $kanbanHolder.find('#type_' + model._id).text(editHolder.find('#type').text());
-                                $workflowStart = $('#' + data.workflowStart);
-                                $workflow = $('#' + data.workflow);
+                        {
+                            $kanbanHolder = $('#' + model._id);
+                            $kanbanHolder.find('#priority_' + model._id).data('id', priority).text(priority);
+                            $kanbanHolder.find('#shortDesc' + model._id).text(editHolder.find('#projectDd').data('shortdesc'));
+                            $kanbanHolder.find('#summary' + model._id).text(summary);
+                            $kanbanHolder.find('#type_' + model._id).text(editHolder.find('#type').text());
+                            $workflowStart = $('#' + data.workflowStart);
+                            $workflow = $('#' + data.workflow);
 
-                                $workflowStart.find('.item').each(function () {
-                                    var seq = $(this).find('.inner').data('sequence');
+                            $workflowStart.find('.item').each(function () {
+                                var seq = $(this).find('.inner').data('sequence');
 
-                                    if (seq > data.sequenceStart) {
-                                        $(this).find('.inner').attr('data-sequence', seq - 1);
-                                    }
-                                });
-
-                                if (result && result.sequence) {
-                                    $kanbanHolder.find('.inner').attr('data-sequence', result.sequence);
+                                if (seq > data.sequenceStart) {
+                                    $(this).find('.inner').attr('data-sequence', seq - 1);
                                 }
-    
-                                $workflow.find('.columnNameDiv').after($kanbanHolder);
+                            });
 
-                                if (data.workflow) {
-                                    $workflow.find('.columnNameDiv').after($kanbanHolder);
-                                    counter = $workflow.closest('.column').find('.totalCount');
-                                    counter.html(parseInt(counter.html(), 10) + 1);
-                                    counter = $workflowStart.closest('.column').find('.totalCount');
-                                    counter.html(parseInt(counter.html(), 10) - 1);
-                                }
-    
+                            if (result && result.sequence) {
+                                $kanbanHolder.find('.inner').attr('data-sequence', result.sequence);
                             }
+
+                            $workflow.find('.columnNameDiv').after($kanbanHolder);
+
+                            if (data.workflow) {
+                                $workflow.find('.columnNameDiv').after($kanbanHolder);
+                                counter = $workflow.closest('.column').find('.totalCount');
+                                counter.html(parseInt(counter.html(), 10) + 1);
+                                counter = $workflowStart.closest('.column').find('.totalCount');
+                                counter.html(parseInt(counter.html(), 10) - 1);
+                            }
+
+                        }
                     }
                 },
 
@@ -288,7 +277,7 @@
 
         showNewSelect: function (e, prev, next) {
             var $target = $(e.target);
-            
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
@@ -318,7 +307,7 @@
 
             mid = 39;
             answer = confirm('Really DELETE items ?!');
-            
+
             if (answer === true) {
                 this.currentModel.destroy({
                     headers: {
@@ -329,26 +318,26 @@
                         var wId;
                         var newTotal;
                         var $totalCount;
-                        
+
                         model = model.toJSON();
                         viewType = custom.getCurrentVT();
 
                         switch (viewType) {
                             case 'list':
-                                {
-                                    $("tr[data-id='" + model._id + "'] td").remove();
-                                }
+                            {
+                                $("tr[data-id='" + model._id + "'] td").remove();
+                            }
                                 break;
                             case 'kanban':
-                                {
-                                    $('#' + model._id).remove();
-                                    // count kanban
-                                    wId = model.workflow._id;
-                                    $totalCount = $('td#' + wId + ' .totalCount');
-                                    
-                                    newTotal = ($totalCount.html() - 1);
-                                    $totalCount.html(newTotal);
-                                }
+                            {
+                                $('#' + model._id).remove();
+                                // count kanban
+                                wId = model.workflow._id;
+                                $totalCount = $('td#' + wId + ' .totalCount');
+
+                                newTotal = ($totalCount.html() - 1);
+                                $totalCount.html(newTotal);
+                            }
                         }
                         self.hideDialog();
                     },
@@ -377,7 +366,7 @@
                         class: 'btn',
                         click: self.saveItem
                     },
-                    
+
                     cancel: {
                         text : 'Cancel',
                         class: 'btn',
@@ -412,14 +401,14 @@
             this.delegateEvents(this.events);
 
             this.$el.find('#StartDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
-            
+
             /* $('#deadline').datepicker({
-                dateFormat : "d M, yy",
-                changeMonth: true,
-                changeYear : true,
-                minDate    : new Date()
-            });*/
-            
+             dateFormat : "d M, yy",
+             changeMonth: true,
+             changeYear : true,
+             minDate    : new Date()
+             });*/
+
             // for input type number
             this.$el.find('#logged').spinner({
                 min: 0,

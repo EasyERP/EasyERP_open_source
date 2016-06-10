@@ -11,12 +11,12 @@ module.exports = function (event, models) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getForView);
-
     router.get('/getYears', authStackMiddleware, accessStackMiddleware, handler.getYears);
-    router.patch('/', authStackMiddleware, accessStackMiddleware, handler.putchBulk);
-    // router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel); // not need
-    router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
+
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
+    router.patch('/', authStackMiddleware, accessStackMiddleware, handler.putchBulk);
+
+    router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
     return router;
 };
