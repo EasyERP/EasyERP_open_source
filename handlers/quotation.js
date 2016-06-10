@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var WorkflowHandler = require('./workflow');
 
 var Module = function (models, event) {
     'use strict';
