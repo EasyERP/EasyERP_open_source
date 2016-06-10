@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'collections/salesInvoice/filterCollection',
@@ -11,7 +12,7 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -845,6 +846,7 @@ define([
     var listView;
     var invoiceCollection;
     var ajaxSpy;
+    var historyNavigateSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -856,6 +858,7 @@ define([
 
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
         });
 
         after(function () {
@@ -868,6 +871,7 @@ define([
             }
 
             ajaxSpy.restore();
+            historyNavigateSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -927,7 +931,9 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var invoiceUrl = new RegExp('\/Invoice\/list', 'i');
+                var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+
+                historyNavigateSpy.reset();
 
                 server.respondWith('GET', invoiceUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 invoiceCollection = new InvoiceCollection({
@@ -940,6 +946,9 @@ define([
                     showMore   : true
                 });
                 server.respond();
+
+                expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
             });
 
             it('Try to create TopBarView', function () {
