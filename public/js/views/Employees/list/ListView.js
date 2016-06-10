@@ -63,12 +63,9 @@ define([
         },
 
         render: function () {
-            var self;
             var $currentEl;
 
             $('.ui-dialog ').remove();
-
-            self = this;
             $currentEl = this.$el;
 
             $currentEl.html('');
@@ -79,7 +76,7 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render());
 
-            this.renderAlphabeticalFilter(this);
+            this.renderAlphabeticalFilter();
             this.renderPagination($currentEl, this);
             this.renderFilter();
 

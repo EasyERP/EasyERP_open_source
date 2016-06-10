@@ -4697,7 +4697,7 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                    expect(spyResponse).to.have.property('message', 'Bad Request');
                 });
 
                 it('Try to show more with', function(){
