@@ -59,27 +59,6 @@ define([
             this.render();
         },
 
-        showFilteredPage: function (filter) {
-            var itemsNumber = $('#itemsNumber').text();
-            
-            $('#top-bar-deleteBtn').hide();
-            $('#checkAll').prop('checked', false);
-
-            this.startTime = new Date();
-            this.newCollection = false;
-
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
-
-            this.filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-
-            this.changeLocationHash(1, itemsNumber, filter);
-            // this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            // this.getTotalLength(null, itemsNumber, filter);
-        },
-
         events: {
             'click .stageSelect'                 : 'showNewSelect',
             'click  .list tbody td:not(.notForm)': 'goToEditDialog',
