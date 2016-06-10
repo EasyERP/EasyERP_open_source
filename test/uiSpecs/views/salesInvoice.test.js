@@ -937,7 +937,7 @@ define([
                     page       : 1,
                     count      : 300,
                     reset      : true,
-                    showMore   : false
+                    showMore   : true
                 });
                 server.respond();
             });
@@ -952,8 +952,7 @@ define([
                     viewType   : 'list',
                     page       : 1,
                     count      : 100,
-                    reset      : true,
-                    showMore   : false
+                    reset      : true
                 });
                 server.respond();
 
