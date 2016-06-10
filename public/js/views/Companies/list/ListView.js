@@ -73,8 +73,8 @@ define([
         },
 
         render: function () {
-            var self;
             var $currentEl;
+            var self;
 
             $('.ui-dialog ').remove();
 

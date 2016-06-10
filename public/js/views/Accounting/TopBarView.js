@@ -1,31 +1,32 @@
 define([
-        'text!templates/Accounting/TopBarTemplate.html',
-        'custom',
-        "common"
-    ],
-    function (TopBarTemplate, Custom, Common) {
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: "Accounting",
-            actionType : null, //Content, Edit, Create
-            template   : _.template(TopBarTemplate),
+    'Underscore',
+    'views/topBarViewBase',
+    'text!templates/Accounting/TopBarTemplate.html'
+], function (_, BaseView, TopBarTemplate) {
+    'use strict';
 
-            getIdFromHash: function (hash) {
-                var hashItems = hash.split('/');
-                return hashItems[hashItems.length - 1];
-            },
+    var TopBarView = BaseView.extend({
+        el         : '#top-bar',
+        contentType: 'Accounting',
+        actionType : null, // Content, Edit, Create
+        template   : _.template(TopBarTemplate),
 
-            initialize   : function (options) {
-                this.render();
-            },
+        getIdFromHash: function (hash) {
+            var hashItems = hash.split('/');
+            return hashItems[hashItems.length - 1];
+        },
 
-            render: function () {
-                $('title').text(this.contentType);
-                this.$el.html(this.template({contentType: this.contentType}));
+        initialize: function () {
+            this.render();
+        },
 
-                return this;
-            }
-        });
+        render: function () {
+            this.$el.find('title').text(this.contentType);
+            this.$el.html(this.template({contentType: this.contentType}));
 
-        return TopBarView;
+            return this;
+        }
     });
+
+    return TopBarView;
+});

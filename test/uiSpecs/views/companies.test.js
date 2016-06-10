@@ -38,7 +38,8 @@ define([
     'use strict';
 
     var fakeCompaniesList = {
-        data: [
+        total: 300,
+        data : [
             {
                 _id           : "56bc9b53dfd8a81466e2f48b",
                 editedBy      : {
@@ -1567,6 +1568,7 @@ define([
     var windowConfirmStub;
     var expect;
     var debounceStub;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -1582,12 +1584,13 @@ define([
             debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
                 return debounceFunction;
             });
+            ajaxSpy = sinon.spy($, 'ajax');
         });
 
         after(function () {
             view.remove();
             thumbnailsView.remove();
-            //listView.remove();
+            listView.remove();
             topBarView.remove();
             formView.remove();
             editView.remove();
@@ -1598,6 +1601,7 @@ define([
 
             debounceStub.restore();
             windowConfirmStub.restore();
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -1672,7 +1676,6 @@ define([
                 });
 
                 server.respond();
-                //expect(window.location.hash).to.be.equals('#login');
             });
 
             it('Try to create TopBarView', function () {
@@ -1682,11 +1685,13 @@ define([
 
                 server.respondWith('GET', companyUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCompaniesList)]);
                 companiesCollection = new CompaniesCollection({
-                    contentType  : 'Companies',
-                    count        : 100,
-                    filter       : null,
-                    newCollection: false,
-                    viewType     : 'list'
+                    contentType: 'Companies',
+                    filter     : null,
+                    viewType   : 'list',
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false
                 });
                 server.respond();
 
@@ -1719,43 +1724,190 @@ define([
             });
         });
 
-        /*describe('Companies list View', function () {
-         var server;
+        describe('Companies list View', function () {
+            var server;
+            var $thisEl;
 
-         before(function () {
-         server = sinon.fakeServer.create();
-         });
+            before(function () {
+                server = sinon.fakeServer.create();
+            });
 
-         after(function () {
-         server.restore();
-         });
+            after(function () {
+                server.restore();
+            });
 
-         it('Try to create companies list view', function () {
-         var $contentHolderEl;
-         var $searchContainerEl;
-         var $alphabetEl;
-         var companiesAlphabetUrl = new RegExp('\/customers\/getCompaniesAlphabet', 'i');
+            it('Try to create companies list view', function () {
+                var companiesAlphabetUrl = new RegExp('\/customers\/getCompaniesAlphabet', 'i');
+                var $searchContainerEl;
+                var $alphabetEl;
+                var $firstRow;
+                var colCount;
+                var name;
+                var email;
+                var phone;
+                var country;
+                var createdBy;
+                var editedBy;
+                var $pagination;
+                var $currentPageList;
 
-         server.respondWith('GET', companiesAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlphabet)]);
-         listView = new ListView({
-         collection: companiesCollection,
-         startTime : new Date()
-         });
+                server.respondWith('GET', companiesAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlphabet)]);
+                listView = new ListView({
+                    collection: companiesCollection,
+                    startTime : new Date()
+                });
 
-         server.respond();
+                server.respond();
 
-         $contentHolderEl = listView.$el;
-         $searchContainerEl = $contentHolderEl.find('.search-view');
-         $alphabetEl = $contentHolderEl.find('#startLetter');
+                eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                eventsBinder.subscribeCollectionEvents(companiesCollection, listView);
 
-         expect($contentHolderEl).to.exist;
-         expect($searchContainerEl).to.exist;
-         expect($alphabetEl).to.exist;
-         expect($contentHolderEl.find('table')).to.exist;
-         expect($contentHolderEl.find('table')).to.have.class('list');
-         });
+                companiesCollection.trigger('fetchFinished', {
+                    totalRecords: companiesCollection.totalRecords,
+                    currentPage : companiesCollection.currentPage,
+                    pageSize    : companiesCollection.pageSize
+                });
 
-         });*/
+                $thisEl = listView.$el;
+                $searchContainerEl = $thisEl.find('.search-view');
+                $alphabetEl = $thisEl.find('#startLetter');
+
+                expect($searchContainerEl).to.exist;
+                expect($alphabetEl).to.exist;
+                expect($thisEl.find('table')).to.exist;
+                expect($thisEl.find('table')).to.have.class('list');
+                expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
+
+                $firstRow = $thisEl.find('#listTable > tr').first();
+                colCount = $firstRow.find('td').length;
+
+                expect(colCount).to.be.equals(8);
+
+                name = $firstRow.find('td:nth-child(3)').text().trim();
+                expect(name).not.to.be.empty;
+                expect(name).to.not.match(/object Object|undefined/);
+
+                email = $firstRow.find('td:nth-child(4)').text().trim();
+                expect(email).to.not.match(/object Object|undefined/);
+
+                phone = $firstRow.find('td:nth-child(5)').text().trim();
+                expect(phone).to.not.match(/object Object|undefined/);
+
+                country = $firstRow.find('td:nth-child(6)').text().trim();
+                expect(country).to.not.match(/object Object|undefined/);
+
+                createdBy = $firstRow.find('td:nth-child(7)').text().trim();
+                expect(createdBy).not.to.be.empty;
+                expect(createdBy).to.not.match(/object Object|undefined/);
+
+                editedBy = $firstRow.find('td:nth-child(8)').text().trim();
+                expect(editedBy).not.to.be.empty;
+                expect(editedBy).to.not.match(/object Object|undefined/);
+
+                // pagination test
+
+                $pagination = $thisEl.find('.pagination');
+
+                expect($pagination).to.exist;
+                expect($pagination.find('.countOnPage')).to.be.exist;
+                expect($pagination.find('.pageList')).to.be.exist;
+
+                $currentPageList = $thisEl.find('.currentPageList');
+                $currentPageList.mouseover();
+                expect($thisEl.find('#pageList')).to.have.css('display', 'block');
+                expect($thisEl.find('#pageList > li')).to.have.lengthOf(3);
+
+                $currentPageList.mouseover();
+                expect($thisEl.find('#pageList')).to.have.css('display', 'none');
+            });
+
+            it('Try to change page1 to page2', function () {
+                var $currentPageList = $thisEl.find('.currentPageList');
+                var ajaxResponse;
+                var $page2Btn;
+
+                ajaxSpy.reset();
+
+                $currentPageList.mouseover();
+                $page2Btn = $thisEl.find('#pageList > li').eq(1);
+                $page2Btn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxSpy.called).to.be.true;
+                expect(ajaxResponse).to.have.property('url', '/companies/');
+                expect(ajaxResponse.data).to.have.property('contentType').and.to.not.undefined;
+                expect(ajaxResponse.data).to.have.property('page', 2);
+            });
+
+            it('Try to select 25 items per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').first();
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '25');
+            });
+
+            it('Try to select 50 items per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').eq(1);
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '50');
+            });
+
+            it('Try to select 100 items per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').eq(2);
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '100');
+            });
+
+            it('Try to select 200 items per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').eq(3);
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '200');
+            });
+        });
 
         describe('Companies thumbnail view', function () {
             var companiesCollection;
@@ -2160,7 +2312,7 @@ define([
                 $selectedItem.click();
 
                 server.respondWith('POST', '/Opportunities/', [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    success: "A new Opportunities create success",
+                    success: 'A new Opportunities create success',
                     id     : '123'
                 })]);
 
@@ -2224,7 +2376,7 @@ define([
                 $selectedItem.click();
 
                 server.respondWith('PATCH', opportunityUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    success: "A new Opportunities create success",
+                    success: 'A new Opportunities create success',
                     id     : '123'
                 })]);
 
@@ -2506,15 +2658,22 @@ define([
         describe('Company create view', function () {
             var server;
             var mainSpy;
+            var saveSpy;
+            var alertStub;
 
             before(function () {
                 mainSpy = sinon.spy(App, 'render');
                 server = sinon.fakeServer.create();
+                saveSpy = sinon.spy(CreateView.prototype, 'saveItem');
+                alertStub = sinon.stub(window, 'alert');
+                alertStub.returns(true);
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                saveSpy.restore();
+                alertStub.restore();
             });
 
             it('Try to create CreateForm', function () {
@@ -2535,13 +2694,15 @@ define([
                 $createBtn.click();
                 server.respond();
 
-                $dialog = $('.ui-dialog');
+                $dialog = $('.ui-dialog').first();
                 expect($dialog).to.exist;
                 expect($dialog.find('.dialog-tabs')).to.exist;
                 expect($dialog.find('.dialog-tabs > li')).to.have.lengthOf(3);
                 expect($dialog.find('.avatar')).to.exist;
                 expect($dialog.find('.avatarInfoContainer')).to.exist;
                 expect($dialog.find('.avatarInfoContainer  .half-block')).to.have.lengthOf(2);
+
+                $('.ui-dialog').eq(1).remove();
             });
 
             it('Try to save lead without need data', function () {
@@ -2563,49 +2724,36 @@ define([
                 expect($firstTab).to.have.class('active');
 
                 $secondTab.click();
-
                 expect($secondTab).to.have.class('active');
 
                 $thirdTab.click();
-
                 expect($thirdTab).to.have.class('active');
 
+                $firstTab.click();
+                expect($($tabEl[0])).to.have.class('active');
             });
 
-            it('Try to showEdit|hideEdit', function () {
-                var $firstTab = $('.dialog-tabs > li:nth-child(1) > a');
-                var $dialog = $('.ui-dialog');
-                var $avatar = $dialog.find('.avatar');
+            it('Try to save company with empty company name', function () {
+                var createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.create-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)').first();
+                var spyResponse;
 
-                $avatar.mouseover();
-                //clock.tick(260000);
-                //expect($avatar.find('.upload')).to.have.css('height', '20px');
-                $avatar.mouseleave();
-                //clock.tick(260000);
-                //expect($avatar.find('.upload')).to.have.css('height', '0px');
+                mainSpy.reset();
 
-                // done();
-            });
-
-            it('Try to save company with error', function () {
-                var createBtn = $('.ui-button')[1];
-
-                server.respondWith('POST', '/companies/', [400, {'Content-Type': 'application/json'}, JSON.stringify({
-                    success: 'A new Person crate success',
-                    id     : '123'
-                })]);
                 createBtn.click();
                 server.respond();
+
+                spyResponse = mainSpy.args[0][0];
+                expect(spyResponse).to.have.property('type', 'error');
+                expect(spyResponse).to.have.property('message', 'Company field can not be empty');
             });
 
-            it('Try to save company with correct data', function () {
-                var $salesTeam;
-                var $afterForm;
-                var createBtn = $('.ui-button')[1];
+            it('Try to save company with error server response', function() {
+                var createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.create-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)').first();
                 var $form = $('.dialog-tabs-item');
-                var $selectBtn = $('.current-selected')[0];
+                var $selectBtn = $('.current-selected').first();
+                var $salesTeam;
 
-                $form.find('#name').val('test');
+                $form.find('#companyName').val('test');
                 $form.find('#website').val('test');
                 $form.find('#email').val('test@test.com');
                 $form.find('#LI').val('test.com');
@@ -2617,12 +2765,27 @@ define([
                 $form.find('#state').val('test');
                 $form.find('#zip').val('88000');
                 $form.find('#country').val('test');
-
                 $selectBtn.click();
 
                 $salesTeam = $('#departmentDd .newSelectList li')[0];
-
                 $salesTeam.click();
+
+                alertStub.reset();
+                saveSpy.reset();
+
+                server.respondWith('POST', '/companies/', [400, {'Content-Type': 'application/json'}, JSON.stringify({
+                    success: 'A new Person crate success',
+                    id     : '123'
+                })]);
+                createBtn.click();
+                server.respond();
+
+                expect(saveSpy.calledOnce).to.be.true;
+                expect(alertStub.calledOnce).to.be.true;
+            });
+
+            it('Try to save company with correct data', function () {
+                var createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.create-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)').first();
 
                 server.respondWith('POST', '/companies/', [201, {'Content-Type': 'application/json'}, JSON.stringify({
                     success: 'A new Person crate success',
@@ -2631,11 +2794,9 @@ define([
                 createBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Companies/thumbnails');
+                expect(saveSpy.calledTwice).to.be.true;
+                expect(window.location.hash).to.be.equals('#easyErp/Companies');
             });
         });
-
     });
-
-
 });
