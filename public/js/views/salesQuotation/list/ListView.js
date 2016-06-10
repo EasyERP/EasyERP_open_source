@@ -78,27 +78,6 @@ define([
             this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
         },
 
-        showFilteredPage: function (filter) {
-            var itemsNumber = $('#itemsNumber').text();
-
-            this.startTime = new Date();
-            this.newCollection = false;
-
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
-
-            this.filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-
-            this.changeLocationHash(null, this.collection.pageSize, this.filter, {replace: false});
-            this.collection.getFirstPage({
-                filter     : this.filter,
-                viewType   : this.viewType,
-                contentType: this.contentType
-            });
-        },
-
         chooseOption: function (event) {
             var self = this;
             var $eventTarget = $(event.target);
