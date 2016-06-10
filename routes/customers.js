@@ -18,9 +18,9 @@ module.exports = function (models, event) {
     router.get('/getCustomersImages', handler.getCustomersImages);
     router.get('/getCompaniesForDd', handler.getCompaniesForDd);
     router.get('/getCompaniesAlphabet', handler.getCompaniesAlphabet);
+    router.get('/:id', handler.getById);
     // router.get('/exportToXlsx', handler.exportToXlsx);
     // router.get('/exportToCsv', handler.exportToCsv);
-    router.get('/totalCollectionLength', accessStackMiddleware, handler.getTotalCount);
     router.post('/', accessStackMiddleware, handler.create);
     router.put('/:id', accessStackMiddleware, handler.update);
     router.patch('/:id', accessStackMiddleware, handler.udateOnlySelectedFields);

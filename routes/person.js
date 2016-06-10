@@ -15,7 +15,7 @@ module.exports = function (models, event) {
     router.get('/', accessStackMiddleware, handler.getByViewType);
     router.get('/getPersonAlphabet', accessStackMiddleware, handler.getCompaniesAlphabet);
     router.get('/getPersonsForMiniView', handler.getFilterPersonsForMiniView);
-    router.get('/totalCollectionLength', accessStackMiddleware, handler.getTotalCount);
+    router.get('/:id', handler.getById);
 
     router.post('/', accessStackMiddleware, handler.create);
     router.put('/:id', accessStackMiddleware, handler.update);
