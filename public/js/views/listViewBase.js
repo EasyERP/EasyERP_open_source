@@ -172,7 +172,7 @@ define([
             }
         },
 
-        deleteItemsRender: function (deleteCounter, deletePage) {
+        /*deleteItemsRender: function (deleteCounter, deletePage) {
             var pagenation;
 
             $('#checkAll').prop('checked', false);
@@ -197,7 +197,7 @@ define([
             } else {
                 pagenation.show();
             }
-        },
+        },*/
 
         // added methods for edit in listView
 

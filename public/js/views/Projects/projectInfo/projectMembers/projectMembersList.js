@@ -247,10 +247,11 @@ define([
 
         updatedOptions: function () {
             var id;
+            var keys = Object.keys(this.changedModels);
 
             this.showCreateBtn();
 
-            for (id in this.changedModels) {
+            for (id = keys.length - 1; id >= 0; id--) {
                 this.collection.get(id).set(this.changedModels[id]);
                 delete this.changedModels[id];
             }
@@ -277,6 +278,7 @@ define([
             var errorContent = this.$el.find('.errorContent');
             var newElements = this.$el.find('tr.false');
             var isPickedEmployee = newElements.find('[data-content="employee"]').text();
+            var keys = Object.keys(this.changedModels);
 
             e.preventDefault();
 
@@ -294,7 +296,7 @@ define([
                 });
             }
 
-            for (id in this.changedModels) {
+            for (id = keys.length - 1; id >= 0; id--) {
                 model = this.collection.get(id);
 
                 if (model) {
@@ -345,7 +347,7 @@ define([
             targetElement.attr('data-id', id);
 
             if (dataType === 'projectPositionId') {
-                //this.removePrevPosition();
+                // this.removePrevPosition();
                 startDate = this.prevEndDate(targetRow);
 
                 if (startDate === constants.END_OF_PROJECT) {

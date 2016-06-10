@@ -43,23 +43,22 @@ define([
         preventChangLocation: true,
 
         events: {
-            'mouseover .currentPageList'                             : 'showPagesPopup',
-            'click .itemsNumber'                                     : 'switchPageCounter',
-            'click .showPage'                                        : 'showPage',
-            'change #currentShowPage'                                : 'showPage',
-            'click .checkbox'                                        : 'checked',
-            'change .listCB'                                         : 'setAllTotalVals',
-            'click #top-bar-copyBtn'                                 : 'copyRow',
-            'click #savewTrack'                                      : 'saveItem',
-            'click #deletewTrack'                                    : 'deleteItems',
-            'click #createBtn'                                       : 'createItem',
-            'click .oe_sortable :not(span.arrow.down, span.arrow.up)': 'goSort',
-            click                                                    : 'removeInputs'
+            'mouseover .currentPageList': 'showPagesPopup',
+            'click .itemsNumber'        : 'switchPageCounter',
+            'click .showPage'           : 'showPage',
+            'change #currentShowPage'   : 'showPage',
+            'click .checkbox'           : 'checked',
+            'change .listCB'            : 'setAllTotalVals',
+            'click #top-bar-copyBtn'    : 'copyRow',
+            'click #savewTrack'         : 'saveItem',
+            'click #deletewTrack'       : 'deleteItems',
+            'click #createBtn'          : 'createItem',
+            click                       : 'removeInputs'
         },
 
         initialize: function (options) {
             this.remove();
-            this.collection = options.model;
+            this.collection = options.collection;
             this.defaultItemsNumber = options.defaultItemsNumber || CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
@@ -117,23 +116,19 @@ define([
         },
 
         showMoreContent: function (newModels) {
+            var self = this;
             var $holder = this.$el;
-            var itemView;
             var pagenation;
 
             this.hideDeleteBtnAndUnSelectCheckAll();
 
-            $holder.find('#listTable').empty();
-
-            itemView = new this.ListItemView({
-                collection : newModels,
-                page       : this.collection.currentPage,
-                itemsNumber: this.collection.pageSize
-            });
-
-            $holder.append(itemView.render());
-
-            itemView.undelegateEvents();
+            if (newModels.length > 0) {
+                $holder.find('#listTable').html(this.template({
+                    project    : this.project.toJSON(),
+                    wTracks    : newModels.toJSON(),
+                    startNumber: self.startNumber - 1
+                }));
+            }
 
             pagenation = $holder.find('.pagination');
 
@@ -302,6 +297,8 @@ define([
             keys.forEach(function (id) {
                 model = self.editCollection.get(id) || self.collection.get(id);
                 model.changed = self.changedModels[id];
+
+                delete model.changed.mainWtrackView;
             });
 
             if (errors.length) {
@@ -485,7 +482,7 @@ define([
                 startNumber: self.startNumber - 1
             }));
 
-            this.renderPagination($('#timesheet'), self);
+            this.renderPagination($currentEl, self);
 
             this.genInvoiceEl = this.$el.find('#top-bar-generateBtn');
             this.copyEl = this.$el.find('#top-bar-copyBtn');

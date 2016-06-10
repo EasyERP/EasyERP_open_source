@@ -11,6 +11,7 @@ module.exports = function (models, event) {
     var pathMod = require('path');
 
     var ProjectSchema = mongoose.Schemas.Project;
+    var ProjectTypeSchema = mongoose.Schemas.projectType;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var EmployeeSchema = mongoose.Schemas.Employee;
@@ -195,21 +196,6 @@ module.exports = function (models, event) {
             }
         });
     }
-
-    this.remove = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-        var _id = req.params.id;
-
-        Project.findByIdAndRemove(_id, function (err) {
-            if (err) {
-                return next(err);
-            }
-
-            removeTasksByPorjectID(req, _id);
-
-            res.status(200).send({success: 'Remove all tasks Starting...'});
-        });
-    };
 
     this.getByViewType = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -817,9 +803,9 @@ module.exports = function (models, event) {
     };
 
     this.getProjectType = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var ProjectType = models.get(req.session.lastDb, 'proectType', ProjectTypeSchema);
 
-        Project.find({}, function (err, projectType) {
+        ProjectType.find({}, function (err, projectType) {
             if (err) {
                 return next(err);
             }
@@ -1804,6 +1790,37 @@ module.exports = function (models, event) {
             data.data = collection;
 
             res.status(200).send(data);
+        });
+    };
+
+    this.remove = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var _id = req.params.id;
+
+        Project.findByIdAndRemove(_id, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            removeTasksByPorjectID(req, _id);
+
+            res.status(200).send({success: 'Remove all tasks Starting...'});
+        });
+    };
+
+    this.bulkRemove = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        // todo some validation on ids array, like check for objectId
+
+        Project.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
         });
     };
 };

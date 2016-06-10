@@ -47,6 +47,7 @@ module.exports = function (models, event) {
 
     router.patch('/:id', accessStackMiddleWare, handler.updateOnlySelectedFields);
     router.delete('/:id', accessStackMiddleWare, handler.remove);
+    router.delete('/', accessStackMiddleWare, handler.bulkRemove);
 
     return router;
 };
