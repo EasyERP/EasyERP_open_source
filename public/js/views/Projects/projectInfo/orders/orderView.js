@@ -55,7 +55,7 @@ define([
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {
-                    new EditView({
+                    return new EditView({
                         model         : model,
                         redirect      : true,
                         projectManager: self.projectManager,
@@ -90,7 +90,7 @@ define([
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {
-                    new EditView({
+                    return new EditView({
                         model         : model,
                         redirect      : true,
                         projectManager: self.projectManager,
@@ -112,8 +112,7 @@ define([
             var $holder = this.$el;
             var pagenation;
 
-            $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+            this.hideDeleteBtnAndUnSelectCheckAll();
 
             if (newModels.length > 0) {
                 $holder.find('#orderTable').html(this.templateList({

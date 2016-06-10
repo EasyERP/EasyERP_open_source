@@ -58,7 +58,7 @@ define([
 
         initialize: function (options) {
             this.remove();
-            this.collection = options.model;
+            this.collection = options.collection;
             this.defaultItemsNumber = options.defaultItemsNumber || CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
@@ -297,6 +297,8 @@ define([
             keys.forEach(function (id) {
                 model = self.editCollection.get(id) || self.collection.get(id);
                 model.changed = self.changedModels[id];
+
+                delete model.changed.mainWtrackView;
             });
 
             if (errors.length) {

@@ -24,7 +24,7 @@ define([
 
         initialize: function (options) {
             this.remove();
-            this.collection = options.model;
+            this.collection = options.collection;
             this.filter = options.filter ? options.filter : {};
 
             eventsBinder.subscribeCollectionEvents(this.collection, this);
@@ -144,7 +144,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({
+                    return new EditView({
                         model       : model,
                         redirect    : true,
                         collection  : this.collection,
@@ -180,8 +180,7 @@ define([
                 },
 
                 success: function (model) {
-
-                    new EditView({
+                    return new EditView({
                         model       : model,
                         redirect    : true,
                         collection  : this.collection,
@@ -248,8 +247,8 @@ define([
             var pagenation;
 
             tBody.empty();
-            $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+
+            this.hideDeleteBtnAndUnSelectCheckAll();
 
             if (newModels.length > 0) {
                 itemView = new this.ListItemView({

@@ -73,7 +73,7 @@ define([
             var price;
             var scheduledDate;
 
-            var forSales = this.forSales ? true : false;
+            var forSales = this.forSales || false;
 
             var currency = {
                 _id : thisEl.find('#currencyDd').attr('data-id'),
