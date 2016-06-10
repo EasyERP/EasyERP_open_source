@@ -17,6 +17,7 @@ module.exports = function (models, event) {
     router.post('/', accessStackMiddleware, handler.create);
     router.patch('/:id', accessStackMiddleware, handler.putchModel);
     router.put('/:id', accessStackMiddleware, handler.updateModel);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     router.delete('/:id', accessStackMiddleware, handler.remove);
 
