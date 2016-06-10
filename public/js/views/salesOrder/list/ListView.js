@@ -41,7 +41,8 @@ define([
         CreateView       : CreateView,
         EditView         : EditView,
 
-        contentType: 'salesOrder', // needs in view.prototype.changeLocationHash
+        viewType   : 'list',
+        contentType: CONSTANTS.SALESORDER, // needs in view.prototype.changeLocationHash
 
         events: {
             'click .stageSelect'                 : 'showNewSelect',
@@ -75,10 +76,6 @@ define([
             model.save({
                 workflow: $target.attr('id')
             }, {
-                headers: {
-                    mid: 55
-                },
-
                 patch   : true,
                 validate: false,
                 success : function () {

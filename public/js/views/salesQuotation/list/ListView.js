@@ -22,7 +22,7 @@ define([
              ListItemView,
              EditView,
              CurrentModel,
-             contentCollection,
+             ContentCollection,
              FilterView,
              dataService,
              CONSTANTS,
@@ -30,14 +30,16 @@ define([
     'use strict';
 
     var QuotationListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/quotation/totalCollectionLength',
-        viewType                : 'list', // needs in view.prototype.changeLocationHash
-        contentType             : CONSTANTS.SALESQUOTATION, // needs in view.prototype.changeLocationHash
+
+        listTemplate: listTemplate,
+        ListItemView: ListItemView,
+
+        ContentCollection: ContentCollection,
+        CreateView       : CreateView,
+        EditView         : EditView,
+
+        viewType   : 'list',
+        contentType: CONSTANTS.SALESQUOTATION,
 
         events: {
             'click .stageSelect'                 : 'showNewSelect',
@@ -46,27 +48,20 @@ define([
         },
 
         initialize: function (options) {
-            $(document).off('click');
-
-            this.EditView = EditView;
-            this.CreateView = CreateView;
-
-            this.startTime = options.startTime;
-            this.collection = options.collection;
-            this.parrentContentId = options.collection.parrentContentId;
-            this.sort = options.sort;
             this.filter = options.filter || {};
             this.filter.forSales = {
                 key  : 'forSales',
                 value: ['true']
             };
+
+            this.startTime = options.startTime;
+            this.collection = options.collection;
+            this.parrentContentId = options.collection.parrentContentId;
+            this.sort = options.sort;
             this.page = options.collection.currentPage;
-            this.contentCollection = contentCollection;
 
             this.render();
-
             this.stages = [];
-
         },
 
         recalcTotal: function () {
@@ -104,23 +99,19 @@ define([
             });
         },
 
-        chooseOption: function (e) {
+        chooseOption: function (event) {
             var self = this;
-            var target$ = $(e.target);
-            var targetElement = target$.parents('td');
-            var id = targetElement.attr('id');
+            var $eventTarget = $(event.target);
+            var $parentTd = $eventTarget.parents('td');
+            var id = $parentTd.attr('id');
             var model = this.collection.get(id);
 
             model.save({
                 workflow: {
-                    _id : target$.attr('id'),
-                    name: target$.text()
+                    _id : $eventTarget.attr('id'),
+                    name: $eventTarget.text()
                 }
             }, {
-                headers: {
-                    mid: 55
-                },
-
                 patch   : true,
                 validate: false,
                 waite   : true,
@@ -133,15 +124,18 @@ define([
             return false;
         },
 
-        showNewSelect: function (e) {
+        showNewSelect: function (event) {
+            var $eventTarget = $(event.target);
+            var compiledStagesTemplate = _.template(stagesTemplate, {
+                stagesCollection: this.stages
+            });
+
             if ($('.newSelectList').is(':visible')) {
                 this.hideNewSelect();
-
                 return false;
             }
-            $(e.target).parent().append(_.template(stagesTemplate, {
-                stagesCollection: this.stages
-            }));
+
+            $eventTarget.parent().append(compiledStagesTemplate);
             return false;
         },
 
@@ -150,32 +144,25 @@ define([
         },
 
         render: function () {
-            var self;
-            var $currentEl;
-            var templ;
+            var self = this;
+            var $thisEl = this.$el;
+            var template = _.template(listTemplate);
 
-            $('.ui-dialog ').remove();
+            $('.ui-dialog').remove();
 
-            self = this;
-            $currentEl = this.$el;
-
-            $currentEl.html('');
-
-            templ = _.template(listTemplate);
-            $currentEl.append(templ);
-            $currentEl.append(new ListItemView({
+            $thisEl.html('');
+            $thisEl.append(template);
+            $thisEl.append(new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
 
             this.renderFilter();
-
-            this.renderPagination($currentEl, this);
-
+            this.renderPagination($thisEl, this);
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            $thisEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
@@ -188,14 +175,18 @@ define([
             return this;
         },
 
-        goToEditDialog: function (e) {
-            var id = $(e.target).closest('tr').data('id');
-            var model = new CurrentModel({validate: false});
+        goToEditDialog: function (event) {
+            var $eventTarget = $(event.target);
+            var $closestTr = $eventTarget.closest('tr');
+            var id = $closestTr.data('id');
+            var quotationModel = new CurrentModel({
+                validate: false
+            });
 
-            e.preventDefault();
+            event.preventDefault();
 
-            model.urlRoot = '/quotation/';
-            model.fetch({
+            quotationModel.urlRoot = '/quotation/';
+            quotationModel.fetch({
                 data: {
                     id      : id,
                     viewType: 'form'
