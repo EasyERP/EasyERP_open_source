@@ -342,6 +342,7 @@ define([
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             deleteItem: function (event) {
                 var mid = 55;
 

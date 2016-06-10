@@ -4,13 +4,12 @@ define([
     'Underscore',
     'text!templates/Employees/EditTemplate.html',
     'views/Notes/AttachView',
-    'views/selectView/selectView',
+    'views/dialogViewBase',
     /* 'collections/Employees/EmployeesCollection',
-    'collections/JobPositions/JobPositionsCollection',
-    'collections/Departments/DepartmentsCollection',
-    'collections/Customers/AccountsDdCollection',
-    'collections/Users/UsersCollection',*/
-    'views/Assignees/AssigneesView',
+     'collections/JobPositions/JobPositionsCollection',
+     'collections/Departments/DepartmentsCollection',
+     'collections/Customers/AccountsDdCollection',
+     'collections/Users/UsersCollection',*/
     'common',
     'populate',
     'moment',
@@ -22,13 +21,12 @@ define([
              _,
              EditTemplate,
              AttachView,
-             SelectView,
+             ParentView,
              /* EmployeesCollection,
-             JobPositionsCollection,
-             DepartmentsCollection,
-             AccountsDdCollection,
-             UsersCollection,*/
-             AssigneesView,
+              JobPositionsCollection,
+              DepartmentsCollection,
+              AccountsDdCollection,
+              UsersCollection,*/
              common,
              populate,
              moment,
@@ -36,7 +34,7 @@ define([
              constants,
              helpers) {
     'use strict';
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Employees',
         imageSrc   : '',
@@ -109,7 +107,7 @@ define([
             'click .withEndContract .newSelectList li'                       : 'endContract',
             'click .current-selected'                                        : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
-            click                                                            : 'hideNewSelect',
+            /* click                                                            : 'hideNewSelect',*/
             'click td.editable'                                              : 'editJob',
             'click #update'                                                  : 'addNewRow',
             'keyup .editing'                                                 : 'validateNumbers',
@@ -232,8 +230,9 @@ define([
                     var editingDates = self.$el.find('.editing');
 
                     editingDates.each(function () {
-                        self.$el.find(this).parent().text($(this).val()).removeClass('changeContent');
-                        self.$el.find(this).remove();
+                        var target = $(this);
+                        target.parent().text(target.val()).removeClass('changeContent');
+                        target.remove();
                     });
                 }
             }).addClass('datepicker');
@@ -241,7 +240,7 @@ define([
             return false;
         },
 
-        showNewSelect: function (e) {
+       /* showNewSelect: function (e) {
             var $target = $(e.target);
             e.stopPropagation();
 
@@ -261,13 +260,13 @@ define([
             $target.append(this.selectView.render().el);
 
             return false;
-        },
+        },*/
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var parentUl = $target.parent();
-            var element = $target.closest('a') || parentUl.closest('a');
-            var id = element.attr('id') || parentUl.attr('id');
+            var $parentUl = $target.parent();
+            var $element = $target.closest('a') || $parentUl.closest('a');
+            var id = $element.attr('id') || $parentUl.attr('id');
             var valueId = $target.attr('id');
             var managersIds = this.responseObj['#departmentManagers'];
             var managers = this.responseObj['#projectManagerDD'];
@@ -275,8 +274,8 @@ define([
             var manager;
 
             if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
-                element.text($target.text());
-                element.attr('data-id', valueId);
+                $element.text($target.text());
+                $element.attr('data-id', valueId);
 
                 if (id === 'departmentsDd') {
 
@@ -293,10 +292,10 @@ define([
                     });
 
                     if (manager) {
-                        element = element.closest('tr').find('a#projectManagerDD');
+                        $element = $element.closest('tr').find('a#projectManagerDD');
 
-                        element.text(manager);
-                        element.attr('data-id', managerId);
+                        $element.text(manager);
+                        $element.attr('data-id', managerId);
                     }
                 }
 
@@ -305,21 +304,21 @@ define([
             }
         },
 
-        hideNewSelect: function () {
-            var self = this;
-            var editingDates = this.$el.find('td.date');
+        /* hideNewSelect: function () {
+         var self = this;
+         var editingDates = this.$el.find('td.date');
 
-            editingDates.each(function () {
-                var target = self.$el.find(this);
-                target.text(target.find('input').val());
-            });
+         editingDates.each(function () {
+         var target = $(this);
+         target.text(target.find('input').val());
+         });
 
-            this.$el.find('.newSelectList').hide();
+         this.$el.find('.newSelectList').hide();
 
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
+         if (this.selectView) {
+         this.selectView.remove();
+         }
+         },*/
 
         showEndContractSelect: function (e) {
             e.preventDefault();
@@ -329,21 +328,21 @@ define([
         },
 
         activeTab: function () {
-            var tabs;
-            var activeTab;
-            var dialogHolder;
+            var $tabs;
+            var $activeTab;
+            var $dialogHolder;
             var tabId;
 
             tabId = 'job';
-            tabs = this.$el.find('.dialog-tabs');
-            activeTab = tabs.find('.active');
+            $tabs = this.$el.find('.dialog-tabs');
+            $activeTab = $tabs.find('.active');
 
-            activeTab.removeClass('active');
-            tabs.find('#' + tabId + 'Tab').addClass('active');
+            $activeTab.removeClass('active');
+            $tabs.find('#' + tabId + 'Tab').addClass('active');
 
-            dialogHolder = this.$el.find('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass('active');
+            $dialogHolder = this.$el.find('.dialog-tabs-items');
+            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+            $dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass('active');
         },
 
         endContract: function (e) {
@@ -352,36 +351,6 @@ define([
             this.activeTab();
 
             this.addNewRow(null, contractEndReason);
-        },
-
-        changeTab: function (e) {
-            var n;
-            var dialogHolder;
-            var holder = $(e.target);
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = holder.closest('.dialog-tabs').parent().find('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
         },
 
         showEdit: function () {
@@ -398,21 +367,6 @@ define([
                 display: 'block'
             }, 250);
         },
-
-       /* switchTab: function (e) {
-            var index;
-            var link;
-
-            e.preventDefault();
-            link = this.$('#tabList a');
-
-            if (link.hasClass('selected')) {
-                link.removeClass('selected');
-            }
-
-            index = link.index($(e.target).addClass('selected'));
-            this.$('.tab').hide().eq(index).show();
-        },*/
 
         saveItem: function () {
             var weeklyScheduler;
@@ -450,18 +404,18 @@ define([
             var info;
             var $thisEl = this.$el;
 
-            self.hideNewSelect();
+           // self.hideNewSelect();
 
-            relatedUser = $thisEl.find('#relatedUsersDd').data('id') || null;
-            coach = $.trim($thisEl.find('#coachDd').data('id')) || null;
+            relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
+            coach = $.trim($thisEl.find('#coachDd').attr('data-id')) || null;
             whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
             dateBirthSt = $.trim(self.$el.find('#dateBirth').val());
             $jobTable = $thisEl.find('#hireFireTable');
-            marital = $thisEl.find('#maritalDd').data('id') || null;
-            nationality = $thisEl.find('#nationality').data('id');
-            gender = $thisEl.find('#genderDd').data('id') || null;
+            marital = $thisEl.find('#maritalDd').attr('data-id') || null;
+            nationality = $thisEl.find('#nationality').attr('data-id');
+            gender = $thisEl.find('#genderDd').attr('data-id') || null;
             $jobTrs = $jobTable.find('tr.transfer');
-            sourceId = $thisEl.find('#sourceDd').data('id');
+            sourceId = $thisEl.find('#sourceDd').attr('data-id');
             homeAddress = {};
             transferArray = [];
             fireArray = [];
@@ -470,8 +424,8 @@ define([
             usersId = [];
 
             $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
-                var el = $thisEl.find(addressLine);
-                homeAddress[el.attr('name')] = $.trim(el.val());
+                var $el = $thisEl.find(addressLine);
+                homeAddress[$el.attr('name')] = $.trim($el.val());
             });
 
             $.each($jobTrs, function (index, $tr) {
@@ -554,14 +508,14 @@ define([
             isEmployee = (event === 'hired') || (event === 'updated');
 
             $thisEl.find('.groupsAndUser tr').each(function (index, element) {
-                dataType = self.$el.find(element).data('type');
+                dataType = self.$el.find(element).attr('data-type');
 
                 if (dataType === 'targetUsers') {
-                    usersId.push(self.$el.find(element).data('id'));
+                    usersId.push(self.$el.find(element).attr('data-id'));
                 }
 
                 if (dataType === 'targetGroups') {
-                    groupsId.push(self.$el.find(element).data('id'));
+                    groupsId.push(self.$el.find(element).attr('data-id'));
                 }
 
             });
@@ -616,7 +570,7 @@ define([
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: self.$el.find('#allUsersSelect').data('id'),
+                    owner: self.$el.find('#allUsersSelect').attr('data-id'),
                     users: usersId,
                     group: groupsId
                 },
@@ -683,40 +637,12 @@ define([
 
         },
 
-        deleteItem: function (event) {
-            var mid = 39;
-            var self = this;
-            var answer;
-
-            event.preventDefault();
-
-            answer = confirm('Really DELETE items ?!');
-
-            if (answer === true) {
-                this.currentModel.urlRoot = '/employees';
-                this.currentModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
-
-                    success: function () {
-                        $('.edit-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
-                    },
-
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
-                });
-            }
-        },
-
         render: function () {
-            var lastElement;
-            var firstElement;
-            var jobPosElement;
-            var departmentElement;
-            var projectManagerElement;
+            var $lastElement;
+            var $firstElement;
+            var $jobPosElement;
+            var $departmentElement;
+            var $projectManagerElement;
             var formString = this.template({
                 model           : this.currentModel.toJSON(),
                 currencySplitter: helpers.currencySplitter
@@ -767,12 +693,13 @@ define([
                     url  : '/employees/uploadEmployeesFiles'
                 }).render().el
             );
-            notDiv = this.$el.find('.assignees-container');
+           /* notDiv = this.$el.find('.assignees-container');
             notDiv.append(
                 new AssigneesView({
                     model: this.currentModel
                 }).render().el
-            );
+            );*/
+            this.renderAssignees(this.currentModel);
             common.getWorkflowContractEnd('Applications', null, null, constants.URLS.WORKFLOWS, null, 'Contract End', function (workflow) {
                 self.$el.find('.endContractReasonList').attr('data-id', workflow[0]._id);
             });
@@ -801,9 +728,10 @@ define([
                 changeYear : true
             });
 
-            this.removeIcon = $thisEl.find('.fa-trash');
+           // this.removeIcon = $thisEl.find('.fa-trash');
             this.hiredDate = this.currentModel.get('hire')[0];
 
+/*
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     this.$el.find('.groupsAndUser').show();
@@ -817,20 +745,20 @@ define([
                     });
 
                 }
-            }
+            }*/
             this.delegateEvents(this.events);
 
-            lastElement = $thisEl.find('#last');
-            firstElement = $thisEl.find('#first');
-            jobPosElement = $thisEl.find('#jobPosition');
-            departmentElement = $thisEl.find('#department');
-            projectManagerElement = $thisEl.find('#manager');
+            $lastElement = $thisEl.find('#last');
+            $firstElement = $thisEl.find('#first');
+            $jobPosElement = $thisEl.find('#jobPosition');
+            $departmentElement = $thisEl.find('#department');
+            $projectManagerElement = $thisEl.find('#manager');
 
-            this.lastData = $.trim(lastElement.val());
-            this.firstData = $.trim(firstElement.val());
-            this.jobPositionData = $.trim(jobPosElement.attr('data-id'));
-            this.departmentData = $.trim(departmentElement.attr('data-id'));
-            this.projectManagerData = $.trim(projectManagerElement.attr('data-id'));
+            this.lastData = $.trim($lastElement.val());
+            this.firstData = $.trim($firstElement.val());
+            this.jobPositionData = $.trim($jobPosElement.attr('data-id'));
+            this.departmentData = $.trim($departmentElement.attr('data-id'));
+            this.projectManagerData = $.trim($projectManagerElement.attr('data-id'));
 
             return this;
         }

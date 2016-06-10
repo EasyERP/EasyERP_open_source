@@ -55,7 +55,7 @@ define([
             "click .confirmOrder"                              : "confirmOrder",
             "click .createProforma"                            : "createProforma", /*"addAttachment",*/
             "click .cancelQuotation"                           : "cancelQuotation",
-            //'change #proformaAttachment'                       : 'uploadAttachment',
+            // 'change #proformaAttachment'                       : 'uploadAttachment',
             "click .setDraft"                                  : "setDraft"
         },
 

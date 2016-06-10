@@ -8,13 +8,13 @@ define([
     'populate',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
-    'views/selectView/selectView',
+    'views/listViewBase',
     'constants',
     'moment'
-], function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, SelectView, CONSTANTS, moment) {
+], function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Employees',
         template   : _.template(CreateTemplate),
@@ -71,11 +71,11 @@ define([
             'click .dialog-tabs a'                             : 'changeTab',
             'click .current-selected'                          : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            click                                              : 'hideNewSelect',
+           /* click                                              : 'hideNewSelect',*/
             'click td.editable'                                : 'editJob'
         },
 
-        showNewSelect: function (e) {
+       /* showNewSelect: function (e) {
             var $target = $(e.target);
             e.stopPropagation();
 
@@ -95,7 +95,7 @@ define([
             $target.append(this.selectView.render().el);
 
             return false;
-        },
+        },*/
 
         editJob: function (e) {
             var self = this;
@@ -122,8 +122,9 @@ define([
                     var editingDates = $thisEl.find('.editing');
 
                     editingDates.each(function () {
-                        $thisEl.find(this).parent().text($thisEl.find(this).val()).removeClass('changeContent');
-                        $thisEl.find(this).remove();
+                        var target = $(this);
+                        target.parent().text(target.val()).removeClass('changeContent');
+                        target.remove();
                     });
                 }
             }).addClass('datepicker');
@@ -137,8 +138,8 @@ define([
             var $target = $(e.target);
             var $td = $target.closest('td');
             var parentUl = $target.parent();
-            var element = $target.closest('a') || parentUl.closest('a');
-            var id = element.attr('id') || parentUl.attr('id');
+            var $element = $target.closest('a') || parentUl.closest('a');
+            var id = $element.attr('id') || parentUl.attr('id');
             var valueId = $target.attr('id');
             var managersIds = this.responseObj['#departmentManagers'];
             var managers = this.responseObj['#projectManagerDD'];
@@ -148,8 +149,8 @@ define([
             $td.removeClass('errorContent');
 
             if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
-                element.text($target.text());
-                element.attr('data-id', valueId);
+                $element.text($target.text());
+                $element.attr('data-id', valueId);
 
                 if (id === 'departmentsDd') {
 
@@ -166,10 +167,10 @@ define([
                     });
 
                     if (manager) {
-                        element = element.closest('tr').find('a#projectManagerDD');
+                        $element = $element.closest('tr').find('a#projectManagerDD');
 
-                        element.text(manager);
-                        element.attr('data-id', managerId);
+                        $element.text(manager);
+                        $element.attr('data-id', managerId);
                     }
                 }
 
@@ -178,13 +179,13 @@ define([
             }
         },
 
-        hideNewSelect: function () {
+      /*  hideNewSelect: function () {
             this.$el.find('.newSelectList').hide();
 
             if (this.selectView) {
                 this.selectView.remove();
             }
-        },
+        },*/
 
         addAttach: function () {
             var $thisEl = this.$el;
@@ -260,13 +261,6 @@ define([
             }
         },
 
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },
-
         showEdit: function () {
             this.$el.find('.upload').animate({
                 height : '20px',
@@ -334,6 +328,7 @@ define([
             var coach;
             var event;
             var data;
+            var dateText;
             var date;
             var info;
             var $tr;
@@ -347,20 +342,20 @@ define([
                 });
             }
 
-            self.hideNewSelect();
+           // self.hideNewSelect();
 
             employeeModel = new EmployeeModel();
 
-            relatedUser = $thisEl.find('#relatedUsersDd').data('id') || null;
-            coach = $.trim($thisEl.find('#coachDd').data('id')) || null;
+            relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
+            coach = $.trim($thisEl.find('#coachDd').attr('id')) || null;
             whoCanRW = $thisEl.find('[name="whoCanRW"]:checked').val();
             dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
             $jobTable = $thisEl.find('#hireFireTable');
-            marital = $thisEl.find('#maritalDd').data('id') || null;
-            nationality = $thisEl.find('#nationality').data('id');
-            gender = $thisEl.find('#genderDd').data('id') || null;
+            marital = $thisEl.find('#maritalDd').attr('data-id') || null;
+            nationality = $thisEl.find('#nationality').attr('data-id');
+            gender = $thisEl.find('#genderDd').attr('data-id') || null;
             $tr = $jobTable.find('tr.transfer');
-            sourceId = $thisEl.find('#sourceDd').data('id');
+            sourceId = $thisEl.find('#sourceDd').attr('data-id');
             homeAddress = {};
             fireArray = [];
             hireArray = [];
@@ -374,8 +369,8 @@ define([
 
             salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text(), 10) : null;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            date = new Date($.trim($tr.find('td').eq(2).text()));
-            date = date ? new Date(date) : new Date();
+            dateText = $.trim($tr.find('td').eq(2).text());
+            date = dateText ? new Date(dateText) : new Date();
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             department = $tr.find('#departmentsDd').attr('data-id');
@@ -403,14 +398,14 @@ define([
             isEmployee = true;
 
             $thisEl.find('.groupsAndUser tr').each(function (index, element) {
-                dataType = $thisEl.find(element).data('type');
+                dataType = $thisEl.find(element).attr('data-type');
 
                 if (dataType === 'targetUsers') {
-                    usersId.push($thisEl.find(element).data('id'));
+                    usersId.push($thisEl.find(element).attr('data-id'));
                 }
 
                 if (dataType === 'targetGroups') {
-                    groupsId.push($thisEl.find(element).data('id'));
+                    groupsId.push($thisEl.find(element).attr('data-id'));
                 }
 
             });
@@ -465,7 +460,7 @@ define([
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: $thisEl.find('#allUsersSelect').data('id'),
+                    owner: $thisEl.find('#allUsersSelect').attr('data-id'),
                     users: usersId,
                     group: groupsId
                 },
@@ -526,7 +521,7 @@ define([
             var formString = this.template({
                 moment: moment
             });
-            var notDiv;
+            var $notDiv;
             var self = this;
             var $thisEl;
 
@@ -551,18 +546,19 @@ define([
                     }
                 }
             });
+            
             $thisEl = this.$el;
 
-            notDiv = $thisEl.find('.attach-container');
+            $notDiv = $thisEl.find('.attach-container');
 
             this.attachView = new AttachView({
                 model   : new EmployeeModel(),
                 url     : '/uploadEmployeesFiles',
                 isCreate: true
             });
-            notDiv.append(this.attachView.render().el);
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
+            $notDiv.append(this.attachView.render().el);
+            $notDiv = this.$el.find('.assignees-container');
+            $notDiv.append(
                 new AssigneesView({
                     model: this.currentModel
                 }).render().el
