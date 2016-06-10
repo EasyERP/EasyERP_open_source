@@ -39,6 +39,7 @@ define([
 
         initialize: function (options) {
             $(document).off('click');
+
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
@@ -55,25 +56,26 @@ define([
         },
 
         events: {
-            'click .list td:not(.notForm)': 'goToEditDialog',
-            'click .stageSelect'          : 'showNewSelect',
-            'click .newSelectList li'     : 'chooseOption'
+            'click .list td:not(.notForm, .checkbox)': 'goToEditDialog',
+            'click .stageSelect'                     : 'showNewSelect',
+            'click .newSelectList li'                : 'chooseOption'
         },
 
         chooseOption: function (e) {
             var self = this;
-            var targetElement = $(e.target).parents('td');
+            var $target = $(e.target);
+            var targetElement = $target.parents('td');
             var id = targetElement.attr('id');
             var obj = this.collection.get(id);
 
             obj.save({
-                workflow     : $(e.target).attr('id'),
+                workflow     : $target.attr('id'),
                 workflowStart: targetElement.find('.stageSelect').attr('data-id'),
                 sequence     : -1,
                 sequenceStart: targetElement.attr('data-sequence')
             }, {
                 headers: {
-                    mid: 39
+                    mid: 25
                 },
                 patch  : true,
                 success: function () {
@@ -131,7 +133,7 @@ define([
             });
 
             $currentEl.append(itemView.render());
-            
+
             this.renderFilter();
 
             this.renderPagination($currentEl, this);
