@@ -2,22 +2,39 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Quotation/EditTemplate.html",
-    "views/Projects/projectInfo/proformas/proformaView",
+    'text!templates/Quotation/EditTemplate.html',
+    'views/Projects/projectInfo/proformas/proformaView',
     'views/selectView/selectView',
     'views/Assignees/AssigneesView',
     'views/Product/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
     'collections/Quotation/filterCollection',
     'collections/Proforma/filterCollection',
-    "common",
-    "custom",
-    "dataService",
-    "populate",
+    'common',
+    'custom',
+    'dataService',
+    'populate',
     'constants',
     'helpers/keyValidator',
     'helpers'
-], function (Backbone, $, _, EditTemplate, ProformaView, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, ProformaCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator, helpers) {
+], function (Backbone,
+             $,
+             _,
+             EditTemplate,
+             ProformaView,
+             SelectView,
+             AssigneesView,
+             ProductItemView,
+             OrdersView,
+             QuotationCollection,
+             ProformaCollection,
+             common,
+             Custom,
+             dataService,
+             populate,
+             CONSTANTS,
+             keyValidator,
+             helpers) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -49,14 +66,14 @@ define([
 
         events: {
             'click .dialog-tabs a'                             : 'changeTab',
-            "click .current-selected:not(.jobs)"               : "showNewSelect",
-            "click"                                            : "hideNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click .confirmOrder"                              : "confirmOrder",
-            "click .createProforma"                            : "createProforma", /*"addAttachment",*/
-            "click .cancelQuotation"                           : "cancelQuotation",
-            //'change #proformaAttachment'                       : 'uploadAttachment',
-            "click .setDraft"                                  : "setDraft"
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            click                                              : 'hideNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click .confirmOrder'                              : 'confirmOrder',
+            'click .createProforma'                            : 'createProforma', /* 'addAttachment',*/
+            'click .cancelQuotation'                           : 'cancelQuotation',
+            // 'change #proformaAttachment'                       : 'uploadAttachment',
+            'click .setDraft'                                  : 'setDraft'
         },
 
         showNewSelect: function (e) {
@@ -82,7 +99,7 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
 
             if (this.selectView) {
                 this.selectView.remove();
@@ -91,7 +108,7 @@ define([
 
         chooseOption: function (e) {
             var target = $(e.target);
-            var id = target.attr("id");
+            var id = target.attr('id');
             var type = target.attr('data-level');
 
             var element = _.find(this.responseObj['#project'], function (el) {
@@ -105,13 +122,14 @@ define([
             var newCurrencyClass = helpers.currencyClass(newCurrency);
 
             var array = this.$el.find('.' + oldCurrencyClass);
-            
+
             array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
             currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
 
             if (type !== $.trim(this.$el.find('#supplierDd').text()) && element && element.customer && element.customer.name) {
-                this.$el.find('#supplierDd').text(element.customer.name && element.customer.name.first ? element.customer.name.first + ' ' + element.customer.name.last : element.customer.name);
+                this.$el.find('#supplierDd').text(element.customer.name && element.customer.name.first ? element.customer.name.first +
+                ' ' + element.customer.name.last : element.customer.name);
                 this.$el.find('#supplierDd').attr('data-id', element.customer._id);
             }
 
@@ -134,18 +152,18 @@ define([
             n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
             dialogHolder = $(selector);
 
-            dialogHolder.find(itemActiveSelector).removeClass("active");
-            dialogHolder.find(itemSelector).eq(n).addClass("active");
+            dialogHolder.find(itemActiveSelector).removeClass('active');
+            dialogHolder.find(itemSelector).eq(n).addClass('active');
         },
 
         confirmOrder: function (e) {
-            e.preventDefault();
-
             var self = this;
             var wId;
             var mid;
             var status;
             var id = self.currentModel.get('_id');
+
+            e.preventDefault();
 
             if (this.forSales) {
                 wId = 'Sales Order';
@@ -163,7 +181,7 @@ define([
                         wId   : wId,
                         source: 'purchase',
                         status: status
-                        //targetSource: 'order'
+                        // targetSource: 'order'
                     }, function (workflow) {
                         var products;
 
@@ -187,15 +205,16 @@ define([
                                 },
                                 patch  : true,
                                 success: function () {
-                                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+                                    var filter;
+                                    var redirectUrl = self.forSales ? 'easyErp/salesOrder' : 'easyErp/Order';
 
                                     if (self.redirect) {
-                                        var filter = {
-                                            'project': {
+                                        filter = {
+                                            project: {
                                                 key  : 'project._id',
                                                 value: [self.pId]
                                             },
-                                            'isOrder'    : {
+                                            isOrder: {
                                                 key  : 'isOrder',
                                                 value: ['true']
                                             }
@@ -243,94 +262,90 @@ define([
             });
         },
 
-        /*addAttachment: function (e) {
-            var self = this;
-            var $attachment;
+        /* addAttachment: function (e) {
+         var self = this;
+         var $attachment;
 
-            e.preventDefault();
+         e.preventDefault();
 
-            $attachment = self.$el.find('#proformaAttachment');
+         $attachment = self.$el.find('#proformaAttachment');
 
-            $attachment.remove();
+         $attachment.remove();
 
-            self.$el.prepend('<form id="proformaAttachmentForm"><input type="file" id="proformaAttachment" accept="application/pdf" name="attachfile"></form>');
-            $attachment = self.$el.find('#proformaAttachment');
+         self.$el.prepend('<form id="proformaAttachmentForm"><input type="file" id="proformaAttachment" accept="application/pdf" name="attachfile"></form>');
+         $attachment = self.$el.find('#proformaAttachment');
 
-            $attachment.click();
-            $attachment.hide();
+         $attachment.click();
+         $attachment.hide();
 
-        },*/
+         },*/
 
-        /*uploadAttachment: function (event) {
-            var self = this;
-            var currentModel = this.model;
-            var currentModelId = currentModel ? currentModel.id : null;
-            var addFrmAttach = $('#proformaAttachmentForm');
-            var addInptAttach;
+        /* uploadAttachment: function (event) {
+         var self = this;
+         var currentModel = this.model;
+         var currentModelId = currentModel ? currentModel.id : null;
+         var addFrmAttach = $('#proformaAttachmentForm');
+         var addInptAttach;
 
-            addInptAttach = self.$el.find("#proformaAttachment")[0].files[0];
+         addInptAttach = self.$el.find("#proformaAttachment")[0].files[0];
 
-            if (!this.fileSizeIsAcceptable(addInptAttach)) {
-                this.$el.find('#inputAttach').val('');
-                return App.render({
-                    type   : 'error',
-                    message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
-                });
-            }
+         if (!this.fileSizeIsAcceptable(addInptAttach)) {
+         this.$el.find('#inputAttach').val('');
+         return App.render({
+         type   : 'error',
+         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+         });
+         }
 
-            addFrmAttach.submit(function (e) {
-                var formURL;
+         addFrmAttach.submit(function (e) {
+         var formURL;
 
-                formURL = "http://" + window.location.host + ((self.url) ? self.url : "/invoice/attach");
+         formURL = "http://" + window.location.host + ((self.url) ? self.url : "/invoice/attach");
 
-                e.preventDefault();
-                addFrmAttach.ajaxSubmit({
-                    url        : formURL,
-                    type       : "POST",
-                    processData: false,
-                    contentType: false,
-                    data       : [addInptAttach],
+         e.preventDefault();
+         addFrmAttach.ajaxSubmit({
+         url        : formURL,
+         type       : "POST",
+         processData: false,
+         contentType: false,
+         data       : [addInptAttach],
 
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("id", currentModelId);
-                    },
+         beforeSend: function (xhr) {
+         xhr.setRequestHeader("id", currentModelId);
+         },
 
-                    uploadProgress: function (event, position, total, statusComplete) {
-                        //todo add code
-                    },
+         uploadProgress: function (event, position, total, statusComplete) {
+         //todo add code
+         },
 
-                    success: function (data) {
-                        self.createProforma();
-                    },
+         success: function (data) {
+         self.createProforma();
+         },
 
-                    error: function (xhr) {
-                        App.stopPreload();
-                        App.render({
-                            type   : 'error',
-                            message: 'Error occurred while image load'
-                        });
-                    }
-                });
-            });
+         error: function (xhr) {
+         App.stopPreload();
+         App.render({
+         type   : 'error',
+         message: 'Error occurred while image load'
+         });
+         }
+         });
+         });
 
-            App.startPreload();
+         App.startPreload();
 
-            addFrmAttach.submit();
-            addFrmAttach.off('submit');
-        },
+         addFrmAttach.submit();
+         addFrmAttach.off('submit');
+         },
 
-        fileSizeIsAcceptable: function (file) {
-            if (!file) {
-                return false;
-            }
-            return file.size < App.File.MAXSIZE;
-        },*/
+         fileSizeIsAcceptable: function (file) {
+         if (!file) {
+         return false;
+         }
+         return file.size < App.File.MAXSIZE;
+         },*/
 
         createProforma: function (e) {
-            e && e.preventDefault();
-
-            App.startPreload();
-
             var self = this;
             var url = '/proforma/create';
             var quotationId = this.currentModel.id;
@@ -340,6 +355,9 @@ define([
                 currency   : this.currentModel.toJSON().currency,
                 journal    : CONSTANTS.PROFORMA_JOURNAL
             };
+
+            e && e.preventDefault();
+            App.startPreload();
 
             this.saveItem(function (err, res) {
                 var id = res.id;
@@ -372,9 +390,9 @@ define([
         },
 
         cancelQuotation: function (e) {
-            e.preventDefault();
-
             var self = this;
+
+            e.preventDefault();
 
             populate.fetchWorkflow({
                 wId         : 'Purchase Order',
@@ -383,7 +401,7 @@ define([
                 status      : 'Cancelled',
                 order       : 1
             }, function (workflow) {
-                //var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
                 var redirectUrl = window.location.hash;
 
                 if (workflow && workflow.error) {
@@ -401,7 +419,7 @@ define([
                     },
                     patch  : true,
                     success: function () {
-                        $(".edit-dialog").remove();
+                        $('.edit-dialog').remove();
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(redirectUrl, {trigger: true});
                     }
@@ -410,9 +428,9 @@ define([
         },
 
         setDraft: function (e) {
-            e.preventDefault();
-
             var self = this;
+
+            e.preventDefault();
 
             populate.fetchWorkflow({
                 wId: 'Sales Order'
@@ -435,7 +453,7 @@ define([
                     },
                     patch  : true,
                     success: function () {
-                        $(".edit-dialog").remove();
+                        $('.edit-dialog').remove();
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(redirectUrl, {trigger: true});
                     }
@@ -443,7 +461,7 @@ define([
             });
         },
 
-        saveItem: function (proformaCb /*orderCb*/) {
+        saveItem: function (proformaCb /* orderCb*/) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
             var thisEl = this.$el;
@@ -492,12 +510,12 @@ define([
             total = parseFloat(total) * 100;
             totalTaxes = parseFloat(totalTaxes) * 100;
 
-            thisEl.find(".groupsAndUser tr").each(function () {
-                if ($(this).data("type") === "targetUsers") {
-                    usersId.push($(this).data("id"));
+            thisEl.find('.groupsAndUser tr').each(function () {
+                if ($(this).data('type') === 'targetUsers') {
+                    usersId.push($(this).data('id'));
                 }
-                if ($(this).data("type") === "targetGroups") {
-                    groupsId.push($(this).data("id"));
+                if ($(this).data('type') === 'targetGroups') {
+                    groupsId.push($(this).data('id'));
                 }
 
             });
@@ -569,13 +587,15 @@ define([
                     unTaxed: unTaxed,
                     taxes  : totalTaxes
                 },
-                groups           : {
-                    owner: $("#allUsersSelect").data("id"),
+
+                groups: {
+                    owner: $('#allUsersSelect').data('id'),
                     users: usersId,
                     group: groupsId
                 },
-                whoCanRW         : whoCanRW,
-                workflow         : workflow
+
+                whoCanRW: whoCanRW,
+                workflow: workflow
             };
 
             if (supplier) {
@@ -601,7 +621,8 @@ define([
 
                         self.eventChannel && self.eventChannel.trigger('quotationUpdated');
                     },
-                    error  : function (model, xhr) {
+                    
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
 
                         if (proformaCb && typeof proformaCb === 'function') {
@@ -629,7 +650,7 @@ define([
             var self = this;
             var mid = this.forSales ? 62 : 55;
             var url;
-            var answer = confirm("Really DELETE items ?!");
+            var answer = confirm('Really DELETE items ?!');
 
             event.preventDefault();
 
@@ -654,7 +675,7 @@ define([
                         if (err.status === 403) {
                             App.render({
                                 type   : 'error',
-                                message: "You do not have permission to perform this action"
+                                message: 'You do not have permission to perform this action'
                             });
                         }
                     }
@@ -673,16 +694,15 @@ define([
             });
             var service = this.forSales;
             var notDiv;
-            var model;
             var productItemContainer;
             var buttons = [
                 {
-                    text : "Save",
+                    text : 'Save',
                     click: function () {
                         self.saveItem();
                     }
                 }, {
-                    text : "Cancel",
+                    text : 'Cancel',
                     click: function () {
                         self.hideDialog();
                     }
@@ -691,8 +711,8 @@ define([
 
             if (!model.proformaCounter) {
                 buttons.push({
-                    text : "Delete",
-                        click: self.deleteItem
+                    text : 'Delete',
+                    click: self.deleteItem
                 });
             }
 
@@ -700,9 +720,9 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : "edit-dialog",
-                title        : "Edit Quotation",
-                width        : "900px",
+                dialogClass  : 'edit-dialog',
+                title        : 'Edit Quotation',
+                width        : '900px',
                 buttons      : buttons
 
             });
@@ -714,28 +734,28 @@ define([
                 }).render().el
             );
 
-            populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
-            populate.get("#destination", "/destination", {}, 'name', this, false, true);
-            populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
-            populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
-            populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
-            populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
+            populate.get('#destination', '/destination', {}, 'name', this, false, true);
+            populate.get('#incoterm', '/incoterm', {}, 'name', this, false, true);
+            populate.get('#invoicingControl', '/invoicingControl', {}, 'name', this, false, true);
+            populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, false, true);
+            populate.get('#deliveryDd', '/deliverTo', {}, 'name', this, false, true);
 
             if (this.forSales) {
-                populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false);
+                populate.get('#supplierDd', CONSTANTS.URLS.CUSTOMERS, {}, 'fullName', this, false, false);
 
                 populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
 
             } else {
-                populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
+                populate.get2name('#supplierDd', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             }
 
             this.$el.find('#orderDate').datepicker({
-                dateFormat : "d M, yy",
+                dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                maxDate    : "+0D"
+                maxDate    : '+0D'
             });
 
             this.delegateEvents(this.events);
@@ -747,20 +767,28 @@ define([
                 new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
             );
 
-            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (response) {
-                self.responseObj['#project'] = response.data;
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {
+                projects = _.map(projects.data, function (project) {
+                    project.name = project.projectName;
+
+                    return project;
+                });
+
+                self.responseObj['#project'] = projects;
             });
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $("#targetGroups").append("<li id='" + item._id + "'>" + item.name + "</li>");
+                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" +
+                            item.name + "</td><td class='text-right'></td></tr>");
+                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + "</li>");
                     });
                     model.groups.users.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
+                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" +
+                            item.login + "</td><td class='text-right'></td></tr>");
+                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + "</li>");
                     });
 
                 }
