@@ -104,7 +104,7 @@ define([
             'mouseleave .avatar'                                             : 'hideEdit',
             'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
             'click .withEndContract .newSelectList li'                       : 'endContract',
-            'click .current-selected'                                        : 'showNewSelect',
+           /* 'click .current-selected'                                        : 'showNewSelect',*/
             'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
             /* click                                                            : 'hideNewSelect',*/
             'click td.editable'                                              : 'editJob',

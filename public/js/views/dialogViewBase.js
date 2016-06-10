@@ -10,9 +10,10 @@
     var View = Backbone.View.extend({
 
         events: {
-            keydown               : 'keyDownHandler',
-            click                 : 'hideNewSelect',
-            'click .dialog-tabs a': 'changeTab'
+            keydown                  : 'keyDownHandler',
+            click                    : 'hideNewSelect',
+            'click .dialog-tabs a'   : 'changeTab',
+            'click .current-selected': 'showNewSelect'
         },
 
         showNewSelect: function (e) {
@@ -92,10 +93,11 @@
                 }).render().el
             );
 
-            model = model.toJSON();
+            if (model) {
 
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
+                model = model.toJSON();
+
+                if (model.groups && model.groups.users.length > 0 || model.groups.group.length) {
                     this.$el.find('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
                         $thisEl.find('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
