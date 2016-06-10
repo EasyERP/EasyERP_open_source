@@ -36,7 +36,7 @@ var Module = function (models) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var query = Department.find({});
 
-        query.select('_id name');
+        query.select('_id name nestingLevel');
         query.sort({name: 1});
         query.exec(function (err, departments) {
             if (err) {
@@ -141,7 +141,7 @@ var Module = function (models) {
                 getCustomDepartment(req, res, next);
                 break;
             default:
-                get(req, res, next);
+                getCustomDepartment(req, res, next);
                 break;
         }
     };
