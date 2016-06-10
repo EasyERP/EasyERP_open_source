@@ -101,7 +101,7 @@ define([
         },
 
         events: {
-            'click #tabList a'                                               : 'switchTab',
+            /* 'click #tabList a'                                               : 'switchTab',*/
             'mouseenter .avatar'                                             : 'showEdit',
             'mouseleave .avatar'                                             : 'hideEdit',
             'click .dialog-tabs a'                                           : 'changeTab',
@@ -156,7 +156,8 @@ define([
         },
 
         addNewRow: function (e, contractEndReason) {
-            var table = this.$el.find('#hireFireTable');
+            var $thisEl = this.$el;
+            var table = $thisEl.find('#hireFireTable');
             var lastTr = table.find('tr').last();
             var newTr = lastTr.clone();
             var trId = newTr.attr('data-id');
@@ -179,7 +180,7 @@ define([
             table.append(newTr);
 
             //  this.$el.find('#update').hide(); // commented by Pasha:  possibility to put few jobPositions
-            this.$el.find('.withEndContract').hide();
+            $thisEl.find('.withEndContract').hide();
 
             this.renderRemoveBtn();
         },
@@ -231,8 +232,8 @@ define([
                     var editingDates = self.$el.find('.editing');
 
                     editingDates.each(function () {
-                        $(this).parent().text($(this).val()).removeClass('changeContent');
-                        $(this).remove();
+                        self.$el.find(this).parent().text($(this).val()).removeClass('changeContent');
+                        self.$el.find(this).remove();
                     });
                 }
             }).addClass('datepicker');
@@ -300,15 +301,17 @@ define([
                 }
 
             } else {
-                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+                $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
         },
 
         hideNewSelect: function () {
+            var self = this;
             var editingDates = this.$el.find('td.date');
 
             editingDates.each(function () {
-                $(this).text($(this).find('input').val());
+                var target = self.$el.find(this);
+                target.text(target.find('input').val());
             });
 
             this.$el.find('.newSelectList').hide();
@@ -332,13 +335,13 @@ define([
             var tabId;
 
             tabId = 'job';
-            tabs = $('.dialog-tabs');
+            tabs = this.$el.find('.dialog-tabs');
             activeTab = tabs.find('.active');
 
             activeTab.removeClass('active');
             tabs.find('#' + tabId + 'Tab').addClass('active');
 
-            dialogHolder = $('.dialog-tabs-items');
+            dialogHolder = this.$el.find('.dialog-tabs-items');
             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
             dialogHolder.find('#' + tabId).closest('.dialog-tabs-item').addClass('active');
         },
@@ -382,7 +385,7 @@ define([
         },
 
         showEdit: function () {
-            $('.upload').animate({
+            this.$el.find('.upload').animate({
                 height : '20px',
                 display: 'block'
             }, 250);
@@ -390,13 +393,13 @@ define([
         },
 
         hideEdit: function () {
-            $('.upload').animate({
+            this.$el.find('.upload').animate({
                 height : '0px',
                 display: 'block'
             }, 250);
         },
 
-        switchTab: function (e) {
+       /* switchTab: function (e) {
             var index;
             var link;
 
@@ -409,7 +412,7 @@ define([
 
             index = link.index($(e.target).addClass('selected'));
             this.$('.tab').hide().eq(index).show();
-        },
+        },*/
 
         saveItem: function () {
             var weeklyScheduler;
@@ -445,20 +448,20 @@ define([
             var data;
             var date;
             var info;
-            var el;
+            var $thisEl = this.$el;
 
             self.hideNewSelect();
 
-            relatedUser = self.$el.find('#relatedUsersDd').data('id') || null;
-            coach = $.trim(self.$el.find('#coachDd').data('id')) || null;
-            whoCanRW = self.$el.find("[name='whoCanRW']:checked").val();
+            relatedUser = $thisEl.find('#relatedUsersDd').data('id') || null;
+            coach = $.trim($thisEl.find('#coachDd').data('id')) || null;
+            whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
             dateBirthSt = $.trim(self.$el.find('#dateBirth').val());
-            $jobTable = self.$el.find('#hireFireTable');
-            marital = $('#maritalDd').data('id') || null;
-            nationality = $('#nationality').data('id');
-            gender = $('#genderDd').data('id') || null;
+            $jobTable = $thisEl.find('#hireFireTable');
+            marital = $thisEl.find('#maritalDd').data('id') || null;
+            nationality = $thisEl.find('#nationality').data('id');
+            gender = $thisEl.find('#genderDd').data('id') || null;
             $jobTrs = $jobTable.find('tr.transfer');
-            sourceId = $('#sourceDd').data('id');
+            sourceId = $thisEl.find('#sourceDd').data('id');
             homeAddress = {};
             transferArray = [];
             fireArray = [];
@@ -466,15 +469,15 @@ define([
             groupsId = [];
             usersId = [];
 
-            $('dd').find('.homeAddress').each(function (index, addressLine) {
-                el = $(addressLine);
+            $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
+                var el = $thisEl.find(addressLine);
                 homeAddress[el.attr('name')] = $.trim(el.val());
             });
 
             $.each($jobTrs, function (index, $tr) {
                 var $previousTr;
 
-                $tr = $($tr);
+                $tr = $thisEl.find($tr);
                 salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) : null;
                 manager = $tr.find('#projectManagerDD').attr('data-id') || null;
                 date = $.trim($tr.find('td').eq(2).text());
@@ -491,7 +494,7 @@ define([
                 }
 
                 if (previousDep !== department) {
-                    $previousTr = $($jobTrs[index - 1]);
+                    $previousTr = self.$el.find($jobTrs[index - 1]);
 
                     transferArray.push({
                         status         : 'transfer',
@@ -550,61 +553,61 @@ define([
 
             isEmployee = (event === 'hired') || (event === 'updated');
 
-            $('.groupsAndUser tr').each(function (index, element) {
-                dataType = $(element).data('type');
+            $thisEl.find('.groupsAndUser tr').each(function (index, element) {
+                dataType = self.$el.find(element).data('type');
 
                 if (dataType === 'targetUsers') {
-                    usersId.push($(element).data('id'));
+                    usersId.push(self.$el.find(element).data('id'));
                 }
 
                 if (dataType === 'targetGroups') {
-                    groupsId.push($(element).data('id'));
+                    groupsId.push(self.$el.find(element).data('id'));
                 }
 
             });
 
             data = {
                 name: {
-                    first: $.trim(this.$el.find('#first').val()),
-                    last : $.trim(this.$el.find('#last').val())
+                    first: $.trim($thisEl.find('#first').val()),
+                    last : $.trim($thisEl.find('#last').val())
                 },
 
                 gender     : gender,
                 jobType    : jobType,
                 marital    : marital,
                 workAddress: {
-                    street : $.trim(this.$el.find('#street').val()),
-                    city   : $.trim(this.$el.find('#city').val()),
-                    state  : $.trim(this.$el.find('#state').val()),
-                    zip    : $.trim(this.$el.find('#zip').val()),
-                    country: $.trim(this.$el.find('#country').val())
+                    street : $.trim($thisEl.find('#street').val()),
+                    city   : $.trim($thisEl.find('#city').val()),
+                    state  : $.trim($thisEl.find('#state').val()),
+                    zip    : $.trim($thisEl.find('#zip').val()),
+                    country: $.trim($thisEl.find('#country').val())
                 },
 
                 social: {
-                    LI: $.trim(this.$el.find('#LI').val()),
-                    FB: $.trim(this.$el.find('#FB').val())
+                    LI: $.trim($thisEl.find('#LI').val()),
+                    FB: $.trim($thisEl.find('#FB').val())
                 },
 
-                tags         : $.trim(this.$el.find('#tags').val()).split(','),
-                workEmail    : $.trim(this.$el.find('#workEmail').val()),
-                personalEmail: $.trim(this.$el.find('#personalEmail').val()),
-                skype        : $.trim(this.$el.find('#skype').val()),
+                tags         : $.trim($thisEl.find('#tags').val()).split(','),
+                workEmail    : $.trim($thisEl.find('#workEmail').val()),
+                personalEmail: $.trim($thisEl.find('#personalEmail').val()),
+                skype        : $.trim($thisEl.find('#skype').val()),
                 workPhones   : {
-                    phone : $.trim(this.$el.find('#phone').val()),
-                    mobile: $.trim(this.$el.find('#mobile').val())
+                    phone : $.trim($thisEl.find('#phone').val()),
+                    mobile: $.trim($thisEl.find('#mobile').val())
                 },
 
-                officeLocation : $.trim(this.$el.find('#officeLocation').val()),
-                bankAccountNo  : $.trim($('#bankAccountNo').val()),
+                officeLocation : $.trim($thisEl.find('#officeLocation').val()),
+                bankAccountNo  : $.trim($thisEl.find('#bankAccountNo').val()),
                 relatedUser    : relatedUser,
                 department     : department,
                 jobPosition    : jobPosition,
                 weeklyScheduler: weeklyScheduler,
                 manager        : manager,
                 coach          : coach,
-                identNo        : $.trim($('#identNo').val()),
-                passportNo     : $.trim(this.$el.find('#passportNo').val()),
-                otherId        : $.trim(this.$el.find('#otherId').val()),
+                identNo        : $.trim($thisEl.find('#identNo').val()),
+                passportNo     : $.trim($thisEl.find('#passportNo').val()),
+                otherId        : $.trim($thisEl.find('#otherId').val()),
                 homeAddress    : homeAddress,
                 dateBirth      : dateBirthSt,
                 source         : sourceId,
@@ -613,7 +616,7 @@ define([
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: self.$el.find('#allUsersSelect').data('id'),
                     users: usersId,
                     group: groupsId
                 },
@@ -656,7 +659,7 @@ define([
                         model = model.toJSON();
                         empThumb = $('#' + model._id);
 
-                        empThumb.find('.age').html(model.result.age);
+                        empThumb.find('.age').html(model.age);
                         empThumb.find('.empDateBirth').html('(' + model.dateBirth + ')');
                         empThumb.find('.telephone a').html(model.workPhones.mobile);
                         empThumb.find('.telephone a').attr('href', 'skype:' + model.workPhones.mobile + '?call');
@@ -721,6 +724,7 @@ define([
             var self = this;
             var model = this.currentModel.toJSON();
             var notDiv;
+            var $thisEl;
 
             if (this.currentModel.get('dateBirth')) {
                 this.currentModel.set({
@@ -754,7 +758,9 @@ define([
                     }
                 }
             });
-            notDiv = this.$el.find('.attach-container');
+            $thisEl = this.$el;
+
+            notDiv = $thisEl.find('.attach-container');
             notDiv.append(
                 new AttachView({
                     model: this.currentModel,
@@ -768,7 +774,7 @@ define([
                 }).render().el
             );
             common.getWorkflowContractEnd('Applications', null, null, constants.URLS.WORKFLOWS, null, 'Contract End', function (workflow) {
-                $('.endContractReasonList').attr('data-id', workflow[0]._id);
+                self.$el.find('.endContractReasonList').attr('data-id', workflow[0]._id);
             });
             populate.get('#departmentManagers', constants.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this);
@@ -780,7 +786,7 @@ define([
             populate.get('#departmentsDd', constants.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
-            $('#dateBirth').datepicker({
+            $thisEl.find('#dateBirth').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
@@ -789,36 +795,36 @@ define([
                 minDate    : null
             });
 
-            $('.date').datepicker({
+            $thisEl.find('.date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
             });
 
-            this.removeIcon = this.$el.find('.fa-trash');
+            this.removeIcon = $thisEl.find('.fa-trash');
             this.hiredDate = this.currentModel.get('hire')[0];
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
+                    this.$el.find('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
-                        $('#targetGroups').append('<li id="' + item._id + '">' + item.name + '</li>');
+                        $thisEl.find('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
+                        $thisEl.find('#targetGroups').append('<li id="' + item._id + '">' + item.name + '</li>');
                     });
                     model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' + item.login + '</td><td class="text-right"></td></tr>');
-                        $('#targetUsers').append('<li id="' + item._id + '">' + item.login + '</li>');
+                        $thisEl.find('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' + item.login + '</td><td class="text-right"></td></tr>');
+                        $thisEl.find('#targetUsers').append('<li id="' + item._id + '">' + item.login + '</li>');
                     });
 
                 }
             }
             this.delegateEvents(this.events);
 
-            lastElement = this.$el.find('#last');
-            firstElement = this.$el.find('#first');
-            jobPosElement = this.$el.find('#jobPosition');
-            departmentElement = this.$el.find('#department');
-            projectManagerElement = this.$el.find('#manager');
+            lastElement = $thisEl.find('#last');
+            firstElement = $thisEl.find('#first');
+            jobPosElement = $thisEl.find('#jobPosition');
+            departmentElement = $thisEl.find('#department');
+            projectManagerElement = $thisEl.find('#manager');
 
             this.lastData = $.trim(lastElement.val());
             this.firstData = $.trim(firstElement.val());

@@ -523,6 +523,15 @@ define([], function () {
                 }
             ]
         },
+        Employees       : {
+            name : [
+                {
+                    _id : "55b92ad221e4b7c40f00004e",
+                    name: "Vitaliy Shuba"
+                }
+            ]
+
+        },
         wTracks         : {
             _id     : null,
             name    : [

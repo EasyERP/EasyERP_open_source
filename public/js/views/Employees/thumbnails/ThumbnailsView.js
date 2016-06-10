@@ -1,5 +1,4 @@
 ﻿define([
-    'Backbone',
     'jQuery',
     'Underscore',
     'text!templates/Employees/thumbnails/ThumbnailsItemTemplate.html',
@@ -12,7 +11,7 @@
     'common',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'constants'
-], function (Backbone, $, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, FilterView, dataService, CurrentModel, common, AphabeticTemplate, CONSTANTS) {
+], function ($, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, FilterView, dataService, CurrentModel, common, AphabeticTemplate, CONSTANTS) {
     'use strict';
 
     var EmployeesThumbnalView = BaseView.extend({
@@ -52,29 +51,29 @@
             'click .removeFilterButton' : 'removeFilter'
         },
 
-        getTotalLength: function (currentNumber) {
-            dataService.getData('/employees/totalCollectionLength', {
-                currentNumber: currentNumber,
-                filter       : this.filter,
-                newCollection: this.newCollection,
-                contentType  : this.contentType,
-                mid          : this.mId
-            }, function (response, context) {
-                var showMore = context.$el.find('#showMoreDiv');
-                var created;
+        /* getTotalLength: function (currentNumber) {
+         dataService.getData('/employees/totalCollectionLength', {
+         currentNumber: currentNumber,
+         filter       : this.filter,
+         newCollection: this.newCollection,
+         contentType  : this.contentType,
+         mid          : this.mId
+         }, function (response, context) {
+         var showMore = context.$el.find('#showMoreDiv');
+         var created;
 
-                if (response.showMore) {
-                    if (showMore.length === 0) {
-                        created = context.$el.find('#timeRecivingDataFromServer');
-                        created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
-                    } else {
-                        showMore.show();
-                    }
-                } else {
-                    showMore.hide();
-                }
-            }, this);
-        },
+         if (response.showMore) {
+         if (showMore.length === 0) {
+         created = context.$el.find('#timeRecivingDataFromServer');
+         created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
+         } else {
+         showMore.show();
+         }
+         } else {
+         showMore.hide();
+         }
+         }, this);
+         },*/
 
         asyncLoadImgs: function (collection) {
             var ids = _.map(collection.toJSON(), function (item) {
@@ -149,10 +148,6 @@
 
             self.filterView.render();
 
-            $(document).on('click', function (e) {
-                self.hideItemsNumber(e);
-            });
-
             /*  common.buildAphabeticArray(this.collection, function (arr) {  changed on renderAlphabeticalFilter
              self.alphabeticArray = arr;
              $('#startLetter').remove();
@@ -196,41 +191,33 @@
          context.getTotalLength(this.defaultItemsNumber, filter);
          },*/
 
-        hideItemsNumber: function (e) {
-            var el = $(e.target);
-
-            this.$el.find('.allNumberPerPage, .newSelectList').hide();
-            if (!el.closest('.search-view')) {
-                $('.search-content').removeClass('fa-caret-up');
-                this.$el.find('.search-options').addClass('hidden');
-            }
-        },
-
         gotoEditForm: function (e) {
             var className;
             var id;
             var model;
             var self = this;
+            var target = $(e.target);
 
             this.$el.delegate('a', 'click', function (event) {
                 event.stopPropagation();
                 event.preventDefault();
             });
 
-            className = $(e.target).parent().attr('class');
+            className = target.parent().attr('class');
 
             if ((className !== 'dropDown') || (className !== 'inner')) {
-                id = $(e.target).closest('.thumbnailwithavatar').attr('id');
+                id = target.closest('.thumbnailwithavatar').attr('id');
                 model = new CurrentModel({validate: false});
 
                 model.urlRoot = CONSTANTS.URLS.EMPLOYEES;
 
                 model.fetch({
                     data   : {id: id, viewType: 'form'},
-                    success: function (model) {
-                        new self.EditView({model: model});
+                    success: function (response) {
+                        new self.EditView({model: response});
                     },
-                    error  : function () {
+
+                    error: function () {
                         App.render({
                             type   : 'error',
                             message: 'Please refresh browser'
@@ -285,54 +272,54 @@
          this.asyncLoadImgs(newModels);
          },*/
 
-        createItem: function () {
-            new this.CreateView();
-        },
+        /* createItem: function () {
+         new this.CreateView();
+         },*/
 
-        editItem: function () {
-            // create editView in dialog here
-            this.EditView({collection: this.collection});
-        },
+        /*  editItem: function () {
+         // create editView in dialog here
+         this.EditView({collection: this.collection});
+         },*/
 
-        deleteItems: function () {
-            var mid = 39;
-            var model;
-            var self = this;
-            var currentLetter;
+        /* deleteItems: function () {
+         var mid = 39;
+         var model;
+         var self = this;
+         var currentLetter;
 
-            model = this.collection.get(this.$el.attr('id'));
+         model = this.collection.get(this.$el.attr('id'));
 
-            this.$el.fadeToggle(200, function () {
-                model.destroy({
-                    headers: {
-                        mid: mid
-                    }
-                });
-                $(this).remove();
-            });
+         this.$el.fadeToggle(200, function () {
+         model.destroy({
+         headers: {
+         mid: mid
+         }
+         });
+         $(this).remove();
+         });
 
-            common.buildAphabeticArray(this.collection, function (arr) {
-                $('#startLetter').remove();
-                self.alphabeticArray = arr;
-                $('#searchContainer').after(_.template(AphabeticTemplate, {
-                    alphabeticArray   : self.alphabeticArray,
-                    selectedLetter    : (self.selectedLetter === '' ? 'All' : self.selectedLetter),
-                    allAlphabeticArray: self.allAlphabeticArray
-                }));
+         common.buildAphabeticArray(this.collection, function (arr) {
+         $('#startLetter').remove();
+         self.alphabeticArray = arr;
+         $('#searchContainer').after(_.template(AphabeticTemplate, {
+         alphabeticArray   : self.alphabeticArray,
+         selectedLetter    : (self.selectedLetter === '' ? 'All' : self.selectedLetter),
+         allAlphabeticArray: self.allAlphabeticArray
+         }));
 
-                currentLetter = (self.filter) ? self.filter.letter.value : null;
+         currentLetter = (self.filter) ? self.filter.letter.value : null;
 
-                if (currentLetter) {
-                    $('#startLetter a').each(function () {
-                        var target = $(this);
-                        if (target.text() === currentLetter) {
-                            target.addClass('current');
-                        }
-                    });
-                }
-            });
+         if (currentLetter) {
+         $('#startLetter a').each(function () {
+         var target = $(this);
+         if (target.text() === currentLetter) {
+         target.addClass('current');
+         }
+         });
+         }
+         });
 
-        },
+         },*/
 
         exportToCsv: function () {
             // todo change after routes refactoring
