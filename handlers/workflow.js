@@ -43,7 +43,6 @@ var workflows = function (models, event) {
     };
 
     this.getFirstForConvert = function (req, res, next) {
-        var callback;
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         var queryObject = req.query;
@@ -56,6 +55,7 @@ var workflows = function (models, event) {
 
         var err;
         var query;
+        var callback;
 
         if (arguments.length === 2 && typeof res === 'function') {
             callback = res;
@@ -253,10 +253,12 @@ var workflows = function (models, event) {
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var data = req.body;
         var _id = req.params.id;
+
         Workflow.find({_id: _id}, function (err, workflows) {
             if (err) {
                 return next(err);
             }
+
             Workflow.find({$and: [{wId: workflows[0].wId}, {name: data.name}]}, function (err, workflow) {
                 if (err) {
                     return next(err);

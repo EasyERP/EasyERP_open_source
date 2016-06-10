@@ -6,20 +6,21 @@ define([
     'dataService'
 ], function ($, _, BaseView, TopBarTemplate, dataService) {
     'use strict';
+
     return BaseView.extend({
-        contentType: "Profiles",
+        contentType: 'Profiles',
         template   : _.template(TopBarTemplate),
 
         onDeleteEvent: function (event) {
-            event.preventDefault();
-
             var self = this;
             var selectedProfileId = $('#profilesList > li.active > a').data('id');
 
-            if (selectedProfileId === "1387275598000" || selectedProfileId === "1387275504000") {
+            event.preventDefault();
+
+            if (selectedProfileId === '1387275598000' || selectedProfileId === '1387275504000') {
                 App.render({
                     type   : 'error',
-                    message: "You cannot delete this profile"
+                    message: 'You cannot delete this profile'
                 });
 
                 return;
@@ -34,12 +35,11 @@ define([
                         self.trigger('deleteEvent');
 
                         if (res.isOwnProfile) {
-                            window.location = "/logout";
+                            window.location = '/logout';
                         }
                     }
                 }
             });
-
         }
     });
 });

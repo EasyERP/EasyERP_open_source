@@ -2,15 +2,16 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Accounting/CreatePaymentTerms.html",
+    'text!templates/Accounting/CreatePaymentTerms.html',
     'views/selectView/selectView',
     'models/paymentTerm',
-    'populate'
-], function (Backbone, $, _, template, SelectView, Model, populate) {
+    'populate',
+    'constants'
+], function (Backbone, $, _, template, SelectView, Model, populate, CONSTANTS) {
     'use strict';
 
     var EditView = Backbone.View.extend({
-        template   : _.template(template),
+        template: _.template(template),
 
         initialize: function (options) {
 
@@ -24,9 +25,9 @@ define([
         },
 
         events: {
-            "click .current-selected:not(.jobs)"               : "showNewSelect",
-            "click"                                            : "hideNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click'                                            : 'hideNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
         showNewSelect: function (e) {
@@ -52,7 +53,7 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
 
             if (this.selectView) {
                 this.selectView.remove();
@@ -60,7 +61,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text());
+            $(e.target).parents('dd').find('.current-selected').text($(e.target).text());
 
             this.hideNewSelect();
         },
@@ -73,7 +74,7 @@ define([
 
 
             var data = {
-                name             : name
+                name: name
             };
 
             this.currentModel.save(data, {
@@ -89,39 +90,40 @@ define([
                         self.hideDialog();
                     }
                 },
-                error  : function (model, xhr) {
+
+                error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
+            $('.edit-dialog').remove();
         },
 
         render: function () {
             var self = this;
             var formString = this.template({
-                model        : this.currentModel.toJSON()
+                model: this.currentModel.toJSON()
             });
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : "edit-dialog",
-                title        : "Create Bank Account",
-                width        : "250px",
+                dialogClass  : 'edit-dialog',
+                title        : 'Create Bank Account',
+                width        : '250px',
                 buttons      : [
                     {
-                        text : "Save",
+                        text : 'Save',
                         click: function () {
                             self.saveItem();
                         }
                     },
 
                     {
-                        text : "Cancel",
+                        text : 'Cancel',
                         click: function () {
                             self.hideDialog();
                         }
@@ -130,7 +132,7 @@ define([
 
             });
 
-            populate.get('#currency', '/currency/getForDd', {}, 'name', this, true);
+            populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             return this;
         }

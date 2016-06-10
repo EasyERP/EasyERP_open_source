@@ -2,10 +2,11 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Accounting/EditPaymentMethods.html",
+    'text!templates/Accounting/EditPaymentMethods.html',
     'views/selectView/selectView',
-    'populate'
-], function (Backbone, $, _, EditTemplate, SelectView, populate) {
+    'populate',
+    'constants'
+], function (Backbone, $, _, EditTemplate, SelectView, populate, CONSTANTS) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -13,7 +14,7 @@ define([
 
         initialize: function (options) {
 
-            _.bindAll(this, "render", "saveItem");
+            _.bindAll(this, 'render', 'saveItem');
 
             if (options.model) {
                 this.currentModel = options.model;
@@ -27,9 +28,9 @@ define([
         },
 
         events: {
-            "click .current-selected:not(.jobs)"               : "showNewSelect",
-            "click"                                            : "hideNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click'                                            : 'hideNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
         showNewSelect: function (e) {
@@ -71,10 +72,9 @@ define([
         saveItem: function () {
             var self = this;
             var thisEl = this.$el;
-
             var name = thisEl.find('#paymentMethodName').val();
             var account = thisEl.find('#account').val();
-            var currency = $.trim(thisEl.find('#currency').text())
+            var currency = $.trim(thisEl.find('#currency').text());
             var bank = thisEl.find('#bankName').val();
 
             var data = {
@@ -97,14 +97,15 @@ define([
                         self.hideDialog();
                     }
                 },
-                error  : function (model, xhr) {
+
+                error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
+            $('.edit-dialog').remove();
         },
 
         render: function () {
@@ -117,19 +118,19 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : "edit-dialog",
-                title        : "Edit Bank Account",
-                width        : "550px",
+                dialogClass  : 'edit-dialog',
+                title        : 'Edit Bank Account',
+                width        : '550px',
                 buttons      : [
                     {
-                        text : "Save",
+                        text : 'Save',
                         click: function () {
                             self.saveItem();
                         }
                     },
 
                     {
-                        text : "Cancel",
+                        text : 'Cancel',
                         click: function () {
                             self.hideDialog();
                         }
@@ -138,7 +139,7 @@ define([
 
             });
 
-            populate.get('#currency', '/currency/getForDd', {}, 'name', this, true);
+            populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
 
             return this;
