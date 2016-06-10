@@ -24,6 +24,7 @@ module.exports = function (event, models) {
     router.patch('/', handler.patchM);
 
     router.delete('/:id', handler.remove);
+    router.delete('/', handler.bulkRemove);
 
     return router;
 };

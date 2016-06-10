@@ -32,11 +32,11 @@ define([
         events: {
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
-            'keydown'                                          : 'keydownHandler',
+            keydown                                            : 'keydownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
             'click .details'                                   : 'showDetailsBox',
             'click .current-selected'                          : 'showNewSelect',
-            'click'                                            : 'hideNewSelect',
+            click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
@@ -92,7 +92,7 @@ define([
             var $holder = $(e.target);
             var $dialogHolder = $('.dialog-tabs-items');
             var n;
-            
+
             $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
             $holder.addClass('active');
             n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());

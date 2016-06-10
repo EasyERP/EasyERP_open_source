@@ -202,7 +202,7 @@ define([
         // added methods for edit in listView
 
         savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find('#false');
+            var savedRow = this.$el.find('#false');
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
 

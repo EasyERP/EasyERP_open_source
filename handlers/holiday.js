@@ -230,6 +230,31 @@ var Module = function (models, event) {
         });
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        async.each(ids, function (id, cb) {
+            Holiday.remove({_id: id}, function (err, holiday) {
+                if (err) {
+                    return err(err);
+                }
+
+                event.emit('setReconcileTimeCard', {req: req, week: holiday.week, year: holiday.year});
+                event.emit('recollectVacationDash');
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+    };
+
     this.create = function (req, res, next) {
         var HolidayModel = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var body = mapObject(req.body);

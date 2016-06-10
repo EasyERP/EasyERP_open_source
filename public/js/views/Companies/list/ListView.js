@@ -12,7 +12,7 @@ define([
 ], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
     'use strict';
 
-    var CompaniesListView = listViewBase.extend({
+    var CompaniesListView = ListViewBase.extend({
 
         CreateView              : CreateView,
         listTemplate            : listTemplate,

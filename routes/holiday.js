@@ -12,10 +12,13 @@ module.exports = function (event, models) {
     router.use(authStackMiddleware);
 
     router.get('/', accessStackMiddleWare, handler.getForView);
+    
     router.patch('/', accessStackMiddleWare, handler.putchBulk);
     router.patch('/:id', accessStackMiddleWare, handler.putchModel);
-    router.delete('/:id', accessStackMiddleWare, handler.remove);
     router.post('/', accessStackMiddleWare, handler.create);
+
+    router.delete('/:id', accessStackMiddleWare, handler.remove);
+    router.delete('/', accessStackMiddleWare, handler.bulkRemove);
 
     return router;
 };
