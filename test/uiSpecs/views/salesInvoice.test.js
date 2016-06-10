@@ -1052,7 +1052,6 @@ define([
                     expect(invNumber).to.not.match(/object Object|undefined/);
 
                     payDate = $firstRow.find('td:nth-child(5)').text().trim();
-                    expect(payDate).to.not.empty;
                     expect(payDate).to.not.match(/object Object|undefined/);
 
                     assigned = $firstRow.find('td:nth-child(6)').text().trim();

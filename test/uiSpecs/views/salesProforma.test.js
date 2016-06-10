@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'collections/salesProforma/filterCollection',
@@ -11,7 +12,7 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (fixtures, ProformaCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, ProformaCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
     var fakeProformas = {
@@ -19,7 +20,7 @@ define([
         data : [
             {
                 _id        : "570f7f05983b1a8e4f9bbfa9",
-                total: 30,
+                total      : 30,
                 salesPerson: {
                     name: {
                         last : "Romanyuk",
@@ -64,7 +65,7 @@ define([
             },
             {
                 _id        : "570f8d09a2489b5b7ba831cb",
-                total: 30,
+                total      : 30,
                 salesPerson: {
                     name: {
                         last : "Ostroverkh",
@@ -109,7 +110,7 @@ define([
             },
             {
                 _id        : "570f8d4d983b1a8e4f9bbfb3",
-                total: 30,
+                total      : 30,
                 salesPerson: {
                     name: {
                         last : "Ostroverkh",
@@ -156,24 +157,24 @@ define([
     };
     var fakeInvoiceById = {
         _id             : "570f8d09a2489b5b7ba831cb",
-        _type: "Proforma",
-        project: {
+        _type       : "Proforma",
+        project     : {
             _id: "562beda846bca6e4591f4930"
         },
-        products: [
+        products    : [
             {
                 unitPrice  : 700000,
                 subTotal : 700000,
                 taxes    : 0,
                 jobs     : {
                     _id      : "566424cd08ed794128637c23",
-                    invoice: "572b4a9c35b6dafc05d3bce9",
+                    invoice  : "572b4a9c35b6dafc05d3bce9",
                     quotation: "570f8cf76f3bd57c48cdb091",
                     budget   : {
                         budgetTotal: {
                             minDate   : 201543,
-                            maxDate: 201610,
-                            hoursSum: 4458,
+                            maxDate   : 201610,
+                            hoursSum  : 4458,
                             revenueSum: 1669999.9999999998,
                             costSum   : 15043
                         },
@@ -184,7 +185,7 @@ define([
                                     revenueSum: 245742.4854194706,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Ivan",
                                         last : "Grab"
@@ -206,7 +207,7 @@ define([
                                     revenueSum: 59937.19156572453,
                                     costSum   : 15043
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Timur",
                                         last : "Berezhnoi"
@@ -228,7 +229,7 @@ define([
                                     revenueSum: 211278.60026917903,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Michael",
                                         last : "Vashkeba"
@@ -250,7 +251,7 @@ define([
                                     revenueSum: 140852.40017945267,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Sergiy",
                                         last : "Degtyar"
@@ -272,7 +273,7 @@ define([
                                     revenueSum: 92902.64692687303,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Ishtvan",
                                         last : "Nazarovich"
@@ -294,7 +295,7 @@ define([
                                     revenueSum: 88032.75011215793,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Liliya",
                                         last : "Orlenko"
@@ -316,7 +317,7 @@ define([
                                     revenueSum: 88407.3575594437,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Valerii",
                                         last : "Ladomiryak"
@@ -338,7 +339,7 @@ define([
                                     revenueSum: 209780.1704800359,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Ivan",
                                         last : "Lyashenko"
@@ -360,7 +361,7 @@ define([
                                     revenueSum: 293692.23867205024,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Michael",
                                         last : "Glagola"
@@ -382,7 +383,7 @@ define([
                                     revenueSum: 200414.9842978914,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Oleg",
                                         last : "Stasiv"
@@ -404,7 +405,7 @@ define([
                                     revenueSum: 38959.174517720945,
                                     costSum   : 0
                                 },
-                                employee: {
+                                employee  : {
                                     name       : {
                                         first: "Yuriy",
                                         last : "Derevenko"
@@ -623,10 +624,10 @@ define([
                 quantity   : 4644
             }
         ],
-        approved: false,
-        removable: true,
-        invoiced : true,
-        editedBy : {
+        approved    : false,
+        removable   : true,
+        invoiced    : true,
+        editedBy    : {
             user: {
                 _id            : "563f673270bbc2b740ce89ae",
                 profile: 1387275598000,
@@ -725,7 +726,7 @@ define([
             },
             date: "2016-04-14T12:29:34.637Z"
         },
-        createdBy: {
+        createdBy   : {
             user: {
                 _id            : "563f673270bbc2b740ce89ae",
                 profile: 1387275598000,
@@ -952,6 +953,7 @@ define([
     var listView;
     var proformaCollection;
     var ajaxSpy;
+    var historyNavigateSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -964,6 +966,7 @@ define([
 
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
         });
 
         after(function () {
@@ -971,7 +974,12 @@ define([
             listView.remove();
             view.remove();
 
+            if($('.ui-dialog').length) {
+                $('.ui-dialog').remove();
+            }
+
             ajaxSpy.restore();
+            historyNavigateSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -1035,19 +1043,23 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var proformaUrl = new RegExp('\/Proforma\/list', 'i');
+                var proformaUrl = new RegExp('\/Proforma\/', 'i');
+
+                historyNavigateSpy.reset();
 
                 server.respondWith('GET', proformaUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 proformaCollection = new ProformaCollection({
                     filter     : null,
-                    viewType   : 'list',
-                    page       : 1,
-                    count      : 100,
-                    reset      : true,
-                    showMore   : false,
+                    viewType: 'list',
+                    page    : 1,
+                    count   : 100,
+                    reset   : true,
+                    showMore: false,
                     contentType: 'salesProforma'
                 });
                 server.respond();
+
+                expect(historyNavigateSpy.calledOnce).to.be.true;
             });
 
             it('Try to create TopBarView', function () {
@@ -1057,16 +1069,16 @@ define([
                 server.respondWith('GET', proformaUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProformas)]);
                 proformaCollection = new ProformaCollection({
                     filter     : null,
-                    viewType   : 'list',
-                    page       : 1,
-                    count      : 100,
-                    reset      : true,
-                    showMore   : false,
+                    viewType: 'list',
+                    page    : 1,
+                    count   : 100,
+                    reset   : true,
+                    showMore: false,
                     contentType: 'salesProforma'
                 });
                 server.respond();
 
-                expect(proformaCollection).top.have.lengthOf(3);
+                expect(proformaCollection).to.have.lengthOf(3);
 
                 server.respondWith('GET', '/currentDb', [200, {'Content-Type': 'application/json'}, 'micheldb']);
                 topBarView = new TopBarView({
@@ -1129,7 +1141,17 @@ define([
                     var $firstRow;
                     var colCount;
                     var customer;
-                    var invNumber
+                    var invNumber;
+                    var payDate;
+                    var assigned;
+                    var due;
+                    var balance;
+                    var paid;
+                    var total;
+                    var status;
+                    var invDate;
+                    var $pagination;
+                    var $pageList;
 
                     listView = new ListView({
                         startTime : new Date(),
@@ -1154,88 +1176,55 @@ define([
                     colCount = $firstRow.find('td').length;
                     expect(colCount).to.be.equals(12);
 
+                    customer = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(customer).to.not.match(/object Object|undefined/);
+
+                    invNumber = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(invNumber).to.not.empty;
+                    expect(invNumber).to.not.match(/object Object|undefined/);
+
+                    payDate = $firstRow.find('td:nth-child(5)').text().trim();
+                    expect(payDate).to.not.match(/object Object|undefined/);
+
+                    assigned = $firstRow.find('td:nth-child(6)').text().trim();
+                    expect(assigned).to.not.empty;
+                    expect(assigned).to.not.match(/object Object|undefined/);
+
+                    due = $firstRow.find('td:nth-child(7) > span').text().trim();
+                    expect(due).to.not.empty;
+                    expect(due).to.not.match(/object Object|undefined/);
+
+                    balance = $firstRow.find('td:nth-child(8)').text().trim();
+                    expect(balance).to.not.empty;
+                    expect(balance).to.not.match(/object Object|undefined/);
+
+                    paid = $firstRow.find('td:nth-child(9)').text().trim();
+                    expect(paid).to.not.empty;
+                    expect(paid).to.not.match(/object Object|undefined/);
+
+                    total = $firstRow.find('td:nth-child(10)').text().trim();
+                    expect(total).to.not.empty;
+                    expect(total).to.not.match(/object Object|undefined/);
+
+                    status = $firstRow.find('td:nth-child(11) > span').text().trim();
+                    expect(status).to.not.empty;
+                    expect(status).to.not.match(/object Object|undefined/);
+
+                    invDate = $firstRow.find('td:nth-child(12)').text().trim();
+                    expect(invDate).to.not.empty;
+                    expect(invDate).to.not.match(/object Object|undefined/);
+
+                    // test pagination
+                    $pagination = $thisEl.find('.pagination');
+                    expect($pagination).to.exist;
+                    expect($pagination.find('.countOnPage')).to.exist;
+                    expect($pagination.find('.pageList')).to.exist;
+                    expect($pagination.find('.currentPageList')).to.exist;
+                    $pageList = $pagination.find('#pageList');
+                    expect($pageList).to.exist;
+                    expect($pageList).to.have.css('display', 'none');
+
                     done();
-                });
-
-
-                it('Try to filter listView', function () {
-                    var proformaUrl = new RegExp('\/Proforma\/list', 'i');
-                    var proformaTotalUrl = new RegExp('\/Proforma\/totalCollectionLength', 'i');
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $customer;
-                    var $assigned;
-                    var $selectedItem;
-
-                    // open filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.not.have.class('hidden');
-
-                    //select customer filter
-                    $customer = $searchContainer.find('#supplierFullContainer > .groupName');
-                    $customer.click();
-                    $selectedItem = $searchContainer.find('#supplierUl > li:nth-child(1)');
-
-                    server.respondWith('GET', proformaUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeProformas[0], fakeProformas[1]])]);
-                    server.respondWith('GET', proformaTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 2
-                    })]);
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-
-                    expect(selectValueSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
-
-                    // select Assigned filter
-                    $assigned = $searchContainer.find('#salesPersonFullContainer > .groupName');
-                    $assigned.click();
-                    $selectedItem = $searchContainer.find('#salesPersonUl > li:nth-child(1)');
-
-                    server.respondWith('GET', proformaUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeProformas[0]])]);
-                    server.respondWith('GET', proformaTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 1
-                    })]);
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-
-                    expect(selectValueSpy.calledTwice).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(1);
-
-                    //unselect Assigned filter
-
-                    server.respondWith('GET', proformaUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeProformas[0], fakeProformas[1]])]);
-                    server.respondWith('GET', proformaTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 2
-                    })]);
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-
-                    expect(selectValueSpy.calledThrice).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
-
-                    //close filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
-                });
-
-                it('Try to close customer filter', function () {
-                    var proformaUrl = new RegExp('\/Proforma\/list', 'i');
-                    var proformaTotalUrl = new RegExp('\/Proforma\/totalCollectionLength', 'i');
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $closeBtn = $searchContainer.find('.removeValues');
-
-                    server.respondWith('GET', proformaUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProformas)]);
-                    server.respondWith('GET', proformaTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 3
-                    })]);
-                    $closeBtn.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
                 });
 
                 it('Try to delete item', function (done) {
@@ -1247,64 +1236,7 @@ define([
                     $needCheckBox.click();
                     $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     server.respondWith('DELETE', deleteUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        "_id"             : "57172daf20c8d9397a7a6d43",
-                        "_type": "Proforma",
-                        "project": "56a0d60062d172544baf0e3d",
-                        "__v"    : 0,
-                        "dueDate": "2016-04-10T22:00:00.000Z",
-                        "reconcile": true,
-                        "paymentDate": "2016-02-09T04:00:00.000Z",
-                        "products"   : [{
-                            "unitPrice"  : 400000,
-                            "subTotal" : 400000,
-                            "taxes"    : 0,
-                            "jobs"     : "56a0e0cc62d172544baf1108",
-                            "description": "",
-                            "product"    : "5540d528dacb551c24000003",
-                            "quantity"   : 2590
-                        }],
-                        "emailed"    : false,
-                        "approved"   : false,
-                        "removable"  : true,
-                        "invoiced"   : false,
-                        "attachments": [],
-                        "editedBy"   : {
-                            "date": "2016-04-20T07:20:54.545Z",
-                            "user": "563f673270bbc2b740ce89ae"
-                        },
-                        "createdBy"  : {
-                            "date": "2016-04-20T07:20:08.140Z",
-                            "user": "563f673270bbc2b740ce89ae"
-                        },
-                        "creationDate": "2016-04-20T07:20:08.140Z",
-                        "groups"      : {
-                            "group": [],
-                            "users": [],
-                            "owner": "560c099da5d4a2e20ba5068b"
-                        },
-                        "whoCanRW"    : "everyOne",
-                        "workflow"    : "56fabc6b5ad5d96f4fb08eab",
-                        "payments"    : ["57172ddf20c8d9397a7a6d46"],
-                        "paymentInfo" : {
-                            "taxes"  : 0,
-                            "unTaxed": 400000,
-                            "balance": 0,
-                            "total"  : 400000
-                        },
-                        "paymentTerms": null,
-                        "salesPerson" : "55b92ad221e4b7c40f0000a2",
-                        "currency"    : {
-                            "rate": 1,
-                            "_id" : "565eab29aeb95fa9c0f9df2d"
-                        },
-                        "journal"     : "57035e4321f9b0c4313d4146",
-                        "invoiceDate" : "2016-02-01T04:00:00.000Z",
-                        "paymentReference": "PO995",
-                        "sourceDocument"  : "57172da81eca60707afbc9d0",
-                        "supplier"        : "56a0d53b62d172544baf0e3c",
-                        "forSales"        : true,
-                        "name"            : "PO995",
-                        "id"              : "57172daf20c8d9397a7a6d43"
+                        _id: '57172daf20c8d9397a7a6d43'
                     })]);
                     server.respondWith('GET', invoiceTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count: 30
@@ -1325,6 +1257,8 @@ define([
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
 
+                    mainSpy.reset();
+
                     server.respondWith('GET', invoiceUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoiceById)]);
                     $needTd.click();
                     server.respond();
@@ -1335,7 +1269,7 @@ define([
 
                 it('Try to go to edit form', function (done) {
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
-                    var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
+                    var invoiceUrl = new RegExp('\/Invoice\/', 'i');
 
                     App.currentDb = 'michelDb';
                     App.currentUser = {
