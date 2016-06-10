@@ -97,7 +97,7 @@
 
                 model = model.toJSON();
 
-                if (model.groups && model.groups.users.length > 0 || model.groups.group.length) {
+                if (model.groups && (model.groups.users.length > 0 || model.groups.group.length)) {
                     this.$el.find('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
                         $thisEl.find('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
