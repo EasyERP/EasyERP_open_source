@@ -247,11 +247,13 @@ define([
 
         updatedOptions: function () {
             var id;
+            var i;
             var keys = Object.keys(this.changedModels);
 
             this.showCreateBtn();
 
-            for (id = keys.length - 1; id >= 0; id--) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 this.collection.get(id).set(this.changedModels[id]);
                 delete this.changedModels[id];
             }
@@ -275,6 +277,7 @@ define([
         saveItem: function (e) {
             var model;
             var id;
+            var i;
             var errorContent = this.$el.find('.errorContent');
             var newElements = this.$el.find('tr.false');
             var isPickedEmployee = newElements.find('[data-content="employee"]').text();
@@ -296,7 +299,8 @@ define([
                 });
             }
 
-            for (id = keys.length - 1; id >= 0; id--) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.collection.get(id);
 
                 if (model) {
