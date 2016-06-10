@@ -1,6 +1,8 @@
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/vacationDashboard/rowTemplate.html'
-], function (mainTemplate) {
+], function (Backbone, _, mainTemplate) {
     var View = Backbone.View.extend({
         el: '#dashboardBody',
 
@@ -13,8 +15,6 @@ define([
         },
 
         render: function (inputData) {
-            var self = this;
-
             this.$el.html(this.template(inputData));
 
             this.rendered = true;

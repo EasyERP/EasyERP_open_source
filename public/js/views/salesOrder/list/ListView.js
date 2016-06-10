@@ -43,6 +43,12 @@ define([
 
         contentType: 'salesOrder', // needs in view.prototype.changeLocationHash
 
+        events: {
+            'click .stageSelect'                 : 'showNewSelect',
+            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
+            'click .newSelectList li'            : 'chooseOption'
+        },
+
         initialize: function (options) {
             this.filter = options.filter || {};
             this.filter.forSales = {
@@ -57,12 +63,6 @@ define([
             this.page = options.collection.currentPage;
 
             this.render();
-        },
-
-        events: {
-            'click .stageSelect'                 : 'showNewSelect',
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
-            'click .newSelectList li'            : 'chooseOption'
         },
 
         chooseOption: function (e) {

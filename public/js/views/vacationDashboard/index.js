@@ -105,7 +105,7 @@ define([
                 return false;
             }
 
-            new CreatewTrackView({
+            return new CreatewTrackView({
                 tr            : tr,
                 tds           : tds,
                 dateByWeek    : dateByWeek,
@@ -124,7 +124,7 @@ define([
             return dashCollection;
         },
 
-        openAll: function (/*e*/) {
+        openAll: function () {
             var self = this;
             var rows = self.$el.find('tr');
             var length = rows.length;
@@ -293,7 +293,7 @@ define([
             var dateByWeek = week.year * 100 + week.week;
 
             if (self.dateByWeek === dateByWeek) {
-                s = "activeHead";
+                s = 'activeHead';
             }
 
             return s;
@@ -330,7 +330,7 @@ define([
         },
 
         getDate: function (dateStr) {
-            return dateStr.isoWeekday(5).format("DD.MM");
+            return dateStr.isoWeekday(5).format('DD.MM');
         },
 
         calculateStatistics: function () {
@@ -342,23 +342,27 @@ define([
             var self = this;
 
             async.parallel({
-                free         : function (callback) {
+                free: function (callback) {
                     var free = count('.red.active');
                     callback(null, free);
                 },
-                almostFree   : function (callback) {
+
+                almostFree: function (callback) {
                     var almostFree = count('.pink.active');
                     callback(null, almostFree);
                 },
+
                 partiallyBusy: function (callback) {
                     var partiallyBusy = count('.yellow.active');
                     callback(null, partiallyBusy);
                 },
-                fullyBusy    : function (callback) {
+
+                fullyBusy: function (callback) {
                     var busy = count('.green.active');
                     callback(null, busy);
                 },
-                overworked   : function (callback) {
+
+                overworked: function (callback) {
                     var overworked = count('.dgreen.active');
                     callback(null, overworked);
                 }
@@ -374,7 +378,7 @@ define([
             var targetEl = $(e.target);
             var td = targetEl.closest('td');
             var tr = td.closest('tr');
-            var project  = td.attr('data-project');
+            var project = td.attr('data-project');
             var dateByWeek = td.attr('data-date');
             var employee = tr.attr('data-employee');
             var table = this.$el.find('#dashboardBody');
@@ -387,9 +391,9 @@ define([
             }
 
             queryData = {
-                project    : project,
-                dateByWeek : dateByWeek,
-                employee   : employee
+                project   : project,
+                dateByWeek: dateByWeek,
+                employee  : employee
             };
 
             dataService.getData('/wTrack/dash', queryData, function (response) {
@@ -419,7 +423,7 @@ define([
             this.$endDate = $('#endDate');
         },
 
-        changeDateRange: function (/*e*/) {
+        changeDateRange: function () {
             var startDateStr = this.$startDate.val();
             var endDateStr = this.$endDate.val();
 
