@@ -76,8 +76,8 @@ define([
             };
 
             this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            this.getTotalLength(null, itemsNumber, filter);
+            // this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+            // this.getTotalLength(null, itemsNumber, filter);
         },
 
         events: {
@@ -112,25 +112,35 @@ define([
         },
 
         recalcTotal: function () {
+            var $thisEl = this.$el;
+            var $total = $thisEl.find('#total');
             var total = 0;
 
             _.each(this.collection.toJSON(), function (model) {
-                total += parseFloat(model.paymentInfo.total);
+                var modelCurrency = model.currency;
+
+                if (modelCurrency && modelCurrency.rate) {
+                    total += parseFloat(model.paymentInfo.total / modelCurrency.rate);
+                } else {
+                    total += parseFloat(model.paymentInfo.total);
+                }
             });
 
-            this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+            total = helpers.currencySplitter(total.toFixed(2));
+            $total.text(total);
         },
 
         render: function () {
             var self = this;
             var $thisEl = this.$el;
+            var itemView;
 
             $('.ui-dialog ').remove();
 
             $thisEl.html('');
             $thisEl.append(_.template(listForWTrack));
 
-            var itemView = new ListItemView({
+            itemView = new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
@@ -146,6 +156,7 @@ define([
 
             this.renderFilter();
             this.renderPagination($thisEl, this);
+            this.recalcTotal();
             
             $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
