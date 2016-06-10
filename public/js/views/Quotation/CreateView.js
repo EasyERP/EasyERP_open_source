@@ -126,7 +126,6 @@ define([
 
         keydownHandler: function (e) {
             var charCode = e.which;
-            // var symbol = String.fromCharCode(charCode);
 
             switch (charCode) {
                 case 27:
@@ -172,9 +171,8 @@ define([
             var productId;
             var quantity;
             var price;
-            var scheduledDate;
 
-            var forSales = this.forSales ? true : false;
+            var forSales = this.forSales || false;
 
             var currency = {
                 _id : thisEl.find('#currencyDd').attr('data-id'),
@@ -320,7 +318,8 @@ define([
                     success: function (model) {
                         self.redirectAfterSave(self, model);
                     },
-                    error  : function (model, xhr) {
+
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });

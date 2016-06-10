@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var WorkflowHandler = require('./workflow');
 
 var Module = function (models, event) {
     'use strict';
@@ -49,8 +48,11 @@ var Module = function (models, event) {
         var filtrElement = {};
         var key;
         var filterName;
+        var keys = Object.keys(filter);
+        var i;
 
-        for (filterName in filter) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            filterName = keys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 

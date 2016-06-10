@@ -1,8 +1,6 @@
 var mongoose = require('mongoose');
 var Categories = function (models, event) {
     var CategorySchema = mongoose.Schemas.ProductCategory;
-    var ProductSchema = mongoose.Schemas.Products;
-    var PayRollSchema = mongoose.Schemas.PayRoll;
     var objectId = mongoose.Types.ObjectId;
     var MAINCONSTANTS = require('../constants/mainConstants');
 

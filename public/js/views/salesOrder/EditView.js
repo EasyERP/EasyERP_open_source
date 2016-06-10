@@ -14,23 +14,21 @@ define([
     'populate',
     'constants',
     'helpers'
-], function (
-    Backbone,
-    $,
-    _,
-    EditTemplate,
-    ViewTemplate,
-    AssigneesView,
-    ProductItemView,
-    InvoiceView,
-    InvoiceCollection,
-    common,
-    Custom,
-    dataService,
-    populate,
-    CONSTANTS,
-    helpers
-) {
+], function (Backbone,
+             $,
+             _,
+             EditTemplate,
+             ViewTemplate,
+             AssigneesView,
+             ProductItemView,
+             InvoiceView,
+             InvoiceCollection,
+             common,
+             Custom,
+             dataService,
+             populate,
+             CONSTANTS,
+             helpers) {
     'use strict';
     var EditView = Backbone.View.extend({
         contentType: 'Order',
@@ -56,7 +54,7 @@ define([
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.currentModel.urlRoot = '/order';
             this.responseObj = {};
-            
+
             this.render(options);
         },
 
@@ -77,13 +75,13 @@ define([
 
         showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
-            
+
             return false;
         },
 
-            notHide: function () {
-                return false;
-            },
+        notHide: function () {
+            return false;
+        },
 
         hideNewSelect: function () {
             $('.newSelectList').hide();
@@ -95,9 +93,9 @@ define([
             $targetEl.parents('dd').find('.current-selected').text($targetEl.text()).attr('data-id', $targetEl.attr('id'));
         },
 
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
+        nextSelect: function (e) {
+            this.showNewSelect(e, false, true);
+        },
 
         prevSelect: function (e) {
             this.showNewSelect(e, true, false);
@@ -188,7 +186,7 @@ define([
 
             this.saveItem(function (err) {
                 App.stopPreload();
-                
+
                 if (!err) {
                     dataService.postData(url, data, function (err, response) {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
@@ -403,7 +401,8 @@ define([
                     headers: {
                         mid: mid
                     },
-                    patch  : true,
+                    
+                    patch: true,
 
                     success: function (model) {
                         self.hideDialog();
@@ -452,7 +451,9 @@ define([
 
             event.preventDefault();
 
-            if (!answer) return;
+            if (!answer) {
+                return;
+            }
 
             this.currentModel.destroy({
                 headers: {
@@ -560,13 +561,13 @@ define([
                 changeYear : true
             });
 
-                this.$el.find('#orderDate').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    maxDate    : 0,
-                    minDate    : model.orderDate
-                });
+            this.$el.find('#orderDate').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                maxDate    : 0,
+                minDate    : model.orderDate
+            });
 
             productItemContainer = this.$el.find('#productItemsHolder');
 

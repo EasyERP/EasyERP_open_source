@@ -73,10 +73,10 @@ define([
             var total = 0;
 
             _.each(this.collection.toJSON(), function (model) {
-                if(model.currency && model.currency.rate){
+                if (model.currency && model.currency.rate) {
                     total += parseFloat(model.paymentInfo.total / model.currency.rate);
                 } else {
-                total += parseFloat(model.paymentInfo.total);
+                    total += parseFloat(model.paymentInfo.total);
                 }
             });
 
@@ -96,7 +96,6 @@ define([
                 value: ['true']
             };
 
-            //this.changeLocationHash(1, itemsNumber, filter);
             this.changeLocationHash(null, this.collection.pageSize, this.filter, {replace: false});
             this.collection.getFirstPage({
                 filter     : this.filter,
@@ -176,7 +175,7 @@ define([
 
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
@@ -197,13 +196,13 @@ define([
 
             model.urlRoot = '/quotation/';
             model.fetch({
-                data   : {
+                data: {
                     id      : id,
                     viewType: 'form'
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

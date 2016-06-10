@@ -415,13 +415,11 @@ define([
                 var projectId = $tr.find('[data-content="project"]').attr('data-id');
                 var holiday = $td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
 
-
                 if ($td.hasClass('disabled')) {
                     return false;
                 }
 
                 year = year.slice(0, 4);
-
 
                 if (!isOvertime && holiday) {
                     App.render({
@@ -623,7 +621,6 @@ define([
 
                     targetElement.attr('data-id', employee);
 
-
                     // this.calculateCost(e, wTrackId);
                     tr.find('[data-content="department"]').removeClass('errorContent');
                 } else if (elementType === '#department') {
@@ -823,65 +820,65 @@ define([
         },
 
         /*showSaveCancelBtns: function () {
-            var saveBtnEl = $('#top-bar-saveBtn');
-            var cancelBtnEl = $('#top-bar-deleteBtn');
-            var createBtnEl = $('#top-bar-createBtn');
+         var saveBtnEl = $('#top-bar-saveBtn');
+         var cancelBtnEl = $('#top-bar-deleteBtn');
+         var createBtnEl = $('#top-bar-createBtn');
 
-            if (!this.changed) {
-                createBtnEl.hide();
-            }
-            saveBtnEl.show();
-            cancelBtnEl.show();
-            createBtnEl.hide();
+         if (!this.changed) {
+         createBtnEl.hide();
+         }
+         saveBtnEl.show();
+         cancelBtnEl.show();
+         createBtnEl.hide();
 
-            return false;
-        },
+         return false;
+         },
 
-        hideSaveCancelBtns: function () {
-            var createBtnEl = $('#top-bar-createBtn');
-            var saveBtnEl = $('#top-bar-saveBtn');
-            var cancelBtnEl = $('#top-bar-deleteBtn');
+         hideSaveCancelBtns: function () {
+         var createBtnEl = $('#top-bar-createBtn');
+         var saveBtnEl = $('#top-bar-saveBtn');
+         var cancelBtnEl = $('#top-bar-deleteBtn');
 
-            this.changed = false;
+         this.changed = false;
 
-            saveBtnEl.hide();
-            cancelBtnEl.hide();
-            createBtnEl.show();
+         saveBtnEl.hide();
+         cancelBtnEl.hide();
+         createBtnEl.show();
 
-            return false;
-        },*/
+         return false;
+         },*/
 
         /*checkProjectId: function (e, checkLength) {
-            var totalCheckLength = $('input.checkbox:checked').length;
-            var element = e.target ? e.target : e;
-            var checked = element ? element.checked : true;
-            var targetEl = $(element);
-            var tr = targetEl.closest('tr');
-            var wTrackId = tr.attr('data-id');
-            var model = this.collection.get(wTrackId);
-            var projectContainer = tr.find('td[data-content="project"]');
-            var projectId = projectContainer.attr('data-id');
+         var totalCheckLength = $('input.checkbox:checked').length;
+         var element = e.target ? e.target : e;
+         var checked = element ? element.checked : true;
+         var targetEl = $(element);
+         var tr = targetEl.closest('tr');
+         var wTrackId = tr.attr('data-id');
+         var model = this.collection.get(wTrackId);
+         var projectContainer = tr.find('td[data-content="project"]');
+         var projectId = projectContainer.attr('data-id');
 
-            if (checkLength >= 1) {
-                this.copyEl.show();
-            } else {
-                this.copyEl.hide();
-            }
+         if (checkLength >= 1) {
+         this.copyEl.show();
+         } else {
+         this.copyEl.hide();
+         }
 
-            if (!checkLength || !model || model.get('isPaid')) {
-                this.selectedProjectId = [];
+         if (!checkLength || !model || model.get('isPaid')) {
+         this.selectedProjectId = [];
 
-                return false;
-            }
+         return false;
+         }
 
-            if (checked) {
-                this.selectedProjectId.push(projectId);
-            } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
-                this.selectedProjectId = _.without(this.selectedProjectId, projectId);
-            }
+         if (checked) {
+         this.selectedProjectId.push(projectId);
+         } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
+         this.selectedProjectId = _.without(this.selectedProjectId, projectId);
+         }
 
-            this.selectedProjectId = _.uniq(this.selectedProjectId);
-        },*/
+         this.selectedProjectId = _.uniq(this.selectedProjectId);
+         },*/
 
         getAutoCalcField: function (idTotal, dataRow, money) {
             var footerRow = this.$el.find('#listFooter');

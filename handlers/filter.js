@@ -1214,9 +1214,9 @@ var Filters = function (models) {
 
                     salesPerson: {
                         $addToSet: {
-                            _id : '$salesmanagers._id',
+                            _id : '$salesManagers._id',
                             name: {
-                                $concat: ['$salesmanagers.name.first', ' ', '$salesmanagers.name.last']
+                                $concat: ['$salesManagers.name.first', ' ', '$salesManagers.name.last']
                             }
                         }
                     },
@@ -1336,9 +1336,9 @@ var Filters = function (models) {
 
                     salesPerson: {
                         $addToSet: {
-                            _id : '$salesmanagers._id',
+                            _id : '$salesManagers._id',
                             name: {
-                                $concat: ['$salesmanagers.name.first', ' ', '$salesmanagers.name.last']
+                                $concat: ['$salesManagers.name.first', ' ', '$salesManagers.name.last']
                             }
                         }
                     },
@@ -1987,7 +1987,7 @@ var Filters = function (models) {
                         }
                     },
 
-                    salesmanager: {
+                    salesManager: {
                         $addToSet: {
                             _id : '$salesmanager._id',
                             name: {
@@ -2104,7 +2104,7 @@ var Filters = function (models) {
                         }
                     },
 
-                    salesmanager: {
+                    salesManager: {
                         $addToSet: {
                             _id : '$salesmanager._id',
                             name: {
