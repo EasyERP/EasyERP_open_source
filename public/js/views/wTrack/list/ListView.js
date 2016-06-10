@@ -13,7 +13,6 @@ define([
     'models/wTrackModel',
     'collections/wTrack/filterCollection',
     'collections/wTrack/editCollection',
-    'views/Filter/FilterView',
     'views/wTrack/list/createJob',
     'common',
     'dataService',
@@ -40,7 +39,6 @@ define([
              CurrentModel,
              ContentCollection,
              EditCollection,
-             FilterView,
              CreateJob,
              common,
              dataService,
@@ -56,24 +54,21 @@ define([
     'use strict';
 
     var wTrackListView = ListViewBase.extend({
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        ContentCollection       : ContentCollection,
-        FilterView              : FilterView,
-        setOverTime             : setOverTime,
-        contentType             : 'wTrack',
-        viewType                : 'list',
-        responseObj             : {},
-        wTrackId                : null, // need for edit rows in listView
-        totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-        $listTable              : null, // cashedJqueryEllemnt
-        editCollection          : null,
-        selectedProjectId       : [],
-        genInvoiceEl            : null,
-        changedModels           : {},
-        exportToCsvUrl          : '/wTrack/exportToCsv',
-        exportToXlsxUrl         : '/wTrack/exportToXlsx',
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        ContentCollection: ContentCollection,
+        setOverTime      : setOverTime,
+        contentType      : 'wTrack',
+        responseObj      : {},
+        wTrackId         : null, // need for edit rows in listView
+        $listTable       : null, // cashedJqueryEllemnt
+        editCollection   : null,
+        selectedProjectId: [],
+        genInvoiceEl     : null,
+        changedModels    : {},
+        exportToCsvUrl   : '/wTrack/exportToCsv',
+        exportToXlsxUrl  : '/wTrack/exportToXlsx',
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -87,7 +82,6 @@ define([
 
             this.render();
 
-            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.ContentCollection = ContentCollection;
             this.stages = [];
         },
