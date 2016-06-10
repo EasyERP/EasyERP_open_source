@@ -3,8 +3,8 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Quotation/EditTemplate.html',
+    'views/dialogViewBase',
     'views/Projects/projectInfo/proformas/proformaView',
-    'views/selectView/selectView',
     'views/Assignees/AssigneesView',
     'views/Product/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
@@ -21,8 +21,8 @@ define([
              $,
              _,
              EditTemplate,
+             ParentView,
              ProformaView,
-             SelectView,
              AssigneesView,
              ProductItemView,
              OrdersView,
@@ -37,7 +37,7 @@ define([
              helpers) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Quotation',
         imageSrc   : '',
         template   : _.template(EditTemplate),
@@ -65,44 +65,10 @@ define([
         },
 
         events: {
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            click                                              : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .confirmOrder'                              : 'confirmOrder',
-            'click .createProforma'                            : 'createProforma',
-            'click .cancelQuotation'                           : 'cancelQuotation',
-            'click .setDraft'                                  : 'setDraft'
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
+            'click .confirmOrder'   : 'confirmOrder',
+            'click .createProforma' : 'createProforma',
+            'click .cancelQuotation': 'cancelQuotation',
+            'click .setDraft'       : 'setDraft'
         },
 
         chooseOption: function (e) {
@@ -133,26 +99,6 @@ define([
             }
 
             this.hideNewSelect();
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
         },
 
         confirmOrder: function (e) {
@@ -642,13 +588,6 @@ define([
             }
         },
 
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },
-
         deleteItem: function (event) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
@@ -698,7 +637,6 @@ define([
                 hidePrAndCust: this.hidePrAndCust
             });
             var service = this.forSales;
-            var notDiv;
             var productItemContainer;
             var buttons = [
                 {
@@ -732,12 +670,7 @@ define([
 
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
