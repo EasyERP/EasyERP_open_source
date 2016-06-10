@@ -1,4 +1,4 @@
-define(['jQuery'],function ($) {
+define(['jQuery'], function ($) {
     'use strict';
     var getData = function (url, data, callback, context) {
         $.get(url, data, function (response) {
@@ -12,25 +12,24 @@ define(['jQuery'],function ($) {
         });
     };
 
-    var sendData = function (url, data, method, callback, contentType) {
+    var sendData = function (url, data, method, callback, options) {
         var ajaxObject;
-        method = method.toUpperCase() || 'POST';
 
+        method = method.toUpperCase() || 'POST';
         ajaxObject = {
-            url    : url,
-            data   : data,
-            type   : method,
+            url : url,
+            contentType: 'application/json',
+            data       : JSON.stringify(data),
+            type       : method,
+
             success: function (response) {
                 callback(null, response);
             },
-            error  : function (jxhr) {
+            
+            error: function (jxhr) {
                 callback(jxhr);
             }
         };
-
-        if (contentType) {
-            ajaxObject.contentType = contentType;
-        }
 
         $.ajax(ajaxObject);
     };

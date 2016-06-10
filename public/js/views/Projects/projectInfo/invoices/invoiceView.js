@@ -26,7 +26,7 @@ define([
 
         initialize: function (options) {
             this.remove();
-            this.collection = options.model;
+            this.collection = options.collection;
             this.filter = options.filter || {};
 
             eventsBinder.subscribeCollectionEvents(this.collection, this);
@@ -46,13 +46,14 @@ define([
         },
 
         saveItems: function (e) {
-            var id;
             var model;
             var self = this;
+            var keys = Object.keys(this.changedModels);
+            var id;
 
             e.preventDefault();
 
-            for (id in this.changedModels) {
+            for (id = keys.length - 1; id >= 0; id--) {
                 model = this.collection.get(id);
 
                 model.save({
@@ -70,9 +71,7 @@ define([
                 });
             }
 
-            for (id in this.changedModels) {
-                delete this.changedModels[id];
-            }
+            this.changedModels = {};
         },
 
         deleteItems: function (e) {
@@ -176,7 +175,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({
+                    return new EditView({
                         model       : model,
                         redirect    : true,
                         collection  : this.collection,
@@ -211,7 +210,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({
+                    return new EditView({
                         model       : model,
                         redirect    : true,
                         collection  : self.collection,
@@ -278,8 +277,7 @@ define([
 
             tBody.empty();
 
-            $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+            this.hideDeleteBtnAndUnSelectCheckAll();
 
             if (newModels.length > 0) {
                 itemView = new this.ListItemView({
@@ -346,9 +344,9 @@ define([
             }, function (stages) {
                 self.stages = stages;
             });
-            
+
             this.renderPagination($currentEl, this);
-           // this.setPagination(this.collection, self.$el);
+            // this.setPagination(this.collection, self.$el);
 
             this.$el.find('#removeInvoice').hide();
             this.$el.find('#saveInvoice').hide();

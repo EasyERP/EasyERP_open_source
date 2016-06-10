@@ -101,7 +101,7 @@ define([
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {
-                    new EditView({
+                    return new EditView({
                         model        : model,
                         redirect     : true,
                         pId          : self.projectID,
@@ -242,7 +242,7 @@ define([
 
         createQuotation: function (e) {
             e.preventDefault();
-            new QuotationCreateView({
+            return new QuotationCreateView({
                 projectId       : this.projectID,
                 customerId      : this.customerId,
                 collection      : this.collection,
@@ -258,9 +258,8 @@ define([
             var $holder = this.$el;
             var pagenation;
 
-            $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
-
+            this.hideDeleteBtnAndUnSelectCheckAll();
+            
             $holder.find('#listTableQuotation').html(this.templateList({
                 quotations      : newModels.toJSON(),
                 startNumber     : 0,

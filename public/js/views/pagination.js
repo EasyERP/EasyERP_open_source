@@ -5,17 +5,19 @@ define([
     'views/Filter/FilterView',
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
-    'common'
-], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common) {
+    'common',
+    'dataService'
+], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, dataService) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
         FilterView: FilterView,
 
         events: {
-            'click .oe_sortable': 'goSort',
-            'click #checkAll'   : 'checkAll',
-            click               : 'hide'
+            'click .oe_sortable'   : 'goSort',
+            'click #checkAll'      : 'checkAll',
+            'click td.notRemovable': 'onDisabledClick',
+            click                  : 'hide'
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
@@ -39,24 +41,17 @@ define([
 
             $checkboxes.prop('checked', check);
 
-            this.inputClick(e);
+            this.checked(e);
+        },
+
+        onDisabledClick: function () {
+            App.render({
+                type   : 'error',
+                message: 'Can\'t be selected'
+            });
         },
 
         checked: function (e) {
-            var $targetEl = $(e.target);
-            var $targetDivContainer = $targetEl.closest('.listRow') && $targetEl.closest('.listRow').length ? $targetEl.closest('.listRow') : $targetEl.closest('tr'); // add or option
-            var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
-            // var checked = $checkbox.prop('checked');
-
-            if (e) {
-                e.stopPropagation();
-            }
-
-            // $checkbox.prop('checked', !checked); //commented by Liliya
-            this.inputClick(e);
-        },
-
-        inputClick: function (e) {
             var $thisEl = this.$el;
             var $topBar = $('#top-bar');
             var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
@@ -411,46 +406,57 @@ define([
 
         nextPage: function (options) {
             var collection = this.collection;
-            var count = options.count;
-            var page = options.page || collection.currentPage + 1;
+            var filter = this.filter;
+            var count;
+            var page;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
-            options = _.extend(options, {
-                filter: this.filter,
+            page = options.page || collection.currentPage + 1;
+            options = _.extend({
+                filter: filter,
                 count : count
-            });
+            }, options);
 
             this.collection.getNextPage(options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         previousPage: function (options) {
             var collection = this.collection;
-            var count = options.count;
-            var page = options.page || collection.currentPage - 1;
+            var filter = this.filter;
+            var count;
+            var page;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
-            options = _.extend(options, {
-                filter: this.filter,
+            page = options.page || collection.currentPage - 1;
+            options = _.extend({
+                filter: filter,
                 count : count
-            });
+            }, options);
 
             this.collection.getPreviousPage(options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         firstPage: function (options) {
             var collection = this.collection;
-            var count = options.count || collection.pageSize;
+            var filter = this.filter;
+            var count;
 
-            options = options || {count: count};
-
-            options.filter = this.filter;
+            options = options || {};
+            count = options.count;
+            count = count || collection.pageSize;
+            options = _.extend({
+                filter: filter,
+                count : count
+            }, options);
 
             collection.getFirstPage(options);
-            this.changeLocationHash(1, count);
+            this.changeLocationHash(1, count, filter);
         },
 
         showFilteredPage: function (filter) {
@@ -472,37 +478,42 @@ define([
         },
 
         lastPage: function (options) {
-            var count = options.count;
             var collection = this.collection;
+            var filter = this.filter;
+            var count;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
-            options = _.extend(options, {
-                filter: this.filter,
+            options = _.extend({
+                filter: filter,
                 count : count
-            });
+            }, options);
 
             this.collection.getLastPage(options);
-            this.changeLocationHash(collection.lastPage, count);
+            this.changeLocationHash(collection.lastPage, count, filter);
         },
 
         getPage: function (options) {
-            var count = options.count;
             var collection = this.collection;
-            var filter = this.filter || {};
+            var filter = this.filter;
+            var count;
             var page;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
             page = options.page;
 
-            options = _.extend(options, {
-                filter: filter,
-                count : count
-            });
+            options = _.extend({
+                filter     : filter,
+                count      : count,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            }, options);
 
             collection.getPage(page, options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         // when tap in elementPerPage (50, 100, 200, ...)
@@ -510,6 +521,7 @@ define([
             var $targetEl = $(e.target);
             var newRows = this.$el.find('#false');
             var itemsNumber = $(e.target).text();
+            var filter = this.filter;
 
             this.startTime = new Date();
 
@@ -540,12 +552,12 @@ define([
             this.collection.getPage(1, {
                 count      : itemsNumber,
                 page       : 1,
-                filter     : this.filter,
+                filter     : filter,
                 viewType   : this.viewType,
                 contentType: this.contentType
             });
 
-            this.changeLocationHash(1, itemsNumber);
+            this.changeLocationHash(1, itemsNumber, filter);
         },
 
         createItem: function () {
@@ -585,57 +597,30 @@ define([
             var $thisEl = this.$el;
             var $table = $thisEl.find('#listTable');
             var mid = CONSTANTS.MID[this.contentType];
-            var model;
-            var localCounter = 0;
+            var collection = this.collection;
+            var url = collection.url;
             var $checkedInputs;
-            var count;
+            var ids = [];
 
             $checkedInputs = $table.find('input:checked');
-            $.each($checkedInputs, function (index, checkbox) {
-                model = self.collection.get(checkbox.value);
-                model.destroy({
-                    headers: {
-                        mid: mid
-                    },
-                    wait   : true,
-                    success: function () {
-                        if (self.hasAlphabet) {
-                            common.buildAphabeticArray(self.collection, function (arr) {
-                                var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : null;
-                                var $startLetter = $('#startLetter');
 
-                                self.alphabeticArray = arr;
-                                $startLetter = $startLetter.replaceWith(_.template(aphabeticTemplate, {
-                                    alphabeticArray   : self.alphabeticArray,
-                                    selectedLetter    : (self.selectedLetter === '' ? 'All' : self.selectedLetter),
-                                    allAlphabeticArray: self.allAlphabeticArray
-                                }));
+            $.each($checkedInputs, function () {
+                var $el = $(this);
 
-                                if (currentLetter) {
-                                    $startLetter.find('a').each(function () {
-                                        var $target = $(this);
+                ids.push($el.val());
+            });
 
-                                        if ($target.text() === currentLetter) {
-                                            $target.addClass('current');
-                                        }
-                                    });
-                                }
-                            });
-                        }
+            ids = _.compact(ids);
 
-                        self.collection.remove(model);
-                        // self.deleteItemsRender(self.deleteCounter, self.deletePage);
-                    },
+            dataService.deleteData(url, {ids: ids}, function (err, response) {
+                if (err) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Can\'t remove items'
+                    });
+                }
 
-                    error: function (_model, xhr) {
-                        if (xhr.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'You do not have permission to perform this action'
-                            });
-                        }
-                    }
-                });
+                self.getPage();
             });
         },
 
@@ -682,8 +667,8 @@ define([
             }
         },
 
-        setPagination: function (options, context) {
-            var $thisEl = context || this.$el;
+        setPagination: function (options) {
+            var $thisEl = this.$el;
             var $pageList = $thisEl.find('#pageList');
             var $curPageInput = $thisEl.find('#currentShowPage');
             var $itemsNumber = $thisEl.find('.itemsNumber');
