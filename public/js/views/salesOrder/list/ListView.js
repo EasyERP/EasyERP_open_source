@@ -15,53 +15,52 @@ define([
     'constants',
     'helpers',
     'helpers'
-], function ($, 
+], function ($,
              _,
-             ListViewBase, 
-             listTemplate, 
-             listForWTrack, 
+             ListViewBase,
+             listTemplate,
+             listForWTrack,
              stagesTemplate,
-             createView, 
-             ListItemView, 
-             ListTotalView, 
-             EditView, 
+             CreateView,
+             ListItemView,
+             ListTotalView,
+             EditView,
              QuotationModel,
-             contentCollection,
-             dataService, 
-             CONSTANTS, 
+             ContentCollection,
+             dataService,
+             CONSTANTS,
              helpers) {
     'use strict';
 
     var OrdersListView = ListViewBase.extend({
 
-        createView              : createView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        contentType             : 'salesOrder', // needs in view.prototype.changeLocationHash
+        listTemplate: listTemplate,
+        ListItemView: ListItemView,
+
+        ContentCollection: ContentCollection,
+        CreateView       : CreateView,
+        EditView         : EditView,
+
+        contentType: 'salesOrder', // needs in view.prototype.changeLocationHash
 
         initialize: function (options) {
-            this.startTime = options.startTime;
-            this.collection = options.collection;
-
             this.filter = options.filter || {};
             this.filter.forSales = {
                 key  : 'forSales',
                 value: ['true']
             };
 
+            this.startTime = options.startTime;
+            this.collection = options.collection;
+            this.parrentContentId = options.collection.parrentContentId;
             this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
-            this.contentCollection = contentCollection;
+            this.page = options.collection.currentPage;
 
             this.render();
         },
 
         showFilteredPage: function (filter) {
-            var itemsNumber = $("#itemsNumber").text();
+            var itemsNumber = $('#itemsNumber').text();
             
             $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
@@ -123,30 +122,32 @@ define([
         },
 
         render: function () {
-            var self;
-            var $currentEl;
+            var self = this;
+            var $thisEl = this.$el;
 
             $('.ui-dialog ').remove();
 
-            self = this;
-            $currentEl = this.$el;
+            $thisEl.html('');
+            $thisEl.append(_.template(listForWTrack));
 
-            $currentEl.html('');
-
-            $currentEl.append(_.template(listForWTrack));
-            $currentEl.append(new ListItemView({
+            var itemView = new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
-            }).render());
+            });
+
+            $thisEl.append(itemView.render());
 
             // added two parameters page and items number
-            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 5}).render());
+            $thisEl.append(new ListTotalView({
+                element : this.$el.find('#listTable'),
+                cellSpan: 5
+            }).render());
 
-            this.renderPagination($currentEl, this);
             this.renderFilter();
-
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            this.renderPagination($thisEl, this);
+            
+            $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
@@ -157,25 +158,33 @@ define([
             });
         },
 
-        goToEditDialog: function (e) {
-            var $tr = $(e.target).closest('tr');
-            var id = $tr.data('id');
-            var notEditable = $tr.hasClass('notEditable');
+        goToEditDialog: function (event) {
+            var self = this;
+            var $eventTarget = $(event.target);
+            var $closestTr = $eventTarget.closest('tr');
+            var dataId = $closestTr.data('id');
+            var isNotEditable = $closestTr.hasClass('notEditable');
+            var quotationModel = new QuotationModel({
+                validate: false
+            });
             var onlyView;
-            var model = new QuotationModel({validate: false});
 
-            e.preventDefault();
+            event.preventDefault();
 
-            if (notEditable) {
+            if (isNotEditable) {
                 onlyView = true;
             }
 
-            model.urlRoot = '/Order/form/' + id;
-            model.fetch({
-                data   : {contentType: this.contentType},
+            quotationModel.urlRoot = '/Order/';
+            quotationModel.fetch({
+                data: {
+                    contentType: self.contentType,
+                    id         : dataId
+                },
+
                 success: function (model) {
-                    return new EditView({
-                        model: model, 
+                    return new self.EditView({
+                        model   : model,
                         onlyView: onlyView
                     });
                 },

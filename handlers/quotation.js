@@ -1305,6 +1305,22 @@ var Module = function (models, event) {
 
         });
     };
+
+    this.bulkRemove = function (req, res, next) {
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        // todo some validation on ids array, like check for objectId
+
+        Quotation.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
+        });
+    };
 };
 
 module.exports = Module;
