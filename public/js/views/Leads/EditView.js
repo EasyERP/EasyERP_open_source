@@ -4,16 +4,15 @@ define([
     'Underscore',
     'text!templates/Leads/EditTemplate.html',
     'text!templates/history.html',
-    'views/selectView/selectView',
-    'views/Assignees/AssigneesView',
+    'views/dialogViewBase',
     'custom',
     'common',
     'dataService',
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, historyTemplate, selectView, AssigneesView, Custom, common, dataService, populate, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, historyTemplate, ParentView, Custom, common, dataService, populate, CONSTANTS) {
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         el             : '#content-holder',
         contentType    : 'Leads',
         template       : _.template(EditTemplate),
@@ -30,16 +29,10 @@ define([
         },
 
         events: {
-            'click #convertToOpportunity'                      : 'openDialog',
-            'click #tabList a'                                 : 'switchTab',
-            'click .breadcrumb a, #cancelCase, #reset'         : 'changeWorkflow',
-            'change #customer'                                 : 'selectCustomer',
-            'change #workflowNames'                            : 'changeWorkflows',
-            'click .current-selected'                          : 'showNewSelect',
-            click                                              : 'hideNewSelect',
-            keydown                                            : 'keydownHandler',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+            'click #convertToOpportunity'             : 'openDialog',
+            'click .breadcrumb a, #cancelCase, #reset': 'changeWorkflow',
+            'change #customer'                        : 'selectCustomer',
+            'change #workflowNames'                   : 'changeWorkflows'
         },
 
         openDialog: function (e) {
@@ -58,36 +51,6 @@ define([
             dialogHolder = $('.dialog-tabs-items');
             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
             dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-        },
-
-        switchTab: function (e) {
-            var thisEl = this.$el;
-            var link = thisEl.find('#tabList a');
-            var index;
-
-            e.preventDefault();
-
-            if (link.hasClass('selected')) {
-                link.removeClass('selected');
-            }
-            index = link.index($(e.target).addClass('selected'));
-            thisEl.find('.tab').hide().eq(index).show();
         },
 
         getWorkflowValue: function (value) {
@@ -110,10 +73,8 @@ define([
             var address = {};
             var salesPersonId = this.$('#salesPerson').data('id');
             var currentSalesPerson = this.currentModel.get('salesPerson');
-            // salesPersonId = salesPersonId ? salesPersonId : null;
             var salesTeamId = this.$('#salesTeam option:selected').val();
             var currentSalesTeam = this.currentModel.get('salesTeam');
-            // salesTeamId = salesTeamId ? salesTeamId : null;
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
             var contactName = {
@@ -152,7 +113,7 @@ define([
                     LI: LI,
                     FB: FB
                 },
-                
+
                 company      : company,
                 campaign     : this.$el.find('#campaignDd').data('id'),
                 source       : this.$el.find('#sourceDd').data('id'),
@@ -242,7 +203,7 @@ define([
             var answer;
             event.preventDefault();
             answer = confirm('Really DELETE items ?!');
-            if (answer === true) {
+            if (answer) {
                 this.currentModel.urlRoot = '/Leads';
                 this.currentModel.destroy({
                     headers: {
@@ -256,36 +217,6 @@ define([
                         self.errorNotification(xhr);
                     }
                 });
-            }
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
             }
         },
 
@@ -384,12 +315,8 @@ define([
 
             self.renderHistory();
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
+
             dataService.getData('/leads/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {
                     priority.name = priority.priority;
@@ -473,11 +400,11 @@ define([
                     $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
                         $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + "</li>");
+                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
                     });
                     model.groups.users.forEach(function (item) {
                         $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + "</li>");
+                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
                     });
 
                 }

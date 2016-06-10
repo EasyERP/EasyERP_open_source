@@ -6,10 +6,9 @@ define([
     'views/Companies/CreateView',
     'views/Companies/list/ListItemView',
     'collections/Companies/filterCollection',
-    'views/Filter/FilterView',
     'common',
     'constants'
-], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
+], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, common, CONSTANTS) {
     'use strict';
 
     var CompaniesListView = ListViewBase.extend({
@@ -18,7 +17,6 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        FilterView       : FilterView,
         contentType      : 'Companies',
         formUrl          : '#easyErp/Companies/form/',
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Companies',

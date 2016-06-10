@@ -7,7 +7,6 @@ define([
     'views/Leads/CreateView',
     'views/Leads/list/ListItemView',
     'views/Leads/EditView',
-    'views/Filter/FilterView',
     'models/LeadsModel',
     'collections/Leads/filterCollection',
     'common',
@@ -20,7 +19,6 @@ define([
              CreateView,
              ListItemView,
              EditView,
-             FilterView,
              CurrentModel,
              contentCollection,
              common,
@@ -28,14 +26,11 @@ define([
     'use strict';
 
     var LeadsListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/leads/totalCollectionLength',
-        formUrl                 : '#easyErp/Leads/form/',
-        contentType             : CONSTANTS.LEADS,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        formUrl          : '#easyErp/Leads/form/',
+        contentType      : CONSTANTS.LEADS,
 
         events: {
             'click .stageSelect'                     : 'showNewSelect',

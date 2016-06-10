@@ -28,7 +28,7 @@
             model.fetch({
                 data   : {id: id},
                 success: function (model) {
-                    new editView({
+                    return new editView({
                         model    : model,
                         elementId: 'personAttach'
                     });

@@ -2,17 +2,16 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Companies/CreateTemplate.html',
-    'views/selectView/selectView',
-    'views/Assignees/AssigneesView',
     'views/CustomersSuppliers/salesPurchases',
     'models/CompaniesModel',
     'common',
     'custom',
     'constants'
-], function (Backbone, $, _, CreateTemplate, SelectView, AssigneesView, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS) {
+], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS) {
     'use strict';
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Companies',
         template   : _.template(CreateTemplate),
@@ -28,60 +27,14 @@ define([
         },
 
         events: {
-            'click #tabList a'                                 : 'switchTab',
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-            'click .details'                                   : 'toggleDetails',
-            keydown                                            : 'keydownHandler',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .current-selected'                          : 'showNewSelect',
-            click                                              : 'hideNewSelect'
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click .details'    : 'toggleDetails'
         },
 
         chooseOption: function (e) {
             var $target = $(e.target);
             $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
         },
 
         changeTab: function (e) {
@@ -95,26 +48,6 @@ define([
             $dialogHolder = $('.dialog-tabs-items');
             $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
             $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        toggleDetails: function () {
-            $('#details-dialog').toggle();
-        },
-        
-        showEdit: function () {
-            $('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        hideEdit: function () {
-            $('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
-
         },
 
         hideDialog: function () {
@@ -234,7 +167,6 @@ define([
             var companyModel = new CompanyModel();
             var formString = this.template({});
             var self = this;
-            var notDiv;
             var salesPurchasesEl;
 
             var thisEl = this.$el = $(formString).dialog({
@@ -259,14 +191,9 @@ define([
                     }]
             });
 
-            notDiv = thisEl.find('.assignees-container');
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({

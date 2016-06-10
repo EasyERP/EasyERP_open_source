@@ -3,16 +3,15 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Leads/CreateTemplate.html',
-    'views/selectView/selectView',
-    'views/Assignees/AssigneesView',
+    'views/dialogViewBAse',
     'models/LeadsModel',
     'common',
     'populate',
     'dataService',
     'constants'
-], function (Backbone, $, _, CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService, CONSTANTS) {
+], function (Backbone, $, _, CreateTemplate, ParentView, LeadModel, common, populate, dataService, CONSTANTS) {
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Leads',
         template   : _.template(CreateTemplate),
@@ -26,13 +25,7 @@ define([
         },
 
         events: {
-            'click #tabList a'                                 : 'switchTab',
-            'change #workflowNames'                            : 'changeWorkflows',
-            keydown                                            : 'keydownHandler',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            click                                              : 'hideNewSelect',
-            'click .current-selected'                          : 'showNewSelect'
+            'change #workflowNames': 'changeWorkflows'
         },
 
         selectCustomer: function (id) {
@@ -79,51 +72,11 @@ define([
 
         },
 
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
         chooseOption: function (e) {
             var holder = $(e.target).parents('dd').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             if (holder.attr('id') === 'customerDd') {
                 this.selectCustomer($(e.target).attr('id'));
-            }
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
             }
         },
 
@@ -144,18 +97,6 @@ define([
             var name = this.$('#workflowNames option:selected').val();
             var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
             // $('#selectWorkflow').html(_.template(selectTemplate, { workflows: this.getWorkflowValue(value) }));
-        },
-
-        switchTab: function (e) {
-            var link;
-            var index;
-            e.preventDefault();
-            link = this.$('#tabList a');
-            if (link.hasClass('selected')) {
-                link.removeClass('selected');
-            }
-            index = link.index($(e.target).addClass('selected'));
-            this.$('.tab').hide().eq(index).show();
         },
 
         saveItem: function () {
@@ -225,13 +166,13 @@ define([
 
             });
             this.model.save({
-                name : name,
-                skype: skype,
-
+                name  : name,
+                skype : skype,
                 social: {
                     LI: LI,
                     FB: FB
                 },
+
                 company      : company || null,
                 campaign     : $('#campaignDd').data('id'),
                 source       : source,
@@ -275,16 +216,9 @@ define([
             });
         },
 
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-        },
-
         render: function () {
             var self = this;
             var formString = this.template();
-            var notDiv;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -310,12 +244,8 @@ define([
                 ]
 
             });
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+
+            this.renderAssignees(this.model);
 
             dataService.getData('/leads/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {

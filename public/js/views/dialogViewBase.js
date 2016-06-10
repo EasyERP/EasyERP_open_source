@@ -17,6 +17,30 @@
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
+        showEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '20px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        hideEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '0px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        showDetailsBox: function (e) {
+            $(e.target).parent().find('.details-box').toggle();
+        },
+
+        toggleDetails: function () {
+            $('#details-dialog').toggle();
+        },
+
         showNewSelect: function (e) {
             var $target = $(e.target);
 

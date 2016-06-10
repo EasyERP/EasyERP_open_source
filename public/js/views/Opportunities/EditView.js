@@ -2,11 +2,10 @@
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Opportunities/EditTemplate.html',
     'text!templates/Opportunities/editSelectTemplate.html',
     'text!templates/history.html',
-    'views/selectView/selectView',
-    'views/Assignees/AssigneesView',
     'views/Notes/NoteView',
     'views/Notes/AttachView',
     'common',
@@ -15,25 +14,17 @@
     'dataService',
     'constants',
     'helpers'
-], function (Backbone, $, _, EditTemplate, editSelectTemplate, historyTemplate,
-             selectView, AssigneesView, noteView, attachView, common, custom,
-             populate, dataService, CONSTANTS, helpers) {
+], function (Backbone, $, _, ParentView, EditTemplate, editSelectTemplate, historyTemplate, noteView, attachView, common, custom, populate, dataService, CONSTANTS, helpers) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         el             : '#content-holder',
         contentType    : 'Opportunities',
         template       : _.template(EditTemplate),
         historyTemplate: _.template(historyTemplate),
 
         events: {
-            'click .breadcrumb a, #lost, #won'                 : 'changeWorkflow',
-            'click #tabList a'                                 : 'switchTab',
-            keydown                                            : 'keydownHandler',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .current-selected'                          : 'showNewSelect',
-            click                                              : 'hideNewSelect'
+            'click .breadcrumb a, #lost, #won': 'changeWorkflow'
         },
 
         initialize: function (options) {
@@ -46,37 +37,6 @@
             this.elementId = options.elementId || null;
 
             this.render();
-        },
-
-        hideNewSelect: function () {
-            this.$el.find('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
         },
 
         chooseOption: function (e) {
@@ -101,16 +61,6 @@
             dialogHolder = this.$el.find('.dialog-tabs-items');
             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
             dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
         },
 
         getWorkflowValue: function (value) {
@@ -155,16 +105,6 @@
             }, this);
 
         },
-
-        /* switchTab: function (e) {  ui tests
-         e.preventDefault();
-         var link = this.$("#tabList a");
-         if (link.hasClass("selected")) {
-         link.removeClass("selected");
-         }
-         var index = link.index($(e.target).addClass("selected"));
-         this.$(".tab").hide().eq(index).show();
-         },*/
 
         saveItem: function () {
             var self = this;
@@ -218,8 +158,6 @@
 
                 address[el.attr('name')] = el.val();
             });
-            /* var salesTeamId = this.$el.find('#salesTeamDd').data('id') || null;
-             var oldWorkFlow = this.currentModel.get('workflow')._id;*/
 
             this.$el.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -235,7 +173,6 @@
                 name           : name,
                 customer       : customerId,
                 email          : email,
-                // salesTeam      : salesTeamId,
                 nextAction     : nextAction,
                 expectedClosing: expectedClosing,
                 priority       : priority,
@@ -302,7 +239,6 @@
 
                     switch (viewType) {
                         case 'list':
-                        {
                             trHolder = $("tr[data-id='" + model._id + "'] td");
                             trHolder.parent().attr('class', 'stage-' + self.$('#workflowDd').text().toLowerCase());
                             trHolder.eq(3).text(name);
@@ -323,10 +259,8 @@
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash.replace('#', ''), {trigger: true});
 
-                        }
                             break;
                         case 'kanban':
-                        {
                             kanbanHolder = $('#' + model._id);
                             expectedRevenueHolder = kanbanHolder.find('.opportunity-header h3');
                             kanbanHolder.find('.opportunity-header h4').text(name);
@@ -377,16 +311,14 @@
                             } else {
                                 self.countTotalAmountForWorkflow(currentWorkflow._id);
                             }
-                        }
                             break;
                         case 'form':
-                        {
                             holder = $('#opportunities .compactList');
                             holder.find('p a#' + model._id).text(name);
                             holder.find('div').eq(0).find('p').eq(1).text('$' + expectedRevenueValue);
                             holder.find('div').eq(1).find('p').eq(0).text(nextAction.date);
                             holder.find('div').eq(1).find('p').eq(1).text(self.$('#workflowDd').text());
-                        }
+                            break;
                     }
                     self.hideDialog();
                 },
@@ -408,12 +340,6 @@
                 sum += parseFloat(value) || 0;
             });
             column.find('.totalAmount').text(helpers.currencySplitter(sum.toString()));
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
         },
 
         deleteItem: function (event) {
@@ -439,19 +365,14 @@
 
                         switch (viewType) {
                             case 'list':
-                            {
                                 $("tr[data-id='" + model._id + "'] td").remove();
 
-                            }
                                 break;
                             case 'form':
-                            {
                                 $('a#' + model._id).parents('li').remove();
 
-                            }
                                 break;
                             case 'kanban':
-                            {
                                 $('#' + model._id).remove();
                                 wId = model.workflow._id;
                                 holderTdTotalCount = $("td[data-id='" + wId + "'] .totalCount");
@@ -459,7 +380,7 @@
                                 holderTdTotalCount.html(newTotal);
 
                                 self.countTotalAmountForWorkflow(wId);
-                            }
+                                break;
                         }
                         self.hideDialog();
                     },
@@ -524,12 +445,8 @@
                     elementId: this.elementId
                 }).render().el
             );
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+
+            this.renderAssignees(this.currentModel);
 
             self.renderHistory();
 
@@ -574,7 +491,6 @@
                     });
                 }
             }
-            // this.delegateEvents(this.events);
             return this;
         }
 
