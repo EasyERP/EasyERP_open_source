@@ -15,12 +15,14 @@ module.exports = function (models, event) {
     router.get('/', accessStackMiddleware, handler.getByViewType);
     router.get('/getPersonAlphabet', accessStackMiddleware, handler.getCompaniesAlphabet);
     router.get('/getPersonsForMiniView', handler.getFilterPersonsForMiniView);
-    router.get('/totalCollectionLength', accessStackMiddleware, handler.getTotalCount);
+    router.get('/:id', handler.getById);
 
     router.post('/', accessStackMiddleware, handler.create);
     router.put('/:id', accessStackMiddleware, handler.update);
     router.patch('/:id', accessStackMiddleware, handler.udateOnlySelectedFields);
+    
     router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

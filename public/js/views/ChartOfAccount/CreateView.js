@@ -6,7 +6,7 @@ define([
     'use strict';
 
     var CreateView = Backbone.View.extend({
-        el      : '#chartOfAccount',
+        el      : '#listTable',
         template: _.template(CreateTemplate),
 
         initialize: function (options) {

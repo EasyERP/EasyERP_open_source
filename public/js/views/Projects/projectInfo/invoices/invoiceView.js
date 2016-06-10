@@ -50,10 +50,12 @@ define([
             var self = this;
             var keys = Object.keys(this.changedModels);
             var id;
+            var i;
 
             e.preventDefault();
 
-            for (id = keys.length - 1; id >= 0; id--) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.collection.get(id);
 
                 model.save({

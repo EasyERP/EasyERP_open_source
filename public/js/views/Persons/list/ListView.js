@@ -13,18 +13,18 @@ define([
     'use strict';
 
     var PersonsListView = ListViewBase.extend({
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: 'persons/totalCollectionLength',
-        formUrl                 : '#easyErp/Persons/form/',
-        contentType             : 'Persons', // needs in view.prototype.changeLocationHash
-        viewType                : 'list', // needs in view.prototype.changeLocationHash
-        exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Persons',
-        exportToCsvUrl          : '/Customers/exportToCsv/?type=Persons',
-        events                  : {
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        FilterView       : FilterView,
+        formUrl          : '#easyErp/Persons/form/',
+        contentType      : 'Persons', // needs in view.prototype.changeLocationHash
+        viewType         : 'list', // needs in view.prototype.changeLocationHash
+        exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Persons',
+        exportToCsvUrl   : '/Customers/exportToCsv/?type=Persons',
+
+        events: {
             'click .letter:not(.empty)': 'alpabeticalRender'
         },
 
@@ -70,12 +70,11 @@ define([
         },
 
         render: function () {
-            var self;
+            var self = this;
             var $currentEl;
 
             $('.ui-dialog ').remove();
 
-            self = this;
             $currentEl = this.$el;
 
             $currentEl.html('');

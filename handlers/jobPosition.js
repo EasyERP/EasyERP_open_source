@@ -323,6 +323,20 @@ var Module = function (models) {
             res.status(200).send({success: 'JobPosition removed'});
         });
     };
+
+    this.bulkRemove = function (req, res, next) {
+        var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        JobPosition.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
+        });
+    };
 };
 
 module.exports = Module;

@@ -13,7 +13,6 @@
             'click #persons p > a': 'gotoPersonsForm'
         },
 
-
         gotoPersonsForm: function (e) {
             var itemIndex = $(e.target).closest('a').attr('id');
 

@@ -25,7 +25,6 @@ module.exports = function (event, models) {
     router.get('/getPersonsForDd', accessStackMiddleware, handler.getSalesPerson);
     router.get('/getEmployeesAlphabet', accessStackMiddleware, handler.getEmployeesAlphabet);
     router.get('/getEmployeesImages', accessStackMiddleware, handler.getEmployeesImages);
-    // router.get('/totalCollectionLength', accessStackMiddleware, handler.totalCollectionLength);
     router.get('/nationality', accessStackMiddleware, handler.getNationality);
     router.get('/languages', accessStackMiddleware, handler.getLanguages);
     router.get('/sources', accessStackMiddleware, handler.getSources);
@@ -38,7 +37,9 @@ module.exports = function (event, models) {
     router.post('/', accessStackMiddleware, handler.create);
     router.post('/uploadEmployeesFiles', accessStackMiddleware, multipartMiddleware, handler.uploadEmployeesFiles);
     router.patch('/:id', accessStackMiddleware, handler.updateOnlySelectedFields);
+   
     router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

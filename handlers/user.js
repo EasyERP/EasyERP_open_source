@@ -4,6 +4,7 @@ var User = function (event, models) {
     'use strict';
     var _ = require('lodash');
     var crypto = require('crypto');
+    var async = require('async');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
     var constants = require('../constants/responses');
@@ -388,6 +389,35 @@ var User = function (event, models) {
             }
 
             res.status(200).send({success: 'User remove success'});
+        });
+    };
+
+    this.bulkRemove = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Users', userSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+        var err;
+
+        async.each(ids, function (id, cb) {
+            if (req.session.uId === id) {
+                err = new Error('You cannot delete current user');
+                err.status = 403;
+
+                return cb(err);
+            }
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) {
+                    return err(err);
+                }
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
         });
     };
 

@@ -13,10 +13,12 @@ module.exports = function (models) {
 
     router.get('/', accessStackMiddleware, handler.getForType);
     router.post('/', accessStackMiddleware, handler.create);
+    
     router.post('/createNextMonth', accessStackMiddleware, handler.createNextMonth);
     router.post('/create', accessStackMiddleware, handler.createAll);
     router.patch('/', accessStackMiddleware, handler.putchBulk);
     router.patch('/:id', accessStackMiddleware, handler.putchModel);
+    
     router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;

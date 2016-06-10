@@ -13,16 +13,17 @@ module.exports = function (models, event) {
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
 
-    router.post('/', handler.createTask);
+  
     router.get('/priority', handler.getTasksPriority);
     router.get('/getLengthByWorkflows', handler.getLengthByWorkflows);
-
     router.get('/getFilterValues', handler.getFilterValues);
-
     router.get('/', handler.getTasks);
 
+    router.post('/', handler.createTask);
     router.patch('/:_id', handler.taskUpdateOnlySelectedFields);
+    
     router.delete('/:_id', handler.removeTask);
+    router.delete('/', handler.bulkRemove);
 
     return router;
 };

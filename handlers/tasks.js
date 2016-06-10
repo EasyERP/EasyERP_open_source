@@ -6,6 +6,7 @@ var projectSchema = mongoose.Schemas.Project;
 var prioritySchema = mongoose.Schemas.Priority;
 var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
+var async = require('async');
 
 var Module = function (models, event) {
     'use strict';
@@ -641,6 +642,31 @@ var Module = function (models, event) {
                 break;
         }
 
+    };
+
+    this.bulkRemove = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        async.each(ids, function (id, cb) {
+            Model.findByIdAndRemove(id, function (err, task) {
+                if (err) {
+                    return err(err);
+                }
+
+                event.emit('updateContent', req, res, task.project, 'remove');
+                event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
     };
 
     this.removeTask = function (req, res, next) {

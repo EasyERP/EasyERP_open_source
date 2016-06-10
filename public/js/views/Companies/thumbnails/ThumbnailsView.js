@@ -47,7 +47,6 @@
             this.EditView = EditView;
             this.CreateView = CreateView;
 
-
             _.bind(this.collection.showMoreAlphabet, this.collection);
             this.allAlphabeticArray = common.buildAllAphabeticArray();
 
@@ -62,7 +61,7 @@
         },
 
         importFiles: function () {
-            new AttachView({
+            return new AttachView({
                 modelName: this.contentType,
                 import   : true
             });
@@ -73,51 +72,6 @@
                 return item._id;
             });
             common.getImages(ids, '/customers/getCustomersImages');
-        },
-
-        alpabeticalRender: function (e) {
-            var selectedLetter;
-            var target;
-
-
-            if (e && e.target) {
-                target = $(e.target);
-                selectedLetter = $(e.target).text();
-
-                if (!this.filter) {
-                    this.filter = {};
-                }
-                this.filter.letter = {
-                    key  : 'letter',
-                    value: selectedLetter,
-                    type : null
-                };
-
-                target.parent().find('.current').removeClass('current');
-                target.addClass('current');
-                if ($(e.target).text() === 'All') {
-                    delete this.filter;
-                    delete App.filter.letter;
-                } else {
-                    App.filter.letter = this.filter.letter;
-                }
-            }
-
-            this.filter = App.filter;
-
-            this.filterView.renderFilterContent(this.filter);
-            _.debounce(
-                function () {
-                    this.trigger('filter', App.filter);
-                }, 10);
-
-            this.$el.find('.thumbnailwithavatar').remove();
-            this.startTime = new Date();
-            this.newCollection = false;
-
-            this.defaultItemsNumber = 0;
-            this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-            this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
         },
 
         gotoForm: function (e) {
@@ -178,26 +132,6 @@
             return this;
         },
 
-        showFilteredPage: function (filter, context) {
-            $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
-
-            context.startTime = new Date();
-
-            this.$el.find('.thumbnailwithavatar').remove();
-            this.startTime = new Date();
-
-            this.filter = filter;
-
-            if (Object.keys(filter).length === 0) {
-                this.filter = {};
-            }
-
-            this.changeLocationHash(null, this.collection.pageSize, filter);
-            this.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType, contentType: this.contentType});
-            // context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
-        },
-
         hideItemsNumber: function (e) {
             var el = this.$(e.target);  // changed after ui test
 
@@ -223,12 +157,12 @@
         },
 
         /* createItem: function () {
-            new CreateView();
-        },
+         new CreateView();
+         },
 
-        editItem: function () {
-            new EditView({collection: this.collection});
-        },*/
+         editItem: function () {
+         new EditView({collection: this.collection});
+         },*/
 
         deleteItems: function () {
             var mid = this.mId;

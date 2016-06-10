@@ -12,18 +12,17 @@ define([
 ], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
     'use strict';
 
-    var CompaniesListView = listViewBase.extend({
+    var CompaniesListView = ListViewBase.extend({
 
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        contentType             : 'Companies',
-        totalCollectionLengthUrl: '/companies/totalCollectionLength',
-        formUrl                 : '#easyErp/Companies/form/',
-        exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Companies',
-        exportToCsvUrl          : '/Customers/exportToCsv/?type=Companies',
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        FilterView       : FilterView,
+        contentType      : 'Companies',
+        formUrl          : '#easyErp/Companies/form/',
+        exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Companies',
+        exportToCsvUrl   : '/Customers/exportToCsv/?type=Companies',
 
         events: {
             'click .letter:not(.empty)': 'alpabeticalRender'

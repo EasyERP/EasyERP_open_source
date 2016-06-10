@@ -12,9 +12,11 @@ module.exports = function (event, models) {
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getForView);
     router.get('/form/:id', handler.getById);
+   
     router.post('/', handler.create);
     router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);
+    
     router.delete('/:id', handler.remove);
 
     return router;

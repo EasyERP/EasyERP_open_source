@@ -10,7 +10,10 @@ module.exports = function (models, event) {
     var moduleId = MODULES.INVOICE;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
-    router.get('/', authStackMiddleware, accessStackMiddleware, function (req, res, next) {
+    router.use(authStackMiddleware);
+    router.use(accessStackMiddleware);
+
+    router.get('/', function (req, res, next) {
         var viewType = req.query.viewType;
         switch (viewType) {
             case 'form':
@@ -24,25 +27,15 @@ module.exports = function (models, event) {
         }
     });
 
-    // router.get('/',  authStackMiddleware, accessStackMiddleware, handler.getAll);
-    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddleware, handler.totalCollectionLength);
-    router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
-    router.get('/generateName', authStackMiddleware, accessStackMiddleware, handler.generateName);
-    router.get('/stats', authStackMiddleware, accessStackMiddleware, handler.getStats);
-    router.get('/stats/project', authStackMiddleware, accessStackMiddleware, handler.getStatsForProject);
-    router.get('/chart', authStackMiddleware, accessStackMiddleware, handler.chartForProject);
+    router.get('/getFilterValues', handler.getFilterValues);
+    router.get('/generateName', handler.generateName);
+    router.get('/stats', handler.getStats);
+    router.get('/stats/project', handler.getStatsForProject);
+    router.get('/chart', handler.chartForProject);
 
-    router.delete('/:_id', authStackMiddleware, accessStackMiddleware, function (req, res) {
-        var id = req.param('_id');
-
-        handler.removeInvoice(req, res, id);
-    });
-
-    router.patch('/approve', authStackMiddleware, accessStackMiddleware, handler.approve);
-
-    router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelected);
-
-    router.put('/:_id', authStackMiddleware, accessStackMiddleware, function (req, res) {
+    router.patch('/approve', handler.approve);
+    router.patch('/:id', handler.updateOnlySelected);
+    router.put('/:_id', function (req, res) {
         var data = {};
         var id = req.params._id;
 
@@ -50,10 +43,16 @@ module.exports = function (models, event) {
 
         handler.updateInvoice(req, res, id, data);
     });
+    router.post('/', handler.create);
+    router.post('/receive', handler.receive);
+    router.post('/attach', multipartMiddleware, handler.attach);
 
-    router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
-    router.post('/receive', authStackMiddleware, accessStackMiddleware, handler.receive);
-    router.post('/attach', authStackMiddleware, accessStackMiddleware, multipartMiddleware, handler.attach);
+    router.delete('/:_id', function (req, res) {
+        var id = req.param('_id');
+
+        handler.removeInvoice(req, res, id);
+    });
+    router.delete('/', handler.bulkRemove);
 
     return router;
 };

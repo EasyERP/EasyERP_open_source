@@ -121,8 +121,11 @@ define([
             var account;
             var id;
             var errors = this.$el.find('.errorContent');
+            var keys = Object.keys(this.changedModels);
+            var i;
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.editCollection.get(id) || this.collection.get(id);
                 if (model) {
                     model.changed = this.changedModels[id];
@@ -137,7 +140,8 @@ define([
             }
             this.editCollection.save();
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 delete this.changedModels[id];
                 this.editCollection.remove(id);
             }

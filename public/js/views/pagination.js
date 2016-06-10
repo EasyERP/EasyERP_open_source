@@ -62,6 +62,10 @@ define([
             var $deleteButton = $topBar.find('#top-bar-deleteBtn');
             var $createButton = $topBar.find('#top-bar-createBtn');
 
+            if (e) {
+                e.stopPropagation();
+            }
+
             if ($currentChecked.attr('id') !== 'checkAll') {
                 if (checkAllBool) {
                     this.$el.find('#checkAll').prop('checked', true);
@@ -615,7 +619,7 @@ define([
 
             ids = _.compact(ids);
 
-            dataService.deleteData(url, {ids: ids}, function (err, response) {
+            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err, response) {
                 if (err) {
                     return App.render({
                         type   : 'error',

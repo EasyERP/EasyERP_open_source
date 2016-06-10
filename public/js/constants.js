@@ -716,7 +716,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 3,
+        DEFAULT_ELEMENTS_PER_PAGE  : 50,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
@@ -756,7 +756,7 @@ define([], function () {
             BONUSTYPE                 : '/bonusType/',
             BONUSTYPE_FORDD           : '/bonusType/getForDD',
             CAPACITY                  : '/capacity/',
-            PAYMENTCUSTOMERS          : '/payment/customers/',
+            PAYMENTCUSTOMERS          : '/payment/',
             EMPLOYEES_PERSONSFORDD    : '/employees/getPersonsForDd',
             CUSTOMERS                 : '/customers/',
             DASHBOARD_HR              : 'dashboard/hr',
@@ -769,12 +769,12 @@ define([], function () {
             JOURNAL_ENTRY             : '/journalEntries/',
             WORKFLOWS                 : '/workflows/',
             MODULES                   : '/getModules',
-            PAYMENT_SALARY            : '/payment/salary/',
+            PAYMENT_SALARY            : '/payment/',
             PRIORITY                  : '/Priority',
             PRODUCT_ALPHABET          : '/product/getProductsAlphabet',
             CATEGORY                  : '/category/',
             PROJECT_DASHBOARD         : 'project/getProjectPMForDashboard',
-            PAYMENT_SUPPLIER          : '/payment/supplier/',
+            PAYMENT_SUPPLIER          : '/payment/',
             APPLICATIONS_WFLENGTH     : '/applications/getApplicationsLengthByWorkflows',
             APPLICATIONS_KANBAN       : '/applications/',
             EMPLOYEES_NATIONALITY     : '/employees/nationality',
