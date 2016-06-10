@@ -14,60 +14,61 @@ define([
     'dataService',
     'constants',
     'helpers'
-], function ($, _, ListViewBase, listTemplate, stagesTemplate, createView, listItemView, ListTotalView, EditView, CurrentModel, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
+], function ($, _, ListViewBase, listTemplate, stagesTemplate, CreateView, ListItemView, ListTotalView, EditView, CurrentModel, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var QuotationListView = ListViewBase.extend({
-        createView              : createView,
-        listTemplate            : listTemplate,
-        listItemView            : listItemView,
-        contentCollection       : contentCollection,
-        contentType             : 'Quotation', // needs in view.prototype.changeLocationHash
-        viewType                : 'list', // needs in view.prototype.changeLocationHash
-        totalCollectionLengthUrl: '/quotation/totalCollectionLength',
-        FilterView              : FilterView,
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        contentType      : 'Quotation', // needs in view.prototype.changeLocationHash
+        viewType         : 'list', // needs in view.prototype.changeLocationHash
+        FilterView       : FilterView,
 
         initialize: function (options) {
+            $(document).off('click');
+
+            this.EditView = EditView;
+            this.CreateView = CreateView;
+
             this.startTime = options.startTime;
             this.collection = options.collection;
+            this.parrentContentId = options.collection.parrentContentId;
+            this.sort = options.sort;
             this.filter = options.filter || {};
             this.filter.forSales = {
                 key  : 'forSales',
                 value: ['false']
             };
-            this.forSales = false;
-            this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
+            this.page = options.collection.currentPage;
+            this.contentCollection = contentCollection;
 
             this.render();
 
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            this.contentCollection = contentCollection;
             this.stages = [];
         },
 
         events: {
-            "click .stageSelect"                 : "showNewSelect",
-            "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .newSelectList li"            : "chooseOption"
+            'click .stageSelect'                 : 'showNewSelect',
+            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
+            'click .newSelectList li'            : 'chooseOption'
         },
 
         chooseOption: function (e) {
             var self = this;
             var target$ = $(e.target);
-            var targetElement = target$.parents("td");
-            var id = targetElement.attr("id");
+            var targetElement = target$.parents('td');
+            var id = targetElement.attr('id');
             var model = this.collection.get(id);
 
             model.save({
-                workflow: target$.attr("id")
+                workflow: target$.attr('id')
             }, {
-                headers : {
+                headers: {
                     mid: 55
                 },
+                
                 patch   : true,
                 validate: false,
                 success : function () {
@@ -93,7 +94,7 @@ define([
         },
 
         showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
+            if ($('.newSelectList').is(':visible')) {
                 this.hideNewSelect();
                 return false;
             }
@@ -103,7 +104,7 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").remove();
+            $('.newSelectList').remove();
         },
 
         render: function () {
@@ -116,17 +117,17 @@ define([
 
             $currentEl.html('');
             $currentEl.append(_.template(this.listTemplate));
-            $currentEl.append(new this.listItemView({
+            $currentEl.append(new this.ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
 
-            $currentEl.append(new ListTotalView({element: $currentEl.find("#listTable"), cellSpan: 4}).render());
+            $currentEl.append(new ListTotalView({element: $currentEl.find('#listTable'), cellSpan: 4}).render());
 
             this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             this.renderFilter();
 
@@ -140,20 +141,21 @@ define([
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
-
-            var id = $(e.target).closest("tr").data("id");
+            var id = $(e.target).closest('tr').data('id');
             var model = new CurrentModel({validate: false});
+
+            e.preventDefault();
 
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
                         type   : 'error',
-                        message: "Please refresh browser"
+                        message: 'Please refresh browser'
                     });
                 }
             });
