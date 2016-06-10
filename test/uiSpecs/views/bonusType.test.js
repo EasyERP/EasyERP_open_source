@@ -5,14 +5,14 @@ define([
     'views/bonusType/list/ListView',
     'views/bonusType/TopBarView',
     'views/bonusType/CreateView',
-    'views/bonusType/EditView',
+    /*'views/bonusType/EditView',*/
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, BonusTypeCollection, MainView, ListView, TopBarView, CreateView, EditView, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, BonusTypeCollection, MainView, ListView, TopBarView, CreateView,/* EditView,*/ $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
