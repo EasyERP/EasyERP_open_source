@@ -43,6 +43,12 @@ define([
 
         contentType: 'salesOrder', // needs in view.prototype.changeLocationHash
 
+        events: {
+            'click .stageSelect'                 : 'showNewSelect',
+            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
+            'click .newSelectList li'            : 'chooseOption'
+        },
+
         initialize: function (options) {
             this.filter = options.filter || {};
             this.filter.forSales = {
@@ -59,58 +65,6 @@ define([
             this.render();
         },
 
-        showFilteredPage: function (filter) {
-            var itemsNumber = $('#itemsNumber').text();
-            
-            $('#top-bar-deleteBtn').hide();
-            $('#checkAll').prop('checked', false);
-
-            this.startTime = new Date();
-            this.newCollection = false;
-
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
-
-            this.filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-
-            this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            this.getTotalLength(null, itemsNumber, filter);
-        },
-
-        events: {
-            'click .stageSelect'                 : 'showNewSelect',
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
-            'click .newSelectList li'            : 'chooseOption'
-        },
-
-        chooseOption: function (e) {
-            var self = this;
-            var $target = $(e.target);
-            var $targetElement = $target.parents('td');
-            var id = $targetElement.attr('id');
-            var model = this.collection.get(id);
-
-            model.save({
-                workflow: $target.attr('id')
-            }, {
-                headers: {
-                    mid: 55
-                },
-
-                patch   : true,
-                validate: false,
-                success : function () {
-                    self.showFilteredPage(self.filter, self);
-                }
-            });
-
-            this.hideNewSelect();
-            return false;
-        },
-
         recalcTotal: function () {
             var total = 0;
 
@@ -124,13 +78,14 @@ define([
         render: function () {
             var self = this;
             var $thisEl = this.$el;
+            var itemView;
 
             $('.ui-dialog ').remove();
 
             $thisEl.html('');
             $thisEl.append(_.template(listForWTrack));
 
-            var itemView = new ListItemView({
+            itemView = new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
@@ -146,7 +101,7 @@ define([
 
             this.renderFilter();
             this.renderPagination($thisEl, this);
-            
+
             $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
@@ -158,7 +113,7 @@ define([
             });
         },
 
-        goToEditDialog: function (event) {
+       /* goToEditDialog: function (event) {
             var self = this;
             var $eventTarget = $(event.target);
             var $closestTr = $eventTarget.closest('tr');
@@ -188,7 +143,7 @@ define([
                         onlyView: onlyView
                     });
                 },
-                
+
                 error: function () {
                     App.render({
                         type   : 'error',
@@ -196,7 +151,7 @@ define([
                     });
                 }
             });
-        }
+        }*/
 
     });
 

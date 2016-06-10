@@ -70,9 +70,8 @@ define([
             click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .confirmOrder'                              : 'confirmOrder',
-            'click .createProforma'                            : 'createProforma', /* 'addAttachment',*/
+            'click .createProforma'                            : 'createProforma',
             'click .cancelQuotation'                           : 'cancelQuotation',
-            // 'change #proformaAttachment'                       : 'uploadAttachment',
             'click .setDraft'                                  : 'setDraft'
         },
 
@@ -356,7 +355,9 @@ define([
                 journal    : CONSTANTS.PROFORMA_JOURNAL
             };
 
-            e && e.preventDefault();
+            if (e) {
+                e.preventDefault();
+            }
             App.startPreload();
 
             this.saveItem(function (err, res) {
@@ -378,7 +379,9 @@ define([
                                 App.projectInfo.currentTab = 'proforma';
                             }
 
-                            self.eventChannel && self.eventChannel.trigger('newProforma', response._id);
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('newProforma', response._id);
+                            }
 
                             tr = $('[data-id=' + quotationId + ']');
                             tr.find('.checkbox').addClass('notRemovable');
@@ -401,7 +404,6 @@ define([
                 status      : 'Cancelled',
                 order       : 1
             }, function (workflow) {
-                // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
                 var redirectUrl = window.location.hash;
 
                 if (workflow && workflow.error) {
@@ -435,7 +437,6 @@ define([
             populate.fetchWorkflow({
                 wId: 'Sales Order'
             }, function (workflow) {
-                // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
                 var redirectUrl = window.location.hash;
 
                 if (workflow && workflow.error) {
@@ -543,7 +544,7 @@ define([
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         taxes = parseFloat(taxes) * 100;
                         description = targetEl.find('[data-name="productDescr"]').text();
-                        jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
+                        jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subTotal = parseFloat(subTotal) * 100;
 
@@ -619,9 +620,11 @@ define([
                             return proformaCb(null, res);
                         }
 
-                        self.eventChannel && self.eventChannel.trigger('quotationUpdated');
+                        if (self.eventChannel) {
+                            self.eventChannel.trigger('quotationUpdated');
+                        }
                     },
-                    
+
                     error: function (model, xhr) {
                         self.errorNotification(xhr);
 
@@ -661,7 +664,6 @@ define([
                     },
                     success: function () {
                         $('.edit-product-dialog').remove();
-                        // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         url = window.location.hash;
 
                         App.projectInfo = App.projectInfo || {};
@@ -669,9 +671,12 @@ define([
 
                         self.hideDialog();
 
-                        self.eventChannel && self.eventChannel.trigger('quotationRemove');
+                        if (self.eventChannel) {
+                            self.eventChannel.trigger('quotationRemove');
+                        }
                     },
-                    error  : function (model, err) {
+
+                    error: function (model, err) {
                         if (err.status === 403) {
                             App.render({
                                 type   : 'error',
