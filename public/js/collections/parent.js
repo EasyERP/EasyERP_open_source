@@ -56,8 +56,10 @@ define([
             var isNew;
             var showMore;
             var success;
-            var error;
             var remove;
+            var error;
+            var merge;
+            var add;
 
             page = page || this.currentPage;
             page = parseInt(page, 10);
@@ -71,12 +73,26 @@ define([
             wait = !!options.wait;
             reset = !!options.reset;
             isNew = !!options.newCollection;
-            remove = !options.remove;
 
             if (!options.hasOwnProperty('showMore')) {
                 showMore = true;
             } else {
                 showMore = !!options.showMore;
+            }
+            if (!options.hasOwnProperty('remove')) {
+                remove = true;
+            } else {
+                remove = !!options.remove;
+            }
+            if (!options.hasOwnProperty('add')) {
+                add = true;
+            } else {
+                add = !!options.add;
+            }
+            if (!options.hasOwnProperty('merge')) {
+                merge = true;
+            } else {
+                merge = !!options.merge;
             }
 
             if (isNew || !options.data) {
@@ -99,6 +115,8 @@ define([
             delete data.wait;
             delete data.reset;
             delete data.remove;
+            delete data.add;
+            delete data.merge;
 
             self.pageSize = data.count;
             self.currentPage = data.page;

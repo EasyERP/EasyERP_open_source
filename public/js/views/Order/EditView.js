@@ -147,7 +147,7 @@ define([
                 this.saveItem(function (err) {
                     if (!err) {
                         dataService.postData(url, data, function (err, response) {
-                            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+                            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
 
                             if (err) {
                                 App.render({
@@ -170,7 +170,7 @@ define([
                 populate.fetchWorkflow({
                     wId: 'Quotation'
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+                    var redirectUrl = self.forSales ? 'easyErp/salesOrder' : 'easyErp/Order';
 
                     if (workflow && workflow.error) {
                         return App.render({

@@ -9,7 +9,6 @@ define([
             collection.bind('showmore', contentView.showMoreContent, contentView);
             collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
             collection.bind('fetchFinished', contentView.setPagination, contentView);
-            collection.bind('remove', _.debounce(contentView.deleteItemsRender, 500), contentView);
             collection.bind('errorPagination', function (err) {
                 App.render({
                     type   : 'error',
