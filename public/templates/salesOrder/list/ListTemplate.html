@@ -1,19 +1,24 @@
 <% orderCollection.forEach(function(order, index){ %>
-<tr data-id="<%=order._id%>"
-<%if (order.workflow && order.workflow.status !== 'New') { %>
-class="notEditable"
-<% } %>>
-<td class="notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox <%if (order.proformaCounter || (order.workflow && order.workflow.name !== 'Not Invoiced')) { %>
-                notRemovable
-                <% } %>"/></td>
-<td class="centerCell"><%=startNumber + index + 1%></td>
-<td><%=order.name%></td>
-<td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></td>
-<td><%=(order.salesManager) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></td>
-<td class="total"><%=(order.paymentInfo && order.paymentInfo.total) ? currencySplitter(order.paymentInfo.total) : '0'%></td>
-<td id='<%=order._id%>'>
-    <span><%=order.workflow ? order.workflow.name: 'Undefinded'%></span>
-</td>
-<td><%=order.orderDate%></td>
-</tr>
+    <tr data-id="<%=order._id%>"
+        <% if (order.workflow && order.workflow.status !== 'New') { %>
+            class="notEditable"
+        <% } %>
+    >
+        <td class="notForm centerCell">
+            <input type="checkbox" value="<%=order._id%>" class="checkbox
+                <% if (order.proformaCounter || (order.workflow && order.workflow.name !== 'Not Invoiced')) { %>
+                    notRemovable
+                <% } %>"
+            />
+        </td>
+        <td class="centerCell"><%=startNumber + index + 1%></td>
+        <td><%=order.name%></td>
+        <td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></td>
+        <td><%=(order.salesManager) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></td>
+        <td class="total <%= currencyClass(order.currency._id) %>"><%= (order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00' %></td>
+        <td id='<%=order._id%>'>
+            <span><%=order.workflow ? order.workflow.name: 'undefined'%></span>
+        </td>
+        <td><%=order.orderDate%></td>
+    </tr>
 <% }) %>
