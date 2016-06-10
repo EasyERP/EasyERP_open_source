@@ -179,7 +179,7 @@ define([
                     id: id
                 }, {
                     success: function (model) {
-                        new EditViewQuotation({
+                        return new EditViewQuotation({
                             model         : model,
                             redirect      : true,
                             pId           : self.id,
@@ -207,7 +207,7 @@ define([
                             onlyView = true;
                         }
 
-                        new EditViewOrder({
+                        return new EditViewOrder({
                             model         : model,
                             redirect      : true,
                             onlyView      : onlyView,
@@ -241,7 +241,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditViewInvoice({
+                    return new EditViewInvoice({
                         model       : model,
                         notCreate   : true,
                         redirect    : true,
@@ -274,7 +274,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditViewProforma({
+                    return new EditViewProforma({
                         model       : model,
                         notCreate   : true,
                         redirect    : true,
@@ -303,7 +303,7 @@ define([
 
             App.startPreload();
 
-            new ReportView({_id: id});
+            return new ReportView({_id: id});
         },
 
         editRow: function (e) {
@@ -369,7 +369,7 @@ define([
                         }
                     };
 
-                    self.wCollection.getFirstPage({count: 100, page: 1, filter: filter});
+                    self.wCollection.getFirstPage({page: 1, filter: filter});
 
                 });
             } else {
@@ -449,7 +449,7 @@ define([
                         }
                     };
 
-                    self.wCollection.getFirstPage({count: 100, page: 1, filter: filter});
+                    self.wCollection.getFirstPage({page: 1, filter: filter});
 
                 });
             }
@@ -642,10 +642,10 @@ define([
             });
 
             $('.groupsAndUser tr').each(function () {
-                if ($(this).data('type') == 'targetUsers') {
+                if ($(this).data('type') === 'targetUsers') {
                     usersId.push($(this).data('id'));
                 }
-                if ($(this).data('type') == 'targetGroups') {
+                if ($(this).data('type') === 'targetGroups') {
                     groupsId.push($(this).data('id'));
                 }
 
@@ -653,6 +653,7 @@ define([
 
             if (validation) {
                 this.formModel.save(data, {
+                    patch  : true,
                     headers: {
                         mid: mid
                     },
@@ -803,7 +804,6 @@ define([
                 viewType : 'list',
                 filter   : filter,
                 projectId: _id,
-                count    : 100,
                 url      : CONSTANTS.URLS.PROJECTS + _id + '/info'
             });
 
@@ -817,7 +817,6 @@ define([
             var template = _.template(DetailsTemplate);
             var container = this.$el.find('#forInfo');
             var self = this;
-            var _id = window.location.hash.split('form/')[1];
 
             var projectTeam = this.jobsCollection.toJSON();
             var firstJob = projectTeam[0];
@@ -854,9 +853,9 @@ define([
             };
 
             this.wCollection = new WTrackCollection({
+                showMore: false,
                 reset   : true,
                 viewType: 'list',
-                count   : 100,
                 url     : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
             });
 
@@ -880,11 +879,17 @@ define([
                 }
 
                 this.wTrackView = new WTrackView({
-                    model             : self.wCollection,
+                    collection        : self.wCollection,
                     defaultItemsNumber: defaultItemsNumber,
                     filter            : filter,
                     startNumber       : startNumber,
                     project           : self.formModel
+                });
+
+                self.wCollection.trigger('fetchFinished', {
+                    totalRecords: self.wCollection.totalRecords,
+                    currentPage : self.wCollection.currentPage,
+                    pageSize    : self.wCollection.pageSize
                 });
             }
 
@@ -994,14 +999,14 @@ define([
 
         createView: function () {
             var gridStart = $('#grid-start').text();
-            var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
+            var startNumber = gridStart || 1;
 
             if (this.wTrackView) {
                 this.wTrackView.undelegateEvents();
             }
 
             this.wTrackView = new WTrackView({
-                model      : this.wCollection,
+                collection : this.wCollection,
                 startNumber: startNumber
             }).render();
         },
@@ -1012,8 +1017,8 @@ define([
             var callback;
 
             self.iCollection = new InvoiceCollection({
+                showMore   : false,
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'salesInvoice',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
@@ -1021,12 +1026,18 @@ define([
 
             function createView() {
 
-                new InvoiceView({
-                    model       : self.iCollection,
+                var invoiceView = new InvoiceView({
+                    collection  : self.iCollection,
                     eventChannel: self.eventChannel
                 });
 
                 self.renderTabCounter();
+
+                self.iCollection.trigger('fetchFinished', {
+                    totalRecords: self.iCollection.totalRecords,
+                    currentPage : self.iCollection.currentPage,
+                    pageSize    : self.iCollection.pageSize
+                });
 
                 if (typeof(cb) === 'function') {
                     callback();
@@ -1046,8 +1057,8 @@ define([
             var callback;
 
             self.pCollection = new ProformaCollection({
+                showMore   : false,
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'proforma',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
@@ -1058,7 +1069,7 @@ define([
 
                 proformaView = new ProformaView({
                     el          : '#proforma',
-                    model       : self.pCollection,
+                    collection  : self.pCollection,
                     eventChannel: self.eventChannel
                 });
 
@@ -1067,6 +1078,12 @@ define([
                 }
 
                 self.renderTabCounter();
+
+                self.pCollection.trigger('fetchFinished', {
+                    totalRecords: self.pCollection.totalRecords,
+                    currentPage : self.pCollection.currentPage,
+                    pageSize    : self.pCollection.pageSize
+                });
 
                 if (typeof(cb) === 'function') {
                     callback();
@@ -1086,8 +1103,8 @@ define([
             var callback;
 
             self.payCollection = new PaymentCollection({
+                showMore   : false,
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'customerPayments',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/payments'
@@ -1096,12 +1113,18 @@ define([
 
             function createPayment() {
                 var data = {
-                    model       : self.payCollection,
+                    collection  : self.payCollection,
                     activate    : activate,
                     eventChannel: self.eventChannel
                 };
 
-                new PaymentView(data);
+                var payView = new PaymentView(data);
+
+                self.payCollection.trigger('fetchFinished', {
+                    totalRecords: self.payCollection.totalRecords,
+                    currentPage : self.payCollection.currentPage,
+                    pageSize    : self.payCollection.pageSize
+                });
 
                 if (typeof(cb) === 'function') {
                     callback();
@@ -1120,8 +1143,9 @@ define([
             var self = this;
 
             self.pMCollection = new ProjectMembersCol({
-                reset  : true,
-                project: self.formModel.id
+                showMore: false,
+                reset   : true,
+                project : self.formModel.id
             });
 
             function createPM() {
@@ -1154,8 +1178,8 @@ define([
             };
 
             this.qCollection = new QuotationCollection({
+                showMore   : false,
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'salesQuotation',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/quotations'
@@ -1181,6 +1205,12 @@ define([
 
                 self.renderTabCounter();
 
+                self.qCollection.trigger('fetchFinished', {
+                    totalRecords: self.qCollection.totalRecords,
+                    currentPage : self.qCollection.currentPage,
+                    pageSize    : self.qCollection.pageSize
+                });
+
             }
 
             this.qCollection.unbind();
@@ -1204,19 +1234,21 @@ define([
             };
 
             this.ordersCollection = new QuotationCollection({
+                showMore   : false,
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'salesOrder',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/orders'
             });
 
             function createView() {
+                var orderView;
+
                 if (cb) {
                     cb();
                 }
 
-                new OredrView({
+                orderView = new OredrView({
                     collection    : self.ordersCollection,
                     projectId     : _id,
                     customerId    : self.formModel.toJSON().customer._id,
@@ -1226,6 +1258,12 @@ define([
                 });
 
                 self.renderTabCounter();
+
+                self.ordersCollection.trigger('fetchFinished', {
+                    totalRecords: self.ordersCollection.totalRecords,
+                    currentPage : self.ordersCollection.currentPage,
+                    pageSize    : self.ordersCollection.pageSize
+                });
 
             }
 
@@ -1381,27 +1419,6 @@ define([
 
         },
 
-        activeTab: function () {
-            var tabs;
-            var activeTab;
-            var dialogHolder;
-            var tabId;
-            var dialogsDiv = $('#dialogContainer').is(':empty');
-
-            /*if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
-             tabId = App.projectInfo.currentTab;
-             tabs = $('.chart-tabs');
-             activeTab = tabs.find('.active');
-
-             activeTab.removeClass('active');
-             tabs.find('#' + tabId + 'Tab').addClass('active');
-
-             dialogHolder = $('.dialog-tabs-items');
-             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-             dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
-             }*/
-        },
-
         newPayment: function () {
             var self = this;
             var paralellTasks;
@@ -1473,7 +1490,6 @@ define([
 
             async.parallel(paralellTasks, function () {
                 self.getProforma(null, quotationId);
-                self.activeTab();
                 self.renderTabCounter();
                 if (!quotationId) {
                     App.stopPreload();
@@ -1487,7 +1503,7 @@ define([
                 data: this.projectValues
             };
 
-            new ProjectChartsView(data);
+            return new ProjectChartsView(data);
         },
 
         render: function () {
@@ -1599,7 +1615,7 @@ define([
             async.parallel(paralellTasks, function (err, result) {
                 App.stopPreload();
                 self.renderProformRevenue();
-                self.activeTab();
+                $('#top-bar-createBtn').remove();
             });
 
             $('#top-bar-deleteBtn').hide();

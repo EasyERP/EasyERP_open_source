@@ -22,7 +22,7 @@ define([
 
         initialize: function (options) {
             this.remove();
-            this.collection = options.model;
+            this.collection = options.collection;
             this.filter = options.filter ? options.filter : {};
 
             this.eventChannel = options.eventChannel;
@@ -52,7 +52,7 @@ define([
 
             e.preventDefault();
 
-            new EditView({model: model});
+            return new EditView({model: model});
         },
 
         deleteItems: function (e) {
@@ -164,8 +164,8 @@ define([
             var pagenation;
 
             tBody.empty();
-            $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+
+            this.hideDeleteBtnAndUnSelectCheckAll();
 
             if (newModels.length > 0) {
                 itemView = new this.ListItemView({

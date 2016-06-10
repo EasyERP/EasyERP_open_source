@@ -300,6 +300,8 @@ define([
             var dayCount = 0;
             var satWork = false;
             var sunWork = false;
+            var tr;
+            var value;
 
             if (row.find('.generateType').text() === 'Hours') {
                 if (isNaN(hoursValue)) {
@@ -312,8 +314,8 @@ define([
             }
 
             for (i = 7; i >= 1; i--) {
-                var tr = this.$el.find('[data-id="' + number + '"]');
-                var value = parseInt(tr.find('[data-content="' + i + '"]').text(), 10);
+                tr = this.$el.find('[data-id="' + number + '"]');
+                value = parseInt(tr.find('[data-content="' + i + '"]').text(), 10);
 
                 if (i === 7 && value) {
                     sunWork = true;
@@ -480,9 +482,7 @@ define([
 
         generateItems: function (e) {
             var self = this;
-            var once = _.once(generateOnce);
-
-            once();
+            var once;
 
             function generateOnce() {
                 var errors = self.$el.find('.errorContent');
@@ -536,7 +536,7 @@ define([
                             }
 
                             if (self.wTrackCollection) {
-                                self.wTrackCollection.getFirstPage({count: 50, page: 1, filter: filter});
+                                self.wTrackCollection.getFirstPage({page: 1, filter: filter});
                             }
 
                             if (self.quotationDialog) {
@@ -557,7 +557,8 @@ define([
                             dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass('active');
 
                         },
-                        error  : function () {
+
+                        error: function () {
                             App.render({
                                 type   : 'error',
                                 message: 'Some error'
@@ -571,6 +572,9 @@ define([
                     });
                 }
             }
+
+            once = _.once(generateOnce);
+            once();
         },
 
         hideDialog: function () {

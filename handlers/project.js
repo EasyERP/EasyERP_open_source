@@ -11,6 +11,7 @@ module.exports = function (models, event) {
     var pathMod = require('path');
 
     var ProjectSchema = mongoose.Schemas.Project;
+    var ProjectTypeSchema = mongoose.Schemas.projectType;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var EmployeeSchema = mongoose.Schemas.Employee;
@@ -802,9 +803,9 @@ module.exports = function (models, event) {
     };
 
     this.getProjectType = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var ProjectType = models.get(req.session.lastDb, 'proectType', ProjectTypeSchema);
 
-        Project.find({}, function (err, projectType) {
+        ProjectType.find({}, function (err, projectType) {
             if (err) {
                 return next(err);
             }
