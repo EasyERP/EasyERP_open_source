@@ -19,6 +19,7 @@ module.exports = function (models, event) {
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.updateWorkflow);
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelectedFields);
+
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
     return router;

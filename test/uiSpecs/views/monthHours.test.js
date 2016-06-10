@@ -6,7 +6,7 @@ define([
     'views/monthHours/list/ListView',
     'views/monthHours/TopBarView',
     'views/monthHours/CreateView',
-    'views/monthHours/EditView',
+    /* 'views/monthHours/EditView',*/
     'jQuery',
     'chai',
     'chai-jquery',
@@ -18,7 +18,7 @@ define([
              ListView,
              TopBarView,
              CreateView,
-             EditView,
+           /*  EditView,*/
              $,
              chai,
              chaiJquery,

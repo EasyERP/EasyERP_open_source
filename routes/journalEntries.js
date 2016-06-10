@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var journalEntryHandler = require('../handlers/journalEntry');
+var JournalEntryHandler = require('../handlers/journalEntry');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
 module.exports = function (models, event) {
-    var _journalEntryHandler = new journalEntryHandler(models, event);
+    var _journalEntryHandler = new JournalEntryHandler(models, event);
     var moduleId = MODULES.JOURNALENTRY;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
@@ -28,6 +28,7 @@ module.exports = function (models, event) {
     router.get('/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/', _journalEntryHandler.getForView);
+
     router.post('/', _journalEntryHandler.create);
     router.post('/reconcile', _journalEntryHandler.reconcile);
     router.post('/closeMonth', _journalEntryHandler.closeMonth);

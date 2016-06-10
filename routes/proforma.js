@@ -16,9 +16,11 @@ module.exports = function (models, event) {
     router.use(accessStackMiddleware);
 
     router.get('/', iHandler.getForView);
-    router.post('/create', handler.create);
-    router.get('/totalCollectionLength', iHandler.totalCollectionLength);
     router.get('/stats/project', iHandler.getStatsForProject);
 
+    router.post('/create', handler.create);
+
+    router.delete('/', iHandler.bulkRemove);
+    
     return router;
 };

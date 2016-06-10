@@ -402,12 +402,7 @@ define([
 
             return false;
         },
-
-        hideGenerateCopy: function () {
-            $('#top-bar-generateBtn').hide();
-            $('#top-bar-copyBtn').hide();
-        },
-
+        
         copyRow: function (e) {
 
             var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');
@@ -427,7 +422,7 @@ define([
             this.changed = true;
 
             this.stopDefaultEvents(e);
-            this.hideGenerateCopy();
+            this.hideDeleteBtnAndUnSelectCheckAll(e);
 
             for (i = length - 1; i >= 0; i--) {
                 selectedWtrack = checkedRows[i];
@@ -529,7 +524,6 @@ define([
                 }
 
                 self.setAllTotalVals();
-
             });
 
             setTimeout(function () {

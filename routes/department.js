@@ -12,7 +12,6 @@ module.exports = function (models) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
-    // router.get('/', authStackMiddleware, handler.get);
     router.get('/getForDD', authStackMiddleware, handler.getForDD);
     /* router.get('/exportToXlsx',authStackMiddleware, accessStackMiddleware, handler.exportToXlsx);
      router.get('/exportToCsv',authStackMiddleware, accessStackMiddleware, handler.exportToCsv); */
@@ -20,6 +19,7 @@ module.exports = function (models) {
 
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.update);
+    
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
     return router;

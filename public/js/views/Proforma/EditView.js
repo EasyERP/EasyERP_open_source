@@ -15,8 +15,7 @@ define([
         'populate',
         'constants',
         'helpers'
-    ],
-    function (Backbone, $, _, EditTemplate, AssigneesView, attachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    ], function (Backbone, $, _, EditTemplate, AssigneesView, attachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({

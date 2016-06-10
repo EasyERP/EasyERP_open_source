@@ -34,7 +34,6 @@
             this.EditView = EditView;
             this.CreateView = CreateView;
 
-
             _.bind(this.collection.showMoreAlphabet, this.collection);
             this.allAlphabeticArray = common.buildAllAphabeticArray();
 
@@ -58,7 +57,7 @@
             common.getImages(ids, '/customers/getCustomersImages');
         },
 
-        alpabeticalRender: function (e) {
+        /*alpabeticalRender: function (e) {
             var selectedLetter;
             var $target;
 
@@ -101,7 +100,7 @@
 
             this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
             this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
-        },
+        },*/
 
         gotoForm: function (e) {
             var id = $(e.target).closest('a').data('id');
@@ -118,7 +117,7 @@
             window.location.hash = '#easyErp/Companies/form/' + id;
         },
 
-        showFilteredPage: function (filter, context) {
+        /*showFilteredPage: function (filter, context) {
             $('#top-bar-deleteBtn').hide();
             $('#check_all').prop('checked', false);
 
@@ -134,9 +133,14 @@
             }
 
             this.changeLocationHash(null, this.collection.pageSize, filter);
-            this.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType, contentType: this.contentType});
+            this.collection.getFirstPage({
+                filter     : filter,
+                showMore   : true,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
             // context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
-        },
+        },*/
 
         render: function () {
             var self = this;
@@ -216,50 +220,6 @@
             $created.before($showMore);
             this.asyncLoadImgs(newModels);
         },
-
-        /* createItem: function () {
-            new CreateView();
-        },
-
-        editItem: function () {
-            new EditView({collection: this.collection});
-        },*/
-
-        /* deleteItems: function () {
-            var mid = this.mId;
-            var model;
-            var self = this;
-
-            model = this.collection.get(this.$el.attr('id'));
-            this.$el.fadeToggle(200, function () {
-                model.destroy({
-                    headers: {
-                        mid: mid
-                    }
-                });
-                $(this).remove();
-            });
-            common.buildAphabeticArray(this.collection, function (arr) {
-                var currentLetter;
-
-                $('#startLetter').remove();
-                self.alphabeticArray = arr;
-                $('#searchContainer').after(_.template(AphabeticTemplate, {
-                    alphabeticArray   : self.alphabeticArray,
-                    selectedLetter    : (self.selectedLetter === '' ? 'All' : self.selectedLetter),
-                    allAlphabeticArray: self.allAlphabeticArray
-                }));
-                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : null;
-                if (currentLetter) {
-                    $('#startLetter a').each(function () {
-                        var target = $(this);
-                        if (target.text() === currentLetter) {
-                            target.addClass('current');
-                        }
-                    });
-                }
-            });
-        },*/
 
         exportToCsv: function () {
             var tempExportToCsvUrl = '';

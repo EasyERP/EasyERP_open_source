@@ -89,7 +89,7 @@ var Module = function (models, event) {
         var email = body.email ? validator.escape(body.email) : '';
         var message = body.message ? validator.escape(body.message) : '';
         var utmMedium = body.utm_medium ? validator.escape(body.utm_medium) : '';
-        var utmSource = body.utm_source ? validator.escape(body.utm_source) : '';
+        var utmSource = body.utm_source ? validator.escape(body.utm_source) : 'Web Organic';
         var utmTerm = body.utm_term ? validator.escape(body.utm_term) : '';
         var utmCampaign = body.utm_campaign ? validator.escape(body.utm_campaign) : '';
         var isEmailValid = EMAIL_REGEXP.test(email);
@@ -247,6 +247,32 @@ var Module = function (models, event) {
             }
 
             res.status(200).send({success: 'Opportunities removed'});
+        });
+    };
+
+    this.bulkRemove = function (req, res, next) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        async.each(ids, function (id, cb) {
+            Opportunity.findByIdAndRemove(id, function (err, result) {
+                if (err) {
+                    return err(err);
+                }
+
+                if (result && result.isOpportunitie) {
+                    event.emit('updateSequence', Opportunity, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
+                }
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
         });
     };
 
@@ -540,67 +566,6 @@ var Module = function (models, event) {
             });
 
         }
-
-    };
-
-    this.totalCollectionLength = function (req, res, next) {
-        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-        var data = req.query;
-        var optionsObject = {};
-        var contentSearcher;
-        var accessRollSearcher;
-        var waterfallTasks;
-        var query;
-        var resp = {};
-        var contentType = req.query.contentType;
-
-        optionsObject.$and = [];
-
-        resp.showMore = false;
-
-        switch (contentType) {
-            case ('Opportunities'):
-                optionsObject.$and.push({'isOpportunitie': true});
-                break;
-            case ('Leads'):
-                optionsObject.$and.push({'isOpportunitie': false});
-
-                if (data.filter && data.filter.isConverted) {
-                    optionsObject.$and.push({'isOpportunitie': true});
-                    optionsObject.$and.push({'isConverted': true});
-                }
-                break;
-        }
-
-        accessRollSearcher = function (cb) {
-            accessRoll(req, Opportunity, cb);
-        };
-
-        contentSearcher = function (opportunitiesIds, waterfallCallback) {
-            var queryObject = {};
-            queryObject.$and = [];
-            queryObject.$and.push({_id: {$in: opportunitiesIds}});
-
-            if (optionsObject.$and.length) {
-                queryObject.$and.push(optionsObject);
-            }
-
-            query = Opportunity.count(queryObject);
-
-            query.exec(waterfallCallback);
-        };
-
-        waterfallTasks = [accessRollSearcher, contentSearcher];
-
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            resp.count = result;
-
-            res.status(200).send(resp);
-        });
 
     };
 

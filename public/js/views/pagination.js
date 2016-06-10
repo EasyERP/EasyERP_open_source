@@ -22,6 +22,9 @@ define([
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
             $('#top-bar-deleteBtn').hide();
+            $('#top-bar-generateBtn').hide();
+            $('#top-bar-copyBtn').hide();
+            
             this.$el.find('#checkAll').prop('checked', false);
         },
 
@@ -37,11 +40,10 @@ define([
 
             if (e) {
                 e.stopPropagation();
+                this.checked(e);
             }
 
             $checkboxes.prop('checked', check);
-
-            this.checked(e);
         },
 
         onDisabledClick: function () {
@@ -59,6 +61,10 @@ define([
             var checkAllBool = ($checkBoxes.length === this.collection.length);
             var $deleteButton = $topBar.find('#top-bar-deleteBtn');
             var $createButton = $topBar.find('#top-bar-createBtn');
+
+            if (e) {
+                e.stopPropagation();
+            }
 
             if ($currentChecked.attr('id') !== 'checkAll') {
                 if (checkAllBool) {
@@ -596,12 +602,13 @@ define([
             var self = this;
             var $thisEl = this.$el;
             var $table = $thisEl.find('#listTable');
-            var mid = CONSTANTS.MID[this.contentType];
             var collection = this.collection;
             var url = collection.url;
             var $checkedInputs;
             var ids = [];
 
+
+            // todo add cancelChanges ----- & call this.cancelChanges method
             $checkedInputs = $table.find('input:checked');
 
             $.each($checkedInputs, function () {
@@ -612,7 +619,7 @@ define([
 
             ids = _.compact(ids);
 
-            dataService.deleteData(url, {ids: ids}, function (err, response) {
+            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err, response) {
                 if (err) {
                     return App.render({
                         type   : 'error',
@@ -622,6 +629,72 @@ define([
 
                 self.getPage();
             });
+        },
+
+        cancelChanges: function () {
+            var $cachedEl = this.$cachedContentHolder;
+
+            if ($cachedEl.length) {
+                this.$el.html($cachedEl);
+            }
+           /* var self = this;
+            var edited = this.edited;
+            var collection = this.collection || new Backbone.Collection();
+            var editedCollectin = this.editCollection;
+            var copiedCreated;
+            var dataId;
+            var enable;
+
+            async.each(edited, function (el, cb) {
+                var tr = $(el).closest('tr');
+                var rowNumber = tr.find('[data-content="number"]').text();
+                var id = tr.attr('data-id');
+                var template = _.template(cancelEdit);
+                var model;
+
+                if (!id) {
+                    return cb('Empty id');
+                } else if (id.length < 24) {
+                    tr.remove();
+                    model = self.changedModels;
+
+                    if (model) {
+                        delete model[id];
+                    }
+
+                    return cb();
+                }
+
+                model = collection.get(id);
+                model = model.toJSON();
+                model.startNumber = rowNumber;
+                enable = model && model.workflow.name !== 'Closed' ? true : false;
+                tr.replaceWith(template({model: model, enable: enable}));
+                cb();
+            }, function (err) {
+                if (!err) {
+                    /!*self.editCollection = new EditCollection(collection.toJSON());*!/
+                    self.bindingEventsToEditedCollection(self);
+                    self.hideSaveCancelBtns();
+                    self.copyEl.hide();
+                }
+            });
+
+            if (this.createdCopied) {
+                copiedCreated = this.$el.find('.false');
+                // this.hideOvertime();
+                copiedCreated.each(function () {
+                    dataId = $(this).attr('data-id');
+                    self.editCollection.remove(dataId);
+                    delete self.changedModels[dataId];
+                    $(this).remove();
+                });
+
+                this.createdCopied = false;
+            }
+
+            self.changedModels = {};
+            self.responseObj['#jobs'] = [];*/
         },
 
         showSaveCancelBtns: function () {

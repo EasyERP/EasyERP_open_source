@@ -8,24 +8,6 @@ var Module = function (models, event) {
     var moment = require('../public/js/libs/moment/moment');
     var pageHelper = require('../helpers/pageHelper');
 
-    this.totalCollectionLength = function (req, res, next) {
-        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
-        var query;
-
-        query = Holiday.find();
-        query.exec(function (err, result) {
-            if (next) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send({count: result.length});
-            } else if (typeof res === 'function') {
-                res(null, result.length);
-            }
-        });
-    };
-
     function getHolidayFilter(req, res, next) {
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var options = req.query;
@@ -227,6 +209,31 @@ var Module = function (models, event) {
             event.emit('recollectVacationDash');
 
             res.status(200).send({success: holiday});
+        });
+    };
+
+    this.bulkRemove = function (req, res, next) {
+        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        async.each(ids, function (id, cb) {
+            Holiday.findByIdAndRemove(id, function (err, holiday) {
+                if (err) {
+                    return err(err);
+                }
+
+                event.emit('setReconcileTimeCard', {req: req, week: holiday.week, year: holiday.year});
+                event.emit('recollectVacationDash');
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
         });
     };
 

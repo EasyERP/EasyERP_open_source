@@ -134,73 +134,6 @@ var Module = function (models) {
         });
     };
 
-    this.getTotalCount = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var data = req.query;
-        var optionsObject = {};
-        var filter = data.filter || {};
-        var waterfallTasks;
-        var accessRollSearcher;
-        var contentSearcher;
-        var query = {};
-        var response = {};
-        var contentType = data.contentType;
-
-        response.showMore = false;
-
-        if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject.$or = caseFilter(filter);
-            } else {
-                optionsObject.$and = caseFilter(filter);
-            }
-        }
-
-        accessRollSearcher = function (cb) {
-            accessRoll(req, Model, cb);
-        };
-
-        contentSearcher = function (ids, cb) {
-            var queryObject = {};
-
-            queryObject.$and = [];
-
-            if (optionsObject.$and && optionsObject.$and.length) {
-                queryObject.$and.push(optionsObject);
-            }
-
-            queryObject.$and.push({_id: {$in: ids}});
-
-            if (contentType === 'Persons') {
-                queryObject.$and.push({type: 'Person'});
-            } else if (contentType === 'Companies') {
-                queryObject.$and.push({type: 'Company'});
-            }
-
-            query = Model.find(queryObject);
-
-            query.count(function (err, _res) {
-                if (err) {
-                    return cb(err);
-                }
-
-                cb(null, _res);
-            });
-
-        };
-        waterfallTasks = [accessRollSearcher, contentSearcher];
-
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            response.count = result;
-
-            res.status(200).send(response);
-        });
-    };
-
     this.getFilterValues = function (req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
@@ -592,7 +525,7 @@ var Module = function (models) {
          * @instance
          */
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var id = req.query.id;
+        var id = req.query.id || req.params.id;
 
         Model
             .findById(id, {
@@ -607,7 +540,9 @@ var Module = function (models) {
                 jobPosition   : 1,
                 dateBirth     : 1,
                 skype         : 1,
-                company       : 1
+                company       : 1,
+                createdBy     : 1,
+                editedBy      : 1
             })
             .populate('company', '_id name')
             .populate('salesPurchases.salesPerson', '_id name fullName')
@@ -616,6 +551,8 @@ var Module = function (models) {
             .populate('groups.users', '_id login')
             .populate('groups.group', '_id name')
             .populate('groups.owner', '_id login')
+            .populate('createdBy.user', '_id login')
+            .populate('editedBy.user', '_id login')
             .exec(function (err, customer) {
                 if (err) {
                     return next(err);
@@ -800,6 +737,10 @@ var Module = function (models) {
 
     }
 
+    this.getById = function (req, res, next) {
+        getById(req, res, next);
+    };
+
     this.getByViewType = function (req, res, next) {
         var query = req.query;
         var viewType = query.viewType;
@@ -815,6 +756,9 @@ var Module = function (models) {
                 getById(req, res, next);
                 break;
             case 'list':
+                getFilterCustomers(req, res, next);
+                break;
+            case 'thumbnails':
                 getFilterCustomers(req, res, next);
                 break;
             default:
@@ -1007,6 +951,20 @@ var Module = function (models) {
             }
 
             res.status(200).send({success: 'customer removed'});
+        });
+    };
+
+    this.bulkRemove = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        Model.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
         });
     };
 

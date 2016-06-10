@@ -15,16 +15,17 @@ module.exports = function (models) {
     router.use(accessStackMiddleware);
 
     router.get('/', handler.getForView);
-    // router.get('/', handler.getAll);
     router.get('/getProductsAlphabet', handler.getProductsAlphabet);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getProductsImages', handler.getProductsImages);
     // router.get('/exportToXlsx',handler.exportToXlsx);
     // router.get('/exportToCsv',handler.exportToCsv);
+   
     router.post('/', handler.create);
     /* router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*/// FixMe
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
+   
     router.delete('/:_id', handler.removeProduct);
 
     return router;
