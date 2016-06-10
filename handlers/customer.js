@@ -954,6 +954,20 @@ var Module = function (models) {
         });
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        Model.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
+        });
+    };
+
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
