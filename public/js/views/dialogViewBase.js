@@ -13,7 +13,8 @@
             keydown                  : 'keyDownHandler',
             click                    : 'hideNewSelect',
             'click .dialog-tabs a'   : 'changeTab',
-            'click .current-selected': 'showNewSelect'
+            'click .current-selected': 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)' : 'chooseOption',
         },
 
         showNewSelect: function (e) {

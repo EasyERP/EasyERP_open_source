@@ -14,10 +14,11 @@ define([
         FilterView: FilterView,
 
         events: {
-            'click .oe_sortable'   : 'goSort',
-            'click #checkAll'      : 'checkAll',
-            'click td.notRemovable': 'onDisabledClick',
-            click                  : 'hide'
+            'click .oe_sortable'       : 'goSort',
+            'click #checkAll'          : 'checkAll',
+            'click td.notRemovable'    : 'onDisabledClick',
+            'click .letter:not(.empty)': 'alpabeticalRender',
+            click                      : 'hide'
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {

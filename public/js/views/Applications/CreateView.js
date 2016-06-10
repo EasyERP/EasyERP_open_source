@@ -32,8 +32,8 @@ define([
            /* 'click .current-selected'                                         : 'showNewSelect',
             click                                                             : 'hideNewSelect',
             keydown                                                           : 'keydownHandler',*/
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption'
+            /* 'click .dialog-tabs a'                                            : 'changeTab',
+            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption'*/
            /* 'click .newSelectList li.miniStylePagination'                     : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'*/

@@ -105,7 +105,7 @@ define([
             'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
             'click .withEndContract .newSelectList li'                       : 'endContract',
            /* 'click .current-selected'                                        : 'showNewSelect',*/
-            'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
+            /* 'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',*/
             /* click                                                            : 'hideNewSelect',*/
             'click td.editable'                                              : 'editJob',
             'click #update'                                                  : 'addNewRow',

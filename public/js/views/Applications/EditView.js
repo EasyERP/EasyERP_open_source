@@ -80,10 +80,10 @@
            /* keydown                                            : 'keydownHandler',*/
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
-            'click .current-selected'                          : 'showNewSelect',
+            /*'click .current-selected'                          : 'showNewSelect',*/
            /* click                                              : 'hideNewSelect',*/
            /* 'click .dialog-tabs a'                             : 'changeTab',*/
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            /* 'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',*/
             'click .hireEmployee'                              : 'isEmployee',
             'click .refuseEmployee'                            : 'refuseEmployee',
             'click td.editable'                                : 'editJob',

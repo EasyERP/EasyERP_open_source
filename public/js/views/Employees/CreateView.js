@@ -70,7 +70,6 @@ define([
            /* keydown                                            : 'keydownHandler',*/
            /* 'click .dialog-tabs a'                             : 'changeTab',*/
            /* 'click .current-selected'                          : 'showNewSelect',*/
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
            /* click                                              : 'hideNewSelect',*/
             'click td.editable'                                : 'editJob'
         },

@@ -13009,7 +13009,7 @@ define([
             }
         ]
     };
-    var fakeJobPositionId = {
+        var fakeJobPositionId = {
         _id                     : "55b92acf21e4b7c40f000017",
         department: {
             _id           : "55b92ace21e4b7c40f000016",
@@ -14057,7 +14057,7 @@ define([
                     $statusBtn.click();
                     expect($needTd.find('ul')).to.exist;
                     $statusBtn.click();
-                    expect($needTd.find('ul')).to.not.exist;
+                    expect($needTd.find('ul')).to.be.hidden;
 
                     $statusBtn.click();
                     $selectedItem = $needTd.find('#528ce71ef3f67bc40b00001d');
