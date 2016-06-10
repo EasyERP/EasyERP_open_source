@@ -19,17 +19,17 @@ define([
 
         events: {
             'click #tabList a'                                 : 'switchTab',
-            'change #workflowNames'                            : 'changeWorkflows', // TODO not used method, check
-            'keydown'                                          : 'keydownHandler',
+            keydown                                            : 'keydownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .current-selected'                          : 'showNewSelect',
-            'click'                                            : 'hideNewSelect'
+            click                                              : 'hideNewSelect',
+             //'change #workflowNames'                            : 'changeWorkflows', // TODO not used method, check
         },
 
         initialize: function (options) {
             options = options || {};
-            
+
             _.bindAll(this, 'saveItem');
             this.responseObj = {};
             this.elementId = options.elementId || null;
@@ -47,7 +47,7 @@ define([
 
         showNewSelect: function (e) {
             var $target = $(e.target);
-            
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
@@ -102,21 +102,22 @@ define([
             dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
         },
 
-        getWorkflowValue: function (value) {
+         /* getWorkflowValue: function (value) {
             var workflows = [];
+            var i;
 
-            for (var i = 0; i < value.length; i++) {
+            for (i = 0; i < value.length; i++) {
                 workflows.push({name: value[i].name, status: value[i].status});
             }
             return workflows;
-        },
+         },
 
-        changeWorkflows: function () {
+         changeWorkflows: function () {
             var name = this.$('#workflowNames option:selected').val();
             var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
 
             $('#selectWorkflow').html(_.template(selectTemplate, {workflows: this.getWorkflowValue(value)}));
-        },
+         },*/
 
         selectCustomer: function (id) {
             dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
@@ -124,26 +125,26 @@ define([
             }, function (response, context) {
                 var customer = response;
 
-                /* if (customer.type === 'Person') {
-                    context.$el.find('#first').val(customer.name.first);
-                    context.$el.find('#last').val(customer.name.last);
-
-                    context.$el.find('#company').val('');
-                } else {
-                    context.$el.find('#company').val(customer.name.first);
-
-                    context.$el.find('#first').val('');
-                    context.$el.find('#last').val('');
-
-                }*/
-                // context.$el.find('#email').val(customer.email);
-                // context.$el.find('#phone').val(customer.phones.phone);
-                // context.$el.find('#mobile').val(customer.phones.mobile);
                 context.$el.find('#street').val(customer.address.street);
                 context.$el.find('#city').val(customer.address.city);
                 context.$el.find('#state').val(customer.address.state);
                 context.$el.find('#zip').val(customer.address.zip);
                 context.$el.find('#country').val(customer.address.country);
+
+                /* context.$el.find('#email').val(customer.email);
+                 context.$el.find('#phone').val(customer.phones.phone);
+                 context.$el.find('#mobile').val(customer.phones.mobile);
+                 if (customer.type === 'Person') {
+                 context.$el.find('#first').val(customer.name.first);
+                 context.$el.find('#last').val(customer.name.last);
+
+                 context.$el.find('#company').val('');
+                 } else {
+                 context.$el.find('#company').val(customer.name.first);
+
+                 context.$el.find('#first').val('');
+                 context.$el.find('#last').val('');
+                 }*/
             }, this);
 
         },
@@ -165,17 +166,13 @@ define([
         },
 
         saveItem: function () {
-            var mid = 39;
+            var mid = 25;
             var opportunityModel = new OpportunityModel();
             var name = $.trim(this.$el.find('#name').val());
             var expectedRevenueValue = $.trim(this.$el.find('#expectedRevenueValue').val()) || '0';
-            // var expectedRevenueProgress = $.trim(this.$el.find('#expectedRevenueProgress').val());
             var expectedRevenue;
             var customerId = this.$('#customerDd').data('id');
-            // var email = $.trim(this.$el.find('#email').val());
             var salesPersonId = this.$('#salesPersonDd').data('id');
-            // var salesTeamId = this.$('#salesTeamDd').data('id');
-            // var nextAct = $.trim(this.$el.find('#nextActionDate').val());
             var nextActionDesc = $.trim(this.$el.find('#nextActionDescription').val());
             var nextAction = {
                 // date: nextAct,
@@ -183,32 +180,37 @@ define([
             };
             var expectedClosing = $.trim(this.$el.find('#expectedClosing').val());
             var priority = $.trim(this.$el.find('#priorityDd').text());
-            // var company = $.trim(this.$el.find('#company').val());
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
             var address = {};
-            // var first = $.trim(this.$el.find('#first').val());
-            // var last = $.trim(this.$el.find('#last').val());
-            /* var contactName = {
-                first: first,
-                last : last
-            };*/
-            // var func = $.trim($('#func').val());
-            // var phone = $.trim($('#phone').val());
-            // var mobile = $.trim($('#mobile').val());
-            // var fax = $.trim($('#fax').val());
-            /* var phones = {
-                phone : phone,
-                mobile: mobile,
-                fax   : fax
-            };*/
             var workflow = this.$el.find('#workflowDd').data('id');
-            // var active = ($('#active').is(':checked'));
-            // var optout = ($('#optout').is(':checked'));
-            // var reffered = $.trim($('#reffered').val());
             var self = this;
             var usersId = [];
             var groupsId = [];
             var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+
+            /* var expectedRevenueProgress = $.trim(this.$el.find('#expectedRevenueProgress').val());
+             var email = $.trim(this.$el.find('#email').val());
+             var salesTeamId = this.$('#salesTeamDd').data('id');
+             var nextAct = $.trim(this.$el.find('#nextActionDate').val());
+             var company = $.trim(this.$el.find('#company').val());
+             var first = $.trim(this.$el.find('#first').val());
+             var last = $.trim(this.$el.find('#last').val());
+             var func = $.trim($('#func').val());
+             var phone = $.trim($('#phone').val());
+             var mobile = $.trim($('#mobile').val());
+             var fax = $.trim($('#fax').val());
+             var active = ($('#active').is(':checked'));
+             var optout = ($('#optout').is(':checked'));
+             var reffered = $.trim($('#reffered').val());
+             var phones = {
+             phone : phone,
+             mobile: mobile,
+             fax   : fax
+             };
+             var contactName = {
+             first: first,
+             last : last
+             };*/
 
             $('dd').find('.address').each(function () {
                 var el = $(this);
@@ -239,28 +241,28 @@ define([
                     name           : name,
                     expectedRevenue: expectedRevenue,
                     customer       : customerId || null,
-                    // email          : email,
                     salesPerson    : salesPersonId || null,
-                    // salesTeam      : salesTeamId,
                     nextAction     : nextAction,
                     expectedClosing: expectedClosing,
                     priority       : priority,
                     workflow       : workflow,
                     internalNotes  : internalNotes,
-                    // company        : company || null,
                     address        : address,
-                    // contactName    : contactName,
-                    // func           : func,
-                    // phones         : phones,
-                    // active         : active,
-                    // optout         : optout,
-                    // reffered       : reffered,
                     whoCanRW       : whoCanRW,
                     groups         : {
                         owner: this.$el.find('#allUsersSelect').data('id'),
                         users: usersId,
                         group: groupsId
                     }
+                     /* email          : email,
+                     salesTeam      : salesTeamId,
+                     company        : company || null,
+                     contactName    : contactName,
+                     func           : func,
+                     phones         : phones,
+                     active         : active,
+                     optout         : optout,
+                     reffered       : reffered,*/
                 },
                 {
                     headers: {
@@ -347,8 +349,9 @@ define([
 
             populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Opportunities'}, 'name', this, true);
             populate.get('#salesTeamDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true, true);
+            populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
 
-            /*                common.populateCustomers("#customerDd", "/Customers",this.model);
+            /* common.populateCustomers("#customerDd", "/Customers",this.model);
              //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getPersonsForDd");
              common.populateEmployeesDd("#salesPersonDd", "/getForDdByRelatedUser", this.model);
              common.populateDepartments("#salesTeamDd", "/DepartmentsForDd");

@@ -14,7 +14,11 @@
         },
 
         render: function (options) {
-            var el = (options && options.thisEl) ? options.thisEl : this.$el;
+            var el;
+            
+            options = options || {};
+            
+            el = options.thisEl || this.$el;
 
             el.append(_.template(listTemplate, {
                 weeklySchedulers: this.collection.toJSON(),

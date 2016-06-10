@@ -4,24 +4,22 @@ define([
     'Underscore',
     'text!templates/settingsEmployee/TopBarTemplate.html',
     'constants'
-],
-    function (Backbone, $, _, ContentTopBarTemplate, CONSTANTS) {
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: CONSTANTS.SETTINGSEMPLOYEE,
-            template   : _.template(ContentTopBarTemplate),
+], function (Backbone, $, _, ContentTopBarTemplate, CONSTANTS) {
+    var TopBarView = Backbone.View.extend({
+        el         : '#top-bar',
+        contentType: CONSTANTS.SETTINGSEMPLOYEE,
+        template   : _.template(ContentTopBarTemplate),
 
-            initialize: function () {
+        initialize: function () {
+            this.render();
+        },
 
-                this.render();
-            },
+        render: function () {
+            this.$el.html(this.template({contentType: this.contentType}));
 
-            render: function () {
-                this.$el.html(this.template({contentType: this.contentType}));
-
-                return this;
-            }
-        });
-
-        return TopBarView;
+            return this;
+        }
     });
+
+    return TopBarView;
+});

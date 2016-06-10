@@ -20,7 +20,7 @@ define([
              CreateView,
              EditView,
              invoiceModel,
-             listItemView,
+             ListItemView,
              contentCollection,
              FilterView,
              common,
@@ -30,13 +30,13 @@ define([
     'use strict';
 
     var InvoiceListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        listItemView            : listItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        contentType             : CONSTANTS.SALESINVOICE, // 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
-        changedModels           : {},
+        createView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        FilterView       : FilterView,
+        contentType      : CONSTANTS.SALESINVOICE, // 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
+        changedModels    : {},
 
         initialize: function (options) {
             $(document).off('click');
@@ -128,7 +128,7 @@ define([
             var itemView;
 
             $currentEl.append(_.template(listTemplate, {currentDb: true}));
-            itemView = new listItemView({
+            itemView = new ListItemView({
                 collection : self.collection,
                 page       : self.page,
                 itemsNumber: self.collection.namberToShow
@@ -151,8 +151,8 @@ define([
 
             this.currentEllistRenderer(self);
 
-                self.renderPagination($currentEl, self);
-                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
+            self.renderPagination($currentEl, self);
+            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
             this.recalcTotal();
 
