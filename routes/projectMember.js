@@ -13,9 +13,11 @@ module.exports = function (models, event) {
     router.use(authStackMiddleware);
     router.use(accessStackMiddleWare);
 
-    router.post('/', handler.create);
     router.get('/', handler.getList);
+
+    router.post('/', handler.create);
     router.patch('/', handler.patchM);
+    
     router.delete('/:id', handler.remove);
 
     return router;

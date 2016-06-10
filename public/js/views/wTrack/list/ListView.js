@@ -173,61 +173,6 @@ define([
             }
         },
 
-        /* generateInvoice: function () {
-         var selectedWtracks = this.$el.find('input.listCB:checked');
-         var wTracks = [];
-         var self = this;
-         var project;
-         var assigned;
-         var customer;
-         var total = 0;
-         var revenue;
-
-         async.each(selectedWtracks, function (el, cb) {
-         var id = $(el).val();
-         var model = self.collection.get(id);
-         var reven = model.get('revenue');
-
-         if (typeof reven !== 'number') {
-         model.set({revenue: parseFloat(reven) * 100});
-         }
-
-         revenue = reven.toString().replace('$', '');
-         revenue = parseFloat(revenue);
-
-         if (typeof reven === 'number') {
-         revenue = revenue / 100;
-         }
-
-         total += revenue;
-
-         if (!project) {
-         project = model.get('project');
-         assigned = project.salesmanager;
-         customer = project.customer;
-         }
-
-         wTracks.push(model.toJSON());
-         cb();
-         }, function (err) {
-         if (!err) {
-         new wTrackCreateView({
-         wTracks : wTracks,
-         project : project,
-         assigned: assigned,
-         customer: customer,
-         total   : total
-         });
-         }
-         });
-         },*/
-
-        hideGenerateCopy: function () {
-            // $('#top-bar-generateBtn').hide();
-            $('#top-bar-copyBtn').hide();
-            $('#top-bar-createBtn').show();
-        },
-
         copyRow: function (e) {
             var self = this;
             var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');
@@ -247,7 +192,8 @@ define([
 
             this.$el.find('#checkAll').prop('checked', false);
 
-            this.hideGenerateCopy();
+            this.hideDeleteBtnAndUnSelectCheckAll(e);
+
             this.changed = true;
             this.createdCopied = true;
 
@@ -469,13 +415,11 @@ define([
                 var projectId = $tr.find('[data-content="project"]').attr('data-id');
                 var holiday = $td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
 
-
                 if ($td.hasClass('disabled')) {
                     return false;
                 }
 
                 year = year.slice(0, 4);
-
 
                 if (!isOvertime && holiday) {
                     App.render({
@@ -579,119 +523,6 @@ define([
             });
         },
 
-        /* calculateCost: function (e, wTrackId) {
-         var self = this;
-         var tr = $(e.target).closest('tr');
-         var profit = tr.find('[data-content="profit"]');
-         var revenueVal = tr.find('[data-content="revenue"]').text();
-         var profitVal = tr.find('[data-content="profit"]').text();
-         var expenseCoefficient;
-         var baseSalaryValue;
-         var editWtrackModel;
-         var fixedExpense;
-         var costElement;
-         var employeeId;
-         var trackWeek;
-         var month;
-         var hours;
-         var calc;
-         var year;
-
-         if (!this.changedModels[wTrackId]) {
-         this.changedModels[wTrackId] = {};
-         }
-
-         costElement = $(e.target).closest('tr').find('[data-content="cost"]');
-         month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
-
-         if (wTrackId.length < 24) {
-         employeeId = this.changedModels[wTrackId].employee._id || $(e.target).attr("data-id");
-
-         year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
-         trackWeek = tr.find('[data-content="worked"]').text();
-
-         } else {
-         editWtrackModel = this.collection.get(wTrackId);
-         this.editCollection.add(editWtrackModel);
-
-         employeeId = editWtrackModel.attributes.employee && editWtrackModel.attributes.employee._id ? editWtrackModel.attributes.employee._id : editWtrackModel.attributes.employee;
-
-         year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
-         trackWeek = tr.find('[data-content="worked"]').text();
-         }
-
-         async.parallel([getMonthData], function callback(err, results) {
-         var baseSalary = results[0];
-         var coefficients = (results[1] && results[1][0]) || {};
-
-         if (err || !baseSalary || !coefficients) {
-         costElement.text('');
-         costElement.addClass('money');
-         costElement.text('0.00');
-
-         //profitVal = (parseFloat(revenueVal) - 0).toFixed(2);
-         //profit.text(profitVal);
-
-         self.changedModels[wTrackId].cost = 0;
-         //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-
-         return 0;
-         }
-
-         baseSalaryValue = parseFloat(baseSalary);
-         expenseCoefficient = parseFloat(coefficients.expenseCoefficient);
-         fixedExpense = parseInt(coefficients.fixedExpense);
-         hours = parseInt(coefficients.hours);
-
-         calc = ((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
-
-         costElement.text('');
-         costElement.addClass('money');
-         costElement.text(calc);
-
-         //profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
-         //profit.text(profitVal);
-
-         self.changedModels[wTrackId].cost = parseFloat(calc);
-         //self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-
-         return calc;
-         });
-
-         function getBaseSalary(callback) {
-         dataService.getData('/employees/getByMonth',
-         {
-         month: month,
-         year : year,
-         _id  : employeeId
-         }, function (response, context) {
-
-         if (response.error) {
-         return callback(response.error);
-         }
-
-         callback(null, response.data);
-
-         }, this);
-
-         }
-
-         function getMonthData(callback) {
-
-         dataService.getData('/monthHours/list', {month: month, year: year}, function (response, context) {
-
-         if (response.error) {
-         return callback(response.error);
-         }
-
-         callback(null, response);
-
-         }, this);
-         }
-
-         return false;
-         },*/
-
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
@@ -789,7 +620,6 @@ define([
                     changedAttr.department = department;
 
                     targetElement.attr('data-id', employee);
-
 
                     // this.calculateCost(e, wTrackId);
                     tr.find('[data-content="department"]').removeClass('errorContent');
@@ -946,6 +776,7 @@ define([
             if (context.editCollection) {
                 context.editCollection.unbind();
             }
+
             context.editCollection = new EditCollection(context.collection.toJSON());
             context.editCollection.on('saved', context.savedNewModel, context);
             context.editCollection.on('updated', context.updatedOptions, context);
@@ -989,65 +820,65 @@ define([
         },
 
         /*showSaveCancelBtns: function () {
-            var saveBtnEl = $('#top-bar-saveBtn');
-            var cancelBtnEl = $('#top-bar-deleteBtn');
-            var createBtnEl = $('#top-bar-createBtn');
+         var saveBtnEl = $('#top-bar-saveBtn');
+         var cancelBtnEl = $('#top-bar-deleteBtn');
+         var createBtnEl = $('#top-bar-createBtn');
 
-            if (!this.changed) {
-                createBtnEl.hide();
-            }
-            saveBtnEl.show();
-            cancelBtnEl.show();
-            createBtnEl.hide();
+         if (!this.changed) {
+         createBtnEl.hide();
+         }
+         saveBtnEl.show();
+         cancelBtnEl.show();
+         createBtnEl.hide();
 
-            return false;
-        },
+         return false;
+         },
 
-        hideSaveCancelBtns: function () {
-            var createBtnEl = $('#top-bar-createBtn');
-            var saveBtnEl = $('#top-bar-saveBtn');
-            var cancelBtnEl = $('#top-bar-deleteBtn');
+         hideSaveCancelBtns: function () {
+         var createBtnEl = $('#top-bar-createBtn');
+         var saveBtnEl = $('#top-bar-saveBtn');
+         var cancelBtnEl = $('#top-bar-deleteBtn');
 
-            this.changed = false;
+         this.changed = false;
 
-            saveBtnEl.hide();
-            cancelBtnEl.hide();
-            createBtnEl.show();
+         saveBtnEl.hide();
+         cancelBtnEl.hide();
+         createBtnEl.show();
 
-            return false;
-        },*/
+         return false;
+         },*/
 
         /*checkProjectId: function (e, checkLength) {
-            var totalCheckLength = $('input.checkbox:checked').length;
-            var element = e.target ? e.target : e;
-            var checked = element ? element.checked : true;
-            var targetEl = $(element);
-            var tr = targetEl.closest('tr');
-            var wTrackId = tr.attr('data-id');
-            var model = this.collection.get(wTrackId);
-            var projectContainer = tr.find('td[data-content="project"]');
-            var projectId = projectContainer.attr('data-id');
+         var totalCheckLength = $('input.checkbox:checked').length;
+         var element = e.target ? e.target : e;
+         var checked = element ? element.checked : true;
+         var targetEl = $(element);
+         var tr = targetEl.closest('tr');
+         var wTrackId = tr.attr('data-id');
+         var model = this.collection.get(wTrackId);
+         var projectContainer = tr.find('td[data-content="project"]');
+         var projectId = projectContainer.attr('data-id');
 
-            if (checkLength >= 1) {
-                this.copyEl.show();
-            } else {
-                this.copyEl.hide();
-            }
+         if (checkLength >= 1) {
+         this.copyEl.show();
+         } else {
+         this.copyEl.hide();
+         }
 
-            if (!checkLength || !model || model.get('isPaid')) {
-                this.selectedProjectId = [];
+         if (!checkLength || !model || model.get('isPaid')) {
+         this.selectedProjectId = [];
 
-                return false;
-            }
+         return false;
+         }
 
-            if (checked) {
-                this.selectedProjectId.push(projectId);
-            } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
-                this.selectedProjectId = _.without(this.selectedProjectId, projectId);
-            }
+         if (checked) {
+         this.selectedProjectId.push(projectId);
+         } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
+         this.selectedProjectId = _.without(this.selectedProjectId, projectId);
+         }
 
-            this.selectedProjectId = _.uniq(this.selectedProjectId);
-        },*/
+         this.selectedProjectId = _.uniq(this.selectedProjectId);
+         },*/
 
         getAutoCalcField: function (idTotal, dataRow, money) {
             var footerRow = this.$el.find('#listFooter');
@@ -1257,10 +1088,6 @@ define([
                         $('#top-bar-createBtn').hide();
 
                         if (checkLength === self.collection.length) {
-                            checkedInputs.each(function (index, element) {
-                                self.checkProjectId(element, checkLength);
-                            });
-
                             $('#checkAll').prop('checked', true);
                         }
                     } else {

@@ -45,7 +45,7 @@
             return false;
         },
 
-        hideItemsNumber: function (e) {
+      /*  hideItemsNumber: function (e) {
             var el = e.target;
 
             this.$el.find('.allNumberPerPage, .newSelectList').hide();
@@ -54,7 +54,7 @@
                 $('.search-content').removeClass('fa-caret-up');
                 this.$el.find('.search-options').addClass('hidden');
             }
-        },
+        },*/
 
         showMore: function (e) {
             e.preventDefault();

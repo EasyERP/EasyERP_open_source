@@ -10,7 +10,7 @@ define([
     'moment',
     'constants'
 ], function (Backbone, $, _, d3, mainTemplate, tableBodyTemplate, InvoiceCharts, helpers, moment, CONSTANTS) {
-    "use strict";
+    'use strict';
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -34,7 +34,6 @@ define([
 
             this.startTime = options.startTime;
             this.collection = options.collection || [];
-            //this.filter = options.filter || custom.retriveFromCash('DashVacation.filter');
 
             year = moment().isoWeekYear();
             week = moment().isoWeek();
@@ -99,8 +98,6 @@ define([
         },
 
         renderByFilter: function () {
-            $('#chart').empty();
-
             var $chartContainer = this.$el.find('#chartContainer');
 
             var WIDTH = $chartContainer.width();
@@ -109,7 +106,7 @@ define([
             var margin = {top: 20, right: 70, bottom: 50, left: 100};
             var width = WIDTH - margin.left - margin.right - 15;
             var height = HEIGH - margin.top - margin.bottom;
-            var topChart = d3.select("#chart");
+            var topChart = d3.select('#chart');
             var x = d3.scale.ordinal().rangeRoundBands([margin.left, width], 0.1);
             var y = d3.scale.linear().range([height, margin.bottom]);
 
@@ -119,10 +116,12 @@ define([
             var yAxis;
             var line;
 
+            $('#chart').empty();
+
             topChart
-                .append("g")
-                .attr("width", width)
-                .attr("height", height);
+                .append('g')
+                .attr('width', width)
+                .attr('height', height);
 
             x.domain(data.map(function (d) {
                 return d.date;
@@ -133,13 +132,13 @@ define([
                 d.paid = d.paid || 0;
                 d.revenue = d.revenue || 0;
 
-                return Math.min(d.invoiced, d.paid/*, d.revenue*/);
+                return Math.min(d.invoiced, d.paid /* , d.revenue*/);
             })), d3.max(data.map(function (d) {
                 d.invoiced = d.invoiced || 0;
                 d.paid = d.paid || 0;
                 d.revenue = d.revenue || 0;
 
-                return Math.max(d.invoiced, d.paid/*, d.revenue*/);
+                return Math.max(d.invoiced, d.paid /* , d.revenue*/);
             }))]);
 
             line = d3.svg.line()
@@ -149,72 +148,72 @@ define([
                 .y(function (d) {
                     return y(d.revenue);
                 })
-                .interpolate("monotone");
+                .interpolate('monotone');
 
             topChart
-                .selectAll("rect")
+                .selectAll('rect')
                 .data(data)
                 .enter()
-                .append("svg:rect")
-                .attr("x", function (datum, index) {
+                .append('svg:rect')
+                .attr('x', function (datum, index) {
                     return (x(datum.date));
                 })
-                .attr("y", function (datum) {
+                .attr('y', function (datum) {
                     return y(datum.invoiced);
                 })
-                .attr("height", function (datum) {
+                .attr('height', function (datum) {
                     return height - y(datum.invoiced);
                 })
-                .attr("width", x.rangeBand())
-                .attr("fill", "#01579B") // lighBlue
-                .attr("opacity", 0.3)
+                .attr('width', x.rangeBand())
+                .attr('fill', '#01579B') // lighBlue
+                .attr('opacity', 0.3)
                 .on('mouseover', function (d) {
 
                 });
 
             topChart
-                .selectAll("rect2")
+                .selectAll('rect2')
                 .data(data)
                 .enter()
-                .append("svg:rect")
-                .attr("x", function (datum, index) {
+                .append('svg:rect')
+                .attr('x', function (datum, index) {
                     return (x(datum.date));
                 })
-                .attr("y", function (datum) {
+                .attr('y', function (datum) {
                     return y(datum.paid);
                 })
-                .attr("height", function (datum) {
+                .attr('height', function (datum) {
                     return height - y(datum.paid);
                 })
-                .attr("width", x.rangeBand())
-                .attr("fill", "#40C4FF")// blue  #40C4FF
-                .attr("opacity", 0.3);
+                .attr('width', x.rangeBand())
+                .attr('fill', '#40C4FF')// blue  #40C4FF
+                .attr('opacity', 0.3);
 
-            /*topChart.append("path")
-                .datum(data)
-                .attr('stroke', 'yellow')
-                .attr('stroke-width', 2)
-                .style('fill', 'none')
-               /!* .attr("class", "line")*!/
-                .attr("d", line);*/
+            /* topChart.append('path')
+             .datum(data)
+             .attr('stroke', 'yellow')
+             .attr('stroke-width', 2)
+             .style('fill', 'none')
+             /!* .attr('class', 'line')*!/
+             .attr('d', line);*/
 
-            /*topChart.selectAll(".circle")
-                .data(data)
-                .enter()
-                .append("circle")
-                .attr("class", "circle")
-                .attr("cx", function (d) {
-                    return x(d.date) + x.rangeBand() / 2;
-                })
-                .attr("cy", function (d) {
-                    return y(d.revenue);
-                })
-                .attr("r", function (d) {
-                    return 4;
-                })
-                .style("fill", "#1EBBEA")
-                .style("stroke", "#fff")
-                .style("stroke-width", "2");*/
+            /* topChart.selectAll('.circle')
+             .data(data)
+             .enter()
+             .append('circle')
+             .attr('class', 'circle')
+             .attr('cx', function (d) {
+             return x(d.date) + x.rangeBand() / 2;
+             })
+             .attr('cy', function (d) {
+             return y(d.revenue);
+             })
+             .attr('r', function (d) {
+             return 4;
+             })
+             .style('fill', '#1EBBEA')
+             .style('stroke', '#fff')
+             .style('stroke-width', '2');*/
 
             xAxis = d3.svg.axis()
                 .scale(x)
@@ -230,37 +229,37 @@ define([
                 .attr('class', 'x axis')
                 .attr('transform', 'translate(0,' + (height + 10) + ')')
                 .call(xAxis)
-                .selectAll("text")
-                .attr("transform", "rotate(-60)")
-                .attr("dx", "-.2em")
-                .attr("dy", ".15em")
-                .style("text-anchor", "end")
-                .style("fill", "white");
+                .selectAll('text')
+                .attr('transform', 'rotate(-60)')
+                .attr('dx', '-.2em')
+                .attr('dy', '.15em')
+                .style('text-anchor', 'end')
+                .style('fill', 'white');
 
             topChart.append('svg:g')
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + (margin.left) + ', 5 )')
                 .call(yAxis)
-                .selectAll(".tick line")
-                .attr("x2", function (d) {
+                .selectAll('.tick line')
+                .attr('x2', function (d) {
                     return width;
                 })
-                .style("fill", "white")
-                .style("stroke-width", "1px")
-                .style("stroke", "white");
+                .style('fill', 'white')
+                .style('stroke-width', '1px')
+                .style('stroke', 'white');
 
-            /*topChart.append('svg:text')
-             .attr("x", x.rangeBand() / 2)
-             .attr("y", HEIGH - 5)
+            /* topChart.append('svg:text')
+             .attr('x', x.rangeBand() / 2)
+             .attr('y', HEIGH - 5)
              .attr('class', 'axesName')
              .text('Date');*/
 
             topChart.append('svg:text')
-                .attr("x", -(HEIGH / 2 ))
-                .attr("y", margin.left - 80)
+                .attr('x', -(HEIGH / 2))
+                .attr('y', margin.left - 80)
                 .attr('class', 'axesName')
                 .text('Ammount')
-                .attr("transform", 'translate(0, 0) rotate(-90)');
+                .attr('transform', 'translate(0, 0) rotate(-90)');
 
             return this;
         },

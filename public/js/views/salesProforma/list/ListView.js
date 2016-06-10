@@ -9,11 +9,11 @@ define([
     'views/Proforma/EditView',
     'models/InvoiceModel',
     'views/salesProforma/list/ListItemView',
-    'views/salesProforma/list/ListTotalView',
     'collections/salesProforma/filterCollection',
     'views/Filter/FilterView',
     'common',
     'dataService',
+    'helpers',
     'constants'
 ], function ($,
              _,
@@ -25,18 +25,18 @@ define([
              EditView,
              invoiceModel,
              ListItemView,
-             listTotalView,
              contentCollection,
              FilterView,
              common,
              dataService,
+             helpers,
              CONSTANTS) {
     var InvoiceListView = listViewBase.extend({
         createView              : CreateView,
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        FilterView              : FilterView,
+        filterView              : FilterView,
         totalCollectionLengthUrl: '/Proforma/totalCollectionLength',
         contentType             : CONSTANTS.SALESPROFORMA, // 'salesProforma', //'Invoice',//needs in view.prototype.changeLocationHash
         changedModels           : {},
@@ -158,6 +158,33 @@ define([
 
         },
 
+        recalcTotal: function () {
+            var self = this;
+            var columns = ['balance', 'total', 'paid'];
+
+            _.each(columns, function (col) {
+                var sum = 0;
+
+                _.each(self.collection.toJSON(), function (model) {
+                    if (col === 'paid') {
+                        if (model.currency && model.currency.rate) {
+                            sum += parseFloat(model[col] / model.currency.rate);
+                        } else {
+                            sum += parseFloat(model[col]);
+                        }
+                    } else {
+                        if (model.currency && model.currency.rate) {
+                            sum += parseFloat(model.paymentInfo[col] / model.currency.rate);
+                        } else {
+                            sum += parseFloat(model.paymentInfo[col]);
+                        }
+                    }
+                });
+
+                self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+            });
+        },
+
         render: function () {
             var self = this;
             var $currentEl;
@@ -171,22 +198,13 @@ define([
 
             this.currentEllistRenderer(self);
 
-            /* if (!App || !App.currentDb) {
-             dataService.getData('/currentDb', null, function (response) {
-             if (response && !response.error) {
-             App.currentDb = response;
-             App.weTrack = true;
-             }
+            // $currentEl.append(new listTotalView({element: this.$el.find('#listTable'), cellSpan: 7}).render());
 
-             this.currentEllistRenderer(self);
-             });
-             } else {
-             }*/
+            self.renderPagination($currentEl, self);
 
-            $currentEl.append(new listTotalView({element: this.$el.find('#listTable'), cellSpan: 7}).render());
+            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-                self.renderPagination($currentEl, self);
-                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
+            this.recalcTotal();
 
             dataService.getData(CONSTANTS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Invoice',
@@ -225,9 +243,9 @@ define([
                     });
                 }
             });
-        },
+        }
 
-        deleteItemsRender: function (deleteCounter, deletePage) {
+       /* deleteItemsRender: function (deleteCounter, deletePage) {
             var pagenation;
             var holder;
             var created;
@@ -259,7 +277,7 @@ define([
             } else {
                 pagenation.show();
             }
-        }
+        }*/
 
     });
 

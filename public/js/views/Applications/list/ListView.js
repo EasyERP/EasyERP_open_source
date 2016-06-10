@@ -32,7 +32,6 @@ define([
         ListItemView            : ListItemView,
         contentCollection       : contentCollection,
         contentType             : 'Applications',
-        totalCollectionLengthUrl: '/applications/totalCollectionLength',
         formUrl                 : '#easyErp/Applications/',
 
         events: {

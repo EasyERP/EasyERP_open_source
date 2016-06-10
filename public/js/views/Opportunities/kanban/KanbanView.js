@@ -33,7 +33,7 @@
 
         columnTotalLength: null,
 
-        initialize: function (options) {
+        initialize        : function (options) {
             this.startTime = options.startTime;
             this.buildTime = 0;
             this.workflowsCollection = options.workflowCollection;
@@ -50,7 +50,7 @@
             if (this.foldWorkflows.length === 0) {
                 this.foldWorkflows = ['Empty'];
             }
-            
+
             dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.opportunities.foldWorkflows': this.foldWorkflows}, function (error, success) {
             });
         },
@@ -61,54 +61,54 @@
             var k;
             var idx;
             var $closestTable;
-            
+
             if (id) {
                 el = $("td.column[data-id='" + id + "']");
             } else {
                 el = $(e.target).closest('td');
             }
-            
+
             if (!el.hasClass('fold')) {
                 el.addClass('fold');
             } else {
                 el.removeClass('fold');
             }
-            
+
             if (el.hasClass('fold')) {
 
                 w = el.find('.columnName .text').width();
                 k = w / 2 - 20;
-                
+
                 if (k <= 0) {
                     k = 20 - w / 2;
                 }
-                
+
                 k = -k;
                 el.find('.columnName .text').css({left: k + 'px', top: Math.abs(w / 2 + 47) + 'px'});
                 this.foldWorkflows.push(el.attr('data-id'));
             } else {
                 idx = this.foldWorkflows.indexOf(el.attr('data-id'));
-                
+
                 if (idx !== -1) {
                     this.foldWorkflows.splice(idx, 1);
                 }
             }
-            
+
             if (!id) {
                 this.updateFoldWorkflow();
             }
 
             $closestTable = el.closest('table');
-            
+
             if ($closestTable.find('.fold').length === $closestTable.find('.column').length) {
                 $closestTable.css({'min-width': 'inherit'});
                 $closestTable.css({width: 'auto'});
             } else {
                 $closestTable.css({'min-width': '100%'});
             }
-            
+
             k = $(document).height() - 115;
-            
+
             if (k < 190) {
                 k = 190;
             }
@@ -120,18 +120,18 @@
 
         isNumberKey: function (evt) {
             var charCode = evt.which || evt.keyCode;
-            
+
             return !(charCode > 31 && (charCode < 48 || charCode > 57));
         },
 
         saveKanbanSettings: function (context) {
             var countPerPage = context.$el.find('#cPerPage').val();
             var self = this;
-            
+
             if (countPerPage === 0) {
                 countPerPage = 5;
             }
-            
+
             dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.opportunities.countPerPage': countPerPage}, function (error, success) {
                 if (success) {
                     self.hideDialog();
@@ -148,7 +148,7 @@
         editKanban: function (e) {
             dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (user, context) {
                 var tempDom = _.template(kanbanSettingsTemplate, {opportunities: user.user.kanbanSettings.opportunities});
-                
+
                 context.$el = $(tempDom).dialog({
                     dialogClass: 'edit-dialog',
                     width      : '400',
@@ -162,7 +162,7 @@
                             }
 
                         },
-                        
+
                         cancel: {
                             text : 'Cancel',
                             class: 'btn',
@@ -184,10 +184,10 @@
             dataService.getData('/opportunities/getLengthByWorkflows', {}, function (data) {
                 data.arrayOfObjects.forEach(function (object) {
                     var column = context.$("[data-id='" + object._id + "']");
-                    
+
                     column.find('.totalCount').text(object.count);
                 });
-                
+
                 if (data.showMore) {
                     context.$el.append('<div id="showMoreDiv" title="To show mor ellements per column, please change kanban settings">And More</div>');
                 }
@@ -196,7 +196,7 @@
 
         selectItem: function (e) {
             var $parentItems = $(e.target).parents('.item');
-            
+
             $parentItems.parents('table').find('.active').removeClass('active');
             $parentItems.addClass('active');
         },
@@ -204,15 +204,19 @@
         gotoEditForm: function (e) {
             var id;
             var model;
-            
+
             e.preventDefault();
-            
+
             id = $(e.target).closest('.inner').data('id');
             model = new CurrentModel();
             model.urlRoot = '/Opportunities/';
-            
+
             model.fetch({
-                data   : {id: id},
+                data: {
+                    id      : id,
+                    viewType: 'form'
+                },
+
                 success: function (newModel) {
                     new EditView({model: newModel});
                 },
@@ -246,7 +250,7 @@
             var workflowAmount;
 
             contentCollection.set(contentCollection.parse(response));
-            
+
             if (collection) {
                 collection.add(contentCollection.models);
             } else {
@@ -262,10 +266,10 @@
             if (response.fold) {
                 context.foldUnfoldKanban(null, response.workflowId);
             }
-            
+
             column.find('.totalCount').html(contentCollection.models.length);
             workflowAmount = 0;
-            
+
             _.each(contentCollection.models, function (wfModel) {
                 var expectedRevenue = wfModel.get('expectedRevenue');
                 var curEl;
@@ -277,7 +281,7 @@
                 if (expectedRevenue && expectedRevenue.value) {
                     workflowAmount += expectedRevenue.value || 0;
                 }
-                
+
             }, this);
             column.find('.totalAmount').html(helpers.currencySplitter(workflowAmount.toString()));
         },
@@ -285,7 +289,7 @@
         editItem: function () {
             // create editView in dialog here
             var edit = new EditView({collection: this.collection});
-            
+
             edit.bind('recalc', this.updateCounter, this);
         },
 
@@ -298,13 +302,13 @@
             var column = $('td[data-id="' + workflowId + '"]');
             var oldColumnContainer = $('td[data-id="' + workflowId + '"] #forContent h3');
             var sum = 0;
-            
+
             oldColumnContainer.each(function (item) {
                 var value = $(this).text().replace(/\s/g, '');
-                
+
                 sum += parseFloat(value) || 0;
             });
-            
+
             column.find('.totalAmount').text(helpers.currencySplitter(sum.toString()));
         },
 
@@ -313,51 +317,51 @@
             var b;
             var inc;
             var $columnItems = $(".column[data-id='" + workflow + "']").find('.item');
-            
+
             if (workflow === workflowStart) {
                 if (sequence > sequenceStart) {
                     sequence -= 1;
                 }
-                
+
                 a = sequenceStart;
                 b = sequence;
                 inc = -1;
-                
+
                 if (a > b) {
                     a = sequence;
                     b = sequenceStart;
                     inc = 1;
                 }
-                
+
                 $columnItems.each(function () {
                     var sec = parseInt($(this).find('.inner').attr('data-sequence'), 10);
-                    
+
                     if (sec >= a && sec <= b) {
                         $(this).find('.inner').attr('data-sequence', sec + inc);
                     }
                 });
-                
+
                 item.find('.inner').attr('data-sequence', sequence);
 
             } else {
                 $columnItems.each(function () {
                     var $inner = $(this).find('.inner');
                     var sec = parseInt($inner.attr('data-sequence'), 10);
-                    
+
                     if (sec >= sequence) {
                         $inner.attr('data-sequence', sec + 1);
                     }
                 });
-                
+
                 $(".column[data-id='" + workflowStart + "']").find('.item').each(function () {
                     var $inner = $(this).find('.inner');
                     var sec = parseInt($inner.attr('data-sequence'), 10);
-                    
+
                     if (sec >= sequenceStart) {
                         $inner.attr('data-sequence', sec - 1);
                     }
                 });
-                
+
                 item.find('.inner').attr('data-sequence', sequence);
 
                 this.countTotalAmountForWorkflow(workflow);
@@ -368,7 +372,7 @@
         updateCounter: function (el, inc) {
             var i = inc ? 1 : -1;
             var counter = el.closest('.column').find('.totalCount');
-            
+
             counter.html(parseInt(counter.html(), 10) + i);
         },
 
@@ -376,7 +380,7 @@
             var el = $(e.target);
 
             this.$el.find('.allNumberPerPage, .newSelectList').hide();
-            
+
             if (!el.closest('.search-view')) {
                 $('.search-content').removeClass('fa-caret-up');
                 this.$el.find('.search-options').addClass('hidden');
@@ -406,7 +410,7 @@
             if (condition && !condition.checked) {
                 self.filter.condition = 'or';
             }
-            
+
             if (chosen.length) {
                 chosen.each(function (index, elem) {
                     if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
@@ -430,7 +434,7 @@
                             });
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            
+
                             $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
                                 self.filter[elem.children[1].value].push($(element).next().text());
                             });

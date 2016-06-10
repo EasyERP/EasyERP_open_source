@@ -15,71 +15,33 @@ define([
     'constants',
     'helpers',
     'helpers'
-], function ($, 
+], function ($,
              _,
-             ListViewBase, 
-             listTemplate, 
-             listForWTrack, 
+             ListViewBase,
+             listTemplate,
+             listForWTrack,
              stagesTemplate,
-             createView, 
-             ListItemView, 
-             ListTotalView, 
-             EditView, 
+             CreateView,
+             ListItemView,
+             ListTotalView,
+             EditView,
              QuotationModel,
-             contentCollection,
-             dataService, 
-             CONSTANTS, 
+             ContentCollection,
+             dataService,
+             CONSTANTS,
              helpers) {
     'use strict';
 
     var OrdersListView = ListViewBase.extend({
 
-        createView              : createView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        contentType             : 'salesOrder', // needs in view.prototype.changeLocationHash
+        listTemplate: listTemplate,
+        ListItemView: ListItemView,
 
-        initialize: function (options) {
-            this.startTime = options.startTime;
-            this.collection = options.collection;
+        ContentCollection: ContentCollection,
+        CreateView       : CreateView,
+        EditView         : EditView,
 
-            this.filter = options.filter || {};
-            this.filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-
-            this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
-            this.contentCollection = contentCollection;
-
-            this.render();
-        },
-
-        showFilteredPage: function (filter) {
-            var itemsNumber = $("#itemsNumber").text();
-            
-            $('#top-bar-deleteBtn').hide();
-            $('#checkAll').prop('checked', false);
-
-            this.startTime = new Date();
-            this.newCollection = false;
-
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
-
-            this.filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-
-            this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            this.getTotalLength(null, itemsNumber, filter);
-        },
+        contentType: 'salesOrder', // needs in view.prototype.changeLocationHash
 
         events: {
             'click .stageSelect'                 : 'showNewSelect',
@@ -87,29 +49,20 @@ define([
             'click .newSelectList li'            : 'chooseOption'
         },
 
-        chooseOption: function (e) {
-            var self = this;
-            var $target = $(e.target);
-            var $targetElement = $target.parents('td');
-            var id = $targetElement.attr('id');
-            var model = this.collection.get(id);
+        initialize: function (options) {
+            this.filter = options.filter || {};
+            this.filter.forSales = {
+                key  : 'forSales',
+                value: ['true']
+            };
 
-            model.save({
-                workflow: $target.attr('id')
-            }, {
-                headers: {
-                    mid: 55
-                },
+            this.startTime = options.startTime;
+            this.collection = options.collection;
+            this.parrentContentId = options.collection.parrentContentId;
+            this.sort = options.sort;
+            this.page = options.collection.currentPage;
 
-                patch   : true,
-                validate: false,
-                success : function () {
-                    self.showFilteredPage(self.filter, self);
-                }
-            });
-
-            this.hideNewSelect();
-            return false;
+            this.render();
         },
 
         recalcTotal: function () {
@@ -123,30 +76,33 @@ define([
         },
 
         render: function () {
-            var self;
-            var $currentEl;
+            var self = this;
+            var $thisEl = this.$el;
+            var itemView;
 
             $('.ui-dialog ').remove();
 
-            self = this;
-            $currentEl = this.$el;
+            $thisEl.html('');
+            $thisEl.append(_.template(listForWTrack));
 
-            $currentEl.html('');
-
-            $currentEl.append(_.template(listForWTrack));
-            $currentEl.append(new ListItemView({
+            itemView = new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
-            }).render());
+            });
+
+            $thisEl.append(itemView.render());
 
             // added two parameters page and items number
-            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 5}).render());
+            $thisEl.append(new ListTotalView({
+                element : this.$el.find('#listTable'),
+                cellSpan: 5
+            }).render());
 
-            this.renderPagination($currentEl, this);
             this.renderFilter();
+            this.renderPagination($thisEl, this);
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
@@ -157,29 +113,37 @@ define([
             });
         },
 
-        goToEditDialog: function (e) {
-            var $tr = $(e.target).closest('tr');
-            var id = $tr.data('id');
-            var notEditable = $tr.hasClass('notEditable');
+       /* goToEditDialog: function (event) {
+            var self = this;
+            var $eventTarget = $(event.target);
+            var $closestTr = $eventTarget.closest('tr');
+            var dataId = $closestTr.data('id');
+            var isNotEditable = $closestTr.hasClass('notEditable');
+            var quotationModel = new QuotationModel({
+                validate: false
+            });
             var onlyView;
-            var model = new QuotationModel({validate: false});
 
-            e.preventDefault();
+            event.preventDefault();
 
-            if (notEditable) {
+            if (isNotEditable) {
                 onlyView = true;
             }
 
-            model.urlRoot = '/Order/form/' + id;
-            model.fetch({
-                data   : {contentType: this.contentType},
+            quotationModel.urlRoot = '/Order/';
+            quotationModel.fetch({
+                data: {
+                    contentType: self.contentType,
+                    id         : dataId
+                },
+
                 success: function (model) {
-                    return new EditView({
-                        model: model, 
+                    return new self.EditView({
+                        model   : model,
                         onlyView: onlyView
                     });
                 },
-                
+
                 error: function () {
                     App.render({
                         type   : 'error',
@@ -187,7 +151,7 @@ define([
                     });
                 }
             });
-        }
+        }*/
 
     });
 

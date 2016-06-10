@@ -325,11 +325,11 @@ var Module = function (models) {
     };
 
     this.bulkRemove = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
+        var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
-        Model.remove({_id: {$in: ids}}, function (err, removed) {
+        JobPosition.remove({_id: {$in: ids}}, function (err, removed) {
             if (err) {
                 return next(err);
             }

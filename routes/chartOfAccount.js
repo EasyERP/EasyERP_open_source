@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var chartOfAccountHandler = require('../handlers/chartOfAccount');
+var ChartOfAccountHandler = require('../handlers/chartOfAccount');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
 module.exports = function (models) {
-    var handler = new chartOfAccountHandler(models);
+    var handler = new ChartOfAccountHandler(models);
     var moduleId = MODULES.CHARTOFACCOUNT;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 

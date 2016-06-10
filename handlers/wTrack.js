@@ -768,6 +768,43 @@ var TCard = function (event, models) {
         });
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        async.each(ids, function (id, cb) {
+            WTrack.findByIdAndRemove(id, function (err, tCard) {
+                var projectId;
+
+                if (err) {
+                    return err(err);
+                }
+
+                projectId = tCard ? tCard.project : null;
+
+                journalEntry.removeBySourceDocument(req, tCard._id);
+
+                event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
+                event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
+
+                if (projectId) {
+                    event.emit('updateProjectDetails', {req: req, _id: projectId});
+                }
+
+                event.emit('recollectProjectInfo');
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+    };
+
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);

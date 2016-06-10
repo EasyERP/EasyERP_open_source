@@ -182,7 +182,7 @@ define([
             var self = this;
             var formModel = this.formModel.toJSON();
             common.populateOpportunitiesForMiniView('/opportunities/OpportunitiesForMiniView', null, formModel._id, this.pageMini, this.pageCount, false, function (collection) {
-                var isLast = self.pageMini === self.allPages ? true : false;
+                var isLast = self.pageMini === self.allPages || false;
                 var oppElem = self.$el.find('#opportunities');
                 oppElem.empty();
                 oppElem.prepend(
@@ -221,7 +221,7 @@ define([
         },
 
         editItem: function () {
-            new EditView({model: this.formModel});
+            return new EditView({model: this.formModel});
         },
 
         quickEdit: function (e) {
@@ -240,7 +240,7 @@ define([
             e.preventDefault();
             model = this.formModel.toJSON();
 
-            new CreateViewOpportunities({
+            return new CreateViewOpportunities({
                 model    : model,
                 elementId: 'companyAttach'
             });
@@ -250,7 +250,7 @@ define([
             var model = this.formModel.toJSON();
 
             e.preventDefault();
-            new CreateViewPersons({model: model});
+            return new CreateViewPersons({model: model});
         },
 
         removeEdit: function () {

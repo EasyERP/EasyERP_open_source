@@ -4,18 +4,20 @@ define([
     'collections/Employees/filterCollection',
     'views/main/MainView',
     'views/Employees/list/ListView',
-    'views/Employees/form/FormView',
+    /*'views/Employees/form/FormView',*/
     'views/Employees/thumbnails/ThumbnailsView',
     'views/Employees/CreateView',
     'views/Employees/EditView',
     'views/Employees/TopBarView',
+    'views/Filter/FilterView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, EmployeeModel, EmployeeCollection, MainView, ListView, FormView, ThumbnailsView, CreateView, EditView, TopBarView, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, EmployeeModel, EmployeeCollection, MainView, ListView,/* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
@@ -5030,6 +5032,9 @@ define([
     describe('Employees View', function () {
         var $fixture;
         var $elFixture;
+        var selectSpy;
+        var removeFilterSpy;
+        var saveFilterSpy;
 
         after(function () {
             view.remove();
@@ -5038,7 +5043,16 @@ define([
             /*formView.remove();*/
             thumbnailView.remove();
             createView.remove();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
         });
+
+        before(function(){
+            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
+        })
 
         describe('#initialize()', function () {
             var server;
@@ -5155,13 +5169,16 @@ define([
 
         describe('Employees list view', function () {
             var server;
+            var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
+                mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
+                mainSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -5198,6 +5215,49 @@ define([
                     expect($listHolder.find('.pagination')).to.exist;
                 });
 
+                it('Try to go to EditForm with error', function (done) {
+                    this.timeout(4000);
+                    var spyResponse;
+                    var $needEl = listView.$el.find('[data-id="560264bb8dc408c632000005"] > td:nth-child(3)');
+                    var employeeUrl = new RegExp('\/employees\/', 'i');
+                    server.respondWith('GET', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
+
+                    $needEl.click();
+
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Please refresh browser');
+
+                    done();
+
+                });
+
+                it('Try to go to EditForm', function (done) {
+                    this.timeout(4000);
+                    var employeeModel;
+                    var $dialogEl;
+                    var $needEl = listView.$el.find('[data-id="560264bb8dc408c632000005"] > td:nth-child(3)');
+                    var employeeUrl = new RegExp('\/employees\/', 'i');
+                    var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                    var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
+                    server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
+                    server.respondWith('GET', depsForDDurl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
+
+                    $needEl.click();
+
+                    server.respond();
+                    server.respond();
+
+                    $dialogEl = $('.ui-dialog');
+
+                    expect($dialogEl).to.exist;
+                    $dialogEl.remove();
+                    done();
+
+                });
+
                 it('Try to click on alphabet letter', function () {
                     var userAgent = navigator.userAgent;
                     var mozilaRegExp = new RegExp('firefox', 'i');
@@ -5206,9 +5266,9 @@ define([
                     $needLetterEl.click();
 
                     if (mozilaRegExp.test(userAgent)) {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=100/filter={"letter":"A"}');
+                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=100/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                     }
                 });
             });
@@ -5365,7 +5425,9 @@ define([
             var mainSpy;
             var $dialogEl;
             var clock;
+            var exportStub;
             var windowConfirmStub;
+            var windowAlertStub;
 
             before(function () {
                 window.location.hash = '#easyErp/Employees/thumbnails';
@@ -5373,6 +5435,9 @@ define([
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
                 windowConfirmStub = sinon.stub(window, 'confirm');
+                windowAlertStub= sinon.stub(window, 'alert');;
+                exportStub =  sinon.stub(ThumbnailsView.prototype, 'exportToCsv');
+                exportStub.returns(true);
                 windowConfirmStub.returns(true);
             });
 
@@ -5381,6 +5446,35 @@ define([
                 mainSpy.restore();
                 clock.restore();
                 windowConfirmStub.restore();
+                windowAlertStub.restore();
+                exportStub.restore();
+            });
+
+            it('Try to fail create thumbnails view', function () {
+                var $thumbHolder;
+                var employeeThumbUrl = new RegExp('\/employees', 'i');
+                var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
+
+                server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                employeeCollection = new EmployeeCollection({
+                    count      : 1,
+                    viewType   : 'thumbnails',
+                    contentType: 'Employees'
+                });
+
+                server.respond();
+
+
+                thumbnailView = new ThumbnailsView({
+                    collection: employeeCollection,
+                    startTime : new Date()
+                });
+
+
+                $thumbHolder = thumbnailView.$el;
+
+                expect($thumbHolder).to.exist;
+                expect($thumbHolder.find('h2')).to.have.text("No Employees found");
             });
 
             it('Try to create thumbnails view', function () {
@@ -5408,6 +5502,17 @@ define([
 
                 server.respond();
 
+                clock.tick(300);
+
+                eventsBinder.subscribeCollectionEvents(employeeCollection, thumbnailView);
+                eventsBinder.subscribeTopBarEvents(topBarView, thumbnailView);
+
+                employeeCollection.trigger('fetchFinished', {
+                    totalRecords: employeeCollection.totalRecords,
+                    currentPage : employeeCollection.currentPage,
+                    pageSize    : employeeCollection.pageSize
+                });
+
                 $thumbHolder = thumbnailView.$el;
 
                 expect($thumbHolder).to.exist;
@@ -5415,26 +5520,106 @@ define([
                 expect($thumbHolder.find('#startLetter')).to.exist;
             });
 
-            it('Try to show more employees', function () {
-                var $showMoreBtn = thumbnailView.$el.find('#showMore');
-                var employeeThumbUrl = new RegExp('\/employees\/thumbnails', 'i');
-                var totalCollectionUrl = new RegExp('\/employees\/totalCollectionLength', 'i');
-                var $thumbHolder;
+            it('Try to filter ThumbnailsView by FullName', function () {
+                var $searchContainer = thumbnailView.$el.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var employeeThumbUrl = new RegExp('\/employees\/', 'i');
+                var $fullName;
+                var $country;
+                var $selectedItem;
+                var $next;
+                var $prev;
 
-                server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForThumb)]);
-                server.respondWith('GET', totalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                    showMore: false,
-                    count   : 2
-                })]);
+                selectSpy.reset();
 
-                $showMoreBtn.click();
+                // open filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                // select fullName
+                $fullName = $searchContainer.find('#nameFullContainer .groupName');
+                $fullName.click();
+                $selectedItem = $searchContainer.find('li[data-value="55b92ad221e4b7c40f00004e"]');
+
+                server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForThumb)]);
+                $selectedItem.click();
+                server.respond();
+                expect(selectSpy.calledOnce).to.be.true;
+                expect(thumbnailView.$el.find('#searchContainer')).to.exist;
+                expect(thumbnailView.$el.find('#startLetter')).to.exist;
+                expect(thumbnailView.$el.find('.thumbnailwithavatar'))
+                    .to.have.lengthOf(2);
+
+            });
+
+            /* it('Try to save favorites filters', function () {
+                var userUrl = new RegExp('\/users\/', 'i');
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
+                var $filterNameInput;
+                var $saveFilterBtn;
+
+                saveFilterSpy.reset();
+
+                $favoritesBtn.click();
+                expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                $filterNameInput = $searchContainer.find('#forFilterName');
+                $filterNameInput.val('Test');
+                $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                $saveFilterBtn.click();
+                server.respond();
+                expect(saveFilterSpy.called).to.be.true;
+
+                //close filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.class('hidden');
+            });*/
+
+           /* it('Try to delete FullName filter', function () {
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
+                var personThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
+
+                removeFilterSpy.reset();
+
+                server.respondWith('GET', personThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
+                $closeBtn.click();
+                server.respond();
+
+                expect(removeFilterSpy.called).to.be.true;
+                expect($thisEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(3);
+            });*/
+
+
+
+            it('Try to go to EditForm with error', function (done) {
+                this.timeout(4000);
+                var spyResponse;
+                var $needEl = thumbnailView.$el.find('#55b92ad221e4b7c40f00004e');
+                var employeeUrl = new RegExp('\/employees\/', 'i');
+                server.respondWith('GET', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
+
+                $needEl.click();
 
                 server.respond();
 
-                $thumbHolder = thumbnailView.$el;
+                spyResponse = mainSpy.args[0][0];
+                expect(spyResponse).to.have.property('type', 'error');
+                expect(spyResponse).to.have.property('message', 'Please refresh browser');
 
-                expect($thumbHolder).to.exist;
+                done();
 
+            });
+
+            it('Try to export to Csv', function() {
+                var $needEl = topBarView.$el.find('#top-bar-exportToCsvBtn');
+                $needEl.click();
+                expect(exportStub.calledOnce).to.be.true;
             });
 
             it('Try to go to EditForm', function (done) {
@@ -5459,6 +5644,18 @@ define([
 
             });
 
+            it('Try to take notification in Edit Form', function () {
+                var departmentTab = $dialogEl.find('#department');
+                var spyResponse;
+
+                departmentTab.click();
+                spyResponse = mainSpy.args[2][0];
+
+                expect(spyResponse).to.have.property('type', 'notify');
+                expect(spyResponse).to.have.property('message', 'You can edit department at "Job" tab');
+
+            });
+
             it('Try to change tab in Edit Form', function () {
                 var $secondTab = $dialogEl.find('ul > li:nth-child(2) > a');
 
@@ -5468,6 +5665,7 @@ define([
             });
 
             it('Try to showEdit|hideEdit', function (done) {
+                this.timeout(7000);
                 var $dialog = $('.ui-dialog');
                 var $avatar = $dialog.find('.avatar');
 
@@ -5549,8 +5747,16 @@ define([
              expect(window.location.hash).to.equals('#easyErp/Applications/kanban');
 
              });*/
+            it('Try to save with error', function () {
+                var employeeUrl = '/employees/';
+                var $saveBtn = $dialogEl.find('button.btn.ui-button:nth-child(1)');
+                server.respondWith('POST', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $saveBtn.click();
+                server.respond();
+                expect($('.ui-dialog')).to.exist;
+            });
 
-            it('Try to save item', function () {
+            it('Try to save item with fired (must be redirected to kanban)', function () {
 
                 var $saveBtn = $dialogEl.find('button.btn.ui-button:nth-child(1)');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
@@ -5566,7 +5772,37 @@ define([
 
             });
 
-            it('Try to delete employee', function () {
+            it('Try to save item', function () {
+
+                var $needEl = thumbnailView.$el.find('#55b92ad221e4b7c40f00004e');
+                var employeeUrl = new RegExp('\/employees\/', 'i');
+                var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
+
+                server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
+                server.respondWith('GET', depsForDDurl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
+
+                $needEl.click();
+                server.respond();
+                server.respond();
+                $dialogEl = $('.ui-dialog');
+
+                $dialogEl.find('#first').val('adasd');
+
+                var $saveBtn = $dialogEl.find('button.btn.ui-button:nth-child(1)');
+                var employeeUrl = new RegExp('\/employees\/', 'i');
+
+                server.respondWith('PATCH', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+
+                $saveBtn.click();
+
+                server.respond();
+
+                expect(window.location.hash).to.be.equals('#easyErp/Applications/kanban');
+                $dialogEl.remove();
+
+            });
+            it('Try to fail delete employee', function () {
                 var $deleteBtn;
                 var $needEl = thumbnailView.$el.find('#55b92ad221e4b7c40f00004e');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
@@ -5576,6 +5812,21 @@ define([
                 server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
                 $needEl.click();
                 server.respond();
+
+                $deleteBtn = $('.ui-dialog button:nth-child(3)');
+
+                server.respondWith('DELETE', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $deleteBtn.click();
+                server.respond();
+
+                expect($dialogEl).to.exist;
+
+            });
+
+            it('Try to delete employee', function () {
+                var $deleteBtn;
+                var $needEl = thumbnailView.$el.find('#55b92ad221e4b7c40f00004e');
+                var employeeUrl = new RegExp('\/employees\/', 'i');
 
                 $deleteBtn = $('.ui-dialog button:nth-child(3)');
 
@@ -5602,21 +5853,32 @@ define([
                 server.respond();
 
                 if (mozilaRegExp.test(userAgent)) {
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%2255b92ad221e4b7c40f00004e%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                 } else {
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%2255b92ad221e4b7c40f00004e%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                 }
             });
 
             it('Try to create CreateView', function () {
                 var jobPositionUrl = new RegExp('\/jobPositions\/getForDd', 'i');
                 var usersForDDUrl = '/users/forDd';
+                var depsForDDUrl = new RegExp('\/departments\/getForDD', 'i');
+                var managersUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var jobTypesUrl =  new RegExp('\/jobPositions\/jobType', 'i');
 
                 server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPosForDD)]);
                 server.respondWith('GET', usersForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', depsForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', managersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpPersonsForDD)]);
+                server.respondWith('GET', jobTypesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositionType)]);
+
                 createView = new CreateView();
                 server.respond();
                 server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
+
                 expect($('.ui-dialog')).to.exist;
             });
 
@@ -5642,7 +5904,7 @@ define([
                 var $createBtnEl = $('#createBtnDialog');
 
                 $createBtnEl.click();
-                spyResponse = mainSpy.args[0][0];
+                spyResponse = mainSpy.args[4][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
 
@@ -5665,26 +5927,28 @@ define([
                 var $selectedGroup;
                 var $chooseGroupBtn;
                 var employeeUrl = '/employees/';
-                var $createBtnEl = $('#createBtnDialog');
+
                 var $dialogEl = $('.ui-dialog');
                 var $firstName = $dialogEl.find('#first');
                 var $lastName = $dialogEl.find('#last');
                 var $dateOfBirth = $dialogEl.find('#dateBirth');
                 var $jobPositionSelect = $dialogEl.find('#jobPositionDd');
                 var $thirdTab = $dialogEl.find('ul > li:nth-child(3) > a');
-                var usersForDDUrl = new RegExp('\/users\/forDd', 'i');
-                var depsForDDUrl = new RegExp('\/departments\/getForDD', 'i');
+
+                var $hireDateEl;
+                var $salaryEl;
+                var $managerEl;
+                var jobPositionEl;
+                var $newSelect;
+                var $nextBtn;
+                var $thirdTab = $dialogEl.find('ul > li:nth-child(3) > a');
 
 
-                this.timeout(3000);
-                server.respondWith('GET', usersForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', depsForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
+                this.timeout(4000);
 
                 $firstName.val('test');
                 $lastName.val('test');
                 $dateOfBirth.val('5 Apr, 1991');
-
-                $jobPositionSelect.click();
 
                 $needLiEl = $dialogEl.find('#55eeeddd6dceaee10b00001f');
                 $needLiEl.click();
@@ -5702,10 +5966,54 @@ define([
                 $selectedItem = $dialogEl.find('#560c099da5d4a2e20ba5068b');
                 $selectedItem.click();
 
+
+                // edit Job
+                $thirdTab.click();
+
+                $hireDateEl = $dialogEl.find('.transfer[data-id="0"] > td.editable.date');
+                $hireDateEl.click();
+                $('.editing').val('24 Sep, 2016');
+
+                $jobPositionSelect = $dialogEl.find('.transfer[data-id="0"] #jobPositionDd');
+                $jobPositionSelect.click();
+                $newSelect = $dialogEl.find('div.newSelectList #55ddd8a2f09cc2ec0b000030');
+                $newSelect.click();
+
+
+                $managerEl = $dialogEl.find('.transfer[data-id="0"] #departmentsDd');
+                $managerEl.click();
+                $newSelect = $dialogEl.find('div.newSelectList');
+                $nextBtn = $newSelect.find('a.next');
+                $nextBtn.click();
+                $newSelect.find('#56802ec21afe27f547b7ba53').click();
+
+
+                $managerEl = $dialogEl.find('.transfer[data-id="0"] #projectManagerDD');
+                $managerEl.click();
+                $newSelect = $dialogEl.find('div.newSelectList');
+                $nextBtn = $newSelect.find('a.next');
+                $nextBtn.click();
+                $newSelect.find('#55b92ad221e4b7c40f00004f').click();
+
+
+                $managerEl = $dialogEl.find('.transfer[data-id="0"] #jobTypeDd');
+                $managerEl.click();
+                $newSelect = $dialogEl.find('div.newSelectList');
+                $newSelect.find('#fullTime').click();
+
+                $salaryEl = $dialogEl.find('.transfer[data-id="0"] > td.editable[data-id="salary"]');
+                $salaryEl.click();
+                $salaryEl.find('.editing').val('15000');
+                $dialogEl.find('.transfer[data-id="0"] > td:nth-child(2)').click();
+
+                expect($dialogEl.find('.transfer[data-id="0"] #departmentsDd').attr('data-id')).to.be.equals('56802ec21afe27f547b7ba53');
+                expect($salaryEl.find('.editing').val()).to.be.equals('15000');
+
                 // manage user
                 $manageUserBtn = $dialogEl.find('.addUser');
                 $manageUserBtn.click();
                 server.respond();
+
 
                 $cancelUserBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.add-user-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
                 $cancelUserBtn.click();
@@ -5746,12 +6054,49 @@ define([
                 $chooseGroupBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.add-group-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
                 $chooseGroupBtn.click();
 
+
+
+
+                //expect($('.ui-dialog')).to.not.exist;
+
+            });
+
+            it('Try to save with error', function () {
+                var employeeUrl = '/employees/';
+                var $createBtnEl = $('#createBtnDialog');
+                server.respondWith('POST', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $createBtnEl.click();
+                server.respond();
+                expect($('.ui-dialog')).to.exist;
+            });
+            it('Try to save with success', function () {
+                var employeeUrl = '/employees/';
+                var $createBtnEl = $('#createBtnDialog');
                 server.respondWith('POST', employeeUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({})]);
                 $createBtnEl.click();
                 server.respond();
 
-                $dialogEl.remove();
-                //expect($('.ui-dialog')).to.not.exist;
+                expect($('.ui-dialog')).to.not.exist;
+            });
+            it('Try to show more employees', function () {
+                var $showMoreBtn = thumbnailView.$el.find('#showMore');
+                var employeeThumbUrl = new RegExp('\/employees\/thumbnails', 'i');
+                var totalCollectionUrl = new RegExp('\/employees\/totalCollectionLength', 'i');
+                var $thumbHolder;
+
+                server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForThumb)]);
+                server.respondWith('GET', totalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    showMore: false,
+                    count   : 2
+                })]);
+
+                $showMoreBtn.click();
+
+                server.respond();
+
+                $thumbHolder = thumbnailView.$el;
+
+                expect($thumbHolder).to.exist;
 
             });
 

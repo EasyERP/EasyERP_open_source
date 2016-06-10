@@ -27,7 +27,6 @@ module.exports = function (models, event) {
         }
     });
 
-    router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/generateName', handler.generateName);
     router.get('/stats', handler.getStats);

@@ -3,11 +3,9 @@ define([
     'Underscore',
     'views/listViewBase',
     'text!templates/salesQuotation/list/ListHeader.html',
-    'text!templates/salesQuotation/list/ListHeader.html',
     'text!templates/stages.html',
     'views/salesQuotation/CreateView',
     'views/salesQuotation/list/ListItemView',
-    'views/supplierPayments/list/ListTotalView',
     'views/salesQuotation/EditView',
     'models/QuotationModel',
     'collections/salesQuotation/filterCollection',
@@ -19,11 +17,9 @@ define([
              _,
              listViewBase,
              listTemplate,
-             listForWTrack,
              stagesTemplate,
              CreateView,
              ListItemView,
-             ListTotalView,
              EditView,
              CurrentModel,
              contentCollection,
@@ -36,7 +32,7 @@ define([
     var QuotationListView = listViewBase.extend({
         createView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentCollection       : contentCollection,
         FilterView              : FilterView,
         totalCollectionLengthUrl: '/quotation/totalCollectionLength',
@@ -71,28 +67,17 @@ define([
 
             this.stages = [];
 
-            /* this.startTime = options.startTime;
-             this.collection = options.collection;
-             this.filter = options.filter || {};
-
-             this.sort = options.sort;
-             this.defaultItemsNumber = this.collection.namberToShow || 100;
-             this.newCollection = options.newCollection;
-             this.deleteCounter = 0;
-             this.page = options.collection.page;
-
-             this.render();
-
-             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-             this.contentCollection = contentCollection;*/
-
         },
 
         recalcTotal: function () {
             var total = 0;
 
             _.each(this.collection.toJSON(), function (model) {
-                total += parseFloat(model.paymentInfo.total);
+                if (model.currency && model.currency.rate) {
+                    total += parseFloat(model.paymentInfo.total / model.currency.rate);
+                } else {
+                    total += parseFloat(model.paymentInfo.total);
+                }
             });
 
             this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
@@ -100,9 +85,6 @@ define([
 
         showFilteredPage: function (filter) {
             var itemsNumber = $('#itemsNumber').text();
-
-            $("#top-bar-deleteBtn").hide();
-            $('#checkAll').prop('checked', false);
 
             this.startTime = new Date();
             this.newCollection = false;
@@ -114,9 +96,12 @@ define([
                 value: ['true']
             };
 
-            this.changeLocationHash(1, itemsNumber, filter);
-            // this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            // this.getTotalLength(null, itemsNumber, filter);
+            this.changeLocationHash(null, this.collection.pageSize, this.filter, {replace: false});
+            this.collection.getFirstPage({
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
         },
 
         chooseOption: function (e) {
@@ -176,7 +161,7 @@ define([
 
             $currentEl.html('');
 
-            templ = _.template(listForWTrack);
+            templ = _.template(listTemplate);
             $currentEl.append(templ);
             $currentEl.append(new ListItemView({
                 collection : this.collection,
@@ -184,17 +169,13 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
 
-            $currentEl.append(new ListTotalView({
-                element : $currentEl.find('#listTable'),
-                cellSpan: 5
-            }).render());
-
-            this.renderPagination($currentEl, this);
             this.renderFilter();
 
             this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            this.recalcTotal();
+
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
@@ -215,12 +196,13 @@ define([
 
             model.urlRoot = '/quotation/';
             model.fetch({
-                data   : {
+                data: {
                     id      : id,
                     viewType: 'form'
                 },
+
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

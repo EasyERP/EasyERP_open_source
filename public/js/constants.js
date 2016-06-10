@@ -1,13 +1,13 @@
 define([], function () {
     var filters = {
         wTrack: {
-            'Employee': {
+            Employee: {
                 view   : 'employee',
                 backend: 'employee._id',
                 type   : 'ObjectId'
             },
 
-            'Customer': {
+            Customer: {
                 view   : 'customer',
                 backend: 'customer._id',
                 type   : 'ObjectId'
@@ -19,37 +19,37 @@ define([], function () {
                 type   : 'ObjectId'
             },
 
-            'Department': {
+            Department: {
                 view   : 'department',
                 backend: 'department._id',
                 type   : 'ObjectId'
             },
 
-            'Month': {
+            Month: {
                 view   : 'month',
                 backend: 'month',
                 type   : 'integer'
             },
 
-            'Year': {
+            Year: {
                 view   : 'year',
                 backend: 'year',
                 type   : 'integer'
             },
 
-            'Week': {
+            Week: {
                 view   : 'week',
                 backend: 'week',
                 type   : 'integer'
             },
 
-            'Type': {
+            Type: {
                 view   : '_type',
                 backend: '_type',
                 type   : 'string'
             },
 
-            'Status': {
+            Status: {
                 view   : 'isPaid',
                 backend: 'isPaid',
                 type   : 'boolean'
@@ -62,41 +62,41 @@ define([], function () {
                 backend: '_id'
             },
 
-            'Country': {
+            Country: {
                 view   : 'country',
                 backend: 'address.country'
             },
 
-            'Services': {
+            Services: {
                 view   : 'services',
                 backend: 'services'
             }
         },
 
         DashVacation: {
-            'Employee': {
+            Employee: {
                 view   : 'name',
                 backend: 'employee'
             },
 
-            'Department': {
+            Department: {
                 view   : 'department',
                 backend: 'department._id'
             }
         },
 
         Companies: {
-            'Name': {
+            Name: {
                 view   : 'name',
                 backend: '_id'
             },
 
-            'Country': {
+            Country: {
                 view   : 'country',
                 backend: 'address.country'
             },
 
-            'Services': {
+            Services: {
                 view   : 'services',
                 backend: 'services'
             }
@@ -108,12 +108,12 @@ define([], function () {
                 backend: '_id'
             },
 
-            'Department': {
+            Department: {
                 view   : 'department',
                 backend: 'department._id'
             },
 
-            'Manager': {
+            Manager: {
                 view   : 'manager',
                 backend: 'manager._id'
             },
@@ -130,14 +130,11 @@ define([], function () {
                 backend: '_id'
             },
 
-            'Department'  : {
+            Department: {
                 view   : 'department',
                 backend: 'department._id'
             },
-            /* 'Manager': {
-             view: 'manager',
-             backend: 'manager._id'
-             },*/
+
             'Job Position': {
                 view   : 'jobPosition',
                 backend: 'jobPosition._id'
@@ -145,29 +142,29 @@ define([], function () {
         },
 
         JobPositions: {
-            'Name': {
+            Name: {
                 view   : 'name',
                 backend: 'name'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow'
             },
 
-            'Department': {
+            Department: {
                 view   : 'department',
                 backend: 'department'
             }
         },
 
         salesInvoice: {
-            'Customer': {
+            Customer: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
 
-            'Assigned': {
+            Assigned: {
                 view   : 'salesPerson',
                 backend: 'salesPerson._id'
             },
@@ -177,47 +174,48 @@ define([], function () {
                 backend: 'project._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         ExpensesInvoice: {
-            'Supplier': {
+            Supplier: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         DividendInvoice: {
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         salesProforma: {
-            'Customer': {
+            Customer: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
 
-            'Assigned'    : {
+            Assigned: {
                 view   : 'salesPerson',
                 backend: 'salesPerson._id'
             },
+
             'Project Name': {
                 view   : 'project',
                 backend: 'project._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
@@ -229,12 +227,12 @@ define([], function () {
                 backend: '_id'
             },
 
-            'Contact': {
+            Contact: {
                 view   : 'customer',
                 backend: 'customer._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
@@ -256,12 +254,12 @@ define([], function () {
                 backend: 'contactName'
             },
 
-            'Source': {
+            Source: {
                 view   : 'source',
                 backend: 'source'
             },
 
-            'Stage': {
+            Stage: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
@@ -273,12 +271,12 @@ define([], function () {
         },
 
         Opportunities: {
-            'Customer': {
+            Customer: {
                 view   : 'customer',
                 backend: 'customer._id'
             },
 
-            'Stage': {
+            Stage: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
@@ -290,7 +288,7 @@ define([], function () {
         },
 
         Tasks: {
-            'Project': {
+            Project: {
                 view   : 'project',
                 backend: 'project'
             },
@@ -300,7 +298,7 @@ define([], function () {
                 backend: 'summary'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow'
             },
@@ -310,19 +308,19 @@ define([], function () {
                 backend: 'assignedTo'
             },
 
-            'Type': {
+            Type: {
                 view   : 'type',
                 backend: 'type'
             }
         },
 
         customerPayments: {
-            'Assigned': {
+            Assigned: {
                 view   : 'assigned',
                 backend: 'assigned._id'
             },
 
-            'Company': {
+            Company: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
@@ -332,14 +330,14 @@ define([], function () {
                 backend: 'paymentMethod._id'
             },
 
-            'Name': {
+            Name: {
                 view   : 'name',
                 backend: '_id'
             }
         },
 
         supplierPayments: {
-            'Employee': {
+            Employee: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
@@ -349,55 +347,56 @@ define([], function () {
                 backend: 'paymentRef'
             },
 
-            'Year' : {
+            Year: {
                 view   : 'year',
                 backend: 'year'
             },
-            'Month': {
+
+            Month: {
                 view   : 'month',
                 backend: 'month'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow'
             }
         },
 
         ExpensesPayments: {
-            'Employee': {
+            Employee: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
 
-            'Year': {
+            Year: {
                 view   : 'year',
                 backend: 'year'
             },
 
-            'Month': {
+            Month: {
                 view   : 'month',
                 backend: 'month'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow'
             }
         },
 
         DividendPayments: {
-            'Year': {
+            Year: {
                 view   : 'year',
                 backend: 'year'
             },
 
-            'Month': {
+            Month: {
                 view   : 'month',
                 backend: 'month'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow'
             }
@@ -458,36 +457,36 @@ define([], function () {
         },
 
         Quotation: {
-            'Supplier': {
+            Supplier: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         Invoice: {
-            'Supplier': {
+            Supplier: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         salesQuotation: {
-            'Project': {
+            Project: {
                 view   : 'project',
                 backend: 'project._id'
             },
 
-            'Customer': {
+            Customer: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
@@ -497,19 +496,19 @@ define([], function () {
                 backend: 'salesManager._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         salesOrder: {
-            'Project': {
+            Project: {
                 view   : 'project',
                 backend: 'project._id'
             },
 
-            'Customer': {
+            Customer: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
@@ -519,26 +518,26 @@ define([], function () {
                 backend: 'salesManager._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         Order: {
-            'Supplier': {
+            Supplier: {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
 
         PayrollExpenses: {
-            'Employee': {
+            Employee: {
                 view   : 'employee',
                 backend: 'employee._id'
             },
@@ -554,23 +553,23 @@ define([], function () {
             }
         },
 
-        'jobsDashboard': {
+        jobsDashboard: {
             'Sales Manager': {
                 view   : 'salesManager',
                 backend: 'salesManager._id'
             },
 
-            'Project': {
+            Project: {
                 view   : 'project',
                 backend: 'project._id'
             },
 
-            'Status': {
+            Status: {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
 
-            'Type': {
+            Type: {
                 view   : 'type',
                 backend: 'type'
             },
@@ -581,13 +580,13 @@ define([], function () {
             }
         },
 
-        'salaryReport': {
-            'Employee': {
+        salaryReport: {
+            Employee: {
                 view   : 'employee',
                 backend: '_id'
             },
 
-            'Department': {
+            Department: {
                 view   : 'department',
                 backend: 'department._id'
             },
@@ -598,13 +597,13 @@ define([], function () {
             }
         },
 
-        'journalEntry': {
-            'Journal': {
+        journalEntry: {
+            Journal: {
                 view   : 'journalName',
                 backend: 'journal.name'
             },
 
-            'Subject': {
+            Subject: {
                 view   : 'sourceDocument',
                 backend: 'sourceDocument.subject._id'
             },
@@ -705,7 +704,8 @@ define([], function () {
             'Design',
             'PM'
         ],
-        SELECTP_ROJECT   : 'Please select a Project',
+        
+        SELECTP_ROJECT: 'Please select a Project',
 
         IT_SERVICES: 'IT services',
 
@@ -716,7 +716,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 50,
+        DEFAULT_ELEMENTS_PER_PAGE  : 3,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {

@@ -14,11 +14,12 @@ module.exports = function (event, models) {
 
     router.get('/', accessStackMiddleWare, handler.getByViewTpe);
     router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
-   // router.get('/totalCollectionLength', accessStackMiddleWare, handler.totalCollectionLength);
 
     router.post('/', accessStackMiddleWare, handler.create);
     router.patch('/:id', accessStackMiddleWare, handler.updateOnlySelectedFields);
+
     router.delete('/:id', accessStackMiddleWare, handler.remove);
+    router.delete('/', accessStackMiddleWare, handler.bulkRemove);
 
     return router;
 };

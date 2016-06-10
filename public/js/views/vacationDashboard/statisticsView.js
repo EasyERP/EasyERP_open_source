@@ -1,6 +1,3 @@
-/**
- * Created by German on 02.07.2015.
- */
 define([
     'Backbone',
     'jQuery',
@@ -33,7 +30,7 @@ define([
                 freedNextWeek: options.freedNextWeek
             }));
 
-            $('#timeRecivingDataFromServer').html("Calculated in " + (new Date() - startTime) + " ms");
+            $('#timeRecivingDataFromServer').html('Calculated in ' + (new Date() - startTime) + ' ms');
         }
     });
 
