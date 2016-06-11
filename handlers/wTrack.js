@@ -68,7 +68,7 @@ var TCard = function (event, models) {
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
-                    event.emit('recollectProjectInfo');
+                    // event.emit('recollectProjectInfo');
                 });
             }, function (err) {
                 if (err) {
@@ -111,7 +111,7 @@ var TCard = function (event, models) {
                 event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
                 // event.emit('updateRevenue', {wTrack: tCard, req: req});
                 event.emit('updateProjectDetails', {req: req, _id: tCard.project});
-                event.emit('recollectProjectInfo');
+                // event.emit('recollectProjectInfo');
                 event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash');
 
@@ -152,7 +152,7 @@ var TCard = function (event, models) {
                 event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
                 // event.emit('updateRevenue', {wTrack: tCard, req: req});
                 event.emit('updateProjectDetails', {req: req, _id: tCard.project});
-                event.emit('recollectProjectInfo');
+                // event.emit('recollectProjectInfo');
                 event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash');
 
@@ -784,23 +784,24 @@ var TCard = function (event, models) {
                 projectId = tCard ? tCard.project : null;
 
                 journalEntry.removeBySourceDocument(req, tCard._id);
-
-                event.emit('dropHoursCashes', req);
-                event.emit('recollectVacationDash');
+                
                 event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
 
                 if (projectId) {
                     event.emit('updateProjectDetails', {req: req, _id: projectId});
                 }
-
-                event.emit('recollectProjectInfo');
+                
                 cb();
             });
         }, function (err) {
             if (err) {
                 return next(err);
             }
-
+            
+            event.emit('recollectVacationDash');
+            event.emit('dropHoursCashes', req);
+            // event.emit('recollectProjectInfo');
+            
             res.status(200).send({success: true});
         });
     };
@@ -829,7 +830,7 @@ var TCard = function (event, models) {
                 event.emit('updateProjectDetails', {req: req, _id: projectId});
             }
 
-            event.emit('recollectProjectInfo');
+            // event.emit('recollectProjectInfo');
 
             res.status(200).send({success: tCard});
         });
@@ -1442,7 +1443,7 @@ var TCard = function (event, models) {
             event.emit('updateProjectDetails', {req: req, _id: project, jobId: jobId});
             event.emit('dropHoursCashes', req);
             event.emit('recollectVacationDash');
-            event.emit('recollectProjectInfo');
+            // event.emit('recollectProjectInfo');
 
             res.status(200).send('success');
         });

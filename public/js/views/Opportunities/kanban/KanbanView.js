@@ -16,7 +16,23 @@
     'constants',
     'helpers',
     'views/pagination'
-], function (Backbone, _, $, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, FilterView, ContentCollection, CONSTANTS, helpers, Pagination) {
+], function (Backbone,
+             _,
+             $,
+             WorkflowsTemplate,
+             kanbanSettingsTemplate,
+             WorkflowsCollection,
+             KanbanItemView,
+             EditView,
+             CreateView,
+             OpportunitiesCollection,
+             CurrentModel,
+             dataService,
+             FilterView,
+             ContentCollection,
+             CONSTANTS,
+             helpers,
+             Pagination) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Pagination.extend({
         el               : '#content-holder',
@@ -32,8 +48,10 @@
         },
 
         columnTotalLength: null,
+        collapseWon      : true,
+        collapseLost     : true,
 
-        initialize        : function (options) {
+        initialize: function (options) {
             this.startTime = options.startTime;
             this.buildTime = 0;
             this.workflowsCollection = options.workflowCollection;
@@ -46,6 +64,7 @@
             // this.asyncFetc(options.workflowCollection.toJSON());
             // this.getCollectionLengthByWorkflows(this);
         },
+
         updateFoldWorkflow: function () {
             if (this.foldWorkflows.length === 0) {
                 this.foldWorkflows = ['Empty'];
@@ -284,6 +303,15 @@
 
             }, this);
             column.find('.totalAmount').html(helpers.currencySplitter(workflowAmount.toString()));
+
+            if (context.collapseWon && (response.workflowId === '528cdef4f3f67bc40b00000a')) {
+                context.foldUnfoldKanban(null, response.workflowId);
+                context.collapseWon = false;
+            }
+            if (context.collapseLost && (response.workflowId === '528cdf1cf3f67bc40b00000b')) {
+                context.foldUnfoldKanban(null, response.workflowId);
+                context.collapseLost = false;
+            }
         },
 
         editItem: function () {

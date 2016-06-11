@@ -45,10 +45,7 @@
         },
 
         events: {
-            'click .thumbnailwithavatar': 'gotoEditForm',
-            'click .letter:not(.empty)' : 'alpabeticalRender',
-            'click .saveFilterButton'   : 'saveFilter',
-            'click .removeFilterButton' : 'removeFilter'
+            'click .thumbnailwithavatar': 'gotoEditForm'
         },
 
         /* getTotalLength: function (currentNumber) {

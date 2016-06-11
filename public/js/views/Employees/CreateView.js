@@ -66,7 +66,6 @@ define([
         events: {
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click td.editable'                                : 'editJob'
         },
 
@@ -192,7 +191,6 @@ define([
             var whoCanRW;
             var sourceId;
             var groupsId;
-          /*  var empThumb;*/
             var dataType;
             var manager;
             var marital;
@@ -216,8 +214,6 @@ define([
                     message: 'Please fill Job tab'
                 });
             }
-
-           // self.hideNewSelect();
 
             employeeModel = new EmployeeModel();
 
