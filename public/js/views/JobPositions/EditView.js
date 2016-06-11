@@ -6,15 +6,15 @@ define([
     /* 'collections/JobPositions/JobPositionsCollection',
     'collections/Departments/DepartmentsCollection',
     'collections/Workflows/WorkflowsCollection',*/
-    'views/Assignees/AssigneesView',
+    'views/dialogViewBase',
     /* 'custom',
     'common',*/
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, /* JobPositionsCollection, DepartmentsCollection, WorkflowsCollection,*/ AssigneesView, /* Custom, common,*/ populate, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, /* JobPositionsCollection, DepartmentsCollection, WorkflowsCollection,*/ DialogViewBase, /* Custom, common,*/ populate, CONSTANTS) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = DialogViewBase.extend({
         el         : '#content-holder',
         contentType: 'JobPositions',
         template   : _.template(EditTemplate),
@@ -32,7 +32,7 @@ define([
             this.render();
         },
 
-        events: {
+        /* events: {
             'click .breadcrumb a'                                             : 'changeWorkflow',
             keydown                                                           : 'keydownHandler',
             'click .dialog-tabs a'                                            : 'changeTab',
@@ -42,23 +42,23 @@ define([
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             click                                                             : 'hideNewSelect'
-        },
+        },*/
 
-        notHide: function () {
+        /* notHide: function () {
             return false;
         },
 
         showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
             return false;
-        },
+        },*/
 
         chooseOption: function (e) {
             $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $('.newSelectList').hide();
         },
 
-        nextSelect: function (e) {
+       /* nextSelect: function (e) {
             this.showNewSelect(e, false, true);
         },
         prevSelect: function (e) {
@@ -90,24 +90,25 @@ define([
                 default:
                     break;
             }
-        },
+        },*/
 
         saveItem: function () {
             var afterPage = '';
             var location = window.location.hash;
             var pageSplited = location.split('/p=')[1];
+            var $thisEl = this.$el;
 
             var self = this;
             var mid = 39;
-            var name = $.trim($('#name').val());
-            var expectedRecruitment = parseInt($.trim($('#expectedRecruitment').val()), 10);
-            var description = $.trim($('#description').val());
-            var requirements = $.trim($('#requirements').val());
-            var department = this.$('#departmentDd').data('id');
+            var name = $.trim($thisEl.find('#name').val());
+            var expectedRecruitment = parseInt($.trim($thisEl.find('#expectedRecruitment').val()), 10);
+            var description = $.trim($thisEl.find('#description').val());
+            var requirements = $.trim($thisEl.find('#requirements').val());
+            var department = $thisEl.find('#departmentDd').data('id');
             var usersId = [];
             var groupsId = [];
-            var whoCanRW = this.$el.find('[name="whoCanRW"]:checked').val();
-            var workflow = this.$('#workflowsDd').data('id');
+            var whoCanRW = $thisEl.find('[name="whoCanRW"]:checked').val();
+            var workflow = $thisEl.find('#workflowsDd').data('id');
             var currentWorkflow = this.currentModel.get('workflow');
             var data;
 
@@ -120,7 +121,7 @@ define([
                 department = null;
             }
 
-            $('.groupsAndUser tr').each(function () {
+            $thisEl.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
                     usersId.push($(this).data('id'));
                 }
@@ -136,7 +137,7 @@ define([
                 requirements       : requirements,
                 department         : department || null,
                 groups             : {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: $thisEl.find('#allUsersSelect').data('id'),
                     users: usersId,
                     group: groupsId
                 },
@@ -165,13 +166,13 @@ define([
             });
         },
 
-        hideDialog: function () {
+       /* hideDialog: function () {
             $('.edit-dialog').remove();
             $('.add-group-dialog').remove();
             $('.add-user-dialog').remove();
-        },
+        },*/
 
-        deleteItem: function (event) {
+       /* deleteItem: function (event) {
             var mid = 39;
             var self = this;
             var answer;
@@ -195,12 +196,12 @@ define([
                     }
                 });
             }
-        },
+        },*/
 
         render: function () {
-            var model = this.currentModel.toJSON();
+            /*var model = this.currentModel.toJSON();*/
             var self = this;
-            var notDiv;
+           /* var notDiv;*/
             var formString = this.template({
                 model: this.currentModel.toJSON()
             });
@@ -231,13 +232,13 @@ define([
 
                 ]
             });
-
-            notDiv = this.$el.find('.assignees-container');
+            this.renderAssignees(this.currentModel);
+          /*  notDiv = this.$el.find('.assignees-container');
             notDiv.append(
                 new AssigneesView({
                     model: this.currentModel
                 }).render().el
-            );
+            );*/
 
             populate.get('#departmentDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, false, true);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Job positions'}, 'name', this, false);
@@ -247,7 +248,7 @@ define([
                 max: 9999
             });
 
-            if (model.groups) {
+         /*   if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
@@ -260,7 +261,7 @@ define([
                     });
 
                 }
-            }
+            }*/
             return this;
         }
 

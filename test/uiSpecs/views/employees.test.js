@@ -5649,7 +5649,7 @@ define([
                 var spyResponse;
 
                 departmentTab.click();
-                spyResponse = mainSpy.args[2][0];
+                spyResponse = mainSpy.args[4][0];
 
                 expect(spyResponse).to.have.property('type', 'notify');
                 expect(spyResponse).to.have.property('message', 'You can edit department at "Job" tab');
@@ -5904,7 +5904,7 @@ define([
                 var $createBtnEl = $('#createBtnDialog');
 
                 $createBtnEl.click();
-                spyResponse = mainSpy.args[4][0];
+                spyResponse = mainSpy.args[8][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
 

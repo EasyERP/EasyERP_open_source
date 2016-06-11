@@ -20,11 +20,6 @@ define([
         formUrl          : '#easyErp/Employees/',
         exportToXlsxUrl  : '/employees/exportToXlsx',
         exportToCsvUrl   : '/employees/exportToCsv',
-        events           : {
-            click                         : 'hideItemsNumber',
-            'click .letter:not(.empty)'   : 'alpabeticalRender',
-            'click .list td:not(.notForm)': 'gotoEditForm'
-        },
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -40,7 +35,7 @@ define([
             this.render();
         },
 
-        gotoEditForm: function (e) {
+        gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new CurrentModel({validate: false});
 
