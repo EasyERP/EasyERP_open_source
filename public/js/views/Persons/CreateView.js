@@ -2,17 +2,16 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Persons/CreateTemplate.html',
-    'views/selectView/selectView',
-    'views/Assignees/AssigneesView',
     'views/CustomersSuppliers/salesPurchases',
     'models/PersonsModel',
     'common',
     'populate',
     'constants'
-], function (Backbone, $, _, CreateTemplate, SelectView, AssigneesView, SalesPurchasesView, PersonModel, common, populate, CONSTANTS) {
+], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, PersonModel, common, populate, CONSTANTS) {
     'use strict';
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Persons',
         template   : _.template(CreateTemplate),
@@ -30,62 +29,14 @@ define([
         },
 
         events: {
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-            keydown                                            : 'keydownHandler',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .details'                                   : 'showDetailsBox',
-            'click .current-selected'                          : 'showNewSelect',
-            click                                              : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-            if (this.selectView) {
-                this.selectView.remove();
-            }
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click .details'    : 'showDetailsBox'
         },
 
         chooseOption: function (e) {
             $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
-        },
-
-        showDetailsBox: function (e) {
-            $(e.target).parent().find('.details-box').toggle();
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
         },
 
         changeTab: function (e) {
@@ -98,20 +49,6 @@ define([
             n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
             $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
             $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        showEdit: function () {
-            $('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-        },
-
-        hideEdit: function () {
-            $('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
         },
 
         saveItem: function () {
@@ -211,18 +148,10 @@ define([
             });
         },
 
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },
-
         render: function () {
             var personModel = new PersonModel();
             var formString = this.template();
             var self = this;
-            var notDiv;
             var salesPurchasesEl;
 
             var thisEl = this.$el = $(formString).dialog({
@@ -250,14 +179,9 @@ define([
                     }]
 
             });
-            notDiv = thisEl.find('.assignees-container');
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            notDiv.append(
-                new AssigneesView({
-                    model: null
-                }).render().el
-            );
+            this.renderAssignees(personModel);
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({

@@ -10,7 +10,7 @@ define([
     'custom',
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, selectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, SelectView, DepartmentsCollection, AccountsDdCollection, common, Custom, populate, CONSTANTS) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -146,7 +146,7 @@ define([
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
                 responseObj: this.responseObj
             });
@@ -160,14 +160,14 @@ define([
             $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id')).attr('data-level', $(e.target).data('level'));
         },
 
-        saveItem  : function () {
+        saveItem: function () {
             var self = this;
             var mid = 39;
             var isDevelopment = this.$el.find('#isDevelopment').prop('checked');
             var departmentName = $.trim($('#departmentName').val());
             var parentDepartment = this.$('#parentDepartment').data('id') ? this.$('#parentDepartment').data('id') : null;
             var departmentManager = this.$('#departmentManager').data('id');
-            var nestingLevel = parseInt(this.$('#parentDepartment').data('level')) + 1;
+            var nestingLevel = parseInt(this.$('#parentDepartment').data('level'), 10) + 1;
             var users = this.$el.find('#targetUsers li');
             var res = _.filter(this.responseObj['#parentDepartment'], function (item) {
                 return item.parentDepartment === parentDepartment;
@@ -195,7 +195,7 @@ define([
                 nestingLevel     : nestingLevel,
                 isDevelopment    : isDevelopment,
                 users            : users,
-                isAllUpdate      : nestingLevel != this.currentModel.toJSON().nestingLevel,
+                isAllUpdate      : nestingLevel !== this.currentModel.toJSON().nestingLevel,
                 sequence         : res.length
             });
 
@@ -204,23 +204,28 @@ define([
                     mid: mid
                 },
                 wait   : true,
-                success: function (model) {
+                success: function () {
                     Backbone.history.navigate('#easyErp/Departments', {trigger: true});
                 },
-                error  : function (model, xhr) {
+
+                error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
         },
+
         hideDialog: function () {
             $('.create-dialog').remove();
         },
+
         deleteItem: function (event) {
             var mid = 39;
-            event.preventDefault();
             var self = this;
             var answer = confirm('Really DELETE items ?!');
-            if (answer == true) {
+
+            event.preventDefault();
+
+            if (answer) {
                 this.currentModel.destroy({
                     headers: {
                         mid: mid
@@ -229,16 +234,19 @@ define([
                         $('.edit-dialog').remove();
                         Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
                     },
-                    error  : function (model, xhr) {
+
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });
             }
         },
-        render    : function () {
+
+        render: function () {
             var formString = this.template({
-                model: this.currentModel.toJSON(),
+                model: this.currentModel.toJSON()
             });
+            var b;
             var self = this;
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -266,8 +274,7 @@ define([
             });
             populate.get2name('#departmentManager', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false, true);
             populate.getParrentDepartment('#parentDepartment', CONSTANTS.URLS.DEPARTMENTS_FOREDITDD, {id: this.currentModel.toJSON()._id}, this, false, true);
-            var k = this.currentModel.toJSON().users;
-            var b = $.map(this.currentModel.toJSON().users, function (item) {
+            b = $.map(this.currentModel.toJSON().users, function (item) {
                 return $('<li/>').text(item.login).attr('id', item._id);
             });
             $('#targetUsers').append(b);

@@ -74,15 +74,11 @@
         },
 
         events: {
-           /* 'click #tabList a'                                 : 'switchTab',*/
             'click .breadcrumb a, #refuse'                     : 'changeWorkflow',
             'change #workflowNames'                            : 'changeWorkflows',
-           /* keydown                                            : 'keydownHandler',*/
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
             'click .current-selected'                          : 'showNewSelect',
-           /* click                                              : 'hideNewSelect',*/
-           /* 'click .dialog-tabs a'                             : 'changeTab',*/
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .hireEmployee'                              : 'isEmployee',
             'click .refuseEmployee'                            : 'refuseEmployee',
@@ -237,58 +233,10 @@
 
         isEmployee: function (e) {
             e.preventDefault();
-            /*
-             var hired = {};
-             transfer.date = new Date();
-             hired.department = this.$el.find("#department").attr("data-id") || null;
-             hired.jobPosition = this.$el.find("#jobPosition").attr("data-id") || null;
-             hired.manager = this.$el.find("#manager").attr("data-id") || null;
-             hired.jobType = this.$el.find("#jobType").attr("data-id") || null;
-
-             if (this.isSalary) {
-             hired.salary = this.$el.find('[data-id="salary"]').text();
-             }
-
-             this.currentModel.save({
-             isEmployee: true,
-             transfer: transfer
-             }, {
-             headers: {
-             mid: 39
-             },
-             patch: true,
-             success: function () {
-             Backbone.history.navigate("easyErp/Employees", {trigger: true});
-             }
-             });
-             */
 
             this.addNewRow();
             this.saveItem(null, true);
         },
-
-       /* changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },*/
-
-       /* keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },*/
 
         getWorkflowValue: function (value) {
             var workflows = [];
@@ -299,43 +247,7 @@
             }
             return workflows;
         },
-
-       /* switchTab: function (e) {
-            var link = this.$('#tabList a');
-            var index;
-
-            e.preventDefault();
-
-            if (link.hasClass('selected')) {
-                link.removeClass('selected');
-            }
-
-            index = link.index($(e.target).addClass('selected'));
-            this.$('.tab').hide().eq(index).show();
-        },*/
-
-       /* hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },*/
-
-        showEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-        },
-
-        hideEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
-
-        },
-
+        
         saveItem: function (e, toEmployyes) {
             var weeklyScheduler;
             var currentWorkflow;

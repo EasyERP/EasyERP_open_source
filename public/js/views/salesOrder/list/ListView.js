@@ -34,19 +34,15 @@ define([
 
     var OrdersListView = ListViewBase.extend({
 
-        listTemplate: listTemplate,
-        ListItemView: ListItemView,
-
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
         CreateView       : CreateView,
         EditView         : EditView,
-
-        contentType: 'salesOrder', // needs in view.prototype.changeLocationHash
+        contentType      : 'salesOrder',
 
         events: {
-            'click .stageSelect'                 : 'showNewSelect',
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
-            'click .newSelectList li'            : 'chooseOption'
+            'click  .list tbody td:not(.notForm)': 'goToEditDialog'
         },
 
         initialize: function (options) {
@@ -76,7 +72,6 @@ define([
         },
 
         render: function () {
-            var self = this;
             var $thisEl = this.$el;
             var itemView;
 
@@ -93,7 +88,6 @@ define([
 
             $thisEl.append(itemView.render());
 
-            // added two parameters page and items number
             $thisEl.append(new ListTotalView({
                 element : this.$el.find('#listTable'),
                 cellSpan: 5
@@ -103,17 +97,9 @@ define([
             this.renderPagination($thisEl, this);
 
             $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
-            dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
-                wId         : 'Sales Order',
-                source      : 'purchase',
-                targetSource: 'order'
-            }, function (stages) {
-                self.stages = stages;
-            });
         },
 
-       /* goToEditDialog: function (event) {
+        goToEditDialog: function (event) {
             var self = this;
             var $eventTarget = $(event.target);
             var $closestTr = $eventTarget.closest('tr');
@@ -151,7 +137,7 @@ define([
                     });
                 }
             });
-        }*/
+        }
 
     });
 

@@ -2,9 +2,9 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'views/dialogViewBase',
     'text!templates/Invoice/EditTemplate.html',
     'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
     'views/Invoice/InvoiceProductItems',
     'views/salesInvoice/wTrack/wTrackRows',
     'views/Payment/CreateView',
@@ -19,9 +19,9 @@ define([
 ], function ($,
              _,
              Backbone,
+             ParentView,
              EditTemplate,
              attachView,
-             AssigneesView,
              InvoiceItemView,
              wTrackRows,
              PaymentCreateView,
@@ -35,28 +35,19 @@ define([
              helpers) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Invoice',
         template   : _.template(EditTemplate),
 
         events: {
-            'click #saveBtn'                                                  : 'saveItem',
-            'click #cancelBtn'                                                : 'hideDialog',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click .details'                                                  : 'showDetailsBox',
-            'click .newPayment'                                               : 'newPayment',
-            'click .sendEmail'                                                : 'sendEmail',
-            'click .approve'                                                  : 'approve',
-            'click .cancelInvoice'                                            : 'cancelInvoice',
-            // 'click .refund': 'refund',
-            'click .setDraft'                                                 : 'setDraft'
-
+            'click #saveBtn'      : 'saveItem',
+            'click #cancelBtn'    : 'hideDialog',
+            'click .details'      : 'showDetailsBox',
+            'click .newPayment'   : 'newPayment',
+            'click .sendEmail'    : 'sendEmail',
+            'click .approve'      : 'approve',
+            'click .cancelInvoice': 'cancelInvoice',
+            'click .setDraft'     : 'setDraft'
         },
 
         initialize: function (options) {
@@ -77,21 +68,6 @@ define([
             this.collection = options.collection;
 
             this.notCreate = options.notCreate ? false : true;
-
-            /* if (!App || !App.currentDb) {
-             dataService.getData('/currentDb', null, function (response) {
-             if (response && !response.error) {
-             App.currentDb = response;
-             App.weTrack = true;
-             } else {
-             console.log('can\'t fetch current db');
-             }
-
-             this.render();
-             });
-             } else {
-             this.render();
-             }*/
 
             this.render();
 
@@ -125,7 +101,7 @@ define([
 
             self.hideDialog();
 
-            new EmailVew({
+            return new EmailVew({
                 model: self.currentModel
             });
         },
@@ -162,14 +138,16 @@ define([
                         invoiceDate: invoiceDate
                     };
 
-                    dataService.patchData(url, data, function (err, response) {
+                    dataService.patchData(url, data, function (err) {
                         if (!err) {
                             self.currentModel.set({approved: true});
                             $buttons.show();
 
                             App.stopPreload();
 
-                            self.eventChannel && self.eventChannel.trigger('invoiceUpdated');
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('invoiceUpdated');
+                            }
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();
@@ -264,42 +242,6 @@ define([
             });
         },
 
-        showDetailsBox: function (e) {
-            $(e.target).parent().find('.details-box').toggle();
-        },
-
-        notHide: function () {
-            return false;
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
-        },
-
         chooseUser: function (e) {
             $(e.target).toggleClass('choosen');
         },
@@ -327,7 +269,6 @@ define([
             var amount;
             var data;
             var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
-            var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
             var currency = {
                 _id : $thisEl.find('#currencyDd').attr('data-id'),
                 name: $.trim($thisEl.find('#currencyDd').text())
@@ -341,12 +282,6 @@ define([
             var total = parseFloat($thisEl.find('#totalAmount').text());
             var unTaxed = parseFloat($thisEl.find('#totalUntaxes').text());
             var balance = parseFloat($thisEl.find('#balance').text());
-
-            var payments = {
-                total  : total,
-                unTaxed: unTaxed,
-                balance: balance
-            };
 
             var salesPersonId = $thisEl.find('#salesPerson').attr('data-id') || null;
             var paymentTermId = $thisEl.find('#payment_terms').attr('data-id') || null;
@@ -405,10 +340,7 @@ define([
                 currency      : currency,
                 supplier      : supplier,
                 fiscalPosition: null,
-                // sourceDocument: $.trim(this.$el.find('#source_document').val()),
-                // supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
-                name          : $.trim(this.$el.find('#supplier_invoice_num').val()), // changed For Yana
-                // paymentReference: $.trim(this.$el.find('#payment_reference').val()),
+                name          : $.trim(this.$el.find('#supplier_invoice_num').val()),
                 invoiceDate   : invoiceDate,
                 dueDate       : dueDate,
                 account       : null,
@@ -416,9 +348,6 @@ define([
 
                 salesPerson : salesPersonId,
                 paymentTerms: paymentTermId,
-
-                // products   : this.redirect ? productsOld : products,
-                // paymentInfo: payments,
 
                 groups: {
                     owner: $('#allUsersSelect').data('id'),
@@ -480,38 +409,28 @@ define([
             }
         },
 
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-        },
-
         chooseOption: function (e) {
             var holder = $(e.target).parents('dd').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
         },
 
         deleteItem: function (event) {
-            var url = window.location.hash;
             var self = this;
             var answer;
-
-            // var redirectUrl = this.forSales ? url : 'easyErp/Invoice';
 
             event.preventDefault();
 
             answer = confirm('Really DELETE items ?!');
-            if (answer === true) {
+            if (answer) {
                 this.currentModel.destroy({
                     success: function () {
                         $('.edit-invoice-dialog').remove();
 
                         self.hideDialog();
-                        self.eventChannel && self.eventChannel.trigger('invoiceRemove');
+
+                        if (self.eventChannel) {
+                            self.eventChannel.trigger('invoiceRemove');
+                        }
                     },
 
                     error: function (model, err) {
@@ -539,7 +458,6 @@ define([
             var assigned;
             var customer;
             var total;
-            var wTracksDom;
             var buttons;
             var invoiceDate;
             var isFinancial;
@@ -594,11 +512,7 @@ define([
                         click: function () {
                             self.hideDialog();
                         }
-                    } /* ,
-                     {
-                     text : 'Delete',
-                     click: self.deleteItem
-                     }*/
+                    }
                 ];
             } else {
                 buttons = [
@@ -632,12 +546,7 @@ define([
 
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(
@@ -709,7 +618,7 @@ define([
             notDiv.append(
                 new attachView({
                     model: this.currentModel,
-                    url  : '/uploadInvoiceFiles',
+                    url  : '/uploadInvoiceFiles'
                 }).render().el
             );
 
@@ -723,11 +632,11 @@ define([
                     $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
                         $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + "</li>");
+                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
                     });
                     model.groups.users.forEach(function (item) {
                         $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + "</li>");
+                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
                     });
 
                 }

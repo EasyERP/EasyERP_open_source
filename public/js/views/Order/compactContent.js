@@ -1,36 +1,39 @@
 ﻿define([
-        "text!templates/Persons/compactContentTemplate.html",
-        "common"
-    ],
-    function (compactContentTemplate, common) {
-        var compactContentView = Backbone.View.extend({
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Persons/compactContentTemplate.html'
+], function (Backbone, $, _, compactContentTemplate) {
+    var compactContentView = Backbone.View.extend({
 
-            className: "form",
+        className: 'form',
 
-            events: {
-                "click #persons p > a": "gotoPersonsForm"
-            },
+        events: {
+            'click #persons p > a': 'gotoPersonsForm'
+        },
 
-            initialize: function (options) {
+        initialize: function (options) {
 
-            },
+        },
 
-            template: _.template(compactContentTemplate),
+        template: _.template(compactContentTemplate),
 
-            gotoPersonsForm: function (e) {
-                e.preventDefault();
-                var itemIndex = $(e.target).closest("a").attr("id");
-                Backbone.history.navigate("#easyErp/Persons/form/" + itemIndex, {trigger: true});
-            },
+        gotoPersonsForm: function (e) {
+            var itemIndex;
 
-            render: function (options) {
-                this.$el.html(this.template({
-                    collection: this.collection,
-                    options   : options
-                }));
-                return this;
-            }
-        });
+            e.preventDefault();
+            itemIndex = $(e.target).closest('a').attr('id');
+            Backbone.history.navigate('#easyErp/Persons/form/' + itemIndex, {trigger: true});
+        },
 
-        return compactContentView;
+        render: function (options) {
+            this.$el.html(this.template({
+                collection: this.collection,
+                options   : options
+            }));
+            return this;
+        }
     });
+
+    return compactContentView;
+});

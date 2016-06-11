@@ -99,14 +99,11 @@ define([
         },
 
         events: {
-            /* 'click #tabList a'                                               : 'switchTab',*/
             'mouseenter .avatar'                                             : 'showEdit',
             'mouseleave .avatar'                                             : 'hideEdit',
             'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
             'click .withEndContract .newSelectList li'                       : 'endContract',
-           /* 'click .current-selected'                                        : 'showNewSelect',*/
             'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
-            /* click                                                            : 'hideNewSelect',*/
             'click td.editable'                                              : 'editJob',
             'click #update'                                                  : 'addNewRow',
             'keyup .editing'                                                 : 'validateNumbers',
@@ -135,7 +132,6 @@ define([
 
             tr.remove();
 
-            // this.$el.find('#update').show(); // commented by Pasha
             this.$el.find('.withEndContract').show();
 
             this.renderRemoveBtn();
@@ -239,28 +235,6 @@ define([
             return false;
         },
 
-       /* showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },*/
-
         chooseOption: function (e) {
             var $target = $(e.target);
             var $parentUl = $target.parent();
@@ -303,22 +277,6 @@ define([
             }
         },
 
-        /* hideNewSelect: function () {
-         var self = this;
-         var editingDates = this.$el.find('td.date');
-
-         editingDates.each(function () {
-         var target = $(this);
-         target.text(target.find('input').val());
-         });
-
-         this.$el.find('.newSelectList').hide();
-
-         if (this.selectView) {
-         this.selectView.remove();
-         }
-         },*/
-
         showEndContractSelect: function (e) {
             e.preventDefault();
             $(e.target).parent().find('.newSelectList').toggle();
@@ -350,21 +308,6 @@ define([
             this.activeTab();
 
             this.addNewRow(null, contractEndReason);
-        },
-
-        showEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        hideEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
         },
 
         saveItem: function () {
