@@ -14,7 +14,7 @@ define([
         },
 
         editItem: function () {
-            new EditView({model: this.formModel});
+            return new EditView({model: this.formModel});
         },
 
         deleteItems: function () {
@@ -47,9 +47,9 @@ define([
 
         render: function () {
             var formModel = this.formModel.toJSON();
-            
+
             this.$el.html(_.template(FormTemplate, formModel));
-            
+
             return this;
         }
     });

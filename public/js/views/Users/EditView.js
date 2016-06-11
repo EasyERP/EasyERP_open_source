@@ -9,33 +9,33 @@
     'constants'
 ], function (Backbone, _, $, EditTemplate, common, populate, Validation, CONSTANTS) {
     var EditView = Backbone.View.extend({
-        el         : "#content-holder",
-        contentType: "Users",
+        el         : '#content-holder',
+        contentType: 'Users',
         imageSrc   : '',
         template   : _.template(EditTemplate),
 
-        initialize   : function (options) {
-            _.bindAll(this, "saveItem");
-            _.bindAll(this, "render", "deleteItem");
+        initialize: function (options) {
+            _.bindAll(this, 'saveItem');
+            _.bindAll(this, 'render', 'deleteItem');
             this.currentModel = options.model || options.collection.getElement();
-            this.currentModel.urlRoot = "/users";
+            this.currentModel.urlRoot = '/users';
             this.responseObj = {};
             this.render();
         },
 
-        events       : {
-            "mouseenter .avatar"                                              : "showEdit",
-            "mouseleave .avatar"                                              : "hideEdit",
-            "click .current-selected"                                         : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                     : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click"                                                           : "hideNewSelect",
-            "keypress #login"                                                 : "checkLoginInputKey"
+        events: {
+            'mouseenter .avatar'                                              : 'showEdit',
+            'mouseleave .avatar'                                              : 'hideEdit',
+            'click .current-selected'                                         : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
+            'click .newSelectList li.miniStylePagination'                     : 'notHide',
+            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
+            click                                                             : 'hideNewSelect',
+            'keypress #login'                                                 : 'checkLoginInputKey'
         },
 
-        notHide      : function () {
+        notHide: function () {
             return false;
         },
 
@@ -44,39 +44,39 @@
             return false;
         },
 
-        chooseOption : function (e) {
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-            $(".newSelectList").hide();
+        chooseOption: function (e) {
+            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $('.newSelectList').hide();
         },
 
-        nextSelect   : function (e) {
+        nextSelect: function (e) {
             this.showNewSelect(e, false, true);
         },
-        prevSelect   : function (e) {
+        prevSelect: function (e) {
             this.showNewSelect(e, true, false);
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
         },
 
-        hideDialog   : function () {
-            $(".edit-dialog").remove();
-            $(".crop-images-dialog").remove();
+        hideDialog: function () {
+            $('.edit-dialog').remove();
+            $('.crop-images-dialog').remove();
         },
 
-        showEdit     : function () {
-            $(".upload").animate({
-                height : "20px",
-                display: "block"
+        showEdit: function () {
+            $('.upload').animate({
+                height : '20px',
+                display: 'block'
             }, 250);
 
         },
 
-        hideEdit     : function () {
-            $(".upload").animate({
-                height : "0px",
-                display: "block"
+        hideEdit: function () {
+            $('.upload').animate({
+                height : '0px',
+                display: 'block'
             }, 250);
 
         },
@@ -89,14 +89,14 @@
             }
         },
 
-        saveItem  : function () {
+        saveItem: function () {
             var self = this;
             var $thisEl = this.$el;
             var mid = 39;
             var jsonModel = this.currentModel.toJSON();
             var email = $thisEl.find('#email').val();
             var login = $thisEl.find('#login').val();
-            var profileId = $thisEl.find('#profilesDd').data("id");
+            var profileId = $thisEl.find('#profilesDd').data('id');
 
             var data = Object.create(null);
 
@@ -121,33 +121,39 @@
             }
 
             this.currentModel.save(data, {
-                headers : {
+                headers: {
                     mid: mid
                 },
-                patch   : true,
-                wait    : true,
-                success : function (model, response) {
+
+                patch  : true,
+                wait   : true,
+                success: function (model, response) {
                     self.hideDialog();
                     if (response && response.logout) {
                         window.location.pathname = '/logout';
                     } else {
-                        Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
                     }
                 },
-                error   : function (model, xhr) {
+
+                error: function (model, xhr) {
                     self.hideDialog();
                     self.render();
                     self.errorNotification(xhr);
                 },
+
                 editMode: true
             });
 
         },
+        
         deleteItem: function (event) {
             var mid = 39;
-            event.preventDefault();
             var self = this;
-            var answer = confirm("Really DELETE items ?!");
+            var answer = confirm('Really DELETE items ?!');
+
+            event.preventDefault();
+
             if (answer === true) {
                 this.currentModel.destroy({
                     headers: {
@@ -155,9 +161,10 @@
                     },
                     success: function () {
                         $('.edit-dialog').remove();
-                        Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
                     },
-                    error  : function (model, xhr) {
+
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });
@@ -168,30 +175,32 @@
             var formString = this.template(this.currentModel.toJSON());
             var self = this;
             this.$el = $(formString).dialog({
-                dialogClass: "edit-dialog",
+                dialogClass: 'edit-dialog',
                 width      : 600,
-                title      : "Edit User",
+                title      : 'Edit User',
                 buttons    : {
-                    save  : {
-                        text : "Save",
-                        class: "btn",
+                    save: {
+                        text : 'Save',
+                        class: 'btn',
                         click: self.saveItem
                     },
+
                     cancel: {
-                        text : "Cancel",
-                        class: "btn",
+                        text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }
                     },
+
                     delete: {
-                        text : "Delete",
-                        class: "btn",
+                        text : 'Delete',
+                        class: 'btn',
                         click: self.deleteItem
                     }
                 }
             });
-            populate.get("#profilesDd", CONSTANTS.URLS.PROFILES_FOR_DD, {}, "profileName", this);
+            populate.get('#profilesDd', CONSTANTS.URLS.PROFILES_FOR_DD, {}, 'profileName', this);
             common.canvasDraw({model: this.model.toJSON()}, this);
             return this;
         }

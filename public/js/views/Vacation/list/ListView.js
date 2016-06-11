@@ -51,7 +51,6 @@ define([
 
         events: {
             'click .fa-trash-o'                                : 'deleteItemPressed',
-            // 'blur td.editable input'                                          : 'hideInput',
             'click td.editable, .current-selected'             : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .oe_sortable'                               : 'goSort',
@@ -60,7 +59,6 @@ define([
         },
 
         hideNewSelect: function () {
-            // $(".newSelectList").remove();
             var editingDates = this.$el.find('.editing');
 
             editingDates.each(function () {
@@ -329,13 +327,10 @@ define([
         },
 
         setEditable: function (td) {
-            // var tr;
 
             if (!td.parents) {
                 td = $(td.target).closest('td');
             }
-
-            // tr = td.parents('tr');
 
             td.addClass('edited');
 
@@ -389,7 +384,7 @@ define([
                 target.addClass('sortUp');
                 sortClass = 'sortUp';
             }
-            
+
             switch (sortClass) {
                 case 'sortDn':
                     target.parent().find('th').removeClass('sortDn').removeClass('sortUp');
@@ -514,7 +509,7 @@ define([
             // var self = this;
             var target = $(e.target);
             var closestTD = target.closest('td');
-            var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
+            var targetElement = closestTD.length ? closestTD : target.closest('th').find('a');
             var tr = target.closest('tr');
             var tdTotalDays = $(tr).find('.totalDays');
             var modelId = tr.attr('data-id');

@@ -9,15 +9,14 @@ define([
     'dataService'
 ], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, ContentCollection) {
     'use strict';
-    
+
     var UsersListView = ListViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : ContentCollection,
-        contentType             : 'Users', // needs in view.prototype.changeLocationHash
-        totalCollectionLengthUrl: '/totalCollectionLength/Users',
-        formUrl                 : '#easyErp/Users/form/',
+        createView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: ContentCollection,
+        contentType      : 'Users', // needs in view.prototype.changeLocationHash
+        formUrl          : '#easyErp/Users/form/',
 
         initialize: function (options) {
             this.startTime = options.startTime;

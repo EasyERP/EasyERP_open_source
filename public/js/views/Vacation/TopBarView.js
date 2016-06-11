@@ -1,10 +1,11 @@
 define([
+    'Underscore',
     'views/topBarViewBase',
     'text!templates/Vacation/TopBarTemplate.html',
     'custom',
     'common',
     'constants'
-], function (BaseView, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+], function (_, BaseView, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
     'use strict';
 
     var TopBarView = BaseView.extend({

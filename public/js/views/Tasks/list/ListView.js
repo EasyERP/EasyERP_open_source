@@ -12,16 +12,14 @@ define([
     'views/Projects/EditView',
     'models/ProjectsModel',
     'collections/Tasks/filterCollection',
-    'views/Filter/FilterView',
     'common'
-], function ($, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, FilterView, common) {
+], function ($, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, common) {
     var TasksListView = ListViewBase.extend({
 
         CreateView       : CreateView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: ContentCollection,
-        filterView       : FilterView,
         contentType      : 'Tasks',
 
         events: {
@@ -83,7 +81,7 @@ define([
             model.fetch({
                 data   : {id: id, viewType: 'form'},
                 success: function (newModel) {
-                    new EditView({model: newModel});
+                    return new EditView({model: newModel});
                 },
 
                 error: function () {

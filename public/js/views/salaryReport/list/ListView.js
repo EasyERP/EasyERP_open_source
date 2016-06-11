@@ -4,14 +4,13 @@ define([
     'views/listViewBase',
     'text!templates/salaryReport/list/ListHeader.html',
     'views/salaryReport/list/ListItemView',
-    'views/Filter/FilterView',
     'collections/salaryReport/filterCollection',
     'constants',
     'moment',
     'dataService',
     'helpers',
     'custom'
-], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers, custom) {
+], function ($, _, listViewBase, listTemplate, ListItemView, reportCollection, CONSTANTS, moment, dataService, helpers, custom) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -25,7 +24,6 @@ define([
         contentType       : CONSTANTS.SALARYREPORT, // needs in view.prototype.changeLocationHash
         viewType          : 'list', // needs in view.prototype.changeLocationHash
         yearElement       : null,
-        FilterView        : FilterView,
 
         initialize: function (options) {
             var dateRange;

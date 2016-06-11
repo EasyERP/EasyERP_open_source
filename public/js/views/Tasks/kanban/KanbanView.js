@@ -41,17 +41,17 @@
             this.workflowsCollection = options.workflowCollection;
             this.responseObj = {};
             this.foldWorkflows = [];
-            
+
             this.render();
             this.asyncFetch(options.workflowCollection, options.parrentContentId);
             // this.getCollectionLengthByWorkflows(this, options.parrentContentId);
-            
+
         },
 
         notHide: function (e) {
             return false;
         },
-        
+
         updateFoldWorkflow: function () {
             if (this.foldWorkflows.length === 0) {
                 this.foldWorkflows = ['Empty'];
@@ -98,7 +98,7 @@
             }
 
             $closestTable = el.closest('table');
-            
+
             if ($closestTable.find('.fold').length === $closestTable.find('.column').length) {
                 $closestTable.css({'min-width': 'inherit'});
             } else {
@@ -120,7 +120,7 @@
 
         showNewSelect: function (e, prev, next) {
             populate.showSelectPriority(e, prev, next, this);
-            
+
             return false;
         },
 
@@ -136,9 +136,9 @@
             var id;
             var priority;
             var type;
-            
+
             currentSelected.text($target.text());
-            
+
             if (selectType === 'priority') {
                 id = currentSelected.attr('id').replace('priority_', '');
                 model = collection.get(id);
@@ -179,7 +179,7 @@
 
         isNumberKey: function (event) {
             var charCode = event.which || event.keyCode;
-            
+
             return !(charCode > 31 && (charCode < 48 || charCode > 57));
         },
 
@@ -212,7 +212,7 @@
         editKanban: function (e) {
             dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (user, context) {
                 var tempDom = _.template(kanbanSettingsTemplate, {tasks: user.user.kanbanSettings.tasks});
-                
+
                 context.$el = $(tempDom).dialog({
                     dialogClass: 'edit-dialog',
                     width      : '400',
@@ -223,7 +223,7 @@
                             class: 'btn',
                             click: context.saveKanbanSettings
                         },
-                        
+
                         cancel: {
                             text : 'Cancel',
                             class: 'btn',
@@ -244,11 +244,11 @@
             dataService.getData('/tasks/getLengthByWorkflows', {parrentContentId: parrentContentId}, function (data) {
                 data.arrayOfObjects.forEach(function (object) {
                     var column = context.$el.find('#' + object._id);
-                    
+
                     column.find('.totalCount').text(object.count);
                     column.find('.remaining').text(object.remaining);
                 });
-                
+
                 if (data.showMore) {
                     context.$el.append('<div id="showMoreDiv" title="To show mor ellements per column, please change kanban settings">And More</div>');
                 }
@@ -273,12 +273,12 @@
             model.urlRoot = CONSTANTS.URLS.TASKS;
 
             model.fetch({
-                data: {
+                data   : {
                     id      : id,
                     viewType: 'form'
                 },
                 success: function (newModel) {
-                    new EditView({model: newModel});
+                    return new EditView({model: newModel});
                 },
 
                 error: function () {
@@ -346,13 +346,11 @@
         },
 
         editItem: function () {
-            // create editView in dialog here
-            new EditView({collection: this.collection});
+            return new EditView({collection: this.collection});
         },
 
         createItem: function () {
-            // create editView in dialog here
-            new CreateView();
+            return new CreateView();
         },
 
         updateSequence: function (item, workflow, sequence, workflowStart, sequenceStart) {
@@ -378,12 +376,12 @@
 
                 $workflowItems.each(function () {
                     var sec = parseInt($(this).find('.inner').attr('data-sequence'), 10);
-                    
+
                     if (sec >= a && sec <= b) {
                         $(this).find('.inner').attr('data-sequence', sec + inc);
                     }
                 });
-                
+
                 item.find('.inner').attr('data-sequence', sequence);
 
             } else {
@@ -392,13 +390,13 @@
                         $(this).find('.inner').attr('data-sequence', parseInt($(this).find('.inner').attr('data-sequence'), 10) + 1);
                     }
                 });
-                
+
                 $('#' + workflowStart).find('.item').each(function () {
                     if (parseInt($(this).find('.inner').attr('data-sequence'), 10) > sequenceStart) {
                         $(this).find('.inner').attr('data-sequence', parseInt($(this).find('.inner').attr('data-sequence'), 10) - 1);
                     }
                 });
-                
+
                 item.find('.inner').attr('data-sequence', sequence);
             }
         },
@@ -407,7 +405,7 @@
             var el = $(e.target);
 
             this.$el.find('.allNumberPerPage, .newSelectList').hide();
-            
+
             if (!el.closest('.search-view')) {
                 $('.search-content').removeClass('fa-caret-up');
                 this.$el.find('.search-options').addClass('hidden');
@@ -509,7 +507,7 @@
             _.each(workflows, function (workflow, i) {
                 var column;
                 var total;
-                
+
                 itemCount = 0;
                 column = this.$('.column').eq(i);
                 total = ' <span><span class="totalCount">' + itemCount + '</span> </span>';

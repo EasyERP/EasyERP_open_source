@@ -35,7 +35,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        contentType      : CONSTANTS.SALESPROFORMA, // 'salesProforma', //'Invoice',//needs in view.prototype.changeLocationHash
+        contentType      : CONSTANTS.SALESPROFORMA,
         changedModels    : {},
 
         initialize: function (options) {

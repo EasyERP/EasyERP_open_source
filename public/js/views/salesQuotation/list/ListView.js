@@ -30,12 +30,12 @@ define([
     'use strict';
 
     var QuotationListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        viewType                : 'list',
-        contentType             : CONSTANTS.SALESQUOTATION,
+        createView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        viewType         : 'list',
+        contentType      : CONSTANTS.SALESQUOTATION,
 
         events: {
             'click .stageSelect'                 : 'showNewSelect',
@@ -135,7 +135,7 @@ define([
             this.recalcTotal();
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
-            
+
             return this;
         },
 

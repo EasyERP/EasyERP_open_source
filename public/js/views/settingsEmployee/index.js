@@ -5,7 +5,7 @@ define([
     'text!templates/settingsEmployee/list/ListTemplate.html',
     'views/weeklyScheduler/list/ListView',
     'views/payrollComponentTypes/list/ListView'
-], function ($, _, Backbone, listTemplate, weeklySchedulerView, PayrollComponentTypeView) {
+], function ($, _, Backbone, listTemplate, WeeklySchedulerView, PayrollComponentTypeView) {
 
     var SettingsEmployeeListView = Backbone.View.extend({
         el      : '#content-holder',
@@ -32,7 +32,7 @@ define([
                 self.weeklySchedulerView.undelegateEvents();
             }
 
-            self.weeklySchedulerView = new weeklySchedulerView({eventChannel: self.eventChannel});
+            self.weeklySchedulerView = new WeeklySchedulerView({eventChannel: self.eventChannel});
         },
 
         getPayrollEarningsType: function () {
