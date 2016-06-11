@@ -195,12 +195,12 @@ describe('ProductCategories Specs', function () {
                 'fullName'    : 'All/Test',
                 'name'        : 'Test',
                 'nestingLevel': null,
-                'parent'      : 'null',
+                'parent'      : null,
                 'sequence'    : 0
             };
 
             aggent
-                .post('category')
+                .get('category')
                 .send(body)
                 .expect(403, done);
         });

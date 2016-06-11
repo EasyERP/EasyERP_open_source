@@ -196,7 +196,7 @@ var Categories = function (models, event) {
             .findById(id)
             .populate('parent')
             .exec(function (err, category) {
-                parrentFullName = category.parent ? category.parent.fullName : null;
+                parrentFullName = category && category.parent ? category.parent.fullName : null;
 
                 if (parrentFullName) {
                     fullName = parrentFullName + ' / ' + category.name;
