@@ -801,7 +801,7 @@ var Module = function (models, event) {
     this.getLeadsForChart = function (req, res, next) {
         var data = req.query;
         var response = {};
-        var type = data.type;
+        var type = data.type || 'sale';
         var myItem = {};
         var fromDateTicks;
         var fromDate;

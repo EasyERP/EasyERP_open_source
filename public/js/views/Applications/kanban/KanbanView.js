@@ -229,7 +229,7 @@
                 collection.set(collection.parse(response));
             }
 
-            column = this.$el.find('[data-id="' + response.workflowId + '"]');
+            column = context.$el.find('[data-id="' + response.workflowId + '"]');
 
             forContent = column.find('#forContent');
             forContent.html(''); // for duplicated content edited by Lilya

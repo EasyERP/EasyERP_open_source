@@ -191,11 +191,12 @@ describe('Payment Specs', function () {
             it('should get payments by viewType', function (done) {
                 var query = {
                     count   : 100,
-                    viewType: 'list'
+                    viewType: 'list',
+                    contentType: 'SalaryPayment'
                 };
 
                 aggent
-                    .get('payment/salary/')
+                    .get('payment/')
                     .query(query)
                     .expect(200)
                     .end(function (err, res) {
