@@ -26,6 +26,7 @@ define([
             $('#top-bar-deleteBtn').hide();
             $('#top-bar-generateBtn').hide();
             $('#top-bar-copyBtn').hide();
+            $('#top-bar-createBtn').show();
 
             this.$el.find('#checkAll').prop('checked', false);
         },

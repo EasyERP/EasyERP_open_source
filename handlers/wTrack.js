@@ -620,30 +620,24 @@ var TCard = function (event, models) {
                 }
             }, {
                 $project: {
-                    project   : {$arrayElemAt: ['$project', 0]},
-                    jobs      : {$arrayElemAt: ['$jobs', 0]},
-                    employee  : {$arrayElemAt: ['$employee', 0]},
-                    department: {$arrayElemAt: ['$department', 0]},
-                    dateByWeek: 1,
-                    createdBy : 1,
-                    month     : 1,
-                    year      : 1,
-                    week      : 1,
-                    revenue   : 1,
-                    amount    : 1,
-                    rate      : 1,
-                    hours     : 1,
-                    cost      : 1,
-                    worked    : 1,
-                    isPaid    : 1,
-                    _type     : 1,
-                    1         : 1,
-                    2         : 1,
-                    3         : 1,
-                    4         : 1,
-                    5         : 1,
-                    6         : 1,
-                    7         : 1
+                    project         : {$arrayElemAt: ['$project', 0]},
+                    jobs            : {$arrayElemAt: ['$jobs', 0]},
+                    employee        : {$arrayElemAt: ['$employee', 0]},
+                    department      : {$arrayElemAt: ['$department', 0]},
+                    'createdBy.date': 1,
+                    dateByWeek      : 1,
+                    month           : 1,
+                    year            : 1,
+                    week            : 1,
+                    worked          : 1,
+                    _type           : 1,
+                    1               : 1,
+                    2               : 1,
+                    3               : 1,
+                    4               : 1,
+                    5               : 1,
+                    6               : 1,
+                    7               : 1
                 }
             }, {
                 $lookup: {
@@ -661,35 +655,79 @@ var TCard = function (event, models) {
                 }
             }, {
                 $project: {
-                    customer  : {$arrayElemAt: ['$customer', 0]},
-                    workflow  : {$arrayElemAt: ['$workflow', 0]},
-                    dateByWeek: 1,
-                    createdBy : 1,
-                    project   : 1,
-                    jobs      : 1,
-                    employee  : 1,
-                    department: 1,
-                    month     : 1,
-                    year      : 1,
-                    week      : 1,
-                    revenue   : 1,
-                    amount    : 1,
-                    rate      : 1,
-                    hours     : 1,
-                    cost      : 1,
-                    worked    : 1,
-                    isPaid    : 1,
-                    _type     : 1,
-                    1         : 1,
-                    2         : 1,
-                    3         : 1,
-                    4         : 1,
-                    5         : 1,
-                    6         : 1,
-                    7         : 1
+                    customer: {$arrayElemAt: ['$customer', 0]},
+                    workflow: {$arrayElemAt: ['$workflow', 0]},
+
+                    project: {
+                        _id : '$project._id',
+                        name: '$project.name'
+                    },
+
+                    jobs: {
+                        _id : '$jobs._id',
+                        name: '$jobs.name'
+                    },
+
+                    employee: {
+                        _id : '$employee._id',
+                        name: '$employee.name'
+                    },
+
+                    department: {
+                        _id : '$department._id',
+                        name: '$department.name'
+                    },
+
+                    'createdBy.date': 1,
+                    dateByWeek      : 1,
+                    month           : 1,
+                    year            : 1,
+                    week            : 1,
+                    worked          : 1,
+                    isPaid          : 1,
+                    _type           : 1,
+                    1               : 1,
+                    2               : 1,
+                    3               : 1,
+                    4               : 1,
+                    5               : 1,
+                    6               : 1,
+                    7               : 1
                 }
             }, {
                 $match: queryObject
+            }, {
+                $project: {
+                    customer: {
+                        _id : '$customert._id',
+                        name: '$customer.name'
+                    },
+
+                    workflow: {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    },
+
+                    'createdBy.date': 1,
+                    project         : 1,
+                    jobs            : 1,
+                    employee        : 1,
+                    department      : 1,
+                    dateByWeek      : 1,
+                    month           : 1,
+                    year            : 1,
+                    week            : 1,
+                    worked          : 1,
+                    isPaid          : 1,
+                    _type           : 1,
+                    1               : 1,
+                    2               : 1,
+                    3               : 1,
+                    4               : 1,
+                    5               : 1,
+                    6               : 1,
+                    7               : 1
+                }
             }, {
                 $group: {
                     _id  : null,
@@ -700,40 +738,29 @@ var TCard = function (event, models) {
                 $unwind: '$root'
             }, {
                 $project: {
-                    _id              : '$root._id',
-                    'customer._id'   : '$root.customer._id',
-                    'customer.name'  : '$root.customer.name',
-                    'project._id'    : '$root.project._id',
-                    'project.name'   : '$root.project.name',
-                    'employee._id'   : '$root.employee._id',
-                    'employee.name'  : '$root.employee.name',
-                    'department._id' : '$root.department._id',
-                    'department.name': '$root.department.name',
-                    'jobs._id'       : '$root.jobs._id',
-                    'jobs.name'      : '$root.jobs.name',
-                    'workflow._id'   : '$root.workflow._id',
-                    'workflow.name'  : '$root.workflow.name',
-                    dateByWeek       : '$root.dateByWeek',
-                    createdBy        : '$root.createdBy',
-                    month            : '$root.month',
-                    year             : '$root.year',
-                    week             : '$root.week',
-                    revenue          : '$root.revenue',
-                    amount           : '$root.amount',
-                    rate             : '$root.rate',
-                    hours            : '$root.hours',
-                    cost             : '$root.cost',
-                    worked           : '$root.worked',
-                    isPaid           : '$root.isPaid',
-                    _type            : '$root._type',
-                    1                : '$root.1',
-                    2                : '$root.2',
-                    3                : '$root.3',
-                    4                : '$root.4',
-                    5                : '$root.5',
-                    6                : '$root.6',
-                    7                : '$root.7',
-                    total            : 1
+                    _id             : '$root._id',
+                    customer        : '$root.customer',
+                    project         : '$root.project',
+                    employee        : '$root.employee',
+                    department      : '$root.department',
+                    jobs            : '$root.jobs',
+                    workflow        : '$root.workflow',
+                    dateByWeek      : '$root.dateByWeek',
+                    month           : '$root.month',
+                    year            : '$root.year',
+                    week            : '$root.week',
+                    worked          : '$root.worked',
+                    isPaid          : '$root.isPaid',
+                    _type           : '$root._type',
+                    'createdBy.date': '$root.createdBy.date',
+                    1               : '$root.1',
+                    2               : '$root.2',
+                    3               : '$root.3',
+                    4               : '$root.4',
+                    5               : '$root.5',
+                    6               : '$root.6',
+                    7               : '$root.7',
+                    total           : 1
                 }
             }, {
                 $sort: sort
@@ -784,24 +811,24 @@ var TCard = function (event, models) {
                 projectId = tCard ? tCard.project : null;
 
                 journalEntry.removeBySourceDocument(req, tCard._id);
-                
+
                 event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
 
                 if (projectId) {
                     event.emit('updateProjectDetails', {req: req, _id: projectId});
                 }
-                
+
                 cb();
             });
         }, function (err) {
             if (err) {
                 return next(err);
             }
-            
+
             event.emit('recollectVacationDash');
             event.emit('dropHoursCashes', req);
             // event.emit('recollectProjectInfo');
-            
+
             res.status(200).send({success: true});
         });
     };

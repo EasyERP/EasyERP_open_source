@@ -15,7 +15,7 @@ define([
     socket.on('fetchInvoiceCollection', _.debounce(fetchInvoice, 1000));
     socket.on('sendMessage', _.debounce(sendMessage, 1000));
 
-    function sendMessage(options){
+    function sendMessage(options) {
         var view = options.view;
         var message = options.message;
         var fragment = Backbone.history.fragment;
@@ -41,7 +41,7 @@ define([
 
         if (App.projectInfo && (options.project === App.projectInfo.projectId)) {
             App.render({
-                type: 'notify',
+                type   : 'notify',
                 message: 'Project data updated.'
             });
         }
@@ -52,7 +52,7 @@ define([
 
         if (App.projectInfo && (options.project === App.projectInfo.projectId)) {
             App.render({
-                type: 'notify',
+                type   : 'notify',
                 message: 'Invoices data updated.'
             });
         }

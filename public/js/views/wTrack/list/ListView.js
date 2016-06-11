@@ -575,7 +575,7 @@ define([
                     $job.text('');
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
-                    tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
+                    tr.find('[data-content="customer"]').text(element.customer && element.customer.name ? element.customer.name.first + ' ' + element.customer.name.last: '');
 
                     project = element._id;
 
