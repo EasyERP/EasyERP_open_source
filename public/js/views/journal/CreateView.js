@@ -2,47 +2,21 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/journal/CreateTemplate.html',
     'models/JournalModel',
     'populate'
-], function (Backbone, $, _, CreateTemplate, JournalModel, populate) {
+], function (Backbone, $, _, ParentView, CreateTemplate, JournalModel, populate) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         template   : _.template(CreateTemplate),
         responseObj: {},
 
-        events: {
-            'click .current-selected'                                         : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            click                                                             : 'removeDd'
-        },
-
         initialize: function () {
             this.model = new JournalModel();
             this.render();
-        },
-
-        removeDd: function () {
-            this.$el.find('.newSelectList').remove();
-        },
-
-        showNewSelect: function (e, prev, next) {
-            e.preventDefault();
-
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
         },
 
         chooseOption: function (e) {
@@ -100,14 +74,26 @@ define([
             Backbone.history.navigate(redirectUrl, {trigger: true});
         },
 
-        hideDialog: function () {
-            $('.create-dialog').remove();
-            $('.edit-dialog').remove();
+        hideSaveCancelBtns: function () {
+            var $topBar = $('#top-bar');
+            var createBtnEl = $topBar.find('#top-bar-createBtn');
+            var saveBtnEl = $topBar.find('#top-bar-saveBtn');
+            var cancelBtnEl = $topBar.find('#top-bar-deleteBtn');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+            createBtnEl.show();
+
+            return false;
         },
 
         render: function () {
             var self = this;
             var formString = this.template();
+
+            this.hideSaveCancelBtns();
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -122,9 +108,7 @@ define([
                         click: function () {
                             self.saveItem();
                         }
-                    },
-
-                    {
+                    }, {
                         text : 'Cancel',
                         click: function () {
                             $(this).dialog('destroy').remove();
