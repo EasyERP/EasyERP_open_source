@@ -1563,7 +1563,7 @@ var Project = function (models, event) {
                 if (projects._id) {
                     event.emit('updateProjectDetails', {req: req, _id: projects._id});
                 }
-                event.emit('recollectProjectInfo');
+                // event.emit('recollectProjectInfo');
                 res.send(200, projects);
             }
         });
@@ -1702,7 +1702,7 @@ var Project = function (models, event) {
                 logWriter.log("Project.js remove project.remove " + err);
                 res.send(500, {error: "Can't remove Project"});
             } else {
-                event.emit('recollectProjectInfo');
+                // event.emit('recollectProjectInfo');
                 event.emit('recollectVacationDash');
 
                 removeTasksByPorjectID(req, _id);

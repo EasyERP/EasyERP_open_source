@@ -95,13 +95,9 @@ define([
         },
 
         onDeleteEvent: function (event) {
-            var answer = confirm('Really DELETE items ?!');
-
             event.preventDefault();
 
-            if (answer) {
-                this.trigger('deleteEvent');
-            }
+            this.trigger('deleteEvent');
         },
 
         onEditKanban: function (event) {

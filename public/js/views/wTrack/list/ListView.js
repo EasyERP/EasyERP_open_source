@@ -59,6 +59,7 @@ define([
         ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
         setOverTime      : setOverTime,
+        cancelEdit       : cancelEdit,
         contentType      : 'wTrack',
         responseObj      : {},
         wTrackId         : null, // need for edit rows in listView
@@ -319,7 +320,7 @@ define([
                 cb(null, weeks);
             }
 
-            if (navigator.userAgent.indexOf('Firefox') > -1) {
+            if (navigator.userAgent.indexOf('Firefox') >= 0) {
                 this.setEditable(editedElement);
             }
 
@@ -379,6 +380,7 @@ define([
             }
         },
 
+        // is overwritten because this logic is more complex
         editRow: function (e) {
             var el = $(e.target);
             var $td = el.closest('td');
@@ -768,7 +770,7 @@ define([
             this.createdCopied = true;
             this.changed = true;
         },
-        
+
         getAutoCalcField: function (idTotal, dataRow, money) {
             var footerRow = this.$el.find('#listFooter');
 
@@ -804,142 +806,6 @@ define([
             this.getAutoCalcField('friHours', '5');
             this.getAutoCalcField('satHours', '6');
             this.getAutoCalcField('sunHours', '7');
-        },
-
-        deleteItemsRender: function () {
-            this.getPage({
-                remove: false
-            });
-        },
-
-        deleteItems: function () {
-            var self = this;
-            var $thisEl = this.$el;
-            var $table = $thisEl.find('#listTable');
-            var mid = CONSTANTS.MID[this.contentType];
-            var model;
-            var $checkedInputs;
-            var value;
-            var enableDelete;
-            var message;
-
-            if (!this.changed) {
-                $checkedInputs = $table.find('input:checked');
-
-                $.each($checkedInputs, function (index, checkbox) {
-                    value = checkbox.value;
-
-                    if (value.length < 24) {
-                        self.editCollection.remove(value);
-                        self.editCollection.on('remove', function () {
-
-                        }, self);
-
-                    } else {
-                        model = self.collection.get(value);
-
-                        enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
-
-                        if (!model.toJSON().workflow) {
-                            if ($.trim($thisEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
-                                enableDelete = true;
-                            }
-                        }
-
-                        if (enableDelete) {
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-
-                                wait   : true,
-                                success: function () {
-
-                                },
-
-                                error: function (_model, xhr) {
-                                    if (xhr.status === 403) {
-                                        App.render({
-                                            type   : 'error',
-                                            message: 'You do not have permission to perform this action'
-                                        });
-                                    }
-                                }
-                            });
-                        } else {
-                            message = "You can't delete tCard with closed project.";
-
-                            App.render({
-                                type   : 'error',
-                                message: message
-                            });
-                        }
-                    }
-                });
-            } else {
-                this.cancelChanges();
-            }
-        },
-
-        cancelChanges: function () {
-            var self = this;
-            var edited = this.edited;
-            var collection = this.collection;
-            var editedCollectin = this.editCollection;
-            var copiedCreated;
-            var dataId;
-            var enable;
-
-            async.each(edited, function (el, cb) {
-                var tr = $(el).closest('tr');
-                var rowNumber = tr.find('[data-content="number"]').text();
-                var id = tr.attr('data-id');
-                var template = _.template(cancelEdit);
-                var model;
-
-                if (!id) {
-                    return cb('Empty id');
-                } else if (id.length < 24) {
-                    tr.remove();
-                    model = self.changedModels;
-
-                    if (model) {
-                        delete model[id];
-                    }
-
-                    return cb();
-                }
-
-                model = collection.get(id);
-                model = model.toJSON();
-                model.startNumber = rowNumber;
-                enable = model && model.workflow.name !== 'Closed' ? true : false;
-                tr.replaceWith(template({model: model, enable: enable}));
-                cb();
-            }, function (err) {
-                if (!err) {
-                    /* self.editCollection = new EditCollection(collection.toJSON());*/
-                    self.bindingEventsToEditedCollection(self);
-                    self.hideSaveCancelBtns();
-                    self.copyEl.hide();
-                }
-            });
-
-            if (this.createdCopied) {
-                copiedCreated = this.$el.find('.false');
-                // this.hideOvertime();
-                copiedCreated.each(function () {
-                    dataId = $(this).attr('data-id');
-                    self.editCollection.remove(dataId);
-                    delete self.changedModels[dataId];
-                    $(this).remove();
-                });
-
-                this.createdCopied = false;
-            }
-
-            self.changedModels = {};
-            self.responseObj['#jobs'] = [];
         },
 
         render: function () {
