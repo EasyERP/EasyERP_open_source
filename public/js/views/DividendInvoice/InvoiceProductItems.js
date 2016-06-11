@@ -70,6 +70,7 @@ define([
             trEl.attr('data-id', _id);
 
             parrent.find('.current-selected').text(target.text()).attr('data-id', _id);
+            parrent.removeClass('errorContent');
 
             $('.newSelectList').hide();
         },
