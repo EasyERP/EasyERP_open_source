@@ -14,6 +14,8 @@ define([
     'constants',
     'helpers'
 ], function ($, _, listViewBase, listTemplate, CreateView, EditView, invoiceModel, ListItemView, contentCollection, FilterView, common, dataService, CONSTANTS, helpers) {
+    'use strcit';
+
     var InvoiceListView = listViewBase.extend({
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
@@ -39,9 +41,9 @@ define([
             this.render();
         },
 
-        events: {
+      /*  events: {
             'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
-        },
+        },*/
 
         saveItem: function () {
             var model;
@@ -122,7 +124,7 @@ define([
             });
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new invoiceModel({validate: false});
             var self = this;

@@ -3,16 +3,12 @@ define([
     'Underscore',
     'Backbone',
     'text!templates/DividendInvoice/EditTemplate.html',
-    'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
+    'views/dialogViewBase',
     'views/DividendInvoice/InvoiceProductItems',
     'views/salesInvoice/wTrack/wTrackRows',
     'views/DividendPayments/CreateView',
     'views/salesInvoice/EmailView',
     'views/Payment/list/ListHeaderInvoice',
-    'common',
-    'custom',
-    'dataService',
     'populate',
     'constants',
     'helpers'
@@ -20,42 +16,31 @@ define([
              _,
              Backbone,
              EditTemplate,
-             attachView,
-             AssigneesView,
+             ParentView,
              InvoiceItemView,
              wTrackRows,
              PaymentCreateView,
              EmailVew,
-             listHederInvoice,
-             common,
-             Custom,
-             dataService,
+             ListHeaderInvoice,
              populate,
              CONSTANTS,
              helpers) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Invoice',
         template   : _.template(EditTemplate),
 
         events: {
-            'click #saveBtn'                                                  : 'saveItem',
-            'click #cancelBtn'                                                : 'hideDialog',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click .details'                                                  : 'showDetailsBox',
-            'click .newPayment'                                               : 'newPayment',
-            'click .sendEmail'                                                : 'sendEmail',
-            'click .approve'                                                  : 'approve',
-            'click .cancelInvoice'                                            : 'cancelInvoice',
+            'click #saveBtn'      : 'saveItem',
+            'click #cancelBtn'    : 'hideDialog',
+            'click .details'      : 'showDetailsBox',
+            'click .newPayment'   : 'newPayment',
+            'click .sendEmail'    : 'sendEmail',
+            'click .approve'      : 'approve',
+            'click .cancelInvoice': 'cancelInvoice',
             // 'click .refund': 'refund',
-            'click .setDraft'                                                 : 'setDraft'
+            'click .setDraft'     : 'setDraft'
 
         },
 
@@ -68,14 +53,14 @@ define([
             this.isWtrack = !!options.isWtrack;
             this.filter = options.filter;
 
-            this.currentModel = (options.model) ? options.model : options.collection.getElement();
+            this.currentModel = options.model || options.collection.getElement();
             this.currentModel.urlRoot = '/Invoice';
             this.responseObj = {};
 
             this.redirect = options.redirect;
             this.collection = options.collection;
 
-            this.notCreate = options.notCreate ? false : true;
+            this.notCreate = options.notCreate;
 
             this.render();
 
@@ -187,57 +172,8 @@ define([
             });
         },
 
-        showDetailsBox: function (e) {
-            $(e.target).parent().find('.details-box').toggle();
-        },
-
-        notHide: function () {
-            return false;
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
-        },
-
         chooseUser: function (e) {
             $(e.target).toggleClass('choosen');
-        },
-
-        hideDialog: function () {
-            $('.edit-invoice-dialog').remove();
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
         },
 
         chooseOption: function (e) {
@@ -256,7 +192,7 @@ define([
             if (answer) {
                 this.currentModel.destroy({
                     success: function () {
-                        $('.edit-invoice-dialog').remove();
+                        $('.edit-dialog').remove();
 
                         self.hideDialog();
 
@@ -281,7 +217,6 @@ define([
         render: function () {
             var self = this;
             var formString;
-            var notDiv;
             var model;
             var invoiceItemContainer;
             var paymentContainer;
@@ -290,13 +225,11 @@ define([
             var assigned;
             var customer;
             var total;
-            var wTracksDom;
             var buttons;
-            var invoiceDate;
             var isFinancial;
+            var $thisEl;
 
             model = this.currentModel.toJSON();
-            invoiceDate = model.invoiceDate;
 
             this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
@@ -344,7 +277,7 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : 'edit-invoice-dialog',
+                dialogClass  : 'edit-dialog',
                 title        : 'Edit Invoice',
                 width        : '900',
                 position     : {my: 'center bottom', at: 'center', of: window},
@@ -352,21 +285,18 @@ define([
 
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            $thisEl = this.$el;
 
-            paymentContainer = this.$el.find('#payments-container');
+            this.renderAssignees();
+
+            paymentContainer = $thisEl.find('#payments-container');
             paymentContainer.append(
-                new listHederInvoice().render({model: this.currentModel.toJSON()}).el
+                new ListHeaderInvoice().render({model: this.currentModel.toJSON()}).el
             );
 
             this.delegateEvents(this.events);
 
-            invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+            invoiceItemContainer = $thisEl.find('#invoiceItemsHolder');
 
             invoiceItemContainer.append(
                 new InvoiceItemView({
@@ -376,21 +306,6 @@ define([
                     notAddItem    : this.notAddItem
                 }).render({model: model}).el
             );
-
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $("#targetGroups").append("<li id='" + item._id + "'>" + item.name + "</li>");
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
-                    });
-
-                }
-            }
 
             return this;
         }

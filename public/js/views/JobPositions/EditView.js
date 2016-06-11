@@ -3,15 +3,10 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/JobPositions/EditTemplate.html',
-    /* 'collections/JobPositions/JobPositionsCollection',
-    'collections/Departments/DepartmentsCollection',
-    'collections/Workflows/WorkflowsCollection',*/
     'views/dialogViewBase',
-    /* 'custom',
-    'common',*/
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, /* JobPositionsCollection, DepartmentsCollection, WorkflowsCollection,*/ DialogViewBase, /* Custom, common,*/ populate, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, DialogViewBase, populate, CONSTANTS) {
     'use strict';
 
     var EditView = DialogViewBase.extend({
@@ -32,65 +27,10 @@ define([
             this.render();
         },
 
-        /* events: {
-            'click .breadcrumb a'                                             : 'changeWorkflow',
-            keydown                                                           : 'keydownHandler',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .current-selected'                                         : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            click                                                             : 'hideNewSelect'
-        },*/
-
-        /* notHide: function () {
-            return false;
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },*/
-
         chooseOption: function (e) {
             $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $('.newSelectList').hide();
         },
-
-       /* nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },*/
 
         saveItem: function () {
             var afterPage = '';
@@ -166,42 +106,11 @@ define([
             });
         },
 
-       /* hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-        },*/
-
-       /* deleteItem: function (event) {
-            var mid = 39;
-            var self = this;
-            var answer;
-
-            event.preventDefault();
-
-            answer = confirm('Really DELETE items ?!');
-
-            if (answer === true) {
-                this.currentModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
-                    success: function () {
-                        $('.edit-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
-                    },
-
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
-                });
-            }
-        },*/
 
         render: function () {
-            /*var model = this.currentModel.toJSON();*/
+
             var self = this;
-           /* var notDiv;*/
+
             var formString = this.template({
                 model: this.currentModel.toJSON()
             });
@@ -233,12 +142,6 @@ define([
                 ]
             });
             this.renderAssignees(this.currentModel);
-          /*  notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );*/
 
             populate.get('#departmentDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, false, true);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Job positions'}, 'name', this, false);
@@ -248,20 +151,6 @@ define([
                 max: 9999
             });
 
-         /*   if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
-                        $('#targetGroups').append('<li id="' + item._id + '">' + item.name + '</li>');
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' + item.login + '</td><td class="text-right"></td></tr>');
-                        $('#targetUsers').append('<li id="' + item._id + '">' + item.login + '</li>');
-                    });
-
-                }
-            }*/
             return this;
         }
 
