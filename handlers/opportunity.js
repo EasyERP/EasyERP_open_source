@@ -24,6 +24,7 @@ var Module = function (models, event) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var HistoryWriter = require('../helpers/historyWriter.js');
     var historyWriter = new HistoryWriter(models);
+    var uploadFileArray = require('../helpers/uploadFileArray.js')();
 
     var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -2468,7 +2469,8 @@ var Module = function (models, event) {
             campaign        : 1,
             source          : 1,
             social          : 1,
-            skype           : 1
+            skype           : 1,
+            attachments     : 1
         });
 
         query
@@ -2504,6 +2506,12 @@ var Module = function (models, event) {
 
         });
     }
+
+    this.uploadOpportunitiesFiles = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+
+        uploadFileArray(req, res, next, Model);
+    };
 
     this.getLeadsPriority = function (req, res, next) {
         var response = {};

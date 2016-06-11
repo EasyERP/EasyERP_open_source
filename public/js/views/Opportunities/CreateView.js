@@ -188,7 +188,7 @@ define([
 
             this.attachView = new AttachView({
                 model    : new OpportunityModel(),
-                url      : '/uploadOpportunitiesFiles',
+                url      : '/opportunities/uploadOpportunitiesFiles',
                 isCreate : true,
                 elementId: this.elementId
             });

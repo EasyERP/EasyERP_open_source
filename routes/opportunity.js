@@ -10,6 +10,8 @@ module.exports = function (models, event) {
     var handler = new OpportunityHandler(models, event);
     var moduleId = MODULES.OPPORTUNITIES;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var multipart = require('connect-multiparty');
+    var multipartMiddleware = multipart();
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
@@ -22,6 +24,7 @@ module.exports = function (models, event) {
    
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
+    router.post('/uploadOpportunitiesFiles', accessStackMiddleware, multipartMiddleware, handler.uploadOpportunitiesFiles);
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelectedFields);
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.update);
    
