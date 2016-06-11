@@ -3,14 +3,11 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/JobPositions/CreateTemplate.html',
-   /* 'collections/Departments/DepartmentsCollection',
-    'collections/Workflows/WorkflowsCollection',*/
     'models/JobPositionsModel',
     'views/dialogViewBase',
-    /* 'common',*/
     'populate',
     'constants'
-], function (Backbone, $, _, CreateTemplate, /* DepartmentsCollection, WorkflowsCollection,*/ JobPositionsModel, DialogViewBase, /* common,*/ populate, CONSTANTS) {
+], function (Backbone, $, _, CreateTemplate, JobPositionsModel, DialogViewBase, populate, CONSTANTS) {
     'use strict';
 
     var CreateView = DialogViewBase.extend({
@@ -25,80 +22,10 @@ define([
             this.render();
         },
 
-       /* events: {
-            'change #workflowNames'                                           : 'changeWorkflows'
-            keydown                                                           : 'keydownHandler',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .current-selected'                                         : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            click                                                             : 'hideNewSelect'
-        },*/
-
-       /* notHide: function () {
-            return false;
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },*/
-
         chooseOption: function (e) {
             $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $('.newSelectList').hide();
         },
-
-       /* nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },*/
-
-      /*  getWorkflowValue: function (value) {
-            var i;
-            var workflows = [];
-            for (i = 0; i < value.length; i++) {
-                workflows.push({name: value[i].name, status: value[i].status});
-            }
-            return workflows;
-        },*/
-
-      /*  changeWorkflows: function () {
-            var name = this.$('#workflowNames option:selected').val();
-            var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
-        },*/
 
         saveItem: function () {
             var afterPage = '';
@@ -164,12 +91,6 @@ define([
             });
         },
 
-       /* hideDialog: function () {
-            $('.create-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-        },*/
-
         render: function () {
             var self = this;
             var formString = this.template({});
@@ -203,12 +124,6 @@ define([
                 max: 9999
             });
 
-            /* notDiv = this$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );*/
             this.renderAssignees();
             populate.get('#departmentDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true, true);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Job positions'}, 'name', this, true);

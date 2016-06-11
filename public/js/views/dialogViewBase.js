@@ -98,15 +98,15 @@
             $('.crop-images-dialog').remove();
         },
 
-        /*changeTab: function (e) {
+        changeTab: function (e) {
             var $target = $(e.target);
             var n;
             var dialogHolder;
             var closestEl = $target.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
+            var dataClass = closestEl.data('class') ? '.' + closestEl.data('class') : '';
+            var selector = '.dialog-tabs-items' + dataClass;
+            var itemActiveSelector = '.dialog-tabs-item' + dataClass + '.active';
+            var itemSelector = '.dialog-tabs-item' + dataClass;
 
             closestEl.find('a.active').removeClass('active');
             $target.addClass('active');
@@ -116,19 +116,6 @@
 
             dialogHolder.find(itemActiveSelector).removeClass('active');
             dialogHolder.find(itemSelector).eq(n).addClass('active');
-        },
-*/
-        changeTab: function (e) {
-            var n;
-            var $dialogHolder;
-            var $holder = $(e.target);
-
-            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $holder.addClass('active');
-            n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
-            $dialogHolder = $holder.closest('.dialog-tabs').parent().find('.dialog-tabs-items');
-            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
         },
 
         renderAssignees: function (model) {

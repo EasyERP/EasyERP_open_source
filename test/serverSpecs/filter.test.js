@@ -18,7 +18,7 @@ describe('Filter Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -172,7 +172,7 @@ describe('Filter Specs', function () {
                         .and.to.exist;
 
                     expect(typeFilter)
-                        .to.have.property('salesmanager')
+                        .to.have.property('salesManager')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
@@ -202,7 +202,7 @@ describe('Filter Specs', function () {
                         .and.to.exist;
 
                     expect(typeFilter)
-                        .to.have.property('salesmanager')
+                        .to.have.property('salesManager')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
@@ -474,6 +474,43 @@ describe('Filter Specs', function () {
                         .and.to.exist;
 
                     done();
+
+//------------------------ ACCOUNTING -------------------
+//------------------------ Sales Payments -------------------
+
+                    typeFilter = body.customerPayments;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('assigned')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('paymentMethod')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('supplier')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('salesManager')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
                     // todo test other properties if its need
                 });
         });
