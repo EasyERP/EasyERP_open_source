@@ -21,7 +21,7 @@ describe('Dashboard Vacation Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -122,7 +122,7 @@ describe('Dashboard Vacation Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });

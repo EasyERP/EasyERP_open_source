@@ -18,7 +18,7 @@ describe('Filter Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -29,7 +29,7 @@ describe('Filter Specs', function () {
                 .expect(302, done);
         });
 
-        it("should get Filter Values", function (done) {
+        it('should get Filter Values', function (done) {
             var query = {
                 filter: {
                     startDate: 201605,
@@ -57,7 +57,7 @@ describe('Filter Specs', function () {
                         .and.to.have.property('name')
                         .and.to.be.instanceOf(Array);
 
-//------------------------ Leads  ----------------
+// ------------------------ Leads  ----------------
 
                     typeFilter = body.Leads;
 
@@ -87,7 +87,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Opportunities  ----------------
+// ------------------------ Opportunities  ----------------
 
                     typeFilter = body.Opportunities;
 
@@ -111,7 +111,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Persons  ----------------
+// ------------------------ Persons  ----------------
 
                     typeFilter = body.Persons;
 
@@ -135,7 +135,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Companies  ----------------
+// ------------------------ Companies  ----------------
 
                     typeFilter = body.Companies;
 
@@ -159,7 +159,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Sales Quotation  ----------------
+// ------------------------ Sales Quotation  ----------------
 
                     typeFilter = body.salesQuotation;
 
@@ -189,7 +189,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Sales Order  ----------------
+// ------------------------ Sales Order  ----------------
 
                     typeFilter = body.salesOrder;
 
@@ -219,7 +219,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Sales Invoice  ----------------
+// ------------------------ Sales Invoice  ----------------
 
                     typeFilter = body.salesInvoice;
 
@@ -249,7 +249,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Sales Proforma ----------------
+// ------------------------ Sales Proforma ----------------
 
                     typeFilter = body.salesProforma;
 
@@ -279,8 +279,8 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ PROJECT -------------------
-//------------------------ Projects -------------------
+// ------------------------ PROJECT -------------------
+// ------------------------ Projects -------------------
 
                     typeFilter = body.Projects;
 
@@ -316,7 +316,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Tasks -------------------
+// ------------------------ Tasks -------------------
 
                     typeFilter = body.Tasks;
 
@@ -358,7 +358,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ tCard -------------------
+// ------------------------ tCard -------------------
 
                     typeFilter = body.wTrack;
 
@@ -418,8 +418,8 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//---------------------------  HR  ------------------------
-//--------------------------- Employee  ----------------
+// ---------------------------  HR  ------------------------
+// --------------------------- Employee  ----------------
 
                     typeFilter = body.Employees;
 
@@ -449,7 +449,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//--------------------------- Application  ----------------
+// --------------------------- Application  ----------------
 
                     typeFilter = body.Applications;
 
@@ -475,8 +475,8 @@ describe('Filter Specs', function () {
 
                     done();
 
-//------------------------ ACCOUNTING -------------------
-//------------------------ Sales Payments -------------------
+// ------------------------ ACCOUNTING -------------------
+// ------------------------ Sales Payments -------------------
 
                     typeFilter = body.customerPayments;
 
@@ -518,7 +518,7 @@ describe('Filter Specs', function () {
 
     describe('Filter with no authorise', function () {
 
-        it("should fail get Filter Values", function (done) {
+        it('should fail get Filter Values', function (done) {
 
             aggent
                 .get('filter/getFiltersValues')

@@ -22,9 +22,8 @@
         listLength        : null,
         filter            : null,
         newCollection     : null,
-        // page: null, // if reload page, and in url is valid page
-        contentType       : 'Employees', // needs in view.prototype.changeLocationHash
-        viewType          : 'thumbnails', // needs in view.prototype.changeLocationHash
+        contentType       : 'Employees',
+        viewType          : 'thumbnails',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
@@ -103,7 +102,7 @@
                 model.fetch({
                     data   : {id: id, viewType: 'form'},
                     success: function (response) {
-                        new self.EditView({model: response});
+                        return new self.EditView({model: response});
                     },
 
                     error: function () {
