@@ -39,7 +39,9 @@ define([
         ContentCollection: ContentCollection,
         CreateView       : CreateView,
         EditView         : EditView,
-        contentType      : 'salesOrder',
+
+        viewType   : 'list',
+        contentType: CONSTANTS.SALESORDER, // needs in view.prototype.changeLocationHash
 
         events: {
             'click  .list tbody td:not(.notForm)': 'goToEditDialog'
@@ -61,14 +63,44 @@ define([
             this.render();
         },
 
+        chooseOption: function (e) {
+            var self = this;
+            var $target = $(e.target);
+            var $targetElement = $target.parents('td');
+            var id = $targetElement.attr('id');
+            var model = this.collection.get(id);
+
+            model.save({
+                workflow: $target.attr('id')
+            }, {
+                patch   : true,
+                validate: false,
+                success : function () {
+                    self.showFilteredPage(self.filter, self);
+                }
+            });
+
+            this.hideNewSelect();
+            return false;
+        },
+
         recalcTotal: function () {
+            var $thisEl = this.$el;
+            var $total = $thisEl.find('#total');
             var total = 0;
 
             _.each(this.collection.toJSON(), function (model) {
-                total += parseFloat(model.paymentInfo.total);
+                var modelCurrency = model.currency;
+
+                if (modelCurrency && modelCurrency.rate) {
+                    total += parseFloat(model.paymentInfo.total / modelCurrency.rate);
+                } else {
+                    total += parseFloat(model.paymentInfo.total);
+                }
             });
 
-            this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+            total = helpers.currencySplitter(total.toFixed(2));
+            $total.text(total);
         },
 
         render: function () {
@@ -95,7 +127,8 @@ define([
 
             this.renderFilter();
             this.renderPagination($thisEl, this);
-
+            this.recalcTotal();
+            
             $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
@@ -129,7 +162,7 @@ define([
                         onlyView: onlyView
                     });
                 },
-
+                
                 error: function () {
                     App.render({
                         type   : 'error',
