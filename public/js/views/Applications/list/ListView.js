@@ -35,7 +35,6 @@ define([
         formUrl                 : '#easyErp/Applications/',
 
         events: {
-            'click .list td:not(.notForm)': 'goToEditDialog',
             'click .stageSelect'          : 'showNewSelect',
             'click .newSelectList li'     : 'chooseOption'
         },
@@ -60,9 +59,9 @@ define([
             this.contentCollection = contentCollection;
         },
 
-        hideNewSelect: function () {
+       /* hideNewSelect: function () {
             $('.newSelectList').remove();  // changed after ui tests
-        },
+        },*/
 
         showNewSelect: function (e) {
             if ($('.newSelectList').is(':visible')) {
@@ -97,7 +96,7 @@ define([
                 }
             });
 
-            this.hideNewSelect();
+            this.hide(e);
             return false;
         },
 
@@ -137,7 +136,7 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        goToEditDialog: function (e) {
+        gotoForm : function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new CurrentModel({validate: false});
 

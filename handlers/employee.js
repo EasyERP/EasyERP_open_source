@@ -1133,7 +1133,7 @@ var Employee = function (event, models) {
                         }
 
                         if (data.dateBirth || data.hired) {
-                            event.emit('recalculate', req, res, next);
+                            event.emit('recalculate', req, null, next);
                         }
 
                         if (fileName) {
@@ -1192,7 +1192,7 @@ var Employee = function (event, models) {
                 event.emit('updateSequence', Model, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
             }
 
-            event.emit('recalculate', req, false, next);
+            event.emit('recalculate', req, null, next);
             event.emit('dropHoursCashes', req);
             event.emit('recollectVacationDash', req);
 
@@ -1215,7 +1215,7 @@ var Employee = function (event, models) {
                     event.emit('updateSequence', Model, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
                 }
 
-                event.emit('recalculate', req, false, next);
+                event.emit('recalculate', req, null, next);
                 event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash', req);
                 cb();

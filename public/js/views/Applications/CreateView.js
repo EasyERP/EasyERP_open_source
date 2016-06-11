@@ -206,15 +206,6 @@ define([
             });
         },
 
-        /* hideNewSelect: function () {
-         $('.newSelectList').hide();
-         },
-
-         showNewSelect: function (e, prev, next) {
-         populate.showSelect(e, prev, next, this);
-         return false;
-         },*/
-
         chooseOption: function (e) {
             var $target = $(e.target);
             $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
@@ -251,16 +242,7 @@ define([
                 url     : '/uploadApplicationFiles',
                 isCreate: true
             });
-
-            /* notDiv = this.$el.find('.attach-container');
-             notDiv.append(this.attachView.render().el);
-             notDiv = this.$el.find('.assignees-container');
-             notDiv.append(
-             new AssigneesView({
-             model: this.currentModel
-             }).render().el
-             );*/
-
+            
             this.renderAssignees(this.currentModel);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this, true, function (data) {
                 var i;
