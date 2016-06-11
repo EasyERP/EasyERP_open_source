@@ -4,7 +4,7 @@ define([
     'Underscore',
     'text!templates/salesOrder/EditTemplate.html',
     'text!templates/salesOrder/ViewTemplate.html',
-    'views/Assignees/AssigneesView',
+    'views/dialogViewBase',
     'views/Product/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/invoices/invoiceView',
     'collections/salesInvoice/filterCollection',
@@ -14,25 +14,23 @@ define([
     'populate',
     'constants',
     'helpers'
-], function (
-    Backbone,
-    $,
-    _,
-    EditTemplate,
-    ViewTemplate,
-    AssigneesView,
-    ProductItemView,
-    InvoiceView,
-    InvoiceCollection,
-    common,
-    Custom,
-    dataService,
-    populate,
-    CONSTANTS,
-    helpers
-) {
+], function (Backbone,
+             $,
+             _,
+             EditTemplate,
+             ViewTemplate,
+             ParentView,
+             ProductItemView,
+             InvoiceView,
+             InvoiceCollection,
+             common,
+             Custom,
+             dataService,
+             populate,
+             CONSTANTS,
+             helpers) {
     'use strict';
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Order',
         imageSrc   : '',
         template   : _.template(EditTemplate),
@@ -56,51 +54,20 @@ define([
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.currentModel.urlRoot = '/order';
             this.responseObj = {};
-            
+
             this.render(options);
         },
 
         events: {
-            keydown                                                           : 'keydownHandler',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click .receiveInvoice'                                           : 'receiveInvoice', /* 'createInvoice', */
-            // 'change #invoiceAttachment'                                       : 'uploadAttachment',
-            'click .cancelOrder'                                              : 'cancelOrder',
-            'click .setDraft'                                                 : 'setDraft'
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            
-            return false;
-        },
-
-            notHide: function () {
-                return false;
-            },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
+            'click .receiveInvoice': 'receiveInvoice',
+            'click .cancelOrder'   : 'cancelOrder',
+            'click .setDraft'      : 'setDraft'
         },
 
         chooseOption: function (e) {
             var $targetEl = $(e.target);
 
             $targetEl.parents('dd').find('.current-selected').text($targetEl.text()).attr('data-id', $targetEl.attr('id'));
-        },
-
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
         },
 
         keydownHandler: function (e) {
@@ -188,7 +155,7 @@ define([
 
             this.saveItem(function (err) {
                 App.stopPreload();
-                
+
                 if (!err) {
                     dataService.postData(url, data, function (err, response) {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
@@ -403,7 +370,8 @@ define([
                     headers: {
                         mid: mid
                     },
-                    patch  : true,
+
+                    patch: true,
 
                     success: function (model) {
                         self.hideDialog();
@@ -438,13 +406,6 @@ define([
             }
         },
 
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },
-
         deleteItem: function (event) {
             var mid = 55;
             var self = this;
@@ -452,7 +413,9 @@ define([
 
             event.preventDefault();
 
-            if (!answer) return;
+            if (!answer) {
+                return;
+            }
 
             this.currentModel.destroy({
                 headers: {
@@ -483,7 +446,6 @@ define([
             var self = this;
             var formString;
             var service = true;
-            var notDiv;
             var model;
             var productItemContainer;
             var buttons;
@@ -537,12 +499,7 @@ define([
                 buttons      : buttons
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             populate.get('#destination', '/destination', {}, 'name', this, false, true);
             populate.get('#incoterm', '/incoterm', {}, 'name', this, false, true);
@@ -560,13 +517,13 @@ define([
                 changeYear : true
             });
 
-                this.$el.find('#orderDate').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    maxDate    : 0,
-                    minDate    : model.orderDate
-                });
+            this.$el.find('#orderDate').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                maxDate    : 0,
+                minDate    : model.orderDate
+            });
 
             productItemContainer = this.$el.find('#productItemsHolder');
 

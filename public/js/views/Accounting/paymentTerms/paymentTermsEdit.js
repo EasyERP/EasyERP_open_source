@@ -4,8 +4,9 @@ define([
     'Underscore',
     'text!templates/Accounting/EditPaymentTerms.html',
     'views/selectView/selectView',
-    'populate'
-], function (Backbone, $, _, EditTemplate, SelectView, populate) {
+    'populate',
+    'constants'
+], function (Backbone, $, _, EditTemplate, SelectView, populate, CONSTANTS) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -49,14 +50,15 @@ define([
                         self.hideDialog();
                     }
                 },
-                error  : function (model, xhr) {
+
+                error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
+            $('.edit-dialog').remove();
         },
 
         render: function () {
@@ -69,19 +71,19 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : "edit-dialog",
-                title        : "Edit Bank Account",
-                width        : "250px",
+                dialogClass  : 'edit-dialog',
+                title        : 'Edit Bank Account',
+                width        : '250px',
                 buttons      : [
                     {
-                        text : "Save",
+                        text : 'Save',
                         click: function () {
                             self.saveItem();
                         }
                     },
 
                     {
-                        text : "Cancel",
+                        text : 'Cancel',
                         click: function () {
                             self.hideDialog();
                         }
@@ -90,7 +92,7 @@ define([
 
             });
 
-            populate.get('#currency', '/currency/getForDd', {}, 'name', this, true);
+            populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             return this;
         }

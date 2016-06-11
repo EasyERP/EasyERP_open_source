@@ -414,13 +414,11 @@ define([
                 var projectId = $tr.find('[data-content="project"]').attr('data-id');
                 var holiday = $td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
 
-
                 if ($td.hasClass('disabled')) {
                     return false;
                 }
 
                 year = year.slice(0, 4);
-
 
                 if (!isOvertime && holiday) {
                     App.render({
@@ -621,7 +619,6 @@ define([
                     changedAttr.department = department;
 
                     targetElement.attr('data-id', employee);
-
 
                     // this.calculateCost(e, wTrackId);
                     tr.find('[data-content="department"]').removeClass('errorContent');

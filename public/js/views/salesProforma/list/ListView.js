@@ -9,11 +9,11 @@ define([
     'views/Proforma/EditView',
     'models/InvoiceModel',
     'views/salesProforma/list/ListItemView',
-    'views/salesProforma/list/ListTotalView',
     'collections/salesProforma/filterCollection',
     'views/Filter/FilterView',
     'common',
     'dataService',
+    'helpers',
     'constants'
 ], function ($,
              _,
@@ -23,23 +23,20 @@ define([
              stagesTemplate,
              CreateView,
              EditView,
-             invoiceModel,
+             InvoiceModel,
              ListItemView,
-             listTotalView,
              contentCollection,
              FilterView,
              common,
              dataService,
+             helpers,
              CONSTANTS) {
     var InvoiceListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/Proforma/totalCollectionLength',
-        contentType             : CONSTANTS.SALESPROFORMA, // 'salesProforma', //'Invoice',//needs in view.prototype.changeLocationHash
-        changedModels           : {},
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        contentType      : CONSTANTS.SALESPROFORMA, // 'salesProforma', //'Invoice',//needs in view.prototype.changeLocationHash
+        changedModels    : {},
 
         initialize: function (options) {
 
@@ -62,26 +59,18 @@ define([
         },
 
         events: {
-            'click .stageSelect'                             : 'showNewSelect',
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
-            'click .newSelectList li'                        : 'chooseOption',
-            'click .selectList'                              : 'showSelects'
-        },
-
-        showSelects: function (e) {
-            e.preventDefault();
-
-            $(e.target).parent('td').append("<ul class='newSelectList'><li>Draft</li><li>Done</li></ul>");
-
-            e.stopPropagation();
+            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
             var model;
             var self = this;
             var id;
+            var i;
+            var keys = Object.keys(this.changedModels);
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.collection.get(id);
 
                 model.save({
@@ -99,47 +88,7 @@ define([
                 });
             }
 
-            for (id in this.changedModels) {
-                delete this.changedModels[id];
-            }
-        },
-
-        chooseOption: function (e) {
-            var target$ = $(e.target);
-            var targetElement = target$.parents('td');
-            var targetTr = target$.parents('tr');
-            var id = targetTr.attr('data-id');
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            if (!this.changedModels[id].hasOwnProperty('validated')) {
-                this.changedModels[id].validated = target$.text();
-                this.changesCount++;
-            }
-
-            targetElement.find('.selectList').text(target$.text());
-
-            this.hideNewSelect();
-
-            $('#top-bar-saveBtn').show();
-            return false;
-
-        },
-
-        showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
-                return false;
-            } else {
-                $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                return false;
-            }
-        },
-
-        hideNewSelect: function (e) {
-            $('.newSelectList').remove();
+            this.changedModels = {};
         },
 
         currentEllistRenderer: function (self) {
@@ -152,10 +101,36 @@ define([
                 page       : self.page,
                 itemsNumber: self.collection.namberToShow
             });
-            itemView.bind('incomingStages', self.pushStages, self);
 
             $currentEl.append(itemView.render());
 
+        },
+
+        recalcTotal: function () {
+            var self = this;
+            var columns = ['balance', 'total', 'paid'];
+
+            _.each(columns, function (col) {
+                var sum = 0;
+
+                _.each(self.collection.toJSON(), function (model) {
+                    if (col === 'paid') {
+                        if (model.currency && model.currency.rate) {
+                            sum += parseFloat(model[col] / model.currency.rate);
+                        } else {
+                            sum += parseFloat(model[col]);
+                        }
+                    } else {
+                        if (model.currency && model.currency.rate) {
+                            sum += parseFloat(model.paymentInfo[col] / model.currency.rate);
+                        } else {
+                            sum += parseFloat(model.paymentInfo[col]);
+                        }
+                    }
+                });
+
+                self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+            });
         },
 
         render: function () {
@@ -164,45 +139,24 @@ define([
 
             $('.ui-dialog ').remove();
 
-
             $currentEl = this.$el;
 
             $currentEl.html('');
 
             this.currentEllistRenderer(self);
 
-            /* if (!App || !App.currentDb) {
-             dataService.getData('/currentDb', null, function (response) {
-             if (response && !response.error) {
-             App.currentDb = response;
-             App.weTrack = true;
-             }
+            self.renderPagination($currentEl, self);
 
-             this.currentEllistRenderer(self);
-             });
-             } else {
-             }*/
+            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-            $currentEl.append(new listTotalView({element: this.$el.find('#listTable'), cellSpan: 7}).render());
+            this.recalcTotal();
 
-                self.renderPagination($currentEl, self);
-                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
-
-            dataService.getData(CONSTANTS.WORKFLOWS_FETCH, {
-                wId         : 'Sales Invoice',
-                source      : 'purchase',
-                targetSource: 'invoice'
-            }, function (stages) {
-                self.stages = stages;
-            });
-
-
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         },
 
         goToEditDialog: function (e) {
             var id = $(e.target).closest('tr').data('id');
-            var model = new invoiceModel({validate: false});
+            var model = new InvoiceModel({validate: false});
 
             e.preventDefault();
 
@@ -215,7 +169,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {
@@ -225,42 +179,7 @@ define([
                     });
                 }
             });
-        },
-
-        deleteItemsRender: function (deleteCounter, deletePage) {
-            var pagenation;
-            var holder;
-            var created;
-
-            dataService.getData('/Invoice/totalCollectionLength', {
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
-            this.deleteRender(deleteCounter, deletePage, {
-                filter          : this.filter,
-                newCollection   : this.newCollection,
-                parrentContentId: this.parrentContentId
-            });
-            if (deleteCounter !== this.collectionLength) {
-                holder = this.$el;
-                created = holder.find('#timeRecivingDataFromServer');
-                created.before(new ListItemView({
-                    collection : this.collection,
-                    page       : holder.find('#currentShowPage').val(),
-                    itemsNumber: holder.find('span#itemsNumber').text()
-                }).render());
-            }
-
-            pagenation = this.$el.find('.pagination');
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
         }
-
     });
 
     return InvoiceListView;

@@ -2,15 +2,14 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Companies/EditTemplate.html',
-    'views/Assignees/AssigneesView',
     'views/CustomersSuppliers/salesPurchases',
-    'views/selectView/selectView',
     'common',
     'constants'
-], function (Backbone, $, _, EditTemplate, AssigneesView, SalesPurchasesView, SelectView, common, CONSTANTS) {
+], function (Backbone, $, _, ParentView, EditTemplate, SalesPurchasesView, common, CONSTANTS) {
     'use strict';
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Companies',
         imageSrc   : '',
@@ -28,48 +27,13 @@ define([
         },
 
         events: {
-            'click #tabList a'                                 : 'switchTab',
-            'click #contacts'                                  : 'editContacts',
-            'click #saveBtn'                                   : 'saveItem',
-            'click #cancelBtn'                                 : 'hideDialog',
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-            'click .current-selected'                          : 'showNewSelect',
-            'click .newSelectList li'                          : 'chooseOption',
-            click                                              : 'hideNewSelect',
-            'click .details'                                   : 'toggleDetails',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
+            'click #tabList a'  : 'switchTab',
+            'click #contacts'   : 'editContacts',
+            'click #saveBtn'    : 'saveItem',
+            'click #cancelBtn'  : 'hideDialog',
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click .details'    : 'toggleDetails'
         },
 
         chooseOption: function (e) {
@@ -93,42 +57,12 @@ define([
             $(e.target).toggleClass('choosen');
         },
 
-        toggleDetails: function () {
-            $('#details-dialog').toggle();
-        },
-
         hideDialog: function () {
             $('.edit-companies-dialog').remove();
             $('.add-group-dialog').remove();
             $('.add-user-dialog').remove();
             $('.crop-images-dialog').remove();
         },
-
-        showEdit: function () {
-            $('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        hideEdit: function () {
-            $('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        /* switchTab: function (e) {
-         e.preventDefault();
-         var link = this.$("#tabList a");
-         if (link.hasClass("selected")) {
-         link.removeClass("selected");
-         }
-         var index = link.index($(e.target).addClass("selected"));
-         this.$(".tab").hide().eq(index).show();
-         },*/
 
         editContacts: function (e) {
             var link = this.$('#tabList a');
@@ -291,7 +225,6 @@ define([
                 model: this.currentModel.toJSON()
             });
             var self = this;
-            var notDiv;
             var salesPurchasesEl;
             var thisEl;
             var model;
@@ -326,14 +259,9 @@ define([
             });
 
             thisEl = this.$el;
-            notDiv = this.$el.find('.assignees-container');
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({

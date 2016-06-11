@@ -5,7 +5,7 @@ define([
     'text!templates/Quotation/CreateTemplate.html',
     'collections/Persons/PersonsCollection',
     'collections/Departments/DepartmentsCollection',
-    'views/selectView/selectView',
+    'views/dialogViewBase',
     'views/Product/InvoiceOrder/ProductItems',
     'models/QuotationModel',
     'common',
@@ -21,7 +21,7 @@ define([
              CreateTemplate,
              PersonsCollection,
              DepartmentsCollection,
-             SelectView,
+             ParentView,
              ProductItemView,
              QuotationModel,
              common,
@@ -32,7 +32,7 @@ define([
              keyValidator,
              helpers) {
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Quotation',
         template   : _.template(CreateTemplate),
@@ -51,40 +51,7 @@ define([
 
         events: {
             'keypress .forNum'                                               : 'keydownHandler',
-            'click .dialog-tabs a'                                           : 'changeTab',
-            'click a.current-selected:not(.jobs)'                            : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination,#generateJobs)': 'chooseOption',
-            click                                                            : 'hideNewSelect'
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').remove();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
+            'click .newSelectList li:not(.miniStylePagination,#generateJobs)': 'chooseOption'
         },
 
         chooseOption: function (e) {
@@ -124,42 +91,6 @@ define([
             return false;
         },
 
-        keydownHandler: function (e) {
-            var charCode = e.which;
-            // var symbol = String.fromCharCode(charCode);
-
-            switch (charCode) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                case 13:
-                    this.validateForm(e);
-                    break;
-                default:
-                    return keyValidator(e, true);
-            }
-        },
-
-        changeTab: function (e) {
-            var $target = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = $target.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            $target.addClass('active');
-
-            n = $target.parents('.dialog-tabs').find('li').index($target.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
-        },
-
         saveItem: function () {
             var self = this;
             var mid = 55;
@@ -172,9 +103,8 @@ define([
             var productId;
             var quantity;
             var price;
-            var scheduledDate;
 
-            var forSales = this.forSales ? true : false;
+            var forSales = this.forSales || false;
 
             var currency = {
                 _id : thisEl.find('#currencyDd').attr('data-id'),
@@ -320,7 +250,8 @@ define([
                     success: function (model) {
                         self.redirectAfterSave(self, model);
                     },
-                    error  : function (model, xhr) {
+
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });
@@ -338,13 +269,6 @@ define([
 
             content.hideDialog();
             Backbone.history.navigate(redirectUrl, {trigger: true});
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
         },
 
         createProductView: function () {
@@ -366,7 +290,6 @@ define([
             var formString = this.template({visible: this.visible, forSales: this.forSales});
             var self = this;
             var curDate = new Date();
-            var notDiv;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -393,12 +316,7 @@ define([
 
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.model);
 
             this.createProductView();
 

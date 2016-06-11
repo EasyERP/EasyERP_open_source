@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'collections/monthHours/filterCollection',
@@ -6,19 +7,20 @@ define([
     'views/monthHours/list/ListView',
     'views/monthHours/TopBarView',
     'views/monthHours/CreateView',
-    /* 'views/monthHours/EditView',*/
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules,
+], function (Backbone,
+             modules,
              fixtures,
              MonthHoursCollection,
              MainView,
              ListView,
              TopBarView,
              CreateView,
-           /*  EditView,*/
+             eventsBinder,
              $,
              chai,
              chaiJquery,
@@ -26,84 +28,71 @@ define([
     'use strict';
 
     var expect;
-    var fakeMonthHours = [
-        {
-            _id               : "55b92ace21e4b7c40f000005",
-            fixedExpense      : 156,
-            expenseCoefficient: 1.2,
-            year              : 2014,
-            hours             : 160,
-            month             : 8,
-            ID                : 1,
-            __v               : 0,
-            dateByMonth       : 201408,
-            overheadRate      : 4.608470949855352,
-            actualHours       : 4148,
-            estimatedHours    : 8568,
-            adminSalaryBudget : 1850,
-            adminBudget       : 0,
-            vacationBudget    : 2855,
-            idleBudget        : 14410.94
-        },
-        {
-            _id               : "55b92ace21e4b7c40f000006",
-            fixedExpense      : 40,
-            expenseCoefficient: 1.2,
-            year              : 2014,
-            hours             : 176,
-            month             : 9,
-            ID                : 2,
-            __v               : 0,
-            dateByMonth       : 201409,
-            overheadRate      : 7.912933667083855,
-            actualHours       : 3995,
-            estimatedHours    : 0,
-            adminSalaryBudget : 1763.33,
-            adminBudget       : 10321,
-            vacationBudget    : 384.09,
-            idleBudget        : 19143.75
-        },
-        {
-            _id               : "55b92ace21e4b7c40f000007",
-            fixedExpense      : 40,
-            expenseCoefficient: 1.2,
-            year              : 2014,
-            hours             : 184,
-            month             : 10,
-            ID                : 3,
-            __v               : 0,
-            dateByMonth       : 201410,
-            overheadRate      : 5.8747648839556,
-            actualHours       : 4955,
-            estimatedHours    : 0,
-            adminSalaryBudget : 1750,
-            adminBudget       : 8435,
-            vacationBudget    : 1510.87,
-            idleBudget        : 17413.59
-        },
-        {
-            _id               : "55b92ace21e4b7c40f000008",
-            fixedExpense      : 40,
-            expenseCoefficient: 1.12,
-            year              : 2014,
-            hours             : 160,
-            month             : 11,
-            ID                : 4,
-            __v               : 0,
-            dateByMonth       : 201411,
-            overheadRate      : 5.561116465863454,
-            actualHours       : 4980,
-            estimatedHours    : 0,
-            adminSalaryBudget : 2076.67,
-            adminBudget       : 6763,
-            vacationBudget    : 492.5,
-            idleBudget        : 18362.19
-        }
-    ];
+    var fakeMonthHours = {
+        total: 300,
+        data: [
+            {
+                _id: "55b92ace21e4b7c40f000005",
+                fixedExpense: 40,
+                expenseCoefficient: 1.2,
+                year: 2014,
+                hours: 160,
+                month: 8,
+                ID: 1,
+                __v: 0,
+                dateByMonth: 201408,
+                overheadRate: 6.574346506442022,
+                actualHours: 4036,
+                estimatedHours: 8568,
+                adminSalaryBudget: 2300,
+                adminBudget: 6000,
+                vacationBudget: 3397.5,
+                idleBudget: 14836.56
+            },
+            {
+                _id: "55b92ace21e4b7c40f000006",
+                fixedExpense: 40,
+                expenseCoefficient: 1.2,
+                year: 2014,
+                hours: 176,
+                month: 9,
+                ID: 2,
+                __v: 0,
+                dateByMonth: 201409,
+                overheadRate: 8.1614875578236,
+                actualHours: 3937,
+                estimatedHours: 0,
+                adminSalaryBudget: 2213.33,
+                adminBudget: 10321,
+                vacationBudget: 429.55,
+                idleBudget: 19167.9
+            },
+            {
+                _id: "55b92ace21e4b7c40f000007",
+                fixedExpense: 40,
+                expenseCoefficient: 1.2,
+                year: 2014,
+                hours: 184,
+                month: 10,
+                ID: 3,
+                __v: 0,
+                dateByMonth: 201410,
+                overheadRate: 5.992615652878442,
+                actualHours: 4937,
+                estimatedHours: 0,
+                adminSalaryBudget: 2200,
+                adminBudget: 8435,
+                vacationBudget: 1510.87,
+                idleBudget: 17439.67
+            }
+        ]
+    };
     var monthHoursCollection;
     var view;
     var topBarView;
     var listView;
+    var historyNavigateSpy;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -113,6 +102,11 @@ define([
         var $fixture;
         var $elFixture;
 
+        before(function () {
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            ajaxSpy = sinon.spy($, 'ajax');
+        });
+
         after(function () {
             view.remove();
             topBarView.remove();
@@ -121,6 +115,9 @@ define([
             if ($('.ui-dialog').length) {
                 $('.ui-dialog').remove();
             }
+
+            historyNavigateSpy.restore();
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -185,9 +182,11 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+                var monthHoursUrl = new RegExp('\/monthHours\/', 'i');
 
-                server.respondWith('GET', monthHoursUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeMonthHours)]);
+                historyNavigateSpy.reset();
+
+                server.respondWith('GET', monthHoursUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify(fakeMonthHours)]);
                 monthHoursCollection = new MonthHoursCollection({
                     viewType: 'list',
                     page    : 1,
@@ -195,23 +194,22 @@ define([
                 });
                 server.respond();
 
-                expect(consoleSpy.called).to.be.true;
+                expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
             });
 
             it('Try to create TopBarView', function () {
-                var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
-                var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
+                var monthHoursUrl = new RegExp('\/monthHours\/', 'i');
+
                 server.respondWith('GET', monthHoursUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeMonthHours)]);
-                server.respondWith('GET', monthTotalCollectionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    count: 13
-                })]);
                 monthHoursCollection = new MonthHoursCollection({
                     viewType: 'list',
                     page    : 1,
                     count   : 14
                 });
-
                 server.respond();
+
+                expect(monthHoursCollection).to.have.lengthOf(3);
 
                 topBarView = new TopBarView({
                     collection: monthHoursCollection
@@ -219,7 +217,6 @@ define([
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
             });
-
         });
 
         describe('MonthHours list view', function () {
@@ -229,6 +226,7 @@ define([
             var mainSpy;
             var $thisEl;
             var alertStub;
+            var cancelChangesSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -238,6 +236,7 @@ define([
                 mainSpy = sinon.spy(App, 'render');
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
+                cancelChangesSpy = sinon.spy(ListView.prototype, 'cancelChanges');
             });
 
             after(function () {
@@ -246,87 +245,101 @@ define([
                 windowConfirmStub.restore();
                 mainSpy.restore();
                 alertStub.restore();
+                cancelChangesSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create monthHours list view', function (done) {
-                    var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
-                    var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+                    var $firstRow;
+                    var colCount;
+                    var month;
+                    var year;
+                    var hours;
+                    var expCoeff;
+                    var fixedExp;
+                    var estimatedHours;
+                    var actualHours;
+                    var adminBudget;
+                    var adminSalaryBudget;
+                    var vacationBudget;
+                    var idleTimeBudget;
+                    var overHeadRate;
 
-                    server.respondWith('GET', monthHoursUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeMonthHours)]);
-                    server.respondWith('GET', monthTotalCollectionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 13
-                    })]);
                     listView = new ListView({
                         collection   : monthHoursCollection,
                         startTime    : new Date(),
                         newCollection: false
                     });
-                    server.respond();
-                    server.respond();
 
                     clock.tick(200);
+
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                    eventsBinder.subscribeCollectionEvents(monthHoursCollection, listView);
+
+                    monthHoursCollection.trigger('fetchFinished', {
+                        totalRecords: monthHoursCollection.totalRecords,
+                        currentPage : monthHoursCollection.currentPage,
+                        pageSize    : monthHoursCollection.pageSize
+                    });
+
                     $thisEl = listView.$el;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(4);
 
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+                    expect($thisEl.find('table')).to.exist;
+                    expect($thisEl.find('#listTable > tr')).to.have.length.of(3);
 
-                    monthHoursCollection.bind('showmore', listView.showMoreContent, listView);
+                    $firstRow = $thisEl.find('#listTable > tr').first();
+                    colCount = $firstRow.find('td').length;
 
-                    done();
-                });
+                    expect(colCount).to.be.equals(14);
 
-                it('Try to switchPageCounter with error', function (done) {
-                    var spyResponse;
-                    var $thisEl = listView.$el;
-                    var $pageList = $thisEl.find('.pageList');
-                    var $needBtn = $pageList.find('a:nth-child(2)');
-                    var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+                    month = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(month).to.not.empty;
+                    expect(month).to.not.match(/object Object|undefined/);
 
-                    server.respondWith('GET', monthHoursUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeMonthHours)]);
+                    year = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(year).to.not.empty;
+                    expect(year).to.not.match(/object Object|undefined/);
 
-                    $needBtn.click();
-                    server.respond();
+                    hours = $firstRow.find('td:nth-child(5)').text().trim();
+                    expect(hours).to.not.empty;
+                    expect(hours).to.not.match(/object Object|undefined/);
 
-                    clock.tick(200);
+                    expCoeff = $firstRow.find('td:nth-child(6)').text().trim();
+                    expect(expCoeff).to.not.empty;
+                    expect(expCoeff).to.not.match(/object Object|undefined/);
 
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                    fixedExp = $firstRow.find('td:nth-child(7)').text().trim();
+                    expect(fixedExp).to.not.empty;
+                    expect(fixedExp).to.not.match(/object Object|undefined/);
 
-                    done();
-                });
+                    estimatedHours = $firstRow.find('td:nth-child(8)').text().trim();
+                    expect(estimatedHours).to.not.empty;
+                    expect(estimatedHours).to.not.match(/object Object|undefined/);
 
-                it('Try to switchPageCounter', function (done) {
-                    var $pageList = $thisEl.find('.pageList');
-                    var $needBtn = $pageList.find('a:nth-child(2)');
-                    var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
-                    var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+                    actualHours = $firstRow.find('td:nth-child(9)').text().trim();
+                    expect(actualHours).to.not.empty;
+                    expect(actualHours).to.not.match(/object Object|undefined/);
 
-                    server.respondWith('GET', monthHoursUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeMonthHours)]);
-                    server.respondWith('GET', monthTotalCollectionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 13
-                    })]);
-                    $needBtn.click();
-                    server.respond();
-                    server.respond();
+                    adminBudget = $firstRow.find('td:nth-child(10)').text().trim();
+                    expect(adminBudget).to.not.empty;
+                    expect(adminBudget).to.not.match(/object Object|undefined/);
 
-                    clock.tick(200);
+                    adminSalaryBudget = $firstRow.find('td:nth-child(11)').text().trim();
+                    expect(adminSalaryBudget).to.not.empty;
+                    expect(adminSalaryBudget).to.not.match(/object Object|undefined/);
 
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(4);
+                    vacationBudget = $firstRow.find('td:nth-child(12)').text().trim();
+                    expect(vacationBudget).to.not.empty;
+                    expect(vacationBudget).to.not.match(/object Object|undefined/);
+
+                    idleTimeBudget = $firstRow.find('td:nth-child(13)').text().trim();
+                    expect(idleTimeBudget).to.not.empty;
+                    expect(idleTimeBudget).to.not.match(/object Object|undefined/);
+
+                    overHeadRate = $firstRow.find('td:nth-child(14)').text().trim();
+                    expect(overHeadRate).to.not.empty;
+                    expect(overHeadRate).to.not.match(/object Object|undefined/);
 
                     done();
                 });
@@ -338,6 +351,8 @@ define([
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var keyDownEvent = $.Event('keydown', {which: 13});
                     var journalEntryUrl = new RegExp('journalEntries\/getExpenses', 'i');
+
+                    cancelChangesSpy.reset();
 
                     server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         actualHours     : 4148,
@@ -356,7 +371,8 @@ define([
                     $fixedInput.trigger(keyDownEvent);
 
                     $deleteBtn.click();
-                    expect($(listView.$el.find('td[data-content="expenseCoefficient"]')[0]).text()).to.be.equals('1.2');
+                    server.respond();
+
                 });
 
                 it('Try to delete item with 403 error', function () {
@@ -373,7 +389,6 @@ define([
 
                     spyResponse = mainSpy.args[1][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
                 });
 
                 it('Try to delete item', function () {
@@ -418,7 +433,6 @@ define([
                     server.respond();
                     spyResponse = mainSpy.args[2][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Fill all fields please');
 
                     $monthInput.click();
 
@@ -449,7 +463,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect($tableContainer.find('input[type="text"]').length).to.equals(0);
+                    expect($tableContainer.find('input[type="text"]').length).to.equals(1);
 
                 });
 

@@ -17,23 +17,28 @@ define([
         },
 
         events: {
-            "click .checkbox"                             : "checked",
-            "click td:not(:has('input[type='checkbox']'))": "gotoForm"
+            'click .checkbox'                               : 'checked',
+            "click td:not(:has('input[type = 'checkbox']'))": 'gotoForm'
         },
 
         gotoForm: function (e) {
+            var itemIndex;
+
             App.ownContentType = true;
-            var itemIndex = $(e.target).closest("tr").data("index") + 1;
-            window.location.hash = "#home/content-Degrees/form/" + itemIndex;
+            itemIndex = $(e.target).closest('tr').data('index') + 1;
+            window.location.hash = '#home/content-Degrees/form/' + itemIndex;
         },
 
         render: function () {
+            var viewType;
+            var itemIndex;
+            var currentModel;
+
             Custom.setCurrentCL(this.collection.models.length);
-            console.log('Render Degrees View');
-            var viewType = Custom.getCurrentVT();
+            viewType = Custom.getCurrentVT();
+
             switch (viewType) {
-                case "list":
-                {
+                case 'list':
                     this.$el.html(_.template(ListTemplate, {degreesCollection: this.collection.toJSON()}));
 
                     $('#checkAll').click(function () {
@@ -41,10 +46,8 @@ define([
                         $(':checkbox').prop('checked', c);
                     });
                     break;
-                }
-                case "form":
-                {
-                    var itemIndex = Custom.getCurrentII() - 1;
+                case 'form':
+                    itemIndex = Custom.getCurrentII() - 1;
                     if (itemIndex > this.collection.models.length - 1) {
                         itemIndex = this.collection.models.length - 1;
                         Custom.setCurrentII(this.collection.models.length);
@@ -53,36 +56,34 @@ define([
                     if (itemIndex === -1) {
                         this.$el.html();
                     } else {
-                        var currentModel = this.collection.models[itemIndex];
+                        currentModel = this.collection.models[itemIndex];
                         this.$el.html(_.template(FormTemplate, currentModel.toJSON()));
                     }
 
                     break;
-                }
             }
             return this;
-
         },
 
         checked: function () {
             if (this.collection.length > 0) {
-                if ($("input:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
+                if ($('input:checked').length > 0) {
+                    $('#top-bar-deleteBtn').show();
                 } else {
-                    $("#top-bar-deleteBtn").hide();
+                    $('#top-bar-deleteBtn').hide();
                 }
             }
         },
 
         deleteItems: function () {
-            var self = this,
-                mid = 39,
-                model,
-                viewType = Custom.getCurrentVT();
+            var self = this;
+            var mid = 39;
+            var model;
+            var viewType = Custom.getCurrentVT();
+            
             switch (viewType) {
-                case "list":
-                {
-                    $.each($("tbody input:checked"), function (index, checkbox) {
+                case 'list':
+                    $.each($('tbody input:checked'), function (index, checkbox) {
                         model = self.collection.get(checkbox.value);
                         model.destroy({
                             headers: {
@@ -93,21 +94,18 @@ define([
 
                     this.collection.trigger('reset');
                     break;
-                }
-                case "form":
-                {
-                    model = this.collection.get($("#wrap").data("id"));
+                case 'form':
+                    model = this.collection.get($('#wrap').data('id'));
                     model.on('change', this.render, this);
                     model.destroy({
                         headers: {
                             mid: mid
                         },
                         success: function () {
-                            Backbone.history.navigate("#home/content-Degrees", {trigger: true});
+                            Backbone.history.navigate('#home/content-Degrees', {trigger: true});
                         }
                     });
                     break;
-                }
             }
         }
     });

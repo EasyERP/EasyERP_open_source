@@ -34,10 +34,8 @@ define([
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/quotation/totalCollectionLength',
-        viewType                : 'list', // needs in view.prototype.changeLocationHash
-        contentType             : CONSTANTS.SALESQUOTATION, // needs in view.prototype.changeLocationHash
+        viewType                : 'list',
+        contentType             : CONSTANTS.SALESQUOTATION,
 
         events: {
             'click .stageSelect'                 : 'showNewSelect',
@@ -73,36 +71,14 @@ define([
             var total = 0;
 
             _.each(this.collection.toJSON(), function (model) {
-                if(model.currency && model.currency.rate){
+                if (model.currency && model.currency.rate) {
                     total += parseFloat(model.paymentInfo.total / model.currency.rate);
                 } else {
-                total += parseFloat(model.paymentInfo.total);
+                    total += parseFloat(model.paymentInfo.total);
                 }
             });
 
             this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
-        },
-
-        showFilteredPage: function (filter) {
-            var itemsNumber = $('#itemsNumber').text();
-
-            this.startTime = new Date();
-            this.newCollection = false;
-
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
-
-            this.filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-
-            //this.changeLocationHash(1, itemsNumber, filter);
-            this.changeLocationHash(null, this.collection.pageSize, this.filter, {replace: false});
-            this.collection.getFirstPage({
-                filter     : this.filter,
-                viewType   : this.viewType,
-                contentType: this.contentType
-            });
         },
 
         chooseOption: function (e) {
@@ -134,30 +110,12 @@ define([
             return false;
         },
 
-        showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
-
-                return false;
-            }
-            $(e.target).parent().append(_.template(stagesTemplate, {
-                stagesCollection: this.stages
-            }));
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').remove();
-        },
-
         render: function () {
-            var self;
             var $currentEl;
             var templ;
 
             $('.ui-dialog ').remove();
 
-            self = this;
             $currentEl = this.$el;
 
             $currentEl.html('');
@@ -176,16 +134,8 @@ define([
 
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-            dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
-                wId         : 'Sales Order',
-                source      : 'purchase',
-                targetSource: 'quotation'
-            }, function (stages) {
-                self.stages = stages;
-            });
-
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            
             return this;
         },
 
@@ -197,13 +147,13 @@ define([
 
             model.urlRoot = '/quotation/';
             model.fetch({
-                data   : {
+                data: {
                     id      : id,
                     viewType: 'form'
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

@@ -2,16 +2,15 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Persons/EditTemplate.html',
-    'views/selectView/selectView',
-    'views/Assignees/AssigneesView',
     'views/CustomersSuppliers/salesPurchases',
     'common',
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, SelectView, AssigneesView, SalesPurchasesView, common, populate, CONSTANTS) {
+], function (Backbone, $, _, ParentView, EditTemplate, SalesPurchasesView, common, populate, CONSTANTS) {
     'use strict';
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Persons',
         imageSrc   : '',
         template   : _.template(EditTemplate),
@@ -29,21 +28,12 @@ define([
         },
 
         events: {
-            'click #saveBtn'                                   : 'saveItem',
-            'click #cancelBtn'                                 : 'hideDialog',
-            'click .current-selected'                          : 'showNewSelect',
-            click                                              : 'hideNewSelect',
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .details'                                   : 'showDetailsBox'
+            'click #saveBtn'    : 'saveItem',
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click .details'    : 'showDetailsBox'
         },
-
-        showDetailsBox: function (e) {
-            $(e.target).parent().find('.details-box').toggle();
-        },
-
+        
         changeTab: function (e) {
             var $holder = $(e.target);
             var $dialogHolder;
@@ -66,22 +56,6 @@ define([
             $('.add-group-dialog').remove();
             $('.add-user-dialog').remove();
             $('.crop-images-dialog').remove();
-        },
-
-        showEdit: function () {
-            $('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        hideEdit: function () {
-            $('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
-
         },
 
         saveItem: function () {
@@ -198,36 +172,6 @@ define([
             });
         },
 
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
         chooseOption: function (e) {
             $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
         },
@@ -264,7 +208,6 @@ define([
 
         render: function () {
             var self = this;
-            var notDiv;
             var thisEl;
             var salesPurchasesEl;
             var model;
@@ -301,14 +244,9 @@ define([
             });
 
             thisEl = this.$el;
-            notDiv = thisEl.find('.assignees-container');
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({

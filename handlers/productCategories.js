@@ -1,8 +1,6 @@
 var mongoose = require('mongoose');
 var Categories = function (models, event) {
     var CategorySchema = mongoose.Schemas.ProductCategory;
-    var ProductSchema = mongoose.Schemas.Products;
-    var PayRollSchema = mongoose.Schemas.PayRoll;
     var objectId = mongoose.Types.ObjectId;
     var MAINCONSTANTS = require('../constants/mainConstants');
 
@@ -26,7 +24,7 @@ var Categories = function (models, event) {
 
     function getById(req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
-        var id = req.query.id;
+        var id = req.query.id || req.params.id;
 
         if (id && id.length < 24) {
             return res.status(400).send();
@@ -46,7 +44,7 @@ var Categories = function (models, event) {
     this.getForDd = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
 
-        if (req.query.id) {
+        if (req.query.id || req.params.id) {
             return getById(req, res, next);
         }
 
@@ -196,7 +194,7 @@ var Categories = function (models, event) {
 
         Model
             .findById(id)
-            .populate(parent)
+            .populate('parent')
             .exec(function (err, category) {
                 parrentFullName = category.parent ? category.parent.fullName : null;
 

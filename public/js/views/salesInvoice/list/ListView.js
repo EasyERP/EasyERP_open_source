@@ -19,8 +19,8 @@ define([
              listTemplate,
              CreateView,
              EditView,
-             invoiceModel,
-             listItemView,
+             InvoiceModel,
+             ListItemView,
              contentCollection,
              FilterView,
              common,
@@ -30,13 +30,11 @@ define([
     'use strict';
 
     var InvoiceListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        listItemView            : listItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        contentType             : CONSTANTS.SALESINVOICE, // 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
-        changedModels           : {},
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        contentType      : CONSTANTS.SALESINVOICE,
+        changedModels    : {},
 
         initialize: function (options) {
             $(document).off('click');
@@ -57,26 +55,18 @@ define([
         },
 
         events: {
-            // 'click .stageSelect'                       : 'showNewSelect',
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
-            'click .newSelectList li'                        : 'chooseOption',
-            'click .selectList'                              : 'showSelects'
-        },
-
-        showSelects: function (e) {
-            e.preventDefault();
-
-            $(e.target).parent('td').append("<ul class='newSelectList'><li>Draft</li><li>Done</li></ul>");
-
-            e.stopPropagation();
+            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
             var model;
             var self = this;
             var id;
+            var i;
+            var keys = Object.keys(this.changedModels);
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.collection.get(id);
 
                 model.save({
@@ -94,33 +84,8 @@ define([
                 });
             }
 
-            for (id in this.changedModels) {
-                delete this.changedModels[id];
-            }
-        },
+            this.changedModels = {};
 
-        chooseOption: function (e) {
-            var target$ = $(e.target);
-            var targetElement = target$.parents('td');
-            var targetTr = target$.parents('tr');
-            var id = targetTr.attr('data-id');
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            if (!this.changedModels[id].hasOwnProperty('validated')) {
-                this.changedModels[id].validated = target$.text();
-                this.changesCount++;
-            }
-
-            targetElement.find('.selectList').text(target$.text());
-
-            this.hideNewSelect();
-
-            $('#top-bar-saveBtn').show();
-
-            return false;
         },
 
         currentEllistRenderer: function (self) {
@@ -128,12 +93,11 @@ define([
             var itemView;
 
             $currentEl.append(_.template(listTemplate, {currentDb: true}));
-            itemView = new listItemView({
+            itemView = new ListItemView({
                 collection : self.collection,
                 page       : self.page,
                 itemsNumber: self.collection.namberToShow
             });
-            itemView.bind('incomingStages', self.pushStages, self);
 
             $currentEl.append(itemView.render());
         },
@@ -151,12 +115,12 @@ define([
 
             this.currentEllistRenderer(self);
 
-                self.renderPagination($currentEl, self);
-                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
+            self.renderPagination($currentEl, self);
+            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         },
 
         recalcTotal: function () {
@@ -180,7 +144,7 @@ define([
 
         goToEditDialog: function (e) {
             var id = $(e.target).closest('tr').data('id');
-            var model = new invoiceModel({validate: false});
+            var model = new InvoiceModel({validate: false});
 
             e.preventDefault();
 
@@ -193,7 +157,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

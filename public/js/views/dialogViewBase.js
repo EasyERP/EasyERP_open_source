@@ -10,10 +10,35 @@
     var View = Backbone.View.extend({
 
         events: {
-            keydown                  : 'keyDownHandler',
-            click                    : 'hideNewSelect',
-            'click .dialog-tabs a'   : 'changeTab',
-            'click .current-selected': 'showNewSelect'
+            keydown                                            : 'keyDownHandler',
+            click                                              : 'hideNewSelect',
+            'click .dialog-tabs a'                             : 'changeTab',
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+        },
+
+        showEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '20px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        hideEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '0px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        showDetailsBox: function (e) {
+            $(e.target).parent().find('.details-box').toggle();
+        },
+
+        toggleDetails: function () {
+            $('#details-dialog').toggle();
         },
 
         showNewSelect: function (e) {
@@ -58,6 +83,9 @@
                 case 27:
                     this.hideDialog();
                     break;
+                case 13:
+                    this.validateForm(e);
+                    break;
                 default:
                     break;
             }
@@ -70,17 +98,37 @@
             $('.crop-images-dialog').remove();
         },
 
+        /*changeTab: function (e) {
+            var $target = $(e.target);
+            var n;
+            var dialogHolder;
+            var closestEl = $target.closest('.dialog-tabs');
+            var dataClass = closestEl.data('class');
+            var selector = '.dialog-tabs-items.' + dataClass;
+            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+            var itemSelector = '.dialog-tabs-item.' + dataClass;
+
+            closestEl.find('a.active').removeClass('active');
+            $target.addClass('active');
+
+            n = $target.parents('.dialog-tabs').find('li').index($target.parent());
+            dialogHolder = $(selector);
+
+            dialogHolder.find(itemActiveSelector).removeClass('active');
+            dialogHolder.find(itemSelector).eq(n).addClass('active');
+        },
+*/
         changeTab: function (e) {
             var n;
-            var $dialogHolder;
-            var $holder = $(e.target);
+            var dialogHolder;
+            var holder = $(e.target);
 
-            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $holder.addClass('active');
-            n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
-            $dialogHolder = $holder.closest('.dialog-tabs').parent().find('.dialog-tabs-items');
-            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
+            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
+            holder.addClass('active');
+            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
+            dialogHolder = $('.dialog-tabs-items');
+            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
         },
 
         renderAssignees: function (model) {

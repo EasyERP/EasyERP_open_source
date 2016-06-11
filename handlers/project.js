@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 
 module.exports = function (models, event) {
-    var access = require('../Modules/additions/access.js')(models);
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var _ = require('../node_modules/underscore');
     var moment = require('../public/js/libs/moment/moment');
@@ -9,11 +8,11 @@ module.exports = function (models, event) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var Mailer = require('../helpers/mailer');
     var pathMod = require('path');
+    var fs = require('fs');
 
     var ProjectSchema = mongoose.Schemas.Project;
     var ProjectTypeSchema = mongoose.Schemas.projectType;
     var wTrackSchema = mongoose.Schemas.wTrack;
-    var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var EmployeeSchema = mongoose.Schemas.Employee;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var tasksSchema = mongoose.Schemas.Task;
@@ -122,7 +121,7 @@ module.exports = function (models, event) {
 
         delete data.fileName;
 
-        if (data.notes && data.notes.length != 0) {
+        if (data.notes && data.notes.length !== 0) {
             obj = data.notes[data.notes.length - 1];
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
@@ -133,7 +132,7 @@ module.exports = function (models, event) {
         }
 
         Project.findByIdAndUpdate({_id: _id}, {$set: data}, {new: true}, function (err, project) {
-            var os = require("os");
+            var os = require('os');
             var osType = (os.type().split('_')[0]);
             var path;
             var dir;
@@ -146,25 +145,21 @@ module.exports = function (models, event) {
             if (fileName) {
 
                 switch (osType) {
-                    case "Windows":
-                    {
-                        newDirname = __dirname.replace("\\Modules", "");
-                        while (newDirname.indexOf("\\") !== -1) {
-                            newDirname = newDirname.replace("\\", "\/");
+                    case 'Windows':
+                        newDirname = __dirname.replace('\\Modules', '');
+                        while (newDirname.indexOf('\\') !== -1) {
+                            newDirname = newDirname.replace('\\', '\/');
                         }
-                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                        dir = newDirname + "\/uploads\/" + _id;
-                    }
+                        path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                        dir = newDirname + '\/uploads\/' + _id;
                         break;
-                    case "Linux":
-                    {
-                        newDirname = __dirname.replace("/Modules", "");
-                        while (newDirname.indexOf("\\") !== -1) {
-                            newDirname = newDirname.replace("\\", "\/");
+                    case 'Linux':
+                        newDirname = __dirname.replace('/Modules', '');
+                        while (newDirname.indexOf('\\') !== -1) {
+                            newDirname = newDirname.replace('\\', '\/');
                         }
-                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                        dir = newDirname + "\/uploads\/" + _id;
-                    }
+                        path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                        dir = newDirname + '\/uploads\/' + _id;
                 }
 
                 fs.unlink(path, function (err) {
@@ -1069,7 +1064,7 @@ module.exports = function (models, event) {
          }
          }, {
          $project: {
-         date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
+         date : {$add: [{$multiply: ['$year', 100]}, '$month']},
          hours: '$hours'
 
          }
@@ -1248,7 +1243,6 @@ module.exports = function (models, event) {
                 return next(err);
             }
 
-            //async.each(result, function (project, callback) {
             Employee.populate(result, {
                 path  : 'wTracks.employee',
                 select: '_id, name',
@@ -1275,11 +1269,8 @@ module.exports = function (models, event) {
 
                     budgetTotal.profitSum = 0;
                     budgetTotal.costSum = 0;
-                    //budgetTotal.rateSum = 0;
                     budgetTotal.revenueSum = 0;
                     budgetTotal.hoursSum = 0;
-                    //budgetTotal.revenueByQA = 0;
-                    //budgetTotal.hoursByQA = 0;
 
                     wTRack.forEach(function (wTrack) {
                         var key;
@@ -1356,14 +1347,7 @@ module.exports = function (models, event) {
                             budgetTotal.costSum += parseFloat(projectTeam[key].cost);
                             budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
                             budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-                            /*                            budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
-                             budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);*/
                         });
-                        /*                        budgetTotal.rateSum = {};
-                         var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                         var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
-                         budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
-                         budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;*/
 
                         projectValues.revenue = budgetTotal.revenueSum;
                         projectValues.profit = budgetTotal.profitSum;
@@ -1442,7 +1426,7 @@ module.exports = function (models, event) {
                      },
                      {
                      $group: {
-                     _id   : "$project",
+                     _id   : '$project',
                      jobIds: {$addToSet: '$_id'}
                      }
                      }
@@ -1456,7 +1440,7 @@ module.exports = function (models, event) {
                      projectId = res._id;
                      var jobIds = res.jobIds;
 
-                     Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
+                     Project.findByIdAndUpdate(projectId, {$set: {'budget.projectTeam': jobIds}}, {new: true}, function (err, result) {
                      if (err) {
                      console.log(err);
                      }
@@ -1633,8 +1617,6 @@ module.exports = function (models, event) {
                     totalObj.revenueSum += jobBudgetTotal ? jobBudgetTotal.revenueSum : 0;
                     totalObj.costSum += jobBudgetTotal ? jobBudgetTotal.costSum : 0;
 
-                    //totalObj.profitSum = job.budget.budgetTotal ? (job.budget.budgetTotal.revenueSum - job.budget.budgetTotal.costSum) : 0;
-
                     if (jobBudgetTotal && jobBudgetTotal.revenueSum) {
                         if (jobBudgetTotal.costSum) {
                             totalObj.profitSum += jobBudgetTotal.revenueSum - jobBudgetTotal.costSum;
@@ -1645,8 +1627,6 @@ module.exports = function (models, event) {
                         totalObj.profitSum = 0;
                     }
                     totalObj.hoursSum += jobBudgetTotal ? jobBudgetTotal.hoursSum : 0;
-                    /*                    totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
-                     totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;*/
                 });
 
                 totalObj.totalInPr = totalInPr;
@@ -1718,7 +1698,7 @@ module.exports = function (models, event) {
                         if (wTrack) {
                             newDate = moment().year(wTrack.year).isoWeek(wTrack.week);
 
-                            if (wTrack['7']) {  //need refactor
+                            if (wTrack['7']) {
                                 newDate = newDate.day(7);
                                 return cb(null, newDate);
                             } else if (wTrack['6']) {

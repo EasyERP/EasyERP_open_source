@@ -2,6 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Invoice/CreateTemplate.html',
     'models/InvoiceModel',
     'populate',
@@ -9,10 +10,10 @@ define([
     'views/Assignees/AssigneesView',
     'views/Payment/list/ListHeaderInvoice',
     'constants'
-], function (Backbone, $, _, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS) {
+], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Invoice',
         template   : _.template(CreateTemplate),
@@ -25,29 +26,7 @@ define([
         },
 
         events: {
-            keydown                                                           : 'keydownHandler',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .details'                                                  : 'showDetailsBox',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-
-        },
-
-        notHide: function () {
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
+            'click .details': 'showDetailsBox'
         },
 
         chooseOption: function (e) {
@@ -55,46 +34,8 @@ define([
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
         },
 
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
         showDetailsBox: function (e) {
             $(e.target).parent().find('.details-box').toggle();
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
         },
 
         saveItem: function () {
@@ -113,7 +54,7 @@ define([
             var amount;
             var description;
 
-            var forSales = (this.forSales) ? true : false;
+            var forSales = this.forSales || false;
 
             var supplier = $currentEl.find('#supplier').data('id');
             var salesPersonId = $currentEl.find('#salesPerson').data('id') ? this.$('#salesPerson').data('id') : null;
@@ -235,19 +176,11 @@ define([
 
         },
 
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },
-
         render: function () {
             var formString = this.template();
             var self = this;
             var invoiceItemContainer;
             var paymentContainer;
-            var notDiv;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -275,12 +208,7 @@ define([
 
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.model);
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
             invoiceItemContainer.append(

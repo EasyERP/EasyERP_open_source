@@ -3,8 +3,8 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Quotation/EditTemplate.html',
+    'views/dialogViewBase',
     'views/Projects/projectInfo/proformas/proformaView',
-    'views/selectView/selectView',
     'views/Assignees/AssigneesView',
     'views/Product/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
@@ -21,8 +21,8 @@ define([
              $,
              _,
              EditTemplate,
+             ParentView,
              ProformaView,
-             SelectView,
              AssigneesView,
              ProductItemView,
              OrdersView,
@@ -37,7 +37,7 @@ define([
              helpers) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Quotation',
         imageSrc   : '',
         template   : _.template(EditTemplate),
@@ -65,45 +65,10 @@ define([
         },
 
         events: {
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            click                                              : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .confirmOrder'                              : 'confirmOrder',
-            'click .createProforma'                            : 'createProforma', /* 'addAttachment',*/
-            'click .cancelQuotation'                           : 'cancelQuotation',
-            // 'change #proformaAttachment'                       : 'uploadAttachment',
-            'click .setDraft'                                  : 'setDraft'
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
+            'click .confirmOrder'   : 'confirmOrder',
+            'click .createProforma' : 'createProforma',
+            'click .cancelQuotation': 'cancelQuotation',
+            'click .setDraft'       : 'setDraft'
         },
 
         chooseOption: function (e) {
@@ -134,26 +99,6 @@ define([
             }
 
             this.hideNewSelect();
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
         },
 
         confirmOrder: function (e) {
@@ -356,7 +301,9 @@ define([
                 journal    : CONSTANTS.PROFORMA_JOURNAL
             };
 
-            e && e.preventDefault();
+            if (e) {
+                e.preventDefault();
+            }
             App.startPreload();
 
             this.saveItem(function (err, res) {
@@ -378,7 +325,9 @@ define([
                                 App.projectInfo.currentTab = 'proforma';
                             }
 
-                            self.eventChannel && self.eventChannel.trigger('newProforma', response._id);
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('newProforma', response._id);
+                            }
 
                             tr = $('[data-id=' + quotationId + ']');
                             tr.find('.checkbox').addClass('notRemovable');
@@ -401,7 +350,6 @@ define([
                 status      : 'Cancelled',
                 order       : 1
             }, function (workflow) {
-                // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
                 var redirectUrl = window.location.hash;
 
                 if (workflow && workflow.error) {
@@ -435,7 +383,6 @@ define([
             populate.fetchWorkflow({
                 wId: 'Sales Order'
             }, function (workflow) {
-                // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
                 var redirectUrl = window.location.hash;
 
                 if (workflow && workflow.error) {
@@ -543,7 +490,7 @@ define([
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         taxes = parseFloat(taxes) * 100;
                         description = targetEl.find('[data-name="productDescr"]').text();
-                        jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
+                        jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subTotal = parseFloat(subTotal) * 100;
 
@@ -619,9 +566,11 @@ define([
                             return proformaCb(null, res);
                         }
 
-                        self.eventChannel && self.eventChannel.trigger('quotationUpdated');
+                        if (self.eventChannel) {
+                            self.eventChannel.trigger('quotationUpdated');
+                        }
                     },
-                    
+
                     error: function (model, xhr) {
                         self.errorNotification(xhr);
 
@@ -639,13 +588,6 @@ define([
             }
         },
 
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },
-
         deleteItem: function (event) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
@@ -661,7 +603,6 @@ define([
                     },
                     success: function () {
                         $('.edit-product-dialog').remove();
-                        // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         url = window.location.hash;
 
                         App.projectInfo = App.projectInfo || {};
@@ -669,9 +610,12 @@ define([
 
                         self.hideDialog();
 
-                        self.eventChannel && self.eventChannel.trigger('quotationRemove');
+                        if (self.eventChannel) {
+                            self.eventChannel.trigger('quotationRemove');
+                        }
                     },
-                    error  : function (model, err) {
+
+                    error: function (model, err) {
                         if (err.status === 403) {
                             App.render({
                                 type   : 'error',
@@ -693,7 +637,6 @@ define([
                 hidePrAndCust: this.hidePrAndCust
             });
             var service = this.forSales;
-            var notDiv;
             var productItemContainer;
             var buttons = [
                 {
@@ -727,12 +670,7 @@ define([
 
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 

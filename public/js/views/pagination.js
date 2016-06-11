@@ -624,7 +624,6 @@ define([
             var $checkedInputs;
             var ids = [];
 
-
             // todo add cancelChanges ----- & call this.cancelChanges method
             $checkedInputs = $table.find('input:checked');
 

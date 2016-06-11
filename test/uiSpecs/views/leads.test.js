@@ -33,7 +33,7 @@ define([
 
     var expect;
     var fakeLeads = {
-        total: 3,
+        total: 300,
         data : [
             {
                 _id            : "573adafe0ff1f7a761a03ea1",
@@ -1654,6 +1654,9 @@ define([
                 var assigned;
                 var createBy;
                 var editedBy;
+                var $pagination;
+                var $currentPageList;
+                var $pageList;
 
                 server.respondWith('GET', workFlowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflows)]);
                 listView = new ListView({
@@ -1666,6 +1669,12 @@ define([
 
                 eventsBinder.subscribeCollectionEvents(leadsCollection, listView);
                 eventsBinder.subscribeTopBarEvents(topBarView, listView);
+
+                leadsCollection.trigger('fetchFinished', {
+                    totalRecords: leadsCollection.totalRecords,
+                    currentPage : leadsCollection.currentPage,
+                    pageSize    : leadsCollection.pageSize
+                });
 
                 $thisEl = listView.$el;
 
@@ -1713,6 +1722,21 @@ define([
                 editedBy = $firstRow.find('td:nth-child(13)').text();
                 expect(editedBy).not.to.be.empty;
                 expect(editedBy).to.not.match(/object Object|undefined/);
+
+                // test list pagination
+
+                $pagination = $thisEl.find('.pagination');
+
+                expect($pagination).to.exist;
+                expect($pagination.find('.countOnPage')).to.exist;
+                expect($pagination.find('.pageList')).to.exist;
+
+                $currentPageList = $pagination.find('.currentPageList');
+                expect($currentPageList).to.exist;
+
+                $pageList = $pagination.find('#pageList');
+                expect($pageList).to.exist;
+                expect($pageList).to.have.css('display', 'none');
             });
 
             it('Try to select 25 item per page', function () {
@@ -1727,9 +1751,95 @@ define([
                 server.respond();
 
                 ajaxResponse = jQueryAjaxSpy.args[0][0];
+
                 expect(ajaxResponse.data).to.exist;
                 expect(ajaxResponse.data).to.have.property('count', '25');
                 expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=25');
+            });
+
+            it('Try to select 2 page on list', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $currentPageList = $pagination.find('.currentPageList');
+                var $pageList;
+                var $secondPageBtn;
+                var ajaxResponse;
+
+                jQueryAjaxSpy.reset();
+
+                $currentPageList.mouseover();
+                $pageList = $pagination.find('#pageList');
+                expect($pageList).to.have.css('display', 'block');
+
+                $secondPageBtn = $pageList.find('li').eq(1);
+
+                $secondPageBtn.click();
+                server.respond();
+
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.exist;
+                expect(ajaxResponse.data).to.have.property('count', '25');
+                expect(ajaxResponse.data).to.have.property('page', 2);
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=2/c=25');
+            });
+
+            it('Try to select 50 item per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $pageList = $pagination.find('.pageList');
+                var $needBtn = $pageList.find('.itemsNumber').eq(1);
+                var ajaxResponse;
+
+                jQueryAjaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.exist;
+                expect(ajaxResponse.data).to.have.property('count', '50');
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=50');
+            });
+
+            it('Try to select 100 item per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $pageList = $pagination.find('.pageList');
+                var $needBtn = $pageList.find('.itemsNumber').eq(2);
+                var ajaxResponse;
+
+                jQueryAjaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.exist;
+                expect(ajaxResponse.data).to.have.property('count', '100');
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=100');
+
+            });
+
+            it('Try to select 200 item per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $pageList = $pagination.find('.pageList');
+                var $needBtn = $pageList.find('.itemsNumber').eq(3);
+                var ajaxResponse;
+
+                jQueryAjaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.exist;
+                expect(ajaxResponse.data).to.have.property('count', '200');
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=200');
             });
 
             it('Try to change leads stage', function () {
@@ -1757,7 +1867,7 @@ define([
                 server.respond();
 
                 expect(jQueryAjaxSpy.args[1][0]).to.have.property('url', '/leads/');
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=100');
+                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=200');
             });
 
             it('Try to delete leads with 403 server response', function () {
@@ -1810,7 +1920,7 @@ define([
                 server.respondWith('GET', '/leads/priority', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeLeadsPriority)]);
                 server.respondWith('GET', '/Campaigns', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCampaigns)]);
                 server.respondWith('GET', '/customers/', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
-                server.respondWith('GET', '/employees/getForDdByRelatedUser', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeRelatedUser)]);
+                server.respondWith('GET', '/employees/getForDD?isEmployee=true', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeesForDD)]);
                 $createBtn.click();
                 server.respond();
 
