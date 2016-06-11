@@ -39,6 +39,7 @@ define([
             monthElement      : null,
             yearElement       : null,
             vacations         : null,
+            cancelEdit        : cancelEdit,
 
             events: {
                 "click .createBtn"                                                : "createItem",
@@ -350,26 +351,26 @@ define([
             },
 
             /*renderContent: function () {
-                var $currentEl = this.$el;
-                var tBody = $currentEl.find('#listTable');
-                $("#top-bar-deleteBtn").hide();
-                $('#checkAll').prop('checked', false);
-                tBody.empty();
-                var itemView = new listItemView({
-                    collection : this.collection,
-                    page       : $currentEl.find("#currentShowPage").val(),
-                    itemsNumber: $currentEl.find("span#itemsNumber").text()
-                });
-                tBody.append(itemView.render());
+             var $currentEl = this.$el;
+             var tBody = $currentEl.find('#listTable');
+             $("#top-bar-deleteBtn").hide();
+             $('#checkAll').prop('checked', false);
+             tBody.empty();
+             var itemView = new listItemView({
+             collection : this.collection,
+             page       : $currentEl.find("#currentShowPage").val(),
+             itemsNumber: $currentEl.find("span#itemsNumber").text()
+             });
+             tBody.append(itemView.render());
 
-                var pagenation = this.$el.find('.pagination');
+             var pagenation = this.$el.find('.pagination');
 
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-            },*/
+             if (this.collection.length === 0) {
+             pagenation.hide();
+             } else {
+             pagenation.show();
+             }
+             },*/
 
             goSort: function (e) {
                 var self = this;
@@ -786,7 +787,7 @@ define([
                     oldYear = this.departmentsCollections[name].models[0].attributes.year;
                 }
 
-                if (!this.departmentsCollections[name] || oldMonth !== this.capacityObject[name][0].month || oldYear !== this.capacityObject[name][0].year ) {
+                if (!this.departmentsCollections[name] || oldMonth !== this.capacityObject[name][0].month || oldYear !== this.capacityObject[name][0].year) {
                     this.departmentsCollections[name] = new departmentCollection(this.capacityObject[name]);
                 }
 
@@ -1098,7 +1099,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }

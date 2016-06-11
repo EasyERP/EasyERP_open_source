@@ -88,8 +88,11 @@ define([
         saveItem: function () {
             var model;
             var id;
+            var i;
+            var keys = Object.keys(this.changedModels);
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.editCollection.get(id);
                 model.changed = this.changedModels[id];
                 delete this.changedModels[id];
@@ -330,18 +333,15 @@ define([
 
             this.collectionLength = this.editCollection.length;
 
-            if (!this.changed) {
-                if (answer === true) {
-                    $.each(that.$el.find('input:checked'), function (index, checkbox) {
-                        checkbox = $(checkbox);
-                        value = checkbox.attr('id');
-                        tr = checkbox.closest('tr');
-                        that.deleteItem(tr, value);
-                    });
-                }
-            } else {
-                this.cancelChanges();
+            if (answer) {
+                $.each(that.$el.find('input:checked'), function (index, checkbox) {
+                    checkbox = $(checkbox);
+                    value = checkbox.attr('id');
+                    tr = checkbox.closest('tr');
+                    that.deleteItem(tr, value);
+                });
             }
+
         },
 
         deleteItem: function (tr, id) {

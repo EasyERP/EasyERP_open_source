@@ -98,10 +98,10 @@ define([
             }
 
             /* this.trigger('selectedElementsChanged', {
-                length  : $checkBoxes.length,
-                $element: $currentChecked,
-                checkAll: checkAllBool
-            }); */
+             length  : $checkBoxes.length,
+             $element: $currentChecked,
+             checkAll: checkAllBool
+             }); */
 
             if (typeof(this.setAllTotalVals) === 'function') {   // added in case of existing setAllTotalVals in View
                 this.setAllTotalVals();
@@ -127,6 +127,10 @@ define([
                     type   : 'notify',
                     message: 'Please, save previous changes or cancel them!'
                 });
+            }
+
+            if (this.editCollection) {
+                this.editCollection.reset();
             }
 
             target$ = $(e.target).closest('th');
@@ -686,7 +690,7 @@ define([
                 model = collection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
-                enable = model && model.workflow.name !== 'Closed';
+                enable = model && model.workflow && model.workflow.name !== 'Closed';
 
                 $tr.replaceWith(template({model: model, enable: enable}));
 

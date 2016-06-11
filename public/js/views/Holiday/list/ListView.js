@@ -40,6 +40,7 @@ define([
         changedModels : {},
         holidayId     : null,
         editCollection: null,
+        cancelEdit    : cancelEdit,
 
         initialize: function (options) {
             $(document).off('click');
@@ -171,57 +172,6 @@ define([
             this.renderPagination($currentEl, this);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-        },
-
-        cancelChanges: function () {
-            var self = this;
-            var edited = this.edited;
-            var collection = this.collection;
-            var copiedCreated;
-            var dataId;
-
-            async.each(edited, function (el, cb) {
-                var tr = $(el).closest('tr');
-                var trId = tr.attr('id');
-                var rowNumber = tr.find('[data-content="number"]').text();
-                var id = tr.data('id');
-                var template = _.template(cancelEdit);
-                var model;
-
-                if (!id || (id.length < 24)) {
-                    self.hideSaveCancelBtns();
-                    return cb('Empty id');
-                }
-
-                model = collection.get(id);
-                model = model.toJSON();
-                model.index = rowNumber;
-                if (!trId) {
-                    tr.replaceWith(template({holiday: model}));
-                } else {
-                    tr.remove();
-                }
-                cb();
-            }, function (err) {
-                if (!err) {
-                    self.hideSaveCancelBtns();
-                    if (!err) {
-                        self.editCollection = new EditCollection(collection.toJSON());
-                        self.editCollection.on('saved', self.savedNewModel, self);
-                        self.editCollection.on('updated', self.updatedOptions, self);
-                    }
-                }
-            });
-
-            copiedCreated = this.$el.find('#false');
-            dataId = copiedCreated.attr('data-id');
-            this.editCollection.remove(dataId);
-            delete this.changedModels[dataId];
-            copiedCreated.remove();
-
-            this.createdCopied = false;
-
-            self.changedModels = {};
         }
 
     });
