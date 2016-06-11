@@ -144,30 +144,6 @@ describe('Employee Specs', function () {
                 });
         });
 
-        it('should get wTrack totalCollectionLength', function (done) {
-
-            aggent
-                .get('employees/totalCollectionLength')
-                .query({contentType: 'Employees'})
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.gte(1);
-
-                    done();
-                });
-        });
-
         it('should get by viewType thumbnails employee', function (done) {
             var query = {
                 viewType     : 'thumbnails',

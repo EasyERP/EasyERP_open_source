@@ -95,27 +95,6 @@ describe('Leads Specs', function () {
                 });
         });
 
-        it('should get Leads totalCollectionLength', function (done) {
-            aggent
-                .get('leads/totalCollectionLength')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count');
-                    expect(body)
-                        .to.have.property('showMore');
-                    done();
-                });
-        });
-
         it('should get Lead For Chart', function (done) {
             aggent
                 .get('leads/getLeadsForChart')

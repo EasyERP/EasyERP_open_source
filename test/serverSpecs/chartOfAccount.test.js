@@ -114,13 +114,11 @@ describe('BonusType Specs', function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Array);
-                    expect(body.length)
-                        .to.be.gte(1);
-                    if (body.length > 1) { // test sorting
-                        expect(body[0].account)
-                            .to.be.gte(body[1].account);
-                    }
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body)
+                        .to.have.property('total');
 
                     done();
                 });

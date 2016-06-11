@@ -521,7 +521,7 @@ describe("wTrack Specs", function () {
                 };
 
                 aggent
-                    .post('jobs/remove')
+                    .delete('jobs/' + id)
                     .send(body)
                     .expect(200)
                     .end(function (err, res) {

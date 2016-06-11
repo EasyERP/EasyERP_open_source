@@ -47,19 +47,6 @@ define([
             }
         },
 
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
         selectCustomer: function (id) {
             dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                 id: id
@@ -220,13 +207,6 @@ define([
             populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Opportunities'}, 'name', this, true);
             populate.get('#salesTeamDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
-
-            /* common.populateCustomers("#customerDd", "/Customers",this.model);
-             //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getPersonsForDd");
-             common.populateEmployeesDd("#salesPersonDd", "/getForDdByRelatedUser", this.model);
-             common.populateDepartments("#salesTeamDd", "/DepartmentsForDd");
-             common.populatePriority("#priorityDd", "/Priority");
-             common.populateWorkflows('Opportunities', '#workflowDd', "#workflowNamesDd", '/WorkflowsForDd');*/
 
             this.delegateEvents(this.events);
             return this;

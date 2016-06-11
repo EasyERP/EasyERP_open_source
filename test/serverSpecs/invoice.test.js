@@ -260,28 +260,6 @@ describe('Invoice Specs', function () {
                     .expect(200, done);
             });
 
-            it('should get invoices totalCollectionLength', function (done) { // long query
-
-                aggent
-                    .get('invoice/totalCollectionLength')
-                    .expect(200)
-                    .end(function (err, res) {
-                        var body = res.body;
-
-                        if (err) {
-                            return done(err);
-                        }
-                        expect(body)
-                            .to.be.instanceOf(Object);
-
-                        expect(body)
-                            .to.have.property('count')
-                            .and.to.be.gte(1);
-
-                        done();
-                    });
-            });
-
             it('should get invoices stats', function (done) {
 
                 aggent

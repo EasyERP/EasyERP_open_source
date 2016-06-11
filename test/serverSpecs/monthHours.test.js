@@ -129,28 +129,6 @@ describe('MonthHours Specs', function () {
                 });
         });
 
-        it('should get monthHours length', function (done) {
-
-            aggent
-                .get('monthHours/list/totalCollectionLength')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.gte(1);
-
-                    done();
-                });
-        });
-
         it('should get monthHours by month&year', function (done) {
             var query = {
                 month: month,
