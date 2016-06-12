@@ -10,12 +10,17 @@ var Module = function (models) {
 
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants');
+    var RESPONSES = require('../constants/responses');
     var objectId = mongoose.Types.ObjectId;
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var pageHelper = require('../helpers/pageHelper');
+    var path = require('path');
     var fs = require('fs');
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
+
+    var Uploader = require('../services/fileStorage/index');
+    var uploader = new Uploader();
 
     var projectCustomer = {
         type                            : 1,
@@ -794,6 +799,40 @@ var Module = function (models) {
             }
 
             res.status(200).send(result);
+        });
+    };
+
+    this.uploadFile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var headers = req.headers;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'persons';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
+
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
+
+            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Customers updated success', data: response});
+            });
         });
     };
 
