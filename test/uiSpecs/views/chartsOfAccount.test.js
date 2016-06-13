@@ -225,6 +225,7 @@ define([
             var cancelChangesSpy;
             var deleteSpy;
             var saveItemSpy;
+            var server;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -235,6 +236,7 @@ define([
                 cancelChangesSpy = sinon.spy(ListView.prototype, 'cancelChanges');
                 deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
                 saveItemSpy = sinon.spy(ListView.prototype, 'saveItem');
+                server = sinon.fakeServer.create();
             });
 
             after(function () {
@@ -245,6 +247,7 @@ define([
                 cancelChangesSpy.restore();
                 deleteSpy.restore();
                 saveItemSpy.restore();
+                server.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -312,6 +315,37 @@ define([
                     expect($thisEl.find('#pageList')).to.have.css('display', 'none');
 
                     done();
+                });
+
+
+
+                it('Try to sort down list', function () {
+                    var $sortAccountBtn = listView.$el.find('th[data-sort="account"]');
+                    var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
+
+                    server.respondWith('GET', chartOfAccountUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeChartOfAccount)]);
+
+                    ajaxSpy.reset();
+
+                    $sortAccountBtn.click();
+                    server.respond();
+
+                    expect(ajaxSpy.args[0][0].data.sort).to.be.exist;
+                    expect(ajaxSpy.args[0][0].data.sort).to.be.have.property('account', -1);
+                    expect($thisEl.find('#listTable > tr')).to.have.length.of(3);
+                });
+
+                it('Try to sort up list', function () {
+                    var $sortAccountBtn = listView.$el.find('th[data-sort="account"]');
+
+                    ajaxSpy.reset();
+
+                    $sortAccountBtn.click();
+                    server.respond();
+
+                    expect(ajaxSpy.args[0][0].data.sort).to.be.exist;
+                    expect(ajaxSpy.args[0][0].data.sort).to.be.have.property('account', 1);
+                    expect($thisEl.find('#listTable > tr')).to.have.length.of(3);
                 });
 
                 it('Try to check|uncheck all checkboxes', function () {
@@ -388,6 +422,8 @@ define([
                     var $tableContainer = listView.$el.find('table');
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
 
+                    saveItemSpy.reset();
+
                     $codeInput.click();
                     $input = listView.$el.find('input.editing');
                     $input.val('1111111');
@@ -398,8 +434,8 @@ define([
                     $saveBtn.click();
                     server.respond();
 
+                    expect(saveItemSpy.calledOnce).to.be.true;
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
-                    expect($(listView.$el.find('td[data-content="code"]')[0]).text()).to.be.equals('1111111');
                 });
 
                 it('Try to create item', function () {
@@ -410,6 +446,8 @@ define([
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
+
+                    saveItemSpy.reset();
 
                     $createBtn.click();
 
@@ -437,35 +475,9 @@ define([
                     server.respond();
 
                     expect(listView.$el.find('input[type="text"].editing').length).to.equals(0);
-                    expect
+                    expect(saveItemSpy.calledOnce).to.be.true;
                 });
 
-                it('Try to sort up list', function () {
-                    var $account;
-                    var $sortAccountBtn = listView.$el.find('th[data-sort="account"]');
-                    var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
-
-                    server.respondWith('GET', chartOfAccountUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeChartOfAccountSortedUp)]);
-                    $sortAccountBtn.click();
-                    server.respond();
-
-                    $account = listView.$el.find('tr:nth-child(1) > td:nth-child(4)');
-                    expect($account.text()).to.be.equals('1');
-                });
-
-                it('Try to sort up list', function () {
-                    var $account;
-                    var $sortAccountBtn = listView.$el.find('th[data-sort="account"]');
-                    var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
-
-                    server.respondWith('GET', chartOfAccountUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeChartOfAccountSortedDown)]);
-                    $sortAccountBtn.click();
-                    server.respond();
-
-                    $account = listView.$el.find('tr:nth-child(1) > td:nth-child(4)');
-
-                    expect($account.text()).to.be.equals('test');
-                });
             });
         });
     });
