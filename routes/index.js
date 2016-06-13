@@ -528,7 +528,7 @@ module.exports = function (app, mainDb) {
         });
     });
 
-    app.post('/uploadOpportunitiesFiles', multipartMiddleware, function (req, res, next) {
+    /*app.post('/uploadOpportunitiesFiles', multipartMiddleware, function (req, res, next) {
         var os = require("os");
         var osType = (os.type().split('_')[0]);
         var dir;
@@ -577,7 +577,7 @@ module.exports = function (app, mainDb) {
                 });
             }
         });
-    });
+    });*/
 
     app.get('/logout', function (req, res, next) {
         if (req.session) {

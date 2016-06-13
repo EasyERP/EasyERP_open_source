@@ -14,7 +14,7 @@
     'dataService',
     'constants',
     'helpers'
-], function (Backbone, $, _, ParentView, EditTemplate, editSelectTemplate, historyTemplate, noteView, attachView, common, custom, populate, dataService, CONSTANTS, helpers) {
+], function (Backbone, $, _, ParentView, EditTemplate, editSelectTemplate, historyTemplate, noteView, AttachView, common, custom, populate, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var EditView = ParentView.extend({
@@ -432,16 +432,17 @@
                     }
                 }
             });
-            notDiv = this.$el.find('#divForNote');
-            notDiv.append(
+
+            /* notDiv.append(
                 new noteView({
                     model: this.currentModel
-                }).render().el);
+                }).render().el);*/
 
+            notDiv = this.$el.find('.attach-container');
             notDiv.append(
-                new attachView({
+                new AttachView({
                     model    : this.currentModel,
-                    url      : '/uploadOpportunitiesFiles',
+                    url      : '/opportunities/uploadOpportunitiesFiles',
                     elementId: this.elementId
                 }).render().el
             );

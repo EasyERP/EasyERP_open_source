@@ -2472,7 +2472,8 @@ var Module = function (models, event) {
             campaign        : 1,
             source          : 1,
             social          : 1,
-            skype           : 1
+            skype           : 1,
+            attachments     : 1
         });
 
         query
