@@ -27,16 +27,16 @@ define([
 
     var ApplicationsListView = ListViewBase.extend({
 
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        contentType             : 'Applications',
-        formUrl                 : '#easyErp/Applications/',
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        contentType      : 'Applications',
+        formUrl          : '#easyErp/Applications/',
 
         events: {
-            'click .stageSelect'          : 'showNewSelect',
-            'click .newSelectList li'     : 'chooseOption'
+            'click .stageSelect'     : 'showNewSelect',
+            'click .newSelectList li': 'chooseOption'
         },
 
         initialize: function (options) {
@@ -55,17 +55,19 @@ define([
 
             this.render();
 
-           // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
 
-       /* hideNewSelect: function () {
-            $('.newSelectList').remove();  // changed after ui tests
-        },*/
+        /* hideNewSelect: function () {
+         $('.newSelectList').remove();  // changed after ui tests
+         },*/
 
         showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
+            var $selectList = $('.newSelectList');
+
+            if ($selectList.is(':visible')) {
+                $selectList.remove();
                 return false;
             }
 
@@ -89,6 +91,7 @@ define([
                 headers: {
                     mid: mid
                 },
+
                 patch   : true,
                 validate: false,
                 success : function () {
@@ -136,7 +139,7 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        gotoForm : function (e) {
+        gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new CurrentModel({validate: false});
 

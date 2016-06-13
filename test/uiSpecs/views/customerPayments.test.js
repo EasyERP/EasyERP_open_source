@@ -502,7 +502,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(deleteSpy.calledOnce).to.be.true;
+                    expect(deleteSpy.calledTwice).to.be.true;
                 });
 
                 it('Try to delete item', function () {
@@ -517,7 +517,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(deleteSpy.calledTwice).to.be.true;
+                    expect(deleteSpy.calledThrice).to.be.true;
                 });
 
                 it('Try to edit item', function () {

@@ -1396,7 +1396,6 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
                     expect(deleteSpy.calledOnce).to.be.true;
                 });
 

@@ -1,1058 +1,360 @@
 define([
+    'Backbone',
     'Underscore',
+    'modules',
     'text!fixtures/index.html',
     'collections/journalEntry/filterCollection',
     'views/main/MainView',
     'views/journalEntry/list/ListView',
     'views/journalEntry/TopBarView',
     'views/Filter/FilterView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (_, fixtures, JournalEntryCollection, MainView, ListView, TopBarView, FilterView, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, _, modules, fixtures, JournalEntryCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
-    var modules = [
-        {
-            "_id"        : 19,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Sales",
-            "parrent"    : null,
-            "sequence"   : 1,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Sales"
-        }, {
-            "_id"        : 36,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Project",
-            "parrent"    : null,
-            "sequence"   : 2,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Project"
-        }, {
-            "_id"        : 9,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "HR",
-            "parrent"    : null,
-            "sequence"   : 3,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "HR"
-        }, {
-            "_id"        : 49,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Persons",
-            "parrent"    : 19,
-            "sequence"   : 7,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Persons"
-        }, {
-            "_id"        : 50,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Companies",
-            "parrent"    : 19,
-            "sequence"   : 8,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Companies"
-        }, {
-            "_id"        : 24,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Leads",
-            "parrent"    : 19,
-            "sequence"   : 9,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Leads"
-        }, {
-            "_id"        : 25,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Opportunities",
-            "parrent"    : 19,
-            "sequence"   : 10,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Opportunities"
-        }, {
-            "_id"        : 39,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Projects",
-            "parrent"    : 36,
-            "sequence"   : 23,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Projects"
-        }, {
-            "_id"        : 40,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Tasks",
-            "parrent"    : 36,
-            "sequence"   : 24,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Tasks"
-        }, {
-            "_id"        : 29,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 19,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Dashboard"
-        }, {
-            "_id"        : 42,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Employees",
-            "parrent"    : 9,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Employees"
-        }, {
-            "_id"        : 43,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Applications",
-            "parrent"    : 9,
-            "sequence"   : 30,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Applications"
-        }, {
-            "_id"        : 14,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Job Positions",
-            "parrent"    : 9,
-            "sequence"   : 32,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "JobPositions"
-        }, {
-            "_id"        : 15,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Groups",
-            "parrent"    : 1,
-            "sequence"   : 33,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Departments"
-        }, {
-            "_id"        : 7,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Users",
-            "parrent"    : 1,
-            "sequence"   : 42,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Users"
-        }, {
-            "_id"        : 44,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Workflows",
-            "parrent"    : 1,
-            "sequence"   : 44,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Workflows"
-        }, {
-            "_id"        : 51,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Profiles",
-            "parrent"    : 1,
-            "sequence"   : 51,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Profiles"
-        }, {
-            "_id"        : 52,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Birthdays",
-            "parrent"    : 9,
-            "sequence"   : 52,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Birthdays"
-        }, {
-            "_id"        : 53,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 36,
-            "sequence"   : 53,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "projectDashboard"
-        }, {
-            "_id"      : 54,
-            "mname"    : "Purchases",
-            "sequence" : 54,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Purchases"
-        }, {
-            "_id"      : 80,
-            "mname"    : "Jobs Dashboard",
-            "sequence" : 54,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "jobsDashboard"
-        }, {
-            "_id"      : 55,
-            "mname"    : "Quotation",
-            "sequence" : 55,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Quotation"
-        }, {
-            "_id"      : 57,
-            "mname"    : "Order",
-            "sequence" : 56,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Order"
-        }, {
-            "_id"      : 56,
-            "mname"    : "Invoice",
-            "sequence" : 57,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Invoice"
-        }, {
-            "_id"      : 58,
-            "mname"    : "Product",
-            "sequence" : 58,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Product"
-        }, {
-            "_id"      : 59,
-            "mname"    : "Accounting",
-            "sequence" : 59,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Accounting"
-        }, {
-            "_id"      : 60,
-            "mname"    : "Supplier Payments",
-            "sequence" : 60,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "supplierPayments"
-        }, {
-            "_id"      : 61,
-            "mname"    : "Customer Payments",
-            "sequence" : 61,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "customerPayments"
-        }, {
-            "_id"      : 62,
-            "mname"    : "Quotation",
-            "sequence" : 62,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesQuotation"
-        }, {
-            "_id"      : 63,
-            "mname"    : "Order",
-            "sequence" : 63,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesOrder"
-        }, {
-            "_id"      : 64,
-            "mname"    : "Invoice",
-            "sequence" : 64,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesInvoice"
-        }, {
-            "_id"      : 68,
-            "mname"    : "MonthHours",
-            "sequence" : 68,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "monthHours"
-        }, {
-            "_id"      : 69,
-            "mname"    : "Holidays",
-            "sequence" : 69,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Holiday"
-        }, {
-            "_id"      : 77,
-            "mname"    : "Capacity",
-            "sequence" : 69,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Capacity"
-        }, {
-            "_id"      : 88,
-            "mname"    : "Salary Report",
-            "sequence" : 69,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salaryReport"
-        }, {
-            "_id"      : 70,
-            "mname"    : "Vacation",
-            "sequence" : 70,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Vacation"
-        }, {
-            "_id"      : 71,
-            "mname"    : "Attendance",
-            "sequence" : 71,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Attendance"
-        }, {
-            "_id"      : 76,
-            "mname"    : "Efficiency",
-            "sequence" : 72,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Efficiency"
-        }, {
-            "_id"      : 72,
-            "mname"    : "BonusType",
-            "sequence" : 73,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "bonusType"
-        }, {
-            "_id"      : 74,
-            "mname"    : "HrDashboard",
-            "sequence" : 74,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "HrDashboard"
-        }, {
-            "_id"      : 66,
-            "mname"    : "Payroll Expenses",
-            "sequence" : 77,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollExpenses"
-        }, {
-            "_id"      : 78,
-            "mname"    : "Payroll",
-            "sequence" : 78,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Payroll"
-        }, {
-            "_id"      : 79,
-            "mname"    : "Payroll Payments",
-            "sequence" : 79,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollPayments"
-        }, {
-            "_id"      : 82,
-            "mname"    : "Invoice Aging",
-            "sequence" : 82,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceAging"
-        }, {
-            "_id"      : 83,
-            "mname"    : "ChartOfAccount",
-            "sequence" : 83,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "ChartOfAccount"
-        }, {
-            "_id"      : 85,
-            "mname"    : "Journal",
-            "sequence" : 85,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journal"
-        }, {
-            "_id"      : 86,
-            "mname"    : "Journal Entry",
-            "sequence" : 86,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journalEntry"
-        }, {
-            "_id"      : 87,
-            "mname"    : "Invoice Charts",
-            "sequence" : 87,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceCharts"
-        }, {
-            "_id"        : 1,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Settings",
-            "parrent"    : null,
-            "sequence"   : 1000,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Settings"
-        }, {
-            "_id"      : 75,
-            "mname"    : "tCard",
-            "sequence" : 1000,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "wTrack"
-        }, {
-            "_id"      : 84,
-            "mname"    : "Categories",
-            "sequence" : 1000,
-            "parrent"  : 1,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "productSettings"
-        }, {
-            "_id"      : 73,
-            "mname"    : "DashBoardVacation",
-            "sequence" : 1001,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "DashBoardVacation"
-        }];
-    var fakeJournalEntry = [
-        {
-            _id           : "572b5a78c7389cfa5172a6af",
-            debit         : 13300,
-            sourceDocument: {
-                model  : "Invoice",
-                _id    : {
-                    _id             : "568bb6af7c0383e04c60e892",
-                    _type           : "wTrackInvoice",
-                    __v             : 0,
-                    project         : "55b92ad621e4b7c40f00068c",
-                    products        : [
-                        {
-                            subTotal   : 13300,
-                            unitPrice  : 13300,
-                            taxes      : 0,
-                            jobs       : "568bb6047c0383e04c60e88b",
-                            description: "",
-                            product    : "5540d528dacb551c24000003",
-                            quantity   : 19
-                        }
-                    ],
-                    editedBy        : {
-                        date: "2016-03-14T07:55:20.865Z",
-                        user: "55bf144765cda0810b000005"
-                    },
-                    createdBy       : {
-                        date: "2016-01-05T12:27:04.595Z",
-                        user: "55bf144765cda0810b000005"
-                    },
-                    creationDate    : "2016-01-05T12:27:04.595Z",
-                    groups          : {
-                        group: [],
-                        users: [],
-                        owner: "560c099da5d4a2e20ba5068b"
-                    },
-                    whoCanRW        : "everyOne",
-                    workflow        : "55647d982e4aa3804a765ecb",
-                    payments        : [
-                        "56e66e6d3d5bc25541857e14"
-                    ],
-                    paymentInfo     : {
-                        taxes  : 0,
-                        unTaxed: 13300,
-                        balance: 0,
-                        total  : 13300
-                    },
-                    paymentTerms    : null,
-                    salesPerson     : "55b92ad221e4b7c40f000063",
-                    currency        : {
-                        _id : "565eab29aeb95fa9c0f9df2d",
-                        rate: 1
-                    },
-                    journal         : "565ef6ba270f53d02ee71d65",
-                    invoiceDate     : "2016-01-01T04:00:00.000Z",
-                    paymentReference: "PO651",
-                    sourceDocument  : "568bb6987c0383e04c60e891",
-                    supplier        : "55b92ad521e4b7c40f000621",
-                    forSales        : true,
-                    name            : "26780540",
-                    dueDate         : "2016-01-15T04:00:00.000Z",
-                    paymentDate     : "2016-01-08T04:00:00.000Z",
-                    approved        : true,
-                    reconcile       : true,
-                    attachments     : [],
-                    removable       : false
-                },
-                subject: {
-                    _id           : "55b92ad521e4b7c40f000621",
-                    ID            : 22,
-                    companyInfo   : {
-                        size    : null,
-                        industry: null
-                    },
-                    editedBy      : {
-                        date: "2015-07-29T19:34:45.999Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    createdBy     : {
-                        date: "2015-07-29T19:34:45.999Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    history       : [],
-                    attachments   : [],
-                    notes         : [],
-                    groups        : {
-                        group: [],
-                        users: [],
-                        owner: null
-                    },
-                    whoCanRW      : "everyOne",
-                    social        : {
-                        LI: "",
-                        FB: ""
-                    },
-                    color         : "#4d5a75",
-                    relatedUser   : null,
-                    salesPurchases: {
-                        receiveMessages: 0,
-                        language       : "English",
-                        reference      : "",
-                        active         : true,
-                        implementedBy  : null,
-                        salesTeam      : null,
-                        salesPerson    : null,
-                        isSupplier     : false,
-                        isCustomer     : true
-                    },
-                    title         : "",
-                    internalNotes : "",
-                    contacts      : [],
-                    phones        : {
-                        fax   : "",
-                        mobile: "",
-                        phone : ""
-                    },
-                    skype         : "",
-                    jobPosition   : "",
-                    website       : "",
-                    address       : {
-                        country: null,
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    timezone      : "UTC",
-                    department    : null,
-                    company       : null,
-                    email         : "",
-                    imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    name          : {
-                        last : "",
-                        first: "Mike Allstar"
-                    },
-                    isOwn         : false,
-                    type          : "Person",
-                    __v           : 0
-                },
-                name   : "26780540"
-            },
-            currency      : {
-                rate: 1,
-                name: "USD"
-            },
-            account       : {
-                _id     : "565eb53a6aa50532e5df0bc9",
-                code    : 101200,
-                account : "Account Receivable",
-                type    : "Receivable",
-                name    : "101200 Account Receivable",
-                editedBy: {
-                    date: "2015-12-02T14:21:11.878Z",
-                    user: "52203e707d4dba8813000003"
-                }
-            },
-            journal       : {
-                name         : "Invoice Journal",
-                creditAccount: {
-                    _id    : "565eb53a6aa50532e5df0be0",
-                    code   : 200000,
-                    account: "Product Sales",
-                    type   : "Income",
-                    name   : "200000 Product Sales"
-                },
-                debitAccount : {
-                    _id     : "565eb53a6aa50532e5df0bc9",
-                    code    : 101200,
-                    account : "Account Receivable",
-                    type    : "Receivable",
-                    name    : "101200 Account Receivable",
-                    editedBy: {
-                        date: "2015-12-02T14:21:11.878Z",
-                        user: "52203e707d4dba8813000003"
-                    }
-                }
-            },
-            date          : "2016-01-01T04:00:00.000Z"
-        },
-        {
-            _id           : "572b5a78c7389cfa5172a549",
-            debit         : 14400,
-            sourceDocument: {
-                model  : "Invoice",
-                _id    : {
-                    _id             : "568a4fce3cce9254776f2b44",
-                    _type           : "wTrackInvoice",
-                    __v             : 0,
-                    project         : "55b92ad621e4b7c40f000672",
-                    products        : [
-                        {
-                            unitPrice  : 7200,
-                            subTotal   : 7200,
-                            taxes      : 0,
-                            jobs       : "568a3ce63cce9254776f2b36",
-                            description: "",
-                            product    : "5540d528dacb551c24000003",
-                            quantity   : 8
+    var fakeJournalEntry = {
+        total: 300,
+        data : [
+            {
+                _id           : "574ed1073b7cc36e352711bc",
+                debit         : 202500,
+                sourceDocument: {
+                    model  : "Invoice",
+                    _id    : {
+                        _id             : "572b00b3dce306912118afab",
+                        _type           : "wTrackInvoice",
+                        __v             : 0,
+                        project         : "55b92ad621e4b7c40f000684",
+                        products        : [
+                            {
+                                subTotal   : 202500,
+                                unitPrice  : 202500,
+                                taxes      : 0,
+                                jobs       : "56e670e7dd81ed4e426c60ab",
+                                description: "",
+                                product    : "5540d528dacb551c24000003",
+                                quantity   : 84
+                            }
+                        ],
+                        emailed         : false,
+                        approved        : true,
+                        removable       : false,
+                        invoiced        : false,
+                        attachments     : [
+                            {
+                                _id         : "572b00b271d367e52185bd53",
+                                name        : "Unibet November.pdf",
+                                shortPas    : "%2Fuploads%2F572b00b3dce306912118afab%2FUnibet%20November.pdf",
+                                size        : "0.047&nbsp;Mb",
+                                uploadDate  : "2016-05-05T08:13:38.993Z",
+                                uploaderName: "peter.volosh"
+                            }
+                        ],
+                        editedBy        : {
+                            user: "563f673270bbc2b740ce89ae",
+                            date: "2016-05-05T10:32:59.145Z"
                         },
-                        {
-                            unitPrice  : 7200,
-                            subTotal   : 7200,
-                            taxes      : 0,
-                            jobs       : "568a3cb63cce9254776f2b34",
-                            description: "",
-                            product    : "5540d528dacb551c24000003",
-                            quantity   : 8
+                        createdBy       : {
+                            date: "2016-05-05T08:11:52.969Z",
+                            user: "55b9fc0fd79a3a3439000008"
+                        },
+                        creationDate    : "2016-05-05T08:11:52.969Z",
+                        groups          : {
+                            owner: "560c099da5d4a2e20ba5068b",
+                            users: [],
+                            group: []
+                        },
+                        whoCanRW        : "everyOne",
+                        workflow        : "55647d982e4aa3804a765ecb",
+                        paymentInfo     : {
+                            total  : 202500,
+                            taxes  : 0,
+                            unTaxed: 202500,
+                            balance: 0
+                        },
+                        paymentTerms    : null,
+                        salesPerson     : "55b92ad221e4b7c40f00005f",
+                        currency        : {
+                            _id : "565eab29aeb95fa9c0f9df2d",
+                            rate: 1
+                        },
+                        journal         : "565ef6ba270f53d02ee71d65",
+                        invoiceDate     : "2016-05-03T22:00:00.000Z",
+                        paymentReference: "PO1032",
+                        sourceDocument  : "572b0048a132c10022d39b75",
+                        supplier        : "55ba0b46d79a3a3439000013",
+                        forSales        : true,
+                        name            : "PO1032",
+                        dueDate         : "2016-05-03T22:00:00.000Z",
+                        reconcile       : true,
+                        paymentDate     : "2016-05-03T22:00:00.000Z",
+                        payments        : [
+                            "572b21609ac68ede4899da89"
+                        ]
+                    },
+                    subject: {
+                        name: {
+                            last : "",
+                            first: "Unibet"
                         }
-                    ],
-                    editedBy        : {
-                        date: "2016-01-05T12:16:46.819Z",
-                        user: "55bf144765cda0810b000005"
-                    },
-                    createdBy       : {
-                        date: "2016-01-04T10:55:21.506Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    creationDate    : "2016-01-04T10:55:21.506Z",
-                    groups          : {
-                        group: [],
-                        users: [],
-                        owner: "560c099da5d4a2e20ba5068b"
-                    },
-                    whoCanRW        : "everyOne",
-                    workflow        : "55647d982e4aa3804a765ecb",
-                    payments        : [
-                        "568bb4377c0383e04c60e880"
-                    ],
-                    paymentInfo     : {
-                        taxes  : 0,
-                        unTaxed: 14400,
-                        balance: 0,
-                        total  : 14400
-                    },
-                    paymentTerms    : null,
-                    salesPerson     : "55b92ad221e4b7c40f000063",
-                    currency        : {
-                        _id : "565eab29aeb95fa9c0f9df2d",
-                        rate: 1
-                    },
-                    journal         : "565ef6ba270f53d02ee71d65",
-                    invoiceDate     : "2016-01-03T04:00:00.000Z",
-                    paymentReference: "PO647",
-                    sourceDocument  : "568a4f993cce9254776f2b43",
-                    supplier        : "55b92ad521e4b7c40f000621",
-                    forSales        : true,
-                    name            : "26662835",
-                    dueDate         : "2016-01-18T23:00:00.000Z",
-                    paymentDate     : "2016-01-04T04:00:00.000Z",
-                    approved        : true,
-                    reconcile       : true,
-                    attachments     : [],
-                    removable       : false
-                },
-                subject: {
-                    _id           : "55b92ad521e4b7c40f000621",
-                    ID            : 22,
-                    companyInfo   : {
-                        size    : null,
-                        industry: null
-                    },
-                    editedBy      : {
-                        date: "2015-07-29T19:34:45.999Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    createdBy     : {
-                        date: "2015-07-29T19:34:45.999Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    history       : [],
-                    attachments   : [],
-                    notes         : [],
-                    groups        : {
-                        group: [],
-                        users: [],
-                        owner: null
-                    },
-                    whoCanRW      : "everyOne",
-                    social        : {
-                        LI: "",
-                        FB: ""
-                    },
-                    color         : "#4d5a75",
-                    relatedUser   : null,
-                    salesPurchases: {
-                        receiveMessages: 0,
-                        language       : "English",
-                        reference      : "",
-                        active         : true,
-                        implementedBy  : null,
-                        salesTeam      : null,
-                        salesPerson    : null,
-                        isSupplier     : false,
-                        isCustomer     : true
-                    },
-                    title         : "",
-                    internalNotes : "",
-                    contacts      : [],
-                    phones        : {
-                        fax   : "",
-                        mobile: "",
-                        phone : ""
-                    },
-                    skype         : "",
-                    jobPosition   : "",
-                    website       : "",
-                    address       : {
-                        country: null,
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    timezone      : "UTC",
-                    department    : null,
-                    company       : null,
-                    email         : "",
-                    imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    name          : {
-                        last : "",
-                        first: "Mike Allstar"
-                    },
-                    isOwn         : false,
-                    type          : "Person",
-                    __v           : 0
-                },
-                name   : "26662835"
-            },
-            currency      : {
-                rate: 1,
-                name: "USD"
-            },
-            account       : {
-                _id     : "565eb53a6aa50532e5df0bc9",
-                code    : 101200,
-                account : "Account Receivable",
-                type    : "Receivable",
-                name    : "101200 Account Receivable",
-                editedBy: {
-                    date: "2015-12-02T14:21:11.878Z",
-                    user: "52203e707d4dba8813000003"
-                }
-            },
-            journal       : {
-                name         : "Invoice Journal",
-                creditAccount: {
-                    _id    : "565eb53a6aa50532e5df0be0",
-                    code   : 200000,
-                    account: "Product Sales",
-                    type   : "Income",
-                    name   : "200000 Product Sales"
-                },
-                debitAccount : {
-                    _id     : "565eb53a6aa50532e5df0bc9",
-                    code    : 101200,
-                    account : "Account Receivable",
-                    type    : "Receivable",
-                    name    : "101200 Account Receivable",
-                    editedBy: {
-                        date: "2015-12-02T14:21:11.878Z",
-                        user: "52203e707d4dba8813000003"
                     }
-                }
-            },
-            date          : "2016-01-03T04:00:00.000Z"
-        },
-        {
-            _id           : "572b5a77c7389cfa5172a3b1",
-            debit         : 432000,
-            sourceDocument: {
-                model  : "Invoice",
-                _id    : {
-                    _id             : "56a15c402208b3af4a527286",
-                    _type           : "wTrackInvoice",
-                    __v             : 0,
-                    project         : "55b92ad621e4b7c40f00067f",
-                    products        : [
-                        {
-                            subTotal   : 432000,
-                            unitPrice  : 432000,
-                            taxes      : 0,
-                            jobs       : "5661f62225e5eb511510bb41",
-                            description: "",
-                            product    : "5540d528dacb551c24000003",
-                            quantity   : 256
+                },
+                currency      : {
+                    rate: 1,
+                    name: "USD"
+                },
+                journal       : {
+                    name         : "Invoice Journal ",
+                    creditAccount: {
+                        _id    : "565eb53a6aa50532e5df0be0",
+                        code   : 200000,
+                        account: "Product Sales",
+                        type   : "Income",
+                        name   : "200000 Product Sales"
+                    },
+                    debitAccount : {
+                        _id     : "565eb53a6aa50532e5df0bc9",
+                        code    : 101200,
+                        account : "Account Receivable ",
+                        type    : "Current Assets",
+                        name    : "101200 Account Receivable ",
+                        editedBy: {
+                            date: "2016-06-13T11:04:15.753Z",
+                            user: null
                         }
-                    ],
-                    editedBy        : {
-                        date: "2016-02-12T09:38:12.564Z",
-                        user: "563f673270bbc2b740ce89ae"
-                    },
-                    createdBy       : {
-                        date: "2016-01-21T22:31:14.602Z",
-                        user: "563f673270bbc2b740ce89ae"
-                    },
-                    creationDate    : "2016-01-21T22:31:14.602Z",
-                    groups          : {
-                        group: [],
-                        users: [],
-                        owner: "560c099da5d4a2e20ba5068b"
-                    },
-                    whoCanRW        : "everyOne",
-                    workflow        : "55647d982e4aa3804a765ecb",
-                    payments        : [
-                        "56bda818dfd8a81466e2f50a"
-                    ],
-                    paymentInfo     : {
-                        taxes  : 0,
-                        unTaxed: 432000,
-                        balance: 0,
-                        total  : 432000
-                    },
-                    paymentTerms    : null,
-                    salesPerson     : "55b92ad221e4b7c40f00004a",
-                    currency        : {
-                        _id : "565eab29aeb95fa9c0f9df2d",
-                        rate: 1
-                    },
-                    journal         : "565ef6ba270f53d02ee71d65",
-                    invoiceDate     : "2016-01-03T04:00:00.000Z",
-                    paymentReference: "PO701",
-                    sourceDocument  : "56a15c322208b3af4a527285",
-                    supplier        : "55b92ad621e4b7c40f000624",
-                    forSales        : true,
-                    name            : "A0104012016",
-                    dueDate         : "2016-01-17T04:00:00.000Z",
-                    paymentDate     : "2016-01-10T04:00:00.000Z",
-                    approved        : true,
-                    reconcile       : true,
-                    attachments     : [],
-                    removable       : false
-                },
-                subject: {
-                    _id           : "55b92ad621e4b7c40f000624",
-                    ID            : 37,
-                    companyInfo   : {
-                        size    : null,
-                        industry: null
-                    },
-                    editedBy      : {
-                        date: "2015-07-29T19:34:46.000Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    createdBy     : {
-                        date: "2015-07-29T19:34:46.000Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    history       : [],
-                    attachments   : [],
-                    notes         : [],
-                    groups        : {
-                        group: [],
-                        users: [],
-                        owner: null
-                    },
-                    whoCanRW      : "everyOne",
-                    social        : {
-                        LI: "",
-                        FB: ""
-                    },
-                    color         : "#4d5a75",
-                    relatedUser   : null,
-                    salesPurchases: {
-                        receiveMessages: 0,
-                        language       : "English",
-                        reference      : "",
-                        active         : true,
-                        implementedBy  : null,
-                        salesTeam      : null,
-                        salesPerson    : null,
-                        isSupplier     : false,
-                        isCustomer     : true
-                    },
-                    title         : "",
-                    internalNotes : "",
-                    contacts      : [],
-                    phones        : {
-                        fax   : "",
-                        mobile: "",
-                        phone : ""
-                    },
-                    skype         : "",
-                    jobPosition   : "",
-                    website       : "",
-                    address       : {
-                        country: "France",
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    timezone      : "UTC",
-                    department    : null,
-                    company       : null,
-                    email         : "",
-                    imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    name          : {
-                        last : "",
-                        first: "Giroptic"
-                    },
-                    isOwn         : false,
-                    type          : "Person",
-                    __v           : 0
-                },
-                name   : "A0104012016"
-            },
-            currency      : {
-                rate: 1,
-                name: "USD"
-            },
-            account       : {
-                _id     : "565eb53a6aa50532e5df0bc9",
-                code    : 101200,
-                account : "Account Receivable",
-                type    : "Receivable",
-                name    : "101200 Account Receivable",
-                editedBy: {
-                    date: "2015-12-02T14:21:11.878Z",
-                    user: "52203e707d4dba8813000003"
-                }
-            },
-            journal       : {
-                name         : "Invoice Journal",
-                creditAccount: {
-                    _id    : "565eb53a6aa50532e5df0be0",
-                    code   : 200000,
-                    account: "Product Sales",
-                    type   : "Income",
-                    name   : "200000 Product Sales"
-                },
-                debitAccount : {
-                    _id     : "565eb53a6aa50532e5df0bc9",
-                    code    : 101200,
-                    account : "Account Receivable",
-                    type    : "Receivable",
-                    name    : "101200 Account Receivable",
-                    editedBy: {
-                        date: "2015-12-02T14:21:11.878Z",
-                        user: "52203e707d4dba8813000003"
                     }
-                }
+                },
+                date          : "2016-05-03T22:00:00.000Z"
             },
-            date          : "2016-01-03T04:00:00.000Z"
-        }
-    ];
+            {
+                _id           : "574ed1083b7cc36e35271294",
+                debit         : 3500,
+                sourceDocument: {
+                    model  : "Invoice",
+                    _id    : {
+                        _id             : "5729bbd92d11557621505d17",
+                        _type           : "wTrackInvoice",
+                        __v             : 0,
+                        project         : "55b92ad621e4b7c40f00067d",
+                        products        : [
+                            {
+                                unitPrice  : 3500,
+                                subTotal   : 3500,
+                                taxes      : 0,
+                                jobs       : "571724de1eca60707afbc9cb",
+                                description: "",
+                                product    : "5540d528dacb551c24000003",
+                                quantity   : 5
+                            }
+                        ],
+                        emailed         : false,
+                        approved        : true,
+                        removable       : false,
+                        invoiced        : false,
+                        attachments     : [
+                            {
+                                uploaderName: "yana.gusti",
+                                uploadDate  : "2016-05-04T09:07:36.920Z",
+                                size        : "0.004&nbsp;Mb",
+                                shortPas    : "%2Fuploads%2F5729bbd92d11557621505d17%2FInvoice_64772568_20160424.pdf",
+                                name        : "Invoice_64772568_20160424.pdf",
+                                _id         : "5729bbd8d4761c212289b803"
+                            }
+                        ],
+                        editedBy        : {
+                            user: "55bf144765cda0810b000005",
+                            date: "2016-05-04T09:08:03.564Z"
+                        },
+                        createdBy       : {
+                            user: "55bf144765cda0810b000005",
+                            date: "2016-05-04T09:05:45.608Z"
+                        },
+                        creationDate    : "2016-05-04T09:05:45.607Z",
+                        groups          : {
+                            owner: "560c099da5d4a2e20ba5068b",
+                            users: [],
+                            group: []
+                        },
+                        whoCanRW        : "everyOne",
+                        workflow        : "55647d982e4aa3804a765ecb",
+                        paymentInfo     : {
+                            total  : 3500,
+                            balance: 0,
+                            unTaxed: 3500,
+                            taxes  : 0
+                        },
+                        paymentTerms    : null,
+                        salesPerson     : "55b92ad221e4b7c40f000063",
+                        currency        : {
+                            _id : "565eab29aeb95fa9c0f9df2d",
+                            rate: 1
+                        },
+                        journal         : "565ef6ba270f53d02ee71d65",
+                        invoiceDate     : "2016-05-03T22:00:00.000Z",
+                        paymentReference: "PO1030",
+                        sourceDocument  : "5729bb69913d96692245eb75",
+                        supplier        : "55b92ad621e4b7c40f000646",
+                        forSales        : true,
+                        name            : "27138242",
+                        dueDate         : "2016-05-03T22:00:00.000Z",
+                        payments        : [
+                            "5729bbf62d11557621505d19"
+                        ],
+                        reconcile       : true,
+                        paymentDate     : "2016-05-03T22:00:00.000Z"
+                    },
+                    subject: {
+                        name: {
+                            last : "",
+                            first: "EtienneL"
+                        }
+                    }
+                },
+                currency      : {
+                    rate: 1,
+                    name: "USD"
+                },
+                journal       : {
+                    name         : "Invoice Journal ",
+                    creditAccount: {
+                        _id    : "565eb53a6aa50532e5df0be0",
+                        code   : 200000,
+                        account: "Product Sales",
+                        type   : "Income",
+                        name   : "200000 Product Sales"
+                    },
+                    debitAccount : {
+                        _id     : "565eb53a6aa50532e5df0bc9",
+                        code    : 101200,
+                        account : "Account Receivable ",
+                        type    : "Current Assets",
+                        name    : "101200 Account Receivable ",
+                        editedBy: {
+                            date: "2016-06-13T11:04:15.753Z",
+                            user: null
+                        }
+                    }
+                },
+                date          : "2016-05-03T22:00:00.000Z"
+            },
+            {
+                _id           : "574ed1073b7cc36e352710e4",
+                debit         : 48000,
+                sourceDocument: {
+                    model  : "Invoice",
+                    _id    : {
+                        _id             : "572af029dce306912118afa4",
+                        _type           : "wTrackInvoice",
+                        __v             : 0,
+                        project         : "5721d21871d367e52185bd3c",
+                        products        : [
+                            {
+                                unitPrice  : 48000,
+                                subTotal   : 48000,
+                                taxes      : 0,
+                                jobs       : "5721d3a8dce306912118af86",
+                                description: "",
+                                product    : "5540d528dacb551c24000003",
+                                quantity   : 48
+                            }
+                        ],
+                        emailed         : false,
+                        approved        : true,
+                        removable       : false,
+                        invoiced        : false,
+                        attachments     : [
+                            {
+                                uploaderName: "eugen.lendyel",
+                                uploadDate  : "2016-05-05T07:03:04.401Z",
+                                size        : "0.054&nbsp;Mb",
+                                shortPas    : "%2Fuploads%2F572af029dce306912118afa4%2FInvoice%20ThinkMobiles_FlightText.pdf",
+                                name        : "Invoice ThinkMobiles_FlightText.pdf",
+                                _id         : "572af028913d96692245ec05"
+                            }
+                        ],
+                        editedBy        : {
+                            user: "560255d1638625cf32000005",
+                            date: "2016-05-11T10:54:23.164Z"
+                        },
+                        createdBy       : {
+                            user: "56d704f1805eb08d2b93d95f",
+                            date: "2016-05-05T07:02:16.278Z"
+                        },
+                        creationDate    : "2016-05-05T07:02:16.278Z",
+                        groups          : {
+                            owner: "56d704f1805eb08d2b93d95f",
+                            users: [],
+                            group: []
+                        },
+                        whoCanRW        : "everyOne",
+                        workflow        : "55647d982e4aa3804a765ecb",
+                        paymentInfo     : {
+                            total  : 48000,
+                            balance: 0,
+                            unTaxed: 48000,
+                            taxes  : 0
+                        },
+                        paymentTerms    : null,
+                        salesPerson     : "56029cc950de7f4138000005",
+                        currency        : {
+                            _id : "565eab29aeb95fa9c0f9df2d",
+                            rate: 1
+                        },
+                        journal         : "565ef6ba270f53d02ee71d65",
+                        invoiceDate     : "2016-05-04T22:00:00.000Z",
+                        paymentReference: "PO1031",
+                        sourceDocument  : "572aeff8913d96692245ec04",
+                        supplier        : "5721d1bb2d11557621505d02",
+                        forSales        : true,
+                        name            : "PO1031",
+                        dueDate         : "2016-05-04T22:00:00.000Z",
+                        reconcile       : true,
+                        paymentDate     : "2016-05-04T22:00:00.000Z",
+                        payments        : [
+                            "57330f68308514ee5f3da7be"
+                        ]
+                    },
+                    subject: {
+                        name: {
+                            last : "Sanz",
+                            first: "Pere"
+                        }
+                    }
+                },
+                currency      : {
+                    rate: 1,
+                    name: "USD"
+                },
+                journal       : {
+                    name         : "Invoice Journal ",
+                    creditAccount: {
+                        _id    : "565eb53a6aa50532e5df0be0",
+                        code   : 200000,
+                        account: "Product Sales",
+                        type   : "Income",
+                        name   : "200000 Product Sales"
+                    },
+                    debitAccount : {
+                        _id     : "565eb53a6aa50532e5df0bc9",
+                        code    : 101200,
+                        account : "Account Receivable ",
+                        type    : "Current Assets",
+                        name    : "101200 Account Receivable ",
+                        editedBy: {
+                            date: "2016-06-13T11:04:15.753Z",
+                            user: null
+                        }
+                    }
+                },
+                date          : "2016-05-04T22:00:00.000Z"
+            }
+        ]
+    };
     var fakeInvoiceForForm = {
         _id             : "568bb6af7c0383e04c60e892",
         _type           : "wTrackInvoice",
@@ -1165,13 +467,13 @@ define([
             date: "2016-03-14T07:55:20.865Z",
             user: {
                 _id            : "55bf144765cda0810b000005",
-                profile        : 1387275598000,
-                kanbanSettings : {
+                profile: 1387275598000,
+                kanbanSettings: {
                     tasks        : {
                         foldWorkflows: [],
                         countPerPage : 10
                     },
-                    applications : {
+                    applications: {
                         foldWorkflows: [],
                         countPerPage : 5
                     },
@@ -1180,85 +482,85 @@ define([
                         countPerPage : 10
                     }
                 },
-                credentials    : {
+                credentials   : {
                     access_token : "",
                     refresh_token: ""
                 },
-                pass           : "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
-                email          : "yana.gusti@thinkmobiles.com",
-                login          : "yana.gusti",
-                imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                __v            : 0,
-                lastAccess     : "2016-05-17T13:32:44.013Z",
-                savedFilters   : [
+                pass          : "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
+                email         : "yana.gusti@thinkmobiles.com",
+                login         : "yana.gusti",
+                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                __v           : 0,
+                lastAccess    : "2016-05-17T13:32:44.013Z",
+                savedFilters  : [
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "5624c55fe9576d1728a9ed40",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "5624c78a25f58a237fd5b4d2",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "562df97d129820ab5994e8fb",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "562f6e8071c88830607cd587",
-                        viewType : "",
+                        viewType: "",
                         byDefault: "salesInvoice"
                     },
                     {
                         _id      : "565c5e853410ae512364dbb1",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "566010ba6226e3c43108dbe1",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "56618b467d284423697e2bf8",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "566191577d284423697e2d88",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "566e7a4a8453e8b464b70914",
-                        viewType : "",
+                        viewType: "",
                         byDefault: "Projects"
                     },
                     {
                         _id      : "56efa708fed15a0833469c69",
-                        viewType : "",
+                        viewType: "",
                         byDefault: "wTrack"
                     }
                 ],
@@ -1269,13 +571,13 @@ define([
             date: "2016-01-05T12:27:04.595Z",
             user: {
                 _id            : "55bf144765cda0810b000005",
-                profile        : 1387275598000,
-                kanbanSettings : {
+                profile: 1387275598000,
+                kanbanSettings: {
                     tasks        : {
                         foldWorkflows: [],
                         countPerPage : 10
                     },
-                    applications : {
+                    applications: {
                         foldWorkflows: [],
                         countPerPage : 5
                     },
@@ -1284,85 +586,85 @@ define([
                         countPerPage : 10
                     }
                 },
-                credentials    : {
+                credentials   : {
                     access_token : "",
                     refresh_token: ""
                 },
-                pass           : "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
-                email          : "yana.gusti@thinkmobiles.com",
-                login          : "yana.gusti",
-                imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                __v            : 0,
-                lastAccess     : "2016-05-17T13:32:44.013Z",
-                savedFilters   : [
+                pass          : "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
+                email         : "yana.gusti@thinkmobiles.com",
+                login         : "yana.gusti",
+                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                __v           : 0,
+                lastAccess    : "2016-05-17T13:32:44.013Z",
+                savedFilters  : [
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : null,
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "5624c55fe9576d1728a9ed40",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "5624c78a25f58a237fd5b4d2",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "562df97d129820ab5994e8fb",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "562f6e8071c88830607cd587",
-                        viewType : "",
+                        viewType: "",
                         byDefault: "salesInvoice"
                     },
                     {
                         _id      : "565c5e853410ae512364dbb1",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "566010ba6226e3c43108dbe1",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "56618b467d284423697e2bf8",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "566191577d284423697e2d88",
-                        viewType : "",
+                        viewType: "",
                         byDefault: ""
                     },
                     {
                         _id      : "566e7a4a8453e8b464b70914",
-                        viewType : "",
+                        viewType: "",
                         byDefault: "Projects"
                     },
                     {
                         _id      : "56efa708fed15a0833469c69",
-                        viewType : "",
+                        viewType: "",
                         byDefault: "wTrack"
                     }
                 ],
@@ -1404,7 +706,7 @@ define([
         currency        : {
             _id : {
                 _id     : "565eab29aeb95fa9c0f9df2d",
-                name    : "USD",
+                name: "USD",
                 sequence: 0
             },
             rate: 1
@@ -1414,24 +716,24 @@ define([
         paymentReference: "PO651",
         sourceDocument  : {
             _id           : "568bb6987c0383e04c60e891",
-            expectedDate  : "2016-01-04T23:00:00.000Z",
-            editedBy      : {
+            expectedDate: "2016-01-04T23:00:00.000Z",
+            editedBy    : {
                 date: "2016-01-05T12:27:27.637Z",
                 user: "55bf144765cda0810b000005"
             },
-            createdBy     : {
+            createdBy   : {
                 date: "2016-01-05T12:27:04.595Z",
                 user: "55bf144765cda0810b000005"
             },
-            creationDate  : "2016-01-05T12:27:04.595Z",
-            groups        : {
+            creationDate: "2016-01-05T12:27:04.595Z",
+            groups      : {
                 group: [],
                 users: [],
                 owner: "560c099da5d4a2e20ba5068b"
             },
-            whoCanRW      : "everyOne",
-            workflow      : "55647b962e4aa3804a765ec6",
-            products      : [
+            whoCanRW    : "everyOne",
+            workflow    : "55647b962e4aa3804a765ec6",
+            products    : [
                 {
                     scheduledDate: "2016-01-04T23:00:00.000Z",
                     jobs         : "568bb6047c0383e04c60e88b",
@@ -1443,12 +745,12 @@ define([
                     quantity     : 19
                 }
             ],
-            paymentInfo   : {
+            paymentInfo : {
                 total  : 13300,
                 unTaxed: 13300,
                 taxes  : 0
             },
-            paymentTerm   : null,
+            paymentTerm : null,
             invoiceRecived: false,
             invoiceControl: null,
             incoterm      : null,
@@ -1490,7 +792,8 @@ define([
     var setDateRangeSpy;
     var showDatePickerSpy;
     var reconcileSpy;
-    // var debounceStub;
+    var debounceStub;
+    var removeFilterSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -1505,9 +808,10 @@ define([
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
             reconcileSpy = sinon.spy(TopBarView.prototype, 'reconcile');
-            //debounceStub = sinon.stub(_, 'debounce', function(debFunction){
-            //    return debFunction;
-            //});
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
         });
 
         after(function () {
@@ -1518,7 +822,12 @@ define([
             setDateRangeSpy.restore();
             showDatePickerSpy.restore();
             reconcileSpy.restore();
-            //debounceStub.restore();
+            debounceStub.restore();
+            removeFilterSpy.restore();
+
+            if ($('.ui-dialog').length) {
+                $('.ui-dialog').remove();
+            }
         });
 
         describe('#initialize()', function () {
@@ -1582,13 +891,7 @@ define([
             });
 
             it('Try to create TopBarView', function (done) {
-                var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
-                var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
-
-                server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    count     : 3,
-                    totalValue: 10000
-                })]);
+                var journalEntryUrl = new RegExp('journalEntries\/', 'i');
                 server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournalEntry)]);
                 journalEntryCollection = new JournalEntryCollection({
                     viewType: 'list',
@@ -1596,7 +899,8 @@ define([
                     count   : 100
                 });
                 server.respond();
-                server.respond();
+
+                expect(journalEntryCollection).to.have.lengthOf(3);
 
                 topBarView = new TopBarView({
                     collection: journalEntryCollection
@@ -1606,7 +910,6 @@ define([
 
                 done();
             });
-
         });
 
         describe('journalEntry list view', function () {
@@ -1636,20 +939,30 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create JournalEntry list view', function (done) {
-                    var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
-                    var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
+                    var $firstRow;
+                    var colCount;
+                    var journal;
+                    var accountingDate;
+                    var subject;
+                    var sourceDocument;
+                    var debitAccount;
+                    var creditAccount;
+                    var sum;
 
-                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count     : 3,
-                        totalValue: 10000
-                    })]);
-                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournalEntry)]);
                     listView = new ListView({
                         collection: journalEntryCollection,
                         startTime : new Date()
                     });
-                    server.respond();
-                    server.respond();
+
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                    eventsBinder.subscribeCollectionEvents(journalEntryCollection, listView);
+
+                    journalEntryCollection.trigger('fetchFinished', {
+                        totalRecords: journalEntryCollection.totalRecords,
+                        currentPage : journalEntryCollection.currentPage,
+                        pageSize    : journalEntryCollection.pageSize
+                    });
+
                     clock.tick(200);
                     $thisEl = listView.$el;
 
@@ -1657,21 +970,39 @@ define([
                     expect($thisEl.find('table')).to.exist;
                     expect($thisEl.find('#listFooter')).to.exist;
 
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
 
-                    journalEntryCollection.bind('showmore', listView.showMoreContent, listView);
+                    $firstRow = $thisEl.find('#listTable > tr').first();
+                    colCount = $firstRow.find('td').length;
+
+                    expect(colCount).to.be.equals(8);
+
+                    journal = $firstRow.find('td:nth-child(2)').text().trim();
+                    expect(journal).to.not.empty;
+                    expect(journal).to.not.match(/object Object|undefined/);
+
+                    accountingDate = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(accountingDate).to.not.empty;
+                    expect(accountingDate).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(subject).to.not.empty;
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    sourceDocument = $firstRow.find('td:nth-child(5)').text().trim();
+                    expect(sourceDocument).to.not.match(/object Object|undefined/);
+
+                    debitAccount = $firstRow.find('td:nth-child(6)').text().trim();
+                    expect(debitAccount).to.not.empty;
+                    expect(debitAccount).to.not.match(/object Object|undefined/);
+
+                    creditAccount = $firstRow.find('td:nth-child(7)').text().trim();
+                    expect(creditAccount).to.not.empty;
+                    expect(creditAccount).to.not.match(/object Object|undefined/);
+
+                    sum = $firstRow.find('td:nth-child(8)').text().trim();
+                    expect(sum).to.not.empty;
+                    expect(sum).to.not.match(/object Object|undefined/);
 
                     done();
                 });
@@ -1679,8 +1010,6 @@ define([
                 it('Try to filter ListView', function () {
                     var $searchContainer = $thisEl.find('#searchContainer');
                     var $searchArrow = $searchContainer.find('.search-content');
-                    var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
-                    var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
                     var $journal;
                     var $subject;
                     var $next;
@@ -1696,19 +1025,11 @@ define([
                     $journal.click();
                     $selectedItem = $searchContainer.find('#journalNameUl > li').first();
 
-                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count     : 2,
-                        totalValue: 10000
-                    })]);
-                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
-                        fakeJournalEntry[0],
-                        fakeJournalEntry[1]
-                    ])]);
                     $selectedItem.click();
                     server.respond();
                     server.respond();
 
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
                     expect(selectSpy.calledOnce).to.be.true;
 
                     // select Subject
@@ -1722,58 +1043,32 @@ define([
                     expect($searchContainer.find('#sourceDocumentContainer .counter').text().trim()).to.be.equals('1-7 of 20');
                     $selectedItem = $searchContainer.find('#sourceDocumentUl > li').first();
 
-                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count     : 1,
-                        totalValue: 10000
-                    })]);
-                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
-                        fakeJournalEntry[0]
-                    ])]);
                     $selectedItem.click();
                     server.respond();
-                    server.respond();
 
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(1);
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
                     expect(selectSpy.calledTwice).to.be.true;
 
                     // unselect Subject filter
-                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count     : 2,
-                        totalValue: 10000
-                    })]);
-                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
-                        fakeJournalEntry[0],
-                        fakeJournalEntry[1]
-                    ])]);
                     $selectedItem = $searchContainer.find('#sourceDocumentUl > li').first();
                     $selectedItem.click();
                     server.respond();
-                    server.respond();
 
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
                     expect(selectSpy.calledThrice).to.be.true;
 
-                    // close filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
                 });
 
                 it('Try to remove Journal filter', function () {
                     var $searchContainer = $thisEl.find('#searchContainer');
                     var $closeBtn = $searchContainer.find('.removeValues');
-                    var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
-                    var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
 
-                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count     : 3,
-                        totalValue: 10000
-                    })]);
-                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournalEntry)]);
                     $closeBtn.click();
                     server.respond();
                     server.respond();
 
                     expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
+                    expect(removeFilterSpy.calledOnce).to.be.true;
                 });
 
                 it('Try to change date range', function (done) {
