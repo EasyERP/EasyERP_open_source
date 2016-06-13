@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'pavlodb';
+var dbId = 'production';
 var admin = {
     login: 'admin',
     pass : 'tm2016',
@@ -228,8 +228,6 @@ describe('Opportunity Specs', function () {
                         .to.have.property('creationDate');
                     expect(first)
                         .to.have.property('expectedRevenue');
-                    expect(first)
-                        .to.have.property('expectedRevenue');
 
                     if (first.salesPerson) {
                         expect(first)
@@ -238,6 +236,10 @@ describe('Opportunity Specs', function () {
                             .and.to.have.property('first')
                             .and.to.be.a('string');
                     }
+
+                    expect(Object.keys(first.editedBy).length).to.be.equal(2);
+                    expect(Object.keys(first.createdBy).length).to.be.equal(2);
+                    expect(Object.keys(first).length).to.be.lte(10);
 
                     done();
                 });

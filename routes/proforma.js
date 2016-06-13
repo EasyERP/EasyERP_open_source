@@ -18,7 +18,7 @@ module.exports = function (models, event) {
     router.get('/', iHandler.getForView);
     router.get('/stats/project', iHandler.getStatsForProject);
 
-    router.post('/create', handler.create);
+    router.post('/', handler.create);
 
     router.delete('/', iHandler.bulkRemove);
     

@@ -292,7 +292,7 @@ define([
 
         createProforma: function (e) {
             var self = this;
-            var url = '/proforma/create';
+            var url = '/proforma';
             var quotationId = this.currentModel.id;
             var data = {
                 forSales   : this.forSales,
