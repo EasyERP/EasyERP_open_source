@@ -21,7 +21,7 @@ define([
              Backbone,
              ParentView,
              EditTemplate,
-             attachView,
+             AttachView,
              InvoiceItemView,
              wTrackRows,
              PaymentCreateView,
@@ -568,7 +568,7 @@ define([
                 populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, false, true);
             }
 
-            populate.get('#journal', '/journals/getForDd', {transaction: 'invoice'}, 'name', this, true);
+            populate.get('#journal', '/journals/getForDd', {}, 'name', this, true);
 
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : 'd M, yy',
@@ -616,9 +616,9 @@ define([
 
             notDiv = this.$el.find('#attach-container');
             notDiv.append(
-                new attachView({
+                new AttachView({
                     model: this.currentModel,
-                    url  : '/uploadInvoiceFiles'
+                    contentType: 'Invoice'
                 }).render().el
             );
 

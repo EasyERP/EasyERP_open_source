@@ -48,12 +48,7 @@ define([
             $('.newSelectList').remove();
         },
 
-        hideHealth: function () {
-            var $thisEl = this.$el;
-
-            $thisEl.find('.health-wrapper ul').hide();
-            $thisEl.find('.newSelectList').hide();
-        },
+        hideHealth: projects.hideHealth,
 
         render: function () {
             var itemView;

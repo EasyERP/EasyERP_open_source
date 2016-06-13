@@ -143,7 +143,7 @@ define([
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else {
-                            attachments = currentModel.get('attachments') || {};
+                            attachments = currentModel.get('attachments') || [];
                             attachments.length = 0;
                             $('.attachContainer').empty();
                             res = (data.data) ? data.data : data.result;

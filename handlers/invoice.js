@@ -35,6 +35,9 @@ var Module = function (models, event) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
+    var path = require('path');
+    var Uploader = require('../services/fileStorage/index');
+    var uploader = new Uploader();
 
     oxr.set({app_id: process.env.OXR_APP_ID});
 
@@ -315,7 +318,7 @@ var Module = function (models, event) {
 
             delete order._id;
 
-            if (forSales === 'true') {
+            if (forSales) {
                 invoice = new wTrackInvoice(order);
             } else {
                 invoice = new Invoice(order);
@@ -453,7 +456,7 @@ var Module = function (models, event) {
 
     };
 
-    function uploadFileArray(req, res, callback) {
+/*    function uploadFileArray(req, res, callback) {
         var files = [];
         var path;
         var os = require('os');
@@ -551,9 +554,9 @@ var Module = function (models, event) {
             });
         });
 
-    }
+    }*/
 
-    this.attach = function (req, res, next) {
+   /* this.attach = function (req, res, next) {
         var os = require('os');
         var osType = (os.type().split('_')[0]);
         var dir;
@@ -610,7 +613,42 @@ var Module = function (models, event) {
                 res.send(200, {success: 'Order update success', data: response});
             }
         });
-    }
+    }*/
+
+    this.uploadFile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var headers = req.headers;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'invoice';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
+
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
+
+            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Invoice updated success', data: response});
+            });
+        });
+    };
+
 
     this.updateOnlySelected = function (req, res, next) {
         var db = req.session.lastDb;
@@ -1220,11 +1258,12 @@ var Module = function (models, event) {
                     $project: {
                         _id               : '$root._id',
                         'salesPerson.name': '$root.salesPerson.name',
+                        'salesPerson._id' : '$root.salesPerson._id',
                         workflow          : '$root.workflow',
                         supplier          : '$root.supplier',
-                        project           : '$root.project',
+                       // project           : '$root.project',
                         expense           : '$root.expense',
-                        forSales          : '$root.forSales',
+                       // forSales          : '$root.forSales',
                         currency          : '$root.currency',
                         paymentInfo       : '$root.paymentInfo',
                         invoiceDate       : '$root.invoiceDate',
@@ -1232,7 +1271,7 @@ var Module = function (models, event) {
                         paymentDate       : '$root.paymentDate',
                         dueDate           : '$root.dueDate',
                         approved          : '$root.approved',
-                        _type             : '$root._type',
+                       // _type             : '$root._type',
                         removable         : '$root.removable',
                         paid              : '$root.paid',
                         total             : 1

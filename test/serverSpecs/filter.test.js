@@ -18,7 +18,7 @@ describe('Filter Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -511,7 +511,147 @@ describe('Filter Specs', function () {
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
+
+//------------------------ Journal Entries -------------------
+
+                    typeFilter = body.journalEntry;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('creditAccount')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('journalName')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('sourceDocument')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+// ------------------------ PAYROLL -------------------
+// ------------------------ Supplier Payments -------------------
+
+                    typeFilter = body.supplierPayments;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('month')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('paymentRef')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('supplier')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('year')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+// ------------------------ Salary Report -------------------
+
+                    typeFilter = body.salaryReport;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('department')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('employee')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('supplier')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('onlyEmployees')
+                        .and.to.be.instanceOf(Object)
+                        .and.to.have.deep.property('name')
+                        .and.to.exist;
+
+// ------------------------ Dividend declaration -------------------
+
+                    typeFilter = body.DividendInvoice;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+// ------------------------ Dividend Payments -------------------
+/*
+                    typeFilter = body.DividendPayments;
+
+                    expect(typeFilter).to.exist;*/
+
+                    // not added on view
+
+// ------------------------ EXPENSES -------------------
+// ------------------------ Invoice -------------------
+
+                    typeFilter = body.ExpensesInvoice;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('supplier')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+// ------------------------ Expenses Payments -------------------
+
+                  /*  typeFilter = body.ExpensesPayments;
+
+                    expect(typeFilter).to.exist;*/
+
+                    // not added on view
+
                     // todo test other properties if its need
+                    done();
                 });
         });
     });

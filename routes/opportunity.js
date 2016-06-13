@@ -3,6 +3,8 @@ var router = express.Router();
 var OpportunityHandler = require('../handlers/opportunity');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     'use strict';
@@ -22,6 +24,7 @@ module.exports = function (models, event) {
    
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
+    router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelectedFields);
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.update);
    

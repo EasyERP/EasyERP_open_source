@@ -150,41 +150,13 @@ define([
                                 },
                                 patch  : true,
                                 success: function () {
-                                    var filter;
                                     var redirectUrl = self.forSales ? 'easyErp/salesOrder' : 'easyErp/Order';
 
                                     if (self.redirect) {
-                                        filter = {
-                                            project: {
-                                                key  : 'project._id',
-                                                value: [self.pId]
-                                            },
-                                            isOrder: {
-                                                key  : 'isOrder',
-                                                value: ['true']
-                                            }
-                                        };
 
-                                        self.ordersCollection = new QuotationCollection({
-                                            count      : 50,
-                                            viewType   : 'list',
-                                            contentType: 'salesOrder',
-                                            filter     : filter
-                                        });
-
-                                        self.ordersCollection.bind('reset', function () {
-                                            self.ordersView = new OrdersView({
-                                                collection  : self.ordersCollection,
-                                                projectId   : self.pId,
-                                                customerId  : self.customerId,
-                                                salesManager: self.salesManager,
-                                                filter      : filter,
-                                                activeTab   : true,
-                                                eventChannel: self.eventChannel
-                                            });
-
-                                            self.ordersView.showOrderDialog(id);
-                                        });
+                                        if (self.eventChannel) {
+                                            self.eventChannel.trigger('orderUpdate', null, self.currentModel.get('_id'), true);
+                                        }
 
                                         if (self.collection) {
                                             self.collection.remove(self.currentModel.get('_id'));
@@ -292,7 +264,7 @@ define([
 
         createProforma: function (e) {
             var self = this;
-            var url = '/proforma/create';
+            var url = '/proforma';
             var quotationId = this.currentModel.id;
             var data = {
                 forSales   : this.forSales,

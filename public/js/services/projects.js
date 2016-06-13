@@ -81,10 +81,18 @@ define([
         return false;
     }
 
+    function hideHealth() {
+        var $thisEl = this.$el;
+
+        $thisEl.find('.health-wrapper ul').hide();
+        $thisEl.find('.newSelectList').remove();
+    }
+
     return {
         chooseHealthDd: chooseHealthDd,
         showHealthDd  : showHealthDd,
         showNewSelect : showNewSelect,
-        chooseOption  : chooseOption
+        chooseOption  : chooseOption,
+        hideHealth    : hideHealth
     };
 });

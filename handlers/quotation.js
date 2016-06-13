@@ -863,12 +863,12 @@ var Module = function (models, event) {
                     _id                : '$root._id',
                     'salesManager.name': '$root.salesManager.name',
                     name               : '$root.name',
-                    paymentInfo        : '$root.paymentInfo',
+                    'paymentInfo.total': '$root.paymentInfo.total',
                     orderDate          : '$root.orderDate',
-                    forSales           : '$root.forSales',
+                   /* forSales           : '$root.forSales',*/
                     workflow           : '$root.workflow',
                     supplier           : '$root.supplier',
-                    isOrder            : '$root.isOrder',
+                    /* isOrder            : '$root.isOrder',*/
                     currency           : '$root.currency',
                     project            : '$root.project',
                     proformaCounter    : '$root.proformaCounter',

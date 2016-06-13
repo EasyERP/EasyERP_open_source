@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var InvoiceHandler = require('../handlers/invoice');
-var multipartMiddleware = require('connect-multiparty')();
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     var handler = new InvoiceHandler(models, event);
@@ -45,7 +46,8 @@ module.exports = function (models, event) {
     });
     router.post('/', handler.create);
     router.post('/receive', handler.receive);
-    router.post('/attach', multipartMiddleware, handler.attach);
+    // router.post('/attach', multipartMiddleware, handler.attach);
+    router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
 
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');
