@@ -4,7 +4,7 @@ define([
     'views/listViewBase',
     'text!templates/salaryReport/list/ListHeader.html',
     'views/salaryReport/list/ListItemView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/salaryReport/filterCollection',
     'constants',
     'moment',

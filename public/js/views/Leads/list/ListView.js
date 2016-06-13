@@ -7,7 +7,7 @@ define([
     'views/Leads/CreateView',
     'views/Leads/list/ListItemView',
     'views/Leads/EditView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'models/LeadsModel',
     'collections/Leads/filterCollection',
     'common',

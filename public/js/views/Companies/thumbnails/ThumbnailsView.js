@@ -10,7 +10,7 @@
     'text!templates/Alpabet/AphabeticTemplate.html',
     'text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html',
     'dataService',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'constants'
 ], function (Backbone,
              $,

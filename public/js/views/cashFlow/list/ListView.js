@@ -4,7 +4,7 @@ define([
     'views/listViewBase',
     'text!templates/cashFlow/list/ListHeader.html',
     'views/cashFlow/list/ListItemView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/cashFlow/filterCollection',
     'constants',
     'dataService',

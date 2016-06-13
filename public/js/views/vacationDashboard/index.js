@@ -7,7 +7,7 @@ define([
     'collections/Dashboard/vacationDashboard',
     'views/wTrack/dashboard/vacationDashEdit',
     'views/wTrack/dashboard/CreatewTrackView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'dataService',
     'async',
     'custom',

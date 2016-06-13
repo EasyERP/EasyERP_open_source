@@ -5,7 +5,7 @@ define([
     'views/main/MainView',
     'views/trialBalance/list/ListView',
     'views/trialBalance/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'jQuery',
     'chai',
     'chai-jquery',

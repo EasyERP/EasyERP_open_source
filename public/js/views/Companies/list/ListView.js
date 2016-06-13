@@ -6,7 +6,7 @@ define([
     'views/Companies/CreateView',
     'views/Companies/list/ListItemView',
     'collections/Companies/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'constants'
 ], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {

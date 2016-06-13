@@ -8,7 +8,7 @@ define([
     'models/InvoiceModel',
     'views/salesInvoice/list/ListItemView',
     'collections/salesInvoice/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'dataService',
     'helpers',

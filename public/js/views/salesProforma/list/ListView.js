@@ -11,7 +11,7 @@ define([
     'views/salesProforma/list/ListItemView',
     'views/salesProforma/list/ListTotalView',
     'collections/salesProforma/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'dataService',
     'constants'

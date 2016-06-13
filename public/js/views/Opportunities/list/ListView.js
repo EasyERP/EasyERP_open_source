@@ -8,7 +8,7 @@ define([
     'views/Opportunities/EditView',
     'models/OpportunitiesModel',
     'collections/Opportunities/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'dataService',
     'text!templates/stages.html'

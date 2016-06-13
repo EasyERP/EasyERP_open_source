@@ -10,7 +10,7 @@ define([
     'views/Invoice/list/ListItemView',
     'views/Order/list/ListTotalView',
     'collections/Invoice/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'dataService',
     'constants',
     'helpers'

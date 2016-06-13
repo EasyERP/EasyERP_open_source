@@ -4,7 +4,7 @@ define([
     'views/listViewBase',
     'text!templates/balanceSheet/list/ListHeader.html',
     'views/balanceSheet/list/ListItemView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/balanceSheet/filterCollection',
     'constants',
     'dataService',

@@ -12,7 +12,7 @@ define([
     'views/Projects/EditView',
     'models/ProjectsModel',
     'collections/Tasks/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common'
 ], function ($, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, FilterView, common) {
     var TasksListView = ListViewBase.extend({

@@ -29,15 +29,16 @@ define([
                 if (this.int) {
                     nameA = parseInt(nameA, 10);
                     nameB = parseInt(nameB, 10);
+                } else {
+                    nameA = nameA.toLowerCase();
+                    nameB = nameB.toLowerCase();
                 }
 
-                if (nameA > nameB) {
-                    return this.sortOrder;
-                } else if (nameA < nameB) {
-                    return this.sortOrder * (-1);
-                } else {
+                if (nameA === nameB) {
                     return 0;
                 }
+
+                return nameA > nameB ? this.sortOrder : this.sortOrder * (-1);
             }
         },
 

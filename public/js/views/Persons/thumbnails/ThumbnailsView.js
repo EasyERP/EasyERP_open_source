@@ -9,7 +9,7 @@
     'text!templates/Alpabet/AphabeticTemplate.html',
     'text!templates/Persons/thumbnails/ThumbnailsItemTemplate.html',
     'dataService',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'constants'
 ], function (Backbone, $, _, common, BaseView, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
     'use strict';

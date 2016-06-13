@@ -6,7 +6,7 @@ define([
     'text!templates/PayrollExpenses/list/cancelEdit.html',
     'text!templates/PayrollExpenses/list/ListTotal.html',
     'views/listViewBase',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'views/PayrollExpenses/generate/GenerateView',
     'views/PayrollExpenses/CreateView',
     'views/PayrollPayments/CreateView',

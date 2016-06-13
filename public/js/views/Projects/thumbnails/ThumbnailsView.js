@@ -6,7 +6,7 @@
     'views/thumbnailsViewBase',
     'views/Projects/EditView',
     'views/Projects/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'services/projects',
     'dataService',
     'common',

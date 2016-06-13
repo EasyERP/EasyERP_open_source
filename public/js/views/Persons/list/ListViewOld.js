@@ -5,7 +5,7 @@ define([
         'views/Persons/list/ListItemView',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'collections/Persons/filterCollection',
-        'views/Filter/FilterView',
+        'views/Filter/filterView',
         'common',
         'dataService',
         'custom'

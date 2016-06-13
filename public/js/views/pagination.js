@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
     'common',
@@ -19,6 +19,29 @@ define([
             'click td.notRemovable': 'onDisabledClick',
             click                  : 'hide'
         },
+
+        /*makeRender: function (options) {
+            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
+            var self = this;
+
+            this.render = _.wrap(this.render, function (render) {
+                self.beforeRender(options);
+                render();
+                self.afterRender(options);
+                return self;
+            });
+        },
+        
+        beforeRender: function(options) {
+            
+        },
+        
+        afterRender: function (options) {
+            var $curEl = this.$el;
+
+            //this.renderRightFilters();
+            //$curEl.find('.tabs').tabs();
+        },*/
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
             $('#top-bar-deleteBtn').hide();
@@ -868,6 +891,16 @@ define([
             });
 
             self.filterView.render();
+        },
+
+        renderRightFilters: function (baseFilter) {
+            var self = this;
+
+            this.rightFilterView = new RightFiltersView({
+                contentType: this.contentType
+            });
+
+            self.rightFilterView.render();
         }
     });
 

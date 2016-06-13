@@ -4,7 +4,7 @@
         'views/Product/CreateView',
         'dataService',
         'models/ProductModel',
-        'views/Filter/FilterView',
+        'views/Filter/filterView',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'constants'

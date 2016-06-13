@@ -7,7 +7,7 @@ define([
     'models/ProductModel',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'collections/salesProduct/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'dataService',
     'constants'
