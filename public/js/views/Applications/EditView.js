@@ -766,7 +766,7 @@
             notDiv.append(
                 new AttachView({
                     model: this.currentModel,
-                    contentType: 'Applications'
+                    contentType: self.contentType
                 }).render().el
             );
 
