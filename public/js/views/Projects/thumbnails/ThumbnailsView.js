@@ -58,12 +58,7 @@
             Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
         },
 
-        hideHealth: function () {
-            var $thisEl = this.$el;
-
-            $thisEl.find('.health-wrapper ul').hide();
-            $thisEl.find('.newSelectList').hide();
-        },
+        hideHealth: projects.hideHealth,
 
         asyncLoadImgs: function (collection) {
             var arr = _.filter(collection.toJSON(), function (item) {

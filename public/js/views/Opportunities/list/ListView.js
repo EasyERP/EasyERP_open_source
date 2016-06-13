@@ -52,7 +52,6 @@ define([
         },
 
         events: {
-            'click .list td:not(.notForm, .checkbox)': 'goToEditDialog',
             'click .stageSelect'                     : 'showNewSelect',
             'click .newSelectList li'                : 'chooseOption'
         },
@@ -137,7 +136,7 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new CurrentModel({validate: false});
 

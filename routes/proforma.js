@@ -4,6 +4,8 @@ var ProformaHandler = require('../handlers/proforma');
 var InvoiceHandler = require('../handlers/invoice');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     var handler = new ProformaHandler(models, event);
@@ -19,7 +21,7 @@ module.exports = function (models, event) {
     router.get('/stats/project', iHandler.getStatsForProject);
 
     router.post('/create', handler.create);
-
+    router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, iHandler.uploadFile);
     router.delete('/', iHandler.bulkRemove);
     
     return router;

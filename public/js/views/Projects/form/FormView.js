@@ -898,37 +898,6 @@ define([
 
         },
 
-        /* showMoreContent: function () {
-         var self = this;
-         var _id = this.id;
-         var gridStart = $('#grid-start').text();
-
-         var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
-
-         var filter = {
-         project: {
-         key  : 'project._id',
-         value: [_id],
-         type : 'ObjectId'
-         }
-         };
-
-         if (self.wTrackView) {
-         self.wTrackView.undelegateEvents();
-         }
-
-         this.wTrackView = new WTrackView({
-         reset      : true,
-         model      : self.wCollection,
-         filter     : filter,
-         startNumber: startNumber,
-         project    : self.formModel,
-         url        : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
-         });
-
-         this.wCollection.bind('reset', this.createView);
-         },*/
-
         getInvoiceStats: function (cb) {
             // ToDo optimize
             var _id = window.location.hash.split('form/')[1];
@@ -1011,7 +980,7 @@ define([
             }).render();
         },
 
-        getInvoice: function (cb) {
+        getInvoice: function (cb, invoiceId, activate) {
             var self = this;
             var _id = this.id;
             var callback;
@@ -1028,10 +997,15 @@ define([
 
                 var invoiceView = new InvoiceView({
                     collection  : self.iCollection,
+                    activeTab   : activate,
                     eventChannel: self.eventChannel
                 });
 
                 self.renderTabCounter();
+
+                if (invoiceId) {
+                    invoiceView.showDialog(invoiceId);
+                }
 
                 self.iCollection.trigger('fetchFinished', {
                     totalRecords: self.iCollection.totalRecords,
@@ -1218,7 +1192,7 @@ define([
             this.qCollection.bind('add remove', self.renderProformRevenue);
         },
 
-        getOrders: function (cb) {
+        getOrders: function (cb, orderId, activate) {
             var self = this;
             var _id = this.id;
 
@@ -1254,10 +1228,15 @@ define([
                     customerId    : self.formModel.toJSON().customer._id,
                     projectManager: self.salesManager,
                     filter        : filter,
-                    eventChannel  : self.eventChannel
+                    eventChannel  : self.eventChannel,
+                    activeTab     : activate
                 });
 
                 self.renderTabCounter();
+
+                if (orderId) {
+                    orderView.showOrderDialog(orderId);
+                }
 
                 self.ordersCollection.trigger('fetchFinished', {
                     totalRecords: self.ordersCollection.totalRecords,
@@ -1459,12 +1438,17 @@ define([
 
         },
 
-        newInvoice: function () {
+        newInvoice: function (invoiceId, activate) {
             var self = this;
             var paralellTasks;
 
+            var getInvoiceWithParams = function (cb) {
+                self.getInvoice(cb, invoiceId, activate);
+            };
+
             paralellTasks = [
                 self.getInvoiceStats,
+                getInvoiceWithParams,
                 self.getOrders
             ];
 
@@ -1526,8 +1510,8 @@ define([
             }).render().el;
 
             atachEl = new AttachView({
-                model: this.formModel,
-                url  : '/uploadProjectsFiles'
+                model      : this.formModel,
+                contentType: self.contentType
             }).render().el;
 
             thisEl.html(templ({
@@ -1562,7 +1546,6 @@ define([
             paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
             accessData.forEach(function (accessElement) {
-                // todo move dom elems removal to template
                 if (accessElement.module === 64) {
                     if (accessElement.access.read) {
                         paralellTasks.push(self.getInvoice);

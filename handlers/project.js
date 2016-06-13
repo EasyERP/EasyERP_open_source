@@ -7,9 +7,11 @@ module.exports = function (models, event) {
     var async = require('async');
     var CONSTANTS = require('../constants/mainConstants.js');
     var Mailer = require('../helpers/mailer');
+    var Uploader = require('../services/fileStorage/index');
     var pathMod = require('path');
-    var fs = require('fs');
 
+    var fs = require('fs');
+    var path = require('path');
     var ProjectSchema = mongoose.Schemas.Project;
     var ProjectTypeSchema = mongoose.Schemas.projectType;
     var wTrackSchema = mongoose.Schemas.wTrack;
@@ -17,9 +19,10 @@ module.exports = function (models, event) {
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var tasksSchema = mongoose.Schemas.Task;
     var jobsSchema = mongoose.Schemas.jobs;
-    var objectId = mongoose.Types.ObjectId;
 
+    var objectId = mongoose.Types.ObjectId;
     var mailer = new Mailer();
+    var uploader = new Uploader();
 
     function pageHelper(data) {
         var count = data.count;
@@ -1802,6 +1805,40 @@ module.exports = function (models, event) {
             }
 
             res.status(200).send(removed);
+        });
+    };
+
+    this.uploadFile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var headers = req.headers;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'persons';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
+
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
+
+            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Customers updated success', data: response});
+            });
         });
     };
 };
