@@ -21,6 +21,7 @@ define([
         editCollection: EditCollection,
         CurrentModel  : CurrentModel,
         changedModels : {},
+        cancelEdit    : cancelEdit,
 
         events: {
             'click td.editable'                                : 'editRow',
@@ -76,6 +77,16 @@ define([
             this.setEditable(targetElement);
 
             return false;
+        },
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
         },
 
         setChangedValueToModel: function () {

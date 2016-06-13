@@ -2,12 +2,12 @@
     var notRemovable = project.notRemovable%>
     <tr data-index="<%= index %>" data-id="<%=project._id%>"
         class="stage-<%=(project.workflow) ? project.workflow._id : ''%>">
-        <!--<td class="notForm centerCell <%= notRemovable ? 'notRemovable' : ''%>">
+        <td class="notForm centerCell">
             <input type="checkbox" value="<%=project._id%>"
-                   class="checkbox  <%= notRemovable ? 'notRemovable' : ''%>" <%= notRemovable ? disabled='disabled': ''%>/></td>-->
-        <td class="notForm centerCell <%= notRemovable ? 'notRemovable' : ''%>">
+                   class="checkbox  <%= notRemovable ? 'notRemovable' : ''%>" <%= notRemovable ? disabled='disabled': ''%>/></td>
+       <!-- <td class="notForm centerCell <%= notRemovable ? 'notRemovable' : ''%>">
             <input type="checkbox" value="<%=project._id%>"
-                   class="checkbox"</td>
+                   class="checkbox"</td>-->
         <td class="centerCell"><%=startNumber + index + 1 %></td>
         <td><%=project.name%></td>
         <td><%=(project.customer) ? project.customer.name.first + ' ' + project.customer.name.last : ''%></td>
@@ -21,7 +21,7 @@
             <progress name="projectProgress" max="100" value="<%=project.progress%>"/>
         </td>
         <td id='<%=project._id%>'>
-            <a href="javascript:;" class="stageSelect"><%=(project.workflow) ? project.workflow.name : 'Undefinded'%></a>
+            <a href="javascript:;" class="stageSelect"><%=(project.workflow) ? project.workflow.name : 'Undefined'%></a>
         </td>
         <td class="health-wrapper" data-id="<%=project._id%>">
             <div class="health-container">

@@ -64,9 +64,9 @@ define([
         },
 
         events: {
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-            'click td.editable'                                : 'editJob'
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click td.editable' : 'editJob'
         },
 
         editJob: function (e) {
@@ -148,7 +148,7 @@ define([
                 $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
         },
-        
+
         addAttach: function () {
             var $thisEl = this.$el;
             var s = $thisEl.find('.inputAttach:last').val().split('\\')[$thisEl.find('.inputAttach:last').val().split('\\').length - 1];
@@ -346,15 +346,17 @@ define([
                 headers: {
                     mid: 39
                 },
-                success: function (model) {
 
+                success: function (model) {
                     if (model.get('relatedUser') === App.currentUser._id) {
                         App.currentUser.imageSrc = self.imageSrc;
 
                         $('#loginPanel .iconEmployee').attr('src', self.imageSrc);
                         $('#loginPanel #userName').text(model.toJSON().fullName);
                     }
-                    
+
+                    self.attachView.sendToServer(null, model.changed);
+
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     self.hideDialog();
@@ -397,21 +399,22 @@ define([
                     }
                 }
             });
-            
+
             $thisEl = this.$el;
 
             $notDiv = $thisEl.find('.attach-container');
 
             this.attachView = new AttachView({
-                model   : new EmployeeModel(),
-                url     : '/uploadEmployeesFiles',
-                isCreate: true
+                model      : new EmployeeModel(),
+                contentType: self.contentType,
+                isCreate   : true
             });
             $notDiv.append(this.attachView.render().el);
             $notDiv = this.$el.find('.assignees-container');
             $notDiv.append(
                 new AssigneesView({
-                    model: this.currentModel
+                    model      : this.currentModel,
+                    contentType: self.contentType
                 }).render().el
             );
 

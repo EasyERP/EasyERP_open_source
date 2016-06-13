@@ -161,7 +161,12 @@ define([
         saveItem: function () {
             var model;
             var newElements = this.$el.find('#false');
+            var errors = this.$el.find('.errorContent')
             var id;
+
+            if (errors.length) {
+                return false;
+            }
 
             this.editCollection.on('saved', this.savedNewModel, this);
             this.editCollection.on('updated', this.updatedOptions, this);
@@ -215,6 +220,7 @@ define([
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                 editedCol.text(editedElementValue);
+                editedCol.removeClass('errorContent');
                 editedElement.remove();
             }
         },
@@ -583,6 +589,8 @@ define([
 
                 changedAttr.employee = employee;
                 changedAttr.department = department;
+
+                closestTD.removeClass('errorContent');
             }
 
             function checkDay(element, selectedClass) {

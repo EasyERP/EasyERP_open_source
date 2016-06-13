@@ -25,6 +25,7 @@ define([
         contentType      : 'journal',
         changedModels    : {},
         responseObj      : {},
+        cancelEdit       : cancelEdit,
 
         initialize: function (options) {
             $(document).off('click');
@@ -85,6 +86,17 @@ define([
                 editedCol.text(editedElementValue);
                 editedElement.remove();
             }
+        },
+
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
         },
 
         chooseOption: function (e) {

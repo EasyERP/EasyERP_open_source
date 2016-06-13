@@ -11,7 +11,6 @@ define([
 
         initialize: function (options) {
             this.contentType = options.contentType;
-            this.url = options.url;
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
         },

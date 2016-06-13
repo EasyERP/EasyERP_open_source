@@ -356,26 +356,6 @@ var Module = function (models) {
         getCustomers(req, res, next);
     };
 
-    /* this.getCustomers = function (req, res, next) {
-     var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-
-     var data = req.query;
-
-     var query = Customers.find();
-     if (data && data.id) {
-     query.where({_id: objectId(data.id)});
-     }
-
-     query.sort({'name.first': 1});
-     query.exec(function (err, customers) {
-     if (err) {
-     return next(err);
-     }
-     res.status(200).send({data: customers});
-     });
-
-     };*/
-
     this.getFilterPersonsForMiniView = function (req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var optionsObject = {};
