@@ -4,7 +4,7 @@ define([
     'views/listViewBase',
     'text!templates/journalEntry/list/ListHeader.html',
     'views/journalEntry/list/ListItemView',
-    'views/salesInvoice/EditView',
+    'views/salesInvoices/EditView',
     'views/DividendInvoice/EditView',
     'models/InvoiceModel',
     'collections/journalEntry/filterCollection',
@@ -151,7 +151,7 @@ define([
                 View = DividendEditView;
             }
 
-            model.urlRoot = '/Invoice/form';
+            model.urlRoot = '/Invoices/form';
             model.fetch({
                 data: {
                     id         : id,

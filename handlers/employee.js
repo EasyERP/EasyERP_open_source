@@ -60,8 +60,6 @@ var Employee = function (event, models) {
         };
     };
 
-    this.getNameAndDepartment = getNameAndDepartment;
-
     function getNameAndDepartment(db, query, callback) {
         var Model = models.get(db, 'Employees', EmployeeSchema);
         var matchQuery = {};
@@ -115,6 +113,8 @@ var Employee = function (event, models) {
             callback(null, employees);
         });
     }
+
+    this.getNameAndDepartment = getNameAndDepartment;
 
     this.getEmployeesCount = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -353,8 +353,11 @@ var Employee = function (event, models) {
         var filtrElement = {};
         var key;
         var filterName;
+        var keys = Object.keys(filter);
+        var i;
 
-        for (filterName in filter) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            filterName = keys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -379,6 +382,7 @@ var Employee = function (event, models) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                // skip default
             }
         }
 
@@ -583,7 +587,7 @@ var Employee = function (event, models) {
                                 total      : 1
                             };
                             break;
-
+                        // skip default;
                     }
                     break;
                 case ('Applications'):
@@ -662,8 +666,10 @@ var Employee = function (event, models) {
                                 total             : 1
                             };
                             break;
+                        // skip default;
                     }
                     break;
+                // skip default;
             }
 
             Model.aggregate([{
@@ -1085,6 +1091,7 @@ var Employee = function (event, models) {
             case 'list':
                 getFilter(req, res, next);
                 break;
+            // skip default;
         }
     };
 
@@ -1530,6 +1537,7 @@ var Employee = function (event, models) {
                     result.data = employees;
                     res.status(200).send(result);
                     break;
+                // skip default;
             }
         });
     };

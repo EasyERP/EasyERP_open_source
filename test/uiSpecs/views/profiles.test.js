@@ -464,13 +464,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         _id   : "55c1de136708490b0b000028",
                         access: {
@@ -554,13 +554,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         _id   : "55c1de136708490b0b000023",
                         access: {
@@ -578,7 +578,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         _id   : "55c1de136708490b0b000022",
                         access: {
@@ -1515,13 +1515,13 @@ define([
                         _id   : "55b790eaa5ebea2c2400001b",
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         access: {
                             del      : false,
@@ -1605,13 +1605,13 @@ define([
                         _id   : "55b790eaa5ebea2c24000016",
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         access: {
                             del      : false,
@@ -1629,7 +1629,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         access: {
                             del      : false,
@@ -2576,13 +2576,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         _id   : "55b790eaa5ebea2c2400001b",
                         access: {
@@ -2666,13 +2666,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         _id   : "55b790eaa5ebea2c24000016",
                         access: {
@@ -2690,7 +2690,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         _id   : "55b790eaa5ebea2c24000015",
                         access: {
@@ -3639,13 +3639,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         _id   : "55b790eaa5ebea2c2400001b",
                         access: {
@@ -3729,13 +3729,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         _id   : "55b790eaa5ebea2c24000016",
                         access: {
@@ -3753,7 +3753,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         _id   : "55b790eaa5ebea2c24000015",
                         access: {
@@ -4702,13 +4702,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         _id   : "55b88fc39ea5a7142b000036",
                         access: {
@@ -4792,13 +4792,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         _id   : "55b88fc39ea5a7142b000031",
                         access: {
@@ -4816,7 +4816,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         _id   : "55b88fc39ea5a7142b000030",
                         access: {
@@ -5764,13 +5764,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         _id   : "55b790eaa5ebea2c2400001b",
                         access: {
@@ -5854,13 +5854,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         _id   : "55b790eaa5ebea2c24000016",
                         access: {
@@ -5878,7 +5878,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         _id   : "55b790eaa5ebea2c24000015",
                         access: {
@@ -6824,13 +6824,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         access: {
                             del      : true,
@@ -6909,13 +6909,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         access: {
                             del      : true,
@@ -6932,7 +6932,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         access: {
                             del      : true,
@@ -7854,13 +7854,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         _id   : "55b790eaa5ebea2c2400001b",
                         access: {
@@ -7944,13 +7944,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         _id   : "55b790eaa5ebea2c24000016",
                         access: {
@@ -7968,7 +7968,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         _id   : "55b790eaa5ebea2c24000015",
                         access: {
@@ -8881,13 +8881,13 @@ define([
                     {
                         module: {
                             _id      : 55,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 55,
                             parrent  : 54,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "Quotation"
+                            href     : "Quotations"
                         },
                         _id   : "55b790eaa5ebea2c2400001b",
                         access: {
@@ -8971,13 +8971,13 @@ define([
                     {
                         module: {
                             _id      : 62,
-                            mname    : "Quotation",
+                            mname    : "Quotations",
                             sequence : 62,
                             parrent  : 19,
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesQuotation"
+                            href     : "salesQuotations"
                         },
                         _id   : "55b790eaa5ebea2c24000016",
                         access: {
@@ -8995,7 +8995,7 @@ define([
                             link     : true,
                             visible  : true,
                             ancestors: [],
-                            href     : "salesOrder"
+                            href     : "salesOrders"
                         },
                         _id   : "55b790eaa5ebea2c24000015",
                         access: {

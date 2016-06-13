@@ -125,9 +125,9 @@ var Filters = function (models) {
                 Applications    : getApplicationFiltersValues,
                 Projects        : getProjectFiltersValues,
                 Tasks           : getTasksFiltersValues,
-                salesInvoice    : getSalesInvoiceFiltersValues,
+                salesInvoices    : getSalesInvoiceFiltersValues,
                 salesProforma   : getSalesProformaFiltersValues,
-                Invoice         : getInvoiceFiltersValues,
+                Invoices         : getInvoiceFiltersValues,
                 ExpensesInvoice : getExpensesInvoiceFiltersValues,
                 DividendInvoice : getDividendInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
@@ -136,10 +136,10 @@ var Filters = function (models) {
                 DividendPayments: getDividendPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
-                Quotation       : getQuotationFiltersValues,
-                salesQuotation  : getSalesQuotation,
-                salesOrder      : getSalesOrders,
-                Order           : getOrdersFiltersValues,
+                Quotations       : getQuotationFiltersValues,
+                salesQuotations : getSalesQuotation,
+                salesOrders     : getSalesOrders,
+                Orders           : getOrdersFiltersValues,
                 PayrollExpenses : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues,
                 jobsDashboard   : getDashJobsFiltersValues,
@@ -507,8 +507,8 @@ var Filters = function (models) {
                 }
             }, {
                 $group: {
-                    _id : null,
-                    name: {
+                    _id       : null,
+                    name      : {
                         $addToSet: {
                             _id : '$_id',
                             name: {
@@ -522,7 +522,7 @@ var Filters = function (models) {
                             name: {$ifNull: ['$department.name', 'None']}
                         }
                     },
-                    
+
                     jobPosition: {
                         $addToSet: {
                             _id : '$jobPosition._id',

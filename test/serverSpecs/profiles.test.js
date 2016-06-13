@@ -288,13 +288,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 57,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 56,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Order'
+                        'href': 'Orders'
                     }, '_id': '55b790eaa5ebea2c2400001d', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -310,13 +310,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 55,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 55,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Quotation'
+                        'href': 'Quotations'
                     }, '_id': '55b790eaa5ebea2c2400001b', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -365,24 +365,24 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 62,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 62,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesQuotation'
+                        'href': 'salesQuotations'
                     }, '_id': '55b790eaa5ebea2c24000016', 'access': {'del': true, 'editWrite': true, 'read': true}
                 }, {
                     'module': {
                         '_id': 63,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 63,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesOrder'
+                        'href': 'salesOrders'
                     }, '_id': '55b790eaa5ebea2c24000015', 'access': {'del': true, 'editWrite': true, 'read': true}
                 }, {
                     'module': {
@@ -1095,13 +1095,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 57,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 56,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Order'
+                        'href': 'Orders'
                     }, '_id': '55c1de136708490b0b00002a', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -1117,13 +1117,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 55,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 55,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Quotation'
+                        'href': 'Quotations'
                     }, '_id': '55c1de136708490b0b000028', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -1172,24 +1172,24 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 62,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 62,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesQuotation'
+                        'href': 'salesQuotations'
                     }, '_id': '55c1de136708490b0b000023', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
                         '_id': 63,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 63,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesOrder'
+                        'href': 'salesOrders'
                     }, '_id': '55c1de136708490b0b000022', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -1777,13 +1777,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 57,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 56,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Order'
+                        'href': 'Orders'
                     }, '_id': '55c1de136708490b0b00002a', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -1799,13 +1799,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 55,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 55,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Quotation'
+                        'href': 'Quotations'
                     }, '_id': '55c1de136708490b0b000028', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -1854,24 +1854,24 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 62,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 62,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesQuotation'
+                        'href': 'salesQuotations'
                     }, '_id': '55c1de136708490b0b000023', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
                         '_id': 63,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 63,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesOrder'
+                        'href': 'salesOrders'
                     }, '_id': '55c1de136708490b0b000022', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -2495,13 +2495,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 57,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 56,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Order'
+                        'href': 'Orders'
                     }, '_id': '55b790eaa5ebea2c2400001d', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -2517,13 +2517,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 55,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 55,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Quotation'
+                        'href': 'Quotations'
                     }, '_id': '55b790eaa5ebea2c2400001b', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -2572,24 +2572,24 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 62,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 62,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesQuotation'
+                        'href': 'salesQuotations'
                     }, '_id': '55b790eaa5ebea2c24000016', 'access': {'del': true, 'editWrite': true, 'read': true}
                 }, {
                     'module': {
                         '_id': 63,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 63,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesOrder'
+                        'href': 'salesOrders'
                     }, '_id': '55b790eaa5ebea2c24000015', 'access': {'del': true, 'editWrite': true, 'read': true}
                 }, {
                     'module': {
@@ -3145,13 +3145,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 57,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 56,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Order'
+                        'href': 'Orders'
                     }, '_id': '55c1de136708490b0b00002a', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -3167,13 +3167,13 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 55,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 55,
                         'parrent': 54,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'Quotation'
+                        'href': 'Quotations'
                     }, '_id': '55c1de136708490b0b000028', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
@@ -3222,24 +3222,24 @@ describe('Profiles Specs', function () {
                 }, {
                     'module': {
                         '_id': 62,
-                        'mname': 'Quotation',
+                        'mname': 'Quotations',
                         'sequence': 62,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesQuotation'
+                        'href': 'salesQuotations'
                     }, '_id': '55c1de136708490b0b000023', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {
                         '_id': 63,
-                        'mname': 'Order',
+                        'mname': 'Orders',
                         'sequence': 63,
                         'parrent': 19,
                         'link': true,
                         'visible': true,
                         'ancestors': [],
-                        'href': 'salesOrder'
+                        'href': 'salesOrders'
                     }, '_id': '55c1de136708490b0b000022', 'access': {'del': false, 'editWrite': false, 'read': false}
                 }, {
                     'module': {

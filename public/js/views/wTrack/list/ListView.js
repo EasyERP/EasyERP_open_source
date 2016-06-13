@@ -9,7 +9,7 @@ define([
     'text!templates/wTrack/list/forWeek.html',
     'views/wTrack/CreateView',
     'views/wTrack/list/ListItemView',
-    'views/salesInvoice/wTrack/CreateView',
+    'views/salesInvoices/wTrack/CreateView',
     'models/wTrackModel',
     'collections/wTrack/filterCollection',
     'collections/wTrack/editCollection',

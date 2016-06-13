@@ -82,7 +82,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .post('quotation')
+                .post('quotations')
                 .set('type', 'sales')
                 .send(body)
                 .expect(201)
@@ -120,12 +120,12 @@ describe('Quotation Specs', function () {
                 page       : 1,
                 count      : 4,
                 viewType   : 'list',
-                contentType: 'salesQuotation',
+                contentType: 'salesQuotations',
                 forSales   : true
             };
 
             aggent
-                .get('quotation')
+                .get('quotations')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -188,7 +188,7 @@ describe('Quotation Specs', function () {
         it('should get quotations filterValues', function (done) {
 
             aggent
-                .get('quotation/getFilterValues')
+                .get('quotations/getFilterValues')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -215,7 +215,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .get('quotation/')
+                .get('quotations/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -266,7 +266,7 @@ describe('Quotation Specs', function () {
         it('should fail get quotation by id', function (done) {
 
             aggent
-                .get('quotation')
+                .get('quotations')
                 .query({id: '111', viewType: 'form'})
                 .expect(400, done);
         });
@@ -321,7 +321,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .put('quotation/' + id)
+                .put('quotations/' + id)
                 .send(body)
                 .set('type', 'sales')
                 .expect(200)
@@ -346,7 +346,7 @@ describe('Quotation Specs', function () {
             var body = {};
 
             aggent
-                .put('quotation/123cba')
+                .put('quotations/123cba')
                 .set('type', 'sales')
                 .send(body)
                 .expect(500, done);
@@ -360,9 +360,9 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .patch('quotation/' + id)
+                .patch('quotations/' + id)
                 .send(body)
-                .set('type', 'salesOrder')
+                .set('type', 'salesOrders')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -384,22 +384,22 @@ describe('Quotation Specs', function () {
             var body = {};
 
             aggent
-                .patch('quotation/123cba')
-                .set('type', 'salesOrder')
+                .patch('quotations/123cba')
+                .set('type', 'salesOrders')
                 .send(body)
                 .expect(500, done);
         });
 
         it('should delete quotation', function (done) {
             aggent
-                .delete('quotation/' + id)
+                .delete('quotations/' + id)
                 .set('type', 'sales')
                 .expect(200, done);
         });
 
         it('should fail delete quotation', function (done) {
             aggent
-                .delete('quotation/123cba')
+                .delete('quotations/123cba')
                 .set('type', 'sales')
                 .expect(500, done);
         });
@@ -480,7 +480,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .post('quotation')
+                .post('quotations')
                 .set('type', 'sales')
                 .send(body)
                 .expect(403, done);
@@ -495,7 +495,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .get('quotation')
+                .get('quotations')
                 .query(query)
                 .expect(404, done);
         });

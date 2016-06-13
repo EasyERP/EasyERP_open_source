@@ -243,9 +243,9 @@ var Module = function (models, event) {
 
         projectId = projectId ? objectId(projectId) : null;
 
-        if (contentType === 'salesQuotation') {
+        if (contentType === 'salesQuotations') {
             moduleId = 62;
-        } else if (contentType === 'salesOrder') {
+        } else if (contentType === 'salesOrders') {
             moduleId = 63;
         }
 
@@ -253,9 +253,9 @@ var Module = function (models, event) {
             queryObject.project = projectId;
         }
 
-        if (contentType === 'salesQuotation') {
+        if (contentType === 'salesQuotations') {
             Quotation = models.get(db, 'Quotation', QuotationSchema);
-        } else if (contentType === 'salesOrder') {
+        } else if (contentType === 'salesOrders') {
             Quotation = models.get(db, 'Order', QuotationSchema);
         }
 
@@ -341,9 +341,9 @@ var Module = function (models, event) {
 
             optionsObject.$and.push({_id: {$in: _.pluck(ids, '_id')}});
 
-            if (contentType === 'salesQuotation') {
+            if (contentType === 'salesQuotations') {
                 optionsObject.$and.push({isOrder: false});
-            } else if (contentType === 'salesOrder') {
+            } else if (contentType === 'salesOrders') {
                 optionsObject.$and.push({isOrder: true});
             }
 
@@ -683,11 +683,23 @@ var Module = function (models, event) {
         var contentSearcher;
         var waterfallTasks;
         var contentType = data.contentType;
-        var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
+        var isOrder = (contentType === 'Orders' || contentType === 'salesOrders');
         var sort = {};
         var filter = data.filter || {};
         var key;
         var queryObject = {};
+
+        if ((contentType === 'Orders') || (contentType === 'Quotations')) {
+            filter.forSales = {
+                key  : 'forSales',
+                value: ['false']
+            };
+        } else {
+            filter.forSales = {
+                key  : 'forSales',
+                value: ['true']
+            };
+        }
 
         if (isOrder) {
             filter.isOrder = {
@@ -916,7 +928,7 @@ var Module = function (models, event) {
         }
 
         /* var contentType = req.query.contentType;
-         var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/
+         var isOrder = ((contentType === 'Orders') || (contentType === 'salesOrders'));*/
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(

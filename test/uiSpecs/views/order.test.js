@@ -1,11 +1,11 @@
 define([
     'modules',
     'text!fixtures/index.html',
-    'collections/salesOrder/filterCollection',
+    'collections/salesOrders/filterCollection',
     'views/main/MainView',
-    'views/salesOrder/list/ListView',
-    'views/salesOrder/EditView',
-    'views/salesOrder/TopBarView',
+    'views/salesOrders/list/ListView',
+    'views/salesOrders/EditView',
+    'views/salesOrders/TopBarView',
     'jQuery',
     'chai',
     'chai-jquery',
@@ -31,7 +31,7 @@ define([
                 wName       : "order",
                 source      : "purchase",
                 targetSource: [
-                    "quotation"
+                    "Quotations"
                 ],
                 visible     : true
             },
@@ -1235,7 +1235,7 @@ define([
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
                 expect(topBarView.$el.find('h3')).to.exist;
-                expect(topBarView.$el.find('h3').text()).to.be.equals('Order');
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Orders');
             });
         });
 
@@ -1424,7 +1424,7 @@ define([
 
                 it('Try to go to edit form', function () {
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
-                    var orderUrl = new RegExp('\/Order\/form', 'i');
+                    var orderUrl = new RegExp('\/orders\/form', 'i');
                     var usersUrl = new RegExp('\/users\/forDd', 'i');
                     var incotermUrl = '/incoterm';
 
@@ -1456,7 +1456,7 @@ define([
                 it('Try to delete NotInvoiced Order with error response', function () {
                     var spyResponse;
                     var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
-                    var orderUrl = new RegExp('\/order\/', 'i');
+                    var orderUrl = new RegExp('\/orders\/', 'i');
 
                     server.respondWith('DELETE', orderUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $deleteBtn.click();
@@ -1469,7 +1469,7 @@ define([
 
                 it('Try to delete NotInvoiced Order ', function () {
                     var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
-                    var orderUrl = new RegExp('\/order\/', 'i');
+                    var orderUrl = new RegExp('\/orders\/', 'i');
 
                     server.respondWith('DELETE', orderUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         "success": {
@@ -1538,8 +1538,8 @@ define([
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(3) > td:nth-child(2)');
                     var usersUrl = new RegExp('\/users\/forDd', 'i');
                     var incotermUrl = '/incoterm';
-                    var orderUrl = new RegExp('\/order\/', 'i');
-                    var invoiceUrl = '/invoice/receive';
+                    var orderUrl = new RegExp('\/orders\/', 'i');
+                    var invoiceUrl = '/invoices/receive';
                     var $dialog;
                     var $receiveInvoiceBtn;
 
@@ -1571,8 +1571,8 @@ define([
                     var $dialog = $('.ui-dialog');
                     var $secondTab = $dialog.find('.dialog-tabs > li:nth-child(2) > a');
                     var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-                    var orderUrl = new RegExp('\/order\/', 'i');
-                    var orderFormUrl = new RegExp('\/Order\/form', 'i');
+                    var orderUrl = new RegExp('\/orders\/', 'i');
+                    var orderFormUrl = new RegExp('\/orders\/form', 'i');
                     var usersUrl = new RegExp('\/users\/forDd', 'i');
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var userAgentPattern = new RegExp('Firefox', 'i');
@@ -1598,9 +1598,9 @@ define([
                     server.respond();
 
                     if (userAgentPattern.test(userAgent)) {
-                        expect(window.location.hash).to.be.equals('#easyErp/salesOrder/list/p=1/c=100/filter={"forSales":{"key":"forSales","value":["true"]}}');
+                        expect(window.location.hash).to.be.equals('#easyErp/salesOrders/list/p=1/c=100/filter={"forSales":{"key":"forSales","value":["true"]}}');
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/salesOrder/list/p=1/c=100/filter=%7B%22forSales%22%3A%7B%22key%22%3A%22forSales%22%2C%22value%22%3A%5B%22true%22%5D%7D%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/salesOrders/list/p=1/c=100/filter=%7B%22forSales%22%3A%7B%22key%22%3A%22forSales%22%2C%22value%22%3A%5B%22true%22%5D%7D%7D');
                     }
                 });
             });

@@ -32,10 +32,11 @@ describe('Application Specs', function () {
 
         it('should create application', function (done) {
             var body = {
-                name     : {
+                name: {
                     first: 'test',
                     last : 'test'
                 },
+                
                 dateBirth: '28 Dec, 1990'
             };
 
@@ -120,19 +121,19 @@ describe('Application Specs', function () {
                     expect(application)
                         .to.exist;
                     /* expect(application)
-                        .to.have.property('department')
-                        .and.to.have.property('_id');*/
+                     .to.have.property('department')
+                     .and.to.have.property('_id');*/
                     /* expect(application)
-                        .to.have.property('department')
-                        .and.to.have.property('name')
-                        .and.to.be.a('string');*/
-                   /* expect(application)
-                        .to.have.property('jobPosition')
-                        .and.to.have.property('_id');
-                    expect(application)
-                        .to.have.property('jobPosition')
-                        .and.to.have.property('name')
-                        .and.to.be.a('string');*/
+                     .to.have.property('department')
+                     .and.to.have.property('name')
+                     .and.to.be.a('string');*/
+                    /* expect(application)
+                     .to.have.property('jobPosition')
+                     .and.to.have.property('_id');
+                     expect(application)
+                     .to.have.property('jobPosition')
+                     .and.to.have.property('name')
+                     .and.to.be.a('string');*/
                     expect(application)
                         .to.have.property('name')
                         .and.to.have.property('last')

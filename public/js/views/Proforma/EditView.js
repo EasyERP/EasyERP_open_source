@@ -6,7 +6,7 @@ define([
         'views/Assignees/AssigneesView',
         'views/Notes/AttachView',
         'views/Proforma/InvoiceProductItems',
-        'views/salesInvoice/wTrack/wTrackRows',
+        'views/salesInvoices/wTrack/wTrackRows',
         'views/Payment/ProformaCreateView',
         'views/Payment/list/ListHeaderInvoice',
         'common',
@@ -247,7 +247,7 @@ define([
                         App.startPreload();
 
                         payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
-                        url = '/invoice/approve';
+                        url = '/invoices/approve';
                         data = {
                             invoiceId  : proformaId,
                             invoiceDate: invoiceDate

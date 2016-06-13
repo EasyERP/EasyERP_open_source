@@ -2307,7 +2307,7 @@ define([], function () {
                 }
             ]
         },
-        salesOrder      : {
+        salesOrders      : {
             _id         : null,
             projectName : [
                 {
@@ -3470,7 +3470,7 @@ define([], function () {
                 }
             ]
         },
-        salesQuotation  : {
+        salesQuotations  : {
             _id         : null,
             projectName : [
                 {

@@ -60,7 +60,7 @@ MongoClient.connect(url, function (err, db) {
         var module = {
             _id: 62,
             mname: 'Quotation',
-            href: 'salesQuotation',
+            href: 'salesQuotations',
             sequence: 62,
             parrent: parrent._id,
             link: true,
@@ -69,8 +69,8 @@ MongoClient.connect(url, function (err, db) {
 
         var module2 = {
             _id: 63,
-            mname: 'Order',
-            href: 'salesOrder',
+            mname: 'Orders',
+            href: 'salesOrders',
             sequence: 63,
             parrent: parrent._id,
             link: true,
@@ -80,7 +80,7 @@ MongoClient.connect(url, function (err, db) {
         var module3 = {
             _id: 64,
             mname: 'Invoice',
-            href: 'salesInvoice',
+            href: 'salesInvoices',
             sequence: 64,
             parrent: parrent._id,
             link: true,

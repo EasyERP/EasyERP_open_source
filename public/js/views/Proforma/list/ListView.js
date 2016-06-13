@@ -1,26 +1,23 @@
 define([
         'views/listViewBase',
-        'text!templates/salesInvoice/list/ListHeader.html',
+        'text!templates/salesInvoices/list/ListHeader.html',
         'text!templates/stages.html',
-        'views/salesInvoice/CreateView',
-        'views/salesInvoice/EditView',
+        'views/salesInvoices/CreateView',
+        'views/salesInvoices/EditView',
         'models/InvoiceModel',
-        'views/salesInvoice/list/ListItemView',
-        'collections/salesInvoice/filterCollection',
-        'views/Filter/FilterView',
+        'views/salesInvoices/list/ListItemView',
+        'collections/salesInvoices/filterCollection',
         'common',
         'dataService',
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, ListItemView, contentCollection, FilterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, ListItemView, contentCollection, common, dataService, CONSTANTS) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
             ListItemView            : ListItemView,
             contentCollection       : contentCollection,
-            FilterView              : FilterView,
-            totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
             contentType             : 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
             changedModels           : {},
 
@@ -212,7 +209,7 @@ define([
                 var id = $(e.target).closest('tr').data("id");
                 var model = new invoiceModel({validate: false});
 
-                model.urlRoot = '/Invoice/form';
+                model.urlRoot = '/Invoices/form';
                 model.fetch({
                     data   : {
                         id       : id,
@@ -228,36 +225,6 @@ define([
                         });
                     }
                 });
-            },
-
-            deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/Invoice/totalCollectionLength', {
-                    filter       : this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-                this.deleteRender(deleteCounter, deletePage, {
-                    filter          : this.filter,
-                    newCollection   : this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                if (deleteCounter !== this.collectionLength) {
-                    var holder = this.$el;
-                    var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new ListItemView({
-                        collection : this.collection,
-                        page       : holder.find("#currentShowPage").val(),
-                        itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
-                }
-
-                var pagenation = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
             }
 
         });

@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'views/salesQuotation/CreateView',
+    'views/salesQuotations/CreateView',
     'text!templates/Projects/projectInfo/quotations/CreateTemplate.html',
     'text!templates/Projects/projectInfo/quotations/newRow.html',
     'collections/Persons/PersonsCollection',
@@ -20,7 +20,7 @@ define([
 
     var CreateView = createView.extend({
         el            : '#content-holder',
-        contentType   : 'Quotation',
+        contentType   : 'Quotations',
         template      : _.template(CreateTemplate),
         templateNewRow: _.template(newRow),
 

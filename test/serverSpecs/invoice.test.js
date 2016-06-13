@@ -86,7 +86,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .post('quotation')
+                    .post('quotations')
                     .set('type', 'sales')
                     .send(body)
                     .expect(201)
@@ -112,20 +112,20 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .patch('quotation/' + quotationBody._id)
+                    .patch('quotations/' + quotationBody._id)
                     .send(body)
                     .set('type', 'sales')
                     .expect(200, done);
             });
 
-            it('should receive  invoice', function (done) {
+            it('should receive  invoices', function (done) {
                 var body = {
                     forSales: 'true',  // in quotationBody boolean
                     orderId : quotationBody._id
                 };
 
                 aggent
-                    .post('invoice/receive')
+                    .post('invoices/receive')
                     .send(body)
                     .expect(201)
                     .end(function (err, res) {
@@ -162,14 +162,14 @@ describe('Invoice Specs', function () {
 
                         invoiceId = body._id;
 
-                        it('should approve invoice', function (done) {
+                        it('should approve invoices', function (done) {
                             var body = {
                                 invoiceId  : invoiceId,
                                 invoiceDate: '1 Feb, 2016'
                             };
 
                             aggent
-                                .patch('invoice/approve')
+                                .patch('invoices/approve')
                                 .send(body)
                                 .expect(200)
                                 .end(function (err, res) {
@@ -192,14 +192,14 @@ describe('Invoice Specs', function () {
                     });
             });
 
-            it('should fail receive  invoice', function (done) {
+            it('should fail receive  invoices', function (done) {
                 var body = {
                     forSales: 'true',
                     orderId : '123cba'
                 };
 
                 aggent
-                    .post('invoice/receive')
+                    .post('invoices/receive')
                     .send(body)
                     .expect(400, done);
 
@@ -208,7 +208,7 @@ describe('Invoice Specs', function () {
             it('should get all invoices', function (done) {
 
                 aggent
-                    .get('invoice')
+                    .get('invoices')
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
@@ -230,7 +230,7 @@ describe('Invoice Specs', function () {
             it('should get invoices filterValues', function (done) {
 
                 aggent
-                    .get('invoice/getFilterValues')
+                    .get('invoices/getFilterValues')
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
@@ -255,7 +255,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .get('invoice/generateName')
+                    .get('invoices/generateName')
                     .query(query)
                     .expect(200, done);
             });
@@ -263,7 +263,7 @@ describe('Invoice Specs', function () {
             it('should get invoices stats', function (done) {
 
                 aggent
-                    .get('invoice/stats')
+                    .get('invoices/stats')
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
@@ -292,7 +292,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .get('invoice/stats/project')
+                    .get('invoices/stats/project')
                     .query(query)
                     .query({'filter[project][value][0]': CONSTANTS.PROJECT})
                     .expect(200)
@@ -321,7 +321,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .get('invoice/chart')
+                    .get('invoices/chart')
                     .query(query)
                     .expect(200)
                     .end(function (err, res) {
@@ -340,7 +340,7 @@ describe('Invoice Specs', function () {
                     });
             });
 
-            it('should patch invoice', function (done) {
+            it('should patch invoices', function (done) {
                 var body = {
                     dueDate : '10 Feb, 2016',
                     currency: {
@@ -350,7 +350,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .patch('invoice/' + invoiceId)
+                    .patch('invoices/' + invoiceId)
                     .send(body)
                     .set('type', 'sales')
                     .expect(200)
@@ -369,18 +369,18 @@ describe('Invoice Specs', function () {
                     });
             });
 
-            it('should fail patch invoice', function (done) {
+            it('should fail patch invoices', function (done) {
                 var body = {};
 
                 aggent
-                    .patch('invoice/123cba')
+                    .patch('invoices/123cba')
                     .send(body)
                     .set('type', 'sales')
                     .expect(400, done);
 
             });
 
-            it('should update invoice', function (done) {
+            it('should update invoices', function (done) {
                 var body = {
                     supplier         : CONSTANTS.SUPPLIER,
                     project          : CONSTANTS.PROJECT,
@@ -435,7 +435,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .put('invoice/' + invoiceId)
+                    .put('invoices/' + invoiceId)
                     .send(body)
                     .set('type', 'sales')
                     .expect(200)
@@ -465,7 +465,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .get('invoice/')
+                    .get('invoices/')
                     .query(query)
                     .expect(200)
                     .end(function (err, res) {
@@ -510,7 +510,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .get('invoice/')
+                    .get('invoices/')
                     .query(query)
                     .expect(400, done);
             });
@@ -523,7 +523,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .get('invoice/')
+                    .get('invoices/')
                     .query(query)
                     // .query({'filter[project][value][0]': CONSTANTS.PROJECT})
                     .expect(200)
@@ -589,23 +589,23 @@ describe('Invoice Specs', function () {
                     });
             });
 
-            it('should delete invoice', function (done) {
+            it('should delete invoices', function (done) {
                 aggent
-                    .delete('invoice/' + invoiceId)
+                    .delete('invoices/' + invoiceId)
                     .set('type', 'sales')
                     .expect(200, done);
             });
 
-            it('should fail delete invoice', function (done) {
+            it('should fail delete invoices', function (done) {
                 aggent
-                    .delete('invoice/123cba')
+                    .delete('invoices/123cba')
                     .set('type', 'sales')
                     .expect(400, done);
             });
 
             it('should delete quotation', function (done) {
                 aggent
-                    .delete('quotation/' + quotationBody._id)
+                    .delete('quotations/' + quotationBody._id)
                     .set('type', 'sales')
                     .expect(200, done);
             });
@@ -614,7 +614,7 @@ describe('Invoice Specs', function () {
         describe('Invoice creating', function () {
             var id;
 
-            it('should create Invoice', function (done) {
+            it('should create invoices', function (done) {
 
                 var body = {
                     account              : null,
@@ -658,7 +658,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .post('invoice')
+                    .post('invoices')
                     .send(body)
                     .expect(201)
                     .end(function (err, res) {
@@ -693,7 +693,7 @@ describe('Invoice Specs', function () {
                     });
             });
 
-            it('should patch invoice', function (done) {
+            it('should patch invoices', function (done) {
                 var body = {
                     dueDate : '10 Feb, 2016',
                     currency: {
@@ -703,7 +703,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .patch('invoice/' + id)
+                    .patch('invoices/' + id)
                     .send(body)
                     .set('type', 'purchase')
                     .expect(200)
@@ -725,7 +725,7 @@ describe('Invoice Specs', function () {
                     });
             });
 
-            it('should update invoice', function (done) {
+            it('should update invoices', function (done) {
                 var body = {
                     account       : null,
                     fiscalPosition: null,
@@ -768,7 +768,7 @@ describe('Invoice Specs', function () {
                 };
 
                 aggent
-                    .put('invoice/' + id)
+                    .put('invoices/' + id)
                     .send(body)
                     .set('type', 'purchase')
                     .expect(200)
@@ -790,19 +790,19 @@ describe('Invoice Specs', function () {
                     });
             });
 
-            it('should fail update invoice', function (done) {
+            it('should fail update invoices', function (done) {
                 var body = {};
 
                 aggent
-                    .put('invoice/123cba')
+                    .put('invoices/123cba')
                     .send(body)
                     .set('type', 'purchase')
                     .expect(400, done);
             });
 
-            it('should delete invoice', function (done) {
+            it('should delete invoices', function (done) {
                 aggent
-                    .delete('invoice/' + id)
+                    .delete('invoices/' + id)
                     .set('type', 'purchase')
                     .expect(200, done);
             });
@@ -831,7 +831,7 @@ describe('Invoice Specs', function () {
                 .expect(302, done);
         });
 
-        it('should fail create Invoice', function (done) {
+        it('should fail create invoices', function (done) {
 
             var body = {
                 account: null,
@@ -878,7 +878,7 @@ describe('Invoice Specs', function () {
             };
 
             aggent
-                .post('invoice')
+                .post('invoices')
                 .send(body)
                 .expect(403, done);
         });
@@ -889,7 +889,7 @@ describe('Invoice Specs', function () {
         it('should fail get Invoices for View', function (done) {
 
             aggent
-                .get('invoice/')
+                .get('invoices/')
                 .expect(404, done);
         });
 
