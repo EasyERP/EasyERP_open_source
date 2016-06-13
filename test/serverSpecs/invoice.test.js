@@ -3,6 +3,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
+var db = 'production';
 
 describe('Invoice Specs', function () {
     'use strict';
@@ -17,7 +18,7 @@ describe('Invoice Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : db
                 })
                 .expect(200, done);
         });
@@ -546,15 +547,7 @@ describe('Invoice Specs', function () {
                             .and.to.have.property('_id')
                             .and.to.have.lengthOf(24);
                         expect(first)
-                            .and.to.have.property('project');
-                        expect(first.project)
-                            .and.to.have.property('_id');
-                        expect(first.project)
-                            .and.to.have.property('name');
-                        expect(first)
                             .and.to.have.property('currency');
-                        expect(first)
-                            .and.to.have.property('dueDate');
                         expect(first)
                             .and.to.have.property('approved');
                         expect(first)
@@ -573,17 +566,30 @@ describe('Invoice Specs', function () {
                             .and.to.have.property('status')
                             .and.to.be.a('string');
                         expect(first)
-                            .and.to.have.property('supplier');
+                            .to.have.property('supplier');
                         expect(first.supplier)
                             .and.to.have.property('name')
                             .and.to.have.property('first')
                             .and.to.be.a('string');
-                        expect(first)
-                            .and.to.have.property('salesPerson');
-                        expect(first.salesPerson)
-                            .and.to.have.property('name')
-                            .and.to.have.property('first')
-                            .and.to.be.a('string');
+
+                        if (first.salesPerson) {
+                            expect(first.salesPerson)
+                                .and.to.have.property('name')
+                                .and.to.have.property('first')
+                                .and.to.be.a('string');
+                            expect(Object.keys(first.salesPerson).length).to.be.equal(2);
+                        }
+
+                        if (first.dueDate) {
+                            expect(Date.parse(first.dueDate)).to.be.a('number');
+                        }
+                        if (first.paymentDate) {
+                            expect(Date.parse(first.paymentDate)).to.be.a('number');
+                        }
+
+                        expect(Object.keys(first).length).to.be.lte(14);
+                        expect(Object.keys(first.workflow).length).to.be.equal(3);
+                        expect(Object.keys(first.supplier).length).to.be.equal(2);
 
                         done();
                     });
@@ -820,7 +826,7 @@ describe('Invoice Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : db
                 })
                 .expect(200, done);
         });
