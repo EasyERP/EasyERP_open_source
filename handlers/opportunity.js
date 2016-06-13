@@ -577,7 +577,9 @@ var Module = function (models, event) {
             var savetoDb = function (data) {
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
+
                     _opportunitie.isOpportunitie = data.isOpportunitie || false;
+
                     if (data.name) {
                         _opportunitie.name = data.name;
                     }
@@ -719,11 +721,7 @@ var Module = function (models, event) {
                     if (data.reffered) {
                         _opportunitie.reffered = data.reffered;
                     }
-                    if (data.uId) {
-                        _opportunitie.createdBy.user = data.uId;
-                        //uId for edited by field on creation
-                        _opportunitie.editedBy.user = data.uId;
-                    }
+
                     if (data.campaign) {
                         _opportunitie.campaign = data.campaign;
                     }
@@ -745,32 +743,38 @@ var Module = function (models, event) {
                         }
                         _opportunitie.social.FB = data.social.FB;
                     }
+
+                    _opportunitie.createdBy.user = req.session.uId;
+                    //uId for edited by field on creation
+                    _opportunitie.editedBy.user = req.session.uId;
+
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                         _opportunitie.sequence = sequence;
                         _opportunitie.save(function (err, result) {
                             var historyOptions;
                             if (err) {
                                 return next(err);
-                            } else {
-                                historyOptions = {
-                                    contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                                    data       : data,
-                                    req        : req,
-                                    contentId  : result._id
-                                };
-
-                                historyWriter.addEntry(historyOptions);
-
-                                res.status(201).send({
-                                    success: 'A new Opportunities create success',
-                                    id     : result._id
-                                });
-
-                                // send email to _opportunitie.salesPerson
-                                if (_opportunitie.salesPerson) {
-                                    sendEmailToAssigned(req, _opportunitie);
-                                }
                             }
+
+                            historyOptions = {
+                                contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                                data       : data,
+                                req        : req,
+                                contentId  : result._id
+                            };
+
+                            historyWriter.addEntry(historyOptions);
+
+                            res.status(201).send({
+                                success: 'A new Opportunities create success',
+                                id     : result._id
+                            });
+
+                            // send email to _opportunitie.salesPerson
+                            if (_opportunitie.salesPerson) {
+                                sendEmailToAssigned(req, _opportunitie);
+                            }
+
                         });
                     });
                 } catch (error) {
@@ -2228,42 +2232,45 @@ var Module = function (models, event) {
                 $unwind: '$root'
             }, {
                 $project: {
-                    _id             : '$root._id',
-                    contactName     : '$root.contactName',
-                    customer        : '$root.customer',
-                    salesPerson     : '$root.salesPerson',
-                    workflow        : '$root.workflow',
-                    'createdBy.user': '$root.createdBy.user.login',
-                    'editedBy.user' : '$root.editedBy.user.login',
-                    'createdBy.date': '$root.createdBy.date',
-                    'editedBy.date' : '$root.editedBy.date',
-                    creationDate    : '$root.creationDate',
-                    isOpportunitie  : '$root.isOpportunitie',
-                    name            : '$root.name',
-                    expectedRevenue : '$root.expectedRevenue',
-                    attachments     : '$root.attachments',
-                    notes           : '$root.notes',
-                    convertedDate   : '$root.convertedDate',
-                    isConverted     : '$root.isConverted',
-                    source          : '$root.source',
-                    campaign        : '$root.campaign',
-                    sequence        : '$root.sequence',
-                    reffered        : '$root.reffered',
-                    optout          : '$root.optout',
-                    active          : '$root.active',
-                    color           : '$root.color',
-                    categories      : '$root.categories',
-                    priority        : '$root.priority',
-                    expectedClosing : '$root.expectedClosing',
-                    nextAction      : '$root.nextAction',
-                    internalNotes   : '$root.internalNotes',
-                    phones          : '$root.phones',
-                    email           : '$root.email',
-                    address         : '$root.address',
-                    company         : '$root.company',
-                    skype           : '$root.skype',
-                    social          : '$root.social',
-                    total           : 1
+                    _id               : '$root._id',
+                    contactName       : '$root.contactName',
+                    customer          : '$root.customer',
+                    'salesPerson._id' : '$root.salesPerson._id',
+                    'salesPerson.name': '$root.salesPerson.name',
+                    'workflow._id'    : '$root.workflow._id',
+                    'workflow.name'   : '$root.workflow.name',
+                    'workflow.status' : '$root.workflow.status',
+                    'createdBy.user'  : '$root.createdBy.user.login',
+                    'editedBy.user'   : '$root.editedBy.user.login',
+                    'createdBy.date'  : '$root.createdBy.date',
+                    'editedBy.date'   : '$root.editedBy.date',
+                    creationDate      : '$root.creationDate',
+                    isOpportunitie    : '$root.isOpportunitie',
+                    name              : '$root.name',
+                    expectedRevenue   : '$root.expectedRevenue',
+                    attachments       : '$root.attachments',
+                    notes             : '$root.notes',
+                    convertedDate     : '$root.convertedDate',
+                    isConverted       : '$root.isConverted',
+                    source            : '$root.source',
+                    campaign          : '$root.campaign',
+                    sequence          : '$root.sequence',
+                    reffered          : '$root.reffered',
+                    optout            : '$root.optout',
+                    active            : '$root.active',
+                    color             : '$root.color',
+                    categories        : '$root.categories',
+                    priority          : '$root.priority',
+                    expectedClosing   : '$root.expectedClosing',
+                    nextAction        : '$root.nextAction',
+                    internalNotes     : '$root.internalNotes',
+                    phones            : '$root.phones',
+                    email             : '$root.email',
+                    address           : '$root.address',
+                    company           : '$root.company',
+                    skype             : '$root.skype',
+                    social            : '$root.social',
+                    total             : 1
 
                 }
             });
@@ -2387,6 +2394,7 @@ var Module = function (models, event) {
 
         if (data && data.filter) {
             optionsObject.$and.push(filterObj);
+
         }
 
         caseFilter(filter, or);

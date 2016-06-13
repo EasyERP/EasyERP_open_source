@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'production';
+var dbId = 'pavlodb';
 var admin = {
     login: 'admin',
     pass : 'tm2016',
@@ -40,7 +40,8 @@ describe('Opportunity Specs', function () {
 
         it('should create opportunity', function (done) {
             var body = {
-                name: 'Subject'
+                name: 'Subject',
+                workflow: '528cdf1cf3f67bc40b00000b'
             };
 
             aggent
@@ -186,7 +187,7 @@ describe('Opportunity Specs', function () {
                     expect(body.data)
                         .to.be.instanceOf(Array);
 
-                    first = body.data[1];
+                    first = body.data[0];
 
                     expect(first)
                         .and.to.have.property('_id')
@@ -270,7 +271,7 @@ describe('Opportunity Specs', function () {
         it('should get opportunity for viewType kanban', function (done) {
 
             var query = {
-                workflowId: '528ce5e3f3f67bc40b000018',
+                workflowId: '528cdf1cf3f67bc40b00000b',
                 viewType  : 'kanban'
             };
 
