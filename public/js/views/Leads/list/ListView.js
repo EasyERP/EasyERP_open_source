@@ -7,6 +7,7 @@ define([
     'views/Leads/CreateView',
     'views/Leads/list/ListItemView',
     'views/Leads/EditView',
+    'views/Filter/filterView',
     'models/LeadsModel',
     'collections/Leads/filterCollection',
     'common',
@@ -19,6 +20,7 @@ define([
              CreateView,
              ListItemView,
              EditView,
+             FilterView,
              CurrentModel,
              contentCollection,
              common,
@@ -26,17 +28,20 @@ define([
     'use strict';
 
     var LeadsListView = listViewBase.extend({
-        listTemplate     : listTemplate,
-        ListItemView     : ListItemView,
-        contentCollection: contentCollection,
-        formUrl          : '#easyErp/Leads/form/',
-        contentType      : CONSTANTS.LEADS,
+        createView              : CreateView,
+        listTemplate            : listTemplate,
+        ListItemView            : ListItemView,
+        contentCollection       : contentCollection,
+        FilterView              : FilterView,
+        totalCollectionLengthUrl: '/leads/totalCollectionLength',
+        formUrl                 : '#easyErp/Leads/form/',
+        contentType             : CONSTANTS.LEADS,
 
         events: {
-            'click .stageSelect'         : 'showNewSelect',
-            'click .newSelectList li'    : 'chooseOption',
-            // 'click .list td:not(.notForm, .checkbox)': 'goToEditDialog',
-            'click #convertToOpportunity': 'openDialog'
+            'click .stageSelect'          : 'showNewSelect',
+            'click .newSelectList li'     : 'chooseOption',
+            'click .list td:not(.notForm)': 'goToEditDialog',
+            'click #convertToOpportunity' : 'openDialog'
         },
 
         initialize: function (options) {
@@ -112,7 +117,7 @@ define([
             });
 
             $currentEl.append(itemView.render());
-
+            
             this.renderFilter();
 
             this.renderPagination($currentEl, this);
@@ -133,7 +138,7 @@ define([
             return false;
         },
 
-        gotoForm: function (e) {
+        goToEditDialog: function (e) {
             var id;
             var currentModel;
 

@@ -5,7 +5,7 @@
     'views/thumbnailsViewBase',
     'views/Employees/EditView',
     'views/Employees/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'dataService',
     'models/EmployeesModel',
     'common',

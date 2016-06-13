@@ -8,6 +8,7 @@ define([
     'views/Opportunities/EditView',
     'models/OpportunitiesModel',
     'collections/Opportunities/filterCollection',
+    'views/Filter/filterView',
     'common',
     'dataService',
     'text!templates/stages.html'
@@ -18,24 +19,26 @@ define([
              CreateView,
              ListItemView,
              EditView,
-             CurrentModel,
+             currentModel,
              contentCollection,
+             FilterView,
              common,
              dataService,
              stagesTemplate) {
     'use strict';
 
     var OpportunitiesListView = ListViewBase.extend({
-        CreateView       : CreateView,
-        listTemplate     : listTemplate,
-        ListItemView     : ListItemView,
-        contentCollection: contentCollection,
-        formUrl          : '#easyErp/Opportunities/form/',
-        contentType      : 'Opportunities', // needs in view.prototype.changeLocationHash
+        CreateView              : CreateView,
+        listTemplate            : listTemplate,
+        ListItemView            : ListItemView,
+        contentCollection       : contentCollection,
+        FilterView              : FilterView,
+        totalCollectionLengthUrl: '/opportunities/totalCollectionLength',
+        formUrl                 : '#easyErp/Opportunities/form/',
+        contentType             : 'Opportunities', // needs in view.prototype.changeLocationHash
 
         initialize: function (options) {
             $(document).off('click');
-
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
@@ -52,25 +55,25 @@ define([
         },
 
         events: {
-            'click .stageSelect'                     : 'showNewSelect',
-            'click .newSelectList li'                : 'chooseOption'
+            'click .list td:not(.notForm)': 'goToEditDialog',
+            'click .stageSelect'          : 'showNewSelect',
+            'click .newSelectList li'     : 'chooseOption'
         },
 
         chooseOption: function (e) {
             var self = this;
-            var $target = $(e.target);
-            var targetElement = $target.parents('td');
+            var targetElement = $(e.target).parents('td');
             var id = targetElement.attr('id');
             var obj = this.collection.get(id);
 
             obj.save({
-                workflow     : $target.attr('id'),
+                workflow     : $(e.target).attr('id'),
                 workflowStart: targetElement.find('.stageSelect').attr('data-id'),
                 sequence     : -1,
                 sequenceStart: targetElement.attr('data-sequence')
             }, {
                 headers: {
-                    mid: 25
+                    mid: 39
                 },
                 patch  : true,
                 success: function () {
@@ -128,7 +131,7 @@ define([
             });
 
             $currentEl.append(itemView.render());
-
+            
             this.renderFilter();
 
             this.renderPagination($currentEl, this);
@@ -136,9 +139,9 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        gotoForm: function (e) {
+        goToEditDialog: function (e) {
             var id = $(e.target).closest('tr').data('id');
-            var model = new CurrentModel({validate: false});
+            var model = new currentModel({validate: false});
 
             e.preventDefault();
 
@@ -150,7 +153,7 @@ define([
                 },
 
                 success: function (model) {
-                    return new EditView({model: model});
+                    new EditView({model: model});
                 },
 
                 error: function () {

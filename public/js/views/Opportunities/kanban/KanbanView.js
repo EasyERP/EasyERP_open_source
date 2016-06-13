@@ -11,7 +11,7 @@
     'collections/Opportunities/OpportunitiesCollection',
     'models/OpportunitiesModel',
     'dataService',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/Opportunities/filterCollection',
     'constants',
     'helpers',

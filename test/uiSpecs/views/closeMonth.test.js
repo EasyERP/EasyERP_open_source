@@ -5,7 +5,7 @@ define([
     'views/main/MainView',
     'views/closeMonth/list/ListView',
     'views/closeMonth/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'views/PayrollExpenses/generate/GenerateView',
     'jQuery',
     'chai',

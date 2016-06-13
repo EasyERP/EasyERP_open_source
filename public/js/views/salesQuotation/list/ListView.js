@@ -9,7 +9,7 @@ define([
     'views/salesQuotation/EditView',
     'models/QuotationModel',
     'collections/salesQuotation/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'dataService',
     'constants',
     'helpers'

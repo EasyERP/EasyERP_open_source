@@ -10,7 +10,7 @@ define([
     'models/InvoiceModel',
     'views/salesProforma/list/ListItemView',
     'collections/salesProforma/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'dataService',
     'helpers',

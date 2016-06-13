@@ -4,7 +4,7 @@ define([
     'views/listViewBase',
     'text!templates/inventoryReport/list/ListHeader.html',
     'views/inventoryReport/list/ListItemView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/inventoryReport/filterCollection',
     'constants',
     'helpers',

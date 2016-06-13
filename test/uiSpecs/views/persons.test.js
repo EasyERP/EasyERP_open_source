@@ -12,7 +12,7 @@ define([
     'views/Persons/form/FormView',
     'views/Persons/list/ListView',
     'views/Persons/thumbnails/ThumbnailsView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

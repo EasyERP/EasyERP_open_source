@@ -9,7 +9,7 @@ define([
     'collections/JobPositions/filterCollection',
     'models/JobPositionsModel',
     'views/JobPositions/EditView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'text!templates/stages.html'
 ], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, FilterView, common, stagesTamplate) {

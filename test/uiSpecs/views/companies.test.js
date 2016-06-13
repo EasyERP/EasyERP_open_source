@@ -4,7 +4,7 @@ define([
     'text!fixtures/index.html',
     'models/CompaniesModel',
     'collections/Companies/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'views/main/MainView',
     'views/Companies/TopBarView',
     'views/Companies/CreateView',

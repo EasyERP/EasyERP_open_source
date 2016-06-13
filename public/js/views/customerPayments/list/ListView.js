@@ -6,7 +6,7 @@ define([
     'text!templates/customerPayments/list/ListHeader.html',
     'text!templates/customerPayments/list/cancelTemplate.html',
     'views/customerPayments/list/ListItemView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'views/customerPayments/EditView',
     'collections/customerPayments/filterCollection',
     'collections/customerPayments/editCollection',
