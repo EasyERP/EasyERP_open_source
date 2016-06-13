@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Leads/CreateTemplate.html',
-    'views/dialogViewBAse',
+    'views/dialogViewBase',
     'models/LeadsModel',
     'common',
     'populate',

@@ -15,7 +15,7 @@ define([
         'populate',
         'constants',
         'helpers'
-    ], function (Backbone, $, _, EditTemplate, AssigneesView, attachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    ], function (Backbone, $, _, EditTemplate, AssigneesView, AttachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -670,9 +670,9 @@ define([
 
                 notDiv = this.$el.find('#attach-container');
                 notDiv.append(
-                    new attachView({
+                    new AttachView({
                         model: this.currentModel,
-                        url  : '/uploadInvoiceFiles'
+                        contentType: 'Proforma'
                     }).render().el
                 );
 

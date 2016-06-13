@@ -35,6 +35,9 @@ var Module = function (models, event) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
+    var path = require('path');
+    var Uploader = require('../services/fileStorage/index');
+    var uploader = new Uploader();
 
     oxr.set({app_id: process.env.OXR_APP_ID});
 
@@ -453,7 +456,7 @@ var Module = function (models, event) {
 
     };
 
-    function uploadFileArray(req, res, callback) {
+/*    function uploadFileArray(req, res, callback) {
         var files = [];
         var path;
         var os = require('os');
@@ -551,9 +554,9 @@ var Module = function (models, event) {
             });
         });
 
-    }
+    }*/
 
-    this.attach = function (req, res, next) {
+   /* this.attach = function (req, res, next) {
         var os = require('os');
         var osType = (os.type().split('_')[0]);
         var dir;
@@ -610,7 +613,42 @@ var Module = function (models, event) {
                 res.send(200, {success: 'Order update success', data: response});
             }
         });
-    }
+    }*/
+
+    this.uploadFile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var headers = req.headers;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'invoice';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
+
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
+
+            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Invoice updated success', data: response});
+            });
+        });
+    };
+
 
     this.updateOnlySelected = function (req, res, next) {
         var db = req.session.lastDb;

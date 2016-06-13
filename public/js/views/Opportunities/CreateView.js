@@ -132,7 +132,7 @@ define([
                     },
                     wait   : true,
                     success: function (model) {
-                        var currentModel = model.changed.success;
+                        var currentModel = model.changed;
 
                         self.attachView.sendToServer(null, currentModel);
                     },
@@ -176,9 +176,8 @@ define([
 
             this.attachView = new AttachView({
                 model    : model,
-                url      : '/uploadOpportunitiesFiles',
-                isCreate : true,
-                elementId: this.elementId
+                contentType: self.contentType,
+                isCreate   : true
             });
 
             notDiv.append(this.attachView.render().el);
