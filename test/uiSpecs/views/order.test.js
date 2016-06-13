@@ -31,7 +31,7 @@ define([
                 wName       : "order",
                 source      : "purchase",
                 targetSource: [
-                    "Quotations"
+                    "quotation"
                 ],
                 visible     : true
             },
