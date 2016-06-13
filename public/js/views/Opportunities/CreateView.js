@@ -148,6 +148,7 @@ define([
             var formString = this.template();
             var self = this;
             var notDiv;
+            var model = new OpportunityModel();
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -174,14 +175,14 @@ define([
             notDiv = this.$el.find('.attach-container');
 
             this.attachView = new AttachView({
-                model    : new OpportunityModel(),
+                model    : model,
                 url      : '/uploadOpportunitiesFiles',
                 isCreate : true,
                 elementId: this.elementId
             });
 
             notDiv.append(this.attachView.render().el);
-            this.renderAssignees(this.model);
+            this.renderAssignees(model);
 
             $('#nextActionDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});

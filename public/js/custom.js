@@ -366,7 +366,7 @@ define([
         var keys;
         var savedFilters;
 
-        dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
+        dataService.getData(CONTENT_TYPES.URLS.CURRENT_USER, null, function (response) {
             if (response && !response.error) {
                 App.currentUser = response.user;
                 App.savedFilters = response.savedFilters;

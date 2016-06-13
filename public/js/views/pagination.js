@@ -60,10 +60,11 @@ define([
             var $thisEl = this.$el;
             var $topBar = $('#top-bar');
             var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
+            var notRemovable = $thisEl.find('.notRemovable');
             var $checkAll = $thisEl.find('#checkAll');
             var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
             var isCheckedAll = $currentChecked.attr('id') === 'checkAll';
-            var checkAllBool = ($checkBoxes.length === this.collection.length);
+            var checkAllBool = (($checkBoxes.length + notRemovable.length) === this.collection.length);
             var $deleteButton = $topBar.find('#top-bar-deleteBtn');
             var $createButton = $topBar.find('#top-bar-createBtn');
             var $copyButton = $topBar.find('#top-bar-copyBtn');

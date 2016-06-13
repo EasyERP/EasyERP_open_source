@@ -2282,9 +2282,9 @@ var Module = function (models, event) {
             }
 
             aggregateQuery.push({
-                $skip: (data.page - 1) * data.count
+                $skip: skip
             }, {
-                $limit: parseInt(data.count, 10)
+                $limit: limit
             });
 
             query.aggregate(aggregateQuery).exec(waterfallCallback);
@@ -2376,7 +2376,7 @@ var Module = function (models, event) {
         var filterObj = {};
         var optionsObject = {};
         var data = req.query;
-        var filter = data.filter;
+        var filter = data.filter || {};
         var query;
 
         optionsObject.$and = [];
@@ -2387,9 +2387,9 @@ var Module = function (models, event) {
 
         if (data && data.filter) {
             optionsObject.$and.push(filterObj);
-        }
 
-        caseFilter(filter, or);
+            caseFilter(filter, or);
+        }
 
         if (!or.length) {
             delete filterObj.$or;
