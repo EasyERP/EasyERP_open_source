@@ -103,12 +103,12 @@ define([
                     if (response && !response.error) {
                         App.currentUser = response.user;
                         App.savedFilters = response.savedFilters;
-                    } else {
+                    } /*else {
                         App.render({
                             type   : 'error',
                             message: 'can\'t fetch currentUser'
                         });
-                    }
+                    }*/
                 });
             }
         },

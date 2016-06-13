@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 13.07.2015.
- */
 module.exports = {
     HR_DEPARTMENT_ID       : '55b79342b370f8642a0013b5',
     BUSINESS_DEPARTMENT_ID : '55b79342b370f8642a0013b4',

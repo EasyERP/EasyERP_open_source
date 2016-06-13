@@ -85,9 +85,9 @@ describe('MonthHours Specs', function () {
 
         it('should patch monthHours', function (done) {
             var body = [{
-                '_id'               : id,
-                'fixedExpense'      : 40,
-                'expenseCoefficient': 2.5
+                _id               : id,
+                fixedExpense      : 40,
+                expenseCoefficient: 2.5
             }];
 
             aggent
@@ -99,7 +99,7 @@ describe('MonthHours Specs', function () {
 
         it('should fail patch monthHours', function (done) {
             var body = [{
-                '_id': '123cba'
+                _id: '123cba'
             }];
 
             aggent
@@ -124,28 +124,6 @@ describe('MonthHours Specs', function () {
                         .to.have.property('data');
                     expect(body)
                         .to.have.property('total');
-
-                    done();
-                });
-        });
-
-        it('should get monthHours length', function (done) {
-
-            aggent
-                .get('monthHours/list/totalCollectionLength')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.gte(1);
 
                     done();
                 });
@@ -241,11 +219,11 @@ describe('MonthHours Specs', function () {
         it('should fail create MonthHours', function (done) {
 
             var body = {
-                'fixedExpense'      : 30,
-                'expenseCoefficient': 5,
-                'year'              : 2015,
-                'hours'             : 172,
-                'month'             : 8
+                fixedExpense      : 30,
+                expenseCoefficient: 5,
+                year              : 2015,
+                hours             : 172,
+                month             : 8
             };
 
             aggent
@@ -254,7 +232,6 @@ describe('MonthHours Specs', function () {
                 .expect(403, done);
         });
     });
-
 
     describe('MonthHours with no authorise', function () {
 

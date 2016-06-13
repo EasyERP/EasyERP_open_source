@@ -1,10 +1,7 @@
-/**
- * Created by liliy on 04.02.2016.
- */
 module.exports = function () {
     'use strict';
     var mongoose = require('mongoose');
-    var fs = require("fs");
+    var fs = require('fs');
 
     function addAtach(res, next, Model, _id, files) {
         Model.findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {

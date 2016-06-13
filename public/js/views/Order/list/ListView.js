@@ -18,18 +18,15 @@ define([
 ], function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, FilterView, common, dataService, helpers, CONSTANTS) {
     'use strict';
     var OrdersListView = listViewBase.extend({
-        createView              : createView,
-        FilterView              : FilterView,
-        listTemplate            : listTemplate,
-        listItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        totalCollectionLengthUrl: '/order/totalCollectionLength',
-        contentType             : 'Order',
+        CreateView       : createView,
+        FilterView       : FilterView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        contentType      : 'Order',
 
         events: {
-            "click .stageSelect"                : "showNewSelect",
-            "click .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .newSelectList li"           : "chooseOption"
+            'click .list tbody td:not(.notForm)': 'goToEditDialog'
         },
 
         initialize: function (options) {
@@ -49,7 +46,6 @@ define([
 
             this.render();
 
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
 
@@ -69,16 +65,17 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target$ = $(e.target);
-            var targetElement = target$.parents("td");
-            var id = targetElement.attr("id");
+            var targetElement = target$.parents('td');
+            var id = targetElement.attr('id');
             var model = this.collection.get(id);
 
             model.save({
-                workflow: target$.attr("id")
+                workflow: target$.attr('id')
             }, {
-                headers : {
+                headers: {
                     mid: 55
                 },
+
                 patch   : true,
                 validate: false,
                 success : function () {
@@ -91,7 +88,7 @@ define([
         },
 
         showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
+            if ($('.newSelectList').is(':visible')) {
                 this.hideNewSelect();
                 return false;
             }
@@ -101,7 +98,7 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").remove();
+            $('.newSelectList').remove();
         },
 
         render: function () {
@@ -119,12 +116,12 @@ define([
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
-            $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
+            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 4}).render());
 
             this.renderPagination($currentEl, this);
             this.renderFilter();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Purchase Order',
@@ -137,12 +134,12 @@ define([
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
-
             var tr = $(e.target).closest('tr');
-            var id = tr.data("id");
+            var id = tr.data('id');
             var notEditable = tr.hasClass('notEditable');
             var model = new QuotationModel({validate: false});
+
+            e.preventDefault();
 
             if (notEditable) {
                 return false;
@@ -152,12 +149,13 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
                         type   : 'error',
-                        message: "Please refresh browser"
+                        message: 'Please refresh browser'
                     });
                 }
             });

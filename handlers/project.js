@@ -105,7 +105,7 @@ module.exports = function (models, event) {
                 event.emit('updateProjectDetails', {req: req, _id: result._id});
             }
 
-            event.emit('recollectProjectInfo');
+            // event.emit('recollectProjectInfo');
             res.status(201).send({success: 'A new Project crate success', result: result, id: result._id});
         });
     };
@@ -177,7 +177,8 @@ module.exports = function (models, event) {
             if (project._id) {
                 event.emit('updateProjectDetails', {req: req, _id: project._id});
             }
-            event.emit('recollectProjectInfo');
+
+            // event.emit('recollectProjectInfo');
             res.status(200).send(project);
         });
     };
@@ -198,7 +199,7 @@ module.exports = function (models, event) {
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
-        var sort = data.sort || {_id: 1};
+        var sort = data.sort || {'createdBy.date': -1};
         var viewType = data.viewType;
         var optionsObject = {};
         var filter = data.filter || {};

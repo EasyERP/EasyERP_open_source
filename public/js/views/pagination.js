@@ -6,24 +6,28 @@ define([
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
     'common',
-    'dataService'
-], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, dataService) {
+    'async',
+    'dataService',
+    'helpers'
+], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, async, dataService, helpers) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
         FilterView: FilterView,
 
         events: {
-            'click .oe_sortable'   : 'goSort',
-            'click #checkAll'      : 'checkAll',
-            'click td.notRemovable': 'onDisabledClick',
-            click                  : 'hide'
+            'click .oe_sortable'       : 'goSort',
+            'click #checkAll'          : 'checkAll',
+            'click td.notRemovable'    : 'onDisabledClick',
+            'click .letter:not(.empty)': 'alpabeticalRender',
+            click                      : 'hide'
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
             $('#top-bar-deleteBtn').hide();
             $('#top-bar-generateBtn').hide();
             $('#top-bar-copyBtn').hide();
+            $('#top-bar-createBtn').show();
 
             this.$el.find('#checkAll').prop('checked', false);
         },
@@ -57,37 +61,50 @@ define([
             var $thisEl = this.$el;
             var $topBar = $('#top-bar');
             var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
+            var notRemovable = $thisEl.find('.notRemovable');
+            var $checkAll = $thisEl.find('#checkAll');
             var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
-            var checkAllBool = ($checkBoxes.length === this.collection.length);
+            var isCheckedAll = $currentChecked.attr('id') === 'checkAll';
+            var checkAllBool = (($checkBoxes.length + notRemovable.length) === this.collection.length);
             var $deleteButton = $topBar.find('#top-bar-deleteBtn');
             var $createButton = $topBar.find('#top-bar-createBtn');
+            var $copyButton = $topBar.find('#top-bar-copyBtn');
+            var $saveButton = $topBar.find('#top-bar-saveBtn');
+            var spesialContentTypes = ['wTrack'];
+            var contentType = this.contentType;
+            var changedRows;
+
+            changedRows = this.changedModels ? Object.keys(this.changedModels) : null;
 
             if (e) {
                 e.stopPropagation();
             }
 
-            if ($currentChecked.attr('id') !== 'checkAll') {
-                if (checkAllBool) {
-                    this.$el.find('#checkAll').prop('checked', true);
-                } else {
-                    this.$el.find('#checkAll').prop('checked', false);
-                }
+            $checkAll.prop('checked', checkAllBool);
 
-            }
-
-            if ($checkBoxes.length > 0) {
+            if ((!isCheckedAll && $checkBoxes.length) || (isCheckedAll && !checkAllBool)) {
                 $deleteButton.show();
+                $copyButton.show();
                 $createButton.hide();
             } else {
                 $deleteButton.hide();
+                $copyButton.hide();
                 $createButton.show();
             }
 
-            this.trigger('selectedElementsChanged', {
-                length  : $checkBoxes.length,
-                $element: $currentChecked,
-                checkAll: checkAllBool
-            });
+            if (contentType && spesialContentTypes.indexOf(contentType) !== -1) {
+                if (changedRows && changedRows.length) {
+                    $saveButton.show();
+                } else {
+                    $saveButton.hide();
+                }
+            }
+
+            /* this.trigger('selectedElementsChanged', {
+             length  : $checkBoxes.length,
+             $element: $currentChecked,
+             checkAll: checkAllBool
+             }); */
 
             if (typeof(this.setAllTotalVals) === 'function') {   // added in case of existing setAllTotalVals in View
                 this.setAllTotalVals();
@@ -113,6 +130,10 @@ define([
                     type   : 'notify',
                     message: 'Please, save previous changes or cancel them!'
                 });
+            }
+
+            if (this.editCollection) {
+                this.editCollection.reset();
             }
 
             target$ = $(e.target).closest('th');
@@ -606,8 +627,18 @@ define([
             var url = collection.url;
             var $checkedInputs;
             var ids = [];
+            var answer;
 
-            // todo add cancelChanges ----- & call this.cancelChanges method
+            if (this.changed) {
+                return this.cancelChanges();
+            }
+
+            answer = confirm('Really DELETE items ?!');
+
+            if (answer === false) {
+                return false;
+            }
+
             $checkedInputs = $table.find('input:checked');
 
             $.each($checkedInputs, function () {
@@ -631,69 +662,69 @@ define([
         },
 
         cancelChanges: function () {
-            var $cachedEl = this.$cachedContentHolder;
+            var self = this;
+            var $copyButton = $('#top-bar-copyBtn');
+            var edited = this.edited;
+            var collection = this.collection || new Backbone.Collection();
+            var template = _.template(this.cancelEdit);
+            var copiedCreated;
+            var dataId;
+            var enable;
 
-            if ($cachedEl.length) {
-                this.$el.html($cachedEl);
+            async.each(edited, function (el, cb) {
+                var $tr = $(el).closest('tr');
+                var rowNumber = $tr.find('[data-content="number"]').text();
+                var id = $tr.attr('data-id');
+                var model;
+
+                if (!id) {
+                    return cb('Empty id');
+                } else if (id.length < 24) {
+                    $tr.remove();
+                    model = self.changedModels;
+
+                    if (model) {
+                        delete model[id];
+                    }
+
+                    return cb();
+                }
+
+                model = collection.get(id);
+                model = model.toJSON();
+                model.startNumber = rowNumber;
+                enable = model && model.workflow && model.workflow.name !== 'Closed';
+
+                $tr.replaceWith(template({model: model, enable: enable, currencySplitter: helpers.currencySplitter}));
+
+                cb();
+            }, function (err) {
+                if (!err) {
+                    self.bindingEventsToEditedCollection(self);
+                    self.hideSaveCancelBtns();
+                    $copyButton.hide();
+                }
+            });
+
+            if (this.createdCopied) {
+                copiedCreated = this.$el.find('.false');
+                copiedCreated.each(function () {
+                    dataId = $(this).attr('data-id');
+                    self.editCollection.remove(dataId);
+
+                    delete self.changedModels[dataId];
+
+                    $(this).remove();
+                });
+
+                this.createdCopied = false;
             }
-            /* var self = this;
-             var edited = this.edited;
-             var collection = this.collection || new Backbone.Collection();
-             var editedCollectin = this.editCollection;
-             var copiedCreated;
-             var dataId;
-             var enable;
 
-             async.each(edited, function (el, cb) {
-             var tr = $(el).closest('tr');
-             var rowNumber = tr.find('[data-content="number"]').text();
-             var id = tr.attr('data-id');
-             var template = _.template(cancelEdit);
-             var model;
+            self.changedModels = {};
 
-             if (!id) {
-             return cb('Empty id');
-             } else if (id.length < 24) {
-             tr.remove();
-             model = self.changedModels;
-
-             if (model) {
-             delete model[id];
-             }
-
-             return cb();
-             }
-
-             model = collection.get(id);
-             model = model.toJSON();
-             model.startNumber = rowNumber;
-             enable = model && model.workflow.name !== 'Closed' ? true : false;
-             tr.replaceWith(template({model: model, enable: enable}));
-             cb();
-             }, function (err) {
-             if (!err) {
-             /!*self.editCollection = new EditCollection(collection.toJSON());*!/
-             self.bindingEventsToEditedCollection(self);
-             self.hideSaveCancelBtns();
-             self.copyEl.hide();
-             }
-             });
-
-             if (this.createdCopied) {
-             copiedCreated = this.$el.find('.false');
-             // this.hideOvertime();
-             copiedCreated.each(function () {
-             dataId = $(this).attr('data-id');
-             self.editCollection.remove(dataId);
-             delete self.changedModels[dataId];
-             $(this).remove();
-             });
-
-             this.createdCopied = false;
-             }
-
-             self.changedModels = {};
-             self.responseObj['#jobs'] = [];*/
+            if (self.responseObj && self.responseObj['#jobs']) {
+                self.responseObj['#jobs'] = [];
+            }
         },
 
         showSaveCancelBtns: function () {
@@ -814,6 +845,10 @@ define([
                     for (i = 1; i <= pageNumber; i++) {
                         $pageList.append('<li class="showPage">' + i + '</li>');
                     }
+                } else if (currentPage >= 5 && currentPage <= itemsOnPage) {
+                    for (i = currentPage - 3; i <= currentPage + 3; i++) {
+                        $pageList.append('<li class="showPage">' + i + '</li>');
+                    }
                 } else if (pageNumber >= itemsOnPage && currentPage <= itemsOnPage) {
                     for (i = 1; i <= itemsOnPage; i++) {
                         $pageList.append('<li class="showPage">' + i + '</li>');
@@ -849,7 +884,7 @@ define([
 
             $curPageInput.val(currentPage);
 
-            this.checkAll();
+            $thisEl.find('#checkAll').attr('checked', false);
             this.hideDeleteBtnAndUnSelectCheckAll();
         },
 

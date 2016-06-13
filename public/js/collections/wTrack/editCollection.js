@@ -1,9 +1,8 @@
 ﻿define([
-        'Backbone',
-        './filterCollection'
-    ],
-    function (Backbone, ParrantCollection) {
-        'use strict';
+    'Backbone',
+    './filterCollection'
+], function (Backbone, ParrantCollection) {
+    'use strict';
 
     var EditableColection = ParrantCollection.extend({
 
@@ -23,6 +22,7 @@
             var cid;
             var saveObject;
             var options;
+            var i;
 
             var syncObject = {
                 trigger: this.trigger,
@@ -38,7 +38,7 @@
                 }
             };
 
-            for (var i = this.models.length - 1; i >= 0; i--) {
+            for (i = this.models.length - 1; i >= 0; i--) {
                 model = this.models[i];
 
                 if (model && model.id && model.hasChanged()) {
@@ -56,15 +56,16 @@
                     saveObject = {
                         trigger: this.trigger,
                         url    : this.url,
-                        toJSON : function () {
+
+                        toJSON: function () {
                             return newModel;
                         }
                     };
 
                     options = {
-                        success: function thisFunction(model) {
-                            model.cid = thisFunction.cid; // (in case of multi copying)
-                            self.trigger('saved', model);
+                        success: function thisFunction(_model) {
+                            _model.cid = thisFunction.cid; // (in case of multi copying)
+                            self.trigger('saved', _model);
                         }
                     };
 

@@ -34,7 +34,7 @@ define([
             var saveBtnEl = $('#top-bar-saveBtn');
             var cancelBtnEl = $('#top-bar-deleteBtn');
 
-            createBtnEl.hide();
+            createBtnEl.remove();
             saveBtnEl.hide();
             cancelBtnEl.hide();
 

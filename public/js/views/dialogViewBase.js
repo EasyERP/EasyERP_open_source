@@ -17,6 +17,30 @@
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
+        showEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '20px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        hideEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '0px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        showDetailsBox: function (e) {
+            $(e.target).parent().find('.details-box').toggle();
+        },
+
+        toggleDetails: function () {
+            $('#details-dialog').toggle();
+        },
+
         showNewSelect: function (e) {
             var $target = $(e.target);
 
@@ -79,10 +103,10 @@
             var n;
             var dialogHolder;
             var closestEl = $target.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
+            var dataClass = closestEl.data('class') ? '.' + closestEl.data('class') : '';
+            var selector = '.dialog-tabs-items' + dataClass;
+            var itemActiveSelector = '.dialog-tabs-item' + dataClass + '.active';
+            var itemSelector = '.dialog-tabs-item' + dataClass;
 
             closestEl.find('a.active').removeClass('active');
             $target.addClass('active');

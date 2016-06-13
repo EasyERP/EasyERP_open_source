@@ -3,6 +3,8 @@ var router = express.Router();
 var CustomerHandler = require('../handlers/customer');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     'use strict';
@@ -19,6 +21,7 @@ module.exports = function (models, event) {
     router.get('/getCompaniesForDd', handler.getCompaniesForDd);
     router.get('/getCompaniesAlphabet', handler.getCompaniesAlphabet);
     router.get('/:id', handler.getById);
+    router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
     // router.get('/exportToXlsx', handler.exportToXlsx);
     // router.get('/exportToCsv', handler.exportToCsv);
    

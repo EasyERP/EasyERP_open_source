@@ -83,6 +83,8 @@ define([
                     startDate = date.subtract(1, 'year').startOf('year');
                     endDate = moment(startDate).endOf('year');
                     break;
+                default:
+                    break;
             }
 
             this.$el.find('#startDate').datepicker('setDate', new Date(startDate));
@@ -149,14 +151,14 @@ define([
                     defaultDate: startDate,
                     onSelect   : function () {
                         var endDatePicker = self.$endDate;
-                        var endDate;
+                        var endDateValue;
 
                         endDatePicker.datepicker('option', 'minDate', $(this).val());
 
-                        endDate = moment(new Date($(this).val())).endOf('month');
-                        endDate = new Date(endDate);
+                        endDateValue = moment(new Date($(this).val())).endOf('month');
+                        endDateValue = new Date(endDateValue);
 
-                        endDatePicker.datepicker('setDate', endDate);
+                        endDatePicker.datepicker('setDate', endDateValue);
 
                         return false;
                     }

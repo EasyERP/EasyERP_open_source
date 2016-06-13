@@ -64,38 +64,10 @@ define([
         },
 
         events: {
-          /*  'click #tabList a'                                 : 'switchTab',*/
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-           /* keydown                                            : 'keydownHandler',*/
-           /* 'click .dialog-tabs a'                             : 'changeTab',*/
-           /* 'click .current-selected'                          : 'showNewSelect',*/
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-           /* click                                              : 'hideNewSelect',*/
-            'click td.editable'                                : 'editJob'
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click td.editable' : 'editJob'
         },
-
-       /* showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },*/
 
         editJob: function (e) {
             var self = this;
@@ -133,8 +105,6 @@ define([
         },
 
         chooseOption: function (e) {
-            // $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-
             var $target = $(e.target);
             var $td = $target.closest('td');
             var parentUl = $target.parent();
@@ -179,14 +149,6 @@ define([
             }
         },
 
-      /*  hideNewSelect: function () {
-            this.$el.find('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },*/
-
         addAttach: function () {
             var $thisEl = this.$el;
             var s = $thisEl.find('.inputAttach:last').val().split('\\')[$thisEl.find('.inputAttach:last').val().split('\\').length - 1];
@@ -203,80 +165,12 @@ define([
             $(e.target).closest('.attachFile').remove();
         },
 
-       /* updateAssigneesPagination: function (el) {  // unused handler
-            var pag = el.find('.userPagination .text');
-            var i;
-            var list = el.find('ul');
-            var count = list.find('li').length;
-            var s = '';
-            var page = parseInt(list.attr('data-page'), 10);
-
-            el.find('.userPagination .nextUserList').remove();
-            el.find('.userPagination .prevUserList').remove();
-            el.find('.userPagination .nextGroupList').remove();
-            el.find('.userPagination .prevGroupList').remove();
-
-            if (page > 1) {
-                el.find('.userPagination').prepend('<a class="prevUserList" href="javascript:;">« prev</a>');
-            }
-            if (count === 0) {
-                s += '0-0 of 0';
-            } else {
-                if (page * 20 - 1 < count) {
-                    s += ((page - 1) * 20 + 1) + '-' + (page * 20) + ' of ' + count;
-                } else {
-                    s += ((page - 1) * 20 + 1) + '-' + count + ' of ' + count;
-                }
-            }
-
-            if (page < count / 20) {
-                el.find('.userPagination').append('<a class="nextUserList" href="javascript:;">next »</a>');
-            }
-            el.find('ul li').hide();
-            for (i = (page - 1) * 20; i < 20 * page; i++) {
-                el.find('ul li').eq(i).show();
-            }
-
-            pag.text(s);
-        },*/
-
-
-        showEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        hideEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
-
-        },
-
         fileSizeIsAcceptable: function (file) {
             if (!file) {
                 return false;
             }
             return file.size < App.File.MAXSIZE;
         },
-
-      /*  switchTab: function (e) {
-            var link = this.$('#tabList a');
-            var index;
-
-            e.preventDefault();
-
-            if (link.hasClass('selected')) {
-                link.removeClass('selected');
-            }
-
-            index = link.index($(e.target).addClass('selected'));
-            this.$('.tab').hide().eq(index).show();
-        },*/
 
         saveItem: function () {
             var weeklyScheduler;
@@ -297,7 +191,6 @@ define([
             var whoCanRW;
             var sourceId;
             var groupsId;
-          /*  var empThumb;*/
             var dataType;
             var manager;
             var marital;
@@ -321,8 +214,6 @@ define([
                     message: 'Please fill Job tab'
                 });
             }
-
-           // self.hideNewSelect();
 
             employeeModel = new EmployeeModel();
 
@@ -455,8 +346,8 @@ define([
                 headers: {
                     mid: 39
                 },
-                success: function (model) {
 
+                success: function (model) {
                     if (model.get('relatedUser') === App.currentUser._id) {
                         App.currentUser.imageSrc = self.imageSrc;
 
@@ -464,28 +355,10 @@ define([
                         $('#loginPanel #userName').text(model.toJSON().fullName);
                     }
 
-                    /* if (self.firstData === data.name.first &&  // unreached condition
-                        self.lastData === data.name.last &&
-                        self.departmentData === department &&
-                        self.jobPositionData === jobPosition &&
-                        self.projectManagerData === manager) {
+                    self.attachView.sendToServer(null, model.changed);
 
-                        model = model.toJSON();
-                        empThumb = $('#' + model._id);
-
-                        empThumb.find('.age').html(model.result.age);
-                        empThumb.find('.empDateBirth').html('(' + model.dateBirth + ')');
-                        empThumb.find('.telephone a').html(model.workPhones.mobile);
-                        empThumb.find('.telephone a').attr('href', 'skype:' + model.workPhones.mobile + '?call');
-
-                        if (model.relatedUser) {
-                            empThumb.find('.relUser').html(model.relatedUser.login);
-                        }
-
-                    } else {*/
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
-                    /* }*/
                     self.hideDialog();
                 },
 
@@ -526,21 +399,22 @@ define([
                     }
                 }
             });
-            
+
             $thisEl = this.$el;
 
             $notDiv = $thisEl.find('.attach-container');
 
             this.attachView = new AttachView({
-                model   : new EmployeeModel(),
-                url     : '/uploadEmployeesFiles',
-                isCreate: true
+                model      : new EmployeeModel(),
+                contentType: self.contentType,
+                isCreate   : true
             });
             $notDiv.append(this.attachView.render().el);
             $notDiv = this.$el.find('.assignees-container');
             $notDiv.append(
                 new AssigneesView({
-                    model: this.currentModel
+                    model      : this.currentModel,
+                    contentType: self.contentType
                 }).render().el
             );
 

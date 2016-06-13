@@ -2,6 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Tasks/CreateTemplate.html',
     'models/TasksModel',
     'common',
@@ -9,24 +10,20 @@ define([
     'views/Notes/AttachView',
     'views/selectView/selectView',
     'constants'
-], function (Backbone, $, _, CreateTemplate, TaskModel, common, populate, AttachView, SelectView, CONSTANTS) {
+], function (Backbone, $, _, ParentView, CreateTemplate, TaskModel, common, populate, AttachView, SelectView, CONSTANTS) {
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Tasks',
         template   : _.template(CreateTemplate),
         responseObj: {},
 
         events: {
-            'click #tabList a'                                 : 'switchTab',
-            'click #deadline'                                  : 'showDatePicker',
-            'change #workflowNames'                            : 'changeWorkflows',
-            'click .current-selected'                          : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click'                                            : 'hideNewSelect'
+            'click #deadline'      : 'showDatePicker',
+            'change #workflowNames': 'changeWorkflows'
         },
 
-        initialize: function (options) {
+        initialize: function () {
             _.bindAll(this, 'saveItem', 'render');
             this.model = new TaskModel();
             this.responseObj['#type'] = [
@@ -44,7 +41,7 @@ define([
             this.render();
         },
 
-        addAttach: function (event) {
+        addAttach: function () {
             var $inputFile = this.$el.find('.input-file');
             var $attachContainer = this.$el.find('.attachContainer');
             var $inputAttach = this.$el.find('.inputAttach:last');
@@ -72,40 +69,21 @@ define([
 
         getWorkflowValue: function (value) {
             var workflows = [];
+            var i;
 
-            for (var i = 0; i < value.length; i++) {
+            for (i = 0; i < value.length; i++) {
                 workflows.push({name: value[i].name, status: value[i].status, _id: value[i]._id});
             }
 
             return workflows;
         },
 
-        showDatePicker: function (e) {
+        showDatePicker: function () {
             var $createDatePicker = $('.createFormDatepicker');
-            
+
             if ($createDatePicker.find('.arrow').length === 0) {
                 $createDatePicker.append('<div class="arrow"></div>');
             }
-        },
-
-        switchTab: function (e) {
-            var link;
-            var index;
-            
-            e.preventDefault();
-            
-            link = this.$el.find('#tabList a');
-            
-            if (link.hasClass('selected')) {
-                link.removeClass('selected');
-            }
-            
-            index = link.index($(e.target).addClass('selected'));
-            this.$el.find('.tab').hide().eq(index).show();
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
         },
 
         saveItem: function () {
@@ -114,10 +92,7 @@ define([
             var summary = $.trim(this.$el.find('#summaryTask').val());
             var project = this.$el.find('#projectDd').data('id');
             var assignedTo = this.$el.find('#assignedToDd').data('id');
-            // var deadline = $.trim(this.$el.find('#deadline').val());
-            // var tags = $.trim(this.$el.find('#tags').val()).split(',');
             var description = $.trim(this.$el.find('#description').val());
-            // var sequence = $.trim(this.$el.find('#sequence').val());
             var StartDate = $.trim(this.$el.find('#StartDate').val());
             var workflow = this.$el.find('#workflowsDd').data('id');
             var estimated = $.trim(this.$el.find('#estimated').val());
@@ -132,11 +107,8 @@ define([
                     assignedTo : assignedTo || '',
                     workflow   : workflow,
                     project    : project || '',
-                    // tags       : tags,
-                    // deadline   : deadline,
                     description: description,
                     priority   : priority,
-                    // sequence   : sequence,
                     StartDate  : StartDate,
                     estimated  : estimated,
                     logged     : logged
@@ -157,36 +129,6 @@ define([
                     }
 
                 });
-        },
-
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-        hideNewSelect: function (e) {
-            this.$el.find('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
         },
 
         chooseOption: function (e) {
@@ -238,7 +180,7 @@ define([
             } else {
                 populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, true);
             }
-            
+
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Tasks'}, 'name', this, true);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true);
             populate.getPriority('#priorityDd', this, true);

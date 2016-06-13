@@ -752,7 +752,6 @@ var Module = function (models, event) {
                             if (err) {
                                 return next(err);
                             } else {
-
                                 historyOptions = {
                                     contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                                     data       : data,
@@ -802,29 +801,29 @@ var Module = function (models, event) {
     this.getLeadsForChart = function (req, res, next) {
         var data = req.query;
         var response = {};
-        var type = data.type;
+        var type = data.type || 'sale';
         var myItem = {};
         var fromDateTicks;
         var fromDate;
 
         data.dataRange = data.dataRange || 365;
-        data.dataItem = data.dataItem || "M";
+        data.dataItem = data.dataItem || 'M';
 
         switch (data.dataItem) {
-            case "M":
-                data.dataItem = "$month";
+            case 'M':
+                data.dataItem = '$month';
                 break;
-            case "W":
-                data.dataItem = "$week";
+            case 'W':
+                data.dataItem = '$week';
                 break;
-            case "D":
-                data.dataItem = "$dayOfYear";
+            case 'D':
+                data.dataItem = '$dayOfYear';
                 break;
-            case "DW":
-                data.dataItem = "$dayOfWeek";
+            case 'DW':
+                data.dataItem = '$dayOfWeek';
                 break;
-            case "DM":
-                data.dataItem = "$dayOfMonth";
+            case 'DM':
+                data.dataItem = '$dayOfMonth';
                 break;
         }
 
@@ -847,10 +846,10 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    'source': '$_id.source',
-                    count   : 1,
-                    'isOpp' : '$_id.isOpportunitie',
-                    _id     : 0
+                    source: '$_id.source',
+                    count : 1,
+                    isOpp : '$_id.isOpportunitie',
+                    _id   : 0
                 }
             }).exec(function (err, result) {
                 if (err) {
@@ -904,12 +903,12 @@ var Module = function (models, event) {
                 res.send(response);
             });
         } else if (type === 'date') {
-            myItem['$project'] = {isOpportunitie: 1, convertedDate: 1};
-            myItem['$project']['dateBy'] = {};
-            myItem['$project']['dateBy'][data.dataItem] = '$convertedDate';
-            if (data.dataItem == '$dayOfYear') {
-                myItem['$project']['year'] = {};
-                myItem['$project']['year']['$year'] = '$convertedDate';
+            myItem.$project = {isOpportunitie: 1, convertedDate: 1};
+            myItem.$project.dateBy = {};
+            myItem.$project.dateBy[data.dataItem] = '$convertedDate';
+            if (data.dataItem === '$dayOfYear') {
+                myItem.$project.year = {};
+                myItem.$project.year.$year = '$convertedDate';
             }
             fromDateTicks = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
             fromDate = new Date(fromDateTicks);
@@ -924,26 +923,22 @@ var Module = function (models, event) {
                                 'createdBy.date': {$gte: fromDate}
                             }]
                     }
-                },
-                myItem,
-                {
+                }, myItem, {
                     $group: {
                         _id  : {dateBy: '$dateBy', isOpportunitie: '$isOpportunitie', year: '$year'},
                         count: {$sum: 1},
                         date : {$push: '$convertedDate'}
                     }
-                },
-                {
+                }, {
                     $project: {
-                        'source': '$_id.dateBy',
-                        count   : 1,
-                        date    : 1,
-                        year    : '$_id.year',
-                        'isOpp' : '$_id.isOpportunitie',
-                        _id     : 0
+                        source: '$_id.dateBy',
+                        count : 1,
+                        date  : 1,
+                        year  : '$_id.year',
+                        isOpp : '$_id.isOpportunitie',
+                        _id   : 0
                     }
-                },
-                {
+                }, {
                     $sort: {year: 1, source: 1}
                 }
             ).exec(function (err, result) {
@@ -1017,7 +1012,7 @@ var Module = function (models, event) {
 
             async.waterfall([
                 function (callback) {
-                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
+                    models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate(
                         {
                             $match: {
                                 $and: [
@@ -1039,7 +1034,7 @@ var Module = function (models, event) {
                         {
                             $group: {
                                 _id: null,
-                                ids: {$addToSet: "$_id"}
+                                ids: {$addToSet: '$_id'}
                             }
                         }
                     ).exec(function (err, result) {
@@ -1059,7 +1054,7 @@ var Module = function (models, event) {
 
                     ids = opportunities[0].ids;
 
-                    models.get(req.session.lastDb, "History", historySchema).aggregate(
+                    models.get(req.session.lastDb, 'History', historySchema).aggregate(
                         {
                             $match: {
                                 $and: [
@@ -1093,51 +1088,56 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                workflow: {$arrayElemAt: ["$workflow", 0]},
+                                workflow: {$arrayElemAt: ['$workflow', 0]},
                                 date    : dateFormat
                             }
                         }, {
                             $sort: {date: 1}
                         }, {
                             $group: {
-                                _id  : {date: '$date', workflow: "$workflow"},
+                                _id  : {date: '$date', workflow: '$workflow'},
                                 count: {$sum: 1}
                             }
                         }, {
                             $group: {
-                                _id            : '$_id.date',
-                                wonCount       : {
+                                _id     : '$_id.date',
+                                wonCount: {
                                     $sum: {
                                         $cond: {
-                                            if  : {
+                                            if: {
                                                 $eq: ['$_id.workflow.name', 'Won']
                                             },
+
                                             then: '$count',
                                             else: 0
                                         }
                                     }
                                 },
-                                lostCount      : {
+
+                                lostCount: {
                                     $sum: {
                                         $cond: {
-                                            if  : {
+                                            if: {
                                                 $eq: ['$_id.workflow.name', 'Lost']
                                             },
+
                                             then: '$count',
                                             else: 0
                                         }
                                     }
                                 },
+
                                 inProgressCount: {
                                     $sum: {
                                         $cond: {
-                                            if  : {
+                                            if: {
                                                 $or: [
-                                                    {$eq: ['$_id.workflow.name', "% 25-50"]},
-                                                    {$eq: ['$_id.workflow.name', "% 50-75"]},
-                                                    {$eq: ['$_id.workflow.name', "% 75-100"]}
+                                                    {$eq: ['$_id.workflow.name', '% 25-50']},
+                                                    {$eq: ['$_id.workflow.name', '% 50-75']},
+                                                    {$eq: ['$_id.workflow.name', '% 75-100']}
                                                 ]
                                             },
+
                                             then: '$count',
                                             else: 0
                                         }
@@ -1169,67 +1169,58 @@ var Module = function (models, event) {
             fromDate = new Date(fromDateTicks);
             now = new Date();
 
-            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
+            models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate(
                 {
                     $match: {
                         $and: [
                             {
                                 isOpportunitie: true
-                            },
-                            {
+                            }, {
                                 'nextAction.date': {$lte: fromDate}
-                            },
-                            {
+                            }, {
                                 'nextAction.date': {$gte: now}
                             }
                         ]
                     }
-                },
-                {
+                }, {
                     $lookup: {
                         from        : 'workflows',
                         localField  : 'workflow',
                         foreignField: '_id',
                         as          : 'workflow'
                     }
-                },
-                {
+                }, {
                     $lookup: {
                         from        : 'Employees',
                         localField  : 'salesPerson',
                         foreignField: '_id',
                         as          : 'salesPerson'
                     }
-                },
-                {
+                }, {
                     $project: {
-                        "salesPerson": {$arrayElemAt: ["$salesPerson", 0]},
-                        "workflow"   : {$arrayElemAt: ["$workflow", 0]},
-                        "name"       : 1,
-                        "revenue"    : '$expectedRevenue.value'
+                        salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
+                        workflow   : {$arrayElemAt: ['$workflow', 0]},
+                        name       : 1,
+                        revenue    : '$expectedRevenue.value'
                     }
-                },
-                {
+                }, {
                     $project: {
-                        "salesPerson": {$concat: ['$salesPerson.name.first', " ", '$salesPerson.name.last']},
-                        "workflow"   : '$workflow.name',
-                        "revenue"    : 1
+                        salesPerson: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']},
+                        workflow   : '$workflow.name',
+                        revenue    : 1
                     }
-                },
-                {
+                }, {
                     $group: {
-                        _id  : {salesPerson: "$salesPerson", workflow: "$workflow"},
+                        _id  : {salesPerson: '$salesPerson', workflow: '$workflow'},
                         count: {$sum: 1},
-                        sum  : {$sum: "$revenue"}
+                        sum  : {$sum: '$revenue'}
                     }
-                },
-                {
+                }, {
                     $group: {
-                        _id : "$_id.workflow",
-                        data: {$push: {"salesPerson": "$_id.salesPerson", "count": "$count", "sum": "$sum"}}
+                        _id : '$_id.workflow',
+                        data: {$push: {salesPerson: '$_id.salesPerson', count: '$count', sum: '$sum'}}
                     }
-                },
-                {
+                }, {
                     $sort: {year: 1, source: 1}
                 }
             ).exec(function (err, result) {
@@ -1295,46 +1286,53 @@ var Module = function (models, event) {
                 }
             }, {
                 $group: {
-                    _id      : '$salesPerson',
-                    wonSum   : {
+                    _id   : '$salesPerson',
+                    wonSum: {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$workflow', 'Won']
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
-                    wonCount : {
+
+                    wonCount: {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$workflow', 'Won']
                                 },
+
                                 then: 1,
                                 else: 0
                             }
                         }
                     },
-                    lostSum  : {
+
+                    lostSum: {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$workflow', 'Lost']
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
+
                     lostCount: {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$workflow', 'Lost']
                                 },
+
                                 then: 1,
                                 else: 0
                             }
@@ -1366,22 +1364,26 @@ var Module = function (models, event) {
         var today = new Date();
         var millsInDay = 24 * 60 * 60 * 1000;
         var dateRanges = {
-            '0-7'   : {
+            '0-7': {
                 to  : today,
                 from: new Date(today - millsInDay * 7)
             },
-            '8-15'  : {
+
+            '8-15': {
                 to  : new Date(today - millsInDay * 7),
                 from: new Date(today - millsInDay * 15)
             },
-            '16-30' : {
+
+            '16-30': {
                 to  : new Date(today - millsInDay * 15),
                 from: new Date(today - millsInDay * 30)
             },
-            '31-60' : {
+
+            '31-60': {
                 to  : new Date(today - millsInDay * 30),
                 from: new Date(today - millsInDay * 60)
             },
+
             '61-120': {
                 to  : new Date(today - millsInDay * 60),
                 from: new Date(today - millsInDay * 120)
@@ -1418,174 +1420,197 @@ var Module = function (models, event) {
                 }
             }, {
                 $group: {
-                    _id           : '$workflow',
-                    '0-7_Sum'     : {
+                    _id      : '$workflow',
+                    '0-7_Sum': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['0-7'].from]
                                     }]
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
-                    '8-15_Sum'    : {
+
+                    '8-15_Sum': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['8-15'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['8-15'].to]
                                     }]
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
-                    '16-30_Sum'   : {
+
+                    '16-30_Sum': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['16-30'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['16-30'].to]
                                     }]
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
-                    '31-60_Sum'   : {
+
+                    '31-60_Sum': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['31-60'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['31-60'].to]
                                     }]
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
-                    '61-120_Sum'  : {
+
+                    '61-120_Sum': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['61-120'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['61-120'].to]
                                     }]
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
-                    '>120_Sum'    : {
+
+                    '>120_Sum': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $lte: ['$date', dateRanges['61-120'].from]
                                     }]
                                 },
+
                                 then: '$revenue',
                                 else: 0
                             }
                         }
                     },
-                    '0-7_Count'   : {
+
+                    '0-7_Count': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['0-7'].from]
                                     }]
                                 },
+
                                 then: 1,
                                 else: 0
                             }
                         }
                     },
-                    '8-15_Count'  : {
+
+                    '8-15_Count': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['8-15'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['8-15'].to]
                                     }]
                                 },
+
                                 then: 1,
                                 else: 0
                             }
                         }
                     },
-                    '16-30_Count' : {
+
+                    '16-30_Count': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['16-30'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['16-30'].to]
                                     }]
                                 },
+
                                 then: 1,
                                 else: 0
                             }
                         }
                     },
-                    '31-60_Count' : {
+
+                    '31-60_Count': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['31-60'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['31-60'].to]
                                     }]
                                 },
+
                                 then: 1,
                                 else: 0
                             }
                         }
                     },
+
                     '61-120_Count': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $gt: ['$date', dateRanges['61-120'].from]
                                     }, {
                                         $lte: ['$date', dateRanges['61-120'].to]
                                     }]
                                 },
+
                                 then: 1,
                                 else: 0
                             }
                         }
                     },
-                    '>120_Count'  : {
+
+                    '>120_Count': {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $and: [{
                                         $lte: ['$date', dateRanges['61-120'].from]
                                     }]
                                 },
+
                                 then: 1,
                                 else: 0
                             }
@@ -1815,8 +1840,11 @@ var Module = function (models, event) {
         var filtrElement = {};
         var key;
         var filterName;
+        var i;
+        var keys = Object.keys(filter);
 
-        for (filterName in filter) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            filterName = keys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -1837,21 +1865,6 @@ var Module = function (models, event) {
         }
         return resArray;
     }
-
-    this.getByViewType = function (req, res, next) {
-        var viewType = req.query.viewType;
-
-        switch (viewType) {
-            case 'list':
-                getFilter(req, res, next);
-                break;
-            case 'form':
-                getById(req, res, next);
-                break;
-            case 'kanban':
-                getForKanban(req, res, next);
-        }
-    };
 
     /**
      * Properties in __Opportunities__ are same as in __Leads__.
@@ -2110,7 +2123,6 @@ var Module = function (models, event) {
             switch (data.contentType) {
 
                 case ('Opportunities'):
-                {
                     aggregateQuery.push({
                         $lookup: {
                             from        : 'Customers',
@@ -2120,10 +2132,8 @@ var Module = function (models, event) {
                         }
                     });
 
-                }
                     break;
                 case ('Leads'):
-                {
 
                     aggregateQuery.push({
                         $lookup: {
@@ -2134,85 +2144,79 @@ var Module = function (models, event) {
                         }
                     });
 
-                }
                     break;
             }
 
             aggregateQuery.push({
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : 'salesPerson',
-                        foreignField: '_id',
-                        as          : 'salesPerson'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'workflows',
-                        localField  : 'workflow',
-                        foreignField: '_id',
-                        as          : 'workflow'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'Users',
-                        localField  : 'createdBy.user',
-                        foreignField: '_id',
-                        as          : 'createdBy.user'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'Users',
-                        localField  : 'editedBy.user',
-                        foreignField: '_id',
-                        as          : 'editedBy.user'
-                    }
-                },
-                {
-                    $project: {
-                        "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
-                        "customer"       : {$arrayElemAt: ["$customer", 0]},
-                        "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
-                        "workflow"       : {$arrayElemAt: ["$workflow", 0]},
-                        "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
-                        "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
-                        "createdBy.date" : 1,
-                        "editedBy.date"  : 1,
-                        "creationDate"   : 1,
-                        "isOpportunitie" : 1,
-                        "name"           : 1,
-                        "expectedRevenue": 1,
-                        "attachments"    : 1,
-                        "notes"          : 1,
-                        "convertedDate"  : 1,
-                        "isConverted"    : 1,
-                        "source"         : 1,
-                        "campaign"       : 1,
-                        "sequence"       : 1,
-                        "reffered"       : 1,
-                        "optout"         : 1,
-                        "active"         : 1,
-                        "color"          : 1,
-                        "categories"     : 1,
-                        "priority"       : 1,
-                        "expectedClosing": 1,
-                        "nextAction"     : 1,
-                        "internalNotes"  : 1,
-                        "phones"         : 1,
-                        "email"          : 1,
-                        "address"        : 1,
-                        "company"        : 1,
-                        skype            : 1,
-                        social           : 1
-                    }
-                },
-                {
-                    $match: {
-                        $and: optionsObject
-                    }
-                });
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPerson',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
+                }
+            }, {
+                $project: {
+                    contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
+                    customer        : {$arrayElemAt: ['$customer', 0]},
+                    salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                    workflow        : {$arrayElemAt: ['$workflow', 0]},
+                    'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                    'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                    'createdBy.date': 1,
+                    'editedBy.date' : 1,
+                    creationDate    : 1,
+                    isOpportunitie  : 1,
+                    name            : 1,
+                    expectedRevenue : 1,
+                    attachments     : 1,
+                    notes           : 1,
+                    convertedDate   : 1,
+                    isConverted     : 1,
+                    source          : 1,
+                    campaign        : 1,
+                    sequence        : 1,
+                    reffered        : 1,
+                    optout          : 1,
+                    active          : 1,
+                    color           : 1,
+                    categories      : 1,
+                    priority        : 1,
+                    expectedClosing : 1,
+                    nextAction      : 1,
+                    internalNotes   : 1,
+                    phones          : 1,
+                    email           : 1,
+                    address         : 1,
+                    company         : 1,
+                    skype           : 1,
+                    social          : 1
+                }
+            }, {
+                $match: {
+                    $and: optionsObject
+                }
+            });
 
             aggregateQuery.push({
                 $group: {
@@ -2226,8 +2230,8 @@ var Module = function (models, event) {
                 $project: {
                     _id             : '$root._id',
                     contactName     : '$root.contactName',
-                    'customer'      : '$root.customer',
-                    'salesPerson'   : '$root.salesPerson',
+                    customer        : '$root.customer',
+                    salesPerson     : '$root.salesPerson',
                     workflow        : '$root.workflow',
                     'createdBy.user': '$root.createdBy.user.login',
                     'editedBy.user' : '$root.editedBy.user.login',
@@ -2278,9 +2282,9 @@ var Module = function (models, event) {
             }
 
             aggregateQuery.push({
-                $skip: (data.page - 1) * data.count
+                $skip: skip
             }, {
-                $limit: parseInt(data.count, 10)
+                $limit: limit
             });
 
             query.aggregate(aggregateQuery).exec(waterfallCallback);
@@ -2372,7 +2376,7 @@ var Module = function (models, event) {
         var filterObj = {};
         var optionsObject = {};
         var data = req.query;
-        var filter = data.filter;
+        var filter = data.filter || {};
         var query;
 
         optionsObject.$and = [];
@@ -2383,9 +2387,9 @@ var Module = function (models, event) {
 
         if (data && data.filter) {
             optionsObject.$and.push(filterObj);
-        }
 
-        caseFilter(filter, or);
+            caseFilter(filter, or);
+        }
 
         if (!or.length) {
             delete filterObj.$or;
@@ -2504,6 +2508,21 @@ var Module = function (models, event) {
 
         });
     }
+
+    this.getByViewType = function (req, res, next) {
+        var viewType = req.query.viewType;
+
+        switch (viewType) {
+            case 'list':
+                getFilter(req, res, next);
+                break;
+            case 'form':
+                getById(req, res, next);
+                break;
+            case 'kanban':
+                getForKanban(req, res, next);
+        }
+    };
 
     this.getLeadsPriority = function (req, res, next) {
         var response = {};

@@ -24,17 +24,16 @@ define([
     'use strict';
 
     var PaymentListView = ListViewBase.extend({
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : paymentCollection,
-        contentType             : 'supplierPayments', // needs in view.prototype.changeLocationHash
-        modelId                 : null,
-        $listTable              : null,
-        editCollection          : null,
-        totalCollectionLengthUrl: '/payment/supplier/totalCollectionLength',
-        changedModels           : {},
-        responseObj             : {},
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: paymentCollection,
+        contentType      : 'supplierPayments', // needs in view.prototype.changeLocationHash
+        modelId          : null,
+        $listTable       : null,
+        editCollection   : null,
+        changedModels    : {},
+        responseObj      : {},
+        cancelEdit       : cancelEdit,
 
         events: {
             'click td.editable'                                : 'editRow',
@@ -59,6 +58,16 @@ define([
             this.contentCollection = paymentCollection;
 
             this.render();
+        },
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
         },
 
         chooseOption: function (e) {
@@ -214,14 +223,16 @@ define([
         },
 
         saveItem: function () {
-            var self = this;
             var model;
             var errors = this.$el.find('.errorContent');
             var id;
+            var i;
+            var keys = Object.keys(this.changedModels);
 
             this.setChangedValueToModel();
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.editCollection.get(id) || this.collection.get(id);
                 model.changed = this.changedModels[id];
                 model.changed.differenceAmount = parseFloat(model.changed.paidAmount || model.paidAmount) - parseFloat(model.changed.paid || model.paid);

@@ -718,7 +718,7 @@ var Module = function (models, event) {
                         return next(err);
                     }
 
-                    if (invoice._type === 'Proforma') {
+                    if (invoice && invoice._type === 'Proforma') {
                         model = 'Proforma';
 
                         query = {

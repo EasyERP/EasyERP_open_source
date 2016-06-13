@@ -8,7 +8,6 @@ define([
     'views/Opportunities/EditView',
     'models/OpportunitiesModel',
     'collections/Opportunities/filterCollection',
-    'views/Filter/FilterView',
     'common',
     'dataService',
     'text!templates/stages.html'
@@ -19,23 +18,20 @@ define([
              CreateView,
              ListItemView,
              EditView,
-             currentModel,
+             CurrentModel,
              contentCollection,
-             FilterView,
              common,
              dataService,
              stagesTemplate) {
     'use strict';
 
     var OpportunitiesListView = ListViewBase.extend({
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/opportunities/totalCollectionLength',
-        formUrl                 : '#easyErp/Opportunities/form/',
-        contentType             : 'Opportunities', // needs in view.prototype.changeLocationHash
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        formUrl          : '#easyErp/Opportunities/form/',
+        contentType      : 'Opportunities', // needs in view.prototype.changeLocationHash
 
         initialize: function (options) {
             $(document).off('click');
@@ -143,7 +139,7 @@ define([
 
         goToEditDialog: function (e) {
             var id = $(e.target).closest('tr').data('id');
-            var model = new currentModel({validate: false});
+            var model = new CurrentModel({validate: false});
 
             e.preventDefault();
 
@@ -155,7 +151,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

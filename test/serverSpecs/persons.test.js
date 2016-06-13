@@ -239,29 +239,6 @@ describe('Person Specs', function () {
                 });
         });
 
-        it('should get totalCollectionLength of persons', function (done) {
-            aggent
-                .get('persons/totalCollectionLength')
-                .query({contentType: 'Persons'})
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('showMore');
-                    expect(body)
-                        .to.have.property('count');
-
-                    done();
-                });
-        });
-
         it('should updateOnlySelectedFields of persons', function (done) {
             aggent
                 .patch('persons/' + id)

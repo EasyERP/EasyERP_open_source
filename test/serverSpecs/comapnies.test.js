@@ -275,29 +275,6 @@ describe('Company Specs', function () {
                 });
         });
 
-        it('should get totalCollectionLength of companies', function (done) {
-            aggent
-                .get('customers/totalCollectionLength')
-                .query({contentType: 'Companies'})
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('showMore');
-                    expect(body)
-                        .to.have.property('count');
-
-                    done();
-                });
-        });
-
         it('should updateOnlySelectedFields of companies', function (done) {
             aggent
                 .patch('customers/55b92ad521e4b7c40f00061d')

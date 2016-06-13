@@ -520,8 +520,10 @@ describe("wTrack Specs", function () {
                     _id: jobsId
                 };
 
+                var id = jobsId && jobsId._id ? jobsId._id : jobsId;
+
                 aggent
-                    .post('jobs/remove')
+                    .delete('jobs/' + id)
                     .send(body)
                     .expect(200)
                     .end(function (err, res) {

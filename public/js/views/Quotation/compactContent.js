@@ -1,8 +1,9 @@
 ﻿define([
     'Backbone',
     'jQuery',
+    'Underscore',
     'text!templates/Persons/compactContentTemplate.html'
-], function (Backbone, $, compactContentTemplate) {
+], function (Backbone, $, _, compactContentTemplate) {
     var compactContentView = Backbone.View.extend({
 
         className: 'form',

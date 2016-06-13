@@ -209,7 +209,8 @@ define([
             );
             this.$el.find('.formLeftColumn').append(
                 new AttachView({
-                    model: this.formModel
+                    model: this.formModel,
+                    contentType: 'Companies'
                 }).render().el
             );
 

@@ -25,61 +25,11 @@ define([
         },
 
         events: {
-           /* 'click #tabList a'                                                : 'switchTab',
-             'change #workflowNames'                                           : 'changeWorkflows',*/
-            'mouseenter .avatar'                                              : 'showEdit',
-            'mouseleave .avatar'                                              : 'hideEdit',
-           /* 'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            keydown                                                           : 'keydownHandler',*/
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption'
-           /* 'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'*/
+            'mouseenter .avatar'                               : 'showEdit',
+            'mouseleave .avatar'                               : 'hideEdit',
+            'click .dialog-tabs a'                             : 'changeTab',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
-
-       /* notHide: function () {
-            return false;
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        changeTab: function (e) {
-            var n;
-            var dialogHolder;
-            var holder = $(e.target);
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },*/
 
         getWorkflowValue: function (value) {
             var workflows = [];
@@ -91,44 +41,9 @@ define([
             return workflows;
         },
 
-        /* changeWorkflows: function () {
-         var name = this.$('#workflowNames option:selected').val();
-         var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
-         },*/
-
         isEmployee: function (e) {
             $(e.target).addClass('pressed');
             this.saveItem();
-        },
-
-       /* switchTab: function (e) {
-            var link = this.$('#tabList a');
-            var index;
-
-            e.preventDefault();
-
-            if (link.hasClass('selected')) {
-                link.removeClass('selected');
-            }
-
-            index = link.index($(e.target).addClass('selected'));
-            this.$('.tab').hide().eq(index).show();
-        },*/
-
-        showEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        hideEdit: function () {
-            this.$el.find('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
-
         },
 
         saveItem: function () {
@@ -291,15 +206,6 @@ define([
             });
         },
 
-       /* hideNewSelect: function () {
-            $('.newSelectList').hide();
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },*/
-
         chooseOption: function (e) {
             var $target = $(e.target);
             $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
@@ -320,7 +226,7 @@ define([
                         class: 'btn',
                         click: self.saveItem
                     },
-                    
+
                     cancel: {
                         text : 'Cancel',
                         class: 'btn',
@@ -328,24 +234,15 @@ define([
                     }
                 }
             });
-            
+
             $thisEl = this.$el;
-            
+
             this.attachView = new AttachView({
                 model   : new ApplicationModel(),
                 url     : '/uploadApplicationFiles',
                 isCreate: true
             });
             
-            /* notDiv = this.$el.find('.attach-container');
-            notDiv.append(this.attachView.render().el);
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );*/
-
             this.renderAssignees(this.currentModel);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this, true, function (data) {
                 var i;

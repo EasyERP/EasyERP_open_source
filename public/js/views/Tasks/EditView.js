@@ -2,29 +2,24 @@
     'Backbone',
     'Underscore',
     'jQuery',
+    'views/dialogViewBase',
     'text!templates/Tasks/EditTemplate.html',
     'views/selectView/selectView',
     'views/Notes/NoteView',
-    'views/Notes/AttachView',
     'common',
     'populate',
     'custom',
     'constants'
-], function (Backbone, _, $, EditTemplate, selectView, noteView, attachView, common, populate, custom, CONSTANTS) {
+], function (Backbone, _, $, ParentView, EditTemplate, selectView, NoteView, common, populate, custom, CONSTANTS) {
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Tasks',
         template   : _.template(EditTemplate),
         responseObj: {},
 
         events: {
-            'click #tabList a'                                 : 'switchTab',
-            'keydown'                                          : 'keydownHandler',
-            'click .current-selected'                          : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click'                                            : 'hideNewSelect',
-            'keypress #logged, #estimated'                     : 'isNumberKey',
-            'click #projectTopName'                            : 'useProjectFilter'
+            'keypress #logged, #estimated': 'isNumberKey',
+            'click #projectTopName'       : 'useProjectFilter'
         },
 
         initialize: function (options) {
@@ -71,34 +66,12 @@
             return !(charCode > 31 && (charCode < 48 || charCode > 57));
         },
 
-        hideNewSelect: function (e) {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
         chooseOption: function (e) {
             var target = $(e.target);
             var endElem = target.parents('dd').find('.current-selected');
 
             endElem.text(target.text()).attr('data-id', target.attr('id'));
             endElem.attr('data-shortdesc', target.data('level'));
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
         },
 
         saveItem: function (event) {
@@ -208,7 +181,6 @@
 
                     switch (viewType) {
                         case 'list':
-                        {
                             $trHolder = $("tr[data-id='" + model._id + "'] td");
                             $trHolder.eq(3).text(summary);
                             $trHolder.eq(4).find('a').data('id', project).text(editHolder.find('#projectDd').text());
@@ -231,10 +203,8 @@
                                 Backbone.history.fragment = '';
                                 Backbone.history.navigate(window.location.hash.replace('#', ''), {trigger: true});
                             }
-                        }
                             break;
                         case 'kanban':
-                        {
                             $kanbanHolder = $('#' + model._id);
                             $kanbanHolder.find('#priority_' + model._id).data('id', priority).text(priority);
                             $kanbanHolder.find('#shortDesc' + model._id).text(editHolder.find('#projectDd').data('shortdesc'));
@@ -264,8 +234,6 @@
                                 counter = $workflowStart.closest('.column').find('.totalCount');
                                 counter.html(parseInt(counter.html(), 10) - 1);
                             }
-
-                        }
                     }
                 },
 
@@ -273,29 +241,6 @@
                     self.errorNotification(xhr);
                 }
             });
-        },
-
-        showNewSelect: function (e, prev, next) {
-            var $target = $(e.target);
-
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
         },
 
         deleteItem: function (event) {
@@ -324,12 +269,9 @@
 
                         switch (viewType) {
                             case 'list':
-                            {
                                 $("tr[data-id='" + model._id + "'] td").remove();
-                            }
                                 break;
                             case 'kanban':
-                            {
                                 $('#' + model._id).remove();
                                 // count kanban
                                 wId = model.workflow._id;
@@ -337,7 +279,6 @@
 
                                 newTotal = ($totalCount.html() - 1);
                                 $totalCount.html(newTotal);
-                            }
                         }
                         self.hideDialog();
                     },
@@ -382,16 +323,11 @@
 
             notDiv = this.$el.find('#divForNote');
             notDiv.append(
-                new noteView({
+                new NoteView({
                     model: this.currentModel
                 }).render().el);
 
-            notDiv.append(
-                new attachView({
-                    model: this.currentModel,
-                    url  : '/uploadTasksFiles'
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             populate.get('#projectDd', '/projects/getForDd', {}, 'name', this);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Tasks'}, 'name', this);
@@ -401,13 +337,6 @@
             this.delegateEvents(this.events);
 
             this.$el.find('#StartDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
-
-            /* $('#deadline').datepicker({
-             dateFormat : "d M, yy",
-             changeMonth: true,
-             changeYear : true,
-             minDate    : new Date()
-             });*/
 
             // for input type number
             this.$el.find('#logged').spinner({

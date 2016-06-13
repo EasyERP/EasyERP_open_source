@@ -35,7 +35,7 @@ module.exports = function (event, models) {
     router.get('/getEmployeesCount', handler.getEmployeesCount);
 
     router.post('/', accessStackMiddleware, handler.create);
-    router.post('/uploadEmployeesFiles', accessStackMiddleware, multipartMiddleware, handler.uploadEmployeesFiles);
+    router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
     router.patch('/:id', accessStackMiddleware, handler.updateOnlySelectedFields);
    
     router.delete('/:id', accessStackMiddleware, handler.remove);

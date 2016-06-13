@@ -13,22 +13,29 @@ var Employee = function (event, models) {
     var SourceSchema = mongoose.Schemas.source;
     var birthdaysSchema = mongoose.Schemas.birthday;
 
-    var accessRoll = require('../helpers/accessRollHelper.js')(models);
-    var uploadFileArray = require('../helpers/uploadFileArray.js')();
     var _ = require('underscore');
     var fs = require('fs');
+    var path = require('path');
     var validatorEmployee = require('../helpers/validator');
-    var Payroll = require('../handlers/payroll');
-    var pageHelper = require('../helpers/pageHelper');
-    var payrollHandler = new Payroll(models);
-    var ids = ['52203e707d4dba8813000003', '563f673270bbc2b740ce89ae', '55b8cb7d0ce4affc2a0015cb', '55ba2ef1d79a3a343900001c', '560255d1638625cf32000005'];
+    var ids = ['52203e707d4dba8813000003',
+        '563f673270bbc2b740ce89ae',
+        '55b8cb7d0ce4affc2a0015cb',
+        '55ba2ef1d79a3a343900001c',
+        '560255d1638625cf32000005'];
     var CONSTANTS = require('../constants/mainConstants.js');
+    var RESPONSES = require('../constants/responses');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
-    /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
-     return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-     }, exportMap, 'Employees');*/
+
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
+
+    var Payroll = require('../handlers/payroll');
+    var pageHelper = require('../helpers/pageHelper');
+    var payrollHandler = new Payroll(models);
+
+    var Uploader = require('../services/fileStorage/index');
+    var uploader = new Uploader();
 
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -120,40 +127,6 @@ var Employee = function (event, models) {
             res.status(200).send({count: result});
         });
     };
-
-    /* this.getSalaryByMonth = function (req, res, next) {
-     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-     var query = req.query;
-     var _id = query._id;
-     var month = query.month;
-     var year = query.year;
-     var date = moment().year(year).month(month - 1).date(1);
-
-     Employee.findById(_id, {transfer: 1}, function (err, result) {
-     var salary = 0;
-     var hire;
-     var i;
-     var length;
-
-     if (err) {
-     return next(err);
-     }
-
-     if (result) {
-     hire = result.transfer;
-     length = hire.length;
-
-     for (i = length - 1; i >= 0; i--) {
-     if (date >= hire[i].date) {
-     salary = hire[i].salary;
-     break;
-     }
-     }
-     }
-
-     res.status(200).send({data: salary});
-     });
-     }; */
 
     this.getYears = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -450,219 +423,6 @@ var Employee = function (event, models) {
         });
 
     }
-
-    /* this.totalCollectionLength = function (req, res, next) {
-     var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-     var data = req.query;
-     var contentType = data.contentType;
-     var optionsObject = {};
-     var filter = data.filter || {};
-     var waterfallTasks;
-     var accessRollSearcher;
-     var contentSearcher;
-     var project;
-     var projectSecond;
-     var response = {};
-
-     response.showMore = false;
-
-     if (filter && typeof filter === 'object') {
-     if (filter.condition === 'or') {
-     optionsObject.$or = caseFilter(filter);
-     } else {
-     optionsObject.$and = caseFilter(filter);
-     }
-     }
-
-     accessRollSearcher = function (cb) {
-     accessRoll(req, Model, cb);
-     };
-
-     contentSearcher = function (idsArray, cb) {
-     var queryObject = {};
-
-     queryObject.$and = [];
-
-     if (optionsObject.$and.length) {
-     queryObject.$and.push(optionsObject);
-     }
-
-     if (contentType === 'Employees') {
-     queryObject.$and.push({isEmployee: true});
-     } else if (contentType === 'Applications') {
-     queryObject.$and.push({isEmployee: false});
-     }
-
-     queryObject.$and.push({_id: {$in: idsArray}});
-
-     switch (contentType) {
-     case ('Employees'):
-
-     project = {
-     manager         : {$arrayElemAt: ['$manager', 0]},
-     jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
-     department      : {$arrayElemAt: ['$department', 0]},
-     'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
-     'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-     name            : 1,
-     'editedBy.date' : 1,
-     'createdBy.date': 1,
-     dateBirth       : 1,
-     skype           : 1,
-     workEmail       : 1,
-     workPhones      : 1,
-     jobType         : 1,
-     isEmployee      : 1
-     };
-
-     projectSecond = {
-     manager         : 1,
-     jobPosition     : 1,
-     department      : 1,
-     'createdBy.user': 1,
-     'editedBy.user' : 1,
-     'editedBy.date' : 1,
-     'createdBy.date': 1,
-     name            : 1,
-     dateBirth       : 1,
-     skype           : 1,
-     workEmail       : 1,
-     workPhones      : 1,
-     jobType         : 1,
-     isEmployee      : 1
-     };
-     break;
-     case ('Applications'):
-
-     if (data && data.filter && data.filter.workflow) {
-     data.filter.workflow = data.filter.workflow.map(function (item) {
-     return item === 'null' ? null : item;
-     });
-     }
-
-     project = {
-     manager         : {$arrayElemAt: ['$manager', 0]},
-     jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
-     department      : {$arrayElemAt: ['$department', 0]},
-     'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
-     'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-     name            : 1,
-     'editedBy.date' : 1,
-     'createdBy.date': 1,
-     dateBirth       : 1,
-     skype           : 1,
-     workEmail       : 1,
-     workPhones      : 1,
-     jobType         : 1,
-     isEmployee      : 1,
-     creationDate    : 1,
-     workflow        : {$arrayElemAt: ['$workflow', 0]},
-     personalEmail   : 1,
-     sequence        : 1,
-     hire            : 1,
-     fire            : 1
-     };
-
-     projectSecond = {
-     manager         : 1,
-     jobPosition     : 1,
-     department      : 1,
-     'createdBy.user': 1,
-     'editedBy.user' : 1,
-     'editedBy.date' : 1,
-     'createdBy.date': 1,
-     name            : 1,
-     dateBirth       : 1,
-     skype           : 1,
-     workEmail       : 1,
-     workPhones      : 1,
-     jobType         : 1,
-     isEmployee      : 1,
-     creationDate    : 1,
-     workflow        : 1,
-     personalEmail   : 1,
-     sequence        : 1,
-     hire            : 1,
-     fire            : 1
-     };
-     break;
-     }
-
-     Model.aggregate([{
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'manager',
-     foreignField: '_id',
-     as          : 'manager'
-     }
-     }, {
-     $lookup: {
-     from        : 'JobPosition',
-     localField  : 'jobPosition',
-     foreignField: '_id',
-     as          : 'jobPosition'
-     }
-     }, {
-     $lookup: {
-     from        : 'Department',
-     localField  : 'department',
-     foreignField: '_id',
-     as          : 'department'
-     }
-     }, {
-     $lookup: {
-     from        : 'Users',
-     localField  : 'relatedUser',
-     foreignField: '_id',
-     as          : 'relatedUser'
-     }
-     }, {
-     $lookup: {
-     from        : 'Users',
-     localField  : 'createdBy.user',
-     foreignField: '_id',
-     as          : 'createdBy.user'
-     }
-     }, {
-     $lookup: {
-     from        : 'Users',
-     localField  : 'editedBy.user',
-     foreignField: '_id',
-     as          : 'editedBy.user'
-     }
-     }, {
-     $lookup: {
-     from        : 'workflows',
-     localField  : 'workflow',
-     foreignField: '_id',
-     as          : 'workflow'
-     }
-     }, {
-     $project: project
-     }, {
-     $project: projectSecond
-     }, {
-     $match: queryObject
-     }], function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     waterfallTasks = [accessRollSearcher, contentSearcher];
-
-     async.waterfall(waterfallTasks, function (err, result) {
-     if (err) {
-     return next(err);
-     }
-
-     response.count = result.length;
-     res.status(200).send(response);
-     });
-     };*/
 
     function getFilter(req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -1133,7 +893,7 @@ var Employee = function (event, models) {
                         }
 
                         if (data.dateBirth || data.hired) {
-                            event.emit('recalculate', req, res, next);
+                            event.emit('recalculate', req, null, next);
                         }
 
                         if (fileName) {
@@ -1192,7 +952,7 @@ var Employee = function (event, models) {
                 event.emit('updateSequence', Model, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
             }
 
-            event.emit('recalculate', req, false, next);
+            event.emit('recalculate', req, null, next);
             event.emit('dropHoursCashes', req);
             event.emit('recollectVacationDash', req);
 
@@ -1201,7 +961,7 @@ var Employee = function (event, models) {
     };
 
     this.bulkRemove = function (req, res, next) {
-        var Model = Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -1215,7 +975,7 @@ var Employee = function (event, models) {
                     event.emit('updateSequence', Model, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
                 }
 
-                event.emit('recalculate', req, false, next);
+                event.emit('recalculate', req, null, next);
                 event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash', req);
                 cb();
@@ -1489,38 +1249,38 @@ var Employee = function (event, models) {
         });
     };
 
-    /* this.getSalaryByMonth = function (req, res, next) {
-     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-     var query = req.query;
-     var _id = query._id;
-     var month = query.month;
-     var year = query.year;
-     var date = moment().year(year).month(month - 1).date(1);
-
-     Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
-     if (err){
-     return next(err);
-     }
-     var hire = result.hire;
-     var salary = 0;
-     var i;
-     var length = hire.length;
-
-     for (i = length - 1; i >= 0; i--){
-     if (date >= hire[i].date){
-     salary = hire[i].salary;
-     break;
-     }
-     }
-
-     return res.status(200).send({data: salary});
-     });
-     };*/
-
-    this.uploadEmployeesFiles = function (req, res, next) {
+    this.uploadFile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var headers = req.headers;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'persons';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
 
-        uploadFileArray(req, res, next, Model);
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
+
+            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Customers updated success', data: response});
+            });
+        });
     };
 
     function check(req, callback) {

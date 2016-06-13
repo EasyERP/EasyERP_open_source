@@ -117,6 +117,14 @@ define([
             delete data.remove;
             delete data.add;
             delete data.merge;
+            delete data.showMore;
+
+            if (!data.contentType) {
+                delete data.contentType;
+            }
+            if (!data.parrentContentId) {
+                delete data.parrentContentId;
+            }
 
             self.pageSize = data.count;
             self.currentPage = data.page;

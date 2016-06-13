@@ -104,36 +104,6 @@ describe('jobs Specs', function () {
                 });
         });
 
-        it('should get totalCollectionLength for jobs', function (done) {
-            var body = {
-                /* filter: {
-                 projectManager: {
-                 key  : '',
-                 value: ['55b92ad221e4b7c40f00004f', '']
-                 }
-                 }*/
-            };
-
-            aggent
-                .get('jobs/totalCollectionLength')
-                .query(body)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count');
-
-                    done();
-                });
-        });
-
         it('should update jobs', function (done) {
             var body = {
                 _id : id,
@@ -168,7 +138,7 @@ describe('jobs Specs', function () {
             };
 
             aggent
-                .post('jobs/remove')
+                .delete('jobs/' + id)
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {

@@ -188,34 +188,15 @@ describe('Payment Specs', function () {
                     .expect(500, done);
             });
 
-            it('should get payments totalCollectionLength', function (done) {
-
-                aggent
-                    .get('payment/salary/totalCollectionLength')
-                    .expect(200)
-                    .end(function (err, res) {
-                        var body = res.body;
-
-                        if (err) {
-                            return done(err);
-                        }
-
-                        expect(body)
-                            .to.have.property('count')
-                            .and.to.be.gte(1);
-
-                        done();
-                    });
-            });
-
             it('should get payments by viewType', function (done) {
                 var query = {
                     count   : 100,
-                    viewType: 'list'
+                    viewType: 'list',
+                    contentType: 'SalaryPayment'
                 };
 
                 aggent
-                    .get('payment/salary/')
+                    .get('payment/')
                     .query(query)
                     .expect(200)
                     .end(function (err, res) {

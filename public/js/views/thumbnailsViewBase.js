@@ -10,7 +10,7 @@
 
         events: {
             'click #showMore'            : 'showMore',
-            'click .thumbnail'           : 'gotoEditForm',
+            'click .thumbnailElement'    : 'gotoEditForm',
             'click .dropDown'            : 'dropDown',
             'click .filterButton'        : 'showfilter',
             'click .filter-check-list li': 'checkCheckbox'

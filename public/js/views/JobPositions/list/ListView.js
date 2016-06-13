@@ -26,7 +26,6 @@ define([
         contentType             : 'JobPositions', // needs in view.prototype.changeLocationHash
 
         events: {
-            'click .list td:not(.notForm)': 'goToEditDialog',
             'click .stageSelect'          : 'showNewSelect',
             'click .newSelectList li'     : 'chooseOption'
         },
@@ -45,13 +44,13 @@ define([
             this.contentCollection = contentCollection;
         },
 
-        hideNewSelect: function () {
+        /*hideNewSelect: function () {
             $('.newSelectList').remove();  // ui tests
-        },
+        },*/
 
         showNewSelect: function (e) {
             if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
+                this.hide(e);
                 return false;
             }
 
@@ -73,6 +72,7 @@ define([
                 location = location.split('/p=')[0] + '/p=1' + '/' + afterPage;
             }
             obj.urlRoot = '/JobPositions';
+            this.hide(e);
             obj.save({
                 workflow                : $(e.target).attr('id'),
                 expectedRecruitment     : obj.toJSON().expectedRecruitment,
@@ -88,7 +88,7 @@ define([
                     Backbone.history.navigate(location, {trigger: true});
                 }
             });
-            this.hideNewSelect();
+
             return false;
         },
 
@@ -125,7 +125,7 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new CurrentModel({validate: false});
 

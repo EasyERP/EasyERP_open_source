@@ -95,30 +95,10 @@ describe('Leads Specs', function () {
                 });
         });
 
-        it('should get Leads totalCollectionLength', function (done) {
-            aggent
-                .get('leads/totalCollectionLength')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count');
-                    expect(body)
-                        .to.have.property('showMore');
-                    done();
-                });
-        });
-
         it('should get Lead For Chart', function (done) {
             aggent
                 .get('leads/getLeadsForChart')
+                .query({type: 'sale'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -166,7 +146,7 @@ describe('Leads Specs', function () {
                     expect(body.data)
                         .to.be.instanceOf(Array);
 
-                    firstProject = body.data[1];
+                    firstProject = body.data[3];
 
                     expect(firstProject)
                         .and.to.have.property('_id')
@@ -184,16 +164,6 @@ describe('Leads Specs', function () {
                         .and.not.to.have.property('mobile');
                     expect(firstProject)
                         .and.to.have.property('address');
-                    expect(firstProject.address)
-                        .and.to.have.property('country');
-                    expect(firstProject.address)
-                        .not.to.have.property('street');
-                    expect(firstProject.address)
-                        .not.to.have.property('state');
-                    expect(firstProject.address)
-                        .not.to.have.property('zip');
-                    expect(firstProject.address)
-                        .not.to.have.property('city');
                     expect(firstProject)
                         .to.have.property('workflow')
                         .and.to.have.property('_id');

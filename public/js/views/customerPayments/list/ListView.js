@@ -75,47 +75,6 @@ define([
             this.$el.find('#totalPaidAmount').text(helpers.currencySplitter(amount.toFixed(2)));
         },
 
-        cancelChanges: function () {
-            var self = this;
-            var edited = this.edited;
-            var collection = this.collection;
-            var copiedCreated;
-            var dataId;
-
-            async.each(edited, function (el, cb) {
-                var tr = $(el).closest('tr');
-                var rowNumber = tr.find('[data-content="number"]').text();
-                var id = tr.attr('data-id');
-                var template = _.template(cancelEdit);
-                var model;
-
-                if (!id) {
-                    return cb('Empty id');
-                }
-
-                model = collection.get(id);
-                model = model.toJSON();
-                model.startNumber = rowNumber;
-                tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
-                cb();
-            }, function (err) {
-                if (!err) {
-                    self.editCollection = new EditCollection(collection.toJSON());
-                    self.editCollection.on('saved', self.savedNewModel, self);
-                    self.editCollection.on('updated', self.updatedOptions, self);
-                    self.hideSaveCancelBtns();
-                }
-            });
-
-            copiedCreated = this.$el.find('#false');
-            dataId = copiedCreated.attr('data-id');
-            this.editCollection.remove(dataId);
-            delete this.changedModels[dataId];
-            copiedCreated.remove();
-
-            self.changedModels = {};
-        },
-
         render: function () {
             var self = this;
             var $currentEl;

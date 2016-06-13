@@ -19,7 +19,7 @@ module.exports = function (models, event) {
     router.post('/', handler.create);
     router.post('/supplier', handler.createPayOut);
     router.post('/salary', handler.salaryPayOut);
-    // router.patch('/:byType', handler.putchBulk);
+    router.patch('/:byType', handler.putchBulk);
 
     router.delete('/:id', handler.remove);
     router.delete('/', handler.bulkRemove);

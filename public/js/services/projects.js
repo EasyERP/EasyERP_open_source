@@ -77,7 +77,7 @@ define([
             }
         });
 
-        this.hideNewSelect();
+        this.hide();
         return false;
     }
 

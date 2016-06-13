@@ -17,7 +17,7 @@ define([
 
             options.month = month;
             options.year = year;
-            
+
             this.render(options);
         },
 

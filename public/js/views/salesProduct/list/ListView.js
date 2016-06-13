@@ -1,4 +1,6 @@
 define([
+    'jQuery',
+    'Underscore',
     'views/listViewBase',
     'text!templates/Product/list/ListHeader.html',
     'views/Product/CreateView',
@@ -7,42 +9,40 @@ define([
     'models/ProductModel',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'collections/salesProduct/filterCollection',
-    'views/Filter/FilterView',
     'common',
     'dataService',
     'constants'
-], function (ListViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, FilterView, common, dataService, CONSTANT) {
+], function ($, _, ListViewBase, listTemplate, CreateView, listItemView, EditView, productModel, aphabeticTemplate, ContentCollection, common, dataService, CONSTANT) {
     var ProductsListView = ListViewBase.extend({
-        createView              : createView,
-        listTemplate            : listTemplate,
-        listItemView            : listItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/product/totalCollectionLength',
-        page                    : null, // if reload page, and in url is valid page
-        contentType             : CONSTANT.SALESPRODUCT, // needs in view.prototype.changeLocationHash
-        exportToXlsxUrl         : '/Product/exportToXlsx',
-        exportToCsvUrl          : '/Product/exportToCsv',
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : listItemView,
+        contentCollection: ContentCollection,
+        page             : null, // if reload page, and in url is valid page
+        contentType      : CONSTANT.SALESPRODUCT, // needs in view.prototype.changeLocationHash
+        exportToXlsxUrl  : '/Product/exportToXlsx',
+        exportToCsvUrl   : '/Product/exportToCsv',
 
         initialize: function (options) {
+            $(document).off('click');
+
+            this.EditView = EditView;
+            this.CreateView = CreateView;
+
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            _.bind(this.collection.showMoreAlphabet, this.collection);
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
-            this.filter = options.filter ? options.filter : {};
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
+            this.parrentContentId = options.collection.parrentContentId;
+            this.sort = options.sort;
+            this.filter = options.filter;
+            this.page = options.collection.currentPage;
+            this.ContentCollection = ContentCollection;
+
             this.render();
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            this.contentCollection = contentCollection;
         },
 
         events: {
-            "click .list td:not(.notForm)": "goToEditDialog",
-            "click .letter:not(.empty)"   : "alpabeticalRender"
+            'click .list td:not(.notForm)': 'goToEditDialog',
+            'click .letter:not(.empty)'   : 'alpabeticalRender'
         },
 
         render: function () {
@@ -51,7 +51,6 @@ define([
 
             $('.ui-dialog ').remove();
 
-            self = this;
             $currentEl = this.$el;
 
             $currentEl.html('');
@@ -66,11 +65,11 @@ define([
             this.renderAlphabeticalFilter(this);
             this.renderFilter();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         },
 
         goToEditDialog: function (e) {
-            var id = $(e.target).closest('tr').data("id");
+            var id = $(e.target).closest('tr').data('id');
             var model = new productModel({validate: false});
 
             e.preventDefault();
@@ -78,7 +77,7 @@ define([
             model.fetch({
                 data   : {id: id},
                 success: function (model) {
-                    new editView({model: model});
+                    new EditView({model: model});
                 },
                 error  : function () {
                     App.render({

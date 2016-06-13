@@ -23,7 +23,7 @@
     <%}%>
 </td>
 <td class="balance <%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
-<td class="paid <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paid.toFixed(2)) : '0.00'%></td>
+<td class="paid <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo && invoice.paid) ? currencySplitter(invoice.paid.toFixed(2)) : '0.00'%></td>
 <td class="total <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
 <td class="centerCell" id='<%=invoice._id%>'>
     <%if(invoice.workflow){%>

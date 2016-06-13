@@ -34,19 +34,17 @@ define([
 
     var OrdersListView = ListViewBase.extend({
 
-        listTemplate: listTemplate,
-        ListItemView: ListItemView,
-
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
         CreateView       : CreateView,
         EditView         : EditView,
 
-        contentType: 'salesOrder', // needs in view.prototype.changeLocationHash
+        viewType   : 'list',
+        contentType: CONSTANTS.SALESORDER, // needs in view.prototype.changeLocationHash
 
         events: {
-            'click .stageSelect'                 : 'showNewSelect',
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
-            'click .newSelectList li'            : 'chooseOption'
+            'click  .list tbody td:not(.notForm)': 'goToEditDialog'
         },
 
         initialize: function (options) {
@@ -65,18 +63,47 @@ define([
             this.render();
         },
 
+        chooseOption: function (e) {
+            var self = this;
+            var $target = $(e.target);
+            var $targetElement = $target.parents('td');
+            var id = $targetElement.attr('id');
+            var model = this.collection.get(id);
+
+            model.save({
+                workflow: $target.attr('id')
+            }, {
+                patch   : true,
+                validate: false,
+                success : function () {
+                    self.showFilteredPage(self.filter, self);
+                }
+            });
+
+            this.hideNewSelect();
+            return false;
+        },
+
         recalcTotal: function () {
+            var $thisEl = this.$el;
+            var $total = $thisEl.find('#total');
             var total = 0;
 
             _.each(this.collection.toJSON(), function (model) {
-                total += parseFloat(model.paymentInfo.total);
+                var modelCurrency = model.currency;
+
+                if (modelCurrency && modelCurrency.rate) {
+                    total += parseFloat(model.paymentInfo.total / modelCurrency.rate);
+                } else {
+                    total += parseFloat(model.paymentInfo.total);
+                }
             });
 
-            this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+            total = helpers.currencySplitter(total.toFixed(2));
+            $total.text(total);
         },
 
         render: function () {
-            var self = this;
             var $thisEl = this.$el;
             var itemView;
 
@@ -93,7 +120,6 @@ define([
 
             $thisEl.append(itemView.render());
 
-            // added two parameters page and items number
             $thisEl.append(new ListTotalView({
                 element : this.$el.find('#listTable'),
                 cellSpan: 5
@@ -101,19 +127,12 @@ define([
 
             this.renderFilter();
             this.renderPagination($thisEl, this);
-
+            this.recalcTotal();
+            
             $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
-            dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
-                wId         : 'Sales Order',
-                source      : 'purchase',
-                targetSource: 'order'
-            }, function (stages) {
-                self.stages = stages;
-            });
         },
 
-       /* goToEditDialog: function (event) {
+        goToEditDialog: function (event) {
             var self = this;
             var $eventTarget = $(event.target);
             var $closestTr = $eventTarget.closest('tr');
@@ -143,7 +162,7 @@ define([
                         onlyView: onlyView
                     });
                 },
-
+                
                 error: function () {
                     App.render({
                         type   : 'error',
@@ -151,7 +170,7 @@ define([
                     });
                 }
             });
-        }*/
+        }
 
     });
 

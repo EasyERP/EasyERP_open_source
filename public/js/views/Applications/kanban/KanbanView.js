@@ -64,9 +64,10 @@
             var w;
             var k;
             var idx;
+            var $thisEl = this.$el;
 
             if (id) {
-                el = $('td.column[data-id="' + id + '"]');
+                el = $thisEl.find('td.column[data-id="' + id + '"]');
             } else {
                 el = $(e.target).closest('td');
             }
@@ -93,20 +94,20 @@
             if (!id) {
                 this.updateFoldWorkflow();
             }
-            if (el.closest('table').find('.fold').length == el.closest('table').find('.column').length) {
+            if (el.closest('table').find('.fold').length === el.closest('table').find('.column').length) {
                 el.closest('table').css({'min-width': 'inherit'});
-                el.closest('table').css({'width': 'auto'});
+                el.closest('table').css({width: 'auto'});
             } else {
                 el.closest('table').css({'min-width': '100%'});
             }
 
             el.closest('table').css({'min-height': ($(window).height() - 110) + 'px'});
-            this.$('.column').sortable('enable');
-            this.$('.column.fold').sortable('disable');
+            $thisEl.find('.column').sortable('enable');
+            $thisEl.find('.column.fold').sortable('disable');
         },
 
         isNumberKey: function (evt) {
-            var charCode = evt.which || event.keyCode;
+            var charCode = evt.which || evt.keyCode;
             if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                 return false;
             }
@@ -177,8 +178,9 @@
         },
 
         selectItem: function (e) {
-            $(e.target).parents('.item').parents('table').find('.active').removeClass('active');
-            $(e.target).parents('.item').addClass('active');
+            var target = $(e.target);
+            target.parents('.item').parents('table').find('.active').removeClass('active');
+            target.parents('.item').addClass('active');
         },
 
         gotoEditForm: function (e) {
@@ -191,8 +193,8 @@
             model.urlRoot = '/applications/';
             model.fetch({
                 data   : {id: id, viewType: 'form'},
-                success: function (model) {
-                    new EditView({model: model});
+                success: function (response) {
+                    new EditView({model: response});
                 },
 
                 error: function () {
@@ -227,7 +229,7 @@
                 collection.set(collection.parse(response));
             }
 
-            column = $('[data-id="' + response.workflowId + '"]');
+            column = context.$el.find('[data-id="' + response.workflowId + '"]');
 
             forContent = column.find('#forContent');
             forContent.html(''); // for duplicated content edited by Lilya
@@ -258,6 +260,7 @@
             var a;
             var b;
             var inc;
+            var $thisEl = this.$el;
             if (workflow === workflowStart) {
                 if (sequence > sequenceStart) {
                     sequence -= 1;
@@ -272,7 +275,7 @@
                     b = sequenceStart;
                     inc = 1;
                 }
-                $('.column[data-id="' + workflow + '"]').find('.item').each(function () {
+                $thisEl.find('.column[data-id="' + workflow + '"]').find('.item').each(function () {
                     var sec = parseInt($(this).find('.inner').attr('data-sequence'), 10);
                     if (sec >= a && sec <= b) {
                         $(this).find('.inner').attr('data-sequence', sec + inc);
@@ -281,12 +284,12 @@
                 item.find('.inner').attr('data-sequence', sequence);
 
             } else {
-                $('.column[data-id="' + workflow + '"]').find('.item').each(function () {
+                $thisEl.find('.column[data-id="' + workflow + '"]').find('.item').each(function () {
                     if (parseInt($(this).find('.inner').attr('data-sequence'), 10) >= sequence) {
                         $(this).find('.inner').attr('data-sequence', parseInt($(this).find('.inner').attr('data-sequence'), 10) + 1);
                     }
                 });
-                $('.column[data-id="' + workflowStart + '"]').find('.item').each(function () {
+                $thisEl.find('.column[data-id="' + workflowStart + '"]').find('.item').each(function () {
                     if (parseInt($(this).find('.inner').attr('data-sequence'), 10) > sequenceStart) {
                         $(this).find('.inner').attr('data-sequence', parseInt($(this).find('.inner').attr('data-sequence'), 10) - 1);
                     }
@@ -296,7 +299,7 @@
             }
         },
 
-        hideItemsNumber: function (e) {
+       /* hideItemsNumber: function (e) {
             var el = $(e.target);
 
             this.$el.find('.allNumberPerPage, .newSelectList').hide();
@@ -304,9 +307,9 @@
                 $('.search-content').removeClass('fa-caret-up');
                 this.$el.find('.search-options').addClass('hidden');
             }
-        },
+        },*/
 
-        showFiltredPage: function (workflows, savedFilter) {
+       /* showFiltredPage: function (workflows, savedFilter) {
             var listId;
             var foldList;
             var showList;
@@ -400,24 +403,26 @@
                 el.removeClass('fold');
             });
 
-        },
+        },*/
 
         render: function () {
             var self = this;
             var workflows = this.workflowsCollection.toJSON();
+            var $thisEl = this.$el;
 
-            this.$el.html(_.template(WorkflowsTemplate, {workflowsCollection: workflows}));
-            $('.column').last().addClass('lastColumn');
+            $thisEl.html(_.template(WorkflowsTemplate, {workflowsCollection: workflows}));
+
+            $thisEl.find('.column').last().addClass('lastColumn');
 
             _.each(workflows, function (workflow, i) {
-                var column = this.$('.column').eq(i);
+                var column = $thisEl.find('.column').eq(i);
                 var itemCount = 0;
                 var total = ' <span><span class="totalCount">' + itemCount + '</span> </span>';
 
                 column.find('.columnNameDiv h2').append(total);
             }, this);
 
-            this.$('.column').sortable({
+            $thisEl.find('.column').sortable({
                 connectWith: '.column',
                 cancel     : 'h2',
                 cursor     : 'move',
@@ -443,12 +448,12 @@
                     }
 
                     if (model) {
-                        secStart = parseInt($('.inner[data-id="' + model.toJSON()._id + '"]').attr('data-sequence'), 10);
+                        secStart = parseInt($thisEl.find('.inner[data-id="' + model.toJSON()._id + '"]').attr('data-sequence'), 10);
                         workStart = model.toJSON().workflow._id || model.toJSON().workflow;
 
                         model.save({
                             workflow     : column.data('id'),
-                            sequenceStart: parseInt($('.inner[data-id="' + model.toJSON()._id + '"]').attr('data-sequence'), 10),
+                            sequenceStart: parseInt($thisEl.find('.inner[data-id="' + model.toJSON()._id + '"]').attr('data-sequence'), 10),
                             sequence     : sequence,
                             workflowStart: model.toJSON().workflow._id || model.toJSON().workflow
                         }, {
@@ -465,12 +470,12 @@
                     }
                 }
             }).disableSelection();
-            this.$el.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
             $(document).on('keypress', '#cPerPage', this.isNumberKey);
-            this.$el.unbind();
-            $(document).on('click', function (e) {
+            $thisEl.unbind();
+           /* $(document).on('click', function (e) {
                 self.hideItemsNumber(e);
-            });
+            });*/
 
             return this;
         }

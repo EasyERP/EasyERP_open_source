@@ -59,6 +59,7 @@ define([
         ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
         setOverTime      : setOverTime,
+        cancelEdit       : cancelEdit,
         contentType      : 'wTrack',
         responseObj      : {},
         wTrackId         : null, // need for edit rows in listView
@@ -75,7 +76,6 @@ define([
             this.collection = options.collection;
             this.filter = options.filter;
             this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.pageSize || 100;
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.currentPage;
@@ -175,7 +175,7 @@ define([
 
         copyRow: function (e) {
             var self = this;
-            var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');
+            var checkedRows = this.$el.find('input:checked:not(#checkAll)');
             var length = checkedRows.length;
             var selectedWtrack;
             var target;
@@ -320,7 +320,7 @@ define([
                 cb(null, weeks);
             }
 
-            if (navigator.userAgent.indexOf('Firefox') > -1) {
+            if (navigator.userAgent.indexOf('Firefox') >= 0) {
                 this.setEditable(editedElement);
             }
 
@@ -380,6 +380,7 @@ define([
             }
         },
 
+        // is overwritten because this logic is more complex
         editRow: function (e) {
             var el = $(e.target);
             var $td = el.closest('td');
@@ -574,7 +575,7 @@ define([
                     $job.text('');
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
-                    tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
+                    tr.find('[data-content="customer"]').text(element.customer && element.customer.name ? element.customer.name.first + ' ' + element.customer.name.last: '');
 
                     project = element._id;
 
@@ -723,55 +724,6 @@ define([
                 }, self);
         },
 
-        checked: function (e) {
-            var $thisEl = this.$el;
-            var changedRows = Object.keys(this.changedModels);
-            var rawRows;
-            var $checkedEls;
-            var checkLength;
-
-            e.stopPropagation();
-
-            if (this.collection.length > 0) {
-                $checkedEls = $thisEl.find('input.listCB:checked');
-
-                checkLength = $checkedEls.length;
-                rawRows = $checkedEls.closest('.false');
-
-                //this.checkProjectId(e, checkLength);
-
-                if (checkLength > 0) {
-                    $('#top-bar-deleteBtn').show();
-                    $('#top-bar-copyBtn').show();
-                    $('#top-bar-createBtn').hide();
-
-                    $('#checkAll').prop('checked', false);
-                    if (checkLength === this.collection.length) {
-                        $('#checkAll').prop('checked', true);
-                    }
-                } else {
-                    $('#top-bar-deleteBtn').hide();
-                    $('#top-bar-copyBtn').hide();
-                    $('#top-bar-createBtn').show();
-                    $('#checkAll').prop('checked', false);
-                }
-
-                if (rawRows.length !== 0 && rawRows.length !== checkLength) {
-                    this.$saveBtn.hide();
-                } else {
-                    this.$saveBtn.show();
-                }
-
-                if (changedRows.length) {
-                    this.$saveBtn.show();
-                } else {
-                    this.$saveBtn.hide();
-                }
-            }
-
-            this.setAllTotalVals();
-        },
-
         bindingEventsToEditedCollection: function (context) {
             if (context.editCollection) {
                 context.editCollection.unbind();
@@ -819,71 +771,10 @@ define([
             this.changed = true;
         },
 
-        /*showSaveCancelBtns: function () {
-         var saveBtnEl = $('#top-bar-saveBtn');
-         var cancelBtnEl = $('#top-bar-deleteBtn');
-         var createBtnEl = $('#top-bar-createBtn');
-
-         if (!this.changed) {
-         createBtnEl.hide();
-         }
-         saveBtnEl.show();
-         cancelBtnEl.show();
-         createBtnEl.hide();
-
-         return false;
-         },
-
-         hideSaveCancelBtns: function () {
-         var createBtnEl = $('#top-bar-createBtn');
-         var saveBtnEl = $('#top-bar-saveBtn');
-         var cancelBtnEl = $('#top-bar-deleteBtn');
-
-         this.changed = false;
-
-         saveBtnEl.hide();
-         cancelBtnEl.hide();
-         createBtnEl.show();
-
-         return false;
-         },*/
-
-        /*checkProjectId: function (e, checkLength) {
-         var totalCheckLength = $('input.checkbox:checked').length;
-         var element = e.target ? e.target : e;
-         var checked = element ? element.checked : true;
-         var targetEl = $(element);
-         var tr = targetEl.closest('tr');
-         var wTrackId = tr.attr('data-id');
-         var model = this.collection.get(wTrackId);
-         var projectContainer = tr.find('td[data-content="project"]');
-         var projectId = projectContainer.attr('data-id');
-
-         if (checkLength >= 1) {
-         this.copyEl.show();
-         } else {
-         this.copyEl.hide();
-         }
-
-         if (!checkLength || !model || model.get('isPaid')) {
-         this.selectedProjectId = [];
-
-         return false;
-         }
-
-         if (checked) {
-         this.selectedProjectId.push(projectId);
-         } else if (totalCheckLength > 0 && this.selectedProjectId.length > 1) {
-         this.selectedProjectId = _.without(this.selectedProjectId, projectId);
-         }
-
-         this.selectedProjectId = _.uniq(this.selectedProjectId);
-         },*/
-
         getAutoCalcField: function (idTotal, dataRow, money) {
             var footerRow = this.$el.find('#listFooter');
 
-            var checkboxes = this.$el.find('#listTable .listCB:checked');
+            var checkboxes = this.$el.find('#listTable .checkbox:checked');
 
             var totalTd = $(footerRow).find('#' + idTotal);
             var rowTdVal = 0;
@@ -917,142 +808,6 @@ define([
             this.getAutoCalcField('sunHours', '7');
         },
 
-        deleteItemsRender: function () {
-            this.getPage({
-                remove: false
-            });
-        },
-
-        deleteItems: function () {
-            var self = this;
-            var $thisEl = this.$el;
-            var $table = $thisEl.find('#listTable');
-            var mid = CONSTANTS.MID[this.contentType];
-            var model;
-            var $checkedInputs;
-            var value;
-            var enableDelete;
-            var message;
-
-            if (!this.changed) {
-                $checkedInputs = $table.find('input:checked');
-
-                $.each($checkedInputs, function (index, checkbox) {
-                    value = checkbox.value;
-
-                    if (value.length < 24) {
-                        self.editCollection.remove(value);
-                        self.editCollection.on('remove', function () {
-
-                        }, self);
-
-                    } else {
-                        model = self.collection.get(value);
-
-                        enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
-
-                        if (!model.toJSON().workflow) {
-                            if ($.trim($thisEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
-                                enableDelete = true;
-                            }
-                        }
-
-                        if (enableDelete) {
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-
-                                wait   : true,
-                                success: function () {
-
-                                },
-
-                                error: function (_model, xhr) {
-                                    if (xhr.status === 403) {
-                                        App.render({
-                                            type   : 'error',
-                                            message: 'You do not have permission to perform this action'
-                                        });
-                                    }
-                                }
-                            });
-                        } else {
-                            message = "You can't delete tCard with closed project.";
-
-                            App.render({
-                                type   : 'error',
-                                message: message
-                            });
-                        }
-                    }
-                });
-            } else {
-                this.cancelChanges();
-            }
-        },
-
-        cancelChanges: function () {
-            var self = this;
-            var edited = this.edited;
-            var collection = this.collection;
-            var editedCollectin = this.editCollection;
-            var copiedCreated;
-            var dataId;
-            var enable;
-
-            async.each(edited, function (el, cb) {
-                var tr = $(el).closest('tr');
-                var rowNumber = tr.find('[data-content="number"]').text();
-                var id = tr.attr('data-id');
-                var template = _.template(cancelEdit);
-                var model;
-
-                if (!id) {
-                    return cb('Empty id');
-                } else if (id.length < 24) {
-                    tr.remove();
-                    model = self.changedModels;
-
-                    if (model) {
-                        delete model[id];
-                    }
-
-                    return cb();
-                }
-
-                model = collection.get(id);
-                model = model.toJSON();
-                model.startNumber = rowNumber;
-                enable = model && model.workflow.name !== 'Closed' ? true : false;
-                tr.replaceWith(template({model: model, enable: enable}));
-                cb();
-            }, function (err) {
-                if (!err) {
-                    /* self.editCollection = new EditCollection(collection.toJSON());*/
-                    self.bindingEventsToEditedCollection(self);
-                    self.hideSaveCancelBtns();
-                    self.copyEl.hide();
-                }
-            });
-
-            if (this.createdCopied) {
-                copiedCreated = this.$el.find('.false');
-                // this.hideOvertime();
-                copiedCreated.each(function () {
-                    dataId = $(this).attr('data-id');
-                    self.editCollection.remove(dataId);
-                    delete self.changedModels[dataId];
-                    $(this).remove();
-                });
-
-                this.createdCopied = false;
-            }
-
-            self.changedModels = {};
-            self.responseObj['#jobs'] = [];
-        },
-
         render: function () {
             var self = this;
             var $currentEl = this.$el;
@@ -1071,36 +826,6 @@ define([
             this.renderPagination($currentEl, this);
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-            $('#checkAll').click(function () {
-                var checkLength;
-
-                allInputs = $('.listCB');
-                allInputs.prop('checked', this.checked);
-                checkedInputs = $('input.listCB:checked');
-
-                if (self.collection.length > 0) {
-                    checkLength = checkedInputs.length;
-
-                    if (checkLength > 0) {
-                        $('#top-bar-deleteBtn').show();
-                        $('#top-bar-copyBtn').show();
-                        $('#top-bar-createBtn').hide();
-
-                        if (checkLength === self.collection.length) {
-                            $('#checkAll').prop('checked', true);
-                        }
-                    } else {
-                        $('#top-bar-deleteBtn').hide();
-                        $('#top-bar-createBtn').show();
-                        // self.genInvoiceEl.hide();
-                        self.copyEl.hide();
-                        $('#checkAll').prop('checked', false);
-                    }
-                }
-
-                self.setAllTotalVals();
-            });
 
             dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (res) {
                 self.responseObj['#project'] = res.data;
@@ -1129,9 +854,6 @@ define([
             this.renderFilter();
 
             setTimeout(function () {
-                /* self.editCollection = new EditCollection(self.collection.toJSON());
-                 self.editCollection.on('saved', self.savedNewModel, self);
-                 self.editCollection.on('updated', self.updatedOptions, self);*/
                 self.bindingEventsToEditedCollection(self);
                 self.$listTable = $('#listTable');
             }, 10);

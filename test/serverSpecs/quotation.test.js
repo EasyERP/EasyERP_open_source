@@ -185,28 +185,6 @@ describe('Quotation Specs', function () {
                 });
         });
 
-        it('should get quotations totalCollectionLength', function (done) {
-
-            aggent
-                .get('quotation/totalCollectionLength')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-                    expect(body)
-                        .to.be.instanceOf(Object);
-
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.gte(1);
-
-                    done();
-                });
-        });
-
         it('should get quotations filterValues', function (done) {
 
             aggent

@@ -2,7 +2,7 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
-var dbId = 'dendb';
+var dbId = 'production';
 var admin = {
     login: 'admin',
     pass : 'tm2016',

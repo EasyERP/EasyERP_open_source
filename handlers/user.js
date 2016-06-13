@@ -237,7 +237,7 @@ var User = function (event, models) {
                 ]
             };
 
-            UserModel.findOne(queryObject, {login: 1, pass: 1}, function (err, _user) {
+            UserModel.findOne(queryObject, {login: 1, pass: 1, kanbanSettings: 1}, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
                 var lastAccess;
 
@@ -469,19 +469,19 @@ var User = function (event, models) {
      * @instance
      */
     /* this.getAll = function (req, res, next) {
-        var response = {};
-        var data = req.query;
-        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+     var response = {};
+     var data = req.query;
+     var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
 
-        findUsers(UserModel, {__v: 0, pass: 0}, {login: 1}, data, function (err, result) {
-            if (err) {
-                return next(err);
-            }
+     findUsers(UserModel, {__v: 0, pass: 0}, {login: 1}, data, function (err, result) {
+     if (err) {
+     return next(err);
+     }
 
-            response.data = result;
-            res.status(200).send(response);
-        });
-    };*/
+     response.data = result;
+     res.status(200).send(response);
+     });
+     };*/
 
     this.getAll = function (req, res, next) {
         var response = {};
