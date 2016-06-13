@@ -26,6 +26,7 @@ define([
             $('#top-bar-deleteBtn').hide();
             $('#top-bar-generateBtn').hide();
             $('#top-bar-copyBtn').hide();
+            $('#top-bar-createBtn').show();
 
             this.$el.find('#checkAll').prop('checked', false);
         },
@@ -840,6 +841,10 @@ define([
 
                 if (pageNumber <= itemsOnPage) {
                     for (i = 1; i <= pageNumber; i++) {
+                        $pageList.append('<li class="showPage">' + i + '</li>');
+                    }
+                } else if (currentPage >= 5 && currentPage <= itemsOnPage) {
+                    for (i = currentPage - 3; i <= currentPage + 3; i++) {
                         $pageList.append('<li class="showPage">' + i + '</li>');
                     }
                 } else if (pageNumber >= itemsOnPage && currentPage <= itemsOnPage) {
