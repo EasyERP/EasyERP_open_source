@@ -19,7 +19,7 @@ define([
 
         initialize: function (options) {
             var self = this;
-            var url = 'project/emails/';
+            var url = 'projects/emails/';
             var projectId;
 
             this.model = options.model.toJSON();
@@ -52,7 +52,7 @@ define([
         send: function () {
             var self = this;
             var data = {};
-            var url = 'project/sendInvoice/';
+            var url = 'projects/sendInvoice/';
             var Cc = self.$el.find('#Cc').val();
             var To = self.$el.find('#To').val();
 
