@@ -7,7 +7,7 @@ define([
     'views/Assignees/AssigneesView',
     'views/Notes/AttachView',
     'views/Proforma/InvoiceProductItems',
-    'views/salesInvoice/wTrack/wTrackRows',
+    'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/ProformaCreateView',
     'views/Payment/list/ListHeaderInvoice',
     'common',
@@ -36,18 +36,17 @@ define([
     'use strict';
 
     var EditView = ParentView.extend({
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {
-            'click #saveBtn'         : 'saveItem',
-            'click #cancelBtn'       : 'hideDialog',
-            'click .current-selected': 'showNewSelect',
-            'click .details'         : 'showDetailsBox',
-            'click .newPayment'      : 'newPayment',
-            'click .approve'         : 'approve',
-            'click .cancelInvoice'   : 'cancelInvoice',
-            'click .setDraft'        : 'setDraft'
+            'click #saveBtn'      : 'saveItem',
+            //'click #cancelBtn'    : 'hideDialog',
+            'click .details'      : 'showDetailsBox',
+            'click .newPayment'   : 'newPayment',
+            'click .approve'      : 'approve',
+            'click .cancelInvoice': 'cancelInvoice',
+            'click .setDraft'     : 'setDraft'
 
         },
 
@@ -63,7 +62,7 @@ define([
             this.forSales = options.forSales;
 
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
-            this.currentModel.urlRoot = '/Invoice';
+            this.currentModel.urlRoot = '/Invoices';
             this.responseObj = {};
 
             this.redirect = options.redirect;
@@ -527,9 +526,7 @@ define([
                 buttons = [
                     {
                         text : this.isPaid ? 'Close' : 'Cancel',
-                        click: function () {
-                            self.hideDialog();
-                        }
+                        click: self.hideDialog
                     }
                 ];
             } else {
@@ -539,9 +536,7 @@ define([
                         click: self.saveItem
                     }, {
                         text : 'Cancel',
-                        click: function () {
-                            self.hideDialog();
-                        }
+                        click: self.hideDialog
                     }, {
                         text : 'Delete',
                         click: self.deleteItem

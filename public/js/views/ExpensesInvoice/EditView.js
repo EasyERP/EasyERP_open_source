@@ -36,7 +36,7 @@ define([
     'use strict';
 
     var EditView = Backbone.View.extend({
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {

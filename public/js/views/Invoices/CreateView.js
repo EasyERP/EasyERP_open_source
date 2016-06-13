@@ -15,7 +15,7 @@ define([
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(CreateTemplate),
 
         initialize: function () {

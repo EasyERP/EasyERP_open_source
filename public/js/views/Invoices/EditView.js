@@ -36,7 +36,7 @@ define([
     'use strict';
 
     var EditView = ParentView.extend({
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {
