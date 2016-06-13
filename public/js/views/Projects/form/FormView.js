@@ -898,37 +898,6 @@ define([
 
         },
 
-        /* showMoreContent: function () {
-         var self = this;
-         var _id = this.id;
-         var gridStart = $('#grid-start').text();
-
-         var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
-
-         var filter = {
-         project: {
-         key  : 'project._id',
-         value: [_id],
-         type : 'ObjectId'
-         }
-         };
-
-         if (self.wTrackView) {
-         self.wTrackView.undelegateEvents();
-         }
-
-         this.wTrackView = new WTrackView({
-         reset      : true,
-         model      : self.wCollection,
-         filter     : filter,
-         startNumber: startNumber,
-         project    : self.formModel,
-         url        : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
-         });
-
-         this.wCollection.bind('reset', this.createView);
-         },*/
-
         getInvoiceStats: function (cb) {
             // ToDo optimize
             var _id = window.location.hash.split('form/')[1];
@@ -1541,8 +1510,8 @@ define([
             }).render().el;
 
             atachEl = new AttachView({
-                model: this.formModel,
-                url  : '/uploadProjectsFiles'
+                model      : this.formModel,
+                contentType: self.contentType
             }).render().el;
 
             thisEl.html(templ({
@@ -1577,7 +1546,6 @@ define([
             paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
             accessData.forEach(function (accessElement) {
-                // todo move dom elems removal to template
                 if (accessElement.module === 64) {
                     if (accessElement.access.read) {
                         paralellTasks.push(self.getInvoice);
