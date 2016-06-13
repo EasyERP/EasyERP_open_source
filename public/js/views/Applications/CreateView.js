@@ -215,6 +215,7 @@ define([
             var formString = this.template();
             var self = this;
             var $thisEl;
+            var notDiv;
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 dialogClass  : 'edit-dialog create-app-dialog',
@@ -239,9 +240,12 @@ define([
 
             this.attachView = new AttachView({
                 model   : new ApplicationModel(),
-                contentType: 'Applications',
+                contentType: self.contentType,
                 isCreate: true
             });
+
+            notDiv = $thisEl.find('.attach-container');
+            notDiv.append(this.attachView.render().el);
             
             this.renderAssignees(this.currentModel);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this, true, function (data) {
