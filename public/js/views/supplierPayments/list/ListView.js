@@ -33,6 +33,7 @@ define([
         editCollection   : null,
         changedModels    : {},
         responseObj      : {},
+        cancelEdit       : cancelEdit,
 
         events: {
             'click td.editable'                                : 'editRow',
@@ -57,6 +58,16 @@ define([
             this.contentCollection = paymentCollection;
 
             this.render();
+        },
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
         },
 
         chooseOption: function (e) {

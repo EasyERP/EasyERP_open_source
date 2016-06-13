@@ -726,7 +726,17 @@ var TCard = function (event, models) {
                     4               : 1,
                     5               : 1,
                     6               : 1,
-                    7               : 1
+                    7               : 1,
+                    notRemovable    : {
+                        $cond: {
+                            if: {
+                                $eq: ['$workflow.name', 'Closed']
+                            },
+
+                            then: 1,
+                            else: 0
+                        }
+                    }
                 }
             }, {
                 $group: {
@@ -760,6 +770,7 @@ var TCard = function (event, models) {
                     5               : '$root.5',
                     6               : '$root.6',
                     7               : '$root.7',
+                    notRemovable    : '$root.notRemovable',
                     total           : 1
                 }
             }, {

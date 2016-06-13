@@ -7,8 +7,9 @@ define([
     'constants',
     'common',
     'async',
-    'dataService'
-], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, async, dataService) {
+    'dataService',
+    'helpers'
+], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, async, dataService, helpers) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
@@ -694,7 +695,7 @@ define([
                 model.startNumber = rowNumber;
                 enable = model && model.workflow && model.workflow.name !== 'Closed';
 
-                $tr.replaceWith(template({model: model, enable: enable}));
+                $tr.replaceWith(template({model: model, enable: enable, currencySplitter: helpers.currencySplitter}));
 
                 cb();
             }, function (err) {

@@ -1,10 +1,11 @@
 define([
     'Underscore',
+    'jQuery',
     'views/topBarViewBase',
     'text!templates/wTrack/TopBarTemplate.html',
     'custom',
     'common'
-], function (_, BaseView, ContentTopBarTemplate, Custom, Common) {
+], function (_, $, BaseView, ContentTopBarTemplate, Custom, Common) {
     var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: 'tCard', // todo change on COSTANT
@@ -27,7 +28,7 @@ define([
 
         render: function () {
             var viewType = Custom.getCurrentVT();
-            this.$el.find('title').text(this.contentType);
+            $('title').text(this.contentType);
 
             this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 

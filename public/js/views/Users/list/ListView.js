@@ -11,7 +11,7 @@ define([
     'use strict';
 
     var UsersListView = ListViewBase.extend({
-        createView       : CreateView,
+        CreateView       : CreateView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: ContentCollection,

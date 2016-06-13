@@ -67,6 +67,16 @@ define([
             'keydown input.editing': 'setChanges'
         },
 
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
+        },
+
         saveItem: function () {
             var self = this;
             var model;
