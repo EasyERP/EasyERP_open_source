@@ -23,15 +23,17 @@ module.exports = function (config) {
             {pattern: 'node_modules/chai-jquery/chai-jquery.js', included: false, watching: false},
             {pattern: 'node_modules/sinon-chai/lib/sinon-chai.js', included: false, watching: false},
 
-            {pattern: 'constants/test/modules.js', included: false, watching: false},
-            {pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
+            {pattern: 'constants/test/*.js', included: false, watching: false},
+            /*{pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
             {pattern: 'constants/test/filter.js', included: false, watching: false},
+            {pattern: 'constants/test/projects.js', included: false, watching: false},*/
 
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
             {pattern: 'public/js/models/*.js', included: false, watching: false},
             {pattern: 'public/js/helpers/*.js', included: false, watching: false},
             {pattern: 'public/js/views/**/*.js', included: false, watching: false},
+            {pattern: 'public/js/services/**/*.js', included: false, watching: false},
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
 
@@ -67,7 +69,7 @@ module.exports = function (config) {
 
         /*autoWatch: true,*/
 
-        browsers: ['Firefox', 'Chrome', /*'Safari', 'IE',*/ 'PhantomJS'],
+        browsers: ['Firefox', 'Chrome', /*'Safari',*/ 'IE', 'PhantomJS'],
 
         singleRun: false,
 
