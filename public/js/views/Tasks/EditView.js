@@ -6,11 +6,23 @@
     'text!templates/Tasks/EditTemplate.html',
     'views/selectView/selectView',
     'views/Notes/NoteView',
+    'views/Notes/AttachView',
     'common',
     'populate',
     'custom',
     'constants'
-], function (Backbone, _, $, ParentView, EditTemplate, selectView, NoteView, common, populate, custom, CONSTANTS) {
+], function (Backbone,
+             _,
+             $,
+             ParentView,
+             EditTemplate,
+             selectView,
+             NoteView,
+             AttachView,
+             common,
+             populate,
+             custom,
+             CONSTANTS) {
 
     var EditView = ParentView.extend({
         contentType: 'Tasks',
@@ -327,6 +339,12 @@
                     model: this.currentModel
                 }).render().el);
 
+            this.$el.find('.attach-container').append(
+                new AttachView({
+                    model      : this.currentModel,
+                    contentType: 'Tasks'
+                }).render().el
+            );
             this.renderAssignees(this.currentModel);
 
             populate.get('#projectDd', '/projects/getForDd', {}, 'name', this);

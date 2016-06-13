@@ -143,7 +143,7 @@ define([
             var data = {
                 forSales: this.forSales,
                 orderId : orderId,
-                currency: this.currentModel.currency,
+                currency: this.currentModel.toJSON().currency,
                 journal : CONSTANTS.INVOICE_JOURNAL
             };
 
@@ -159,25 +159,6 @@ define([
                 if (!err) {
                     dataService.postData(url, data, function (err, response) {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
-                        var filter;
-                        var _id;
-                        var tr;
-
-                        function createView() {
-
-                            self.invoiceView = new InvoiceView({
-                                model       : self.collection,
-                                activeTab   : true,
-                                eventChannel: self.eventChannel,
-                                filter      : filter
-                            });
-
-                            self.invoiceView.showDialog(orderId);
-
-                            if (self.eventChannel) {
-                                self.eventChannel.trigger('invoiceReceive');
-                            }
-                        }
 
                         if (err) {
                             App.render({
@@ -186,28 +167,9 @@ define([
                             });
                         } else {
                             if (self.redirect) {
-                                _id = window.location.hash.split('form/')[1];
-                                tr = $('[data-id=' + orderId + ']');
-
-                                tr.addClass('notEditable');
-                                tr.find('.checkbox').addClass('notRemovable');
-                                tr.find('.workflow').find('a').text('Invoiced');
-
-                                filter = {
-                                    project: {
-                                        key  : 'project._id',
-                                        value: [_id]
-                                    }
-                                };
-
-                                self.collection = new InvoiceCollection({
-                                    count      : 50,
-                                    viewType   : 'list',
-                                    contentType: 'salesInvoice',
-                                    filter     : filter
-                                });
-                                self.collection.unbind();
-                                self.collection.bind('reset', createView);
+                                if (self.eventChannel) {
+                                    self.eventChannel.trigger('invoiceReceive', response._id, true);
+                                }
                             } else {
                                 Backbone.history.navigate(redirectUrl, {trigger: true});
                             }

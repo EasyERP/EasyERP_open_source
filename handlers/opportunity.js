@@ -25,6 +25,10 @@ var Module = function (models, event) {
     var HistoryWriter = require('../helpers/historyWriter.js');
     var historyWriter = new HistoryWriter(models);
 
+    var path = require('path');
+    var Uploader = require('../services/fileStorage/index');
+    var uploader = new Uploader();
+
     var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     function validBody(body) {
@@ -434,6 +438,40 @@ var Module = function (models, event) {
 
                 res.status(200).send({success: 'Opportunities updated success', result: result});
 
+            });
+        });
+    };
+
+    this.uploadFile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var headers = req.headers;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'opportunities';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
+
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
+
+            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Opportunity updated success', data: response});
             });
         });
     };
@@ -2472,7 +2510,8 @@ var Module = function (models, event) {
             campaign        : 1,
             source          : 1,
             social          : 1,
-            skype           : 1
+            skype           : 1,
+            attachments     : 1
         });
 
         query

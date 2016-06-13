@@ -1011,7 +1011,7 @@ define([
             }).render();
         },
 
-        getInvoice: function (cb) {
+        getInvoice: function (cb, invoiceId, activate) {
             var self = this;
             var _id = this.id;
             var callback;
@@ -1028,10 +1028,15 @@ define([
 
                 var invoiceView = new InvoiceView({
                     collection  : self.iCollection,
+                    activeTab   : activate,
                     eventChannel: self.eventChannel
                 });
 
                 self.renderTabCounter();
+
+                if (invoiceId) {
+                    invoiceView.showDialog(invoiceId);
+                }
 
                 self.iCollection.trigger('fetchFinished', {
                     totalRecords: self.iCollection.totalRecords,
@@ -1218,7 +1223,7 @@ define([
             this.qCollection.bind('add remove', self.renderProformRevenue);
         },
 
-        getOrders: function (cb) {
+        getOrders: function (cb, orderId, activate) {
             var self = this;
             var _id = this.id;
 
@@ -1254,10 +1259,15 @@ define([
                     customerId    : self.formModel.toJSON().customer._id,
                     projectManager: self.salesManager,
                     filter        : filter,
-                    eventChannel  : self.eventChannel
+                    eventChannel  : self.eventChannel,
+                    activeTab     : activate
                 });
 
                 self.renderTabCounter();
+
+                if (orderId) {
+                    orderView.showOrderDialog(orderId);
+                }
 
                 self.ordersCollection.trigger('fetchFinished', {
                     totalRecords: self.ordersCollection.totalRecords,
@@ -1459,12 +1469,17 @@ define([
 
         },
 
-        newInvoice: function () {
+        newInvoice: function (invoiceId, activate) {
             var self = this;
             var paralellTasks;
 
+            var getInvoiceWithParams = function (cb) {
+                self.getInvoice(cb, invoiceId, activate);
+            };
+
             paralellTasks = [
                 self.getInvoiceStats,
+                getInvoiceWithParams,
                 self.getOrders
             ];
 
