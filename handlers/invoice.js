@@ -1267,11 +1267,12 @@ var Module = function (models, event) {
                     $project: {
                         _id               : '$root._id',
                         'salesPerson.name': '$root.salesPerson.name',
+                        'salesPerson._id' : '$root.salesPerson._id',
                         workflow          : '$root.workflow',
                         supplier          : '$root.supplier',
-                        project           : '$root.project',
+                       // project           : '$root.project',
                         expense           : '$root.expense',
-                        forSales          : '$root.forSales',
+                       // forSales          : '$root.forSales',
                         currency          : '$root.currency',
                         paymentInfo       : '$root.paymentInfo',
                         invoiceDate       : '$root.invoiceDate',
@@ -1279,7 +1280,7 @@ var Module = function (models, event) {
                         paymentDate       : '$root.paymentDate',
                         dueDate           : '$root.dueDate',
                         approved          : '$root.approved',
-                        _type             : '$root._type',
+                       // _type             : '$root._type',
                         removable         : '$root.removable',
                         paid              : '$root.paid',
                         total             : 1

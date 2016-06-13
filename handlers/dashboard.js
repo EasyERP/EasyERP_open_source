@@ -8,20 +8,6 @@ var wTrack = function (models) {
     var async = require('async');
     var redisStore = require('../helpers/redisClient');
     var CONSTANTS = require('../constants/mainConstants');
-    var constForView = [
-        '55b92ace21e4b7c40f00000f',
-        '55b92ace21e4b7c40f000010',
-        '55b92ace21e4b7c40f000016',
-        '56802eb31afe27f547b7ba52',
-        '566ee11b8453e8b464b70b73',
-        '56802e9d1afe27f547b7ba51',
-        '56802ec21afe27f547b7ba53',
-        '55b92ace21e4b7c40f000012',
-        '55b92ace21e4b7c40f000011',
-        '55bb1f14cb76ca630b000006',
-        '55bb1f40cb76ca630b000007',
-        '56e175c4d62294582e10ca68'
-    ];
 
     var objectId = mongoose.Types.ObjectId;
     var wTrackSchema = mongoose.Schemas.wTrack;
@@ -36,13 +22,10 @@ var wTrack = function (models) {
         var query = req.query;
         var employeesArray = [];
         var filter = query.filter || {};
-        var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
-            objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
-            objectId(CONSTANTS.MARKETING_DEPARTMENT_ID),
-            objectId(CONSTANTS.PM_ID)
+        var departmentsArray = [objectId(CONSTANTS.DEVELOPMENT)
         ];
         var departmentQuery = {
-            $nin: departmentsArray
+            $or: [{_id: {$in: departmentsArray}}, {parentDepartment: {$in: departmentsArray}}]
         };
         var employeeQueryForEmployeeByDep;
 
@@ -56,6 +39,7 @@ var wTrack = function (models) {
         var _startDateByMonth;
         var _endDateByMonth;
         var _dateStr;
+        var sortedDepartments;
         var duration;
         var weeks = 0;
         var key;
@@ -67,7 +51,7 @@ var wTrack = function (models) {
 
         if (filter.department && filter.department.value) {
             departmentQuery = {
-                $in: filter.department.value.objectID()
+                _id: {$in: filter.department.value.objectID()}
             };
         }
 
@@ -277,12 +261,12 @@ var wTrack = function (models) {
                         weeksArray: weeksArr
                     };
 
-                    constForView.forEach(function (dep) {
+                    sortedDepartments.forEach(function (dep) {
                         employeesByDep.forEach(function (department, index) {
                             var _dep = employeesByDep[index].department;
 
                             if (_dep && _dep._id) {
-                                if (dep === _dep._id.toString()) {
+                                if (dep.toString() === _dep._id.toString()) {
                                     sortDepartments.push(employeesByDep[index]);
                                 }
                             }
@@ -300,443 +284,459 @@ var wTrack = function (models) {
             // res.status(200).send(employeesByDep);
         }
 
-        function holidaysComposer(parallelCb) {
-            var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        async.waterfall([function (wfCb) {
+            var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
 
-            Holiday.aggregate([{
-                $project: {
-                    dateByWeek: {$add: [{$multiply: [100, '$year']}, '$week']},
-                    day       : 1,
-                    date      : 1,
-                    comment   : 1,
-                    ID        : 1,
-                    _id       : 0
-                }
-            }, {
-                $match: {
-                    $and: [{dateByWeek: {$gte: startDate, $lte: endDate}}, {day: {$nin: [0, 6]}}]
-                }
-            }], /* parallelCb*/function (err, holidays) {
-                var holidaysObject = {};
-                var key;
-                var i;
-
+            Department.find(departmentQuery, {_id: 1}).sort({nestingLevel: 1, sequence: -1}).exec(function (err, depIds) {
                 if (err) {
-                    return parallelCb(err);
+                    return wfCb(err);
                 }
 
-                for (i = holidays.length - 1; i >= 0; i--) {
-                    key = holidays[i].dateByWeek;
-
-                    if (!holidaysObject[key]) {
-                        holidaysObject[key] = 1;
-                    } else {
-                        holidaysObject[key]++;
-                    }
-                }
-
-                console.log(holidaysObject);
-
-                parallelCb(null, holidaysObject);
+                depIds = _.pluck(depIds, '_id');
+                sortedDepartments = depIds.slice();
+                wfCb(null, depIds);
             });
-        }
+        }, function (depIds, wfCb) {
+            function employeeByDepComposer(parallelCb) {
+                var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        function vacationComposer(parallelCb) {
-            // ToDo optimize and refactor
-            var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-            var matchObject = {
-                $and: [{dateByMonth: {$gte: _startDateByMonth, $lte: _endDateByMonth}}]
-            };
-
-            if (employeesArray.length) {
-                matchObject.$and.unshift({
-                    employee: {$in: employeesArray}
-                });
-            }
-
-            Vacation.aggregate([{
-                $project: {
-                    _id        : 1,
-                    month      : 1,
-                    year       : 1,
-                    vacations  : 1,
-                    vacArray   : 1,
-                    department : 1,
-                    employee   : 1,
-                    dateByMonth: {$add: ['$month', {$multiply: ['$year', 100]}]}
-                }
-            }, {
-                $match: matchObject
-            }, {
-                $group: {
-                    _id      : '$employee',
-                    vacations: {$push: '$vacations'}
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : '_id',
-                    foreignField: '_id',
-                    as          : 'employee'
-                }
-            }, {
-                $project: {
-                    employee    : {$arrayElemAt: ['$employee', 0]},
-                    employeeName: '$employee.name',
-                    vacations   : 1
-                }
-            }], parallelCb);
-        }
-
-        function employeeByDepComposer(parallelCb) {
-            var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-
-            Employee.aggregate([{
-                $match: {
-                    hire: {$ne: []} // add by Liliya for new Application ToDO review
-                }
-            }, {
-                $project: {
-                    isEmployee  : 1,
-                    department  : 1,
-                    isLead      : 1,
-                    fire        : 1,
-                    hire        : 1,
-                    name        : 1,
-                    lastFire    : 1,
-                    transfer    : 1,
-                    lastTransfer: {$max: '$transfer.date'},
-                    hireCount   : {$size: '$hire'},
-                    lastHire    : {
-                        $let: {
-                            vars: {
-                                lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
-                            },
-
-                            in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
-                        }
-                    }
-                }
-            }, {
-                $match: employeeQueryForEmployeeByDep
-            }, {
-                $unwind: '$transfer'
-            }, {
-                $match: {
-                    'transfer.department': departmentQuery
-                }
-            }, {
-                $group: {
-                    _id: {
-                        _id       : '$_id',
-                        department: '$transfer.department',
-                        isEmployee: '$isEmployee',
-                        isLead    : '$isLead'
-                    },
-
-                    firstTransferDate: {$min: '$transfer.date'},
-                    lastTransferDate : {$max: '$transfer.date'},
-                    isTransfer       : {
-                        $addToSet: {
-                            status: '$transfer.status',
-                            date  : '$transfer.date'
-                        }
-                    },
-
-                    name        : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
-                    lastTransfer: {$first: '$lastTransfer'},
-                    lastHire    : {$first: '$lastHire'}
-                }
-            }, {
-                $unwind: '$isTransfer'
-            }, {
-                $sort: {'isTransfer.date': 1}
-            }, {
-                $group: {
-                    _id              : '$_id',
-                    firstTransferDate: {$first: '$firstTransferDate'},
-                    lastTransferDate : {$first: '$lastTransferDate'},
-                    isTransfer       : {
-                        $push: '$isTransfer'
-                    },
-
-                    name        : {$first: '$name'},
-                    lastTransfer: {$first: '$lastTransfer'},
-                    lastHire    : {$first: '$lastHire'}
-                }
-            }, {
-                $project: {
-                    _id               : 1,
-                    isTransfer        : 1,
-                    firstTransferDate : 1,
-                    lastTransferDate  : 1,
-                    lastTransfer      : 1,
-                    name              : 1,
-                    _lastTransferDate : {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]},
-                    _firstTransferDate: {$add: [{$multiply: [{$year: '$firstTransferDate'}, 100]}, {$week: '$firstTransferDate'}]}
-                }
-            }, {
-                $match: {
-                    $or: [
-                        {
-                            _lastTransferDate  : {$gte: startDate},
-                            _firstTransferDate : {$lte: endDate},
-                            'isTransfer.status': 'transfer'
-                        }, {
-                            'isTransfer.status': {$nin: ['transfer']},
-                            _firstTransferDate : {$lte: endDate}
-                        }
-                    ]
-                }
-            }, {
-                $project: {
-                    department: '$_id.department',
-                    isEmployee: '$_id.isEmployee',
-                    isLead    : '$_id.isLead',
-                    _id       : '$_id._id',
-
-                    transferArr: {
-                        $filter: {
-                            input: '$isTransfer',
-                            as   : 'transfer',
-                            cond : {$eq: ['$$transfer.status', 'transfer']}
-                        }
-                    },
-
-                    isTransfer        : 1,
-                    firstTransferDate : 1,
-                    lastTransferDate  : 1,
-                    lastTransfer      : 1,
-                    name              : 1,
-                    _lastTransferDate : 1,
-                    _firstTransferDate: 1
-                }
-            }, {
-                $group: {
-                    _id      : '$department',
-                    employees: {
-                        $addToSet: {
-                            isEmployee        : '$isEmployee',
-                            isLead            : '$isLead',
-                            firstTransferDate : '$firstTransferDate',
-                            lastTransferDate  : '$lastTransferDate',
-                            _lastTransferDate : '$_lastTransferDate',
-                            _firstTransferDate: '$_firstTransferDate',
-                            lastTransfer      : '$lastTransfer',
-                            name              : '$name',
-                            isTransfer        : '$isTransfer',
-                            transferArr       : '$transferArr',
-                            _id               : '$_id'
-                        }
-                    }
-                }
-            }, {
-                $project: {
-                    department: '$_id',
-                    employees : 1,
-                    _id       : 0
-                }
-            }], function (err, employees) {
-                if (err) {
-                    return parallelCb(err);
-                }
-
-                parallelCb(null, employees);
-            });
-        }
-
-        function dashComposer(parallelCb) {
-            function employeeFinder(waterfallCb) {
-                var aggregateQuery = [{
-                    $group: {
-                        _id  : '$employee',
-                        hours: {$sum: '$worked'}
-                    }
-                }, {
+                Employee.aggregate([{
                     $match: {
-                        hours: {$gt: 0}
+                        hire: {$ne: []} // add by Liliya for new Application ToDO review
                     }
                 }, {
                     $project: {
-                        _id: 1
-                    }
-                }];
+                        isEmployee  : 1,
+                        department  : 1,
+                        isLead      : 1,
+                        fire        : 1,
+                        hire        : 1,
+                        name        : 1,
+                        lastFire    : 1,
+                        transfer    : 1,
+                        lastTransfer: {$max: '$transfer.date'},
+                        hireCount   : {$size: '$hire'},
+                        lastHire    : {
+                            $let: {
+                                vars: {
+                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                },
 
-                if (employeesArray && employeesArray.length) {
-                    aggregateQuery.unshift({
-                        $match: {
-                            employee: {$in: employeesArray}
+                                in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                            }
                         }
-                    });
-                }
+                    }
+                }, {
+                    $match: employeeQueryForEmployeeByDep
+                }, {
+                    $unwind: '$transfer'
+                }, {
+                    $match: {
+                        'transfer.department': {$in: depIds}
+                    }
+                }, {
+                    $group: {
+                        _id: {
+                            _id       : '$_id',
+                            department: '$transfer.department',
+                            isEmployee: '$isEmployee',
+                            isLead    : '$isLead'
+                        },
 
-                function findEmployee(_employeesIds, inerWaterfallCb) {
-                    Employee
-                        .aggregate([{
-                            $project: {
-                                isEmployee: 1,
-                                department: 1,
-                                fire      : 1,
-                                firedCount: {$size: '$fire'}
+                        firstTransferDate: {$min: '$transfer.date'},
+                        lastTransferDate : {$max: '$transfer.date'},
+                        isTransfer       : {
+                            $addToSet: {
+                                status: '$transfer.status',
+                                date  : '$transfer.date'
                             }
-                        }, {
+                        },
+
+                        name        : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
+                        lastTransfer: {$first: '$lastTransfer'},
+                        lastHire    : {$first: '$lastHire'}
+                    }
+                }, {
+                    $unwind: '$isTransfer'
+                }, {
+                    $sort: {'isTransfer.date': 1}
+                }, {
+                    $group: {
+                        _id              : '$_id',
+                        firstTransferDate: {$first: '$firstTransferDate'},
+                        lastTransferDate : {$first: '$lastTransferDate'},
+                        isTransfer       : {
+                            $push: '$isTransfer'
+                        },
+
+                        name        : {$first: '$name'},
+                        lastTransfer: {$first: '$lastTransfer'},
+                        lastHire    : {$first: '$lastHire'}
+                    }
+                }, {
+                    $project: {
+                        _id               : 1,
+                        isTransfer        : 1,
+                        firstTransferDate : 1,
+                        lastTransferDate  : 1,
+                        lastTransfer      : 1,
+                        name              : 1,
+                        _lastTransferDate : {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]},
+                        _firstTransferDate: {$add: [{$multiply: [{$year: '$firstTransferDate'}, 100]}, {$week: '$firstTransferDate'}]}
+                    }
+                }, {
+                    $match: {
+                        $or: [
+                            {
+                                _lastTransferDate  : {$gte: startDate},
+                                _firstTransferDate : {$lte: endDate},
+                                'isTransfer.status': 'transfer'
+                            }, {
+                                'isTransfer.status': {$nin: ['transfer']},
+                                _firstTransferDate : {$lte: endDate}
+                            }
+                        ]
+                    }
+                }, {
+                    $project: {
+                        department: '$_id.department',
+                        isEmployee: '$_id.isEmployee',
+                        isLead    : '$_id.isLead',
+                        _id       : '$_id._id',
+
+                        transferArr: {
+                            $filter: {
+                                input: '$isTransfer',
+                                as   : 'transfer',
+                                cond : {$eq: ['$$transfer.status', 'transfer']}
+                            }
+                        },
+
+                        isTransfer        : 1,
+                        firstTransferDate : 1,
+                        lastTransferDate  : 1,
+                        lastTransfer      : 1,
+                        name              : 1,
+                        _lastTransferDate : 1,
+                        _firstTransferDate: 1
+                    }
+                }, {
+                    $group: {
+                        _id      : '$department',
+                        employees: {
+                            $addToSet: {
+                                isEmployee        : '$isEmployee',
+                                isLead            : '$isLead',
+                                firstTransferDate : '$firstTransferDate',
+                                lastTransferDate  : '$lastTransferDate',
+                                _lastTransferDate : '$_lastTransferDate',
+                                _firstTransferDate: '$_firstTransferDate',
+                                lastTransfer      : '$lastTransfer',
+                                name              : '$name',
+                                isTransfer        : '$isTransfer',
+                                transferArr       : '$transferArr',
+                                _id               : '$_id'
+                            }
+                        }
+                    }
+                }, {
+                    $project: {
+                        department: '$_id',
+                        employees : 1,
+                        _id       : 0
+                    }
+                }], function (err, employees) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+
+                    parallelCb(null, employees);
+                });
+            }
+
+            function dashComposer(parallelCb) {
+                function employeeFinder(waterfallCb) {
+                    var aggregateQuery = [{
+                        $group: {
+                            _id  : '$employee',
+                            hours: {$sum: '$worked'}
+                        }
+                    }, {
+                        $match: {
+                            hours: {$gt: 0}
+                        }
+                    }, {
+                        $project: {
+                            _id: 1
+                        }
+                    }];
+
+                    if (employeesArray && employeesArray.length) {
+                        aggregateQuery.unshift({
                             $match: {
-                                $or: [
-                                    {
-                                        isEmployee: true
-                                    }, {
-                                        $and: [{isEmployee: false}, {firedCount: {$gt: 0}}, {_id: {$in: _employeesIds}}]
-                                    }
-                                ]/* ,
-                                 department: departmentQuery*/
+                                employee: {$in: employeesArray}
                             }
-                        }], function (err, employees) {
+                        });
+                    }
+
+                    function findEmployee(_employeesIds, inerWaterfallCb) {
+                        Employee
+                            .aggregate([{
+                                $project: {
+                                    isEmployee: 1,
+                                    department: 1,
+                                    fire      : 1,
+                                    firedCount: {$size: '$fire'}
+                                }
+                            }, {
+                                $match: {
+                                    $or: [
+                                        {
+                                            isEmployee: true
+                                        }, {
+                                            $and: [{isEmployee: false}, {firedCount: {$gt: 0}}, {_id: {$in: _employeesIds}}]
+                                        }
+                                    ]/* ,
+                                 department: departmentQuery*/
+                                }
+                            }], function (err, employees) {
+                                if (err) {
+                                    return inerWaterfallCb(err);
+                                }
+
+                                employees = _.pluck(employees, '_id');
+
+                                inerWaterfallCb(null, employees);
+                            });
+                    }
+
+                    function groupWtrackByEmployee(inerWaterfallCb) {
+                        WTrack.aggregate(aggregateQuery, function (err, employees) {
                             if (err) {
                                 return inerWaterfallCb(err);
                             }
 
                             employees = _.pluck(employees, '_id');
-
                             inerWaterfallCb(null, employees);
                         });
-                }
+                    }
 
-                function groupWtrackByEmployee(inerWaterfallCb) {
-                    WTrack.aggregate(aggregateQuery, function (err, employees) {
+                    async.waterfall([groupWtrackByEmployee, findEmployee], function (err, result) {
                         if (err) {
-                            return inerWaterfallCb(err);
+                            return waterfallCb(err);
                         }
 
-                        employees = _.pluck(employees, '_id');
-                        inerWaterfallCb(null, employees);
+                        waterfallCb(null, result);
                     });
                 }
 
-                async.waterfall([groupWtrackByEmployee, findEmployee], function (err, result) {
-                    if (err) {
-                        return waterfallCb(err);
-                    }
+                function wTrackComposer(employeesArray, waterfallCb) {
+                    WTrack.aggregate([
+                        {
+                            $match: {
+                                employee  : {$in: employeesArray},
+                                dateByWeek: {$gte: startDate, $lte: endDate},
+                                department: {$in: depIds}
+                            }
+                        }, {
+                            $group: {
+                                _id: {
+                                    department: '$department',
+                                    employee  : '$employee',
+                                    dateByWeek: '$dateByWeek',
+                                    project   : '$project'
+                                },
 
-                    waterfallCb(null, result);
-                });
-            }
+                                hours: {$sum: '$worked'}
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Project',
+                                localField  : '_id.project',
+                                foreignField: '_id',
+                                as          : 'project'
+                            }
+                        }, {
+                            $project: {
+                                department: '$_id.department',
+                                employee  : '$_id.employee',
+                                dateByWeek: '$_id.dateByWeek',
+                                project   : {$arrayElemAt: ['$project', 0]},
+                                hours     : 1,
+                                _id       : 0
+                            }
+                        }, {
+                            $project: {
+                                department: 1,
+                                employee  : 1,
+                                dateByWeek: 1,
+                                project   : '$project.name',
+                                hours     : 1
+                            }
+                        }, {
+                            $group: {
+                                _id: {
+                                    department: '$department',
+                                    employee  : '$employee',
+                                    dateByWeek: '$dateByWeek'
+                                },
 
-            function wTrackComposer(employeesArray, waterfallCb) {
-                WTrack.aggregate([
-                    {
-                        $match: {
-                            employee  : {$in: employeesArray},
-                            dateByWeek: {$gte: startDate, $lte: endDate},
-                            department: departmentQuery
-                        }
-                    }, {
-                        $group: {
-                            _id: {
-                                department: '$department',
-                                employee  : '$employee',
-                                dateByWeek: '$dateByWeek',
-                                project   : '$project'
-                            },
+                                projectRoot: {$push: '$$ROOT'},
+                                hours      : {$sum: '$hours'}
+                            }
+                        }, {
+                            $project: {
+                                department : '$_id.department',
+                                employee   : '$_id.employee',
+                                dateByWeek : '$_id.dateByWeek',
+                                projectRoot: 1,
+                                projects   : {$size: '$projectRoot'},
+                                hours      : 1,
+                                _id        : 0
+                            }
+                        }, {
+                            $group: {
+                                _id: {
+                                    department: '$department',
+                                    employee  : '$employee'
+                                },
 
-                            hours: {$sum: '$worked'}
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Project',
-                            localField  : '_id.project',
-                            foreignField: '_id',
-                            as          : 'project'
-                        }
-                    }, {
-                        $project: {
-                            department: '$_id.department',
-                            employee  : '$_id.employee',
-                            dateByWeek: '$_id.dateByWeek',
-                            project   : {$arrayElemAt: ['$project', 0]},
-                            hours     : 1,
-                            _id       : 0
-                        }
-                    }, {
-                        $project: {
-                            department: 1,
-                            employee  : 1,
-                            dateByWeek: 1,
-                            project   : '$project.name',
-                            hours     : 1
-                        }
-                    }, {
-                        $group: {
-                            _id: {
-                                department: '$department',
-                                employee  : '$employee',
-                                dateByWeek: '$dateByWeek'
-                            },
+                                maxProjects: {$max: '$projects'},
+                                weekData   : {$push: '$$ROOT'}
+                            }
+                        }, {
+                            $project: {
+                                department : '$_id.department',
+                                employee   : '$_id.employee',
+                                weekData   : 1,
+                                maxProjects: 1,
+                                _id        : 0
+                            }
+                        }, {
+                            $group: {
+                                _id: {
+                                    department: '$department'
+                                },
 
-                            projectRoot: {$push: '$$ROOT'},
-                            hours      : {$sum: '$hours'}
+                                root: {$push: '$$ROOT'}
+                            }
+                        }, {
+                            $project: {
+                                department  : '$_id.department',
+                                employeeData: '$root',
+                                _id         : 0
+                            }
+                        }], function (err, response) {
+                        if (err) {
+                            return waterfallCb(err);
                         }
-                    }, {
-                        $project: {
-                            department : '$_id.department',
-                            employee   : '$_id.employee',
-                            dateByWeek : '$_id.dateByWeek',
-                            projectRoot: 1,
-                            projects   : {$size: '$projectRoot'},
-                            hours      : 1,
-                            _id        : 0
-                        }
-                    }, {
-                        $group: {
-                            _id: {
-                                department: '$department',
-                                employee  : '$employee'
-                            },
-
-                            maxProjects: {$max: '$projects'},
-                            weekData   : {$push: '$$ROOT'}
-                        }
-                    }, {
-                        $project: {
-                            department : '$_id.department',
-                            employee   : '$_id.employee',
-                            weekData   : 1,
-                            maxProjects: 1,
-                            _id        : 0
-                        }
-                    }, {
-                        $group: {
-                            _id: {
-                                department: '$department'
-                            },
-
-                            root: {$push: '$$ROOT'}
-                        }
-                    }, {
-                        $project: {
-                            department  : '$_id.department',
-                            employeeData: '$root',
-                            _id         : 0
-                        }
-                    }], function (err, response) {
-                    if (err) {
-                        return waterfallCb(err);
-                    }
-                    waterfallCb(null, response);
-                });
-            }
-
-            function masterWaterfallCb(err, result) {
-                if (err) {
-                    return parallelCb(err);
+                        waterfallCb(null, response);
+                    });
                 }
 
-                parallelCb(null, result);
+                function masterWaterfallCb(err, result) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+
+                    parallelCb(null, result);
+                }
+
+                async.waterfall([employeeFinder, wTrackComposer], masterWaterfallCb);
             }
 
-            async.waterfall([employeeFinder, wTrackComposer], masterWaterfallCb);
-        }
+            function holidaysComposer(parallelCb) {
+                var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
 
-        async.parallel([employeeByDepComposer, dashComposer, holidaysComposer, vacationComposer], resultMapper);
+                Holiday.aggregate([{
+                    $project: {
+                        dateByWeek: {$add: [{$multiply: [100, '$year']}, '$week']},
+                        day       : 1,
+                        date      : 1,
+                        comment   : 1,
+                        ID        : 1,
+                        _id       : 0
+                    }
+                }, {
+                    $match: {
+                        $and: [{dateByWeek: {$gte: startDate, $lte: endDate}}, {day: {$nin: [0, 6]}}]
+                    }
+                }], /* parallelCb*/function (err, holidays) {
+                    var holidaysObject = {};
+                    var key;
+                    var i;
+
+                    if (err) {
+                        return parallelCb(err);
+                    }
+
+                    for (i = holidays.length - 1; i >= 0; i--) {
+                        key = holidays[i].dateByWeek;
+
+                        if (!holidaysObject[key]) {
+                            holidaysObject[key] = 1;
+                        } else {
+                            holidaysObject[key]++;
+                        }
+                    }
+
+                    console.log(holidaysObject);
+
+                    parallelCb(null, holidaysObject);
+                });
+            }
+
+            function vacationComposer(parallelCb) {
+                // ToDo optimize and refactor
+                var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+                var matchObject = {
+                    $and: [{dateByMonth: {$gte: _startDateByMonth, $lte: _endDateByMonth}}]
+                };
+
+                if (employeesArray.length) {
+                    matchObject.$and.unshift({
+                        employee: {$in: employeesArray}
+                    });
+                }
+
+                Vacation.aggregate([{
+                    $project: {
+                        _id        : 1,
+                        month      : 1,
+                        year       : 1,
+                        vacations  : 1,
+                        vacArray   : 1,
+                        department : 1,
+                        employee   : 1,
+                        dateByMonth: {$add: ['$month', {$multiply: ['$year', 100]}]}
+                    }
+                }, {
+                    $match: matchObject
+                }, {
+                    $group: {
+                        _id      : '$employee',
+                        vacations: {$push: '$vacations'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : '_id',
+                        foreignField: '_id',
+                        as          : 'employee'
+                    }
+                }, {
+                    $project: {
+                        employee    : {$arrayElemAt: ['$employee', 0]},
+                        employeeName: '$employee.name',
+                        vacations   : 1
+                    }
+                }], parallelCb);
+            }
+
+            async.parallel([employeeByDepComposer, dashComposer, holidaysComposer, vacationComposer], wfCb);
+        }], resultMapper);
+
+
     };
 
     this.composeForHr = function (req, res, next) {

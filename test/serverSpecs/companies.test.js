@@ -2,6 +2,7 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
+var db = 'production';
 
 require('../../config/development');
 
@@ -19,7 +20,7 @@ describe('Company Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : db
                 })
                 .expect(200, done);
         });
@@ -83,6 +84,29 @@ describe('Company Specs', function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('_id');
+                    expect(body)
+                        .and.to.have.property('name');
+                    expect(body)
+                        .and.to.have.property('email');
+                    expect(body)
+                        .and.to.have.property('phones');
+                    expect(body.phones)
+                        .to.have.property('phone')
+                        .and.not.to.have.property('mobile');
+                    expect(body)
+                        .to.have.property('address');
+                    expect(body)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('date');
+                    expect(body)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('user');
+                    expect(body)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('date');
+                    expect(body)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('user');
 
                     done();
                 });
@@ -166,6 +190,7 @@ describe('Company Specs', function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var first;
 
                     if (err) {
                         return done(err);
@@ -178,6 +203,22 @@ describe('Company Specs', function () {
                         .to.have.property('data');
                     expect(body.data)
                         .to.be.instanceOf(Array);
+                    expect(body.total)
+                        .to.be.gte(1);
+
+                    first = body.data[0];
+
+                    expect(first)
+                        .and.to.have.property('_id')
+                        .and.to.have.lengthOf(24);
+                    expect(first)
+                        .and.to.have.property('name');
+                    expect(first)
+                        .and.to.have.property('company');
+                    expect(first)
+                        .and.to.have.property('fullName');
+
+                    expect(Object.keys(first).length).to.be.equal(5);
 
                     done();
                 });
@@ -186,7 +227,9 @@ describe('Company Specs', function () {
         it('should get companies for list', function (done) {
             var query = {
                 viewType   : 'list',
-                contentType: 'Companies'
+                contentType: 'Companies',
+                page : 1,
+                count : 4
             };
             var first;
 
@@ -206,8 +249,10 @@ describe('Company Specs', function () {
                         .to.have.property('total');
                     expect(body)
                         .to.have.property('data');
-                    expect(body.data)
-                        .to.be.instanceOf(Array);
+                    expect(body.data.length)
+                        .to.be.lte(4);
+                    expect(body.total)
+                        .to.be.gte(1);
 
                     first = body.data[0];
 
@@ -215,27 +260,22 @@ describe('Company Specs', function () {
                         .and.to.have.property('_id')
                         .and.to.have.lengthOf(24);
                     expect(first)
-                        .and.to.have.property('name');
+                        .and.to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
                     expect(first)
-                        .and.to.have.property('email');
+                        .and.to.have.property('email')
+                        .and.to.be.a('string');
                     expect(first)
-                        .and.to.have.property('phones');
-                    expect(first.phones)
-                        .to.have.property('phone');
+                        .to.have.property('phones')
+                        .and.to.have.property('phone')
+                        .and.to.be.a('string');
                     expect(first.phones)
                         .to.have.property('mobile');
                     expect(first)
                         .to.have.property('address');
                     expect(first.address)
                         .to.have.property('country');
-                    expect(first.address)
-                        .not.to.have.property('street');
-                    expect(first.address)
-                        .not.to.have.property('state');
-                    expect(first.address)
-                        .not.to.have.property('zip');
-                    expect(first.address)
-                        .not.to.have.property('city');
                     expect(first)
                         .and.to.have.property('createdBy')
                         .and.to.have.property('date');
@@ -248,6 +288,12 @@ describe('Company Specs', function () {
                     expect(first)
                         .and.to.have.property('editedBy')
                         .and.to.have.property('user');
+
+                    expect(Object.keys(first.editedBy).length).to.be.equal(2);
+                    expect(Object.keys(first.createdBy).length).to.be.equal(2);
+                    expect(Object.keys(first.address).length).to.be.equal(1);
+                    expect(Object.keys(first.phones).length).to.be.equal(2);
+                    expect(Object.keys(first).length).to.be.lte(10);
 
                     done();
                 });
@@ -384,7 +430,7 @@ describe('Company Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : db
                 })
                 .expect(200, done);
         });

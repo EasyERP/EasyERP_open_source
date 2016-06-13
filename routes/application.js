@@ -9,12 +9,14 @@ module.exports = function (event, models) {
     var handler = new EmployeeHandler(event, models);
     var moduleId = MODULES.APPLICATIONS;
     var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
-
+    var multipart = require('connect-multiparty');
+    var multipartMiddleware = multipart();
     router.use(authStackMiddleware);
 
     router.get('/', accessStackMiddleWare, handler.getByViewTpe);
-    router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
+    router.get('/upload', handler.getCollectionLengthByWorkflows);
 
+    router.post('/uploadFiles', accessStackMiddleWare, multipartMiddleware, handler.uploadFile);
     router.post('/', accessStackMiddleWare, handler.create);
     router.patch('/:id', accessStackMiddleWare, handler.updateOnlySelectedFields);
 

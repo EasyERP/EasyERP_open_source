@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var Module = function (models) {
+var Module = function (models, event) {
     'use strict';
 
     var DepartmentSchema = mongoose.Schemas.Department;
@@ -73,6 +73,7 @@ var Module = function (models) {
                     }
 
                     res.status(201).send({success: 'A new Department create success', id: result._id});
+                    event.emit('recollectVacationDash');
                 });
             }
         });
@@ -331,7 +332,7 @@ var Module = function (models) {
                         } else {
                             res.status(200).send({success: 'Department updated success'});
                         }
-
+                        event.emit('recollectVacationDash');
                     });
                 });
             } else {
@@ -347,7 +348,7 @@ var Module = function (models) {
                     } else {
                         res.status(200).send({success: 'Department updated success'});
                     }
-
+                    event.emit('recollectVacationDash');
                 });
             }
 

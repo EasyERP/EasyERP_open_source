@@ -40,7 +40,8 @@ describe('Leads Specs', function () {
 
         it('should create lead', function (done) {
             var body = {
-                name: 'Subject'
+                name: 'Subject',
+                workflow : "528ce74ef3f67bc40b00001e"
             };
 
             aggent
@@ -146,7 +147,7 @@ describe('Leads Specs', function () {
                     expect(body.data)
                         .to.be.instanceOf(Array);
 
-                    firstProject = body.data[3];
+                    firstProject = body.data[0];
 
                     expect(firstProject)
                         .and.to.have.property('_id')
@@ -157,46 +158,40 @@ describe('Leads Specs', function () {
                     expect(firstProject)
                         .and.to.have.property('contactName');
                     expect(firstProject)
-                        .and.to.have.property('email');
-                    expect(firstProject)
-                        .and.to.have.property('phones')
-                        .and.to.have.property('phone')
-                        .and.not.to.have.property('mobile');
-                    expect(firstProject)
-                        .and.to.have.property('address');
+                        .to.have.property('address')
+                        .and.to.have.property('country');
                     expect(firstProject)
                         .to.have.property('workflow')
                         .and.to.have.property('_id');
-                    expect(firstProject)
-                        .to.have.property('workflow');
                     expect(firstProject.workflow)
-                        .to.have.property('name');
+                        .to.have.property('name')
+                        .and.to.be.a('string');
                     expect(firstProject.workflow)
                         .to.have.property('status');
-                    expect(firstProject.workflow.name)
-                        .to.be.a('string');
-                    expect(firstProject)
-                        .and.to.have.property('campaign');
+
                     expect(firstProject)
                         .to.have.property('source');
                     expect(firstProject)
-                        .and.to.have.property('salesPerson')
-                        .and.to.have.property('name')
-                        .and.to.have.property('first')
-                        .and.to.be.a('string');
-                    expect(firstProject)
                         .and.to.have.property('createdBy')
                         .and.to.have.property('date');
                     expect(firstProject)
                         .and.to.have.property('createdBy')
-                        .and.to.have.property('user');
-                    expect(firstProject)
-                        .and.to.have.property('editedBy')
-                        .and.to.have.property('date');
-                    expect(firstProject)
-                        .and.to.have.property('editedBy')
-                        .and.to.have.property('user');
+                    if (firstProject.salesPerson) {
+                        expect(firstProject.salesPerson)
+                            .to.have.property('name')
+                            .and.to.have.property('first')
+                            .and.to.be.a('string');
+                        expect(Object.keys(firstProject.salesPerson).length).to.be.equal(2);
+                    }
+                    if (firstProject.skype) {
+                        expect(firstProject.skype)
+                            .to.be.a('string');
+                    }
 
+                    expect(Object.keys(firstProject.createdBy).length).to.be.equal(2);
+                    expect(Object.keys(firstProject.address).length).to.be.equal(1);
+                    expect(Object.keys(firstProject.workflow).length).to.be.equal(3);
+                    expect(Object.keys(firstProject).length).to.be.lte(9);
                     done();
                 });
         });
@@ -221,6 +216,29 @@ describe('Leads Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object)
                         .and.to.have.property('_id');
+                    expect(body)
+                        .to.have.property('history')
+                        .and.to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(body)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Object)
+                        .and.to.have.property('_id',  '528ce74ef3f67bc40b00001e');
+                    expect(body)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('date');
+                    expect(body)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('user');
+                    expect(body)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('date');
+                    expect(body)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('user');
+
 
                     done();
                 });

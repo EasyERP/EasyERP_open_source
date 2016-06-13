@@ -580,6 +580,7 @@ define([
         },
 
         render: function () {
+            var self = this;
             var $lastElement;
             var $firstElement;
             var $jobPosElement;
@@ -632,7 +633,7 @@ define([
             notDiv.append(
                 new AttachView({
                     model: this.currentModel,
-                    url  : '/employees/uploadEmployeesFiles'
+                    contentType: self.contentType
                 }).render().el
             );
            /* notDiv = this.$el.find('.assignees-container');

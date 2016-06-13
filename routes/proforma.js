@@ -20,8 +20,9 @@ module.exports = function (models, event) {
     router.get('/', iHandler.getForView);
     router.get('/stats/project', iHandler.getStatsForProject);
 
-    router.post('/create', handler.create);
+    router.post('/', handler.create);
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, iHandler.uploadFile);
+    
     router.delete('/', iHandler.bulkRemove);
     
     return router;
