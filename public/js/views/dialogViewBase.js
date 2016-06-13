@@ -73,6 +73,10 @@
 
             this.$el.find('.newSelectList').hide();
 
+            if (typeof this.hideHealth === 'function') {
+                this.hideHealth();
+            }
+
             if (this.selectView) {
                 this.selectView.remove();
             }
@@ -129,7 +133,6 @@
             );
 
             if (model) {
-
                 model = model.toJSON();
 
                 if (model.groups && (model.groups.users.length > 0 || model.groups.group.length)) {

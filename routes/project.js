@@ -8,6 +8,8 @@ var QuotationHandler = require('../handlers/quotation');
 var PaymentsHandler = require('../handlers/payment');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     'use strict';
@@ -42,6 +44,7 @@ module.exports = function (models, event) {
     router.get('/:id/payments', accessStackMiddleWare, paymentsHandler.getForProject);
 
     router.post('/', accessStackMiddleWare, handler.create);
+    router.post('/uploadFiles', accessStackMiddleWare, multipartMiddleware, handler.uploadFile);
     router.post('/updateAllProjects', accessStackMiddleWare, handler.updateAllProjects);
     router.post('/sendInvoice', accessStackMiddleWare, handler.sendInvoice);
 
