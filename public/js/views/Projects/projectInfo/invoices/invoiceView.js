@@ -163,24 +163,22 @@ define([
 
         showDialog: function (orderId) {
             var self = this;
-            var invoice = _.find(this.collection.toJSON(), function (el) {
-                return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null);
-            });
 
             var model = new InvoiceModel({validate: false});
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoice/';
             model.fetch({
                 data: {
-                    id       : invoice._id,
-                    currentDb: App.currentDb
+                    id       : orderId,
+                    currentDb: App.currentDb,
+                    viewType : 'form'
                 },
 
                 success: function (model) {
                     return new EditView({
                         model       : model,
                         redirect    : true,
-                        collection  : this.collection,
+                        collection  : self.collection,
                         notCreate   : true,
                         eventChannel: self.eventChannel
                     });

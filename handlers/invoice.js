@@ -318,7 +318,7 @@ var Module = function (models, event) {
 
             delete order._id;
 
-            if (forSales === 'true') {
+            if (forSales) {
                 invoice = new wTrackInvoice(order);
             } else {
                 invoice = new Invoice(order);
