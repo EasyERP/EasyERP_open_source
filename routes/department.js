@@ -4,11 +4,11 @@ var DepartmentHandler = require('../handlers/department');
 var MODULES = require('../constants/modules');
 var authStackMiddleware = require('../helpers/checkAuth');
 
-module.exports = function (models) {
+module.exports = function (models, event) {
     'use strict';
     var moduleId = MODULES.DEPARTMENTS;
 
-    var handler = new DepartmentHandler(models);
+    var handler = new DepartmentHandler(models, event);
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
