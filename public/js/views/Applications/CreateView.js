@@ -239,7 +239,7 @@ define([
 
             this.attachView = new AttachView({
                 model   : new ApplicationModel(),
-                url     : '/uploadApplicationFiles',
+                contentType: 'Applications',
                 isCreate: true
             });
             

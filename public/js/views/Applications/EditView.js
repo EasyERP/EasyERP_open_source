@@ -766,7 +766,7 @@
             notDiv.append(
                 new AttachView({
                     model: this.currentModel,
-                    url  : '/uploadApplicationFiles'
+                    contentType: 'Applications'
                 }).render().el
             );
 
