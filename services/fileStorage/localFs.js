@@ -103,7 +103,7 @@ var LocalFs = function () {
             fileData = [fileData];
         }
 
-        async.each(fileData, function (item, eachCb) {
+        async.eachSeries(fileData, function (item, eachCb) {
             var attachfileName = item.name.slice(0, item.name.lastIndexOf('.'));
             var checkIs = false;
             var maxK = 0;
