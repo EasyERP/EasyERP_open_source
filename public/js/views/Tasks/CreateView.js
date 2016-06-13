@@ -168,9 +168,9 @@ define([
             notDiv = this.$el.find('.attach-container');
 
             this.attachView = new AttachView({
-                model   : new TaskModel(),
-                url     : '/uploadTasksFiles',
-                isCreate: true
+                model      : new TaskModel(),
+                contentType: self.contentType,
+                isCreate   : true
             });
 
             notDiv.append(this.attachView.render().el);

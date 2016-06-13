@@ -13,6 +13,7 @@ var Module = function (models, event) {
 
     var validator = require('../helpers/validator');
 
+    var fs = require('fs');
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
