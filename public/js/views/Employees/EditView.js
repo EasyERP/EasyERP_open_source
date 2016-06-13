@@ -632,7 +632,8 @@ define([
             notDiv.append(
                 new AttachView({
                     model: this.currentModel,
-                    url  : '/employees/uploadEmployeesFiles'
+                    url  : '/employees/uploadFiles',
+                    contentType: 'Employees'
                 }).render().el
             );
            /* notDiv = this.$el.find('.assignees-container');
