@@ -110,6 +110,30 @@ var LocalFs = function () {
             var k = '';
             var files;
 
+            function resultMaker(err) {
+                var file = {};
+
+                if (err) {
+                    return eachCb(err);
+                }
+
+                file._id = mongoose.Types.ObjectId();
+                file.name = item.name;
+                file.shortPas = encodeURIComponent(filePath);
+
+                if (item.size >= 1024) {
+                    file.size = (Math.round(item.size / 1024 / 1024 * 1000) / 1000) + '&nbsp;Mb';
+                } else {
+                    file.size = (Math.round(item.size / 1024 * 1000) / 1000) + '&nbsp;Kb';
+                }
+                file.uploadDate = new Date();
+                file.uploaderName = authorId;
+
+                _files.push(file);
+
+                eachCb();
+            }
+
             filePath = path.join(defaultFileDir, folderName, item.name);
 
             if (fs.existsSync(targetPath)) {
@@ -142,35 +166,13 @@ var LocalFs = function () {
 
                 filePath = path.join(defaultFileDir, folderName, item.name);
 
-                writeFile(filePath, item, function (err) {
-                    var file = {};
-
-                    if (err) {
-                        return eachCb(err);
-                    }
-
-                    file._id = mongoose.Types.ObjectId();
-                    file.name = item.name;
-                    file.shortPas = encodeURIComponent(filePath);
-
-                    if (item.size >= 1024) {
-                        file.size = (Math.round(item.size / 1024 / 1024 * 1000) / 1000) + '&nbsp;Mb';
-                    } else {
-                        file.size = (Math.round(item.size / 1024 * 1000) / 1000) + '&nbsp;Kb';
-                    }
-                    file.uploadDate = new Date();
-                    file.uploaderName = authorId;
-
-                    _files.push(file);
-                    
-                    eachCb();
-                });
+                writeFile(filePath, item, resultMaker);
             } else {
                 makeDir(targetPath, function (err) {
                     if (err) {
                         eachCb(err);
                     } else {
-                        writeFile(filePath, item, eachCb);
+                        writeFile(filePath, item, resultMaker);
                     }
                 });
             }
