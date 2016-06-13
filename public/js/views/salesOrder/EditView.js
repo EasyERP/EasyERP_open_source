@@ -143,7 +143,7 @@ define([
             var data = {
                 forSales: this.forSales,
                 orderId : orderId,
-                currency: this.currentModel.currency,
+                currency: this.currentModel.toJSON().currency,
                 journal : CONSTANTS.INVOICE_JOURNAL
             };
 

@@ -21,7 +21,7 @@ define([
              Backbone,
              ParentView,
              EditTemplate,
-             attachView,
+             AttachView,
              InvoiceItemView,
              wTrackRows,
              PaymentCreateView,
@@ -616,9 +616,9 @@ define([
 
             notDiv = this.$el.find('#attach-container');
             notDiv.append(
-                new attachView({
+                new AttachView({
                     model: this.currentModel,
-                    url  : '/uploadInvoiceFiles'
+                    contentType: 'Invoice'
                 }).render().el
             );
 

@@ -3,6 +3,8 @@ var router = express.Router();
 var TasksHandler = require('../handlers/tasks');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     'use strict';
@@ -20,6 +22,7 @@ module.exports = function (models, event) {
     router.get('/', handler.getTasks);
 
     router.post('/', handler.createTask);
+    router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
     router.patch('/:_id', handler.taskUpdateOnlySelectedFields);
     
     router.delete('/:_id', handler.removeTask);
