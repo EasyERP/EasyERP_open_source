@@ -203,9 +203,13 @@ define([
 
                 server.respondWith('GET', monthHoursUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeMonthHours)]);
                 monthHoursCollection = new MonthHoursCollection({
-                    viewType: 'list',
-                    page    : 1,
-                    count   : 14
+                    filter     : null,
+                    viewType   : 'list',
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
+                    contentType: 'monthHours'
+
                 });
                 server.respond();
 
@@ -265,6 +269,8 @@ define([
                     var vacationBudget;
                     var idleTimeBudget;
                     var overHeadRate;
+                    var $pagination;
+                    var $currentPageList;
 
                     listView = new ListView({
                         collection   : monthHoursCollection,
@@ -341,38 +347,110 @@ define([
                     expect(overHeadRate).to.not.empty;
                     expect(overHeadRate).to.not.match(/object Object|undefined/);
 
+                    // test pagination
+
+                    $pagination = $thisEl.find('.pagination');
+
+                    expect($pagination).to.exist;
+                    expect($pagination.find('.countOnPage')).to.be.exist;
+                    expect($pagination.find('.pageList')).to.be.exist;
+
+                    $currentPageList = $thisEl.find('.currentPageList');
+                    $currentPageList.mouseover();
+                    expect($thisEl.find('#pageList')).to.have.css('display', 'block');
+                    expect($thisEl.find('#pageList > li')).to.have.lengthOf(3);
+
+                    $currentPageList.mouseover();
+                    expect($thisEl.find('#pageList')).to.have.css('display', 'none');
+
                     done();
                 });
 
-                it('Try to delete with changes', function () {
-                    var $input;
-                    var $expenseInput = listView.$el.find('tr[data-id="55b92ace21e4b7c40f000005"] > td[data-content="expenseCoefficient"]');
-                    var $fixedInput = listView.$el.find('tr[data-id="55b92ace21e4b7c40f000005"] > td[data-content="fixedExpense"]');
-                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-                    var keyDownEvent = $.Event('keydown', {which: 13});
-                    var journalEntryUrl = new RegExp('journalEntries\/getExpenses', 'i');
+                it('Try to change page1 to page2', function () {
+                    var $currentPageList = $thisEl.find('.currentPageList');
+                    var ajaxResponse;
+                    var $page2Btn;
 
-                    cancelChangesSpy.reset();
+                    ajaxSpy.reset();
 
-                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        actualHours     : 4148,
-                        adminExpenses   : 0,
-                        adminSalary     : 185000,
-                        vacationExpenses: 285500,
-                        idleExpenses    : 1441093.75
-                    })]);
-
-                    $expenseInput.click();
-                    server.respond();
-                    $input = $expenseInput.find('input.editing');
-                    $input.val('1.7878787');
-                    $input.trigger('change');
-
-                    $fixedInput.trigger(keyDownEvent);
-
-                    $deleteBtn.click();
+                    $currentPageList.mouseover();
+                    $page2Btn = $thisEl.find('#pageList > li').eq(1);
+                    $page2Btn.click();
                     server.respond();
 
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxSpy.called).to.be.true;
+                    expect(ajaxResponse).to.have.property('url', '/monthHours/');
+                    expect(ajaxResponse.data).to.have.property('contentType').and.to.not.undefined;
+                    expect(ajaxResponse.data).to.have.property('page', 2);
+                });
+
+                it('Try to select 25 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').first();
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                });
+
+                it('Try to select 50 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(1);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '50');
+                });
+
+                it('Try to select 100 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(2);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '100');
+                });
+
+                it('Try to select 200 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(3);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '200');
                 });
 
                 it('Try to delete item with 403 error', function () {
@@ -381,13 +459,14 @@ define([
                     var $firstEl = $(listView.$el.find('.notForm input')[0]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
+                    mainSpy.reset();
                     $firstEl.click();
 
                     server.respondWith('DELETE', monthHoursUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Delete success'})]);
                     $deleteBtn.click();
                     server.respond();
 
-                    spyResponse = mainSpy.args[1][0];
+                    spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
                 });
 
@@ -412,6 +491,7 @@ define([
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $tableContainer = listView.$el.find('table');
 
+                    mainSpy.reset();
                     $createBtn.click();
 
                     $monthInput = listView.$el.find('td[data-content="month"]')[0];
@@ -431,7 +511,7 @@ define([
                     })]);
                     $saveBtn.click();
                     server.respond();
-                    spyResponse = mainSpy.args[2][0];
+                    spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
 
                     $monthInput.click();
@@ -459,12 +539,10 @@ define([
                     $input = listView.$el.find('input.editing');
                     $input.val('45');
 
-                    //server.respondWith('POST', '/monthHours/', [200, {'Content-Type': 'application/json'}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
                     $saveBtn.click();
                     server.respond();
 
-                    expect($tableContainer.find('input[type="text"]').length).to.equals(1);
-
+                    expect($tableContainer.find('input[type="text"]').length).to.equals(0);
                 });
 
                 it('Try to edit item', function (done) {
