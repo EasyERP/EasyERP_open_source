@@ -1,899 +1,80 @@
 define([
+    'Backbone',
+    'modules',
     'text!fixtures/index.html',
     'collections/bonusType/filterCollection',
     'views/main/MainView',
     'views/bonusType/list/ListView',
     'views/bonusType/TopBarView',
     'views/bonusType/CreateView',
-    /*'views/bonusType/EditView',*/
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom',
-    'async'
-], function (fixtures, BonusTypeCollection, MainView, ListView, TopBarView, CreateView,/* EditView,*/ $, chai, chaiJquery, sinonChai, Custom, async) {
+    'sinon-chai'
+], function (Backbone, modules, fixtures, BonusTypeCollection, MainView, ListView, TopBarView, CreateView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
+
     var expect;
+    var fakeBonusTypes = {
+        total: 300,
+        data : [
+            {
+                _id      : "55b92ad521e4b7c40f000602",
+                isPercent: true,
+                value    : 8,
+                name     : "Sales/Head 8%",
+                ID       : 2,
+                __v      : 0,
+                bonusType: "Sales"
+            },
+            {
+                _id      : "55b92ad521e4b7c40f000603",
+                isPercent: true,
+                value    : 6,
+                name     : "Sales/Usual 6%",
+                ID       : 3,
+                __v      : 0,
+                bonusType: "Sales"
+            },
+            {
+                _id      : "55b92ad521e4b7c40f000604",
+                isPercent: true,
+                value    : 2,
+                name     : "Sales/Ref 2%",
+                ID       : 4,
+                __v      : 0,
+                bonusType: "Sales"
+            }
+        ]
+    }
+    var bonusTypesCollection;
+    var view;
+    var topBarView;
+    var listView;
+    var ajaxSpy;
+    var historyNavigateSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [
-        {
-        "_id": 19,
-        "attachments": [],
-        "link": false,
-        "mname": "Sales",
-        "parrent": null,
-        "sequence": 1,
-        "visible": true,
-        "ancestors": [],
-        "href": "Sales"
-    }, {
-        "_id": 36,
-        "attachments": [],
-        "link": false,
-        "mname": "Project",
-        "parrent": null,
-        "sequence": 2,
-        "visible": true,
-        "ancestors": [],
-        "href": "Project"
-    }, {
-        "_id": 9,
-        "attachments": [],
-        "link": false,
-        "mname": "HR",
-        "parrent": null,
-        "sequence": 3,
-        "visible": true,
-        "ancestors": [],
-        "href": "HR"
-    }, {
-        "_id": 49,
-        "attachments": [],
-        "htref": "persons",
-        "link": true,
-        "mname": "Persons",
-        "parrent": 19,
-        "sequence": 7,
-        "visible": true,
-        "ancestors": [],
-        "href": "Persons"
-    }, {
-        "_id": 50,
-        "attachments": [],
-        "htref": "persons",
-        "link": true,
-        "mname": "Companies",
-        "parrent": 19,
-        "sequence": 8,
-        "visible": true,
-        "ancestors": [],
-        "href": "Companies"
-    }, {
-        "_id": 24,
-        "attachments": [],
-        "link": true,
-        "mname": "Leads",
-        "parrent": 19,
-        "sequence": 9,
-        "visible": true,
-        "ancestors": [],
-        "href": "Leads"
-    }, {
-        "_id": 25,
-        "attachments": [],
-        "link": true,
-        "mname": "Opportunities",
-        "parrent": 19,
-        "sequence": 10,
-        "visible": true,
-        "ancestors": [],
-        "href": "Opportunities"
-    }, {
-        "_id": 39,
-        "attachments": [],
-        "link": true,
-        "mname": "Projects",
-        "parrent": 36,
-        "sequence": 23,
-        "visible": true,
-        "ancestors": [],
-        "href": "Projects"
-    }, {
-        "_id": 40,
-        "attachments": [],
-        "link": true,
-        "mname": "Tasks",
-        "parrent": 36,
-        "sequence": 24,
-        "visible": true,
-        "ancestors": [],
-        "href": "Tasks"
-    }, {
-        "_id": 29,
-        "attachments": [],
-        "link": true,
-        "mname": "Dashboard",
-        "parrent": 19,
-        "sequence": 29,
-        "visible": true,
-        "ancestors": [],
-        "href": "Dashboard"
-    }, {
-        "_id": 42,
-        "attachments": [],
-        "link": true,
-        "mname": "Employees",
-        "parrent": 9,
-        "sequence": 29,
-        "visible": true,
-        "ancestors": [],
-        "href": "Employees"
-    }, {
-        "_id": 43,
-        "attachments": [],
-        "link": true,
-        "mname": "Applications",
-        "parrent": 9,
-        "sequence": 30,
-        "visible": true,
-        "ancestors": [],
-        "href": "Applications"
-    }, {
-        "_id": 14,
-        "attachments": [],
-        "link": true,
-        "mname": "Job Positions",
-        "parrent": 9,
-        "sequence": 32,
-        "visible": true,
-        "ancestors": [],
-        "href": "JobPositions"
-    }, {
-        "_id": 15,
-        "attachments": [],
-        "link": true,
-        "mname": "Groups",
-        "parrent": 1,
-        "sequence": 33,
-        "visible": true,
-        "ancestors": [],
-        "href": "Departments"
-    }, {
-        "_id": 7,
-        "__v": 0,
-        "attachments": [],
-        "link": true,
-        "mname": "Users",
-        "parrent": 1,
-        "sequence": 42,
-        "visible": true,
-        "ancestors": [],
-        "href": "Users"
-    }, {
-        "_id": 44,
-        "attachments": [],
-        "link": true,
-        "mname": "Workflows",
-        "parrent": 1,
-        "sequence": 44,
-        "visible": true,
-        "ancestors": [],
-        "href": "Workflows"
-    }, {
-        "_id": 51,
-        "attachments": [],
-        "link": true,
-        "mname": "Profiles",
-        "parrent": 1,
-        "sequence": 51,
-        "visible": true,
-        "ancestors": [],
-        "href": "Profiles"
-    }, {
-        "_id": 52,
-        "attachments": [],
-        "link": true,
-        "mname": "Birthdays",
-        "parrent": 9,
-        "sequence": 52,
-        "visible": true,
-        "ancestors": [],
-        "href": "Birthdays"
-    }, {
-        "_id": 53,
-        "attachments": [],
-        "link": true,
-        "mname": "Dashboard",
-        "parrent": 36,
-        "sequence": 53,
-        "visible": true,
-        "ancestors": [],
-        "href": "projectDashboard"
-    }, {
-        "_id": 54,
-        "mname": "Purchases",
-        "sequence": 54,
-        "parrent": null,
-        "link": false,
-        "visible": true,
-        "ancestors": [],
-        "href": "Purchases"
-    }, {
-        "_id": 80,
-        "mname": "Jobs Dashboard",
-        "sequence": 54,
-        "parrent": 36,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "jobsDashboard"
-    }, {
-        "_id": 55,
-        "mname": "Quotations",
-        "sequence": 55,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Quotations"
-    }, {
-        "_id": 57,
-        "mname": "Order",
-        "sequence": 56,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Order"
-    }, {
-        "_id": 56,
-        "mname": "Invoice",
-        "sequence": 57,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Invoice"
-    }, {
-        "_id": 58,
-        "mname": "Product",
-        "sequence": 58,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Product"
-    }, {
-        "_id": 59,
-        "mname": "Accounting",
-        "sequence": 59,
-        "parrent": null,
-        "link": false,
-        "visible": true,
-        "ancestors": [],
-        "href": "Accounting"
-    }, {
-        "_id": 60,
-        "mname": "Supplier Payments",
-        "sequence": 60,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "supplierPayments"
-    }, {
-        "_id": 61,
-        "mname": "Customer Payments",
-        "sequence": 61,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "customerPayments"
-    }, {
-        "_id": 62,
-        "mname": "Quotations",
-        "sequence": 62,
-        "parrent": 19,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salesQuotations"
-    }, {
-        "_id": 63,
-        "mname": "Order",
-        "sequence": 63,
-        "parrent": 19,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salesOrders"
-    }, {
-        "_id": 64,
-        "mname": "Invoice",
-        "sequence": 64,
-        "parrent": 19,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salesInvoice"
-    }, {
-        "_id": 68,
-        "mname": "MonthHours",
-        "sequence": 68,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "monthHours"
-    }, {
-        "_id": 69,
-        "mname": "Holidays",
-        "sequence": 69,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Holiday"
-    }, {
-        "_id": 77,
-        "mname": "Capacity",
-        "sequence": 69,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Capacity"
-    }, {
-        "_id": 88,
-        "mname": "Salary Report",
-        "sequence": 69,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salaryReport"
-    }, {
-        "_id": 70,
-        "mname": "Vacation",
-        "sequence": 70,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Vacation"
-    }, {
-        "_id": 71,
-        "mname": "Attendance",
-        "sequence": 71,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Attendance"
-    }, {
-        "_id": 76,
-        "mname": "Efficiency",
-        "sequence": 72,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Efficiency"
-    }, {
-        "_id": 72,
-        "mname": "BonusType",
-        "sequence": 73,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "bonusType"
-    }, {
-        "_id": 74,
-        "mname": "HrDashboard",
-        "sequence": 74,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "HrDashboard"
-    }, {
-        "_id": 66,
-        "mname": "Payroll Expenses",
-        "sequence": 77,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "PayrollExpenses"
-    }, {
-        "_id": 78,
-        "mname": "Payroll",
-        "sequence": 78,
-        "parrent": null,
-        "link": false,
-        "visible": true,
-        "ancestors": [],
-        "href": "Payroll"
-    }, {
-        "_id": 79,
-        "mname": "Payroll Payments",
-        "sequence": 79,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "PayrollPayments"
-    }, {
-        "_id": 82,
-        "mname": "Invoice Aging",
-        "sequence": 82,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "invoiceAging"
-    }, {
-        "_id": 83,
-        "mname": "ChartOfAccount",
-        "sequence": 83,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "ChartOfAccount"
-    }, {
-        "_id": 85,
-        "mname": "Journal",
-        "sequence": 85,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "journal"
-    }, {
-        "_id": 86,
-        "mname": "Journal Entry",
-        "sequence": 86,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "journalEntry"
-    }, {
-        "_id": 87,
-        "mname": "Invoice Charts",
-        "sequence": 87,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "invoiceCharts"
-    }, {
-        "_id": 1,
-        "__v": 0,
-        "attachments": [],
-        "link": false,
-        "mname": "Settings",
-        "parrent": null,
-        "sequence": 1000,
-        "visible": true,
-        "ancestors": [],
-        "href": "Settings"
-    }, {
-        "_id": 75,
-        "mname": "tCard",
-        "sequence": 1000,
-        "parrent": 36,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "wTrack"
-    }, {
-        "_id": 84,
-        "mname": "Categories",
-        "sequence": 1000,
-        "parrent": 1,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "productSettings"
-    }, {
-        "_id": 73,
-        "mname": "DashBoardVacation",
-        "sequence": 1001,
-        "parrent": 36,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "DashBoardVacation"
-    }];
-    var fakeBonusTypes = [
-        {
-            _id: "55b92ad521e4b7c40f000602",
-            isPercent: true,
-            value: 8,
-            name: "Sales/Head 8%",
-            ID: 2,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000603",
-            isPercent: true,
-            value: 6,
-            name: "Sales/Usual 6%",
-            ID: 3,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000604",
-            isPercent: true,
-            value: 2,
-            name: "Sales/Ref 2%",
-            ID: 4,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000605",
-            isPercent: true,
-            value: 16,
-            name: "Sales/QA 16%",
-            ID: 5,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000606",
-            isPercent: true,
-            value: 14,
-            name: "Sales/QA 14%",
-            ID: 6,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000607",
-            isPercent: true,
-            value: 8,
-            name: "Sales/QA 8%",
-            ID: 7,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000608",
-            isPercent: true,
-            value: 8,
-            name: "Sales/Usual 8%",
-            ID: 8,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000609",
-            isPercent: true,
-            value: 10,
-            name: "Sales/Head 10%",
-            ID: 9,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f00060a",
-            isPercent: true,
-            value: 1.5,
-            name: "PM Junior/Usual 1.5%",
-            ID: 10,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "55b92ad521e4b7c40f00060b",
-            isPercent: false,
-            value: 30,
-            name: "PM Base/Junior",
-            ID: 12,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "560eaaa5c90e2fb026ce061e",
-            name: "Sales/Usual 4%",
-            value: 4,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        }
-    ];
-    var fakeSortedDownBonusType = [
-        {
-            _id: "55b92ad521e4b7c40f000602",
-            isPercent: true,
-            value: 8,
-            name: "Sales/Head 8%",
-            ID: 2,
-            __v: 0,
-            bonusType: "HR"
-        },
-        {
-            _id: "55b92ad521e4b7c40f00060a",
-            isPercent: true,
-            value: 1.5,
-            name: "PM Junior/Usual 1.5%",
-            ID: 10,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "55b92ad521e4b7c40f00060b",
-            isPercent: false,
-            value: 30,
-            name: "PM Base/Junior",
-            ID: 12,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "56e2ed3f3abb6ba70f73ae93",
-            name: "dfg",
-            value: 9,
-            isPercent: true,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "56e2fb7e3abb6ba70f73ae94",
-            name: "df",
-            value: 9,
-            isPercent: false,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000603",
-            isPercent: true,
-            value: 6,
-            name: "Sales/Usual 6%",
-            ID: 3,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000604",
-            isPercent: true,
-            value: 2,
-            name: "Sales/Ref 2%",
-            ID: 4,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000605",
-            isPercent: true,
-            value: 16,
-            name: "Sales/QA 16%",
-            ID: 5,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000606",
-            isPercent: true,
-            value: 14,
-            name: "Sales/QA 14%",
-            ID: 6,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000607",
-            isPercent: true,
-            value: 8,
-            name: "Sales/QA 8%",
-            ID: 7,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000608",
-            isPercent: true,
-            value: 8,
-            name: "Sales/Usual 8%",
-            ID: 8,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000609",
-            isPercent: true,
-            value: 10,
-            name: "Sales/Head 10%",
-            ID: 9,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "56053965cdc112333a000009",
-            name: "hjkhg",
-            value: 6,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "5605396a82ca87623a00000b",
-            name: "hjkhgytryt",
-            value: 6,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "560eaaa5c90e2fb026ce061e",
-            name: "Sales/Usual 4%",
-            value: 4,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        }
-    ];
-    var fakeSortedUpBonusType = [
-        {
-            _id: "55b92ad521e4b7c40f000603",
-            isPercent: true,
-            value: 6,
-            name: "Sales/Usual 6%",
-            ID: 3,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000604",
-            isPercent: true,
-            value: 2,
-            name: "Sales/Ref 2%",
-            ID: 4,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000605",
-            isPercent: true,
-            value: 16,
-            name: "Sales/QA 16%",
-            ID: 5,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000606",
-            isPercent: true,
-            value: 14,
-            name: "Sales/QA 14%",
-            ID: 6,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000607",
-            isPercent: true,
-            value: 8,
-            name: "Sales/QA 8%",
-            ID: 7,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000608",
-            isPercent: true,
-            value: 8,
-            name: "Sales/Usual 8%",
-            ID: 8,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000609",
-            isPercent: true,
-            value: 10,
-            name: "Sales/Head 10%",
-            ID: 9,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "56053965cdc112333a000009",
-            name: "hjkhg",
-            value: 6,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "5605396a82ca87623a00000b",
-            name: "hjkhgytryt",
-            value: 6,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "560eaaa5c90e2fb026ce061e",
-            name: "Sales/Usual 4%",
-            value: 4,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "55b92ad521e4b7c40f00060a",
-            isPercent: true,
-            value: 1.5,
-            name: "PM Junior/Usual 1.5%",
-            ID: 10,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "55b92ad521e4b7c40f00060b",
-            isPercent: false,
-            value: 30,
-            name: "PM Base/Junior",
-            ID: 12,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "56e2ed3f3abb6ba70f73ae93",
-            name: "dfg",
-            value: 9,
-            isPercent: true,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "56e2fb7e3abb6ba70f73ae94",
-            name: "df",
-            value: 9,
-            isPercent: false,
-            __v: 0,
-            bonusType: "PM"
-        },
-        {
-            _id: "55b92ad521e4b7c40f000602",
-            isPercent: true,
-            value: 8,
-            name: "Sales/Head 8%",
-            ID: 2,
-            __v: 0,
-            bonusType: "HR"
-        }
-    ];
-
-    var bonusTypesCollection;
-    var view;
-    var topBarView;
-    var listView;
-    var windowConfirmStub;
-
     describe('BonusTypes View', function () {
         var $fixture;
         var $elFixture;
+
+        before(function () {
+            ajaxSpy = sinon.spy($, 'ajax');
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+        });
 
         after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
 
+            ajaxSpy.restore();
+            historyNavigateSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -916,7 +97,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'bonusType'});
 
@@ -960,28 +141,40 @@ define([
                 consoleSpy.restore();
             });
 
-            it('Try to fetch collection with error', function(){
-                var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+            it('Try to fetch collection with error', function () {
+                var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
 
-                server.respondWith('GET', bonusTypeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
+                historyNavigateSpy.reset();
+
+                server.respondWith('GET', bonusTypeUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify(fakeBonusTypes)]);
                 bonusTypesCollection = new BonusTypeCollection({
-                    viewType: 'list',
-                    page: 1,
-                    count: 13
+                    filter     : null,
+                    viewType   : 'list',
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
+                    contentType: 'bonusType'
                 });
                 server.respond();
 
-                expect(consoleSpy.called).to.be.true;
+                expect(historyNavigateSpy.called).to.be.true;
             });
 
             it('Try to create TopBarView', function () {
-                var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+                var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
 
-                server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
+                server.respondWith('GET', bonusTypeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeBonusTypes)]);
                 bonusTypesCollection = new BonusTypeCollection({
-                    viewType: 'list'
+                    filter     : null,
+                    viewType   : 'list',
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
+                    contentType: 'bonusType'
                 });
                 server.respond();
+
+                expect(bonusTypesCollection).to.have.lengthOf(3);
 
                 topBarView = new TopBarView({
                     collection: bonusTypesCollection
@@ -998,6 +191,9 @@ define([
             var mainSpy;
             var clock;
             var windowConfirmStub;
+            var $thisEl;
+            var saveSpy;
+            var sortSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -1005,6 +201,8 @@ define([
                 clock = sinon.useFakeTimers();
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 windowConfirmStub.returns(true);
+                saveSpy = sinon.spy(ListView.prototype, 'saveItem');
+                sortSpy = sinon.spy(ListView.prototype, 'goSort');
             });
 
             after(function () {
@@ -1012,53 +210,83 @@ define([
                 mainSpy.restore();
                 clock.restore();
                 windowConfirmStub.restore();
+                saveSpy.restore();
+                sortSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create bonusType list view', function (done) {
-                    var $listHolder;
-                    var bonusTypeTotalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i');
-                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+                    var $firstRow;
+                    var colCount;
+                    var name;
+                    var type;
+                    var value;
+                    var isPercent;
+                    var $pagination;
+                    var $currentPageList;
 
-                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
-                    server.respondWith('GET', bonusTypeTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 13
-                    })]);
                     listView = new ListView({
                         collection: bonusTypesCollection,
-                        startTime: new Date()
+                        startTime : new Date()
                     });
-                    server.respond();
-                    server.respond();
 
                     clock.tick(100);
 
-                    $listHolder = listView.$el;
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                    eventsBinder.subscribeCollectionEvents(bonusTypesCollection, listView);
 
-                    expect($listHolder.find('table')).to.exist;
+                    bonusTypesCollection.trigger('fetchFinished', {
+                        totalRecords: bonusTypesCollection.totalRecords,
+                        currentPage : bonusTypesCollection.currentPage,
+                        pageSize    : bonusTypesCollection.pageSize
+                    });
 
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+                    $thisEl = listView.$el;
 
-                    bonusTypesCollection.bind('showmore', listView.showMoreContent, listView);
+                    expect($thisEl.find('table')).to.exist;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
+
+                    $firstRow = $thisEl.find('#listTable > tr').first();
+                    colCount = $firstRow.find('td').length;
+                    expect(colCount).to.be.equals(6)
+
+                    name = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(name).not.to.be.empty;
+                    expect(name).to.not.match(/object Object|undefined/);
+
+                    type = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(type).not.to.be.empty;
+                    expect(type).to.not.match(/object Object|undefined/);
+
+                    value = $firstRow.find('td:nth-child(5)').text().trim();
+                    expect(value).not.to.be.empty;
+                    expect(value).to.not.match(/object Object|undefined/);
+
+                    isPercent = $firstRow.find('td:nth-child(6)').text().trim();
+                    expect(isPercent).not.to.be.empty;
+                    expect(isPercent).to.not.match(/object Object|undefined/);
+
+                    // test pagination container
+
+                    $pagination = $thisEl.find('.pagination');
+
+                    expect($pagination).to.exist;
+                    expect($pagination.find('.countOnPage')).to.be.exist;
+                    expect($pagination.find('.pageList')).to.be.exist;
+
+                    $currentPageList = $thisEl.find('.currentPageList');
+                    $currentPageList.mouseover();
+                    expect($thisEl.find('#pageList')).to.have.css('display', 'block');
+                    expect($thisEl.find('#pageList > li')).to.have.lengthOf(3);
+
+                    $currentPageList.mouseover();
+                    expect($thisEl.find('#pageList')).to.have.css('display', 'none');
 
                     done();
-
                 });
 
-                it('Try to check|uncheck all checckboxes', function(){
+                it('Try to check|uncheck all checckboxes', function () {
                     var $checkAllBtn = listView.$el.find('#checkAll');
 
                     $checkAllBtn.click();
@@ -1068,14 +296,14 @@ define([
                     expect(listView.$el.find('input[type=checkbox]').prop('checked')).to.be.false;
                 });
 
-                it('Try to switchPageCounter with error', function(done){
+                it('Try to switchPageCounter with error', function (done) {
                     var spyResponse;
                     var $thisEl = listView.$el;
                     var $pageList = $thisEl.find('.pageList');
                     var $needBtn = $pageList.find('a:nth-child(2)');
                     var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
 
-                    server.respondWith('GET', bonusTypeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
+                    server.respondWith('GET', bonusTypeUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeBonusTypes)]);
                     $needBtn.click();
                     server.respond();
 
@@ -1083,57 +311,108 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Some Error.');
 
                     done();
                 });
 
-                it('Try to switchPageCounter', function(done){
-                    var $thisEl = listView.$el;
-                    var $pageList = $thisEl.find('.pageList');
-                    var $needBtn = $pageList.find('a:nth-child(2)');
-                    var bonusTypeTotalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i');
-                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+                it('Try to change page1 to page2', function () {
+                    var $currentPageList = $thisEl.find('.currentPageList');
+                    var ajaxResponse;
+                    var $page2Btn;
 
-                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
-                    server.respondWith('GET', bonusTypeTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 13
-                    })]);
+                    ajaxSpy.reset();
+
+                    $currentPageList.mouseover();
+                    $page2Btn = $thisEl.find('#pageList > li').eq(1);
+                    $page2Btn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxSpy.called).to.be.true;
+                    expect(ajaxResponse).to.have.property('url', '/bonusType/');
+                    expect(ajaxResponse.data).to.have.property('contentType').and.to.not.undefined;
+                    expect(ajaxResponse.data).to.have.property('page', 2);
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
+                });
+
+                it('Try to select 25 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').first();
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
                     $needBtn.click();
                     server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
+                });
+
+                it('Try to select 50 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(1);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
                     server.respond();
 
-                    clock.tick(200);
+                    ajaxResponse = ajaxSpy.args[0][0];
 
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(11);
-
-                    done();
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '50');
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
                 });
 
-                it('Try to change page', function(){
-                    var $thisEl = listView.$el;
-                    var $firstShowPage = $thisEl.find('#firstShowPage');
-                    var $previousPage = $thisEl.find('#previousPage');
-                    var $nextPage = $thisEl.find('#nextPage');
-                    var $lastShowPage = $thisEl.find('#lastShowPage');
+                it('Try to select 100 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(2);
+                    var ajaxResponse;
 
-                    $firstShowPage.prop('disabled', false);
-                    $firstShowPage.click();
-                    $previousPage.prop('disabled', false);
-                    $previousPage.click();
-                    $nextPage.prop('disabled', false);
-                    $nextPage.click();
-                    $lastShowPage.prop('disabled', false);
-                    $lastShowPage.click();
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '100');
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
                 });
 
-                it('Try to delete with changes', function(){
-                    var $input;
-                    var $selectedItem;
-                    var $thisEl = listView.$el;
+                it('Try to select 200 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(3);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '200');
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
+                });
+
+                it('Try to delete with changes', function () {
                     var $valueInput = $thisEl.find('tr[data-id="55b92ad521e4b7c40f000602"] > td[data-content="value"]');
                     var $type = $thisEl.find('tr[data-id="55b92ad521e4b7c40f000602"] > td[data-content="bonusType"]');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var $input;
+                    var $selectedItem;
 
                     // set value
                     $valueInput.click();
@@ -1160,13 +439,12 @@ define([
                     var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
 
                     $firstEl.click();
-                    server.respondWith('DELETE', bonusTypeUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    server.respondWith('DELETE', bonusTypeUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Delete success'})]);
                     $deleteBtn.click();
                     server.respond();
 
                     spyResponse = mainSpy.args[1][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
                 });
 
                 it('Try to delete item', function () {
@@ -1175,7 +453,7 @@ define([
                     var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
 
                     $firstEl.click();
-                    server.respondWith('DELETE', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    server.respondWith('DELETE', bonusTypeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Delete success'})]);
                     $deleteBtn.click();
                     server.respond();
                 });
@@ -1192,6 +470,8 @@ define([
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $tableContainer = listView.$el.find('table');
 
+                    saveSpy.reset();
+
                     $createBtn.click();
 
                     $nameInput = listView.$el.find('td[data-content="name"]')[0];
@@ -1199,23 +479,22 @@ define([
                     $valueInput = listView.$el.find('td[data-content="value"]')[0];
                     $isPercentInput = listView.$el.find('td[data-content="isPercent"]')[0];
 
-                    server.respondWith('POST', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        "success": {
-                            "__v": 0,
-                            "date": "2016-03-11T22:00:00.000Z",
-                            "year": null,
-                            "week": null,
-                            "_id": "56e2cd4a3abb6ba70f73ad73"
+                    server.respondWith('POST', '/bonusType/', [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        success: {
+                            date: '2016-03-11T22:00:00.000Z',
+                            year: null,
+                            week: null,
+                            _id : '56e2cd4a3abb6ba70f73ad73'
                         }
                     })]);
                     $saveBtn.click();
                     server.respond();
 
+                    expect(saveSpy.calledOnce).to.be.true;
                     spyResponse = mainSpy.args[2][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Fill all fields please');
 
-                    /*$nameInput.click();
+                    $nameInput.click();
                     $input = listView.$el.find('input.editing');
                     $input.val('test');
 
@@ -1231,85 +510,52 @@ define([
                     $newSelectEl = listView.$el.find('li[data-id="true"]');
                     $newSelectEl.click();
 
-                    server.respondWith('POST', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('POST', '/bonusType/', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
 
                     $saveBtn.click();
                     server.respond();
 
-                    expect($tableContainer.find('input[type="text"]').length).to.equals(0);*/
+                    expect(saveSpy.calledTwice).to.be.true;
+                    expect($tableContainer.find('input[type="text"]').length).to.equals(0);
                 });
 
-                /*it('Try to edit item', function () {
-                    var $input;
-                    var $valueInput = listView.$el.find('td[data-content="value"]')[0];
+                it('Try to edit item', function () {
+                    var $valueInput = $thisEl.find('td[data-content="value"]').first();
+                    var $typeTd = $thisEl.find('td[data-content="bonusType"]').first();
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
-                    var $body = $('body');
-                    var $tableContainer = listView.$el.find('table');
+                    var $tableContainer = $thisEl.find('table');
+                    var $input;
+                    var $selectList;
+                    var $selectedItem;
+
+                    saveSpy.reset();
 
                     $valueInput.click();
-
                     $input = listView.$el.find('input.editing');
                     $input.val('17');
+                    $input.trigger('change');
 
-                    $body.click();
+                    $typeTd.click();
+                    $selectList = $typeTd.find('.newSelectList')
+                    expect($selectList).to.exist;
 
-                    server.respondWith('PATCH', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        "success": {
-                            "__v": 0,
-                            "date": "2016-03-11T22:00:00.000Z",
-                            "year": null,
-                            "week": null,
-                            "_id": "56e2cd4a3abb6ba70f73ad73"
+                    $selectedItem = $selectList.find('li').first();
+                    $selectedItem.click();
+
+                    server.respondWith('PATCH', '/bonusType/', [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        success: {
+                            date: '2016-03-11T22:00:00.000Z',
+                            year: null,
+                            week: null,
+                            _id : '56e2cd4a3abb6ba70f73ad73'
                         }
                     })]);
-
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
 
+                    expect(saveSpy.calledOnce).to.be.true;
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
                     expect($(listView.$el.find('td[data-content="value"]')[0]).text()).to.be.equals('17');
-
-                });*/
-
-                it('Try to sort down list', function () {
-                    var $sortTypeBtn = listView.$el.find('th[data-sort="bonusType"]');
-                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
-                    var totalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i')
-                    var $bonusTypeInput;
-
-                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSortedDownBonusType)]);
-                    server.respondWith('GET', totalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 15
-                    })]);
-
-                    $sortTypeBtn.click();
-
-                    server.respond();
-
-                    $bonusTypeInput = $(listView.$el.find('td[data-content="bonusType"]')[0]);
-
-                    expect($bonusTypeInput.text()).to.be.equals('HR');
-
-                });
-
-                it('Try to sort up list', function () {
-                    var $sortTypeBtn = listView.$el.find('th[data-sort="bonusType"]');
-                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
-                    var totalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i')
-                    var $bonusTypeInput;
-
-                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSortedUpBonusType)]);
-                    server.respondWith('GET', totalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 15
-                    })]);
-                    $sortTypeBtn.click();
-                    server.respond();
-
-                    $bonusTypeInput = $(listView.$el.find('td[data-content="bonusType"]')[0]);
-
-                    expect($bonusTypeInput.text()).to.be.equals('Sales');
                 });
             });
         });

@@ -7,11 +7,12 @@ define([
     'views/balanceSheet/list/ListView',
     'views/balanceSheet/TopBarView',
     'views/Filter/FilterView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, modules, fixtures, BalanceSheetCollection, MainView, ListView, TopBarView, FilterView, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, BalanceSheetCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -163,15 +164,18 @@ define([
         describe('TopBarView', function () {
             var server;
             var clock;
+            var consoleLogSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 clock = sinon.useFakeTimers();
+                consoleLogSpy = sinon.spy(console, 'log');
             });
 
             after(function () {
                 server.restore();
                 clock.restore();
+                consoleLogSpy.restore();
             });
 
             it('Try to fetch collection with error', function () {
@@ -185,6 +189,8 @@ define([
                     contentType: 'balanceSheet'
                 });
                 server.respond();
+
+                expect(consoleLogSpy.calledOnce).to.be.true;
             });
 
             it('Try to create TopBarView', function (done) {
@@ -226,6 +232,7 @@ define([
             var $thisEl;
             var mainSpy;
             var showHiddenSpy;
+            var changeDateRangeSpy;
 
             before(function () {
                 App.startPreload = function () {
@@ -243,6 +250,7 @@ define([
                 server = sinon.fakeServer.create();
                 clock = sinon.useFakeTimers();
                 mainSpy = sinon.spy(App, 'render');
+                changeDateRangeSpy = sinon.spy(ListView.prototype, 'changeDateRange');
                 showHiddenSpy = sinon.spy(ListView.prototype, 'showHidden');
             });
 
@@ -251,6 +259,7 @@ define([
                 clock.restore();
                 mainSpy.restore();
                 showHiddenSpy.restore();
+                changeDateRangeSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -266,25 +275,18 @@ define([
                     server.respond();
                     clock.tick(300);
 
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                    eventsBinder.subscribeCollectionEvents(balanceSheetCollection, listView);
+
+                    balanceSheetCollection.trigger('fetchFinished', {
+                        totalRecords: balanceSheetCollection.totalRecords,
+                        currentPage : balanceSheetCollection.currentPage,
+                        pageSize    : balanceSheetCollection.pageSize
+                    });
+
                     $thisEl = listView.$el;
 
                     expect($thisEl.find('.list')).to.have.lengthOf(4);
-
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
-
-                    balanceSheetCollection.bind('showmore', listView.showMoreContent, listView);
 
                     done();
                 });
@@ -327,26 +329,31 @@ define([
                     $thisMonth.click();
                     server.respond();
                     expect(setDateRangeSpy.calledOnce).to.be.true;
+                    expect(changeDateRangeSpy.calledOnce).to.be.true;
 
                     $finYear = $topBarEl.find('#thisYear');
                     $finYear.click();
                     server.respond();
                     expect(setDateRangeSpy.calledTwice).to.be.true;
+                    expect(changeDateRangeSpy.calledTwice).to.be.true;
 
                     $lastMonth = $topBarEl.find('#lastMonth');
                     $lastMonth.click();
                     server.respond();
                     expect(setDateRangeSpy.calledThrice).to.be.true;
+                    expect(changeDateRangeSpy.calledThrice).to.be.true;
 
                     $lastQuarter = $topBarEl.find('#lastQuarter');
                     $lastQuarter.click();
                     server.respond();
                     expect(setDateRangeSpy.callCount).to.be.equals(4);
+                    expect(changeDateRangeSpy.callCount).to.be.equals(4);
 
                     $lastFinYear = $topBarEl.find('#lastYear');
                     $lastFinYear.click();
                     server.respond();
                     expect(setDateRangeSpy.callCount).to.be.equals(5);
+                    expect(changeDateRangeSpy.callCount).to.be.equals(5);
 
                     // open dateRange dropdown
                     $dateRange.click();
@@ -370,6 +377,7 @@ define([
 
                     $updateDateBtn.click();
                     server.respond();
+                    expect(changeDateRangeSpy.callCount).to.be.equals(6);
 
                     done();
                 });
