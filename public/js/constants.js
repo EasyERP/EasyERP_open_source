@@ -766,6 +766,7 @@ define([], function () {
             INVOICE_STATS             : '/invoices/stats/',
             REVENUE_SYNTHETIC         : 'revenue/synthetic',
             JOBS                      : '/jobs/',
+            JOBS_DASHBOARD            : '/jobs/getForOverview',
             JOURNAL_ENTRY             : '/journalEntries/',
             WORKFLOWS                 : '/workflows/',
             MODULES                   : '/getModules',

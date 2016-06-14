@@ -2174,15 +2174,14 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        name     : 1,
-                        workflow : {$arrayElemAt: ['$workflow', 0]},
-                        type     : 1,
-                        wTracks  : 1,
-                        project  : {$arrayElemAt: ['$project', 0]},
-                        budget   : 1,
-                        quotation: {$arrayElemAt: ['$quotation', 0]},
-                        invoice  : {$arrayElemAt: ['$invoice', 0]},
-
+                        name         : 1,
+                        workflow     : {$arrayElemAt: ['$workflow', 0]},
+                        type         : 1,
+                        wTracks      : 1,
+                        project      : {$arrayElemAt: ['$project', 0]},
+                        budget       : 1,
+                        quotation    : {$arrayElemAt: ['$quotation', 0]},
+                        invoice      : {$arrayElemAt: ['$invoice', 0]},
                         salesmanagers: {
                             $filter: {
                                 input: '$projectMembers',
@@ -2291,11 +2290,11 @@ var Filters = function (models) {
                         project: {
                             $addToSet: {
                                 _id : '$project._id',
-                                name: '$project.projectName'
+                                name: '$project.name'
                             }
                         },
 
-                        salesmanager: {
+                        salesManager: {
                             $addToSet: {
                                 _id : '$salesmanager._id',
                                 name: {

@@ -402,13 +402,13 @@ define([
             if (this.exportToXlsxUrl) {
                 tempExportToXlsxUrl = this.exportToXlsxUrl;
                 if (this.filter) {
-                    tempExportToXlsxUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    tempExportToXlsxUrl += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
                 }
                 window.location = tempExportToXlsxUrl;
             } else {
                 if (this.collection) {
                     if (this.filter) {
-                        filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                        filterString += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
                     }
                     window.location = this.collection.url + '/exportToXlsx' + filterString;
                 }
