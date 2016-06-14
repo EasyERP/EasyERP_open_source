@@ -186,7 +186,7 @@ define([
                     contentType: 'profitAndLoss'
                 });
                 server.respond();
-                
+
                 expect(profitAndLossCollection).to.have.lengthOf(1);
 
                 clock.tick(200);

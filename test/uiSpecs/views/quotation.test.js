@@ -1,14 +1,13 @@
 define([
     'modules',
     'text!fixtures/index.html',
-    'collections/Quotation/filterCollection',
+    'collections/Quotations/filterCollection',
     'views/main/MainView',
-    'views/Quotation/list/ListView',
-    'views/Quotation/thumbnails/ThumbnailsView',
-    'views/Quotation/form/FormView',
-    'views/Quotation/TopBarView',
-    'views/Quotation/CreateView',
-    'views/Quotation/EditView',
+    'views/Quotations/list/ListView',
+    'views/Quotations/form/FormView',
+    'views/Quotations/TopBarView',
+    'views/Quotations/CreateView',
+    'views/Quotations/EditView',
     'jQuery',
     'chai',
     'chai-jquery',
@@ -18,7 +17,6 @@ define([
              QuotationCollection,
              MainView,
              ListView,
-             ThumbnailsView,
              FormView,
              TopBarView,
              CreateView,
@@ -789,7 +787,7 @@ define([
 
                 server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
-                view = new MainView({el: $elFixture, contentType: 'salesQuotation'});
+                view = new MainView({el: $elFixture, contentType: 'salesQuotations'});
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
                 $expectedSubMenuEl = view.$el.find('#submenu-holder');
@@ -811,7 +809,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/salesQuotation');
+                expect(window.location.hash).to.be.equals('#easyErp/salesQuotations');
 
             });
 
@@ -829,13 +827,13 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var quotationUrl = new RegExp('\/quotation\/list', 'i');
+                var quotationUrl = new RegExp('\/quotations\/list', 'i');
 
                 server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotation)]);
                 quotationCollection = new QuotationCollection({
                     count      : 100,
                     viewType   : 'list',
-                    contentType: 'salesQuotation'
+                    contentType: 'salesQuotations'
                 });
                 server.respond();
 
@@ -871,7 +869,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create listView', function (done) {
-                    var quotationUrl = new RegExp('\/quotation\/list', 'i');
+                    var quotationUrl = new RegExp('\/quotations\/list', 'i');
                     var workflowUrl = new RegExp('\/workflows\/fetch', 'i');
 
                     server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotation)]);
@@ -910,7 +908,7 @@ define([
                 });
 
                 it('Try to sort list', function () {
-                    var quotationUrl = new RegExp('\/quotation\/list', 'i');
+                    var quotationUrl = new RegExp('\/quotations\/list', 'i');
                     var $thSortEl = listView.$el.find('table > thead > tr > th.oe_sortable');
 
                     sortSpy.reset();
@@ -930,7 +928,7 @@ define([
                 });
 
                 it('Try to go to edit form', function () {
-                    var quotationFormUrl = new RegExp('\/quotation\/form\/', 'i');
+                    var quotationFormUrl = new RegExp('\/quotations\/form\/', 'i');
                     var currencyUrl = new RegExp('\/currency\/getForDd', 'i');
                     var $needTd = listView.$el.find('tr:nth-child(1) > td:nth-child(3)');
 
@@ -987,7 +985,7 @@ define([
                  server.respond();
                  //server.respond();
 
-                 expect(window.location.hash).to.be.equals('#easyErp/Order/list');
+                 expect(window.location.hash).to.be.equals('#easyErp/orders/list');
                  });*/
 
 

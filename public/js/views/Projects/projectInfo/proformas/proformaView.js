@@ -135,7 +135,7 @@ define([
 
             var model = new InvoiceModel({validate: false});
 
-            model.urlRoot = '/invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : invoice._id,
@@ -171,7 +171,7 @@ define([
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : id,

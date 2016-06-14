@@ -173,7 +173,7 @@ define([
             ]
         };
 
-        it ('Try to create collection with contentType="salesOrder"', function(){
+        it ('Try to create collection with contentType="salesOrders"', function(){
             var customersUrl = '/customers/';
 
             server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);

@@ -4,9 +4,9 @@ define([
     'text!templates/Projects/projectInfo/orders/ListTemplate.html',
     'text!templates/Projects/projectInfo/orders/ListHeader.html',
     'text!templates/Pagination/PaginationTemplate.html',
-    'views/salesOrder/EditView',
-    'views/salesOrder/list/ListView',
-    'collections/Quotation/filterCollection',
+    'views/salesOrders/EditView',
+    'views/salesOrders/list/ListView',
+    'collections/Quotations/filterCollection',
     'models/QuotationModel',
     'dataService',
     'common',
@@ -51,7 +51,7 @@ define([
             var self = this;
             var model = new OrderModel({validate: false});
 
-            model.urlRoot = '/order/';
+            model.urlRoot = '/orders/';
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {
@@ -86,7 +86,7 @@ define([
                 onlyView = true;
             }
 
-            model.urlRoot = '/Order/';
+            model.urlRoot = '/orders/';
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {

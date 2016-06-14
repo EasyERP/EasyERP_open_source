@@ -100,6 +100,7 @@
             $('.add-group-dialog').remove();
             $('.add-user-dialog').remove();
             $('.crop-images-dialog').remove();
+            $('.edit-invoice-dialog').remove();
         },
 
         changeTab: function (e) {

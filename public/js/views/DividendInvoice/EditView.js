@@ -5,9 +5,9 @@ define([
     'text!templates/DividendInvoice/EditTemplate.html',
     'views/dialogViewBase',
     'views/DividendInvoice/InvoiceProductItems',
-    'views/salesInvoice/wTrack/wTrackRows',
+    'views/salesInvoices/wTrack/wTrackRows',
     'views/DividendPayments/CreateView',
-    'views/salesInvoice/EmailView',
+    'views/salesInvoices/EmailView',
     'views/Payment/list/ListHeaderInvoice',
     'populate',
     'constants',
@@ -28,7 +28,7 @@ define([
     'use strict';
 
     var EditView = ParentView.extend({
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {

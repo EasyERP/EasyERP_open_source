@@ -3,7 +3,7 @@ define([
     'Underscore',
     'socketio',
     'collections/Jobs/filterCollection',
-    'collections/Invoice/filterCollection',
+    'collections/Invoices/filterCollection',
     'custom'
 ], function (Backbone, _, io, JobsCollection, InvoiceCollection, custom) {
     'use strict';

@@ -261,13 +261,13 @@ define([
                         currentPage : cashFlowCollection.currentPage,
                         pageSize    : cashFlowCollection.pageSize
                     });
-                    
+
                     $thisEl = listView.$el;
                     expect($thisEl.find('.list')).to.exist;
                     expect($thisEl.find('#listTableOperating')).to.exist;
                     expect($thisEl.find('#listTableInvesting')).to.exist;
                     expect($thisEl.find('#listTableFinancing')).to.exist;
-                    
+
                     done();
                 });
 

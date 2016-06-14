@@ -5,7 +5,7 @@ define([
     'views/listViewBase',
     'text!templates/salesProforma/list/ListHeader.html',
     'text!templates/stages.html',
-    'views/salesInvoice/CreateView',
+    'views/salesInvoices/CreateView',
     'views/Proforma/EditView',
     'models/InvoiceModel',
     'views/salesProforma/list/ListItemView',
@@ -160,7 +160,7 @@ define([
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : id,

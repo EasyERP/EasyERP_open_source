@@ -1,7 +1,5 @@
 define([], function () {
     return  {
-
-
         Persons         : {
             _id     : null,
             name    : [
@@ -2307,7 +2305,7 @@ define([], function () {
                 }
             ]
         },
-        salesOrder      : {
+        salesOrders      : {
             _id         : null,
             projectName : [
                 {
@@ -3470,7 +3468,7 @@ define([], function () {
                 }
             ]
         },
-        salesQuotation  : {
+        salesQuotations  : {
             _id         : null,
             projectName : [
                 {

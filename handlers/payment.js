@@ -1030,8 +1030,7 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    'supplier.name' : '$sullpier.name',
-                    'supplier._id'  : '$sullpier._id',
+                    supplier        : 1,
                     currency        : 1,
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
@@ -1832,7 +1831,7 @@ var Module = function (models, event) {
                                             paymentInfoNew.unTaxed = paymentInfoNew.total;
 
                                             if (paymentInfo.total !== parseInt(paymentInfo.balance, 10)) {
-                                                paymentInfoNew.balance = parseInt(paymentInfo.balance, 10) +  parseInt(paid, 10);
+                                                paymentInfoNew.balance = parseInt(paymentInfo.balance, 10) + parseInt(paid, 10);
                                             } else {
                                                 paymentInfoNew.balance = parseInt(paymentInfo.balance, 10);
                                             }

@@ -4,7 +4,7 @@ define([
     'Backbone',
     'text!templates/ExpensesInvoice/InvoiceProductItems.html',
     'text!templates/ExpensesInvoice/InvoiceProductInputContent.html',
-    'text!templates/Invoice/EditInvoiceProductInputContent.html',
+    'text!templates/Invoices/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
