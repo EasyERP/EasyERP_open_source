@@ -1,59 +1,144 @@
-/**
- * Created by liliya on 8/13/15.
- */
 define([
         'Backbone',
         'jQuery',
         'Underscore',
         'text!templates/Filter/filterFavourites.html',
-        'models/UsersModel',
-        'custom'
+        'text!templates/Filter/filterFavouritesElements.html',
+        'models/UsersModel'
     ],
-    function (Backbone, $, _, ContentFilterTemplate, usersModel, custom) {
+    function (Backbone, $, _, SavedFilterTemplate, SavedElementsTemplate, UserModel) {
         'use strict';
 
         var FilterView;
         FilterView = Backbone.View.extend({
-            el          : '#favoritesContent',
-            contentType : null,
-            savedFilters: {},
-            filter      : null,
+            el              : '#favoritesContent',
+            template        : _.template(SavedFilterTemplate),
+            elementsTemplate: _.template(SavedElementsTemplate),
 
-            events: {},
+            events: {
+                'click #saveFilterButton': 'saveFilter'
+            },
 
             initialize: function (options) {
-                this.contentType = options.contentType;
-                this.filter = options.filter;
+                var defSavedFilter;
 
+                this.contentType = options.contentType;
+                this.savedFilters = this.getSavedFilters(App);
+
+                defSavedFilter = _.findWhere(this.savedFilters, {byDefault: true});
+
+                if (defSavedFilter) {
+                    App.filter = defSavedFilter.filters;
+                    this.trigger('savedNewFavorite', defSavedFilter._id, defSavedFilter.name, true);
+                }
                 this.render();
             },
 
-            render: function () {
-                this.$el.append(_.template(ContentFilterTemplate));
+            getSavedFilters: function(object) {
+                var savedFiltersObject = object && object.savedFilters ? object.savedFilters[this.contentType] : [];
+                var savedFilters = savedFiltersObject && savedFiltersObject.length ? savedFiltersObject[0].filter : [];
 
-                if (App.savedFilters[this.contentType]) {
-                    this.savedFilters = App.savedFilters[this.contentType];
+                return savedFilters;
+            },
 
-                    for (var j = this.savedFilters.length - 1; j >= 0; j--) {
-                        if (this.savedFilters[j]) {
-                            if (this.savedFilters[j].byDefault === this.contentType) {
-                                var keys = Object.keys(this.savedFilters[j]['_id']['filter']);
+            saveFilter: function () {
+                var $curEl = this.$el;
+                var currentUser = new UserModel(App.currentUser);
+                var key = this.contentType;
+                var id;
+                var filterObj = {};
+                var mid = 39;
+                var $filterNameEl = $curEl.find('#forFilterName');
+                var filterName = $filterNameEl.val().trim();
+                var $byDefEl = $curEl.find('.defaultFilter');
+                var byDefault = $byDefEl.prop('checked');
+                var self = this;
+                var filterForSave = {};
+                var sameSavedFilter = _.findWhere(this.savedFilters, {name: filterName});
 
-                                filter = this.savedFilters[j]['_id']['filter'][keys[0]];
-
-                                //url += '/filter=' + encodeURI(JSON.stringify(filter));
-                                //Backbone.history.fragment = "";
-                                //Backbone.history.navigate(url, {trigger: true});
-
-                                self.useFilter(filter);
-                            }
-                            var keys = Object.keys(this.savedFilters[j]['_id']['filter']);
-                            for (var i = keys.length - 1; i >= 0; i--) {
-                                this.$el.append('<li class="filters"  id ="' + this.savedFilters[j]['_id']['_id'] + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + this.savedFilters[j]['_id']['_id'] + '">' + 'x' + '</button>');
-                            }
-                        }
-                    }
+                if (!filterName.length) {
+                    return App.render({type: 'error', message: 'Please, enter filter name'});
                 }
+
+                if (sameSavedFilter) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Filter with same name already exists! Please, change filter name.'
+                    });
+                }
+                if ((Object.keys(App.filter)).length === 0) {
+                    return App.render({type: 'error', message: 'Please, use some filter!'});
+                }
+
+                if (!App.savedFilters[key]) {
+                    App.savedFilters[key] = [];
+                }
+
+                filterForSave[filterName] = _.extend({}, App.filter);
+
+                if (byDefault) {
+                    this.savedFilters = _.map(this.savedFilters, function (element) {
+                        element.byDefault = false;
+
+                        return element;
+                    })
+                }
+
+                filterObj = {
+                    filter      : filterForSave[filterName],
+                    key         : key,
+                    name        : filterName,
+                    useByDefault: byDefault
+                };
+
+                currentUser.changed = {newFilter: filterObj};
+
+                currentUser.save(
+                    {newFilter: filterObj},
+                    {
+                        headers : {
+                            mid: mid
+                        },
+                        wait    : true,
+                        patch   : true,
+                        validate: false,
+                        success : function (model) {
+                            var updatedInfo = model.get('success');
+                            var filters = updatedInfo.savedFilters;
+                            var justSavedFilter = _.last(filters);
+                            var id = justSavedFilter._id;
+
+                            filterObj._id = id;
+
+                            self.savedFilters.push(filterObj);
+                            $byDefEl.attr('checked', false);
+                            $filterNameEl.val('');
+                            self.renderSavedFiltersElements();
+
+                            self.trigger('savedNewFavorite', id, filterName);
+                        },
+                        error   : function (model, xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    });
+            },
+
+            renderSavedFiltersElements: function () {
+                var $curEl = this.$el;
+                var $favouritesContent = $curEl.find('#savedFiltersElements');
+
+                $favouritesContent.html(this.elementsTemplate({collection: this.savedFilters}));
+            },
+
+            render: function () {
+                var $curEl = this.$el;
+
+                $curEl.append(this.template());
+
+                this.renderSavedFiltersElements();
+
+                return this;
             }
 
         });

@@ -1,0 +1,4 @@
+<% collection.forEach(function (model) {
+%>
+<li class="filters" id="<%= model._id %>"><%= model.name %><button class="removeSavedFilter">x</button></li>
+<% }); %>

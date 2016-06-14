@@ -14,6 +14,8 @@ var User = function (event, models) {
     var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
 
+    var ObjectId = mongoose.Types.ObjectId;
+
     function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
             if (error) {
@@ -33,31 +35,95 @@ var User = function (event, models) {
     function updateUser(req, res, next) {
         var data = req.body;
         var query = {};
-        var key = data.key;
+        var newFilter = data.newFilter;
         var deleteId = data.deleteId;
-        var byDefault = data.byDefault;
-        var viewType = data.viewType;
+        var byDefault;
+        var viewType;
         var _id = req.session.uId;
         var id = req.params.id;
         var SavedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
-        var filterModel = new SavedFilters();
-        var newSavedFilters;
+        var waterFallTasks = [saveFilter, getUpdateFilterQuery];
+
+        function saveFilter(callback) {
+            var filterModel = new SavedFilters();
+
+            filterModel.name = newFilter.name;
+            filterModel.filter = newFilter.filter;
+
+            filterModel.save(function (err, result) {
+                var customError;
+
+                if (err) {
+                    customError = new Error();
+                    customError.status = 400;
+                    customError.message = 'Filter hasn\'t been saved';
+
+                    return callback(customError);
+                }
+
+                callback(null, result);
+            });
+        };
+
+        function getUpdateFilterQuery(filterModel, callback) {
+            var byDefault = newFilter.useByDefault;
+            var contentType = newFilter.key;
+            var newSavedFilters;
+
+            if (byDefault) {
+                models
+                    .get(req.session.lastDb, 'Users', userSchema)
+                    .findById(_id, {savedFilters: 1}, function (err, result) {
+                        var savedFilters = result.toJSON().savedFilters || [];
+
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        savedFilters = _.map(savedFilters, function (element) {
+                            if (element.contentType === contentType) {
+                                element.byDefault = false;
+                            }
+
+                            return element;
+                        });
+
+                        savedFilters.push({
+                            _id        : filterModel.get('id'),
+                            byDefault  : byDefault,
+                            contentType: contentType
+                        });
+
+                        return callback(null, {$set: {savedFilters: savedFilters}});
+                    });
+            } else {
+                newSavedFilters = {
+                    _id        : filterModel.get('id'),
+                    byDefault  : byDefault,
+                    contentType: contentType
+                };
+
+                return callback(null, {$push: {savedFilters: newSavedFilters}});
+            }
+        };
 
         function updateThisUser(_id, query) {
             var saveChanges = function () {
-                models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
+                models
+                    .get(req.session.lastDb, 'Users', userSchema)
+                    .findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                    req.session.kanbanSettings = result.kanbanSettings;
+                        req.session.kanbanSettings = result.kanbanSettings;
 
-                    if (data.profile && (result._id === req.session.uId)) {
-                        res.status(200).send({success: result, logout: true});
-                    } else {
-                        res.status(200).send({success: result});
-                    }
-                });
+                        if (data.profile && (result._id === req.session.uId)) {
+                            res.status(200).send({success: result, logout: true});
+                        } else {
+                            res.status(200).send({success: result});
+                        }
+                    });
             };
 
             if (query.$set && query.$set.login) {
@@ -112,62 +178,15 @@ var User = function (event, models) {
             });
             return;
         }
-        if (data.filter && data.key) {
-
-            filterModel.contentView = key;
-            filterModel.filter = data.filter;
-
-            byDefault = data.useByDefault;
-            viewType = data.viewType;
-            newSavedFilters = [];
-
-            filterModel.save(function (err, result) {
+        if (newFilter) {
+            async.waterfall(waterFallTasks, function (err, result) {
                 if (err) {
-                    return console.log('error save filter');
+                    return next(err);
                 }
 
-                if (result) {
-                    id = result.get('_id');
-
-                    if (byDefault) {
-                        models.get(req.session.lastDb, 'Users', userSchema).findById(_id, {savedFilters: 1}, function (err, result) {
-                            var savedFilters;
-
-                            if (err) {
-                                return next(err);
-                            }
-                            savedFilters = result.toJSON().savedFilters || [];
-
-                            savedFilters.forEach(function (filter) {
-                                if (filter.byDefault === byDefault) {
-                                    filter.byDefault = '';
-                                }
-                            });
-
-                            savedFilters.push({
-                                _id      : id,
-                                byDefault: byDefault,
-                                viewType : viewType
-                            });
-
-                            query = {$set: {savedFilters: savedFilters}};
-
-                            updateThisUser(_id, query);
-                        });
-                    } else {
-                        newSavedFilters = {
-                            _id      : id,
-                            byDefault: byDefault,
-                            viewType : viewType
-                        };
-
-                        query = {$push: {savedFilters: newSavedFilters}};
-
-                        updateThisUser(_id, query);
-                    }
-
-                }
+                updateThisUser(_id, result);
             });
+
             return;
         }
 
@@ -575,28 +594,192 @@ var User = function (event, models) {
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
         var query;
 
-        query = UserModel.findById(id, {__v: 0, pass: 0});
-        query
-            .populate('profile', '_id profileName profileAccess')
-            .populate('relatedEmployee', 'imageSrc name fullName')
-            .populate('savedFilters._id');
+        var pipeLine = [];
 
-        query.exec(function (err, result) {
-            var newUserResult = {};
-            var savedFilters;
-
-            if (err) {
-                return next(err);
+        pipeLine.push({
+            $match: {
+                _id: ObjectId(id)
             }
-
-            savedFilters = result ? result.toJSON().savedFilters : null;
-
-            if (savedFilters) {
-                newUserResult = _.groupBy(savedFilters, '_id.contentView');
-            }
-
-            res.status(200).send({user: result, savedFilters: newUserResult});
         });
+
+        pipeLine.push({
+            $lookup: {
+                from        : 'Profile',
+                localField  : 'profile',
+                foreignField: "_id",
+                as          : 'profile'
+            }
+        });
+
+        pipeLine.push({
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'relatedEmployee',
+                foreignField: "_id",
+                as          : 'relatedEmployee'
+            }
+        });
+
+        pipeLine.push({
+            $project: {
+                _id            : '$_id',
+                imageSrc       : '$imageSrc',
+                login          : '$login',
+                email          : '$email',
+                kanbanSettings : '$kanbanSettings',
+                lastAccess     : '$lastAccess',
+                credentials    : '$credentials',
+                profile        : {$arrayElemAt: ['$profile', 0]},
+                relatedEmployee: {$arrayElemAt: ['$relatedEmployee', 0]},
+                savedFilters   : '$savedFilters'
+            }
+        });
+
+        pipeLine.push({
+            $project: {
+                _id            : '$_id',
+                imageSrc       : '$imageSrc',
+                login          : '$login',
+                email          : '$email',
+                kanbanSettings : '$kanbanSettings',
+                lastAccess     : '$lastAccess',
+                credentials    : '$credentials',
+                profile        : {
+                    _id          : '$profile._id',
+                    profileName  : '$profileName',
+                    profileAccess: '$profileAccess'
+                },
+                relatedEmployee: {
+                    _id     : '$relatedEmployee._id',
+                    imageSrc: '$relatedEmployee.imageSrc',
+                    name    : '$relatedEmployee.name',
+                    fullName: '$relatedEmployee.fullName'
+                },
+                savedFilters   : '$savedFilters'
+            }
+        });
+
+        pipeLine.push({
+            $unwind: {
+                path                      : '$savedFilters',
+                preserveNullAndEmptyArrays: true
+            }
+        });
+
+        pipeLine.push({
+            $lookup: {
+                from        : 'savedFilters',
+                localField  : 'savedFilters._id',
+                foreignField: "_id",
+                as          : 'savedFilters._id'
+            }
+        });
+
+        pipeLine.push({
+            $project: {
+                _id            : '$_id',
+                imageSrc       : '$imageSrc',
+                login          : '$login',
+                email          : '$email',
+                kanbanSettings : '$kanbanSettings',
+                lastAccess     : '$lastAccess',
+                credentials    : '$credentials',
+                profile        : '$profile',
+                relatedEmployee: '$relatedEmployee',
+                savedFilters   : {
+                    _id        : {$arrayElemAt: ['$savedFilters._id', 0]},
+                    byDefault  : '$savedFilters.byDefault',
+                    contentType: '$savedFilters.contentType'
+                }
+            }
+        });
+
+        pipeLine.push({
+            $group: {
+                _id            : {
+                    _id        : '$_id',
+                    contentType: '$savedFilters.contentType'
+                },
+                imageSrc       : {$first: '$imageSrc'},
+                login          : {$first: '$login'},
+                email          : {$first: '$email'},
+                kanbanSettings : {$first: '$kanbanSettings'},
+                lastAccess     : {$first: '$lastAccess'},
+                credentials    : {$first: '$credentials'},
+                profile        : {$first: '$profile'},
+                relatedEmployee: {$first: '$relatedEmployee'},
+                savedFilters   : {
+                    $addToSet: {
+                        _id      : '$savedFilters._id._id',
+                        name     : '$savedFilters._id.name',
+                        filters  : '$savedFilters._id.filter',
+                        byDefault: '$savedFilters.byDefault'
+                    }
+                }
+            }
+        });
+
+        pipeLine.push({
+            $group: {
+                _id            : "$_id._id",
+                imageSrc       : {$first: '$imageSrc'},
+                login          : {$first: '$login'},
+                email          : {$first: '$email'},
+                kanbanSettings : {$first: '$kanbanSettings'},
+                lastAccess     : {$first: '$lastAccess'},
+                credentials    : {$first: '$credentials'},
+                profile        : {$first: '$profile'},
+                relatedEmployee: {$first: '$relatedEmployee'},
+                savedFilters   : {
+                    $addToSet: {
+                        contentType: '$_id.contentType',
+                        filter     : '$savedFilters'
+                    }
+                }
+            }
+        });
+
+        UserModel
+            .aggregate(pipeLine)
+            .exec(function (err, result) {
+                var savedFilters;
+
+                if (err) {
+                    return next(err);
+                }
+
+                result = result[0];
+
+                savedFilters = result.savedFilters || [];
+
+                savedFilters = _.groupBy(savedFilters, 'contentType');
+                delete result.savedFilters;
+
+                res.status(200).send({user: result, savedFilters: savedFilters});
+            });
+
+        /*query = UserModel.findById(id, {__v: 0, pass: 0});
+         query
+         .populate('profile', '_id profileName profileAccess')
+         .populate('relatedEmployee', 'imageSrc name fullName')
+         .populate('savedFilters._id');
+
+         query.exec(function (err, result) {
+         var newUserResult = {};
+         var savedFilters;
+
+         if (err) {
+         return next(err);
+         }
+
+         savedFilters = result ? result.toJSON().savedFilters : null;
+
+         if (savedFilters) {
+         newUserResult = _.groupBy(savedFilters, '_id.contentView');
+         }
+
+         res.status(200).send({user: result, savedFilters: newUserResult});
+         });*/
     };
 
     this.totalCollectionLength = function (req, res, next) {

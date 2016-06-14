@@ -84,11 +84,13 @@ define([
 
             if (elementState) {
                 if (!filterValues) {
-                    filterValues = {
+                    App.filter[this.filterViewName] = {
                         key  : groupType,
                         value: [],
                         type : this.filterType || null
                     };
+
+                    filterValues = App.filter[this.filterViewName];
                 }
 
                 filterValues.value.push(currentValue);
