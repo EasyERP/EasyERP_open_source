@@ -2306,10 +2306,24 @@ var Module = function (models, event) {
     };
 
     this.createCostsForJob = function (options) {
+        var req = options.req;
+        var jobsArray = options.jobIds;
+        var newReq = req;
 
+        var cb = function () {
+            return false;
+        };
+
+        newReq.body.jobs = jobsArray;
+
+        reconcile(req, null, cb, cb);
     };
 
     this.reconcile = function (req, res, next) {
+        reconcile(req, res, next);
+    };
+
+    function reconcile(req, res, next, cb) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
@@ -2965,20 +2979,28 @@ var Module = function (models, event) {
             db = models.connection(req.session.lastDb);
             setObj = {date: date};
 
+            console.log('Success');
             event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
 
-            Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function () {
+            if (cb) {
+                event.emit('sendMessage', {
+                    view   : 'Projects',
+                    message: 'Please, refresh browser, costs were calculated.'
+                });
+            }
+
+            Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
 
             });
 
-            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function () {
+            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
 
             });
         });
-    };
+    }
 
     this.getReconcileDate = function (req, res, next) {
         var db = models.connection(req.session.lastDb);

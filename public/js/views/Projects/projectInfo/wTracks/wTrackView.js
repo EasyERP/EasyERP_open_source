@@ -153,64 +153,64 @@ define([
         },
 
         /*deleteItems: function (e) {
-            var that = this;
+         var that = this;
 
-            var mid = 39;
-            var model;
-            var table = $('#listTable');
-            var value;
-            var answer;
+         var mid = 39;
+         var model;
+         var table = $('#listTable');
+         var value;
+         var answer;
 
-            this.collectionLength = this.collection.length;
-            e.preventDefault();
+         this.collectionLength = this.collection.length;
+         e.preventDefault();
 
-            if (!this.changed) {
+         if (!this.changed) {
 
-                answer = confirm('Really DELETE items ?!');
+         answer = confirm('Really DELETE items ?!');
 
-                if (answer === true) {
-                    async.each($('#listTable input:checked'), function (checkbox, cb) {
-                        value = checkbox.value;
+         if (answer === true) {
+         async.each($('#listTable input:checked'), function (checkbox, cb) {
+         value = checkbox.value;
 
-                        model = that.collection.get(value);
-                        model.destroy({
-                            headers: {
-                                mid: mid
-                            },
-                            wait   : true,
-                            success: function (model) {
-                                var id = model.get('_id');
+         model = that.collection.get(value);
+         model.destroy({
+         headers: {
+         mid: mid
+         },
+         wait   : true,
+         success: function (model) {
+         var id = model.get('_id');
 
-                                table.find('[data-id="' + id + '"]').remove();
+         table.find('[data-id="' + id + '"]').remove();
 
-                                that.$el.find('#checkAll').prop('checked', false);
+         that.$el.find('#checkAll').prop('checked', false);
 
-                                cb();
-                            },
-                            error  : function (model, res) {
-                                if (res.status === 403) {
-                                    App.render({
-                                        type   : 'error',
-                                        message: 'You do not have permission to perform this action'
-                                    });
-                                }
-                                cb();
-                            }
-                        });
-                    }, function () {
-                        that.setAllTotalVals();
-                        that.hideSaveCancelBtns();
-                        that.rerenderNumbers();
-                        that.getTotalLength(null, that.defaultItemsNumber, that.filter);
+         cb();
+         },
+         error  : function (model, res) {
+         if (res.status === 403) {
+         App.render({
+         type   : 'error',
+         message: 'You do not have permission to perform this action'
+         });
+         }
+         cb();
+         }
+         });
+         }, function () {
+         that.setAllTotalVals();
+         that.hideSaveCancelBtns();
+         that.rerenderNumbers();
+         that.getTotalLength(null, that.defaultItemsNumber, that.filter);
 
-                        that.copyEl.hide();
-                        that.genInvoiceEl.hide();
-                    });
-                }
-            } else {
-                this.cancelChanges();
-            }
-        },*/
+         that.copyEl.hide();
+         that.genInvoiceEl.hide();
+         });
+         }
+         } else {
+         this.cancelChanges();
+         }
+         },*/
 
         hideSaveCancelBtns: function () {
             var saveBtnEl = $('#savewTrack');
@@ -344,7 +344,7 @@ define([
 
             return false;
         },
-
+        
         copyRow: function (e) {
 
             var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');

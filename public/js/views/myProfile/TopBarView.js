@@ -1,6 +1,6 @@
 define([
     'Backbone',
-    'Query',
+    'jQuery',
     'Underscore',
     'text!templates/myProfile/TopBarTemplate.html',
     'custom',

@@ -1,121 +1,279 @@
 <div id="top-bar">
     <h3>HR Dashboard</h3>
 </div>
-<div class="grid-conatiner">
-    <table class="grid hrTop" cellspacing="0" cellpadding="0">
-        <thead>
-        <tr>
-            <th>
-                <span>&nbsp</span>
-            </th>
-            <% arrOfDates.forEach(function(dateObject){%>
-            <th>
-                <span><%=dateObject.month + '/' + dateObject.year%> </span>
-            </th>
-            <%})%>
-        </tr>
-        </thead>
-        <tbody id="dashboardBody">
-        <tr class="double">
-            <td class="vcenter">
-                <span>Hired</span>
-            </td>
-            <%var employeesData = hired.get('data');
-            if(employeesData){
-            arrOfDates.forEach(function(dateObject){
-            var employees = employeesData.get(dateObject.dateByMonth);
-            employees = employees ? employees.get('hiredEmployees') : null;
+<ul class="chart-tabs dashboard">
+    <li><a class="active" href="javascript:;">Dashboard</a></li>
+    <li><a href="javascript:;" class="">Hired/Fired</a></li>
+    <li><a href="javascript:;" class="">Hierarchy</a></li>
+    <li><a href="javascript:;" class="">Radial hierarchy</a></li>
+    <li><a href="javascript:;" class="">Treemap</a></li>
+</ul>
+<div class="chart-tabs-items">
+    <div class="chart-tabs-item active">
+        <label for="month">Month: </label>
+        <input type="text" id="month" name="month" class="monthPicker" />
 
-            if(employees && employees.length){%>
-            <td>
-                <%employees.forEach(function(employee){%>
-                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.name : ''%></span>
+        <div class="clearfix"></div>
+
+        <div style=" width: 700px; margin: 0 auto;" class="row">
+            <div id="totalEmployeesCont" class="col-md-4 ">
+                <div href="javascript:;" class="dashboard-stat">
+                    <div class="number">
+                        <span id="totalEmployees" data-counter="counterup" data-value="1349"></span>
+                    </div>
+                    <div class="desc"> Employees </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div href="javascript:;" class="dashboard-stat">
+                    <div class="number">
+                        <span id="hired" data-counter="counterup" data-value="1349"></span>
+                    </div>
+                    <div class="desc"> Hired </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div href="javascript:;" class="dashboard-stat">
+                    <div class="number">
+                        <span id="fired" data-counter="counterup" data-value="1349"></span>
+                    </div>
+                    <div class="desc"> Fired </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding-top: 20px">
+            <div style="float: left">
+                <h3 class="dashboard">Departments employee by gender</h3>
+                <div style="width: 200px;  margin: 0 auto;" class="legend-box">
+                    <div class="converted">
+                        <div style="background-color: #FF3333;" class="square">
+                        </div>
+                        <div class="text">
+                            Female
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="unconverted">
+                        <div style="background-color: #33F;" class="square">
+                        </div>
+                        <div class="text">
+                            Male
+                        </div>
+                    </div>
+                </div>
+
+                <svg class="chart employeesChart"></svg>
+            </div>
+
+            <div style="float: left; text-align: center" class="row">
+                <h3>Hours</h3>
+                <div style="float: left" class="col-md-4 ">
+                    <div href="javascript:;" class="dashboard-hours-stat">
+                        <div class="number">
+                            <span id="actual" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc">  </div>
+                    </div>
+                </div>
+                <div style="float: left" class="col-md-4">
+                    <div href="javascript:;" class="dashboard-hours-stat">
+                        <div class="number">
+                            <span id="ideal" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc">  </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div href="javascript:;" class="dashboard-hours-stat">
+                        <div class="number">
+                            <span id="total" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc">  </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div href="javascript:;" class="dashboard-hours-stat">
+                        <div class="number">
+                            <span id="overtime" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc">  </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <h3>Vacation days</h3>
+                <div class="col-md-4 ">
+                    <div href="javascript:;" class="dashboard-vacation-stat">
+                        <div class="number">
+                            <span id="personal" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc"> </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div href="javascript:;" class="dashboard-vacation-stat">
+                        <div class="number">
+                            <span id="sick" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc">  </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div href="javascript:;" class="dashboard-vacation-stat">
+                        <div class="number">
+                            <span id="education" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc">  </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div href="javascript:;" class="dashboard-vacation-stat">
+                        <div class="number">
+                            <span id="holiday" data-counter="counterup" data-value="1349"></span>
+                        </div>
+                        <div class="desc">  </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+    </div>
+
+    <div class="chart-tabs-item grid-conatiner">
+        <table class="grid hrTop" cellspacing="0" cellpadding="0">
+            <thead>
+            <tr>
+                <th>
+                    <span>&nbsp</span>
+                </th>
+                <% arrOfDates.forEach(function(dateObject){%>
+                <th>
+                    <span><%=dateObject.month + '/' + dateObject.year%> </span>
+                </th>
                 <%})%>
-            </td>
-            <%} else {%>
-            <td><span>&nbsp</span></td>
-            <%}
-            })
-            } else {%>
-            <td><span>&nbsp</span></td>
-            <%}%>
-        </tr>
-        <tr class="double">
-            <td class="count">
-                <span>Hired count</span>
-            </td>
-            <%var employeesData = hired.get('data');
-            if(employeesData){
-            arrOfDates.forEach(function(dateObject){
-            var employees = employeesData.get(dateObject.dateByMonth);
+            </tr>
+            </thead>
+            <tbody id="dashboardBody">
+            <tr class="double">
+                <td class="vcenter">
+                    <span>Hired</span>
+                </td>
+                <%var employeesData = hired.get('data');
+                if(employeesData){
+                arrOfDates.forEach(function(dateObject){
+                var employees = employeesData.get(dateObject.dateByMonth);
+                employees = employees ? employees.get('hiredEmployees') : null;
 
-            if(employees){%>
-            <td>
-                <span id="hired_<%=dateObject.dateByMonth%>"><%=employees.get('hiredCount') || 0%></span>
-            </td>
-            <%} else {%>
-            <td><span id="hired_<%=dateObject.dateByMonth%>">0</span></td>
-            <%}
-            });
-            } else {%>
-            <td><span>0</span></td>
-            <%}%>
-        </tr>
-        <tr class="double">
-            <td class="vcenter">
-                <span>Fired</span>
-            </td>
-            <%var employeesData = fired.get('data');
-            if(employeesData){
-            arrOfDates.forEach(function(dateObject){
-            var employees = employeesData.get(dateObject.dateByMonth);
-            employees = employees ? employees.get('firedEmployees') : null;
+                if(employees && employees.length){%>
+                <td>
+                    <%employees.forEach(function(employee){%>
+                    <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
+                    <%})%>
+                </td>
+                <%} else {%>
+                <td><span>&nbsp</span></td>
+                <%}
+                })
+                } else {%>
+                <td><span>&nbsp</span></td>
+                <%}%>
+            </tr>
+            <tr class="double">
+                <td class="count">
+                    <span>Hired count</span>
+                </td>
+                <%var employeesData = hired.get('data');
+                if(employeesData){
+                arrOfDates.forEach(function(dateObject){
+                var employees = employeesData.get(dateObject.dateByMonth);
 
-            if(employees && employees.length){%>
-            <td>
-                <%employees.forEach(function(employee){%>
-                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.name : ''%></span>
+                if(employees){%>
+                <td>
+                    <span id="hired_<%=dateObject.dateByMonth%>"><%=employees.get('hiredCount') || 0%></span>
+                </td>
+                <%} else {%>
+                <td><span id="hired_<%=dateObject.dateByMonth%>">0</span></td>
+                <%}
+                });
+                } else {%>
+                <td><span>0</span></td>
+                <%}%>
+            </tr>
+            <tr class="double">
+                <td class="vcenter">
+                    <span>Fired</span>
+                </td>
+                <%var employeesData = fired.get('data');
+                if(employeesData){
+                arrOfDates.forEach(function(dateObject){
+                var employees = employeesData.get(dateObject.dateByMonth);
+                employees = employees ? employees.get('firedEmployees') : null;
+
+                if(employees && employees.length){%>
+                <td>
+                    <%employees.forEach(function(employee){%>
+                    <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
+                    <%})%>
+                </td>
+                <%} else {%>
+                <td><span>&nbsp</span></td>
+                <%}
+                })
+                } else {%>
+                <td><span>&nbsp</span></td>
+                <%}%>
+            </tr>
+            <tr class="double">
+                <td class="count">
+                    <span>Fired count</span>
+                </td>
+                <%var employeesData = fired.get('data');
+                if(employeesData){
+                arrOfDates.forEach(function(dateObject){
+                var employees = employeesData.get(dateObject.dateByMonth);
+
+                if(employees){%>
+                <td>
+                    <span id="fired_<%=dateObject.dateByMonth%>"><%=employees.get('firedCount') || 0%></span>
+                </td>
+                <%} else {%>
+                <td><span id="fired_<%=dateObject.dateByMonth%>">0</span></td>
+                <%}
+                });
+                } else {%>
+                <td><span>0</span></td>
+                <%}%>
+            </tr>
+            <tr class="double">
+                <td>
+                    <span>Hired Total</span>
+                </td>
+                <% arrOfDates.forEach(function(dateObject){%>
+                <td>
+                    <span id="total_<%=dateObject.dateByMonth%>"></span>
+                </td>
                 <%})%>
-            </td>
-            <%} else {%>
-            <td><span>&nbsp</span></td>
-            <%}
-            })
-            } else {%>
-            <td><span>&nbsp</span></td>
-            <%}%>
-        </tr>
-        <tr class="double">
-            <td class="count">
-                <span>Fired count</span>
-            </td>
-            <%var employeesData = fired.get('data');
-            if(employeesData){
-            arrOfDates.forEach(function(dateObject){
-            var employees = employeesData.get(dateObject.dateByMonth);
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-            if(employees){%>
-            <td>
-                <span id="fired_<%=dateObject.dateByMonth%>"><%=employees.get('firedCount') || 0%></span>
-            </td>
-            <%} else {%>
-            <td><span id="fired_<%=dateObject.dateByMonth%>">0</span></td>
-            <%}
-            });
-            } else {%>
-            <td><span>0</span></td>
-            <%}%>
-        </tr>
-        <tr class="double">
-            <td>
-                <span>Hired Total</span>
-            </td>
-            <% arrOfDates.forEach(function(dateObject){%>
-            <td>
-                <span id="total_<%=dateObject.dateByMonth%>"></span>
-            </td>
-            <%})%>
-        </tr>
-        </tbody>
-    </table>
+    <div class="chart-tabs-item">
+        <div class="treeChart">
+
+        </div>
+    </div>
+    <div class="chart-tabs-item">
+        <div class="radialTreeChart">
+
+        </div>
+    </div>
+    <div class="chart-tabs-item">
+        <div class="treemap">
+
+        </div>
+    </div>
 </div>

@@ -9,7 +9,7 @@
                     <dl class="opp-info">
                         <dt><label for="supplierDD">Supplier</label></dt>
                         <dd>
-                            <%if(model && model.supplier && model.supplier._id){%>
+                            <%if(model && model.supplier && model.supplier.name){%>
                             <a id="supplierDd" class="" href="javascript:;"
                                data-id="<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' +
                                 model.supplier.name.last%></a>

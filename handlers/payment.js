@@ -547,7 +547,8 @@ var Module = function (models, event) {
 
         query
             .populate('supplier', '_id name fullName')
-            .populate('paymentMethod', '_id name');
+            .populate('paymentMethod', '_id name')
+            .populate('currency', '_id name');
 
         query.exec(function (err, payment) {
             if (err) {
@@ -1015,10 +1016,18 @@ var Module = function (models, event) {
                     as          : 'salesmanagers'
                 }
             }, {
+                $lookup: {
+                    from        : 'currency',
+                    localField  : 'currency._id',
+                    foreignField: '_id',
+                    as          : 'currency._id'
+                }
+            }, {
                 $project: {
                     assigned        : {$arrayElemAt: ['$salesmanagers', 0]},
                     supplier        : 1,
-                    currency        : 1,
+                    'currencyModel' : {$arrayElemAt: ['$currency._id', 0]},
+                    'currency.rate' : 1,
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
                     forSale         : 1,
@@ -1034,7 +1043,9 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     supplier        : 1,
-                    currency        : 1,
+                    'currency.rate' : 1,
+                    'currency._id'  : '$currencyModel._id',
+                    'currency.name' : '$currencyModel.name',
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
                     'assigned.name' : '$assigned.name',

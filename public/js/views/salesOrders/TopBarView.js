@@ -11,7 +11,7 @@ define([
 
     var TopBarView = BaseView.extend({
         el         : '#top-bar',
-        contentType: CONSTANTS.ORDER,
+        contentType: CONSTANTS.ORDERS,
         template   : _.template(ContentTopBarTemplate),
 
         initialize: function (options) {

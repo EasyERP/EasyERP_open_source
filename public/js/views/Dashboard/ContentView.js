@@ -469,7 +469,9 @@ define([
                     .attr('ry', function (d) {
                         return y.rangeBand() / 2;
                     })
-                    .attr('rx', 6)
+                    .attr('rx', function (d) {
+                        return y.rangeBand() / 2;
+                    })
                     .style('fill', '#66ff66');
 
                 chart.append('text')

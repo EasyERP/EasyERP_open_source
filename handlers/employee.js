@@ -210,6 +210,186 @@ var Employee = function (event, models) {
 
     };
 
+    this.getEmployeesForChart = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        Employee
+            .aggregate([{
+                $match: {isEmployee: true}
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ['$department', 0]},
+                    gender    : 1,
+                    name      : 1
+                }
+            }, {
+                $group: {
+                    _id           : '$department',
+                    employeesCount: {
+                        $sum: 1
+                    },
+                    maleCount     : {
+                        $sum: {
+                            $cond: {
+                                if  : {
+                                    $eq: ['$gender', 'male']
+                                },
+                                then: 1,
+                                else: 0
+                            }
+                        }
+                    },
+                    femaleCount   : {
+                        $sum: {
+                            $cond: {
+                                if  : {
+                                    $eq: ['$gender', 'female']
+                                },
+                                then: 1,
+                                else: 0
+                            }
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    _id           : '$_id.name',
+                    employeesCount: 1,
+                    maleCount     : 1,
+                    femaleCount   : 1
+                }
+            }], function (err, employees) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(employees);
+            });
+    };
+
+    this.byDepartmentForChart = function (req, res, next) {
+        var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+
+        Department.aggregate([{
+            $lookup: {
+                from        : 'Employees',
+                localField  : '_id',
+                foreignField: 'department',
+                as          : 'employees'
+            }
+        }, {
+            $unwind: '$employees'
+        }, {
+            $match: {
+                "employees.isEmployee": true
+            }
+        }, {
+            $project: {
+                employees       : {
+                    name: {$concat: ['$employees.name.first', ' ', '$employees.name.last']},
+                    _id : '$employees._id'
+                },
+                parentDepartment: 1,
+                _id             : 1,
+                name            : 1
+            }
+        }, {
+            $group: {
+                _id             : '$_id',
+                parentDepartment: {$push: '$parentDepartment'},
+                name            : {$push: '$name'},
+                employees       : {$push: '$employees'}
+            }
+        }, {
+            $project: {
+                employees       : 1,
+                parentDepartment: {$arrayElemAt: ['$parentDepartment', 0]},
+                _id             : 1,
+                name            : {$arrayElemAt: ['$name', 0]}
+            }
+        }, {
+            $group: {
+                _id        : '$parentDepartment',
+                departments: {
+                    $push: {_id: '$_id', name: '$name', employees: '$employees', parentDepartment: '$parentDepartment'}
+                }
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : '_id',
+                foreignField: '_id',
+                as          : 'parent'
+            }
+        }, {
+            $project: {
+                _id        : 1,
+                departments: 1,
+                selfData   : {$arrayElemAt: ['$parent', 0]}
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'selfData.parentDepartment',
+                foreignField: '_id',
+                as          : 'mainParent'
+            }
+        }, {
+            $project: {
+                _id        : 1,
+                departments: 1,
+                name       : '$selfData.name',
+                parent     : {$arrayElemAt: ['$mainParent', 0]}
+            }
+        }, {
+            $match: {_id: {$ne: null}}
+        }], function (err, result) {
+            var data = {};
+
+            if (err) {
+                return next(err);
+            }
+
+            result.forEach(function (item) {
+                if (item && item.departments) {
+                    item.departments.forEach(function (department) {
+                        var d = _.find(result, function (el) {
+                            return department._id && el._id ? department._id.toString() === el._id.toString() : null;
+                        });
+
+                        if (d && d.departments) {
+                            department.departments = d.departments;
+                            result.splice(result.indexOf(d), 1);
+                        }
+
+                        if (department.name === 'Web') {
+                            department.departments.push({
+                                name            : 'JS',
+                                employees       : department.employees,
+                                parentDepartment: department._id
+                            });
+
+                            department.employees = null;
+                        }
+                    });
+                }
+            });
+
+            data._id = null;
+            data.name = 'Departments';
+            data.children = result;
+
+            res.status(200).send(data);
+        });
+    };
+
     this.byDepartment = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
