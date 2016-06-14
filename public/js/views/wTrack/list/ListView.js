@@ -827,9 +827,8 @@ define([
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
             $currentEl.append(new ListItemView({
-                collection : this.collection,
-                page       : this.page,
-                itemsNumber: this.collection.namberToShow
+                collection: this.collection,
+                page      : this.page
             }).render());// added two parameters page and items number
 
             this.renderPagination($currentEl, this);

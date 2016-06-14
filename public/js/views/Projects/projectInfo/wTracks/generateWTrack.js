@@ -526,7 +526,7 @@ define([
                             self.hideDialog();
 
                             if (self.eventChannel) {
-                                self.eventChannel.trigger('generated');
+                                self.eventChannel.trigger('generatedTcards');
 
                                 App.render({
                                     type   : 'notify',
