@@ -80,6 +80,7 @@ var Module = function (event, models) {
                     case 'E':
                         education++;
                         break;
+                    // skip default;
                 }
             });
         });
@@ -286,14 +287,14 @@ var Module = function (event, models) {
             }
         }, {
             $project: {
-                'department.name'          : 1,
-                'employee.name'            : 1,
-                'employee._id'             : 1,
-                month                      : 1,
-                year                       : 1,
-                vacations                  : 1,
-                vacArray                   : 1,
-                monthTotal                 : 1
+                'department.name': 1,
+                'employee.name'  : 1,
+                'employee._id'   : 1,
+                month            : 1,
+                year             : 1,
+                vacations        : 1,
+                vacArray         : 1,
+                monthTotal       : 1
             }
         }, {
             $match: queryObject

@@ -1521,7 +1521,7 @@ var wTrack = function (models) {
 
                 //iterate over grouped result of projects with bonus by Employee
                 for (var i = groupedEmployees.length;
-                     i--;) {
+                    i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1533,24 +1533,24 @@ var wTrack = function (models) {
                     };
                     //iterate over grouped result of wTrack by date and projects
                     for (var j = groupedWtracks.length;
-                         j--;) {
+                        j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
                         for (var m = groupedEmployee.root.length;
-                             m--;) {
+                            m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
                             for (var k = groupedWtracks[j].root.length;
-                                 k--;) {
+                                k--;) {
 
                                 for (var l = groupedEmployee.root[m].projects.length;
-                                     l--;) {
+                                    l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1856,7 +1856,7 @@ var wTrack = function (models) {
 
                 //iterate over grouped result of projects with bonus by Employee
                 for (var i = groupedEmployees.length;
-                     i--;) {
+                    i--;) {
                     totalByBonus = 0;
 
                     groupedEmployee = groupedEmployees[i];
@@ -1868,24 +1868,24 @@ var wTrack = function (models) {
                     };
                     //iterate over grouped result of wTrack by date and projects
                     for (var j = groupedWtracks.length;
-                         j--;) {
+                        j--;) {
                         dateStr = groupedWtracks[j]._id;
                         /*employee[dateStr] = [];*/
                         bonusObject = {
                             total: 0
                         };
                         for (var m = groupedEmployee.root.length;
-                             m--;) {
+                            m--;) {
                             /*bonusObject = {
                              total: 0
                              };*/
                             totalByBonus = 0;
 
                             for (var k = groupedWtracks[j].root.length;
-                                 k--;) {
+                                k--;) {
 
                                 for (var l = groupedEmployee.root[m].projects.length;
-                                     l--;) {
+                                    l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                         if (groupedEmployee.root[m].bonus) {
                                             totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -3246,7 +3246,7 @@ var wTrack = function (models) {
         async.parallel({
             invoiced: invoiceGrouper,
             paid    : paymentGrouper,
-           /* revenue : revenueGrouper*/
+            /* revenue : revenueGrouper*/
         }, function (err, response) {
             var sales;
             var _sales;
@@ -3274,7 +3274,7 @@ var wTrack = function (models) {
             _sales = response.paid[0] ? response.paid[0].salesArray : [];
             sales = sales.concat(_sales);
             /*_sales = response.revenue[0] ? response.revenue[0].salesArray : [];
-            sales = sales.concat(_sales);*/
+             sales = sales.concat(_sales);*/
             sales = _.uniq(sales, function (elm) {
                 if (elm._id) {
                     return elm._id.toString();

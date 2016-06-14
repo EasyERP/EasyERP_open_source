@@ -291,8 +291,7 @@ var TCard = function (event, models) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
                         break;
-
-                    // no default
+                    // skip default
                 }
             }
         }
@@ -415,28 +414,9 @@ var TCard = function (event, models) {
                         week      : 1,
                         isPaid    : 1,
                         _type     : 1
-
-                        /* startDateWeek: {
-                         $let: {
-                         vars: {
-                         startDate: {$ifNull: ['$salesmanagers.startDate', null]}
-                         },
-                         in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
-                         }
-                         },
-                         endDateWeek  : {
-                         $let: {
-                         vars: {
-                         endDate: {$ifNull: ['$salesmanagers.endDate', null]}
-                         },
-                         in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
-                         }
-                         }*/
                     }
                 }, {
                     $project: {
-                        /* isValid       : salesManagerMatch,
-                         salesmanagers : 1,*/
                         project       : 1,
                         employee      : 1,
                         department    : 1,
@@ -447,54 +427,7 @@ var TCard = function (event, models) {
                         'customer._id': 1,
                         _type         : 1
                     }
-                }, /* {
-                 $match: {
-                 isValid: true
-                 }
-                 }, {
-                 $sort: {
-                 'salesmanagers.startDate': -1
-                 }
-                 }, {
-                 $group: {
-                 _id: '$_id',
-                 doc: {$first: '$$ROOT'}
-                 }
-                 }, {
-                 $lookup: {
-                 from        : 'Employees',
-                 localField  : 'doc.salesmanagers.employeeId',
-                 foreignField: '_id',
-                 as          : 'salesmanager'
-                 }
-                 }, {
-                 $project: {
-                 salesmanager: {$arrayElemAt: ['$salesmanager', 0]},
-                 customer    : '$doc.customer',
-                 project     : '$doc.project',
-                 employee    : '$doc.employee',
-                 department  : '$doc.department',
-                 month       : '$doc.month',
-                 year        : '$doc.year',
-                 week        : '$doc.week',
-                 isPaid      : '$doc.isPaid',
-                 _type       : '$doc._type'
-                 }
-                 }, {
-                 $project: {
-                 'salesmanager._id': 1,
-                 'customer._id'    : 1,
-                 project           : 1,
-                 employee          : 1,
-                 department        : 1,
-                 month             : 1,
-                 year              : 1,
-                 week              : 1,
-                 isPaid            : 1,
-                 _type             : 1
-                 }
-                 },*/
-                {
+                }, {
                     $match: queryObject
                 }], function (err, result) {
                 if (err) {
@@ -1477,11 +1410,9 @@ var TCard = function (event, models) {
                 return next(err);
             }
 
-            // event.emit('updateRevenue', {project: project, req: req});
             event.emit('updateProjectDetails', {req: req, _id: project, jobId: jobId});
             event.emit('dropHoursCashes', req);
             event.emit('recollectVacationDash');
-            // event.emit('recollectProjectInfo');
 
             res.status(200).send('success');
         });
@@ -1496,33 +1427,6 @@ var TCard = function (event, models) {
             dateByWeek: parseInt(query.dateByWeek, 10),
             employee  : objectId(query.employee)
         };
-        /* var salesManagerMatch = {
-         $or: [{
-         $and: [{
-         $eq: ['$startDateWeek', null]
-         }, {
-         $eq: ['$endDateWeek', null]
-         }]
-         }, {
-         $and: [{
-         $eq: ['$startDateWeek', null]
-         }, {
-         $gte: ['$endDateWeek', '$dateByWeek']
-         }]
-         }, {
-         $and: [{
-         $lte: ['$startDateWeek', '$dateByWeek']
-         }, {
-         $eq: ['$endDateWeek', null]
-         }]
-         }, {
-         $and: [{
-         $lte: ['$startDateWeek', '$dateByWeek']
-         }, {
-         $gte: ['$endDateWeek', '$dateByWeek']
-         }]
-         }]
-         };*/
 
         WTrack.aggregate([{
             $match: mongoQuery
@@ -1575,231 +1479,86 @@ var TCard = function (event, models) {
                 foreignField: '_id',
                 as          : 'customer'
             }
-        }, /* {
-         $lookup: {
-         from        : 'projectMembers',
-         localField  : 'project._id',
-         foreignField: 'projectId',
-         as          : 'projectMembers'
-         }
-         }, {
-         $lookup: {
-         from        : 'Employees',
-         localField  : 'project.projectmanager',
-         foreignField: '_id',
-         as          : 'projectmanager'
-         }
-         },*/
-            {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'employee',
-                    foreignField: '_id',
-                    as          : 'employee'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Department',
-                    localField  : 'department',
-                    foreignField: '_id',
-                    as          : 'department'
-                }
-            }, {
-                $project: {
-                    1          : 1,
-                    2          : 1,
-                    3          : 1,
-                    4          : 1,
-                    5          : 1,
-                    6          : 1,
-                    7          : 1,
-                    cost       : 1,
-                    worked     : 1,
-                    week       : 1,
-                    month      : 1,
-                    year       : 1,
-                    dateByWeek : 1,
-                    dateByMonth: 1,
-                    info       : 1,
-                    _type      : 1,
-                    revenue    : 1,
-                    project    : 1,
-                    department : {$arrayElemAt: ['$department', 0]},
-                    customer   : {$arrayElemAt: ['$customer', 0]},
-                    employee   : {$arrayElemAt: ['$employee', 0]},
-                    jobs       : {$arrayElemAt: ['$jobs', 0]}
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'employee',
+                foreignField: '_id',
+                as          : 'employee'
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'department',
+                foreignField: '_id',
+                as          : 'department'
+            }
+        }, {
+            $project: {
+                1          : 1,
+                2          : 1,
+                3          : 1,
+                4          : 1,
+                5          : 1,
+                6          : 1,
+                7          : 1,
+                cost       : 1,
+                worked     : 1,
+                week       : 1,
+                month      : 1,
+                year       : 1,
+                dateByWeek : 1,
+                dateByMonth: 1,
+                info       : 1,
+                _type      : 1,
+                revenue    : 1,
+                project    : 1,
+                department : {$arrayElemAt: ['$department', 0]},
+                customer   : {$arrayElemAt: ['$customer', 0]},
+                employee   : {$arrayElemAt: ['$employee', 0]},
+                jobs       : {$arrayElemAt: ['$jobs', 0]}
+            }
+        }, {
+            $project: {
+                1          : 1,
+                2          : 1,
+                3          : 1,
+                4          : 1,
+                5          : 1,
+                6          : 1,
+                7          : 1,
+                cost       : 1,
+                worked     : 1,
+                week       : 1,
+                month      : 1,
+                year       : 1,
+                dateByWeek : 1,
+                dateByMonth: 1,
+                info       : 1,
+                _type      : 1,
+                revenue    : 1,
+                project    : 1,
+                department : {
+                    _id : '$department._id',
+                    name: '$department.name'
+                },
 
-                    /* salesmanagers: {
-                     $filter: {
-                     input: '$projectMembers',
-                     as   : 'projectMember',
-                     cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
-                     }
-                     }*/
+                customer: {
+                    _id : '$customer._id',
+                    name: '$customer.name'
+                },
+
+                employee: {
+                    _id : '$employee._id',
+                    name: '$employee.name'
+                },
+
+                jobs: {
+                    _id : '$jobs._id',
+                    name: '$jobs.name'
                 }
-            }, {
-                $project: {
-                    1          : 1,
-                    2          : 1,
-                    3          : 1,
-                    4          : 1,
-                    5          : 1,
-                    6          : 1,
-                    7          : 1,
-                    cost       : 1,
-                    worked     : 1,
-                    week       : 1,
-                    month      : 1,
-                    year       : 1,
-                    dateByWeek : 1,
-                    dateByMonth: 1,
-                    info       : 1,
-                    _type      : 1,
-                    revenue    : 1,
-                    project    : 1,
-                    department : {
-                        _id : '$department._id',
-                        name: '$department.name'
-                    },
-
-                    customer: {
-                        _id : '$customer._id',
-                        name: '$customer.name'
-                    },
-
-                    employee: {
-                        _id : '$employee._id',
-                        name: '$employee.name'
-                    },
-
-                    jobs: {
-                        _id : '$jobs._id',
-                        name: '$jobs.name'
-                    }
-                }
-            }/* {
-             $unwind: {
-             path                      : '$salesmanagers',
-             preserveNullAndEmptyArrays: true
-             }
-             }, {
-             $project: {
-             startDateWeek: {
-             $let: {
-             vars: {
-             startDate: {$ifNull: ['$salesmanagers.startDate', null]}
-             },
-             in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
-             }
-             },
-             endDateWeek  : {
-             $let: {
-             vars: {
-             endDate: {$ifNull: ['$salesmanagers.endDate', null]}
-             },
-             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
-             }
-             },
-             1            : 1,
-             2            : 1,
-             3            : 1,
-             4            : 1,
-             5            : 1,
-             6            : 1,
-             7            : 1,
-             cost         : 1,
-             worked       : 1,
-             week         : 1,
-             month        : 1,
-             year         : 1,
-             dateByWeek   : 1,
-             dateByMonth  : 1,
-             info         : 1,
-             salesmanagers: 1,
-             department   : 1,
-             project      : 1,
-             customer     : 1,
-             employee     : 1,
-             jobs         : 1,
-             revenue      : 1,
-             _type        : 1
-             }
-             }, {
-             $project: {
-             startDateWeek: 1,
-             endDateWeek  : 1,
-             1            : 1,
-             2            : 1,
-             3            : 1,
-             4            : 1,
-             5            : 1,
-             6            : 1,
-             7            : 1,
-             cost         : 1,
-             worked       : 1,
-             week         : 1,
-             month        : 1,
-             year         : 1,
-             dateByWeek   : 1,
-             dateByMonth  : 1,
-             info         : 1,
-             salesmanagers: 1,
-             department   : 1,
-             project      : 1,
-             customer     : 1,
-             employee     : 1,
-             jobs         : 1,
-             revenue      : 1,
-             _type        : 1,
-             isValid      : salesManagerMatch
-             }
-             }, {
-             $match: {
-             isValid: true
-             }
-             }, {
-             $sort: {
-             'salesmanagers.startDate': -1
-             }
-             }, {
-             $group: {
-             _id : '$_id',
-             root: {$first: '$$ROOT'}
-             }
-             }, {
-             $lookup: {
-             from        : 'Employees',
-             localField  : 'root.salesmanagers.employeeId',
-             foreignField: '_id',
-             as          : 'salesmanager'
-             }
-             }, {
-             $project: {
-             1           : '$root.1',
-             2           : '$root.2',
-             3           : '$root.3',
-             4           : '$root.4',
-             5           : '$root.5',
-             6           : '$root.6',
-             7           : '$root.7',
-             cost        : '$root.cost',
-             worked      : '$root.worked',
-             week        : '$root.week',
-             month       : '$root.month',
-             year        : '$root.year',
-             dateByWeek  : '$root.dateByWeek',
-             dateByMonth : '$root.dateByMonth',
-             info        : '$root.info',
-             salesmanager: {$arrayElemAt: ['$salesmanager', 0]},
-             department  : '$root.department',
-             project     : '$root.project',
-             customer    : '$root.customer',
-             employee    : '$root.employee',
-             jobs        : '$root.jobs',
-             revenue     : '$root.revenue',
-             _type       : '$root._type'
-             }
-             }*/], function (err, wTrack) {
+            }
+        }], function (err, wTrack) {
             var firstWtrack;
             var customer;
             var projectmanager;
@@ -1825,7 +1584,6 @@ var TCard = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var projectId = req.params.id;
         var query = req.query;
-        // var filter = query.filter;
         var contentSearcher;
         var waterfallTasks;
         var key;
@@ -1845,7 +1603,6 @@ var TCard = function (event, models) {
         };
 
         var sort = {};
-        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
         var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
         var skip;
@@ -1894,10 +1651,6 @@ var TCard = function (event, models) {
 
             queryObject.$and = [];
             queryObject.$and.push({_id: {$in: wtrackIds}});
-
-            /* if (filterObj) {
-             queryObject.$and.push(filterObj);
-             }*/
 
             aggregation = WTrack.aggregate([{
                 $match: queryObject

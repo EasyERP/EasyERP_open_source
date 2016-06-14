@@ -237,18 +237,6 @@ var workflows = function (models, event) {
         });
     };
 
-    /* this.updateRefs = function (result, dbName, _id) {
-     var ProjectSchema;
-     var ProjectModel;
-
-     if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === 'production') || (dbName === 'development')) {
-     ProjectSchema = mongoose.Schemas.Project;
-     ProjectModel = models.get(dbName, 'Project', ProjectSchema);
-
-     event.emit('updateName', _id, ProjectModel, 'workflow._id', 'workflow.name', result.name);
-     }
-     };*/
-
     this.updateWorkflow = function (req, res, next) {
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var data = req.body;
@@ -278,7 +266,6 @@ var workflows = function (models, event) {
 
                         res.status(200).send({success: 'WorkFlow update success'});
 
-                        // self.updateRefs(res, dbName, _id);
                     });
                 }
             });
