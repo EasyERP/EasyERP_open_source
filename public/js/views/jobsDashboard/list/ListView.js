@@ -17,7 +17,7 @@ define([
         contentType      : CONSTANTS.JOBSDASHBOARD, // needs in view.prototype.changeLocationHash
         changedModels    : {},
         contentCollection: JobsCollection,
-        exportToXlsxUrl  : '/jobs/exportToXlsx',
+        exportToXlsxUrl  : '/jobs/exportToXlsx/',
 
         events: {
             'click .jobs': 'showReport'
@@ -26,7 +26,6 @@ define([
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
             this.filter = options.filter || {};
             this.sort = options.sort || {};
             this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -35,8 +34,6 @@ define([
             this.page = options.collection.page;
 
             this.render();
-
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         showReport: function (e) {
@@ -60,7 +57,7 @@ define([
             this.renderFilter();
             this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             return this;
         }
