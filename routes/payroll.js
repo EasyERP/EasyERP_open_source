@@ -36,6 +36,7 @@ module.exports = function (models) {
 
     // router.get('/', handler.getSorted);
     router.get('/getAsyncData', handler.getAsyncData);
+    router.get('/:id', handler.getForView);
     
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
