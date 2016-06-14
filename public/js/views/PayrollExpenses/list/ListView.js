@@ -285,7 +285,7 @@ define([
             }
             App.ownContentType = true;
             id = $(e.target).closest('tr').attr('id');
-            window.location.hash = this.formUrl + 'form/?id=' + id;
+            window.location.hash = this.formUrl + 'form/' + id;
         },
 
         hideSaveCancelBtns: function () {

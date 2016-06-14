@@ -27,9 +27,11 @@ define([
         responseObj  : {},
 
         initialize: function (options) {
+            var hash = window.location.hash;
+
             this.collection = options.model;
 
-            this.dataKey = this.collection.toJSON()[0].dataKey;
+            this.dataKey = hash.split('form/')[1];
         },
 
         events: {
