@@ -3972,7 +3972,7 @@ define([
                     $input.val('2 Mar, 2016');
                     $input.focusout();
 
-                    server.respondWith('POST', '/payment/supplier/ ', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('POST', '/payments/ ', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $saveBtn.click();
                     server.respond();
 
