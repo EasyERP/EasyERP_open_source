@@ -15,7 +15,7 @@ define([
         },
 
         getClass: function (job) {
-            return job.payment && job.invoice && job.invoice.paymentInfo.total !== job.payment.paid && job.workflow.name !== 'In Progress' ? 'redBorder' : '';
+            return job.payment && job.invoice && job.invoice !== job.payment.paid && job.workflow.name !== 'In Progress' ? 'redBorder' : '';
         },
 
         render: function () {

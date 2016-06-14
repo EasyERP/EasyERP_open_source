@@ -13,7 +13,7 @@ define([
         page             : null,
         sort             : null,
         listTemplate     : DashboardHeader,
-        listItemView     : ListItemView,
+        ListItemView     : ListItemView,
         contentType      : CONSTANTS.JOBSDASHBOARD, // needs in view.prototype.changeLocationHash
         changedModels    : {},
         contentCollection: JobsCollection,
