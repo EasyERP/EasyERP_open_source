@@ -131,11 +131,7 @@ define([
                     message: 'Please, save previous changes or cancel them!'
                 });
             }
-
-            if (this.editCollection) {
-                this.editCollection.reset();
-            }
-
+            
             target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
