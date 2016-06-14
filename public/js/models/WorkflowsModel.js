@@ -34,7 +34,7 @@
             } else {
                 Validation.checkGroupsNameField(errors, true, attrs.name, 'Name');
             }
-            
+
             if (errors.length > 0) {
                 return errors;
             }

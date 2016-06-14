@@ -26,7 +26,7 @@ define([
 
         events: {
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            'click'                                            : 'hideNewSelect',
+            click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
@@ -71,7 +71,6 @@ define([
             var thisEl = this.$el;
 
             var name = thisEl.find('#paymentTermName').val();
-
 
             var data = {
                 name: name

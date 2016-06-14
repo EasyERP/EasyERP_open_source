@@ -1,34 +1,35 @@
 define([
-        'Backbone',
-        'Underscore',
-        'text!templates/Dashboard/TopBarTemplate.html',
-        'custom',
-        "common"
-    ],
-    function (Backbone, _, TopBarTemplate, Custom, Common) {
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: "Dashboard",
-            actionType : null, //Content, Edit, Create
-            template   : _.template(TopBarTemplate),
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Dashboard/TopBarTemplate.html',
+    'custom',
+    'common'
+], function (Backbone, $, _, TopBarTemplate, Custom, Common) {
+    var TopBarView = Backbone.View.extend({
+        el         : '#top-bar',
+        contentType: 'Dashboard',
+        actionType : null, // Content, Edit, Create
+        template   : _.template(TopBarTemplate),
 
-            getIdFromHash: function (hash) {
-                var hashItems = hash.split('/');
-                return hashItems[hashItems.length - 1];
-            },
-            initialize   : function (options) {
-                this.actionType = options.actionType;
-                this.render();
-            },
+        getIdFromHash: function (hash) {
+            var hashItems = hash.split('/');
+            return hashItems[hashItems.length - 1];
+        },
 
-            render: function () {
-                $('title').text(this.contentType);
-                this.$el.html(this.template({contentType: this.contentType}));
-                Common.displayControlBtnsByActionType(this.actionType);
+        initialize: function (options) {
+            this.actionType = options.actionType;
+            this.render();
+        },
 
-                return this;
-            }
-        });
+        render: function () {
+            $('title').text(this.contentType);
+            this.$el.html(this.template({contentType: this.contentType}));
+            Common.displayControlBtnsByActionType(this.actionType);
 
-        return TopBarView;
+            return this;
+        }
     });
+
+    return TopBarView;
+});

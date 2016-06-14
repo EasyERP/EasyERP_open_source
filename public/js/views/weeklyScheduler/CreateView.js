@@ -3,12 +3,8 @@ define([
     'Underscore',
     'Backbone',
     'text!templates/weeklyScheduler/CreateTemplate.html',
-    'models/WeeklySchedulerModel',
-    'common',
-    'populate',
-    'dataService',
-    'constants'
-], function ($, _, Backbone, CreateTemplate, WeeklySchedulerModel, common, populate, dataService, CONSTANTS) {
+    'models/WeeklySchedulerModel'
+], function ($, _, Backbone, CreateTemplate, WeeklySchedulerModel) {
 
     var CreateView = Backbone.View.extend({
         el         : '#content-holder',
@@ -32,10 +28,11 @@ define([
             var totalHours = 0;
             var $currentEl = this.$el;
             var hours;
+            var i;
 
             e.preventDefault();
 
-            for (var i = 7; i > 0; i--) {
+            for (i = 7; i > 0; i--) {
                 hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val(), 10);
                 totalHours += isNaN(hours) ? 0 : hours;
             }
@@ -48,7 +45,7 @@ define([
             var model;
             var hours;
             var $currentEl = this.$el;
-
+            var i;
             var name = $.trim($currentEl.find('#weeklySchedulerName input').val());
             var totalHours = $currentEl.find('#totalHours span').text();
 
@@ -64,7 +61,7 @@ define([
                 });
             }
 
-            for (var i = 7; i > 0; i--) {
+            for (i = 7; i > 0; i--) {
                 hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val(), 10);
                 hours = isNaN(hours) ? 0 : hours;
 

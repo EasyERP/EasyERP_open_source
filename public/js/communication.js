@@ -1,14 +1,17 @@
 // Filename: communication.js
-define(function () {
+define([
+    'jQuery'
+], function ($) {
     var checkLogin = function (callback) {
-        var url = "/account/authenticated";
+        var url = '/account/authenticated';
         $.ajax({
             url    : url,
-            type   : "GET",
+            type   : 'GET',
             success: function () {
                 return callback(true);
             },
-            error  : function (data) {
+            
+            error: function (data) {
                 return callback(false);
             }
         });
@@ -16,5 +19,5 @@ define(function () {
 
     return {
         checkLogin: checkLogin
-    }
+    };
 });

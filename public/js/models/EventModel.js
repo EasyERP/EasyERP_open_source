@@ -12,7 +12,7 @@ define([
             description: '',
             eventType  : 'call'
         },
-        
+
         urlRoot: CONSTANTS.URLS.EVENTS
     });
     return EventModel;

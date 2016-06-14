@@ -41,7 +41,6 @@ define([
 
         events: {
             'click #saveBtn'      : 'saveItem',
-            //'click #cancelBtn'    : 'hideDialog',
             'click .details'      : 'showDetailsBox',
             'click .newPayment'   : 'newPayment',
             'click .approve'      : 'approve',

@@ -1,22 +1,25 @@
 define([
     'Backbone',
     'jQuery',
+    'Underscore',
     'text!templates/menu/MenuItemTemplate.html'
-], function (Backbone, $, MenuItemTemplate) {
+], function (Backbone, $, _, MenuItemTemplate) {
     'use strict';
     var MenuItem = Backbone.View.extend({
         tagName : 'li',
         template: _.template(MenuItemTemplate),
 
         initialize: function (options) {
-            //_.bindAll(this, 'render');
-            //this.model.bind('change', this.render);
+            // _.bindAll(this, 'render');
+            // this.model.bind('change', this.render);
         },
-        close     : function () {
+
+        close: function () {
             this.unbind();
             this.model.unbind();
         },
-        render    : function () {
+
+        render: function () {
             var model = this.model.toJSON();
             var template = this.template(model);
 

@@ -10,15 +10,14 @@ define([
 ], function ($, _, ListViewBase, DashboardHeader, JobsCollection, ListItemView, ReportView, CONSTANTS) {
     'use strict';
     var ContentView = ListViewBase.extend({
-        page                    : null,
-        sort                    : null,
-        listTemplate            : DashboardHeader,
-        listItemView            : ListItemView,
-        contentType             : CONSTANTS.JOBSDASHBOARD, // needs in view.prototype.changeLocationHash
-        changedModels           : {},
-        totalCollectionLengthUrl: '/jobs/totalCollectionLength',
-        contentCollection       : JobsCollection,
-        exportToXlsxUrl         : '/jobs/exportToXlsx',
+        page             : null,
+        sort             : null,
+        listTemplate     : DashboardHeader,
+        listItemView     : ListItemView,
+        contentType      : CONSTANTS.JOBSDASHBOARD, // needs in view.prototype.changeLocationHash
+        changedModels    : {},
+        contentCollection: JobsCollection,
+        exportToXlsxUrl  : '/jobs/exportToXlsx',
 
         events: {
             'click .jobs': 'showReport'
@@ -44,8 +43,7 @@ define([
             var el = $(e.target);
             var id = el.attr('data-id');
 
-            new ReportView({_id: id});
-
+            return new ReportView({_id: id});
         },
 
         render: function () {
@@ -62,7 +60,7 @@ define([
             this.renderFilter();
             this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
             return this;
         }

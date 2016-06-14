@@ -11,13 +11,13 @@ define([
 
         initialize: function (options) {
             var responseObj;
-            
+
             this.render(options);
 
             if (options.mainWtrackView) {
                 responseObj = options.mainWtrackView.responseObj;
                 responseObj = responseObj || {};
-                
+
                 dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (response) {
                     responseObj['#project'] = response.data;
                 });

@@ -23,7 +23,7 @@ define([
 
         events: {
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            'click'                                            : 'hideNewSelect',
+            click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
@@ -64,12 +64,12 @@ define([
             this.hideNewSelect();
         },
 
-        saveItem: function (proformaCb /*orderCb*/) {
+        saveItem: function () {
             var self = this;
             var thisEl = this.$el;
             var name = thisEl.find('#paymentMethodName').val();
             var account = thisEl.find('#account').val();
-            var currency = $.trim(thisEl.find('#currency').text())
+            var currency = $.trim(thisEl.find('#currency').text());
             var bank = thisEl.find('#bankName').val();
 
             var data = {
@@ -81,7 +81,7 @@ define([
 
             this.currentModel.save(data, {
                 wait   : true,
-                success: function (res) {
+                success: function () {
                     var url = window.location.hash;
 
                     if (url === '#easyErp/Accounts') {

@@ -129,6 +129,10 @@ define([
             var sumBudget;
             var hours;
             var editModel;
+            var adminExpenses;
+            var vacationExpenses;
+            var idleExpenses;
+            var adminSalary;
 
             if (mothHoursId && el.prop('tagName') !== 'INPUT') {
                 if (this.modelId) {
@@ -144,14 +148,14 @@ define([
                     month: month,
                     year : year
                 }, function (result) {
-                    var adminExpenses = result.adminExpenses;
-                    var vacationExpenses = result.vacationExpenses;
-                    var idleExpenses = result.idleExpenses;
-                    var adminSalary = result.adminSalary;
-                    var actualHours = result.actualHours;
+                    adminExpenses = result.adminExpenses;
+                    vacationExpenses = result.vacationExpenses;
+                    idleExpenses = result.idleExpenses;
+                    adminSalary = result.adminSalary;
+                    actualHours = result.actualHours;
 
                     if (result.error) {
-                        return alert('error');
+                        return App.render({message: 'Some error'});
                     }
 
                     if (tr.find('.editing').length) {

@@ -1,4 +1,6 @@
 define([
+    'jQuery',
+    'Underscore',
     'views/listViewBase',
     'text!templates/salesInvoices/list/ListHeader.html',
     'text!templates/stages.html',
@@ -10,7 +12,7 @@ define([
     'common',
     'dataService',
     'constants'
-], function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, ListItemView, contentCollection, common, dataService, CONSTANTS) {
+], function ($, _, listViewBase, listTemplate, stagesTemplate, CreateView, editView, InvoiceModel, ListItemView, contentCollection, common, dataService, CONSTANTS) {
     var InvoiceListView = listViewBase.extend({
         CreateView       : CreateView,
         listTemplate     : listTemplate,
@@ -44,8 +46,12 @@ define([
         saveItem: function () {
             var model;
             var self = this;
+            var keys = Object.keys(this.changedModels);
+            var i;
+            var id;
 
-            for (var id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.collection.get(id);
 
                 model.save({
@@ -118,8 +124,10 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             function currentEllistRenderer(self) {
+                var itemView;
+
                 $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
-                var itemView = new ListItemView({
+                itemView = new ListItemView({
                     collection : self.collection,
                     page       : self.page,
                     itemsNumber: self.collection.namberToShow
@@ -133,18 +141,20 @@ define([
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
 
             var id = $(e.target).closest('tr').data('id');
-            var model = new invoiceModel({validate: false});
+            var model = new InvoiceModel({validate: false});
+
+            e.preventDefault();
 
             model.urlRoot = '/Invoices';
             model.fetch({
-                data   : {
+                data: {
                     id       : id,
                     viewType : 'form',
                     currentDb: App.currentDb
                 },
+
                 success: function (model) {
                     return new editView({model: model});
                 },

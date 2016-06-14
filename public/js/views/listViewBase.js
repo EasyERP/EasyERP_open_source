@@ -3,7 +3,6 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Pagination/PaginationTemplate.html',
-    /* 'text!templates/Alpabet/AphabeticTemplate.html',*/  // took off to pagination
     'text!templates/Notes/importTemplate.html',
     'views/pagination',
     'views/selectView/selectView',
@@ -11,7 +10,7 @@ define([
     'common',
     'dataService',
     'constants'
-], function (Backbone, $, _, paginationTemplate, /* aphabeticTemplate,*/ importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
+], function (Backbone, $, _, paginationTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
@@ -74,82 +73,82 @@ define([
 
         // todo fixit
         /*  alpabeticalRender: function (e) {  // took off to pagination
-              var target;
-              var itemsNumber = $('.selectedItemsNumber').text();
-              var selectedLetter;
+         var target;
+         var itemsNumber = $('.selectedItemsNumber').text();
+         var selectedLetter;
 
-              this.startTime = new Date();
+         this.startTime = new Date();
 
-              if (e && e.target) {
-                  target = $(e.target);
-                  selectedLetter = $(e.target).text();
+         if (e && e.target) {
+         target = $(e.target);
+         selectedLetter = $(e.target).text();
 
-                  if (!this.filter) {
-                      this.filter = {};
-                  }
-                  this.filter.letter = {
-                      key  : 'letter',
-                      value: selectedLetter,
-                      type : null
-                  };
+         if (!this.filter) {
+         this.filter = {};
+         }
+         this.filter.letter = {
+         key  : 'letter',
+         value: selectedLetter,
+         type : null
+         };
 
-                  target.parent().find('.current').removeClass('current');
-                  target.addClass('current');
+         target.parent().find('.current').removeClass('current');
+         target.addClass('current');
 
-                  if ($(e.target).text() === 'All') {
-                      delete this.filter;
-                      delete App.filter.letter;
-                  } else {
-                      App.filter.letter = this.filter.letter;
-                  }
-              }
+         if ($(e.target).text() === 'All') {
+         delete this.filter;
+         delete App.filter.letter;
+         } else {
+         App.filter.letter = this.filter.letter;
+         }
+         }
 
-              this.filter = App.filter;
+         this.filter = App.filter;
 
-              this.filterView.renderFilterContent(this.filter);
-              _.debounce(
-                  function () {
-                      this.trigger('filter', App.filter);
-                  }, 10);
+         this.filterView.renderFilterContent(this.filter);
+         _.debounce(
+         function () {
+         this.trigger('filter', App.filter);
+         }, 10);
 
-              $('#top-bar-deleteBtn').hide();
-              $('#checkAll').prop('checked', false);
+         $('#top-bar-deleteBtn').hide();
+         $('#checkAll').prop('checked', false);
 
-              this.changeLocationHash(1, itemsNumber, this.filter);
-              this.collection.getFirstPage({
-                  count      : itemsNumber,
-                  filter     : this.filter,
-                  viewType   : this.viewType,
-                  contentType: this.contentType
-              });
-          },
+         this.changeLocationHash(1, itemsNumber, this.filter);
+         this.collection.getFirstPage({
+         count      : itemsNumber,
+         filter     : this.filter,
+         viewType   : this.viewType,
+         contentType: this.contentType
+         });
+         },
 
-          renderAlphabeticalFilter: function () {
-              var self = this;
-              var currentLetter;
+         renderAlphabeticalFilter: function () {
+         var self = this;
+         var currentLetter;
 
-              this.hasAlphabet = true;
+         this.hasAlphabet = true;
 
-              common.buildAphabeticArray(this.collection, function (arr) {
-                  self.$el.find('#startLetter').remove();
-                  self.alphabeticArray = arr;
-                  self.$el.find('#searchContainer').after(_.template(aphabeticTemplate, {
-                      alphabeticArray   : self.alphabeticArray,
-                      allAlphabeticArray: self.allAlphabeticArray
-                  }));
+         common.buildAphabeticArray(this.collection, function (arr) {
+         self.$el.find('#startLetter').remove();
+         self.alphabeticArray = arr;
+         self.$el.find('#searchContainer').after(_.template(aphabeticTemplate, {
+         alphabeticArray   : self.alphabeticArray,
+         allAlphabeticArray: self.allAlphabeticArray
+         }));
 
-                  currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
+         currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
 
-                  if (currentLetter) {
-                      $('#startLetter').find('a').each(function () {
-                          var target = $(this);
-                          if (target.text() === currentLetter) {
-                              target.addClass('current');
-                          }
-                      });
-                  }
-              });
-          },*/
+         if (currentLetter) {
+         $('#startLetter').find('a').each(function () {
+         var target = $(this);
+         if (target.text() === currentLetter) {
+         target.addClass('current');
+         }
+         });
+         }
+         });
+         },*/
 
         renderPagination: function ($currentEl, _self) {
             var self = _self || this;

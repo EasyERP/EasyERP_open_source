@@ -22,13 +22,13 @@ define([
 
         events: {
             'click #loginPanel': 'showSelect',
-            'click'            : 'hideProp'
+            click              : 'hideProp'
         },
 
         hideProp: function (e) {
             var select;
 
-            if ($(e.target).closest("#loginPanel").length === 0) {
+            if ($(e.target).closest('#loginPanel').length === 0) {
                 select = this.$el.find('#loginSelect');
                 select.hide();
                 select.prop('hidden', true);
@@ -42,7 +42,7 @@ define([
 
             if (this.contentType) {
                 currentChildren = this.collection.where({href: this.contentType});
-                currentRootId = currentChildren[0] ? currentChildren[0].get("parrent") : null;
+                currentRootId = currentChildren[0] ? currentChildren[0].get('parrent') : null;
                 currentRoot = this.collection.where({_id: currentRootId});
             }
 
@@ -62,16 +62,16 @@ define([
             this.topMenu.bind('mouseOver', this.leftMenu.mouseOver, {leftMenu: this.leftMenu});
         },
 
-        updateMenu     : function (contentType) {
+        updateMenu: function (contentType) {
             var currentChildren = this.collection.where({href: contentType});
-            var currentRootId = currentChildren[0] ? currentChildren[0].get("parrent") : null;
+            var currentRootId = currentChildren[0] ? currentChildren[0].get('parrent') : null;
             var currentRoot = this.collection.where({_id: currentRootId});
 
             this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
             this.topMenu.updateTopMenu(currentRoot);
         },
 
-        showSelect     : function (e) {
+        showSelect: function (e) {
             var select = this.$el.find('#loginSelect');
 
             if (select.prop('hidden')) {
@@ -83,7 +83,7 @@ define([
             }
         },
 
-        render         : function () {
+        render: function () {
             var icon;
             var log;
 
@@ -97,23 +97,23 @@ define([
                     App.currentUser = currentUser;
                     App.savedFilters = response.savedFilters || {};
 
-                    if (currentUser.profile && currentUser.profile.profileName == 'baned') {
-                        $('title').text("EasyERP");
-                        context.$el.find("li#userpage").remove();
-                        context.$el.find("#top-bar").addClass("banned");
-                        context.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
+                    if (currentUser.profile && currentUser.profile.profileName === 'baned') {
+                        $('title').text('EasyERP');
+                        context.$el.find('li#userpage').remove();
+                        context.$el.find('#top-bar').addClass('banned');
+                        context.$el.find('#content-holder').append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                     }
                     if (currentUser && currentUser.relatedEmployee) {
-                        $("#loginPanel .iconEmployee").attr("src", currentUser.relatedEmployee.imageSrc);
+                        $('#loginPanel .iconEmployee').attr('src', currentUser.relatedEmployee.imageSrc);
 
                         if (currentUser.relatedEmployee.name) {
-                            $("#loginPanel  #userName").text(currentUser.relatedEmployee.name.first + " " + currentUser.relatedEmployee.name.last);
+                            $('#loginPanel  #userName').text(currentUser.relatedEmployee.name.first + ' ' + currentUser.relatedEmployee.name.last);
                         } else {
-                            $("#loginPanel  #userName").text(currentUser.login);
+                            $('#loginPanel  #userName').text(currentUser.login);
                         }
                     } else {
-                        $("#loginPanel .iconEmployee").attr("src", currentUser.imageSrc);
-                        $("#loginPanel  #userName").text(currentUser.login);
+                        $('#loginPanel .iconEmployee').attr('src', currentUser.imageSrc);
+                        $('#loginPanel  #userName').text(currentUser.login);
                     }
                 }, this);
 
@@ -121,25 +121,25 @@ define([
             } else {
                 this.$el.html(_.template(MainTemplate));
 
-                icon = $("#loginPanel .iconEmployee");
-                log = $("#loginPanel  #userName");
+                icon = $('#loginPanel .iconEmployee');
+                log = $('#loginPanel  #userName');
 
-                if (App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName == 'baned') {
-                    $('title').text("EasyERP");
-                    this.$el.find("li#userpage").remove();
-                    this.$el.find("#top-bar").addClass("banned");
-                    this.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
+                if (App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName === 'baned') {
+                    $('title').text('EasyERP');
+                    this.$el.find('li#userpage').remove();
+                    this.$el.find('#top-bar').addClass('banned');
+                    this.$el.find('#content-holder').append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                 }
                 if (App.currentUser.relatedEmployee) {
-                    $("#loginPanel .iconEmployee").attr("src", App.currentUser.relatedEmployee.imageSrc);
+                    $('#loginPanel .iconEmployee').attr('src', App.currentUser.relatedEmployee.imageSrc);
 
                     if (App.currentUser.relatedEmployee.name) {
-                        $("#loginPanel  #userName").text(App.currentUser.relatedEmployee.name.first + " " + App.currentUser.relatedEmployee.name.last);
+                        $('#loginPanel  #userName').text(App.currentUser.relatedEmployee.name.first + ' ' + App.currentUser.relatedEmployee.name.last);
                     } else {
-                        $("#loginPanel  #userName").text(App.currentUser.login);
+                        $('#loginPanel  #userName').text(App.currentUser.login);
                     }
                 } else {
-                    icon.attr("src", App.currentUser.imageSrc);
+                    icon.attr('src', App.currentUser.imageSrc);
                     log.text(App.currentUser.login);
                 }
             }

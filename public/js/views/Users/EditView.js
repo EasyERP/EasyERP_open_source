@@ -146,7 +146,7 @@
             });
 
         },
-        
+
         deleteItem: function (event) {
             var mid = 39;
             var self = this;

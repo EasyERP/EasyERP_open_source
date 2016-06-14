@@ -2,9 +2,9 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'views/dialogViewBase',
     'text!templates/ExpensesInvoice/EditTemplate.html',
     'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
     'views/Invoices/InvoiceProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/CreateView',
@@ -19,9 +19,9 @@ define([
 ], function ($,
              _,
              Backbone,
+             ParentView,
              EditTemplate,
              AttachView,
-             AssigneesView,
              InvoiceItemView,
              wTrackRows,
              PaymentCreateView,
@@ -35,26 +35,18 @@ define([
              helpers) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
         contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {
-            'click #saveBtn'                                                  : 'saveItem',
-            'click #cancelBtn'                                                : 'hideDialog',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click .details'                                                  : 'showDetailsBox',
-            'click .newPayment'                                               : 'newPayment',
-            'click .sendEmail'                                                : 'sendEmail',
-            'click .approve'                                                  : 'approve',
-            'click .cancelInvoice'                                            : 'cancelInvoice',
-            'click .setDraft'                                                 : 'setDraft'
+            'click #saveBtn'      : 'saveItem',
+            'click .details'      : 'showDetailsBox',
+            'click .newPayment'   : 'newPayment',
+            'click .sendEmail'    : 'sendEmail',
+            'click .approve'      : 'approve',
+            'click .cancelInvoice': 'cancelInvoice',
+            'click .setDraft'     : 'setDraft'
 
         },
 
@@ -68,7 +60,7 @@ define([
             this.filter = options.filter;
 
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
-            this.currentModel.urlRoot = '/Invoice';
+            this.currentModel.urlRoot = '/Invoices';
             this.responseObj = {};
 
             this.redirect = options.redirect;
@@ -188,53 +180,8 @@ define([
             $(e.target).parent().find('.details-box').toggle();
         },
 
-        notHide: function () {
-            return false;
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
-        },
-
         chooseUser: function (e) {
             $(e.target).toggleClass('choosen');
-        },
-
-        hideDialog: function () {
-            $('.edit-invoice-dialog').remove();
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
         },
 
         chooseOption: function (e) {
@@ -323,9 +270,7 @@ define([
             buttons = [
                 {
                     text : 'Close',
-                    click: function () {
-                        self.hideDialog();
-                    }
+                    click: self.hideDialog
                 }, {
                     text : 'Delete',
                     click: self.deleteItem
@@ -344,12 +289,7 @@ define([
 
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.currentModel);
 
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(

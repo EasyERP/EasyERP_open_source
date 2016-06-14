@@ -35,7 +35,6 @@ define([
         events: {
             'click .stageSelect'         : 'showNewSelect',
             'click .newSelectList li'    : 'chooseOption',
-            // 'click .list td:not(.notForm, .checkbox)': 'goToEditDialog',
             'click #convertToOpportunity': 'openDialog'
         },
 
@@ -149,7 +148,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

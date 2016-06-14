@@ -52,8 +52,8 @@ define([
         },
 
         events: {
-            'click .stageSelect'                     : 'showNewSelect',
-            'click .newSelectList li'                : 'chooseOption'
+            'click .stageSelect'     : 'showNewSelect',
+            'click .newSelectList li': 'chooseOption'
         },
 
         chooseOption: function (e) {

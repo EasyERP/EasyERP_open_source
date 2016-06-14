@@ -9,6 +9,6 @@ define([
         contentType: CONSTANTS.EXPENSESINVOICE,
         template   : _.template(ContentTopBarTemplate)
     });
-    
+
     return TopBarView;
 });

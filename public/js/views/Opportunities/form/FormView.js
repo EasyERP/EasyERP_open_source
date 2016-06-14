@@ -6,22 +6,22 @@ define([
 ], function (Backbone, _, OpportunitiesFormTemplate, EditView) {
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',
-        
+
         initialize: function (options) {
             this.formModel = options.model;
         },
 
         render: function () {
             var formModel = this.formModel.toJSON();
-            
+
             this.$el.html(_.template(OpportunitiesFormTemplate, formModel));
-            
+
             return this;
         },
 
         editItem: function () {
             // create editView in dialog here
-            new EditView({model: this.formModel});
+            return new EditView({model: this.formModel});
         },
 
         deleteItems: function () {

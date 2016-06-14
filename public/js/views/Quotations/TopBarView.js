@@ -2,10 +2,8 @@ define([
     'Underscore',
     'views/topBarViewBase',
     'text!templates/Quotations/TopBarTemplate.html',
-    'custom',
-    'common',
     'constants'
-], function (_, BaseView, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+], function (_, BaseView, ContentTopBarTemplate, CONSTANTS) {
     'use strict';
 
     var TopBarView = BaseView.extend({

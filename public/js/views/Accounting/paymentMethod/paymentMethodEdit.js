@@ -29,7 +29,7 @@ define([
 
         events: {
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            'click'                                            : 'hideNewSelect',
+            click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
@@ -140,7 +140,6 @@ define([
             });
 
             populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
-
 
             return this;
         }

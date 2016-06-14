@@ -56,7 +56,7 @@
             });
             common.getImages(ids, '/customers/getCustomersImages');
         },
-        
+
         gotoForm: function (e) {
             var id = $(e.target).closest('a').data('id');
 

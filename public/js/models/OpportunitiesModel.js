@@ -42,7 +42,7 @@
             },
 
             email: '',
-            
+
             phones: {
                 mobile: '',
                 phone : '',
@@ -58,7 +58,7 @@
                 date: null,
                 desc: ''
             },
-            
+
             expectedClosing: null,
             priority       : 'Trivial',
             categories     : '',
@@ -71,7 +71,7 @@
         urlRoot: function () {
             return CONSTANTS.URLS.OPPORTUNITIES;
         },
-        
+
         initialize: function () {
             this.on('invalid', function (model, errors) {
                 var msg;

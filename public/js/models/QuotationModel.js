@@ -15,7 +15,7 @@ define([
                 name: ''
             },
 
-            project: {
+            project : {
                 _id           : null,
                 projectnamager: {},
                 name          : ''

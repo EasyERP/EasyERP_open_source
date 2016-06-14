@@ -2,6 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'views/dialogViewBase',
     'text!templates/ExpensesInvoice/CreateTemplate.html',
     'views/Notes/AttachView',
     'models/InvoiceModel',
@@ -12,10 +13,10 @@ define([
     'views/Payment/list/ListHeaderInvoice',
     'dataService',
     'constants'
-], function ($, _, Backbone, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, ListHeaderInvoice, dataService, CONSTANTS) {
+], function ($, _, Backbone, ParentView, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, ListHeaderInvoice, dataService, CONSTANTS) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Invoices',
         template   : _.template(CreateTemplate),
@@ -28,28 +29,7 @@ define([
         },
 
         events: {
-            keydown                                                           : 'keydownHandler',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .details'                                                  : 'showDetailsBox',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },
-
-        notHide: function () {
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
+            'click .details': 'showDetailsBox'
         },
 
         chooseOption: function (e) {
@@ -58,46 +38,8 @@ define([
             $(e.target).closest('td').removeClass('errorContent');
         },
 
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
         showDetailsBox: function (e) {
             $(e.target).parent().find('.details-box').toggle();
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
         },
 
         saveItem: function () {
@@ -219,7 +161,7 @@ define([
                         mid: mid
                     },
                     wait   : true,
-                    success: function (res) {
+                    success: function () {
                         self.hideDialog();
                         Backbone.history.navigate('#easyErp/ExpensesInvoice', {trigger: true});
                     },
@@ -236,13 +178,6 @@ define([
                 });
             }
 
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
         },
 
         render: function () {
@@ -270,18 +205,11 @@ define([
                         }
                     }, {
                         text : 'Cancel',
-                        click: function () {
-                            self.hideDialog();
-                        }
+                        click: self.hideDialog
                     }]
             });
 
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
+            this.renderAssignees(this.model);
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
             invoiceItemContainer.append(

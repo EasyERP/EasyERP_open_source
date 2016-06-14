@@ -1,6 +1,6 @@
 var App = App || {
         File: {
-            MAXSIZE           : 10485760,  // size in kilobytes  = 3 MB
+            MAXSIZE           : 10485760, // size in kilobytes  = 3 MB
             MaxFileSizeDisplay: '10 MB'
         },
 
@@ -83,7 +83,7 @@ require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
     };
 
     Backbone.Collection.prototype.getElement = function (id) {
-        return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
+        return id ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
     };
 
     Backbone.Collection.prototype.setElement = function (id, model) {
@@ -96,9 +96,9 @@ require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
                 this.currentElement = this.get(id);
             }
         } else {
-            if ((typeof (id) == 'string') && id.length == 24) {
+            if ((typeof (id) === 'string') && id.length === 24) {
                 this.currentElement = this.get(id);
-            } else if (typeof (id) == 'object') {
+            } else if (typeof (id) === 'object') {
                 this.currentElement = id;
             }
         }
@@ -109,27 +109,27 @@ require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
         if (xhr) {
             if (xhr.status === 401 || xhr.status === 403) {
                 if (xhr.status === 401) {
-                    Backbone.history.navigate("login", {trigger: true});
+                    Backbone.history.navigate('login', {trigger: true});
                 } else {
                     App.render({
                         type   : 'error',
-                        message: "You do not have permission to perform this action."
+                        message: 'You do not have permission to perform this action.'
                     });
                 }
             } else {
                 if (xhr.responseJSON) {
                     alert(xhr.responseJSON.error);
                 } else {
-                    Backbone.history.navigate("home", {trigger: true});
+                    Backbone.history.navigate('home', {trigger: true});
                 }
             }
         }
     };
-    
+
     Date.prototype.getWeek = function () {
         // Create a copy of this date object
         var target = new Date(this.valueOf());
-
+        var firstThursday;
         // ISO week date weeks start on monday
         // so correct the day number
         var dayNr = (this.getDay() + 6) % 7;
@@ -140,7 +140,7 @@ require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
         target.setDate(target.getDate() - dayNr + 3);
 
         // Store the millisecond value of the target date
-        var firstThursday = target.valueOf();
+        firstThursday = target.valueOf();
 
         // Set the target to the first thursday of the year
         // First set the target to january first

@@ -14,7 +14,7 @@ define([
             relatedEmployee: null,
             savedFilters   : []
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return CONSTANTS.URLS.USERS;
         },
 

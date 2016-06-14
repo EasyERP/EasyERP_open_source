@@ -80,7 +80,7 @@ define([
             var mid = 39;
             var model;
             var viewType = Custom.getCurrentVT();
-            
+
             switch (viewType) {
                 case 'list':
                     $.each($('tbody input:checked'), function (index, checkbox) {

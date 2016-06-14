@@ -617,7 +617,7 @@ define([
             notDiv = this.$el.find('#attach-container');
             notDiv.append(
                 new AttachView({
-                    model: this.currentModel,
+                    model      : this.currentModel,
                     contentType: 'Invoice'
                 }).render().el
             );

@@ -12,7 +12,7 @@ define([
     'helpers',
     'constants'
 ], function (Backbone, _, $, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate, keyValidator, helpers, CONSTANTS) {
-    'use strict'
+    'use strict';
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 

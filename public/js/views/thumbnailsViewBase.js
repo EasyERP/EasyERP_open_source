@@ -45,16 +45,16 @@
             return false;
         },
 
-      /*  hideItemsNumber: function (e) {
-            var el = e.target;
+        /*  hideItemsNumber: function (e) {
+         var el = e.target;
 
-            this.$el.find('.allNumberPerPage, .newSelectList').hide();
+         this.$el.find('.allNumberPerPage, .newSelectList').hide();
 
-            if (!el.closest('.search-view')) {
-                $('.search-content').removeClass('fa-caret-up');
-                this.$el.find('.search-options').addClass('hidden');
-            }
-        },*/
+         if (!el.closest('.search-view')) {
+         $('.search-content').removeClass('fa-caret-up');
+         this.$el.find('.search-options').addClass('hidden');
+         }
+         },*/
 
         showMore: function (e) {
             e.preventDefault();

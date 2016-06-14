@@ -175,7 +175,7 @@ define([
             notDiv = this.$el.find('.attach-container');
 
             this.attachView = new AttachView({
-                model    : model,
+                model      : model,
                 contentType: self.contentType,
                 isCreate   : true
             });

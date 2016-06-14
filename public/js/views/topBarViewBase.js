@@ -90,7 +90,7 @@ define([
 
         onSaveEvent: function (event) {
             event.preventDefault();
-            
+
             this.trigger('saveEvent');
         },
 
