@@ -23,8 +23,11 @@ var Module = function (models, event) {
         var filtrElement = {};
         var key;
         var filterName;
+        var filterNameKeys = Object.keys(filter);
+        var i;
 
-        for (filterName in filter) {
+        for (i = filterNameKeys.length - 1; i >= 0; i--) {
+            filterName = filterNameKeys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -106,6 +109,8 @@ var Module = function (models, event) {
         var page = parseInt(data.page, 10);
         var skip;
         var sortKey;
+        var key;
+        var i;
         var salesManagerMatch = {
             $and: [
                 {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
@@ -145,9 +150,10 @@ var Module = function (models, event) {
 
         if (data.sort) {
             sort = {};
-
-            for (sortKey in data.sort) {
-                sort[sortKey] = parseInt(data.sort[sortKey], 10);
+            sortKey = Object.keys(data.sort);
+            for (i = sortKey.length - 1; i >= 0; i--) {
+                key = sortKey[i];
+                sort[key] = parseInt(data.sort[key], 10);
             }
         }
 
@@ -1004,7 +1010,7 @@ var Module = function (models, event) {
                         cb();
                     });
 
-                }, function (err, result) {
+                }, function (err) {
                     if (err) {
                         return next(err);
                     }

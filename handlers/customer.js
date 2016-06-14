@@ -888,7 +888,7 @@ var Module = function (models) {
                     // skip default
                 }
 
-                fs.unlink(path, function (err) {
+                fs.unlink(path, function () {
                     fs.readdir(dir, function (err, files) {
                         if (files && files.length === 0) {
                             fs.rmdir(dir, function () {

@@ -86,7 +86,7 @@ var Products = function (models) {
         getProductImages(req, res, next, data);
     };
 
-    this.uploadProductFiles = function (req, res, next) {
+   /* this.uploadProductFiles = function (req, res, next) {
         var os = require('os');
         var osType = (os.type().split('_')[0]);
         var dir;
@@ -131,9 +131,9 @@ var Products = function (models) {
                 });
             }
         });
-    };
+    };*/
 
-    function addAtach(req, res, next, _id, files) {//to be deleted
+   /* function addAtach(req, res, next, _id, files) { // to be deleted
         models.get(req.session.lastDb, 'Product', ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {
             new   : true,
             upsert: true
@@ -158,7 +158,7 @@ var Products = function (models) {
         } else {
             res.status(401).send();
         }
-    }
+    }*/
 
     function remove(req, res, next, id) {
         models.get(req.session.lastDb, 'Products', ProductSchema).remove({_id: id}, function (err, product) {
@@ -205,51 +205,7 @@ var Products = function (models) {
         getAll(req, res, next);
     };
 
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        for (var filterName in filter) {
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
-
-            switch (filterName) {
-                case 'letter':
-                    filtrElement.name = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                    resArray.push(filtrElement);
-                    break;
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'productType':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'canBeSold':
-                    condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'canBeExpensed':
-                    condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'canBePurchased':
-                    condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
-
-        return resArray;
-    }
-
-    function ConvertType(array, type) {
+    function convertType(array, type) {
         var i;
         var result = [];
 
@@ -270,6 +226,55 @@ var Products = function (models) {
         }
 
         return result;
+    }
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
+        var filterNameKeys = Object.keys(filter);
+        var i;
+
+        for (i = filterNameKeys.length - 1; i >= 0; i--) {
+            filterName = filterNameKeys[i];
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
+
+            switch (filterName) {
+                case 'letter':
+                    filtrElement.name = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+                    resArray.push(filtrElement);
+                    break;
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'productType':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeSold':
+                    condition = convertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeExpensed':
+                    condition = convertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBePurchased':
+                    condition = convertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                // skip default;
+            }
+        }
+
+        return resArray;
     }
 
     function getProductsFilter(req, res, next) {

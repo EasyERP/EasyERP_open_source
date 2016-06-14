@@ -8,8 +8,6 @@ var fs = require('fs');
 var pathMod = require('path');
 var pageHelper = require('../helpers/pageHelper');
 
-// var fileUploader = require('../helpers/fileUploader');
-
 var Module = function (models, event) {
     'use strict';
 
@@ -207,6 +205,7 @@ var Module = function (models, event) {
                 case 'Linux':
                     dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
                     break;
+                // skip default;
             }
 
             oldDir = dir + orderId;
@@ -411,17 +410,10 @@ var Module = function (models, event) {
 
         }
 
-        function createJournalEntry(invoice, callback) {
-            journalEntryComposer(invoice, req.session.lastDb, callback, req.session.uId);
-        }
-
         parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow, getRates];
         waterFallTasks = [parallel, createInvoice/* , createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            // var project;
-            // var invoiceId = result._id;
-            // var products = result.products;
 
             if (err) {
                 return next(err);
@@ -437,183 +429,10 @@ var Module = function (models, event) {
                 }
             });
 
-            // result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
-
-            /* Invoice.findByIdAndUpdate(invoiceId, {
-             $set: {
-             attachments: result.attachments
-             }
-             }, {new: true}, function (err, invoice) {
-             if (err) {
-             return next(err);
-             }*/
-
-            // renameFolder(id.toString(), invoiceId.toString());
-
             res.status(201).send(result);
-            // });
         });
 
     };
-
-    /*    function uploadFileArray(req, res, callback) {
-     var files = [];
-     var path;
-     var os = require('os');
-     var osType = (os.type().split('_')[0]);
-
-     if (req.files && req.files.attachfile && !req.files.attachfile.length) {
-     req.files.attachfile = [req.files.attachfile];
-     }
-
-     req.files.attachfile.forEach(function (item) {
-     var localPath;
-     switch (osType) {
-     case 'Windows':
-     localPath = pathMod.join(__dirname, '..\\routes\\uploads\\', req.headers.id);
-     break;
-     case 'Linux':
-     localPath = pathMod.join(__dirname, '..\/routes\/uploads\/', req.headers.id);
-     break;
-     }
-     fs.readdir(localPath, function (err, files) {
-     var k = '';
-     var maxK = 0;
-     var checkIs = false;
-     var intVal;
-     var attachfileName = item.name.slice(0, item.name.lastIndexOf('.'));
-
-     if (err) {
-     return console.log(err);
-     }
-
-     files.forEach(function (fileName) {
-     if (fileName === item.name) {
-     k = 1;
-     checkIs = true;
-     } else {
-     if ((fileName.indexOf(attachfileName) === 0) &&
-     (fileName.lastIndexOf(attachfileName) === 0) &&
-     (fileName.lastIndexOf(').') !== -1) &&
-     (fileName.lastIndexOf('(') !== -1) &&
-     (fileName.lastIndexOf('(') < fileName.lastIndexOf(').')) &&
-     (attachfileName.length === fileName.lastIndexOf('('))) {
-     intVal = fileName.slice(fileName.lastIndexOf('(') + 1, fileName.lastIndexOf(').'));
-     k = parseInt(intVal, 10) + 1;
-     }
-     }
-     if (maxK < k) {
-     maxK = k;
-     }
-     });
-     if (!(maxK === 0) && checkIs) {
-     item.name = attachfileName + '(' + maxK + ')' + item.name.slice(item.name.lastIndexOf('.'));
-     }
-     });
-
-     fs.readFile(item.path, function (err, data) {
-     var shortPas;
-     switch (osType) {
-     case 'Windows':
-     path = pathMod.join(__dirname, '..\\routes\\uploads\\', req.headers.id, item.name);
-     shortPas = pathMod.join('..\\routes\\uploads\\', req.headers.id, item.name);
-     break;
-     case 'Linux':
-     path = pathMod.join(__dirname, '..\/routes\/uploads\/', req.headers.id, item.name);
-     shortPas = pathMod.join('..\/routes\/uploads\/', req.headers.id, item.name);
-     break;
-     }
-     fs.writeFile(path, data, function (err) {
-     var file = {};
-
-     if (err) {
-     return console.log(err);
-     }
-
-     file._id = mongoose.Types.ObjectId();
-     file.name = item.name;
-     file.shortPas = encodeURIComponent(shortPas);
-
-     if (item.size >= 1024) {
-     file.size = (Math.round(item.size / 1024 / 1024 * 1000) / 1000) + '&nbsp;Mb';
-     } else {
-     file.size = (Math.round(item.size / 1024 * 1000) / 1000) + '&nbsp;Kb';
-     }
-
-     file.uploadDate = new Date();
-     file.uploaderName = req.session.uName;
-     files.push(file);
-
-     if (files.length === req.files.attachfile.length) {
-     if (callback) {
-     callback(files);
-     }
-     }
-
-     });
-     });
-     });
-
-     }*/
-
-    /* this.attach = function (req, res, next) {
-     var os = require('os');
-     var osType = (os.type().split('_')[0]);
-     var dir;
-
-     switch (osType) {
-     case 'Windows':
-     dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
-     break;
-     case 'Linux':
-     dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
-     break;
-     }
-
-     fs.readdir(dir, function (err, files) {
-     if (err) {
-     fs.mkdir(dir, function (errr) {
-     if (!errr) {
-     dir += req.headers.id;
-     }
-     fs.mkdir(dir, function (errr) {
-     if (!errr) {
-     uploadFileArray(req, res, function (files) {
-     uploadFile(req, res, req.headers.id, files);
-     });
-     }
-     });
-     });
-     } else {
-     dir += req.headers.id;
-     fs.readdir(dir, function (err) {
-     if (err) {
-     fs.mkdir(dir, function (errr) {
-     if (!errr) {
-     uploadFileArray(req, res, function (files) {
-     uploadFile(req, res, req.headers.id, files);
-     });
-     }
-     });
-     } else {
-     uploadFileArray(req, res, function (files) {
-     uploadFile(req, res, req.headers.id, files);
-     });
-     }
-     });
-     }
-     });
-     };
-
-     function uploadFile(req, res, id, file) {
-     models.get(req.session.lastDb, 'Quotation', OrderSchema).findByIdAndUpdate(id, {$set: {attachments: file}}, {new: true}, function (err, response) {
-     if (err) {
-     res.send(401);
-     } else {
-     res.send(200, {success: 'Order update success', data: response});
-     }
-     });
-     }*/
 
     this.uploadFile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -1027,6 +846,7 @@ var Module = function (models, event) {
                         resArray.push(filtrElement);
                     }
                     break;
+                // skip default;
             }
         }
 
@@ -1079,7 +899,7 @@ var Module = function (models, event) {
 
         if (req.query.sort) {
             key = Object.keys(req.query.sort)[0];
-            req.query.sort[key] = parseInt(req.query.sort[key]);
+            req.query.sort[key] = parseInt(req.query.sort[key], 10);
             sort = req.query.sort;
         } else {
             sort = {'editedBy.date': -1};
@@ -1812,6 +1632,7 @@ var Module = function (models, event) {
                     case 'salesPerson':
                         result[0][key] = _.sortBy(value, 'name');
                         break;
+                    // skip default;
                 }
             });
             res.status(200).send(result);
@@ -1822,7 +1643,10 @@ var Module = function (models, event) {
         var sortObj = {'paymentInfo.balance': -1};
         var now = new Date();
         var sortValueInt;
+        var keys;
         var key;
+        var i;
+
         var salesManagerMatch = {
             $and: [
                 {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
@@ -1855,10 +1679,11 @@ var Module = function (models, event) {
                 }]
         };
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-
         sortObj = req.query.sort || sortObj;
+        keys = Object.keys(sortObj);
 
-        for (key in sortObj) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            key = keys[i];
             sortValueInt = parseInt(sortObj[key], 10);
             sortObj[key] = sortValueInt;
             break;
