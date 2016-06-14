@@ -1597,7 +1597,7 @@ var Module = function (models, event) {
 
                                             request.query.wId = wId;
 
-                                            isNotFullPaid = paymentInfo.total > (parseInt(paymentInfo.balance, 10) + parseInt(paid, 10));
+                                            isNotFullPaid = paymentInfo.total > parseInt(paymentInfo.balance + paid, 10);
 
                                             if (isNotFullPaid) {
                                                 request.query.status = 'In Progress';
@@ -1626,7 +1626,7 @@ var Module = function (models, event) {
                                                 paymentInfoNew.unTaxed = paymentInfoNew.total;
 
                                                 if (paymentInfo.total !== parseInt(paymentInfo.balance, 10)) {
-                                                    paymentInfoNew.balance = parseInt(paymentInfo.balance, 10) + parseInt(paid, 10);
+                                                    paymentInfoNew.balance = parseInt(paymentInfo.balance + paid, 10);
                                                 } else {
                                                     paymentInfoNew.balance = parseInt(paymentInfo.balance, 10);
                                                 }
@@ -1805,7 +1805,7 @@ var Module = function (models, event) {
 
                                         request.query.wId = wId;
 
-                                        isNotFullPaid = paymentInfo.total > (parseInt(paymentInfo.balance, 10) + parseInt(paid, 10));
+                                        isNotFullPaid = paymentInfo.total > parseInt(paymentInfo.balance + paid, 10);
 
                                         if (isNotFullPaid) {
                                             request.query.status = 'In Progress';
@@ -1834,7 +1834,7 @@ var Module = function (models, event) {
                                             paymentInfoNew.unTaxed = paymentInfoNew.total;
 
                                             if (paymentInfo.total !== parseInt(paymentInfo.balance, 10)) {
-                                                paymentInfoNew.balance = parseInt(paymentInfo.balance, 10) + parseInt(paid, 10);
+                                                paymentInfoNew.balance = parseInt(paymentInfo.balance + paid, 10);
                                             } else {
                                                 paymentInfoNew.balance = parseInt(paymentInfo.balance, 10);
                                             }

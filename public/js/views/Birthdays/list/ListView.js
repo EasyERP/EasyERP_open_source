@@ -16,11 +16,11 @@ define([
         },
         
         render: function () {
-            var list = this.$el.find('#birthdaysList');
+            var list;
             var ids;
 
             this.$el.html(_.template(ListTemplate));
-
+            list = this.$el.find('#birthdaysList');
             list.find('#weekList').append(new ListItemView({collection: this.employeesCollection.weekly}).render().el);
             list.find('#weekList.next').append(new ListItemView({collection: this.employeesCollection.nextweek}).render().el);
             list.find('#monthList').append(new ListItemView({collection: this.employeesCollection.monthly}).render().el);

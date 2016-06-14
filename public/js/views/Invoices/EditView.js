@@ -36,7 +36,7 @@ define([
     'use strict';
 
     var EditView = ParentView.extend({
-        contentType: 'Invoices',
+        contentType: CONSTANTS.INVOICES, // 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {
@@ -618,7 +618,7 @@ define([
             notDiv.append(
                 new AttachView({
                     model      : this.currentModel,
-                    contentType: 'Invoice'
+                    contentType: CONSTANTS.INVOICES
                 }).render().el
             );
 
