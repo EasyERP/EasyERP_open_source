@@ -897,7 +897,7 @@ define([
                 var $expectedMenuEl;
 
                 server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
-                view = new MainView({el: $elFixture, contentType: 'expensesInvoice'});
+                view = new MainView({el: $elFixture, contentType: 'ExpensesInvoice'});
                 server.respond();
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
@@ -918,7 +918,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/expensesInvoice');
+                expect(window.location.hash).to.be.equals('#easyErp/ExpensesInvoice');
             });
         });
 
@@ -934,13 +934,13 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                var invoiceUrl = new RegExp('\/invoices\/', 'i');
 
                 historyNavigateSpy.reset();
 
                 server.respondWith('GET', invoiceUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 invoiceCollection = new InvoiceCollection({
-                    contentType: 'expensesInvoice',
+                    contentType: 'ExpensesInvoice',
                     filter     : null,
                     viewType   : 'list',
                     page       : 1,
@@ -955,11 +955,11 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                var invoiceUrl = new RegExp('\/invoices\/', 'i');
 
                 server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoice)]);
                 invoiceCollection = new InvoiceCollection({
-                    contentType: 'expensesInvoice',
+                    contentType: 'ExpensesInvoice',
                     filter     : null,
                     viewType   : 'list',
                     page       : 1,
@@ -996,7 +996,7 @@ define([
                 mainSpy = sinon.spy(App, 'render');
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 windowConfirmStub.returns(true);
-                goToEditSpy = sinon.spy(ListView.prototype, 'goToEditDialog');
+                goToEditSpy = sinon.spy(ListView.prototype, 'gotoForm');
                 editViewSpy = sinon.spy(EditView.prototype, 'initialize');
                 deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
             });
@@ -1048,13 +1048,13 @@ define([
                     $thisEl = listView.$el;
 
                     expect($thisEl.find('.list')).to.exist;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(4);
                     expect($thisEl.find('#searchContainer')).to.exist;
 
                     $firstRow = $thisEl.find('#listTable > tr').first();
                     colCount = $firstRow.find('td').length;
 
-                    expect(colCount).to.be.equals(12);
+                    expect(colCount).to.be.equals(11);
 
                     customer = $firstRow.find('td:nth-child(3)').text().trim();
                     expect(customer).to.not.match(/object Object|undefined/);
@@ -1068,9 +1068,9 @@ define([
 
                     assigned = $firstRow.find('td:nth-child(6)').text().trim();
                     expect(assigned).to.not.empty;
-                    expect(assigned).to.not.match(/object Object|undefined/);
+                    expect(assigned).to.not.match(/object Object|undefined/)
 
-                    due = $firstRow.find('td:nth-child(7) > span').text().trim();
+                    due = $firstRow.find('td:nth-child(7)').text().trim();
                     expect(due).to.not.empty;
                     expect(due).to.not.match(/object Object|undefined/);
 
@@ -1082,17 +1082,13 @@ define([
                     expect(paid).to.not.empty;
                     expect(paid).to.not.match(/object Object|undefined/);
 
-                    total = $firstRow.find('td:nth-child(10)').text().trim();
+                    total = $firstRow.find('td:nth-child(10) > span').text().trim();
                     expect(total).to.not.empty;
                     expect(total).to.not.match(/object Object|undefined/);
 
-                    status = $firstRow.find('td:nth-child(11) > span').text().trim();
+                    status = $firstRow.find('td:nth-child(11)').text().trim();
                     expect(status).to.not.empty;
                     expect(status).to.not.match(/object Object|undefined/);
-
-                    invDate = $firstRow.find('td:nth-child(12)').text().trim();
-                    expect(invDate).to.not.empty;
-                    expect(invDate).to.not.match(/object Object|undefined/);
 
                     // test pagination
                     $pagination = $thisEl.find('.pagination');
@@ -1119,6 +1115,25 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
+                });
+
+                it('Try to change page1 to page2', function () {
+                    var $currentPageList = $thisEl.find('.currentPageList');
+                    var ajaxResponse;
+                    var $page2Btn;
+
+                    ajaxSpy.reset();
+
+                    $currentPageList.mouseover();
+                    $page2Btn = $thisEl.find('#pageList > li').eq(1);
+                    $page2Btn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxSpy.called).to.be.true;
+                    expect(ajaxResponse).to.have.property('url', '/invoices/');
+                    expect(ajaxResponse.data).to.have.property('contentType').and.to.not.undefined;
+                    expect(ajaxResponse.data).to.have.property('page', 2);
                 });
 
                 it('Try to select 25 items per page', function () {
@@ -1212,7 +1227,7 @@ define([
                 it('Try to delete item', function () {
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
-                    var invoiceUrl = new RegExp('\/Invoice\/');
+                    var invoiceUrl = new RegExp('\/invoices\/');
 
                     $needCheckBox.click();
                     server.respondWith('DELETE', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Deleted success'})]);
@@ -1220,13 +1235,13 @@ define([
                     server.respond();
 
                     expect(deleteSpy.calledTwice).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(4);
                 });
 
                 it('Try to go to edit dialog with error response', function () {
-                    var spyResponse;
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
-                    var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
+                    var invoiceUrl = new RegExp('\/invoices', 'i');
+                    var spyResponse;
 
                     mainSpy.reset();
 
@@ -1240,7 +1255,7 @@ define([
 
                 it('Try to go to edit dialog', function () {
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(6)');
-                    var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                    var invoiceUrl = new RegExp('\/invoices', 'i');
                     var productUrl = new RegExp('\/product\/', 'i');
 
                     App.currentDb = 'micheldb';
