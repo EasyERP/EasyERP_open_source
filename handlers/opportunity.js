@@ -2071,7 +2071,7 @@ var Module = function (models, event) {
             key = keys[i];
             ids = [];
 
-            if (key !== 'workflowId') {
+            if ((key !== 'workflowId') && (key !== 'viewType')) {
 
                 if (key === 'contactName') {
 

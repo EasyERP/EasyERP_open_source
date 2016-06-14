@@ -534,7 +534,8 @@ var Module = function (models) {
                 skype         : 1,
                 company       : 1,
                 createdBy     : 1,
-                editedBy      : 1
+                editedBy      : 1,
+                imageSrc      : 1
             })
             .populate('company', '_id name')
             .populate('salesPurchases.salesPerson', '_id name fullName')

@@ -91,7 +91,7 @@ define([
             this.saveItem(function (err) {
                 if (!err) {
                     dataService.postData(url, data, function (err) {
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
                         if (err) {
                             App.render({

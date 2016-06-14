@@ -336,7 +336,7 @@ var Employee = function (event, models) {
                     res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
                     if (result.isEmployee) {
-                        event.emit('recalculate', req, res, next);
+                        event.emit('recalculate', req, {}, next);
                     }
 
                     event.emit('dropHoursCashes', req);
@@ -1512,7 +1512,7 @@ var Employee = function (event, models) {
 
             result.data = birth.currentEmployees;
 
-            if (res) {
+            if (res && res.status) {
                 res.status(200).send(result);
             }
         });

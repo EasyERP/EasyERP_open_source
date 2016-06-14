@@ -369,6 +369,7 @@ var Module = function (models, event) {
                     workflow            : 1,
                     date                : 1,
                     'paymentMethod.name': '$paymentMethod.name',
+                    'paymentMethod._id' : '$paymentMethod._id',
                     isExpense           : 1,
                     bonus               : 1,
                     paymentRef          : 1,

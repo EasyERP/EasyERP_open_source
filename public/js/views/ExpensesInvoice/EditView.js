@@ -101,7 +101,7 @@ define([
         cancelInvoice: function (e) {
             var wId;
             var self = this;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
             e.preventDefault();
 
@@ -142,7 +142,7 @@ define([
         setDraft: function (e) {
             var self = this;
             var wId;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
             e.preventDefault();
 

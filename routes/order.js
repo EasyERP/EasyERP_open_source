@@ -6,7 +6,7 @@ var MODULES = require('../constants/modules');
 
 module.exports = function (models, event) {
     var handler = new QuotationHandler(models, event);
-    var moduleId = MODULES.ORDER;
+    var moduleId = MODULES.ORDERS;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);

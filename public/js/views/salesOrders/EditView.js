@@ -158,7 +158,7 @@ define([
 
                 if (!err) {
                     dataService.postData(url, data, function (err, response) {
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
                         if (err) {
                             App.render({
