@@ -568,7 +568,7 @@ define([
                 var $expectedMenuEl;
 
                 server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
-                view = new MainView({el: $elFixture, contentType: 'salesOrder'});
+                view = new MainView({el: $elFixture, contentType: 'salesOrders'});
                 server.respond();
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
@@ -829,15 +829,6 @@ define([
                     expect($searchContainer.find('#salesManagerUl > li').first()).to.have.not.class('checkedValue');
                 });
 
-                it('Try to open CreateView', function () {
-                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.exist;
-
-                    $('.ui-dialog').remove();
-                });
-
                 it('Try to delete item', function () {
                     var $deleteBtn;
                     var $checkBox = listView.$el.find('#listTable > tr:nth-child(1) > td.notForm > input');
@@ -907,7 +898,7 @@ define([
 
                 it('Try to go to edit form', function () {
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
-                    var orderUrl = new RegExp('\/orders\/form', 'i');
+                    var orderUrl = new RegExp('\/orders\/', 'i');
                     var usersUrl = new RegExp('\/users\/forDd', 'i');
                     var incotermUrl = '/incoterm';
 
@@ -946,7 +937,6 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
                 });
 
                 it('Try to delete NotInvoiced Order ', function () {
