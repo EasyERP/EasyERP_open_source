@@ -147,7 +147,7 @@ define([
             this.listenTo(eventChannel, 'orderRemove orderUpdate', this.getOrders);
             this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiceProforma);
             this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
-            this.listenTo(eventChannel, 'generatedTcards', this.newInvoice);
+            this.listenTo(eventChannel, 'generatedTcards', this.getWTrack);
         },
 
         viewQuotation: function (e) {
@@ -475,6 +475,7 @@ define([
 
         createDialog: function (e) {
             var jobs = {};
+            var self = this;
             var $target = $(e.target);
 
             jobs._id = $target.attr('data-id');
@@ -487,11 +488,14 @@ define([
             this.generatedView = new GenerateWTrack({
                 model           : this.formModel,
                 wTrackCollection: this.wCollection,
-                jobs            : jobs
+                jobs            : jobs,
+                eventChannel    : self.eventChannel
+
             });
         },
 
         createJob: function () {
+            var self = this;
             this.wCollection.unbind();
             this.wCollection.bind('reset', this.renderContent, this);
 
@@ -503,7 +507,8 @@ define([
                 reset           : true,
                 model           : this.formModel,
                 wTrackCollection: this.wCollection,
-                createJob       : true
+                createJob       : true,
+                eventChannel    : self.eventChannel
             });
 
             App.projectInfo.currentTab = 'timesheet';
@@ -811,20 +816,11 @@ define([
             this.showProjectCharts();
         },
 
-        getWTrack: function (options, cb) {
+        getWTrack: function (cb) {
             var self = this;
-            var callback;
-            var _id;
-            var filter;
+            var _id = this.id;
 
-            if (typeof options === 'function') {
-                cb = options;
-                options = {};
-            }
-
-            callback = _.once(cb);
-            _id = this.id;
-            filter = {
+            var filter = {
                 project: {
                     key  : 'project._id',
                     value: [_id],
@@ -852,10 +848,8 @@ define([
                 itemsNumber = !isNaN(itemsNumber) ? itemsNumber : CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
 
-                callback();
-
-                if (self.wTrackView) {
-                    self.wTrackView.undelegateEvents();
+                if (typeof cb === 'function') {
+                    cb();
                 }
 
                 self.wTrackView = new WTrackView({

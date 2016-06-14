@@ -24,6 +24,12 @@ define([
             this.render();
         },
 
+        chooseOption: function (e) {
+            var holder = $(e.target).parents('dd').find('.current-selected');
+            holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).closest('td').removeClass('errorContent');
+        },
+
         saveItem: function () {
             var self = this;
             var mid = 100;

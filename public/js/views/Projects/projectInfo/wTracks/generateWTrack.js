@@ -132,6 +132,8 @@ define([
             this.createJob = options.createJob; // ? options.createJob : true;
             this.quotationDialog = options.quotationDialog;
 
+            this.eventChannel = options.eventChannel;
+
             this.render();
         },
 
@@ -495,14 +497,6 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
 
-                var filter = {
-                    project: {
-                        key  : 'project._id',
-                        value: [_id],
-                        type : 'ObjectId'
-                    }
-                };
-
                 self.setChangedValueToModel();// add for setChanges by Hours
 
                 self.stopDefaultEvents(e);
@@ -531,12 +525,13 @@ define([
                         success: function () {
                             self.hideDialog();
 
-                            if (self.wTrackCollection && self.wTrackCollection.wTrackView) {
-                                self.wTrackCollection.wTrackView.undelegateEvents(); // need refactor
-                            }
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('generated');
 
-                            if (self.wTrackCollection) {
-                                self.wTrackCollection.getFirstPage({page: 1, filter: filter});
+                                App.render({
+                                    type   : 'notify',
+                                    message: 'Project data updated.'
+                                });
                             }
 
                             if (self.quotationDialog) {

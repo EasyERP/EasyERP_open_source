@@ -920,7 +920,7 @@ var TCard = function (event, models) {
                 var projectId;
 
                 if (err) {
-                    return err(err);
+                    return next(err);
                 }
 
                 projectId = tCard ? tCard.project : null;

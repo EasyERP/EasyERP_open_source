@@ -63,11 +63,24 @@ define([
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
 
+            this.collection.url = CONSTANTS.URLS.WTRACK;
+
             eventsBinder.subscribeCollectionEvents(this.collection, this);
 
             this.startNumber = options.startNumber || 1;
 
             this.render();
+        },
+
+        hideDeleteBtnAndUnSelectCheckAll: function () {
+            $('#deletewTrack').hide();
+            $('#top-bar-generateBtn').hide();
+            $('#top-bar-copyBtn').hide();
+            $('#createBtn').show();
+
+            this.$el.find('#checkAll').prop('checked', false);
+
+            this.setAllTotalVals();
         },
 
         createItem: function (e) {
@@ -344,7 +357,7 @@ define([
 
             return false;
         },
-        
+
         copyRow: function (e) {
 
             var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');
