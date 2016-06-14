@@ -19,6 +19,7 @@ define([
             'click .addProductItem'  : 'getProducts',
             'click .current-selected': 'showProductsSelect',
             'change input.statusInfo': 'recalculateTaxes',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'keyup input.statusInfo' : 'recalculateTaxes'
         },
 
@@ -56,15 +57,25 @@ define([
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr('data-id');
             var trEll = parrent.find('tr.productItem');
+            var templ = _.template(ProductInputContent);
+            var currency = {};
 
             e.preventDefault();
             e.stopPropagation();
 
+            currency._id = $('#currencyDd').attr('data-id');
+
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
-                    return parrent.prepend(_.template(ProductInputContent));
+                    return parrent.prepend(templ({
+                        currencyClass: helpers.currencyClass,
+                        currency     : currency
+                    }));
                 }
-                $(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
+                $(trEll[trEll.length - 1]).after(templ({
+                    currencyClass: helpers.currencyClass,
+                    currency     : currency
+                }));
             }
 
             return false;
@@ -97,7 +108,7 @@ define([
             trEl.attr('data-id', model.id);
 
             parrent.find('.current-selected').text(target.text()).attr('data-id', _id);
-
+            parrent.removeClass('errorContent');
             $('.newSelectList').hide();
 
             this.calculateTotal(selectedProduct.info.salePrice);

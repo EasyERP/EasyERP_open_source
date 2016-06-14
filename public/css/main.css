@@ -722,7 +722,7 @@ th {
   width: 100%;
 }
 .vacation-list .V {
-  background-color: #a22a2d;
+  background-color: #e55253;
 }
 .vacation-list .P {
   background-color: #f9a203;
@@ -842,6 +842,10 @@ th {
 .vacation-list .subHeaderHolder th {
   color: #000000;
   line-height: 20px;
+}
+.vacation-list #caption .subMarker,
+.vacation-list .subHeaderHolder .subMarker {
+  color: #ffffff;
 }
 .vacation-list .newSelectList,
 .salary-list .newSelectList,
@@ -1283,6 +1287,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Vocations ===================================*/
 /*=New User=======================================*/
 /*==DashBoard Vocation============================*/
+/*== Capacity =====================================*/
 /*== forInfo ======================================*/
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
@@ -1491,7 +1496,7 @@ li.fired {
   margin-top: -26px;
 }
 .V {
-  background-color: #a22a2d;
+  background-color: #e55253;
 }
 .P {
   background-color: #f9a203;
@@ -1722,7 +1727,7 @@ textarea {
   content: '₴';
 }
 .errorContent {
-  border: 1px solid red !important;
+  border: 1px solid #e55253 !important;
 }
 span.error {
   color: #e55253 !important;
@@ -1819,6 +1824,16 @@ input::-ms-clear {
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
+}
+.kanban .column .item.errorContent {
+  background-color: #e55253;
+}
+.kanban .column .item.errorContent .opportunity-header h4,
+.kanban .column .item.errorContent .opportunity-header h3 {
+  color: #ffffff;
+}
+.kanban .column .item.errorContent .opportunity-content p {
+  color: #ffffff;
 }
 .kanban .column .item.active {
   box-shadow: 0px 0 10px rgba(50, 50, 50, 0.75);
@@ -8803,7 +8818,7 @@ textarea#editInput {
   padding: 0;
   text-align: center;
   float: left;
-  height: 21px;
+  height: 100%;
   background-color: #bdd7ee;
   color: white;
 }
@@ -8825,7 +8840,7 @@ textarea#editInput {
   padding: 0;
   padding-right: 3px;
   background-color: #3c86e0;
-  color: #000000;
+  color: #ffffff;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -9054,7 +9069,7 @@ textarea#editInput {
   background-color: #36384e;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.vacation {
-  background-color: #a22a2d;
+  background-color: #e55253;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.personal {
   background-color: #f9a203;

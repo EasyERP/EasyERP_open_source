@@ -59,8 +59,10 @@ define([
         },
 
         showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
+            var $selectList = $('.newSelectList');
+
+            if ($selectList.is(':visible')) {
+                $selectList.remove();
                 return false;
             }
 
@@ -84,7 +86,7 @@ define([
                 headers: {
                     mid: mid
                 },
-                
+
                 patch   : true,
                 validate: false,
                 success : function () {

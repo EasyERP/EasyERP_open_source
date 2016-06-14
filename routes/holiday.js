@@ -10,15 +10,16 @@ module.exports = function (event, models) {
     var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
+    router.use(accessStackMiddleWare);
 
-    router.get('/', accessStackMiddleWare, handler.getForView);
+    router.get('/', handler.getForView);
     
-    router.patch('/', accessStackMiddleWare, handler.putchBulk);
-    router.patch('/:id', accessStackMiddleWare, handler.putchModel);
-    router.post('/', accessStackMiddleWare, handler.create);
+    router.patch('/', handler.putchBulk);
+    router.patch('/:id', handler.putchModel);
+    router.post('/', handler.create);
 
-    router.delete('/:id', accessStackMiddleWare, handler.remove);
-    router.delete('/', accessStackMiddleWare, handler.bulkRemove);
+    router.delete('/:id', handler.remove);
+    router.delete('/', handler.bulkRemove);
 
     return router;
 };

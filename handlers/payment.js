@@ -1238,10 +1238,15 @@ var Module = function (models, event) {
 
             request.query.wId = wId;
 
-            totalToPay = parseFloat(totalToPay).toFixed(2);
+           /* totalToPay = parseFloat(totalToPay).toFixed(2);
             paid = parseFloat(paid).toFixed(2);
 
-            isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);
+            isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);*/
+
+            totalToPay = parseInt(totalToPay, 10);
+            paid = parseInt(paid, 10);
+
+            isNotFullPaid = paid < totalToPay;
 
             if (isNotFullPaid) {
                 request.query.status = 'In Progress';

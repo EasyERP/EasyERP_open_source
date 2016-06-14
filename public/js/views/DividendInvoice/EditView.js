@@ -54,7 +54,7 @@ define([
             this.filter = options.filter;
 
             this.currentModel = options.model || options.collection.getElement();
-            this.currentModel.urlRoot = '/Invoice';
+            this.currentModel.urlRoot = '/invoices';
             this.responseObj = {};
 
             this.redirect = options.redirect;

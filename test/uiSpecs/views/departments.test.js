@@ -9,6 +9,7 @@ define([
     'views/Departments/EditView',
     'views/Departments/form/FormView',
     'views/Departments/list/ListView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
@@ -23,6 +24,7 @@ define([
              EditView,
              FormView,
              ListView,
+             eventsBinder,
              $,
              chai,
              chaiJquery,
@@ -3232,7 +3234,7 @@ define([
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
                 expect(topBarView.$el.find('h3')).to.exist;
-                expect(topBarView.$el.find('h3').text()).to.be.equals('Groups');
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Departments');
                 expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
         });
@@ -3260,16 +3262,33 @@ define([
             it('Try to create departments list view', function (done) {
                 var $contentHolderEl;
                 var $listContainerEl;
-                var depsUrl = new RegExp('\/Departments\/list', 'i');
+                var depsUrl = new RegExp('\/Departments\/', 'i');
 
                 server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
+
+                depsCollection = new DepartmentsCollection({
+                    count      : 0,
+                    page       : 1,
+                    viewType   : 'list',
+                    contentType: 'Departments'
+                });
+                server.respond();
                 listView = new ListView({
                     collection   : depsCollection,
                     startTime    : new Date(),
                     newCollection: true,
                     page         : 1
                 });
-                server.respond();
+
+
+                eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                eventsBinder.subscribeCollectionEvents(depsCollection, listView);
+
+                depsCollection.trigger('fetchFinished', {
+                    totalRecords: depsCollection.totalRecords,
+                    currentPage : depsCollection.currentPage,
+                    pageSize    : depsCollection.pageSize
+                });
 
                 clock.tick(500);
 
@@ -3282,57 +3301,7 @@ define([
                 expect($listContainerEl).to.have.class('ui-sortable');
                 expect($listContainerEl).to.have.id('groupList');
 
-                topBarView.bind('copyEvent', listView.copy, listView);
-                topBarView.bind('generateEvent', listView.generate, listView);
-                topBarView.bind('createEvent', listView.createItem, listView);
-                topBarView.bind('editEvent', listView.editItem, listView);
-                topBarView.bind('saveEvent', listView.saveItem, listView);
-                topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                topBarView.bind('copyRow', listView.copyRow, listView);
-                topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                topBarView.bind('importEvent', listView.importFiles, listView);
-                topBarView.bind('pay', listView.newPayment, listView);
-                topBarView.bind('changeDateRange', listView.changeDateRange, listView);
-
-                depsCollection.bind('showmore', listView.showMoreContent, listView);
-
                 done();
-            });
-
-            it('Try to showmore collection with error', function () {
-                var depsUrl = new RegExp('\/Departments\/list', 'i');
-                var spyResponse;
-
-                server.respondWith('GET', depsUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
-                depsCollection.showMore();
-                server.respond();
-
-                spyResponse = mainSpy.args[0][0];
-                expect(spyResponse).to.have.property('type', 'error');
-                expect(spyResponse).to.have.property('message', 'Some Error.');
-            });
-
-            it('Try to showmore collection', function () {
-                var $contentHolderEl;
-                var $listContainerEl;
-                var depsUrl = new RegExp('\/Departments\/list', 'i');
-
-                server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
-
-                depsCollection.showMore({
-                    page: 2
-                });
-                server.respond();
-
-                $contentHolderEl = view.$el.find('#content-holder');
-                $listContainerEl = $contentHolderEl.find('ul');
-
-                expect($contentHolderEl).to.exist;
-                expect($listContainerEl).to.exist;
-                expect($listContainerEl).to.have.class('ui-sortable');
-                expect($listContainerEl).to.have.id('groupList');
             });
 
             it('Try to delete item with some error', function () {
@@ -3381,8 +3350,9 @@ define([
             it('Try to edit item with error of  /Departments/form/?id=55b92ace21e4b7c40f000012', function () {
                 var spyResponse;
                 var $needLiEl = listView.$el.find('#groupList > li:nth-child(1)');
+                var departmentsUrl = new RegExp('\/Departments\/', 'i');
 
-                server.respondWith('GET', '/Departments/form/?id=55b92ace21e4b7c40f000012', [400, {'Content-Type': 'application/json'}, JSON.stringify(new Error())]);
+                server.respondWith('GET', departmentsUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(new Error())]);
                 $needLiEl.click();
 
                 server.respond();
@@ -3396,7 +3366,7 @@ define([
             it('Try to open edit form', function () {
                 var $dialogContainerEl;
                 var $needLiEl = listView.$el.find('#groupList > li:nth-child(1)');
-                var depFormUrl = new RegExp('\/Departments\/form\/', 'i');
+                var depFormUrl = new RegExp('\/Departments\/', 'i');
                 var usersUrl = new RegExp('\/users\/forDd', 'i');
                 var employeesUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
 

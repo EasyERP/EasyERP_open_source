@@ -6,16 +6,18 @@ define([
     'views/Holiday/list/ListView',
     'views/Holiday/TopBarView',
     'views/Holiday/CreateView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules, fixtures, HolidaysCollection, MainView, ListView, TopBarView, CreateView, $, chai, chaiJquery, sinonChai) {
+], function (modules, fixtures, HolidaysCollection, MainView, ListView, TopBarView, CreateView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     
     var expect;
     var fakeHoliday = {
-        success: [
+        total : 300,
+        data: [
             {
                 _id    : "569fa6fc62d172544baf0db9",
                 date   : "2016-10-13T22:00:00.000Z",
@@ -264,6 +266,7 @@ define([
     var view;
     var topBarView;
     var listView;
+    var ajaxSpy;
     
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -272,11 +275,15 @@ define([
     describe('Holidays View', function () {
         var $fixture;
         var $elFixture;
+        before(function () {
+            ajaxSpy = sinon.spy($, 'ajax');
+        });
 
         after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -349,11 +356,7 @@ define([
 
             it('Try to create TopBarView', function () {
                 var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
-                var holidaysTotalUrl = new RegExp('\/holiday\/totalCollectionLength');
 
-                server.respondWith('GET', holidaysTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    count: 29
-                })]);
                 server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeHoliday)]);
                 holidaysCollection = new HolidaysCollection({
                     viewType: 'list',
@@ -374,6 +377,7 @@ define([
             var mainSpy;
             var windowConfirmStub;
             var clock;
+            var $thisEl;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -393,75 +397,156 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create holidays list view', function (done) {
-                    var $listHolder;
-                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
-                    var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
+                    var holidaysUrl = new RegExp('\/Holiday', 'i');
+                    var $firstRow;
+                    var countColumn;
+                    var subject;
+                    var $pagination;
+                    var $currentPageList;
 
                     server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeHoliday)]);
-                    server.respondWith('GET', holidayTotalCollectionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 29
-                    })]);
+
+                    holidaysCollection = new HolidaysCollection({
+                        viewType: 'list',
+                        page    : 1
+                    });
+
+                    server.respond();
+
                     listView = new ListView({
                         collection: holidaysCollection,
                         startTime : new Date()
                     });
-                    server.respond();
-                    server.respond();
 
                     clock.tick(200);
 
-                    $listHolder = listView.$el;
+                    $thisEl = listView.$el;
 
-                    expect($listHolder.find('table')).to.exist;
+                    expect($thisEl.find('table')).to.exist;
+                    eventsBinder.subscribeCollectionEvents(holidaysCollection, listView);
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
 
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+                    holidaysCollection.trigger('fetchFinished', {
+                        totalRecords: holidaysCollection.totalRecords,
+                        currentPage : holidaysCollection.currentPage,
+                        pageSize    : holidaysCollection.pageSize
+                    });
 
-                    holidaysCollection.bind('showmore', listView.showMoreContent, listView);
+                    expect($thisEl).to.exist;
+                    expect($thisEl.find('.pagination')).to.exist;
+
+                    $firstRow = $thisEl.find('#listTable > tr').first();
+                    countColumn = $firstRow.find('td').length;
+                    expect(countColumn).to.be.equals(4);
+
+                    subject = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(subject).not.to.be.empty;
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    $pagination = $thisEl.find('.pagination');
+
+                    expect($pagination).to.exist;
+                    expect($pagination.find('.countOnPage')).to.exist;
+                    expect($pagination.find('.pageList')).to.exist;
+
+                    $currentPageList = $pagination.find('.currentPageList');
+                    expect($currentPageList).to.exist;
+
+                    $currentPageList = $pagination.find('#pageList');
+                    expect($currentPageList).to.exist;
+                    expect($currentPageList).to.have.css('display', 'none');
 
                     done();
                 });
 
-                it('Try to showMore collection with error', function () {
-                    var spyResponse;
-                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
-                    var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
+                it('Try to change page1 to page2', function () {
+                    var $currentPageList = $thisEl.find('.currentPageList');
+                    var ajaxResponse;
+                    var $page2Btn;
 
-                    server.respondWith('GET', holidaysUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeHoliday)]);
-                    server.respondWith('GET', holidayTotalCollectionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 29
-                    })]);
-                    holidaysCollection.showMore();
-                    server.respond();
+                    ajaxSpy.reset();
+
+                    $currentPageList.mouseover();
+                    $page2Btn = $thisEl.find('#pageList > li').eq(1);
+                    $page2Btn.click();
                     server.respond();
 
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxSpy.called).to.be.true;
+                    expect(ajaxResponse).to.have.property('url', '/Holiday/');
+                    expect(ajaxResponse.data).to.have.property('contentType').and.to.not.undefined;
+                    expect(ajaxResponse.data).to.have.property('page', 2);
                 });
 
-                it('Try to showMore collection', function () {
-                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
-                    var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
+                it('Try to select 25 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').first();
+                    var ajaxResponse;
 
-                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeHoliday)]);
-                    server.respondWith('GET', holidayTotalCollectionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 29
-                    })]);
-                    holidaysCollection.showMore();
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
                     server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                });
+
+                it('Try to select 50 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(1);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
                     server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '50');
+                });
+
+                it('Try to select 100 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(2);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '100');
+                });
+
+                it('Try to select 200 items per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needBtn = $pagination.find('.pageList > a').eq(3);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.be.exist;
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(ajaxResponse.data).to.have.property('count', '200');
                 });
 
                 it('Try to delete with changes', function () {
@@ -512,9 +597,9 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    spyResponse = mainSpy.args[1][0];
+                    spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                    expect(spyResponse).to.have.property('message', "Can't remove items");
                 });
 
                 it('Try to create item', function () {
