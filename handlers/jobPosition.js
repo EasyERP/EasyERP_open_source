@@ -61,7 +61,7 @@ var Module = function (models) {
                             return num;
                         });
                         break;
-
+                    // skip default;
                 }
             });
 
@@ -141,6 +141,8 @@ var Module = function (models) {
         var getCount;
         var getData;
         var i;
+        var keysSort;
+        var key;
 
         function compareSort(personA, personB) {
             if (sort[i] === '1') {
@@ -195,8 +197,11 @@ var Module = function (models) {
                             return pCb(err);
                         }
 
-                        for (i in sort) {
-                            if (result.length && typeof result[0][i] === 'number') {
+                        keysSort = Object.keys(sort);
+
+                        for (i = keysSort.length - 1; i >= 0; i--) {
+                            key = keysSort[i];
+                            if (result.length && typeof result[0][key] === 'number') {
                                 result.sort(compareSort);
                             }
                         }

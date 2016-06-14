@@ -8,7 +8,7 @@ define([
     'views/ChartOfAccount/CreateView',
     'views/ChartOfAccount/list/ListItemView',
     'collections/ChartOfAccount/filterCollection',
-    'collections/ChartOfAccount/EditCollection',
+    'collections/ChartOfAccount/editCollection',
     'models/chartOfAccount'
 ], function ($, _, ListViewBase, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ListItemView, ContentCollection, EditCollection, CurrentModel) {
     'use strict';

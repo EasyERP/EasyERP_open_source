@@ -132,6 +132,7 @@ var Module = function (models, event) {
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
+                // skip default;
             }
         }
 
@@ -620,6 +621,7 @@ var Module = function (models, event) {
             case 'form':
                 getById(req, res, next);
                 break;
+            // skip default;
         }
     };
 
@@ -1315,7 +1317,7 @@ var Module = function (models, event) {
             var paid = payment.paidAmount || 0;
             var wTrackIds = _.pluck(invoice.products, 'product');
 
-            function updateWtrack(id, cb) {
+            function updateWTrack(id, cb) {
                 var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
                 function wTrackFinder(innerWaterfallCb) {
@@ -1372,7 +1374,7 @@ var Module = function (models, event) {
                 return waterfallCallback(null, payment);
             }
 
-            async.eachSeries(wTrackIds, updateWtrack, function (err, result) {
+            async.eachSeries(wTrackIds, updateWTrack, function (err, result) {
                 if (err) {
                     return waterfallCallback(err);
                 }
