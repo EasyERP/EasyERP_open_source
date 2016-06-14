@@ -8,8 +8,9 @@ define([
     'populate',
     'views/DividendInvoice/InvoiceProductItems',
     'views/Payment/list/ListHeaderInvoice',
-    'constants'
-], function ($, _, Backbone, CreateTemplate, ParentView, InvoiceModel, populate, InvoiceItemView, ListHeaderInvoice, CONSTANTS) {
+    'constants',
+    'helpers'
+], function ($, _, Backbone, CreateTemplate, ParentView, InvoiceModel, populate, InvoiceItemView, ListHeaderInvoice, CONSTANTS, helpers) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -22,6 +23,20 @@ define([
             this.responseObj = {};
 
             this.render();
+        },
+
+        chooseOption: function (e) {
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+            var array = this.$el.find('.' + oldCurrencyClass);
+
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
         },
 
         saveItem: function () {

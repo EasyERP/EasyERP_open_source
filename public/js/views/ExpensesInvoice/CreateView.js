@@ -12,8 +12,9 @@ define([
     'views/Assignees/AssigneesView',
     'views/Payment/list/ListHeaderInvoice',
     'dataService',
-    'constants'
-], function ($, _, Backbone, ParentView, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, ListHeaderInvoice, dataService, CONSTANTS) {
+    'constants',
+    'helpers'
+], function ($, _, Backbone, ParentView, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, ListHeaderInvoice, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -33,7 +34,19 @@ define([
         },
 
         chooseOption: function (e) {
-            var holder = $(e.target).parents('dd').find('.current-selected');
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+            var array = this.$el.find('.' + oldCurrencyClass);
+
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
+
+            var holder = $(e.target).parents('td').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $(e.target).closest('td').removeClass('errorContent');
         },

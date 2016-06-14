@@ -47,15 +47,25 @@ define([
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr('data-id');
             var trEll = parrent.find('tr.productItem');
+            var templ = _.template(ProductInputContent);
+            var currency = {};
 
             e.preventDefault();
             e.stopPropagation();
 
+            currency._id = $('#currencyDd').attr('data-id');
+
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
-                    return parrent.prepend(_.template(ProductInputContent));
+                    return parrent.prepend(templ({
+                        currencyClass: helpers.currencyClass,
+                        currency     : currency
+                    }));
                 }
-                $(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
+                $(trEll[trEll.length - 1]).after(templ({
+                    currencyClass: helpers.currencyClass,
+                    currency     : currency
+                }));
             }
 
             return false;
