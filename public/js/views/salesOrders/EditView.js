@@ -385,6 +385,8 @@ define([
                 },
 
                 success: function () {
+                    var url = window.location.hash;
+                    
                     $('.edit-product-dialog').remove();
 
                     App.projectInfo = App.projectInfo || {};
@@ -394,6 +396,9 @@ define([
 
                     if (self.eventChannel) {
                         self.eventChannel.trigger('orderRemove');
+                    } else {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(url, {trigger: true});
                     }
                 },
 

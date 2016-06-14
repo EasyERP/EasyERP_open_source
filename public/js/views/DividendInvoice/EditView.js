@@ -192,12 +192,16 @@ define([
             if (answer) {
                 this.currentModel.destroy({
                     success: function () {
+
                         $('.edit-dialog').remove();
 
                         self.hideDialog();
 
                         if (self.eventChannel) {
                             self.eventChannel.trigger('invoiceRemove');
+                        } else {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         }
                     },
 
