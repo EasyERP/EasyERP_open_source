@@ -1,5 +1,5 @@
 define([
-    'underscore',
+    'Underscore',
     'text!templates/supplierPayments/TopBarTemplate.html',
     'views/topBarViewBase',
     'custom',

@@ -3120,7 +3120,7 @@ define([
                 server.respond();
 
                 expect(createItemSpy.calledTwice).to.be.true;
-                expect(window.location.hash).to.be.equals('#easyErp/Users');
+                expect(window.location.hash).to.be.equals('#easyErp/Users/list/p=1/c=100');
             });
 
             it('Try to close create dialog', function () {
@@ -3344,7 +3344,6 @@ define([
 
                 spyResponse = mainSpy.args[1][0];
                 expect(spyResponse).to.have.property('type', 'error');
-                expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
             });
 
             it('Try to delete item from form', function () {
