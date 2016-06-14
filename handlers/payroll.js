@@ -234,7 +234,7 @@ var Module = function (models) {
     };
 
     function getByDataKey(req, res, next) {
-        var id = req.query.id || req.params.id;
+        var id = req.query.id  || req.params.id || req.query.dataKey;
         var data = req.query;
         var error;
         var sort = data.sort || {'employee.name.first': 1, 'employee.name.last': 1};
@@ -335,6 +335,11 @@ var Module = function (models) {
     this.getForView = function (req, res, next) {
         var query = req.query;
         var id = req.params.id;
+        var sort = query.sort || {};
+
+        if (Object.keys(sort).length){
+            return getByDataKey(req, res, next);
+        }
 
         if (query.id || id) {
             getByDataKey(req, res, next);
