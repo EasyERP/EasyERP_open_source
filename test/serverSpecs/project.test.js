@@ -227,12 +227,6 @@ describe('Project Specs', function () {
                     expect(firstProject)
                         .and.to.have.property('progress');
                     expect(firstProject)
-                        .and.to.have.property('StartDate');
-                    expect(firstProject)
-                        .and.to.have.property('EndDate');
-                    expect(firstProject)
-                        .and.to.have.property('TargetEndDate');
-                    expect(firstProject)
                         .and.to.have.property('notRemovable');
                     expect(firstProject)
                         .and.to.have.property('workflow')
@@ -249,15 +243,7 @@ describe('Project Specs', function () {
                         .and.to.have.property('date')
                         .and.to.be.a('string');
                     expect(firstProject)
-                        .and.to.have.property('createdBy')
-                        .and.to.have.property('user')
-                        .and.to.be.a('string');
-                    expect(firstProject)
-                        .and.to.have.property('editedBy')
-                        .and.to.have.property('date')
-                        .and.to.be.a('string');
-                    expect(firstProject)
-                        .and.to.have.property('editedBy')
+                        .to.have.property('createdBy')
                         .and.to.have.property('user')
                         .and.to.be.a('string');
                     expect(firstProject)
@@ -275,6 +261,25 @@ describe('Project Specs', function () {
                             .and.to.have.lengthOf(24);
                         expect(Object.keys(firstProject.salesManager))
                             .to.have.lengthOf(1);
+                    }
+                    if (firstProject.StartDate) {
+                        expect(firstProject.StartDate)
+                            .to.be.a('string');
+                    }
+                    if (firstProject.EndDate) {
+                        expect(firstProject.EndDate)
+                            .to.be.a('string');
+                    }
+                    if (firstProject.TargetEndDate) {
+                        expect(firstProject.TargetEndDate)
+                            .to.be.a('string');
+                    }
+                    if (firstProject.editedBy && firstProject.editedBy.user) {
+                        expect(firstProject.editedBy.user)
+                            .to.be.a('string');
+                        expect(firstProject.editedBy)
+                            .to.have.property('date')
+                            .and.to.be.a('string');
                     }
 
                     done();
@@ -374,60 +379,6 @@ describe('Project Specs', function () {
                 .get('logout')
                 .expect(302, done);
         });
-
-        /* it('should fail create quotation', function (done) {
-         var body = {
-         'supplier'         : CONSTANTS.SUPPLIER,
-         'project'          : CONSTANTS.PROJECT,
-         'workflow'         : CONSTANTS.WORKFLOW,
-         'supplierReference': null,
-         'orderDate'        : '28 Dec, 2015',
-         'expectedDate'     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
-         'name'             : 'PO',
-         'invoiceControl'   : null,
-         'invoiceRecived'   : false,
-         'paymentTerm'      : null,
-         'fiscalPosition'   : null,
-         'destination'      : null,
-         'incoterm'         : null,
-         'products'         : [
-         {
-         'product'      : CONSTANTS.PRODUCT,
-         'unitPrice'    : '500',
-         'quantity'     : '1',
-         'scheduledDate': '28 Dec, 2015',
-         'taxes'        : '0.00',
-         'description'  : '',
-         'subTotal'     : '500',
-         'jobs'         : CONSTANTS.JOB
-         }
-         ],
-         'currency'         : {
-         _id : CONSTANTS.EURO,
-         name: 'EUR'
-         },
-         'forSales'         : true,
-         'deliverTo'        : CONSTANTS.DELIVERTO,
-         'populate'         : true,
-         'paymentInfo'      : {
-         'total'  : '500.00',
-         'unTaxed': '500.00',
-         'taxes'  : '0.00'
-         },
-         'groups'           : {
-         'owner': CONSTANTS.OWNER,
-         'users': [],
-         'group': []
-         },
-         'whoCanRW'         : 'everyOne'
-         };
-
-         aggent
-         .post('quotation')
-         .set('type', 'sales')
-         .send(body)
-         .expect(403, done);
-         });*/
     });
 
     describe('Project with no authorise', function () {
