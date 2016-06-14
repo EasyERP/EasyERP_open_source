@@ -132,7 +132,7 @@ var Module = function (models) {
     function getFilterJobPositions(req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var sort = req.query.sort;
+        var sort = req.query.sort || {};
         var data = req.query;
         var parallelTasks;
         var paginationObject = pageHelper(data);

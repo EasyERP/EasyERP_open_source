@@ -895,6 +895,13 @@ var Module = function (models, event) {
                 key  : 'forSales',
                 value: ['false']
             };
+        } else {
+            Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+
+            filter.forSales = {
+                key  : 'forSales',
+                value: ['true']
+            };
         }
 
         if (req.query.sort) {
