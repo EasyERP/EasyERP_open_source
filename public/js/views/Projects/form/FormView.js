@@ -159,6 +159,8 @@ define([
             this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiceProforma);
             this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
 
+            this.listenTo(eventChannel, 'generated', this.getWTrack);
+
         },
 
         viewQuotation: function (e) {
@@ -517,6 +519,7 @@ define([
 
         createDialog: function (e) {
             var jobs = {};
+            var self = this;
             var $target = $(e.target);
 
             jobs._id = $target.attr('data-id');
@@ -529,11 +532,14 @@ define([
             this.generatedView = new GenerateWTrack({
                 model           : this.formModel,
                 wTrackCollection: this.wCollection,
-                jobs            : jobs
+                jobs            : jobs,
+                eventChannel    : self.eventChannel
+
             });
         },
 
         createJob: function () {
+            var self = this;
             this.wCollection.unbind();
             this.wCollection.bind('reset', this.renderContent, this);
 
@@ -545,7 +551,8 @@ define([
                 reset           : true,
                 model           : this.formModel,
                 wTrackCollection: this.wCollection,
-                createJob       : true
+                createJob       : true,
+                eventChannel    : self.eventChannel
             });
 
             App.projectInfo.currentTab = 'timesheet';
@@ -854,7 +861,6 @@ define([
 
         getWTrack: function (cb) {
             var self = this;
-            var callback = _.once(cb);
             var _id = this.id;
 
             var filter = {
@@ -885,10 +891,12 @@ define([
                 itemsNumber = !isNaN(itemsNumber) ? itemsNumber : CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
 
-                callback();
-
-                if (self.wTrackView) {
+               /* if (self.wTrackView) {
                     self.wTrackView.undelegateEvents();
+                }*/
+
+                if (cb) {
+                    cb();
                 }
 
                 this.wTrackView = new WTrackView({
@@ -908,7 +916,6 @@ define([
 
             this.wCollection.unbind();
             this.wCollection.bind('reset', createView);
-
         },
 
         getInvoiceStats: function (cb) {
