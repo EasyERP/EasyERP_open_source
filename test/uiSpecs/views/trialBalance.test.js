@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'collections/trialBalance/filterCollection',
@@ -6,11 +7,12 @@ define([
     'views/trialBalance/list/ListView',
     'views/trialBalance/TopBarView',
     'views/Filter/FilterView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules, fixtures, TrialBalanceCollection, MainView, ListView, TopBarView, FilterView, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, TrialBalanceCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -104,6 +106,8 @@ define([
     var trialBalanceCollection;
     var setDateRangeSpy;
     var showDatePickerSpy;
+    var historyNavigateSpy;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -114,6 +118,8 @@ define([
         var $elFixture;
 
         before(function () {
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            ajaxSpy = sinon.spy($, 'ajax');
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
         });
@@ -122,6 +128,8 @@ define([
             view.remove();
             setDateRangeSpy.restore();
             showDatePickerSpy.restore();
+            historyNavigateSpy.restore();
+            ajaxSpy.restore();
 
             if ($('.ui-dialog').length) {
                 $('.ui-dialog').remove();
@@ -177,15 +185,18 @@ define([
         describe('TopBarView', function () {
             var server;
             var clock;
+            var consoleLogSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 clock = sinon.useFakeTimers();
+                consoleLogSpy = sinon.spy(console, 'log');
             });
 
             after(function () {
                 server.restore();
                 clock.restore();
+                consoleLogSpy.restore();
             });
 
             it('Try to fetch collection with error', function () {
@@ -199,6 +210,8 @@ define([
                     contentType: 'trialBalance'
                 });
                 server.respond();
+
+                expect(consoleLogSpy.calledOnce).to.be.true;
             });
 
             it('Try to create TopBarView', function (done) {
@@ -211,6 +224,8 @@ define([
                     contentType: 'trialBalance'
                 });
                 server.respond();
+
+                expect(trialBalanceCollection).to.have.lengthOf(9);
 
                 clock.tick(200);
 
@@ -271,27 +286,20 @@ define([
                     });
                     server.respond();
 
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                    eventsBinder.subscribeCollectionEvents(trialBalanceCollection, listView);
+
+                    trialBalanceCollection.trigger('fetchFinished', {
+                        totalRecords: trialBalanceCollection.totalRecords,
+                        currentPage : trialBalanceCollection.currentPage,
+                        pageSize    : trialBalanceCollection.pageSize
+                    });
+
                     clock.tick(300);
 
                     $thisEl = listView.$el;
                     expect($thisEl.find('.list')).to.exist;
-                    expect($thisEl.find('#listTable > tr').length).to.be.not.equals(0);
-
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
-
-                    trialBalanceCollection.bind('showmore', listView.showMoreContent, listView);
+                    expect($thisEl.find('#listTable > tr').length).to.be.not.equals(1);
 
                     done();
                 });

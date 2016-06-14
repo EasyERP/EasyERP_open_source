@@ -51,7 +51,7 @@ define([
             var projectId = $(e.target).data('id');
             var model = new ProjectModel({validate: false});
 
-            model.urlRoot = '/Projects/form/' + projectId;
+            model.urlRoot = '/Projects/' + projectId;
             model.fetch({
                 success: function (newModel) {
                     new ProjectEditView({model: newModel});

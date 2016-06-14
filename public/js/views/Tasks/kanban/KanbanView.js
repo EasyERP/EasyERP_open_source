@@ -42,6 +42,7 @@
             this.responseObj = {};
             this.foldWorkflows = [];
 
+            _.bindAll(this, 'saveKanbanSettings');
             this.render();
             this.asyncFetch(options.workflowCollection, options.parrentContentId);
         },

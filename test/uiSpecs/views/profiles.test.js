@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'collections/Profiles/ProfilesCollection',
@@ -6,11 +7,12 @@ define([
     'views/Profiles/ContentView',
     'views/Profiles/TopBarView',
     'views/Profiles/CreateView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules, fixtures, ProfilesCollection, MainView, ContentView, TopBarView, CreateView, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, ProfilesCollection, MainView, ContentView, TopBarView, CreateView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
     var fakeProfiles = {
@@ -9556,6 +9558,8 @@ define([
     var topBarView;
     var listView;
     var profilesCollection;
+    var historyNavigateSpy;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -9565,10 +9569,18 @@ define([
         var $fixture;
         var $elFixture;
 
+        before(function () {
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            ajaxSpy = sinon.spy($, 'ajax');
+        });
+
         after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
+
+            historyNavigateSpy.restore();
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -9631,15 +9643,40 @@ define([
                 server.restore();
             });
 
+            it('Try to fetch collection with error response', function () {
+                var profilesUrl = new RegExp('\/profiles\/', 'i');
+
+                historyNavigateSpy.reset();
+
+                server.respondWith('GET', profilesUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                profilesCollection = new ProfilesCollection({
+                    filter     : null,
+                    viewType   : 'list',
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
+                    contentType: 'Profiles'
+                });
+                server.respond();
+
+                expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
+
+            });
+
             it('Try to create TopBarView', function () {
                 var profilesUrl = new RegExp('\/profiles\/', 'i');
 
                 server.respondWith('GET', profilesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProfiles)]);
                 profilesCollection = new ProfilesCollection({
-                    count      : 0,
+                    filter     : null,
+                    viewType   : 'list',
                     page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'Profiles'
-
                 });
                 server.respond();
 
@@ -9662,8 +9699,10 @@ define([
             var mainSpy;
             var windowConfirmStub;
             var clock;
+            var $thisEl;
 
             before(function () {
+                window.location.hash = '#easyErp/Profiles';
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 windowConfirmStub = sinon.stub(window, 'confirm');
@@ -9695,7 +9734,17 @@ define([
 
                     clock.tick(200);
 
-                    $contentHolderEl = view.$el.find('#content-holder');
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                    eventsBinder.subscribeCollectionEvents(profilesCollection, listView);
+
+                    profilesCollection.trigger('fetchFinished', {
+                        totalRecords: profilesCollection.totalRecords,
+                        currentPage : profilesCollection.currentPage,
+                        pageSize    : profilesCollection.pageSize
+                    });
+
+                    $thisEl = view.$el;
+                    $contentHolderEl = $thisEl.find('#content-holder');
                     $profileListEl = $contentHolderEl.find('.workflow-list-wrapper');
                     $profileTableEl = $contentHolderEl.find('#profileTableWrapper');
 
@@ -9717,18 +9766,6 @@ define([
                     expect($tableEl).to.have.class('list');
                     expect($tableEl.find('thead')).to.exist;
                     expect($tableEl.find('tbody')).to.exist;
-
-                });
-
-                it('Try to edit banned profile', function () {
-                    var spyResponse;
-                    var $needA = listView.$el.find('a[data-id="1387275598000"]');
-
-                    $needA.click();
-                    listView.editProfileDetails();
-                    spyResponse = mainSpy.args[0][0];
-
-                    expect(spyResponse).to.have.property('type', 'error');
 
                 });
 
@@ -9754,7 +9791,6 @@ define([
 
                     expect(window.location.hash).to.be.equals('#easyErp/Profiles');
                     expect(listView.$el.find('a[data-id="1438158808000"]').text()).to.be.equals('TEST Profile');
-                    //expect(listView.$el.find('#modulesAccessTable > tbody > tr:nth-child(1) > td:nth-child(2) > input').prop('checked')).to.be.true;
                 });
 
                 it('Try to delete profile with not empty user', function () {

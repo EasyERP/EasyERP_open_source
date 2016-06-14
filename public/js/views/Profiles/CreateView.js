@@ -79,7 +79,7 @@ define([
 
             switch (choice) {
                 case 'new':
-                    this.selectedProfile = this.profilesCollection.findWhere({profileName: 'baned'});
+                    this.selectedProfile = this.profilesCollection.findWhere({profileName: 'banned'});
                     break;
                 case 'base':
                     profileId = $('#profilesDd').data('id');
