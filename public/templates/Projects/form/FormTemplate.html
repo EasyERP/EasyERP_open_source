@@ -34,13 +34,13 @@
                             <label for="salesManager">Sales Manager</label>
                         </dt>
                         <dd>
-                            <a id="salesManager" href="javascript:;"><%=model.salesmanager ? (model.salesmanager.fullName):''%></a>
+                            <a id="salesManager" href="javascript:;"><%=model.salesManager ? (model.salesManager.fullName):''%></a>
                         </dd>
                         <dt>
                             <label for="projectManager">Project Manager</label>
                         </dt>
                         <dd>
-                            <a id="projectManager" href="javascript:;"><%=model.projectmanager ? (model.projectmanager.fullName):''%></a>
+                            <a id="projectManager" href="javascript:;"><%=model.projectManager ? (model.projectManager.fullName):''%></a>
                         </dd>
 
 
@@ -48,7 +48,7 @@
                         <dt><label for="projectTypeDD">Project Type </label></dt>
                         <dd>
                             <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>"
-                               class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
+                               class="current-selected" href="javascript:;"><%=model.projecttype? model.projecttype:'Select'%></a>
                         </dd>
                         <dt>
                             <label for="customerDd">Project Customer </label>
