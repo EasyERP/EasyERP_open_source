@@ -2467,14 +2467,11 @@ define([
 
                 it('Try to delete item good response', function () {
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-                    var dividendUrl = new RegExp('\/Invoice\/', 'i');
-                    var dividendTotalUrl = new RegExp('\/Invoice\/totalCollectionLength');
-                    var dividendListUrl = new RegExp('\/Invoice\/list', 'i');
+                    var dividendUrl = new RegExp('\/invoices\/', 'i');
 
-                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 3
-                    })]);
+                    ajaxSpy.reset();
+
+                    server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
                     server.respondWith('DELETE', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         "_id"             : "5742f26e7afe352f10c11c3d",
                         "_type": "dividendInvoice",
@@ -2528,9 +2525,10 @@ define([
                     $deleteBtn.click();
                     server.respond();
                     server.respond();
-                    server.respond();
 
                     expect(deleteSpy.calledTwice).to.be.true;
+                    expect(ajaxSpy.args[1][0]).to.have.property('type', 'GET');
+                    expect(ajaxSpy.args[1][0]).to.have.property('url', '/invoices/');
                 });
 
                 it('Try to go to editDialog with error response', function () {
@@ -2590,7 +2588,9 @@ define([
                 it('Try to delete item', function () {
                     var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
                     var dividendUrl = new RegExp('\/invoices\/', 'i');
+                    ajaxSpy.reset();
 
+                    server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
                     server.respondWith('DELETE', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         "_id"             : "5742f26e7afe352f10c11c3d",
                         "_type": "dividendInvoice",
@@ -2643,8 +2643,11 @@ define([
                     })]);
                     $deleteBtn.click();
                     server.respond();
+                    server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
+                    expect(ajaxSpy.args[1][0]).to.have.property('type', 'GET');
+                    expect(ajaxSpy.args[1][0]).to.have.property('url', '/invoices/');
                 });
 
                 it('Try to open not paid item and open CreatePaymentView', function (done) {
