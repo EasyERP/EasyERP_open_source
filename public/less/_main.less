@@ -238,7 +238,7 @@ textarea {
 
 
 .errorContent {
-  border: 1px solid @red-1 !important;
+  border: 1px solid red !important;
 }
 
 span.error {
@@ -1248,20 +1248,6 @@ input::-ms-clear {
       transition: box-shadow 1s ease;
       transition: border-color 1s ease;
       .border-radius(0px);
-      
-      &.errorContent {
-        background-color: @kanabError-bg;
-        .opportunity-header {
-          h4, h3 {
-            color: @kanabError-text;
-          }
-        }
-        .opportunity-content {
-          p {
-            color: @kanabError-text;
-          }
-        }
-      }
 
       &.active {
         .box-shadow(0px, 0, 10px, rgba(50, 50, 50, 0.75));
@@ -5135,7 +5121,7 @@ textarea#editInput {
             padding: 0;
             text-align: center;
             float: left;
-            height: 100%;
+            height: 21px;
             background-color: #bdd7ee;
             color: white;
           }
@@ -5179,7 +5165,7 @@ textarea#editInput {
             padding: 0;
             padding-right: 3px;
             background-color: @vacation;
-            color: @inactivate;
+            color: @overiewText-color;
             text-align: center;
             &.size40 {
               width: 50%;
