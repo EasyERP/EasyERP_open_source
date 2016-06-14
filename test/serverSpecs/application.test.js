@@ -181,7 +181,7 @@ describe('Application Specs', function () {
 
         it('should get applications length by workflows', function (done) {
             aggent
-                .get('applications/upload')
+                .get('applications/getApplicationsLengthByWorkflows')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;

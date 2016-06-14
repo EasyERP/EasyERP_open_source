@@ -86,7 +86,7 @@ describe('Invoice Specs', function () {
             };
 
             aggent
-                .post('quotation')
+                .post('quotations')
                 .set('type', 'sales')
                 .send(body)
                 .expect(201)
@@ -166,7 +166,7 @@ describe('Invoice Specs', function () {
             };
 
             aggent
-                .patch('invoice/' + proformaId)
+                .patch('invoices/' + proformaId)
                 .send(body)
                 .set('type', 'sales')
                 .expect(200)
@@ -189,7 +189,7 @@ describe('Invoice Specs', function () {
             var body = {};
 
             aggent
-                .patch('invoice/123cba')
+                .patch('invoices/123cba')
                 .send(body)
                 .set('type', 'sales')
                 .expect(400, done);
@@ -203,7 +203,7 @@ describe('Invoice Specs', function () {
             };
 
             aggent
-                .get('invoice/')
+                .get('invoices/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -254,7 +254,7 @@ describe('Invoice Specs', function () {
             };
 
             aggent
-                .patch('invoice/approve')
+                .patch('invoices/approve')
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -370,7 +370,7 @@ describe('Invoice Specs', function () {
 
         it('should delete quotation', function (done) {
             aggent
-                .delete('quotation/' + quotationBody._id)
+                .delete('quotations/' + quotationBody._id)
                 .set('type', 'sales')
                 .expect(200, done);
         });
