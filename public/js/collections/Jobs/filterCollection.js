@@ -25,6 +25,11 @@ define([
             options.error = options.error || _errHandler;
             page = options.page;
 
+            if (options && options.url) {
+                this.url = options.url;
+                delete options.url;
+            }
+
             this.startTime = new Date();
 
             if (page) {
