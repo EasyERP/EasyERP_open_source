@@ -520,7 +520,7 @@ define([
             "href"     : "DashBoardVacation"
         }];
     var fakeEmployeeForList = {
-        count : 5,
+        total : 300,
         data: [
             {
                 _id: "560264bb8dc408c632000005",
@@ -5170,32 +5170,50 @@ define([
         describe('Employees list view', function () {
             var server;
             var mainSpy;
+            var jQueryAjaxSpy;
+            var $thisEl;
+            var exportStub;
+            var exportStubXlsx;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                jQueryAjaxSpy = sinon.spy($, 'ajax');
+                exportStub =  sinon.stub(ListView.prototype, 'exportToCsv');
+                exportStubXlsx =  sinon.stub(ListView.prototype, 'exportToXlsx');
+                exportStub.returns(true);
+                exportStubXlsx.returns(true);
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                jQueryAjaxSpy.restore();
+                exportStub.restore();
+                exportStubXlsx.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create Employees listView', function () {
-                    var $listHolder;
+                    var countColumn;
+                    var $firstRow;
                     var employeeListUrl = new RegExp('\/employees', 'i');
                     var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
 
+                    var subject;
+                    var $pagination;
+                    var $currentPageList;
+                    var $pageList;
                     server.respondWith('GET', employeeListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForList)]);
 
                     employeeCollection = new EmployeeCollection({
-                        count      : 1,
-                        viewType   : 'thumbnails',
+                        count      : 100,
+                        viewType   : 'list',
                         contentType: 'Employees'
                     });
                     server.respond();
+
 
                     server.respondWith('GET', employeeAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAphabet)]);
 
@@ -5204,15 +5222,187 @@ define([
                         startTime : new Date()
                     });
 
+
                     server.respond();
 
-                    $listHolder = listView.$el;
+                    eventsBinder.subscribeCollectionEvents(employeeCollection, listView);
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
 
-                    expect($listHolder).to.exist;
-                    expect($listHolder.find('#listTable > tr').length).to.be.equals(5);
-                    expect($listHolder.find('#searchContainer')).to.exist;
-                    expect($listHolder.find('#startLetter')).to.exist;
-                    expect($listHolder.find('.pagination')).to.exist;
+                    employeeCollection.trigger('fetchFinished', {
+                        totalRecords: employeeCollection.totalRecords,
+                        currentPage : employeeCollection.currentPage,
+                        pageSize    : employeeCollection.pageSize
+                    });
+
+                    $thisEl = listView.$el;
+
+                    expect($thisEl).to.exist;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    expect($thisEl.find('#startLetter')).to.exist;
+                    expect($thisEl.find('.pagination')).to.exist;
+
+                    $firstRow = $thisEl.find('#listTable > tr').first();
+                    countColumn = $firstRow.find('td').length;
+                    expect(countColumn).to.be.equals(11);
+
+                    subject = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(subject).not.to.be.empty;
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(5)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(6) > a').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(7)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(8)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(9)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    expect($firstRow.find('td:nth-child(10)').find('a')).to.be.not.empty;
+                    /* expect(stage).not.to.be.empty;
+                     expect(stage).to.not.match(/object Object|undefined/);*/
+
+                    subject = $firstRow.find('td:nth-child(11)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    // test list pagination
+
+                    $pagination = $thisEl.find('.pagination');
+
+                    expect($pagination).to.exist;
+                    expect($pagination.find('.countOnPage')).to.exist;
+                    expect($pagination.find('.pageList')).to.exist;
+
+                    $currentPageList = $pagination.find('.currentPageList');
+                    expect($currentPageList).to.exist;
+
+                    $pageList = $pagination.find('#pageList');
+                    expect($pageList).to.exist;
+                    expect($pageList).to.have.css('display', 'none');
+                });
+
+                it('Try to select 25 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').first();
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=25');
+                });
+
+                it('Try to select 2 page on list', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $currentPageList = $pagination.find('.currentPageList');
+                    var $pageList;
+                    var $secondPageBtn;
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $currentPageList.mouseover();
+                    $pageList = $pagination.find('#pageList');
+                    expect($pageList).to.have.css('display', 'block');
+
+                    $secondPageBtn = $pageList.find('li').eq(1);
+
+                    $secondPageBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                    expect(ajaxResponse.data).to.have.property('page', 2);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=2/c=25');
+                });
+
+                it('Try to select 50 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').eq(1);
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '50');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=50');
+                });
+
+                it('Try to select 100 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').eq(2);
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '100');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=100');
+
+                });
+
+                it('Try to select 200 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').eq(3);
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '200');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200');
+                });
+
+                it('Try to export to Csv', function() {
+                    var $needEl = topBarView.$el.find('#top-bar-exportToCsvBtn');
+                    $needEl.click();
+                    expect(exportStub.calledOnce).to.be.true;
+                });
+
+                it('Try to export to Csv', function() {
+                    var $needEl = topBarView.$el.find('#top-bar-exportToXlsxBtn');
+                    $needEl.click();
+                    expect(exportStubXlsx.calledOnce).to.be.true;
                 });
 
                 it('Try to go to EditForm with error', function (done) {
@@ -5266,159 +5456,13 @@ define([
                     $needLetterEl.click();
 
                     if (mozilaRegExp.test(userAgent)) {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                     }
                 });
             });
         });
-
-        /*describe('Form View', function () {
-            var employeeModel;
-            var server;
-            var mainSpy;
-
-            before(function () {
-                server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
-            });
-
-            after(function () {
-                server.restore();
-                mainSpy.restore();
-            });
-
-            it('Try to open form', function (done) {
-                var $formHolder;
-                var employeeUrl = new RegExp('\/employees\/', 'i');
-                var workFlowUrl = new RegExp('\/Workflows', 'i');
-
-                employeeModel = new EmployeeModel();
-
-                employeeModel.urlRoot = employeeModel.url() + '56e696da81046d9741fb66fc';
-
-                server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeWithId)]);
-
-                employeeModel.fetch({
-                    success: function (model) {
-                        server.respondWith('GET', workFlowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            data: [
-                                {
-                                    _id         : "52d2c1369b57890814000005",
-                                    __v         : 0,
-                                    attachments : [],
-                                    name        : "Contract End",
-                                    sequence    : 1,
-                                    status      : "Cancelled",
-                                    wId         : "Applications",
-                                    wName       : "",
-                                    source      : "",
-                                    targetSource: [
-                                        ""
-                                    ],
-                                    visible     : true,
-                                    color       : "#2C3E50"
-                                }
-                            ]
-                        })]);
-
-                        formView = new FormView({
-                            model    : model,
-                            startTime: new Date()
-                        });
-
-                        server.respond();
-
-                        formView.render();
-
-                        done();
-                    },
-
-                    error: function (model, response) {
-                        done(response);
-                    }
-                });
-
-                server.respond();
-
-                $formHolder = formView.$el;
-
-                expect($formHolder).to.exist;
-                expect($formHolder.find('form')).to.exist;
-                expect($formHolder.find('form').attr('data-id')).to.be.equals('56e696da81046d9741fb66fc');
-            });
-
-            it('Try to change tab', function () {
-                var $firstTab = formView.$el.find('.chart-tabs li:nth-child(1) > a');
-                var $secondTab = formView.$el.find('.chart-tabs li:nth-child(2) > a');
-
-                $firstTab.click();
-                expect(formView.$el.find('.chart-tabs li:nth-child(1) > a')).to.have.class('active');
-
-                $secondTab.click();
-                expect(formView.$el.find('.chart-tabs li:nth-child(2) > a')).to.have.class('active');
-            });
-
-            /!*it('Try to click end contract with Error status', function () {
-             var $newSelectEl;
-             var employeeUrl = new RegExp('/employees/', 'i');
-             var $endContractArrowEl = formView.$el.find('ul > li.right.withEndContract > span.arrow');
-
-             $endContractArrowEl.click();
-
-             $newSelectEl = formView.$el.find('ul > li.right.withEndContract > ul > li:nth-child(1)');
-             server.respondWith('PATCH', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
-             $newSelectEl.click();
-             server.respond();
-
-             expect(window.location.hash).to.be.equals('#home');
-             });
-
-             it('Try to click end contract', function () {
-             var $newSelectEl;
-             var employeeUrl = new RegExp('/employees/', 'i');
-             var $endContractArrowEl = formView.$el.find('ul > li.right.withEndContract > span.arrow');
-
-             $endContractArrowEl.click();
-
-             $newSelectEl = formView.$el.find('ul > li.right.withEndContract > ul > li:nth-child(1)');
-             server.respondWith('PATCH', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
-             $newSelectEl.click();
-
-             server.respond();
-
-             expect(window.location.hash).to.be.equals('#easyErp/Applications/kanban');
-
-             });*!/
-
-            it('Try to open EditForm', function () {
-                formView.editItem();
-
-                expect($('.ui-dialog')).to.exist;
-            });
-
-            it('Try to cancel dialog', function () {
-                var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-
-                $cancelBtn.click();
-
-                expect($('.ui-dialog')).to.not.exist;
-            });
-
-            it('Try to delete employee from the form', function () {
-                var employeeUrl = new RegExp('\/employees\/', 'i');
-
-                server.respondWith('DELETE', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                formView.deleteItems();
-                server.respond();
-
-                expect(window.location.hash).to.be.equals('#easyErp/Employees/list');
-
-            });
-
-        });*/
 
         describe('Thumbnails View', function () {
             var server;
@@ -5426,6 +5470,7 @@ define([
             var $dialogEl;
             var clock;
             var exportStub;
+            var exportStubXlsx;
             var windowConfirmStub;
             var windowAlertStub;
 
@@ -5435,9 +5480,11 @@ define([
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
                 windowConfirmStub = sinon.stub(window, 'confirm');
-                windowAlertStub= sinon.stub(window, 'alert');;
+                windowAlertStub= sinon.stub(window, 'alert');
                 exportStub =  sinon.stub(ThumbnailsView.prototype, 'exportToCsv');
+                exportStubXlsx =  sinon.stub(ThumbnailsView.prototype, 'exportToXlsx');
                 exportStub.returns(true);
+                exportStubXlsx.returns(true);
                 windowConfirmStub.returns(true);
             });
 
@@ -5448,6 +5495,7 @@ define([
                 windowConfirmStub.restore();
                 windowAlertStub.restore();
                 exportStub.restore();
+                exportStubXlsx.restore();
             });
 
             it('Try to fail create thumbnails view', function () {
@@ -5622,6 +5670,12 @@ define([
                 expect(exportStub.calledOnce).to.be.true;
             });
 
+            it('Try to export to Csv', function() {
+                var $needEl = topBarView.$el.find('#top-bar-exportToXlsxBtn');
+                $needEl.click();
+                expect(exportStubXlsx.calledOnce).to.be.true;
+            });
+
             it('Try to go to EditForm', function (done) {
                 var employeeModel;
                 var editForm;
@@ -5649,7 +5703,7 @@ define([
                 var spyResponse;
 
                 departmentTab.click();
-                spyResponse = mainSpy.args[4][0];
+                spyResponse = mainSpy.args[3][0];
 
                 expect(spyResponse).to.have.property('type', 'notify');
                 expect(spyResponse).to.have.property('message', 'You can edit department at "Job" tab');
@@ -5904,7 +5958,7 @@ define([
                 var $createBtnEl = $('#createBtnDialog');
 
                 $createBtnEl.click();
-                spyResponse = mainSpy.args[8][0];
+                spyResponse = mainSpy.args[4][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
 
