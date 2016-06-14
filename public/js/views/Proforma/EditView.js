@@ -457,6 +457,9 @@ define([
 
                         if (self.eventChannel) {
                             self.eventChannel.trigger('proformaRemove');
+                        } else {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         }
                     },
 
