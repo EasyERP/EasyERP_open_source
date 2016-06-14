@@ -1138,6 +1138,7 @@ require.config({
         models           : './public/js/models',
         collections      : './public/js/collections',
         views            : './public/js/views',
+        services         : './public/js/services',
         templates        : './public/templates',
         helpers          : './public/js/helpers',
         d3               : './public/js/libs/d3.v3.min',
@@ -1164,6 +1165,7 @@ require.config({
         fixtures         : './test/uiSpecs/fixtures',
         images           : './public/images',
         modules          : './constants/test/modules',
+        testConstants    : './constants/test',
         dashboardVacation: './constants/test/dashboardVacation',
         filter           : './constants/test/filter'
     },
