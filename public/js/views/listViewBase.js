@@ -110,11 +110,13 @@ define([
 
             this.hideSaveCancelBtns();
             this.resetCollection(modelObject);
+            this.changedModels = {};
         },
 
         updatedOptions: function () {
             this.hideSaveCancelBtns();
             this.resetCollection();
+            this.changedModels = {};
         },
 
         resetCollection: function (model) {
@@ -125,6 +127,13 @@ define([
             } else {
                 this.collection.set(this.editCollection.models, {remove: false});
             }
+        },
+
+        resetEditCollection: function () {
+            if (!this.collection || !this.editCollection) {
+                return false;
+            }
+            this.editCollection.reset(this.collection.models);
         },
 
         keyDown: function (e) {
@@ -258,7 +267,6 @@ define([
             }
 
             this.editCollection.save();
-            this.changedModels = {};
 
             this.deleteEditable();
         },

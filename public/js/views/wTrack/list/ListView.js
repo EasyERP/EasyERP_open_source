@@ -730,6 +730,7 @@ define([
             }
 
             context.editCollection = new EditCollection(context.collection.toJSON());
+            context.collection.bind('resetEditCollection', context.resetEditCollection, context);
             context.editCollection.on('saved', context.savedNewModel, context);
             context.editCollection.on('updated', context.updatedOptions, context);
         },
