@@ -22,6 +22,7 @@ module.exports = function (models) {
     router.get('/uncalcBonus', expressSession.authenticatedUser, handler.uncalcBonus);
     router.get('/calcBonus', expressSession.authenticatedUser, handler.calcBonus);
     router.get('/synthetic', expressSession.authenticatedUser, handler.synthetic);
+    router.get('/totalInvoiceBySales', expressSession.authenticatedUser, handler.totalInvoiceBySales);
 
     router.get('/profit/:byContent', expressSession.authenticatedUser, handler.profit);
 
