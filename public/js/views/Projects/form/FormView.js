@@ -135,30 +135,19 @@ define([
             this.eventChannel = eventChannel;
             this.formModel = options.model;
             this.id = this.formModel.id;
-            this.formModel.urlRoot = '/Projects/';
-            this.salesManager = this.formModel.get('salesmanager');
+            this.formModel.urlRoot = '/projects/';
+            this.salesManager = this.formModel.get('salesManager');
             this.responseObj = {};
             this.proformValues = {};
 
-            this.listenTo(eventChannel, 'newPayment', this.newPayment);
-            this.listenTo(eventChannel, 'paymentRemoved', this.newPayment);
-
+            this.listenTo(eventChannel, 'newPayment paymentRemoved invoiceRemove', this.newPayment);
             this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
-
-            this.listenTo(eventChannel, 'newProforma', this.createProforma);
-            this.listenTo(eventChannel, 'proformaRemove', this.createProforma);
-            this.listenTo(eventChannel, 'savedProforma', this.createProforma);
-
-            this.listenTo(eventChannel, 'quotationUpdated', this.getQuotations);
-            this.listenTo(eventChannel, 'quotationRemove', this.getQuotations);
-
-            this.listenTo(eventChannel, 'orderRemove', this.getOrders);
-            this.listenTo(eventChannel, 'orderUpdate', this.getOrders);
-
-            this.listenTo(eventChannel, 'invoiceRemove', this.newPayment);
+            this.listenTo(eventChannel, 'newProforma proformaRemove savedProforma', this.createProforma);
+            this.listenTo(eventChannel, 'quotationUpdated quotationRemove', this.getQuotations);
+            this.listenTo(eventChannel, 'orderRemove orderUpdate', this.getOrders);
             this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiceProforma);
             this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
-
+            this.listenTo(eventChannel, 'generatedTcards', this.newInvoice);
         },
 
         viewQuotation: function (e) {
@@ -313,37 +302,6 @@ define([
 
             return new ReportView({_id: id});
         },
-
-        /* editRow: function (e) {
-         var el = $(e.target);
-         var tr = $(e.target).closest('tr');
-         var tempContainer;
-         var editedElement;
-         var editedCol;
-         var editedElementValue;
-         var insertedInput;
-
-         if (el.prop('tagName') !== 'INPUT') {
-         editedElement = $('#projectTeam').find('.editing');
-
-         if (editedElement.length) {
-         editedCol = editedElement.closest('td');
-         editedElementValue = editedElement.val();
-
-         editedCol.text(editedElementValue);
-         editedElement.remove();
-         }
-         }
-
-         tempContainer = el.text();
-         el.html('<input class="editing" type="text" maxlength="32" value="' + tempContainer + '">' + "<a href='javascript:;' class='fa fa-check' title='Save' id='saveName'></a>");
-
-         insertedInput = el.find('input');
-         insertedInput.focus();
-         insertedInput[0].setSelectionRange(0, insertedInput.val().length);
-
-         return false;
-         },*/
 
         saveNewJobName: function (e) {
             var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
@@ -557,6 +515,7 @@ define([
 
         showNewSelect: function (e) {
             var $target = $(e.target);
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
@@ -578,18 +537,18 @@ define([
         },
 
         saveItem: function () {
-            var thisEl = this.$el;
+            var $thisEl = this.$el;
             var validation = true;
             var self = this;
             var mid = 39;
-            var projectName = $.trim(thisEl.find('#projectName').val());
-            var projectShortDesc = $.trim(thisEl.find('#projectShortDesc').val());
+            var projectName = $.trim($thisEl.find('#projectName').val());
+            var projectShortDesc = $.trim($thisEl.find('#projectShortDesc').val());
             var customer = {};
             var workflow = {};
 
-            var projecttype = thisEl.find('#projectTypeDD').data('id');
-            var paymentTerm = thisEl.find('#payment_terms').data('id');
-            var paymentMethod = thisEl.find('#payment_method').data('id');
+            var projecttype = $thisEl.find('#projectTypeDD').data('id');
+            var paymentTerm = $thisEl.find('#payment_terms').data('id');
+            var paymentMethod = $thisEl.find('#payment_method').data('id');
             var $userNodes = $('#usereditDd option:selected');
             var users = [];
 
@@ -598,10 +557,10 @@ define([
             var usersId = [];
             var groupsId = [];
 
-            var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
-            var health = thisEl.find('#health a').data('value');
+            var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
+            var health = $thisEl.find('#health a').data('value');
             var customerName;
-            var description = $.trim(thisEl.find('#description').val());
+            var description = $.trim($thisEl.find('#description').val());
             var data = {
                 name            : projectName,
                 projectShortDesc: projectShortDesc,
@@ -626,8 +585,8 @@ define([
                 budget  : budget
             };
 
-            customer._id = thisEl.find('#customerDd').data('id');
-            customerName = thisEl.find('#customerDd').text();
+            customer._id = $thisEl.find('#customerDd').data('id');
+            customerName = $thisEl.find('#customerDd').text();
             customerName = customerName.split(' ');
 
             if (customerName.length) {
@@ -642,8 +601,8 @@ define([
                 };
             }
 
-            workflow._id = thisEl.find('#workflowsDd').data('id');
-            workflow.name = thisEl.find('#workflowsDd').text();
+            workflow._id = $thisEl.find('#workflowsDd').data('id');
+            workflow.name = $thisEl.find('#workflowsDd').text();
 
             $userNodes.each(function (key, val) {
                 users.push({
@@ -852,12 +811,20 @@ define([
             this.showProjectCharts();
         },
 
-        getWTrack: function (cb) {
+        getWTrack: function (options, cb) {
             var self = this;
-            var callback = _.once(cb);
-            var _id = this.id;
+            var callback;
+            var _id;
+            var filter;
 
-            var filter = {
+            if (typeof options === 'function') {
+                cb = options;
+                options = {};
+            }
+
+            callback = _.once(cb);
+            _id = this.id;
+            filter = {
                 project: {
                     key  : 'project._id',
                     value: [_id],
@@ -891,7 +858,7 @@ define([
                     self.wTrackView.undelegateEvents();
                 }
 
-                this.wTrackView = new WTrackView({
+                self.wTrackView = new WTrackView({
                     collection        : self.wCollection,
                     defaultItemsNumber: defaultItemsNumber,
                     filter            : filter,
@@ -908,7 +875,6 @@ define([
 
             this.wCollection.unbind();
             this.wCollection.bind('reset', createView);
-
         },
 
         getInvoiceStats: function (cb) {
@@ -1506,11 +1472,11 @@ define([
 
         render: function () {
             var formModel = this.formModel.toJSON();
+            var templ = _.template(ProjectsFormTemplate);
             var assignees;
             var paralellTasks;
             var self = this;
-            var templ = _.template(ProjectsFormTemplate);
-            var thisEl = this.$el;
+            var $thisEl = this.$el;
             var notesEl;
             var atachEl;
             var notDiv;
@@ -1528,7 +1494,7 @@ define([
                 contentType: self.contentType
             }).render().el;
 
-            thisEl.html(templ({
+            $thisEl.html(templ({
                 model: formModel
             }));
 
@@ -1548,7 +1514,7 @@ define([
 
             this.formModel.bind('chooseAssignee', this.showSaveButton);
 
-            assignees = thisEl.find('#assignees-container');
+            assignees = $thisEl.find('#assignees-container');
             assignees.html(
                 new AssigneesView({
                     model: this.formModel
@@ -1566,12 +1532,12 @@ define([
                         paralellTasks.push(self.getProforma);
                         paralellTasks.push(self.getPayments);
                     } else {
-                        thisEl.find('#invoicesTab').parent().remove();
-                        thisEl.find('div#invoices').parent().remove();
-                        thisEl.find('#proformaTab').parent().remove();
-                        thisEl.find('div#proforma').parent().remove();
-                        thisEl.find('#paymentsTab').parent().remove();
-                        thisEl.find('div#payments').parent().remove();
+                        $thisEl.find('#invoicesTab').parent().remove();
+                        $thisEl.find('div#invoices').parent().remove();
+                        $thisEl.find('#proformaTab').parent().remove();
+                        $thisEl.find('div#proforma').parent().remove();
+                        $thisEl.find('#paymentsTab').parent().remove();
+                        $thisEl.find('div#payments').parent().remove();
 
                         self.getPayments = function () {
                         };
@@ -1586,8 +1552,8 @@ define([
                     if (accessElement.access.read) {
                         paralellTasks.push(self.getWTrack);
                     } else {
-                        thisEl.find('#timesheetTab').parent().remove();
-                        thisEl.find('div#timesheet').parent().remove();
+                        $thisEl.find('#timesheetTab').parent().remove();
+                        $thisEl.find('div#timesheet').parent().remove();
                     }
                 }
 
@@ -1595,8 +1561,8 @@ define([
                     if (accessElement.access.read) {
                         paralellTasks.push(self.getProjectMembers);
                     } else {
-                        thisEl.find('#projectMembersTab').parent().remove();
-                        thisEl.find('div#projectMembers').parent().remove();
+                        $thisEl.find('#projectMembersTab').parent().remove();
+                        $thisEl.find('div#projectMembers').parent().remove();
                     }
                 }
 
@@ -1618,33 +1584,33 @@ define([
             $('#top-bar-deleteBtn').hide();
             $('#createQuotation').show();
 
-            thisEl.find('#StartDate').datepicker({
+            $thisEl.find('#StartDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function () {
                     var endDate = $('#StartDate').datepicker('getDate');
                     endDate.setDate(endDate.getDate());
-                    thisEl.find('#EndDateTarget').datepicker('option', 'minDate', endDate);
-                    thisEl.find('#EndDate').datepicker('option', 'minDate', endDate); // added minDate after selecting new startDate
+                    $thisEl.find('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    $thisEl.find('#EndDate').datepicker('option', 'minDate', endDate); // added minDate after selecting new startDate
 
                     self.showSaveButton();
                 }
             });
-            thisEl.find('#EndDate').datepicker({
+            $thisEl.find('#EndDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : thisEl.find('#StartDate').datepicker('getDate'), // added minDate at start
+                minDate    : $thisEl.find('#StartDate').datepicker('getDate'), // added minDate at start
                 onSelect   : function () {
                     var endDate = $('#StartDate').datepicker('getDate');
                     endDate.setDate(endDate.getDate());
-                    thisEl.find('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    $thisEl.find('#EndDateTarget').datepicker('option', 'minDate', endDate);
 
                     self.showSaveButton();
                 }
             });
-            thisEl.find('#EndDateTarget').datepicker({
+            $thisEl.find('#EndDateTarget').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
