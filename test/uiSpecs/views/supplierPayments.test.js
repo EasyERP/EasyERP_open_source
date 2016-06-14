@@ -3976,6 +3976,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
+
                     expect(listView.$el.find('input[type="text"].editing').length).to.equals(0);
                 });
 
