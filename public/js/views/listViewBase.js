@@ -10,7 +10,7 @@ define([
     'common',
     'dataService',
     'constants'
-], function (Backbone, $, _, paginationTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
+], function (Backbone, $, _, paginationTemplate, /* aphabeticTemplate,*/ importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
