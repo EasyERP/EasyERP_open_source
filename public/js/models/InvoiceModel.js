@@ -139,7 +139,7 @@ define([
         },
 
         urlRoot: function () {
-            return CONSTANTS.URLS.INVOICE;
+            return CONSTANTS.URLS.INVOICES;
         }
     });
     return InvoiceModel;
