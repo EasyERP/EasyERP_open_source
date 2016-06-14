@@ -13,26 +13,7 @@
         page      : 1,
         initialize: function (options) {
             this.startTime = new Date();
-            var filterObject = {};
-            var that = this;
-            var i;
-            /*if (options && options.viewType) {
-             this.url += options.viewType;
-             delete options.viewType;
-             }*/
-
-            for (i in options) {
-                filterObject[i] = options[i];
-            }
-
-            this.fetch({
-                data   : null,
-                reset  : true,
-                success: function () {
-                    that.page += 1;
-                },
-                error  : this.fetchError
-            });
+            this.getFirstPage(options);
         },
 
         parse: function (response) {
