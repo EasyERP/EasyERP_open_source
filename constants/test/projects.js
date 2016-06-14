@@ -4112,16 +4112,14 @@ define([], function () {
         projectShortDesc: "emptyProject"
     };
     var fakeProjectByIdForForm = {
-        _id             : "55b92ad621e4b7c40f00065f",
-        EndDate         : "2014-08-15T09:10:39.579Z",
-        StartDate       : "2014-08-11T09:10:39.578Z",
-        ID              : 1,
-        __v             : 0,
-        description     : "",
+        _id             : '55b92ad621e4b7c40f00065f',
+        EndDate         : '2014-08-15T09:10:39.579Z',
+        StartDate       : '2014-08-11T09:10:39.578Z',
+        description     : '',
         TargetEndDate   : null,
         salesManagers   : [
             {
-                manager: "55b92ad221e4b7c40f000063",
+                manager: '55b92ad221e4b7c40f000063',
                 _id    : "5707533ecbb17f48214c769c",
                 date   : "2014-08-11T12:27:35.056Z"
             }
@@ -4338,7 +4336,7 @@ define([], function () {
             }
         },
         whoCanRW        : "everyOne",
-        projectmanager  : {
+        projectManager  : {
             _id     : "55b92ad221e4b7c40f000063",
             name    : {
                 last : "Gusti",
@@ -16042,6 +16040,11 @@ define([], function () {
         fakeProjects                                : fakeProjects,
         fakeWorkflows                               : fakeWorkflows,
         fakeProjectsForThumbnails                   : fakeProjectsForThumbnails,
-        fakeProjectsForThumbnailsAfterChooseWorkflow: fakeProjectsForThumbnailsAfterChooseWorkflow
+        fakeProjectsForThumbnailsAfterChooseWorkflow: fakeProjectsForThumbnailsAfterChooseWorkflow,
+        fakeUsers                                   : fakeUsers,
+        fakeCustomers                               : fakeCustomers,
+        fakeEmployees                               : fakeEmployees,
+        fakeProjectById                             : fakeProjectById,
+        fakeProjectByIdForForm                      : fakeProjectByIdForForm
     };
 });
