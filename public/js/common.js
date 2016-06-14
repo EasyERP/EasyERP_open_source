@@ -473,8 +473,13 @@
             callback(response.data);
         });
     };
+    var byDepartmentForChart = function (callback) {
+        dataService.getData('employees/byDepartmentForChart', {}, function (response) {
+            callback(response);
+        });
+    };
     var getEmployeesForChart = function (callback) {
-        dataService.getData('/employee/EmployeesForChart', {}, function (response) {
+        dataService.getData('/employees/EmployeesForChart', {}, function (response) {
             callback(response);
         });
     };
@@ -494,8 +499,8 @@
             callback(response);
         });
     };
-    var getEmployeesCount = function (callback) {
-        dataService.getData('employee/getEmployeesCount', {}, function (response) {
+    var getEmployeesCount = function (data, callback) {
+        dataService.getData('employees/getEmployeesCount', data, function (response) {
             callback(response);
         });
     };
@@ -505,6 +510,12 @@
         }, function (response) {
             callback(response.data);
         });
+    };
+    var totalInvoiceBySales = function (callback) {
+        dataService.getData('revenue/totalInvoiceBySales', {}, function (response) {
+            callback(response.data);
+        });
+
     };
     var getOpportunitiesAgingChart = function (callback) {
         dataService.getData("/opportunities/OpportunitiesAgingChart", {}, function (response) {
@@ -1189,6 +1200,8 @@
         getEmployeesForChart              : getEmployeesForChart,
         getHoursForChart                  : getHoursForChart,
         getVacationForChart               : getVacationForChart,
-        getEmployeesCount                 : getEmployeesCount
+        getEmployeesCount                 : getEmployeesCount,
+        byDepartmentForChart              : byDepartmentForChart,
+        totalInvoiceBySales               : totalInvoiceBySales
     }
 });

@@ -449,6 +449,177 @@ var TCard = function (event, models) {
         });
     };
 
+    this.getHours = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Employees = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var month = parseInt(req.query.month, 10) + 1;
+        var year = parseInt(req.query.year, 10);
+        var startMomentDate = moment().year(year).month(month - 1).startOf('month');
+        var endMomentDate = moment().year(year).month(month - 1).endOf('month');
+        var startDate = year * 100 + moment(startMomentDate).week();
+        var endDate = year * 100 + moment(endMomentDate).week();
+        var workedDays = 0;
+        var employeeQueryForEmployeeByDep;
+        var i;
+
+        for (i = moment(endMomentDate).date(); i >= 1; i--) {
+            if ((moment(endMomentDate).date(i).day() !== 6) && (moment(endMomentDate).date(i).day() !== 0)) {
+                workedDays++;
+            }
+        }
+
+        employeeQueryForEmployeeByDep = {
+            $and: [{
+                $or: [{
+                    $and: [{
+                        isEmployee: true
+                    }, {
+                        $or: [{
+                            lastFire: null,
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }, {
+                            lastFire: {
+                                $ne : null,
+                                $gte: startDate
+                            }
+                        }, {
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }]
+                    }]
+                }, {
+                    $and: [{
+                        isEmployee: false
+                    }, {
+                        lastFire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }]
+            }]
+        };
+
+        function getByEmployees(callback) {
+            Employees.aggregate([{
+                $match: {
+                    department: {$nin: CONSTANTS.NOT_DEV_ARRAY.objectID()}
+                }
+            }, {
+                $project: {
+                    weeklyScheduler: 1,
+                    lastFire       : 1,
+                    hire           : 1,
+                    fire           : 1,
+                    isEmployee     : 1,
+                    lastHire       : {
+                        $let: {
+                            vars: {
+                                lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                            },
+                            in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: employeeQueryForEmployeeByDep
+            }, {
+                $lookup: {
+                    from        : 'weeklySchedulers',
+                    localField  : 'weeklyScheduler',
+                    foreignField: '_id',
+                    as          : 'weeklyScheduler'
+                }
+            }, {
+                $project: {
+                    weeklyScheduler: {$arrayElemAt: ['$weeklyScheduler', 0]}
+                }
+            }, {
+                $group: {
+                    _id  : null,
+                    hours: {$sum: '$weeklyScheduler.totalHours'}
+                }
+            }, {
+                $project: {
+                    hours: {$multiply: [{$divide: ['$hours', 5]}, workedDays]}
+                }
+            }], function (err, hours) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, hours);
+            });
+        }
+
+        function getBywTrack(callback) {
+            WTrack.aggregate([{
+                $match: {
+                    month: month,
+                    year : year
+                }
+            }, {
+                $group: {
+                    _id  : '$_type',
+                    hours: {$sum: '$worked'}
+                }
+            }], function (err, hours) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, hours);
+            });
+        }
+
+        async.parallel([
+            getBywTrack,
+            getByEmployees
+        ], function (err, result) {
+            var wTr;
+            var byEmployee;
+            var resObj;
+            var overtime;
+            var actual;
+
+            if (err) {
+                return next(err);
+            }
+
+            wTr = result[0];
+            byEmployee = result[1];
+            resObj = {};
+
+            resObj.total = byEmployee && byEmployee.length ? byEmployee[0].hours : 0;
+
+            overtime = _.find(wTr, function (item) {
+                return item._id === 'overtime';
+            });
+
+            actual = _.find(wTr, function (item) {
+                return item._id === 'ordinary';
+            });
+
+            actual = actual || {};
+            actual.hours = actual.hours || 0;
+            resObj.overtime = (overtime && overtime.hours) || 0;
+            resObj.actual = (actual.hours + resObj.overtime) || 0;
+            resObj.idle = resObj.total - actual.hours;
+
+            res.status(200).send(resObj);
+        });
+    };
+
     this.getByViewType = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
