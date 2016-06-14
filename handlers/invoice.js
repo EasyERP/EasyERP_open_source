@@ -438,7 +438,7 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var headers = req.headers;
         var id = headers.modelid || 'empty';
-        var contentType = headers.modelname || 'invoice';
+        var contentType = headers.modelname || 'invoices';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
