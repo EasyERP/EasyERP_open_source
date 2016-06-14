@@ -1727,7 +1727,7 @@ textarea {
   content: '₴';
 }
 .errorContent {
-  border: 1px solid #e55253 !important;
+  border: 1px solid red !important;
 }
 span.error {
   color: #e55253 !important;
@@ -1824,16 +1824,6 @@ input::-ms-clear {
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
-}
-.kanban .column .item.errorContent {
-  background-color: #e55253;
-}
-.kanban .column .item.errorContent .opportunity-header h4,
-.kanban .column .item.errorContent .opportunity-header h3 {
-  color: #ffffff;
-}
-.kanban .column .item.errorContent .opportunity-content p {
-  color: #ffffff;
 }
 .kanban .column .item.active {
   box-shadow: 0px 0 10px rgba(50, 50, 50, 0.75);
@@ -8818,7 +8808,7 @@ textarea#editInput {
   padding: 0;
   text-align: center;
   float: left;
-  height: 100%;
+  height: 21px;
   background-color: #bdd7ee;
   color: white;
 }
@@ -8840,7 +8830,7 @@ textarea#editInput {
   padding: 0;
   padding-right: 3px;
   background-color: #3c86e0;
-  color: #ffffff;
+  color: #000000;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -10071,4 +10061,34 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
+}
+
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.nodeTree {
+  border: solid 1px white;
+  font: 10px sans-serif;
+  line-height: 12px;
+  overflow: hidden;
+  position: absolute;
+  text-indent: 2px;
 }
