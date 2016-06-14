@@ -141,6 +141,8 @@ define([
 
                         $element.text(manager);
                         $element.attr('data-id', managerId);
+
+                        $element.closest('td').removeClass('errorContent');
                     }
                 }
 

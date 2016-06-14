@@ -31,7 +31,7 @@
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             'click .column.fold'                                              : 'foldUnfoldKanban',
-            'click'                                                           : 'hideNewSelect'
+            click                                                             : 'hideNewSelect'
         },
 
         columnTotalLength: null,
@@ -45,8 +45,6 @@
             _.bindAll(this, 'saveKanbanSettings');
             this.render();
             this.asyncFetch(options.workflowCollection, options.parrentContentId);
-            // this.getCollectionLengthByWorkflows(this, options.parrentContentId);
-
         },
 
         notHide: function (e) {

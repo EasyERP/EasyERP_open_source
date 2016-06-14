@@ -13,8 +13,8 @@ define([
     'use strict';
     var ContentView = Backbone.View.extend({
         el         : '#content-holder',
-        contentType: "myProfile",
-        actionType : "Content",
+        contentType: 'myProfile',
+        actionType : 'Content',
         template   : _.template(ChangePassword),
         imageSrc   : '',
 
@@ -25,18 +25,18 @@ define([
         },
 
         events: {
-            "click .changePassword"                                           : "changePassword",
-            "mouseenter .avatar"                                              : "showEdit",
-            "mouseleave .avatar"                                              : "hideEdit",
-            "click #resetBtn"                                                 : "resetForm",
-            "click #saveBtn"                                                  : "save",
-            "click #relatedEmployee li > a"                                   : "gotoEmployeesForm",
-            "click"                                                           : "hideNewSelect",
-            "click .current-selected"                                         : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                     : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+            'click .changePassword'                                           : 'changePassword',
+            'mouseenter .avatar'                                              : 'showEdit',
+            'mouseleave .avatar'                                              : 'hideEdit',
+            'click #resetBtn'                                                 : 'resetForm',
+            'click #saveBtn'                                                  : 'save',
+            'click #relatedEmployee li > a'                                   : 'gotoEmployeesForm',
+            click                                                             : 'hideNewSelect',
+            'click .current-selected'                                         : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
+            'click .newSelectList li.miniStylePagination'                     : 'notHide',
+            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
 
         },
 
@@ -51,11 +51,11 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
         },
 
         chooseOption: function (e) {
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
         },
 
         nextSelect: function (e) {
@@ -67,29 +67,30 @@ define([
         },
 
         changePassword: function (e) {
-            e.preventDefault();
-
             var formString = this.template();
             var self = this;
 
+            e.preventDefault();
+
             this.$el = $(formString).dialog({
-                dialogClass  : "change-password-dialog",
-                width        : "500px",
-                title        : "Change Password",
+                dialogClass  : 'change-password-dialog',
+                width        : '500px',
+                title        : 'Change Password',
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
                 buttons      : {
-                    save  : {
-                        text : "Save",
-                        class: "btn",
+                    save: {
+                        text : 'Save',
+                        class: 'btn',
                         click: function () {
                             self._changePassword(self);
                         }
                     },
+
                     cancel: {
-                        text : "Cancel",
-                        class: "btn",
+                        text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }
@@ -109,35 +110,40 @@ define([
                 context.UsersModel = new UsersModel(response.user);
                 context.UsersModel.urlRoot = CONSTANTS.URLS.CURRENT_USER;
                 context.UsersModel.save({
-                        oldpass: oldpass,
-                        pass   : pass
+                    oldpass: oldpass,
+                    pass   : pass
+                }, {
+                    headers: {
+                        mid: mid
                     },
-                    {
-                        headers    : {
-                            mid: mid
-                        },
-                        wait       : true,
-                        patch      : true,
-                        success    : function (/*model*/) {
-                            self.hideDialog();
-                        },
-                        error      : function (model, xhr) {
-                            self.errorNotification(xhr);
-                        },
-                        editMode   : false,
-                        confirmPass: confirmPass
-                    });
+
+                    wait : true,
+                    patch: true,
+
+                    success: function () {
+                        self.hideDialog();
+                    },
+
+                    error: function (model, xhr) {
+                        self.errorNotification(xhr);
+                    },
+
+                    editMode   : false,
+                    confirmPass: confirmPass
+                });
             }, this);
 
         },
 
         save: function (e) {
-            e.preventDefault();
+
             var self = this;
             var ids = [];
-            var email = $.trim($("#email").val());
-            var login = $.trim($("#login").val());
-            var relatedEmployee = $("input[type='radio']:checked").attr("data-id");
+            var email = $.trim($('#email').val());
+            var login = $.trim($('#login').val());
+            var relatedEmployee = $("input[type='radio']:checked").attr('data-id');
+
+            e.preventDefault();
 
             if (relatedEmployee) {
                 ids.push(relatedEmployee);
@@ -161,28 +167,31 @@ define([
                 });
 
                 context.UsersModel.save(context.UsersModel.changedAttributes(), {
-                    headers : {
+                    headers: {
                         mid: mid
                     },
-                    patch   : true,
-                    wait    : true,
-                    success : function (model) {
+
+                    patch  : true,
+                    wait   : true,
+                    success: function (model) {
                         if (relatedEmployee) {
                             common.getImages(ids, '/employees/getEmployeesImages', function (response) {
                                 // App.currentUser.imageSrc = response.data[0].imageSrc;
-                                $("#loginPanel .iconEmployee").attr("src", response.data[0].imageSrc);
-                                $("#loginPanel #userName").text(response.data[0].fullName);
+                                $('#loginPanel .iconEmployee').attr('src', response.data[0].imageSrc);
+                                $('#loginPanel #userName').text(response.data[0].fullName);
                             });
                         } else {
-                            $("#loginPanel .iconEmployee").attr("src", model.toJSON().imageSrc);
-                            $("#loginPanel  #userName").text(model.toJSON().login);
+                            $('#loginPanel .iconEmployee').attr('src', model.toJSON().imageSrc);
+                            $('#loginPanel  #userName').text(model.toJSON().login);
                         }
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate("easyErp/myProfile", {trigger: true});
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate('easyErp/myProfile', {trigger: true});
                     },
-                    error   : function (model, xhr) {
+
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
                     },
+
                     editMode: true
                 });
             }, this.render());
@@ -197,43 +206,44 @@ define([
         },
 
         showEdit: function () {
-            $(".upload").animate({
-                height : "20px",
-                display: "block"
+            $('.upload').animate({
+                height : '20px',
+                display: 'block'
             }, 250);
 
         },
         hideEdit: function () {
-            $(".upload").animate({
-                height : "0px",
-                display: "block"
+            $('.upload').animate({
+                height : '0px',
+                display: 'block'
             }, 250);
 
         },
 
         hideDialog: function () {
-            $(".change-password-dialog").remove();
+            $('.change-password-dialog').remove();
         },
 
         gotoEmployeesForm: function (e) {
+            var itemIndex = $(e.target).closest('a').attr('id');
             e.preventDefault();
-            var itemIndex = $(e.target).closest("a").attr("id");
-            window.location.hash = "#easyErp/Employees/form/" + itemIndex;
+
+            window.location.hash = '#easyErp/Employees/form/' + itemIndex;
         },
 
-            render: function () {
-                var self = this;
-                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response, context) {
-                    dataService.getData(CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, null, function (relatedEmployee) {
-                        var date = new Date();
-                        var minutes = date.getTimezoneOffset();
-                        var timezone;
-                        var model;
+        render: function () {
+            var self = this;
+            dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response, context) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, null, function (relatedEmployee) {
+                    var date = new Date();
+                    var minutes = date.getTimezoneOffset();
+                    var timezone;
+                    var model;
 
                     if (minutes < 0) {
-                        timezone = ("UTC +" + (minutes / 60) * (-1));
+                        timezone = ('UTC +' + (minutes / 60) * (-1));
                     } else {
-                        timezone = ("UTC -" + (minutes / 60) * (-1));
+                        timezone = ('UTC -' + (minutes / 60) * (-1));
                     }
 
                     model = response.user;
@@ -246,12 +256,11 @@ define([
                     common.canvasDraw({model: model}, self);
 
                     if (response.user.relatedEmployee) {
-                        $("input[type='radio'][value=" + response.user.relatedEmployee._id + "]").attr("checked", true);
+                        $("input[type='radio'][value=" + response.user.relatedEmployee._id + ']').attr('checked', true);
+                    } else {
+                        $("input[type='radio']:first").attr('checked', true);
                     }
-                    else {
-                        $("input[type='radio']:first").attr("checked", true);
-                    }
-                    context.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - context.startTime) + " ms</div>");
+                    context.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - context.startTime) + ' ms</div>');
                 }, self);
             }, this);
 

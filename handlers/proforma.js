@@ -229,32 +229,8 @@ var Proforma = function (models) {
             });
         }
 
-        function createJournalEntry(proforma, callback) {
-            var amount;
-            var body = {
-                currency      : CONSTANTS.CURRENCY_USD,
-                journal       : CONSTANTS.PROFORMA_JOURNAL,
-                sourceDocument: {
-                    model: 'Proforma',
-                    _id  : proforma._id
-                },
-
-                amount: 0,
-                date  : proforma.invoiceDate
-            };
-
-            amount = proforma.currency.rate * proforma.paymentInfo.total;
-
-            body.amount = amount;
-
-            _journalEntryHandler.create(body, req.session.lastDb, function () {
-            }, req.session.uId);
-
-            callback(null, proforma);
-        }
-
         parallelTasks = [findQuotation, fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createProforma/* , createJournalEntry*/];
+        waterFallTasks = [parallel, createProforma];
 
         async.waterfall(waterFallTasks, function (err, result) {
 

@@ -30,7 +30,6 @@ define([
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
-            // _.bind(this.collection.showMore, this.collection);
             _.bind(this.collection.showMoreAlphabet, this.collection);
             this.allAlphabeticArray = common.buildAllAphabeticArray();
             this.filter = options.filter;
@@ -42,7 +41,6 @@ define([
 
             this.render();
 
-            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
 

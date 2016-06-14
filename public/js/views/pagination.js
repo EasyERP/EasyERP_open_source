@@ -599,6 +599,7 @@ define([
 
             if (!this.isNewRow()) {
                 if (this.editCollection) {
+                    this.changed = true;
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
                 }
@@ -664,7 +665,7 @@ define([
         cancelChanges: function () {
             var self = this;
             var $copyButton = $('#top-bar-copyBtn');
-            var edited = this.edited;
+            var edited = this.edited || this.$el.find('#false'); // ToDo refactor
             var collection = this.collection || new Backbone.Collection();
             var template = _.template(this.cancelEdit);
             var copiedCreated;

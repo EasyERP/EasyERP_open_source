@@ -2,7 +2,7 @@
 <% var ArrayDepartments = ['QA', 'Design', 'IOS', 'Android', 'Unity', 'DotNet', 'Web', 'ROR','Dev']; %>
 <tr data-id="<%=job._id%>" class="<%=getClass(job)%>">
     <td><%=startNumber + count + 1%></a></td>
-    <td><%=job.project && job.salesmanager ? job.salesmanager.name.first + ' ' + job.salesmanager.name.last : "---"%></td>
+    <td><%=job.project && job.salesManager ? job.salesManager.name.first + ' ' + job.salesManager.name.last : "---"%></td>
     <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
         job.project.name : "---"%></a></td>
     <td><a data-id="<%=job._id%>" class="jobs"><%=job.name%></a></td>

@@ -40,7 +40,8 @@
         contentCollection: ContentCollection,
         contentType      : 'Opportunities',
         viewType         : 'kanban',
-        events           : {
+
+        events: {
             'dblclick .item'    : 'gotoEditForm',
             'click .item'       : 'selectItem',
             'click .column.fold': 'foldUnfoldKanban',
@@ -237,7 +238,7 @@
                 },
 
                 success: function (newModel) {
-                    new EditView({model: newModel});
+                    return new EditView({model: newModel});
                 },
 
                 error: function () {
@@ -322,8 +323,7 @@
         },
 
         createItem: function () {
-            // create editView in dialog here
-            new CreateView();
+            return new CreateView();
         },
 
         countTotalAmountForWorkflow: function (workflowId) {

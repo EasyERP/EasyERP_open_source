@@ -61,7 +61,7 @@ var Module = function (models) {
                             return num;
                         });
                         break;
-
+                    // skip default;
                 }
             });
 
@@ -132,7 +132,7 @@ var Module = function (models) {
     function getFilterJobPositions(req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var sort = req.query.sort;
+        var sort = req.query.sort || {};
         var data = req.query;
         var parallelTasks;
         var paginationObject = pageHelper(data);
@@ -141,6 +141,8 @@ var Module = function (models) {
         var getCount;
         var getData;
         var i;
+        var keysSort;
+        var key;
 
         function compareSort(personA, personB) {
             if (sort[i] === '1') {
@@ -195,8 +197,11 @@ var Module = function (models) {
                             return pCb(err);
                         }
 
-                        for (i in sort) {
-                            if (result.length && typeof result[0][i] === 'number') {
+                        keysSort = Object.keys(sort);
+
+                        for (i = keysSort.length - 1; i >= 0; i--) {
+                            key = keysSort[i];
+                            if (result.length && typeof result[0][key] === 'number') {
                                 result.sort(compareSort);
                             }
                         }

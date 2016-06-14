@@ -48,8 +48,11 @@ define([
             var model;
             var id;
             var self = this;
+            var keys = Object.keys(this.changedModels);
+            var i;
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.collection.get(id);
 
                 model.save({
@@ -67,9 +70,7 @@ define([
                 });
             }
 
-            for (id in this.changedModels) {
-                delete this.changedModels[id];
-            }
+            this.changedModels = {};
         },
 
         render: function () {
@@ -129,7 +130,7 @@ define([
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoice';
+            model.urlRoot = '/Invoices';
             model.fetch({
                 data: {
                     id       : id,
@@ -139,7 +140,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

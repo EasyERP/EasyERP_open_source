@@ -1,12 +1,12 @@
 define([
     'Backbone',
     'models/jobsModel',
-    'custom',
+    'collections/parent',
     'constants'
-], function (Backbone, JobsModel, custom, CONSTANTS) {
+], function (Backbone, JobsModel, Parent, CONSTANTS) {
     'use strict';
 
-    var JobsCollection = Backbone.Collection.extend({
+    var JobsCollection = Parent.extend({
         model       : JobsModel,
         url         : CONSTANTS.URLS.JOBS,
         contentType : null,
@@ -15,72 +15,25 @@ define([
         viewType    : 'list',
 
         initialize: function (options) {
-            options = options || {};
-            this.startTime = new Date();
-            var self = this;
+            var page;
 
-            this.filter = options ? options.filter : {};
-            this.projectId = options.projectId;
-            this.bySocket = options.bySocket;
-
-            this.fetch({
-                data   : options,
-                reset  : true,
-                success: function (newCollection) {
-
-                    var key = 'jobs_projectId:' + self.projectId;
-                    var collection = custom.retriveFromCash(key);
-
-                    self.page++;
-
-                    if (collection && collection.length) {
-
-                        if (!App.projectInfo || (App.projectInfo && App.projectInfo.currentTab !== 'overview')) {
-                            collection.reset(newCollection.models);
-                        } else if (self.bySocket) {
-                            App.render({
-                                type   : 'notify',
-                                message: 'Data were changed, please refresh browser'
-                            });
-                        }
-                    } else {
-                        custom.cacheToApp(key, newCollection, true);
-                    }
-                },
-                error  : function (err, xhr) {
-                    console.log(xhr);
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
                 }
-            });
-        },
-
-        showMore: function (options) {
-            var that = this;
-            var filterObject = options || {};
-
-            filterObject.page = (options && options.page) ? options.page : this.page;
-            filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-            filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-            filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-            filterObject.filter = options ? options.filter : {};
-
-            if (options && options.contentType && !(options.filter)) {
-                options.filter = {};
             }
 
-            this.fetch({
-                data   : filterObject,
-                waite  : true,
-                success: function (models) {
-                    that.page += 1;
-                    that.trigger('showmore', models);
-                },
-                error  : function () {
-                    App.render({
-                        type   : 'error',
-                        message: "Some Error."
-                    });
-                }
-            });
+            options = options || {};
+            options.error = options.error || _errHandler;
+            page = options.page;
+
+            this.startTime = new Date();
+
+            if (page) {
+                return this.getPage(page, options);
+            }
+
+            this.getFirstPage(options);
         }
     });
 

@@ -14,6 +14,7 @@ module.exports = function (event, models) {
     router.use(authStackMiddleware);
 
     router.get('/', accessStackMiddleWare, handler.getByViewTpe);
+    router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
     router.get('/upload', handler.getCollectionLengthByWorkflows);
 
     router.post('/uploadFiles', accessStackMiddleWare, multipartMiddleware, handler.uploadFile);

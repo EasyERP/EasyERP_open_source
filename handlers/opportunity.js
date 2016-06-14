@@ -32,11 +32,8 @@ var Module = function (models, event) {
     var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     function validBody(body) {
-        if (body.name) {
-            return true;
-        }
 
-        return false;
+        return body.name ? true : false;
     }
 
     function sendEmailToAssigned(req, opportunity) {
@@ -535,7 +532,7 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                if (data.notes && data.notes.length != 0) {
+                if (data.notes && data.notes.length !== 0) {
                     obj = data.notes[data.notes.length - 1];
 
                     if (!obj._id) {
@@ -564,24 +561,22 @@ var Module = function (models, event) {
                     if (fileName) {
                         switch (osType) {
                             case 'Windows':
-                            {
                                 newDirname = __dirname.replace('\\Modules', '');
                                 while (newDirname.indexOf('\\') !== -1) {
                                     newDirname = newDirname.replace('\\', '\/');
                                 }
                                 path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                 dir = newDirname + '\/uploads\/' + _id;
-                            }
                                 break;
                             case 'Linux':
-                            {
                                 newDirname = __dirname.replace('/Modules', '');
                                 while (newDirname.indexOf('\\') !== -1) {
                                     newDirname = newDirname.replace('\\', '\/');
                                 }
                                 path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                 dir = newDirname + '\/uploads\/' + _id;
-                            }
+                                break;
+                            //skip default;
                         }
 
                         fs.unlink(path, function (err) {
@@ -1046,6 +1041,7 @@ var Module = function (models, event) {
                     day   : {$dateToString: {format: '%d', date: '$date'}}
                 };
                 break;
+            //skip default;
         }
 
         if (type === 'date') {
@@ -2064,15 +2060,18 @@ var Module = function (models, event) {
         var tempObj = {};
         var query = {};
         var ids;
+        var keys = Object.keys(data);
         var key;
+        var i;
 
         query.$or = [];
         filter.$and = [];
 
-        for (key in data) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            key = keys[i];
             ids = [];
 
-            if (key !== 'workflowId') {
+            if ((key !== 'workflowId') && (key !== 'viewType')) {
 
                 if (key === 'contactName') {
 
@@ -2146,6 +2145,7 @@ var Module = function (models, event) {
                     optionsObject.push(filterObj);
                 }
                 break;
+            //skip default;
         }
 
         accessRollSearcher = function (cb) {
@@ -2311,6 +2311,7 @@ var Module = function (models, event) {
                         }
                     });
                     break;
+                // skip default;
             }
 
             if (data.sort) {
@@ -2403,7 +2404,7 @@ var Module = function (models, event) {
                             return num;
                         });
                         break;
-
+                    // skip default;
                 }
             });
 
@@ -2567,6 +2568,8 @@ var Module = function (models, event) {
                 break;
             case 'kanban':
                 getForKanban(req, res, next);
+                break;
+            // skip default;
         }
     };
 

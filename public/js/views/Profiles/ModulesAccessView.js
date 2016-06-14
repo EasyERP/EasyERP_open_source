@@ -1,7 +1,7 @@
 define([
     'Backbone',
     'Underscore',
-    'text!templates/Profiles/ModulesAccessListTemplate.html',
+    'text!templates/Profiles/ModulesAccessListTemplate.html'
 ], function (Backbone, _, ModulesAccessTemplate) {
     'use strict';
 

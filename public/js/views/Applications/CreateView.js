@@ -239,14 +239,14 @@ define([
             $thisEl = this.$el;
 
             this.attachView = new AttachView({
-                model   : new ApplicationModel(),
+                model      : new ApplicationModel(),
                 contentType: self.contentType,
-                isCreate: true
+                isCreate   : true
             });
 
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(this.attachView.render().el);
-            
+
             this.renderAssignees(this.currentModel);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this, true, function (data) {
                 var i;

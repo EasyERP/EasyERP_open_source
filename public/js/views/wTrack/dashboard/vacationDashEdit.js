@@ -283,10 +283,11 @@ define([
                 var worked = 0;
                 var _value;
                 var workedEl;
+                var i;
 
                 workedEl = tr.find('[data-content="worked"]');
 
-                for (var i = days.length - 1; i >= 0; i--) {
+                for (i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
 
                     value = appplyDefaultValue(calcEl);
@@ -324,12 +325,13 @@ define([
             var intValue;
             var calcEl;
             var workedEl = tr.find('[data-content="worked"]');
+            var i;
 
             if (worked) {
                 intValue = worked / 7;
                 intValue = Math.floor(intValue);
 
-                for (var i = days.length - 1; i >= 0; i--) {
+                for (i = days.length - 1; i >= 0; i--) {
                     value = worked - intValue;
                     calcEl = $(days[i]);
 
@@ -363,7 +365,7 @@ define([
             var value;
             var insertedInput;
             var colType = el.data('type');
-            var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
             var trs = this.$table.find('input.editing');
 
             $('.newSelectList').hide();
@@ -424,10 +426,6 @@ define([
                 }
             }
 
-            /* else if (isHours) {
-             this.autoHoursPerDay(e);
-             }*/
-
             return false;
         },
 
@@ -487,20 +485,16 @@ define([
             return false;
         },
 
-        generateJob: function (e) {
+        generateJob: function () {
             var model = this.wTracks[0].project;
 
-            new CreateJob({
+            return new CreateJob({
                 model     : model,
                 wTrackView: this
             });
-
-            return false;
         },
 
-        showNewSelect: function (e, prev, next) {
-            // populate.showSelect(e, prev, next, this);
-
+        showNewSelect: function (e) {
             var $target = $(e.target);
             e.stopPropagation();
 
@@ -517,14 +511,12 @@ define([
                 responseObj: this.responseObj
             });
 
-
             $target.append(this.selectView.render().el);
 
             return false;
         },
 
-        hideNewSelect: function (e) {
-            // $(".newSelectList").remove();
+        hideNewSelect: function () {
 
             if (this.selectView) {
                 this.selectView.remove();

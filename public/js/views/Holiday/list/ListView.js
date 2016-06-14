@@ -118,10 +118,7 @@ define([
             }
             this.editCollection.save();
 
-            keys.forEach(function (id) {
-                delete self.changedModels[id];
-                self.editCollection.remove(id);
-            });
+            this.changedModels = {};
         },
 
         editRow: function (e) {

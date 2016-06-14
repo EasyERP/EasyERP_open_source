@@ -136,6 +136,7 @@ define([
                 headers: {
                     mid: mid
                 },
+
                 wait   : true,
                 success: function () {
                     self.hideDialog();

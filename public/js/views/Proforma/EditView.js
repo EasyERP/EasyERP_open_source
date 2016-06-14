@@ -41,7 +41,6 @@ define([
 
         events: {
             'click #saveBtn'      : 'saveItem',
-            //'click #cancelBtn'    : 'hideDialog',
             'click .details'      : 'showDetailsBox',
             'click .newPayment'   : 'newPayment',
             'click .approve'      : 'approve',
@@ -109,7 +108,7 @@ define([
         cancelInvoice: function (e) {
             var wId;
             var self = this;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
             e.preventDefault();
 
@@ -150,7 +149,7 @@ define([
         setDraft: function (e) {
             var self = this;
             var wId;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
             e.preventDefault();
             if (self.forSales) {
@@ -397,7 +396,7 @@ define([
                     success: function (err, result) {
                         var $dueDateEl;
                         var url = window.location.hash;
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
                         self.hideDialog();
 

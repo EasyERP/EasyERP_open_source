@@ -8,7 +8,7 @@ module.exports = function (models, event) {
     router.get('/', handler.getData);
     router.get('/getForOverview', handler.getForOverview);
     router.get('/getForDD', handler.getForDD);
-    router.get('/exportToXlsx/:filter', handler.exportToXlsx);
+    router.get('/exportToXlsx/', handler.exportToXlsx);
 
     router.post('/', handler.create);
     router.post('/update', handler.update);

@@ -113,7 +113,7 @@ define([
                 error: function (model, xhr) {
                     self.errorNotification(xhr);
                 },
-                
+
                 confirmPass: $('#confirmpassword').val()
             });
 

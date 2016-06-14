@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'text!templates/Dashboard/DashboardTemplate.html',
@@ -10,7 +11,7 @@ define([
     'dataService',
     'helpers',
     'moment'
-], function ($, _, DashboardTemplate, filterValuesCollection, workflowsCollection, OpportunitiesCollection, d3, common, dataService, helpers, moment) {
+], function (Backbone, $, _, DashboardTemplate, filterValuesCollection, workflowsCollection, OpportunitiesCollection, d3, common, dataService, helpers, moment) {
     var ContentView = Backbone.View.extend({
         contentType: 'Dashboard',
         actionType : 'Content',
@@ -41,15 +42,19 @@ define([
 
             this.render();
         },
-        events     : {
+
+        events: {
             'click .choseDateRange .item': 'newRange',
             'click .choseDateItem .item' : 'newItem',
             'click .chart-tabs a'        : 'changeTab'
         },
-        changeTab  : function (e) {
+
+        changeTab: function (e) {
+            var n;
+
             $(e.target).closest('.chart-tabs').find('a.active').removeClass('active');
             $(e.target).addClass('active');
-            var n = $(e.target).parents('.chart-tabs').find('li').index($(e.target).parent());
+            n = $(e.target).parents('.chart-tabs').find('li').index($(e.target).parent());
             $('.chart-tabs-items').find('.chart-tabs-item.active').removeClass('active');
             $('.chart-tabs-items').find('.chart-tabs-item').eq(n).addClass('active');
         },
@@ -82,6 +87,7 @@ define([
                 case 'winLost':
                     this.renderOpportunitiesWinAndLost();
                     break;
+                // skip default;
             }
         },
 
@@ -110,11 +116,12 @@ define([
                 case 'winLost':
                     this.renderOpportunitiesWinAndLost();
                     break;
+                // skip default;
             }
         },
 
         getDateFromDayOfYear: function (index) {
-            //return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), 'mmmm dd, yyyy');
+            // return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), 'mmmm dd, yyyy');
             return moment(new Date(this.numberToDate[index])).format('MMM DD, YYYY');
         },
 
@@ -134,6 +141,7 @@ define([
                     return 'Saturday';
                 case 7:
                     return 'Sunday';
+                // skip default;
             }
         },
 
@@ -163,6 +171,7 @@ define([
                     return 'November';
                 case 12:
                     return 'December';
+                // skip default;
 
             }
         },
@@ -189,7 +198,7 @@ define([
         render: function () {
             var self = this;
             this.$el.html(this.template());
-            this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
             $(window).unbind('resize').resize(self.resizeHandler);
         },
 
@@ -588,7 +597,6 @@ define([
                     .attr('dy', '2em')
                     .text('Conversion Rate');
 
-
             });
         },
 
@@ -958,8 +966,9 @@ define([
                         return item.source;
                     }));
                     for (var i = 1; i < 8; i++) {
-                        if (dt.indexOf(i) === -1)
+                        if (dt.indexOf(i) === -1) {
                             data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
+                        }
                         data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                     }
                     data.sort(function (a, b) {
@@ -972,8 +981,9 @@ define([
                         return item.source;
                     }));
                     for (var i = 1; i < 32; i++) {
-                        if (dt.indexOf(i) === -1)
+                        if (dt.indexOf(i) === -1) {
                             data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
+                        }
                         data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                     }
                     data.sort(function (a, b) {
@@ -986,8 +996,9 @@ define([
                         return item.source;
                     }));
                     for (var i = 1; i < 13; i++) {
-                        if (dt.indexOf(i) === -1)
+                        if (dt.indexOf(i) === -1) {
                             data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
+                        }
                         data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                     }
                     data.sort(function (a, b) {
@@ -1006,7 +1017,7 @@ define([
                         var diff = now - start;
                         var oneDay = 1000 * 60 * 60 * 24;
                         var dayofYera = Math.floor(diff / oneDay);
-                        if (dt.indexOf(dayofYera) === -1)
+                        if (dt.indexOf(dayofYera) === -1) {
                             data.push({
                                 count : 0,
                                 date  : [now],
@@ -1014,6 +1025,7 @@ define([
                                 source: dayofYera,
                                 year  : now.getFullYear()
                             });
+                        }
                         // data.push({count: 0, date: [now], source: dayofYera, isOpp: true, year: now.getFullYear()});
                     }
                     data = _.map(data, function (item) {
@@ -1086,7 +1098,9 @@ define([
                 var maxval2 = d3.max(percent, function (d) {
                     return d.count;
                 });
-                if (maxval2 == 0)maxval2 = 1;
+                if (maxval2 == 0) {
+                    maxval2 = 1;
+                }
                 percent = _.map(percent, function (item) {
                     item.count = (item.count) * 100;
                     return item;

@@ -1,12 +1,13 @@
 // Filename: app.js
 define([
+    'jQuery',
     'router',
     'communication',
     'custom',
     'socket.io',
     'spinJs',
     'constants'
-], function (Router, Communication, Custom, io, Spinner, constants) {
+], function ($, Router, Communication, Custom, io, Spinner, constants) {
     var initialize = function () {
         'use strict';
         var appRouter = new Router();
@@ -47,23 +48,23 @@ define([
             }
         });
 
-        App.startPreload = function() {
+        App.startPreload = function () {
             $('#loading').show();
         };
 
-        App.stopPreload = function() {
+        App.stopPreload = function () {
             $('#loading').hide();
         };
 
         appRouter.checkLogin = Communication.checkLogin;
         Communication.checkLogin(Custom.runApplication);
 
-        App.startPreload = function() {
+        App.startPreload = function () {
             App.preloaderShowFlag = true;
             $('#loading').show();
         };
 
-        App.stopPreload = function() {
+        App.stopPreload = function () {
             App.preloaderShowFlag = false;
             $('#loading').hide();
         };
@@ -71,11 +72,11 @@ define([
 
     var applyDefaults = function () {
         $.datepicker.setDefaults({
-            //dateFormat:"dd/mm/yy"
+            // dateFormat:'dd/mm/yy'
             firstDay: 1,
-            minDate: new Date(constants.MIN_DATE)
+            minDate : new Date(constants.MIN_DATE)
         });
-        //add ability to clear console by calling -> console.API.clear();
+        // add ability to clear console by calling -> console.API.clear();
         if (typeof console._commandLineAPI !== 'undefined') {
             console.API = console._commandLineAPI;
         } else if (typeof console._inspectorCommandLineAPI !== 'undefined') {
@@ -83,14 +84,14 @@ define([
         } else if (typeof console.clear !== 'undefined') {
             console.API = console;
         }
-        //add startsWith function to strings
-        if (typeof String.prototype.startsWith != 'function') {
+        // add startsWith function to strings
+        if (typeof String.prototype.startsWith !== 'function') {
             String.prototype.startsWith = function (str) {
-                if (str === "All") {
+                if (str === 'All') {
                     return true;
                 }
-                if (str === "0-9") {
-                    return !isNaN(parseInt(this[0]));
+                if (str === '0-9') {
+                    return !isNaN(parseInt(this[0], 10));
                 }
                 return this.indexOf(str) === 0;
             };
@@ -104,22 +105,25 @@ define([
             appendTo : '#dialogContainer',
             create   : function (event, ui) {
                 var win = $(window);
-                var dialog = $(event.target).parent(".ui-dialog");
+                var dialog = $(event.target).parent('.ui-dialog');
                 var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
                 var left = (win.width() - dialog.width()) / 2;
 
                 dialog.css({
-                    position: "absolute",
+                    position: 'absolute',
                     top     : top,
                     left    : left
                 });
             }
         });
         $.datepicker.setDefaults({
-            dateFormat: "d M, yy",
+            dateFormat: 'd M, yy',
 
             onChangeMonthYear: function (year, month) {
                 var mon;
+                var target;
+                var day;
+
                 switch (month) {
                     case 1:
                         mon = 'Jan';
@@ -157,10 +161,11 @@ define([
                     case 12:
                         mon = 'Dec';
                         break;
+                    // skip default;
                 }
-                ;
-                var target = $(this);
-                var day = target.val().split(' ')[0] || '01';
+
+                target = $(this);
+                day = target.val().split(' ')[0] || '01';
                 target.val(day + ' ' + mon + ', ' + year);
             }
         });
@@ -170,5 +175,5 @@ define([
     return {
         initialize   : initialize,
         applyDefaults: applyDefaults
-    }
+    };
 });

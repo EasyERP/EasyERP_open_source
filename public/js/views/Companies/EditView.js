@@ -40,28 +40,8 @@ define([
             $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
         },
 
-        changeTab: function (e) {
-            var $holder = $(e.target);
-            var $dialogHolder;
-            var n;
-
-            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $holder.addClass('active');
-            n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
-            $dialogHolder = $('.dialog-tabs-items');
-            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
         chooseUser: function (e) {
             $(e.target).toggleClass('choosen');
-        },
-
-        hideDialog: function () {
-            $('.edit-companies-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
         },
 
         editContacts: function (e) {
@@ -245,9 +225,7 @@ define([
                     },
                     {
                         text : 'Cancel',
-                        click: function () {
-                            self.hideDialog();
-                        }
+                        click: self.hideDialog
                     },
                     {
                         text : 'Delete',

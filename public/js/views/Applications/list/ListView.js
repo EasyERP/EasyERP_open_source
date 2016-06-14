@@ -55,13 +55,8 @@ define([
 
             this.render();
 
-            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
-
-        /* hideNewSelect: function () {
-         $('.newSelectList').remove();  // changed after ui tests
-         },*/
 
         showNewSelect: function (e) {
             var $selectList = $('.newSelectList');
@@ -145,12 +140,11 @@ define([
 
             e.preventDefault();
 
-
             model.urlRoot = '/applications/';
             model.fetch({
                 data   : {id: id},
                 success: function (response) {
-                    new EditView({model: response});
+                    return new EditView({model: response});
                 },
 
                 error: function () {

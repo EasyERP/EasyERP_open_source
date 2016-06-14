@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 var CONSTANTS = require('../../constants/constantsTest');
 var url = 'http://localhost:8089/';
 var aggent;
-var db = 'pavlodb';
+var db = 'production';
 
 describe('Quotation Specs', function () {
     'use strict';

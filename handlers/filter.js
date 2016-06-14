@@ -52,11 +52,18 @@ var Filters = function (models) {
         var _endDate;
 
         function validNames(result) {
+            var modelNameKeys = Object.keys(result);
             var modelName;
+            var filterNameKeys;
             var filterName;
+            var i;
+            var j;
 
-            for (modelName in result) {
-                for (filterName in result[modelName]) {
+            for (i = modelNameKeys.length - 1; i >= 0; i--) {
+                modelName = modelNameKeys[i];
+                filterNameKeys = Object.keys(result[modelName]);
+                for (j = filterNameKeys.length - 1; j >= 0; j--) {
+                    filterName = filterNameKeys[j];
                     if (_.isArray(result[modelName][filterName])) {
                         result[modelName][filterName] = _.reject(result[modelName][filterName], function (element) {
                             return (element ? (element.name === '' || element.name === 'None') : null);
@@ -114,49 +121,6 @@ var Filters = function (models) {
             startDate = dateRangeObject.startDate;
             endDate = dateRangeObject.endDate;
         }
-
-        console.log(startDate, endDate);
-
-        async.parallel({
-                wTrack          : getWtrackFiltersValues,
-                Persons         : getPersonFiltersValues,
-                Companies       : getCompaniesFiltersValues,
-                Employees       : getEmployeeFiltersValues,
-                Applications    : getApplicationFiltersValues,
-                Projects        : getProjectFiltersValues,
-                Tasks           : getTasksFiltersValues,
-                salesInvoices    : getSalesInvoiceFiltersValues,
-                salesProforma   : getSalesProformaFiltersValues,
-                Invoices         : getInvoiceFiltersValues,
-                ExpensesInvoice : getExpensesInvoiceFiltersValues,
-                DividendInvoice : getDividendInvoiceFiltersValues,
-                customerPayments: getCustomerPaymentsFiltersValues,
-                supplierPayments: getSupplierPaymentsFiltersValues,
-                ExpensesPayments: getExpensesPaymentsFiltersValues,
-                DividendPayments: getDividendPaymentsFiltersValues,
-                Product         : getProductsFiltersValues,
-                salesProduct    : getProductsFiltersValues,
-                Quotations       : getQuotationFiltersValues,
-                salesQuotations : getSalesQuotation,
-                salesOrders     : getSalesOrders,
-                Orders           : getOrdersFiltersValues,
-                PayrollExpenses : getPayRollFiltersValues,
-                DashVacation    : getDashVacationFiltersValues,
-                jobsDashboard   : getDashJobsFiltersValues,
-                salaryReport    : getsalaryReportFiltersValues,
-                Leads           : getLeadsFiltersValues,
-                Opportunities   : getOpportunitiesFiltersValues,
-                journalEntry    : getJournalEntryFiltersValues
-            },
-            function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                result = validNames(result);
-
-                res.status(200).send(result);
-            });
 
         function getWtrackFiltersValues(callback) {
             WTrack.aggregate([{
@@ -436,7 +400,7 @@ var Filters = function (models) {
                     department: {
                         $addToSet: {
                             _id : '$department._id',
-                            name: {'$ifNull': ['$department.name', 'None']}
+                            name: {$ifNull: ['$department.name', 'None']}
                         }
                     }
                 }
@@ -507,8 +471,9 @@ var Filters = function (models) {
                 }
             }, {
                 $group: {
-                    _id       : null,
-                    name      : {
+                    _id: null,
+
+                    name: {
                         $addToSet: {
                             _id : '$_id',
                             name: {
@@ -516,6 +481,7 @@ var Filters = function (models) {
                             }
                         }
                     },
+
                     department: {
                         $addToSet: {
                             _id : '$department._id',
@@ -2137,7 +2103,8 @@ var Filters = function (models) {
         }
 
         function getDashJobsFiltersValues(callback) {
-            Jobs.aggregate([{
+            Jobs.aggregate([
+                {
                     $lookup: {
                         from        : 'projectMembers',
                         localField  : 'project',
@@ -2174,15 +2141,14 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        name     : 1,
-                        workflow : {$arrayElemAt: ['$workflow', 0]},
-                        type     : 1,
-                        wTracks  : 1,
-                        project  : {$arrayElemAt: ['$project', 0]},
-                        budget   : 1,
-                        quotation: {$arrayElemAt: ['$quotation', 0]},
-                        invoice  : {$arrayElemAt: ['$invoice', 0]},
-
+                        name         : 1,
+                        workflow     : {$arrayElemAt: ['$workflow', 0]},
+                        type         : 1,
+                        wTracks      : 1,
+                        project      : {$arrayElemAt: ['$project', 0]},
+                        budget       : 1,
+                        quotation    : {$arrayElemAt: ['$quotation', 0]},
+                        invoice      : {$arrayElemAt: ['$invoice', 0]},
                         salesmanagers: {
                             $filter: {
                                 input: '$projectMembers',
@@ -2212,7 +2178,7 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        order       : {
+                        order: {
                             $cond: {
                                 if: {
                                     $eq: ['$type', 'Not Quoted']
@@ -2231,6 +2197,7 @@ var Filters = function (models) {
                                 }
                             }
                         },
+
                         name        : 1,
                         workflow    : 1,
                         type        : 1,
@@ -2291,11 +2258,11 @@ var Filters = function (models) {
                         project: {
                             $addToSet: {
                                 _id : '$project._id',
-                                name: '$project.projectName'
+                                name: '$project.name'
                             }
                         },
 
-                        salesmanager: {
+                        salesManager: {
                             $addToSet: {
                                 _id : '$salesmanager._id',
                                 name: {
@@ -2312,20 +2279,19 @@ var Filters = function (models) {
                         }
                     }
                 }
-                ],
-                function (err, result) {
-                    if (err) {
-                        return callback(err);
-                    }
+            ], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
 
-                    if (result && result.length) {
-                        result = result[0];
-                        callback(null, result);
-                    } else {
-                        callback(null, []);
-                    }
+                if (result && result.length) {
+                    result = result[0];
+                    callback(null, result);
+                } else {
+                    callback(null, []);
+                }
 
-                });
+            });
         }
 
         function getOrdersFiltersValues(callback) {
@@ -2928,6 +2894,46 @@ var Filters = function (models) {
             });
 
         }
+
+        async.parallel({
+            wTrack          : getWtrackFiltersValues,
+            Persons         : getPersonFiltersValues,
+            Companies       : getCompaniesFiltersValues,
+            Employees       : getEmployeeFiltersValues,
+            Applications    : getApplicationFiltersValues,
+            Projects        : getProjectFiltersValues,
+            Tasks           : getTasksFiltersValues,
+            salesInvoices   : getSalesInvoiceFiltersValues,
+            salesProforma   : getSalesProformaFiltersValues,
+            Invoices        : getInvoiceFiltersValues,
+            ExpensesInvoice : getExpensesInvoiceFiltersValues,
+            DividendInvoice : getDividendInvoiceFiltersValues,
+            customerPayments: getCustomerPaymentsFiltersValues,
+            supplierPayments: getSupplierPaymentsFiltersValues,
+            ExpensesPayments: getExpensesPaymentsFiltersValues,
+            DividendPayments: getDividendPaymentsFiltersValues,
+            Product         : getProductsFiltersValues,
+            salesProduct    : getProductsFiltersValues,
+            Quotations      : getQuotationFiltersValues,
+            salesQuotations : getSalesQuotation,
+            salesOrders     : getSalesOrders,
+            Orders          : getOrdersFiltersValues,
+            PayrollExpenses : getPayRollFiltersValues,
+            DashVacation    : getDashVacationFiltersValues,
+            jobsDashboard   : getDashJobsFiltersValues,
+            salaryReport    : getsalaryReportFiltersValues,
+            Leads           : getLeadsFiltersValues,
+            Opportunities   : getOpportunitiesFiltersValues,
+            journalEntry    : getJournalEntryFiltersValues
+        }, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = validNames(result);
+
+            res.status(200).send(result);
+        });
     };
 };
 

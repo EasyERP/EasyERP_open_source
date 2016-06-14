@@ -394,12 +394,13 @@ define([
             var intValue;
             var calcEl;
             var workedEl = tr.find('[data-content="worked"]');
+            var i;
 
             if (worked) {
                 intValue = worked / 7;
                 intValue = Math.floor(intValue);
 
-                for (var i = days.length - 1; i >= 0; i--) {
+                for (i = days.length - 1; i >= 0; i--) {
                     value = worked - intValue;
                     calcEl = $(days[i]);
 
@@ -552,12 +553,10 @@ define([
                 $targetElement = $target.parents('span');
             }
 
-
             $tr = $target.parents('tr');
             id = $target.attr('id');
             attr = $targetElement.data('content');
             elementType = '#' + attr;
-
 
             element = _.find(this.responseObj[elementType], function (el) {
                 return el._id === id;
@@ -613,12 +612,10 @@ define([
         generateJob: function () {
             var model = this.project;
 
-            new CreateJob({
+            return new CreateJob({
                 model    : model,
                 createJob: true
             });
-
-            return false;
         },
 
         showNewSelect: function (e) {

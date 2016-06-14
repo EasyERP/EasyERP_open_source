@@ -187,7 +187,7 @@ define([
                 attr = targetEl.attr("id") || targetEl.attr("data-id");
                 data = context.responseObj["#" + attr];
 
-                if (targetEl.parents('td').hasClass('jobs') && !data){
+                if (targetEl.parents('td').hasClass('jobs') && !data) {
                     attr = 'jobs';
                     data = context.responseObj["#" + attr];
                 }

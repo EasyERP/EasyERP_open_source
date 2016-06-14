@@ -10,7 +10,7 @@
             _id     : null,
             priority: ''
         },
-        
+
         urlRoot: function () {
             return CONSTANTS.URLS.PRIORITY;
         }

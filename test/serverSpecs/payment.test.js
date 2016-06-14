@@ -439,7 +439,7 @@ describe('Payment Specs', function () {
 
             it('should delete invoice', function (done) {
                 aggent
-                    .delete('invoice/' + invoiceBody._id)
+                    .delete('invoices/' + invoiceBody._id)
                     .set('type', 'sales')
                     .expect(200, done);
             });

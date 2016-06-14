@@ -4,7 +4,7 @@
     'text!templates/wTrack/list/ListTemplate.html'
 ], function (Backbone, _, listTemplate) {
     'use strict';
-    
+
     var QuotationListItemView = Backbone.View.extend({
         el: '#listTable',
 

@@ -574,9 +574,12 @@ var Module = function (models, event) {
         var condition;
         var resArray = [];
         var filtrElement = {};
+        var filterNameKeys = Object.keys(filter);
         var filterName;
+        var i;
 
-        for (filterName in filter) {
+        for (i = filterNameKeys.length - 1; i >= 0; i--) {
+            filterName = filterNameKeys[i];
             condition = filter[filterName].value;
 
             switch (filterName) {
@@ -592,6 +595,7 @@ var Module = function (models, event) {
                     filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                // skip default;
             }
         }
 
@@ -603,9 +607,12 @@ var Module = function (models, event) {
         var resArray = [];
         var filtrElement = {};
         var key;
+        var filterNameKeys = Object.keys(filter);
         var filterName;
+        var i;
 
-        for (filterName in filter) {
+        for (i = filterNameKeys.length - 1; i >= 0; i--) {
+            filterName = filterNameKeys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -719,7 +726,7 @@ var Module = function (models, event) {
                     }
                 }], function (err, result) {
                     if (err) {
-                        return next(err);
+                        return console.log(err);
                     }
 
                     cb(null, result);
@@ -767,7 +774,7 @@ var Module = function (models, event) {
 
             aggregate.exec(function (err, result) {
                 if (err) {
-                    return next(err);
+                    return console.log(err);
                 }
 
                 cb(null, result);
@@ -836,7 +843,7 @@ var Module = function (models, event) {
 
             aggregate.exec(function (err, result) {
                 if (err) {
-                    return next(err);
+                    return console.log(err);
                 }
 
                 cb(null, result);
@@ -1359,23 +1366,25 @@ var Module = function (models, event) {
         });
     };
 
-    this.setReconcileDate = function (req, date) {
-        setReconcileDate(req, date);
-    };
-
     function setReconcileDate(req, date) {
         var db = models.connection(req.session.lastDb);
         db.collection('settings').findOne({name: 'reconcileDate'}, function (err, result) {
+            var dateResult;
+            var newDae;
+            var newReconcileDate;
+            var lessDate;
+
             if (err) {
                 return console.log(err);
             }
-            var dateResult = result ? result.date : new Date();
-            var newDae = moment(date);
-            var newReconcileDate = moment(dateResult);
-            var lessDate = newDae.isBefore(newReconcileDate) ? true : false;
+
+            dateResult = result ? result.date : new Date();
+            newDae = moment(date);
+            newReconcileDate = moment(dateResult);
+            lessDate = newDae.isBefore(newReconcileDate) ? true : false;
 
             if (lessDate) {
-                db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: new Date(newDae)}}, function (err, result) {
+                db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: new Date(newDae)}}, function (err) {
                     if (err) {
                         return console.log(err);
                     }
@@ -1385,22 +1394,26 @@ var Module = function (models, event) {
         });
     }
 
+    this.setReconcileDate = function (req, date) {
+        setReconcileDate(req, date);
+    };
+
     this.removeBySourceDocument = function (req, sourceId) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
 
         Model.find({'sourceDocument._id': sourceId}, function (err, result) {
+            var ids = [];
+
             if (err) {
                 return console.log(err);
             }
-
-            var ids = [];
 
             result.forEach(function (el) {
                 setReconcileDate(req, el.date);
                 ids.push(el._id);
             });
 
-            Model.remove({_id: {$in: ids}}, function (err, result) {
+            Model.remove({_id: {$in: ids}}, function (err) {
                 if (err) {
                     return console.log(err);
                 }
@@ -1601,9 +1614,7 @@ var Module = function (models, event) {
                             }
                         }
                     }
-                }, /* , {
-                 $match: query
-                 }*/ {
+                }, {
                     $project: {
                         _id     : 1,
                         transfer: 1,
@@ -2295,10 +2306,24 @@ var Module = function (models, event) {
     };
 
     this.createCostsForJob = function (options) {
+        var req = options.req;
+        var jobsArray = options.jobIds;
+        var newReq = req;
 
+        var cb = function () {
+            return false;
+        };
+
+        newReq.body.jobs = jobsArray;
+
+        reconcile(req, null, cb, cb);
     };
 
     this.reconcile = function (req, res, next) {
+        reconcile(req, res, next);
+    };
+
+    function reconcile(req, res, next, cb) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
@@ -2752,7 +2777,7 @@ var Module = function (models, event) {
 
                         holidays.forEach(function (holiday) {
                             if ((holiday.day !== 0) && (holiday.day !== 6)) {
-                                hoursToRemove += parseInt(weeklyScheduler[holiday.day]) || 0;
+                                hoursToRemove += parseInt(weeklyScheduler[holiday.day], 10) || 0;
                             }
                         });
 
@@ -2762,7 +2787,7 @@ var Module = function (models, event) {
                             if (checkDate === 0) {
                                 checkDate = 7;
                             }
-                            hoursInMonth += parseInt(weeklyScheduler[checkDate]) || 0;
+                            hoursInMonth += parseInt(weeklyScheduler[checkDate], 10) || 0;
                         }
 
                         hoursInMonth -= hoursToRemove;
@@ -2943,14 +2968,8 @@ var Module = function (models, event) {
             });
         };
 
-        /*  if (jobIds && jobIds.length) {
-         mainWaterfallTasks = [parallelFunction, reconcileJobs];
-         } else if (month && year) {
-         mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
-         }*/
-
         mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
-        async.waterfall(mainWaterfallTasks, function (err, resut) {
+        async.waterfall(mainWaterfallTasks, function (err) {
             var db;
             var setObj;
 
@@ -2963,25 +2982,25 @@ var Module = function (models, event) {
             console.log('Success');
             event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
 
-            /* jobIds.forEach(function (job) {
-             checkAndCreateForJob({
-             req  : req,
-             jobId: job
-             })
-             });*/
+            if (cb) {
+                event.emit('sendMessage', {
+                    view   : 'Projects',
+                    message: 'Please, refresh browser, costs were calculated.'
+                });
+            }
 
-            Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function () {
+            Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
 
             });
 
-            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function () {
+            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
 
             });
         });
-    };
+    }
 
     this.getReconcileDate = function (req, res, next) {
         var db = models.connection(req.session.lastDb);
@@ -3130,7 +3149,9 @@ var Module = function (models, event) {
 
                 waterfallCb(null, result);
             });
-        };
+        }
+
+        waterfallTasks = [currencyNameFinder, journalFinder, journalEntrySave];
 
         async.waterfall(waterfallTasks, function (err, response) {
             if (err) {
@@ -3892,12 +3913,16 @@ var Module = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var sortKey;
+        var key;
+        var i;
 
         if (query.sort) {
             sort = {};
+            sortKey = Object.keys(query.sort);
 
-            for (sortKey in query.sort) {
-                sort[sortKey] = parseInt(query.sort[sortKey], 10);
+            for (i = sortKey.length - 1; i >= 0; i--) {
+                key = sortKey[i];
+                sort[key] = parseInt(query.sort[key], 10);
             }
         }
 
@@ -5296,12 +5321,16 @@ var Module = function (models, event) {
         }
 
         async.parallel([matchByWTrack, matchEmployee], function (err, result) {
+
+            var empIds;
+            var empIdsSecond;
+
             if (err) {
                 return next(err);
             }
 
-            var empIds = result[0];
-            var empIdsSecond = result[1];
+            empIds = result[0];
+            empIdsSecond = result[1];
 
             res.status(200).send({data: _.union(empIds, empIdsSecond)});
         });
@@ -5347,134 +5376,6 @@ var Module = function (models, event) {
             });
 
     };
-
-    /* this.create = function (body, dbIndex, cb, uId) {
-     var Journal = models.get(dbIndex, 'journal', journalSchema);
-     var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
-     var Currency = models.get(dbIndex, 'currency', CurrencySchema);
-     var journalId = body.journal;
-     var now = moment();
-     var date = body.date ? moment(body.date) : now;
-     //var currency = {
-     //    name: body.currency
-     //};
-     var currency;
-     var amount = body.amount;
-     var rates;
-
-     var waterfallTasks = [currencyNameFinder, journalFinder, journalEntrySave];
-
-     date = date.format('YYYY-MM-DD');
-
-     function currencyNameFinder(waterfallCb) {
-
-     Currency.findById(body.currency, function (err, result) {
-     if (err) {
-     waterfallCb(err);
-     }
-
-     waterfallCb(null, result.name);
-     });
-     }
-
-     function journalFinder(currencyName, waterfallCb) {
-     var err;
-
-     if (!journalId) {
-     err = new Error('Journal id is required field');
-     err.status = 400;
-
-     return waterfallCb(err);
-     }
-
-     currency = {
-     name: currencyName
-     };
-
-     Journal.findById(journalId, waterfallCb);
-
-     };
-
-     function journalEntrySave(journal, waterfallCb) {
-     oxr.historical(date, function () {
-     var err;
-     var debitObject;
-     var creditObject;
-     var parallelTasks = {
-     debitSaver : function (parallelCb) {
-     var journalEntry;
-
-     debitObject.debit = amount;
-     debitObject.account = journal.debitAccount;
-
-     debitObject.editedBy = {
-     user: uId,
-     date: new Date()
-     };
-
-     debitObject.createdBy = {
-     user: uId,
-     date: new Date()
-     };
-
-     journalEntry = new Model(debitObject);
-     journalEntry.save(parallelCb);
-     },
-     creditSaver: function (parallelCb) {
-     var journalEntry;
-
-     creditObject.credit = amount;
-     creditObject.account = journal.creditAccount;
-
-     creditObject.editedBy = {
-     user: uId,
-     date: new Date()
-     };
-
-     creditObject.createdBy = {
-     user: uId,
-     date: new Date()
-     };
-
-     journalEntry = new Model(creditObject);
-     journalEntry.save(parallelCb);
-     }
-     };
-
-     if (!journal || !journal._id) {
-     err = new Error('Invalid Journal');
-     err.status = 400;
-
-     return waterfallCb(err);
-     }
-
-     rates = oxr.rates;
-     currency.rate = rates[currency.name];
-
-     body.currency = currency;
-     body.journal = journal._id;
-
-     debitObject = _.extend({}, body);
-     creditObject = _.extend({}, body);
-
-     async.parallel(parallelTasks, function (err, result) {
-     if (err) {
-     return waterfallCb(err);
-     }
-
-     waterfallCb(null, result);
-     });
-     });
-     };
-
-     async.waterfall(waterfallTasks, function (err, response) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, response);
-     });
-     };*/
 
     function getForView(req, mainCallback) {
         var dbIndex = req.session.lastDb;

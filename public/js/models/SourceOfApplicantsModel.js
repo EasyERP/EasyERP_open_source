@@ -9,7 +9,7 @@
         defaults   : {
             name: 'New'
         },
-        
+
         urlRoot: function () {
             return CONSTANTS.URLS.SOURCESOFAPPLICANTS;
         }

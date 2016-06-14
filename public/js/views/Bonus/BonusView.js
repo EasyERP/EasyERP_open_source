@@ -6,7 +6,7 @@ define([
     'views/selectView/selectView',
     'views/Bonus/CreateView',
     'models/BonusModel',
-    "dataService",
+    'dataService',
     'moment',
     'constants'
 ], function (Backbone, $, _, bonusTemplate, SelectView, CreateView, CurrentModel, dataService, moment, CONSTANTS) {
@@ -26,18 +26,17 @@ define([
         events: {
             'click #createBonus'                               : 'addBonus',
             'click #removeBonus'                               : 'removeBonus',
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .choseType'                                 : 'showSelect',
             'click .choseEmployee'                             : 'showSelect',
             'click .bonus-checkbox'                            : 'checkBonus',
-            'click #checkAll_bonus'                           : 'checkAllBonus',
+            'click #checkAll_bonus'                            : 'checkAllBonus',
             'click .startDate div'                             : 'showDatepicker',
             'click .endDate div'                               : 'showDatepicker',
-            'click'                                            : 'hideDatepicker'
+            click                                              : 'hideDatepicker'
         },
 
         hideDatepicker: function () {
-            //ToDO Hide Datepicker
 
             if (this.selectView) {
                 this.selectView.remove();
@@ -126,15 +125,13 @@ define([
         },
 
         chooseOption: function (e) {
-            e.preventDefault();
-
             var self = this;
             var target = $(e.target);
-            var closestTD = target.closest("td");
-            var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
-            var tr = target.closest("tr");
-            var id = target.attr("id");
-            var attr = targetElement.attr("id") || targetElement.data("content");
+            var closestTD = target.closest('td');
+            var targetElement = closestTD.length ? closestTD : target.closest('th').find('a');
+            var tr = target.closest('tr');
+            var id = target.attr('id');
+            var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
             var element = _.find(self.responseObj[elementType], function (el) {
                 return el._id === id;
@@ -142,6 +139,8 @@ define([
             var employee;
             var bonus;
             var model = new CurrentModel();
+
+            e.preventDefault();
 
             if (elementType === '#employee') {
                 tr.find('[data-content="employee"]').text(element.name);
@@ -171,7 +170,7 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").remove();
+            $('.newSelectList').remove();
 
             if (this.selectView) {
                 this.selectView.remove();
@@ -182,27 +181,23 @@ define([
             var self = this;
             e.preventDefault();
 
-            new CreateView(self.model.toJSON());
+            return new CreateView(self.model.toJSON());
         },
 
         removeBonus: function (e) {
-            e.preventDefault();
-
             var self = this;
             var element;
 
+            e.preventDefault();
+
             self.selectedBonus.forEach(function (bonus) {
-                element = $("#bonusTable").find("tr[data-id=" + bonus + "]");
+                element = $('#bonusTable').find('tr[data-id=' + bonus + ']');
                 element.remove();
             });
 
             self.selectedBonus = [];
             self.$el.find('#removeBonus').hide();
 
-            //App.render({
-            //    type   : 'notify',
-            //    message: 'Data were changed, please refresh browser'
-            //});
             this.trigger('save');
         },
 
@@ -214,7 +209,7 @@ define([
             var endDate = this.$el.find(selectedEnd);
 
             startDate.datepicker({
-                dateFormat : "d M, yy",
+                dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function () {
@@ -232,7 +227,7 @@ define([
             });
 
             endDate.datepicker({
-                dateFormat : "d M, yy",
+                dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function () {
@@ -258,7 +253,7 @@ define([
                 return '';
             }
 
-            return moment(oldDate).format("D MMM, YYYY");
+            return moment(oldDate).format('D MMM, YYYY');
         },
 
         render: function () {
@@ -286,7 +281,7 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData("/bonusType/list", null, function (bonus) {
+            dataService.getData('/bonusType/list', null, function (bonus) {
                 self.responseObj['#bonus'] = bonus;
             });
 

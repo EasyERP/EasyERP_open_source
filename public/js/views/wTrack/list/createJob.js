@@ -1,6 +1,3 @@
-/**
- * Created by lilya on 01/12/15.
- */
 define([
     'Backbone',
     'jQuery',
@@ -27,12 +24,6 @@ define([
             this.render();
         },
 
-        /* keyDown: function (e) {
-         if (e.which === 13) {
-         this.setChangedValueToModel(e);
-         }
-         },*/
-
         stopDefaultEvents: function (e) {
             e.stopPropagation();
             e.preventDefault();
@@ -41,37 +32,6 @@ define([
         hideDialog: function () {
             $('.wTrackDialog').remove();
         },
-
-        /* setChangedValueToModel: function (elem) {
-         var editedElement = elem || this.$listTable.find('.editing');
-         var editedCol;
-         var editedElementRowId;
-         var editedElementContent;
-         var editedElementValue;
-
-         if (editedElement.length) {
-
-         if (editedElement.length > 1) {
-         editedElement = $(editedElement[1]);
-         }
-
-         editedCol = editedElement.closest('td');
-         editedElementRowId = editedElement.closest('tr').data('id');
-         editedElementContent = editedCol.data('content');
-         editedElementValue = editedElement.val();
-
-         if (editedElementValue) {
-         editedCol.removeClass('errorContent');
-         }
-
-         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
-
-         if (!elem) {
-         editedCol.not('.endDateTD').text(editedElementValue);
-         editedElement.not('.endDateInput').remove();
-         }
-         }
-         },*/
 
         generateItems: function (e) {
             var self = this;

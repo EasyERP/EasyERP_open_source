@@ -77,7 +77,7 @@ define([
             this.showNewSelect(e, true, false);
         },
 
-        changePaidAmount: function (e) {
+        changePaidAmount: function () {
             var self = this;
             var targetEl = $('#paidAmount');
             var changedValue = $.trim(targetEl.val());
@@ -205,7 +205,9 @@ define([
                         self.hideDialog();
 
                         if (self.redirect) {
-                            self.eventChannel && self.eventChannel.trigger('newPayment');
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('newPayment');
+                            }
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }

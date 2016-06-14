@@ -766,115 +766,114 @@ var Module = function (models, event) {
             addObj._id = objectId(options.parrentContentId);
         }
 
-        models.get(req.session.lastDb, 'Department', department).aggregate({ // toDo on accessRollHelper
-                $match: {
-                    users: objectId(req.session.uId)
-                }
-            }, {
-                $project: {
-                    _id: 1
-                }
-            },
-            function (err, deps) {
-                var arrOfObjectId;
-                if (err) {
-                    return next(err);
-                }
+        models.get(req.session.lastDb, 'Department', department).aggregate([{ // toDo on accessRollHelper
+            $match: {
+                users: objectId(req.session.uId)
+            }
+        }, {
+            $project: {
+                _id: 1
+            }
+        }], function (err, deps) {
+            var arrOfObjectId;
+            if (err) {
+                return next(err);
+            }
 
-                arrOfObjectId = deps.objectID();
+            arrOfObjectId = deps.objectID();
 
-                models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
-                    {
-                        $match: {
-                            $and: [
-                                addObj,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.users': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.group': {$in: arrOfObjectId}}
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            $and: [
-                                                {whoCanRW: 'owner'},
-                                                {'groups.owner': objectId(req.session.uId)}
-                                            ]
-                                        },
-                                        {whoCanRW: 'everyOne'}
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $project: {
-                            _id: 1
-                        }
-                    },
-                    {
-                        $project: {
-                            _id: 1
-                        }
-                    },
-                    function (err, projectsId) {
-                        var arrayOfProjectsId;
-
-                        if (err) {
-                            return next(err);
-                        }
-
-                        arrayOfProjectsId = projectsId.objectID();
-
-                        Tasks.aggregate(
+            models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
+                {
+                    $match: {
+                        $and: [
+                            addObj,
                             {
-                                $match: {
-                                    project: {$in: arrayOfProjectsId}
-                                }
-                            },
-                            {
-                                $project: {
-                                    _id      : 1,
-                                    workflow : 1,
-                                    remaining: 1
-                                }
-                            },
-                            {
-                                $group: {
-                                    _id           : '$workflow',
-                                    count         : {$sum: 1},
-                                    totalRemaining: {$sum: '$remaining'}
-                                }
-                            },
-                            function (err, responseTasks) {
-                                if (err) {
-                                    return next(err);
-                                }
-
-                                responseTasks.forEach(function (object) {
-                                    if (object.count > req.session.kanbanSettings.tasks.countPerPage) {
-                                        data.showMore = true;
-                                    }
-                                });
-                                data.arrayOfObjects = responseTasks;
-                                res.send(data);
+                                $or: [
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.users': objectId(req.session.uId)}
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.group': {$in: arrOfObjectId}}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $and: [
+                                            {whoCanRW: 'owner'},
+                                            {'groups.owner': objectId(req.session.uId)}
+                                        ]
+                                    },
+                                    {whoCanRW: 'everyOne'}
+                                ]
                             }
-                        );
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                function (err, projectsId) {
+                    var arrayOfProjectsId;
 
-                    });
+                    if (err) {
+                        return next(err);
+                    }
 
-            });
+                    arrayOfProjectsId = projectsId.objectID();
+
+                    Tasks.aggregate(
+                        {
+                            $match: {
+                                project: {$in: arrayOfProjectsId}
+                            }
+                        },
+                        {
+                            $project: {
+                                _id      : 1,
+                                workflow : 1,
+                                remaining: 1
+                            }
+                        },
+                        {
+                            $group: {
+                                _id           : '$workflow',
+                                count         : {$sum: 1},
+                                totalRemaining: {$sum: '$remaining'}
+                            }
+                        },
+                        function (err, responseTasks) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            responseTasks.forEach(function (object) {
+                                if (object.count > req.session.kanbanSettings.tasks.countPerPage) {
+                                    data.showMore = true;
+                                }
+                            });
+                            data.arrayOfObjects = responseTasks;
+                            res.send(data);
+                        }
+                    );
+
+                });
+
+        });
     };
 
 };

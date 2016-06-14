@@ -1,6 +1,3 @@
-/**
- * Created by German on 30.06.2015.
- */
 define([
     'Backbone',
     'Underscore',
@@ -8,13 +5,11 @@ define([
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
-    /* 'views/Attendance/StatisticsView',
-    'populate',*/
     'moment',
     'dataService',
     'views/selectView/selectView',
-    'constants'// added view for employees dd list
-], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, /* StatisticsView, populate,*/ moment, dataService, SelectView, CONSTANTS) {
+    'constants'
+], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, moment, dataService, SelectView, CONSTANTS) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -52,8 +47,6 @@ define([
 
             this.model = new AttendanceModel();
             this.listenTo(this.model, 'change:currentEmployee', this.changeEmployee);
-            // this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
-            // this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 var yearToday = moment().year();
@@ -62,7 +55,7 @@ define([
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
                     return employee;
-                });   // changed for getting proper form of names
+                });
 
                 self.model.set({
                     employees: employees
@@ -190,13 +183,13 @@ define([
         },
 
         /* changeStatus: function () {
-            var self = this;
-            self.currentStatus = this.$el.find('#currentStatus option:selected').attr('id');
+         var self = this;
+         self.currentStatus = this.$el.find('#currentStatus option:selected').attr('id');
 
-            dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function () {
-                // ToDo Hired and Not Hired
-            });
-        },*/
+         dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function () {
+         // ToDo Hired and Not Hired
+         });
+         },*/
 
         changeTime: function () {
             var startTime = new Date();

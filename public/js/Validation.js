@@ -1,26 +1,26 @@
 define(
     function () {
-        //Removed cyrillic chars
-        var phoneRegExp = /^[0-9\+]?([0-9-\s()])+[0-9()]$/,
-            intNumberRegExp = /[0-9]+/,
-            floatNumberRegExp = /(^[0-9]+(\.[0-9]{1,2})?)$/,
-            nameRegExp = /^[a-zA-Z]+[a-zA-Z-_\s]+$/,
-            groupsNameRegExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/,
-            loginRegExp = /[\w\.@]{4,100}$/,
-            passRegExp = /^[\w\.@]{3,100}$/,
-            skypeRegExp = /^[\w\._@]{6,100}$/,
-            workflowRegExp = /^[a-zA-Z0-9\s]{2,100}$/,
-            invalidCharsRegExp = /[~<>\^\*₴]/,
-            countryRegExp = /[a-zA-Z\s-]+/,
-            zipRegExp = /[a-zA-Z0-9\s-]+$/,
-            streetRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/,
-            moneyAmountRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/,
-            emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-            loggedRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/,
-            loginCharRegex = /[a-zA-Z0-9\.]/;
-        var MIN_LENGTH = 2,
-            LOGIN_MIN_LENGTH = 4,
-            WORKFLOW_MIN_LENGTH = 3;
+        // Removed cyrillic chars
+        var phoneRegExp = /^[0-9\+]?([0-9-\s()])+[0-9()]$/;
+        var intNumberRegExp = /[0-9]+/;
+        var floatNumberRegExp = /(^[0-9]+(\.[0-9]{1,2})?)$/;
+        var nameRegExp = /^[a-zA-Z]+[a-zA-Z-_\s]+$/;
+        var groupsNameRegExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/;
+        var loginRegExp = /[\w\.@]{4,100}$/;
+        var passRegExp = /^[\w\.@]{3,100}$/;
+        var skypeRegExp = /^[\w\._@]{6,100}$/;
+        var workflowRegExp = /^[a-zA-Z0-9\s]{2,100}$/;
+        var invalidCharsRegExp = /[~<>\^\*₴]/;
+        var countryRegExp = /[a-zA-Z\s-]+/;
+        var zipRegExp = /[a-zA-Z0-9\s-]+$/;
+        var streetRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
+        var moneyAmountRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/;
+        var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        var loggedRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/;
+        var loginCharRegex = /[a-zA-Z0-9\.]/;
+        var MIN_LENGTH = 2;
+        var LOGIN_MIN_LENGTH = 4;
+        var WORKFLOW_MIN_LENGTH = 3;
 
         var validateEmail = function (validatedString) {
             return emailRegExp.test(validatedString);
@@ -95,24 +95,25 @@ define(
         };
 
         var errorMessages = {
-            userName             : "field value is incorrect. It should contain only the following symbols: A-Z, a-z",
-            invalidNameMsg       : "field value is incorrect. It should start with letter or number",
-            invalidLoginMsg      : "field value is incorrect. It should contain only the following symbols: A-Z, a-z, 0-9, _ @",
-            notNumberMsg         : "field should contain a valid integer value",
-            notPriceMsg          : "field should contain a valid price value with only two digest after dot and contain only the following symbols: 0-9, .",
-            invalidCountryMsg    : "field should contain only letters, whitespaces and '-' sign",
-            loggedNotValid       : "field should contain a valid decimal value with max 1 digit after dot",
-            minLengthMsg         : function (minLength) {
-                return "field should be at least " + minLength + " characters long"
+            userName         : 'field value is incorrect. It should contain only the following symbols: A-Z, a-z',
+            invalidNameMsg   : 'field value is incorrect. It should start with letter or number',
+            invalidLoginMsg  : 'field value is incorrect. It should contain only the following symbols: A-Z, a-z, 0-9, _ @',
+            notNumberMsg     : 'field should contain a valid integer value',
+            notPriceMsg      : 'field should contain a valid price value with only two digest after dot and contain only the following symbols: 0-9, .',
+            invalidCountryMsg: 'field should contain only letters, whitespaces and ' - ' sign',
+            loggedNotValid   : 'field should contain a valid decimal value with max 1 digit after dot',
+            minLengthMsg     : function (minLength) {
+                return 'field should be at least ' + minLength + ' characters long';
             },
-            invalidMoneyAmountMsg: "field should contain a number with max 2 digits after dot",
-            invalidEmailMsg      : "field should contain a valid email address",
-            requiredMsg          : "field can not be empty",
+
+            invalidMoneyAmountMsg: 'field should contain a number with max 2 digits after dot',
+            invalidEmailMsg      : 'field should contain a valid email address',
+            requiredMsg          : 'field can not be empty',
             invalidCharsMsg      : "field can not contain '~ < > ^ * ₴' signs",
             invalidStreetMsg     : "field can contain only letters, numbers and '. , - /' signs",
             invalidPhoneMsg      : "field should contain only numbers and '+ - ( )' signs",
             invalidZipMsg        : "field should contain only letters, numbers and '-' sing",
-            passwordsNotMatchMsg : "Password and confirm password field do not match"
+            passwordsNotMatchMsg : 'Password and confirm password field do not match'
         };
 
         var checkNameField = function (errorArray, required, fieldValue, fieldName) {
@@ -588,7 +589,7 @@ define(
 
         var checkFirstDateIsGreater = function (errorArray, greaterDate, greaterDateName, smallerDate, smallerDateName) {
             if ((new Date(greaterDate) < new Date(smallerDate))) {
-                errorArray.push(smallerDateName + " can not be greater than " + greaterDateName);
+                errorArray.push(smallerDateName + ' can not be greater than ' + greaterDateName);
             }
         };
 
@@ -628,5 +629,5 @@ define(
             checkJobPositionField     : checkJobPositionField,
 
             loginCharNotValid: loginCharNotValid
-        }
+        };
     });

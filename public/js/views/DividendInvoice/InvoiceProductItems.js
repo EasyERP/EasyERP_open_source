@@ -50,7 +50,7 @@ define([
 
             e.preventDefault();
             e.stopPropagation();
-            
+
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
                     return parrent.prepend(_.template(ProductInputContent));

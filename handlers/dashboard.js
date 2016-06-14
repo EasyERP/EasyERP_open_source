@@ -680,8 +680,6 @@ var wTrack = function (models) {
                         }
                     }
 
-                    console.log(holidaysObject);
-
                     parallelCb(null, holidaysObject);
                 });
             }

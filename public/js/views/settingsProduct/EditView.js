@@ -16,7 +16,7 @@ define([
             'click #sourceUsers li'                                           : 'addUsers',
             'click #targetUsers li'                                           : 'removeUsers',
             'click .current-selected'                                         : 'showNewSelect',
-            'click'                                                           : 'hideNewSelect',
+            click                                                             : 'hideNewSelect',
             'click .prevUserList'                                             : 'prevUserList',
             'click .nextUserList'                                             : 'nextUserList',
             'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
@@ -27,7 +27,7 @@ define([
 
         initialize: function (options) {
             options = options || {};
-            
+
             _.bindAll(this, 'render', 'saveItem');
             _.bindAll(this, 'render', 'deleteItem');
 
@@ -36,7 +36,7 @@ define([
             } else {
                 this.currentModel = options.model || options.collection.getElement();
             }
-            
+
             this.currentModel.urlRoot = '/category';
             this.responseObj = {};
             this.render();
@@ -126,7 +126,7 @@ define([
         hideNewSelect: function (e) {
             this.$el.find('.newSelectList').hide();
         },
-        
+
         showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
             return false;
@@ -134,7 +134,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            
+
             $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id')).attr('data-level', $target.data('level'));
         },
 
@@ -183,11 +183,11 @@ define([
                 }
             });
         },
-        
+
         hideDialog: function () {
             $('.create-dialog').remove();
         },
-        
+
         deleteItem: function (event) {
             var mid;
             var self = this;
@@ -251,6 +251,6 @@ define([
             return this;
         }
     });
-    
+
     return EditView;
 });

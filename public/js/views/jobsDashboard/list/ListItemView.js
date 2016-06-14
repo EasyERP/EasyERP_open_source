@@ -11,7 +11,7 @@ define([
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize;  // Counting the start index of list items
         },
 
         getClass: function (job) {

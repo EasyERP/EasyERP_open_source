@@ -156,7 +156,7 @@ define([
                     },
                     wait   : true,
                     success: function () {
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
                         self.hideDialog();
                         Backbone.history.navigate(redirectUrl, {trigger: true});

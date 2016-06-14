@@ -242,11 +242,11 @@ define([
                     self.collection.url = CONSTANTS.URLS.WORKFLOWS;
 
                     if (ui.item.next().hasClass('row')) {
-                        sequence = parseInt(ui.item.next().find('div.name').attr('data-sequence')) + 1;
+                        sequence = parseInt(ui.item.next().find('div.name').attr('data-sequence'), 10) + 1;
                     }
 
                     model.save({
-                        sequenceStart: parseInt(ui.item.find('div.name').attr('data-sequence')),
+                        sequenceStart: parseInt(ui.item.find('div.name').attr('data-sequence'), 10),
                         wId          : model.toJSON().wId,
                         sequence     : sequence
                     }, {
@@ -279,13 +279,13 @@ define([
             }
         },
 
-        createItem: function () {
-            new CreateView({collection: this.collection});
+       /* createItem: function () {
+            return new CreateView({collection: this.collection});
         },
 
         editItem: function () {
-            new EditView({collection: this.collection});
-        },
+            return new EditView({collection: this.collection});
+        },*/
 
         addNewStatus: function (e) {
             var $thisEl = this.$el;
@@ -375,7 +375,7 @@ define([
 
         quickEdit: function () {
             var n = $('#workflows .row').length;
-            
+
             if (n === 1) {
                 $('a.delete').remove();
             }
@@ -388,6 +388,3 @@ define([
 
     return ContentView;
 });
-
-
-

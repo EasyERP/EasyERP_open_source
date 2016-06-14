@@ -30,6 +30,7 @@ define([
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
             this.forSales = false;
+
             this.render(options);
         },
 
@@ -90,7 +91,7 @@ define([
             this.saveItem(function (err) {
                 if (!err) {
                     dataService.postData(url, data, function (err) {
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
                         if (err) {
                             App.render({
@@ -171,6 +172,7 @@ define([
             var groupsId = [];
             var whoCanRW;
             var currency;
+            var i;
 
             if (thisEl.find('#currencyDd').attr('data-id')) {
                 currency = {
@@ -197,7 +199,7 @@ define([
             whoCanRW = this.$el.find('[name="whoCanRW"]:checked').val();
 
             if (selectedLength) {
-                for (var i = selectedLength - 1; i >= 0; i--) {
+                for (i = selectedLength - 1; i >= 0; i--) {
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {  // added more info for save
@@ -379,14 +381,14 @@ define([
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $(".groupsAndUser").show();
+                    $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $("#targetGroups").append("<li id='" + item._id + "'>" + item.name + "</li>");
+                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
+                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
                     });
                     model.groups.users.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
+                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
                     });
 
                 }

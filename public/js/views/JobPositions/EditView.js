@@ -106,7 +106,6 @@ define([
             });
         },
 
-
         render: function () {
 
             var self = this;

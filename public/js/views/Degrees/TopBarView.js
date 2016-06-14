@@ -14,12 +14,13 @@ define([
         actionType : null,
         template   : _.template(ContentTopBarTemplate),
 
-        events               : {
+        events: {
             'click a.changeContentView'    : 'changeContentViewType',
             'click ul.changeContentIndex a': 'changeItemIndex',
             'click #top-bar-deleteBtn'     : 'deleteEvent',
             'click #top-bar-discardBtn'    : 'discardEvent'
         },
+        
         changeContentViewType: Custom.changeContentViewType,
         changeItemIndex      : Custom.changeItemIndex,
 

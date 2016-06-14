@@ -10,15 +10,7 @@ define([
         el           : '#top-bar',
         contentType  : CONSTANTS.BONUSTYPE,
         contentHeader: 'BonusType',
-        viewType     : null,
-        template     : _.template(ContentTopBarTemplate),
-
-        initialize: function (options) {
-            if (options.collection) {
-                this.collection = options.collection;
-            }
-            this.render();
-        }
+        template     : _.template(ContentTopBarTemplate)
     });
 
     return topBarView;

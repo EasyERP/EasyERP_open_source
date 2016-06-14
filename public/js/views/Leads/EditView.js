@@ -40,19 +40,6 @@ define([
             $('#convert-dialog-form').dialog('open');
         },
 
-        changeTab: function (e) {
-            var $target = $(e.target);
-            var dialogHolder;
-            var n;
-
-            $target.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $target.addClass('active');
-            n = $target.parents('.dialog-tabs').find('li').index($(e.target).parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
         getWorkflowValue: function (value) {
             var workflows = [];
             var i;
@@ -285,7 +272,6 @@ define([
             });
             var self = this;
             var model = this.currentModel.toJSON();
-            var notDiv;
 
             var that = this; // DO NOT confuse with "self" below! it's other context!
 

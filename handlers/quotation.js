@@ -91,6 +91,7 @@ var Module = function (models, event) {
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
+                // skip default;
             }
         }
 
@@ -877,7 +878,7 @@ var Module = function (models, event) {
                     name               : '$root.name',
                     'paymentInfo.total': '$root.paymentInfo.total',
                     orderDate          : '$root.orderDate',
-                   /* forSales           : '$root.forSales',*/
+                    /* forSales           : '$root.forSales',*/
                     workflow           : '$root.workflow',
                     supplier           : '$root.supplier',
                     /* isOrder            : '$root.isOrder',*/

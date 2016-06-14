@@ -175,7 +175,7 @@ define([
 
         copyRow: function (e) {
             var self = this;
-            var checkedRows = this.$el.find('input:checked:not(#checkAll)');
+            var checkedRows = this.$el.find('.checkbox:checked:not(#checkAll)');
             var length = checkedRows.length;
             var selectedWtrack;
             var target;
@@ -203,7 +203,7 @@ define([
                 id = target.val();
                 row = target.closest('tr');
                 model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                hours = (model && model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                 $(selectedWtrack).attr('checked', false);
                 projectWorkflow = $.trim(row.find('[data-content="workflow"]').text());
 
@@ -575,7 +575,7 @@ define([
                     $job.text('');
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
-                    tr.find('[data-content="customer"]').text(element.customer && element.customer.name ? element.customer.name.first + ' ' + element.customer.name.last: '');
+                    tr.find('[data-content="customer"]').text(element.customer && element.customer.name ? element.customer.name.first + ' ' + element.customer.name.last : '');
 
                     project = element._id;
 
