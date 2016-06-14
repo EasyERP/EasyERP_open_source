@@ -5,10 +5,10 @@ define([
     'text!templates/ExpensesInvoice/EditTemplate.html',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
-    'views/Invoice/InvoiceProductItems',
-    'views/salesInvoice/wTrack/wTrackRows',
+    'views/Invoices/InvoiceProductItems',
+    'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/CreateView',
-    'views/salesInvoice/EmailView',
+    'views/salesInvoices/EmailView',
     'views/Payment/list/ListHeaderInvoice',
     'common',
     'custom',
@@ -36,7 +36,7 @@ define([
     'use strict';
 
     var EditView = Backbone.View.extend({
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {

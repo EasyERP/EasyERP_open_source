@@ -268,7 +268,7 @@ define([
             link: true,
             visible: true,
             ancestors: [ ],
-            href: "Quotation"
+            href: "Quotations"
         },
         {
             _id: 57,
@@ -332,13 +332,13 @@ define([
         },
         {
             _id: 62,
-            mname: "Quotation",
+            mname: "Quotations",
             sequence: 62,
             parrent: 19,
             link: true,
             visible: true,
             ancestors: [ ],
-            href: "salesQuotation"
+            href: "salesQuotations"
         },
         {
             _id: 63,
@@ -348,7 +348,7 @@ define([
             link: true,
             visible: true,
             ancestors: [ ],
-            href: "salesOrder"
+            href: "salesOrders"
         },
         {
             _id: 64,

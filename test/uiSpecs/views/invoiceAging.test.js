@@ -170,7 +170,7 @@ define([
             });
 
             it('Try to fetch collection with error result', function () {
-                var invoiceAging = new RegExp('\/invoice\/stats/', 'i');
+                var invoiceAging = new RegExp('\/invoices\/stats/', 'i');
 
                 historyNavigateSpy.reset();
                 server.respondWith('GET', invoiceAging, [401, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoiceAging)]);
@@ -185,7 +185,7 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var invoiceAging = new RegExp('\/invoice\/stats/', 'i');
+                var invoiceAging = new RegExp('\/invoices\/stats/', 'i');
 
                 server.respondWith('GET', invoiceAging, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoiceAging)]);
                 invoiveAgingCollection = new InvoiceAgingCollection({

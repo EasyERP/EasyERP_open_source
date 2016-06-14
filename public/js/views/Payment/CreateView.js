@@ -8,7 +8,7 @@ define([
     "text!templates/Payment/CreateTemplate.html",
     "collections/Persons/PersonsCollection",
     "collections/Departments/DepartmentsCollection",
-    'collections/salesInvoice/filterCollection',
+    'collections/salesInvoices/filterCollection',
     'collections/customerPayments/filterCollection',
     'views/Projects/projectInfo/payments/paymentView',
     //"views/Projects/projectInfo/invoices/invoiceView",

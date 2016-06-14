@@ -1,11 +1,11 @@
 define([
     'Underscore',
     'jQuery',
-    'views/salesInvoice/list/ListView',
+    'views/salesInvoices/list/ListView',
     'text!templates/Projects/projectInfo/invoiceTemplate.html',
-    'views/salesInvoice/EditView',
-    'views/salesInvoice/list/ListItemView',
-    'collections/salesInvoice/filterCollection',
+    'views/salesInvoices/EditView',
+    'views/salesInvoices/list/ListItemView',
+    'collections/salesInvoices/filterCollection',
     'models/InvoiceModel',
     'common',
     'helpers',
@@ -166,7 +166,7 @@ define([
 
             var model = new InvoiceModel({validate: false});
 
-            model.urlRoot = '/invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : orderId,
@@ -201,7 +201,7 @@ define([
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : id,

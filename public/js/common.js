@@ -15,12 +15,14 @@
     };
 
     var utcDateToLocaleDate = function (utcDateString) {
+        utcDateString = new Date(utcDateString);
         utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
 
         return utcDateString;
     };
 
     var utcDateToLocaleFullDateTime = function (utcDateString) {
+        utcDateString = new Date(utcDateString);
         utcDateString = utcDateString ? moment(utcDateString).format("dddd, D MM YYYY HH:mm:s") : null;
 
         return utcDateString;

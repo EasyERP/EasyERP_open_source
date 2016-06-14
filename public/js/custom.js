@@ -127,14 +127,14 @@ define([
                     case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:
-                    case CONTENT_TYPES.QUOTATION:
-                    case CONTENT_TYPES.ORDER:
-                    case CONTENT_TYPES.INVOICE:
+                    case CONTENT_TYPES.QUOTATIONS:
+                    case CONTENT_TYPES.ORDERS:
+                    case CONTENT_TYPES.INVOICES:
                     case CONTENT_TYPES.SUPPLIERPAYMENTS:
                     case CONTENT_TYPES.CUSTOMERPAYMENTS:
-                    case CONTENT_TYPES.SALESQUOTATION:
-                    case CONTENT_TYPES.SALESORDER:
-                    case CONTENT_TYPES.SALESINVOICE:
+                    case CONTENT_TYPES.SALESQUOTATIONS:
+                    case CONTENT_TYPES.SALESORDERS:
+                    case CONTENT_TYPES.SALESINVOICES:
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:
@@ -189,14 +189,14 @@ define([
                     case CONTENT_TYPES.BIRTHDAYS:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:
-                    case CONTENT_TYPES.QUOTATION:
-                    case CONTENT_TYPES.ORDER:
-                    case CONTENT_TYPES.INVOICE:
+                    case CONTENT_TYPES.QUOTATIONS:
+                    case CONTENT_TYPES.ORDERS:
+                    case CONTENT_TYPES.INVOICES:
                     case CONTENT_TYPES.SUPPLIERPAYMENTS:
                     case CONTENT_TYPES.CUSTOMERPAYMENTS:
-                    case CONTENT_TYPES.SALESQUOTATION:
-                    case CONTENT_TYPES.SALESORDER:
-                    case CONTENT_TYPES.SALESINVOICE:
+                    case CONTENT_TYPES.SALESQUOTATIONS:
+                    case CONTENT_TYPES.SALESORDERS:
+                    case CONTENT_TYPES.SALESINVOICES:
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:

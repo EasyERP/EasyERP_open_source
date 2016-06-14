@@ -20,7 +20,6 @@ var Module = function (models, event) {
     'use strict';
     // ToDo set it to process.env
 
-    var access = require('../Modules/additions/access.js')(models);
     var CONSTANTS = require('../constants/mainConstants.js');
     var matchObject = {};
     var notDevArray = CONSTANTS.NOT_DEV_ARRAY;
@@ -450,7 +449,7 @@ var Module = function (models, event) {
         var currency;
         var amount = body.amount;
 
-        var waterfallTasks = [journalFinder, journalEntrySave];
+        var waterfallTasks;
 
         function journalFinder(waterfallCb) {
             var err;
@@ -552,7 +551,9 @@ var Module = function (models, event) {
 
                 waterfallCb(null, result);
             });
-        };
+        }
+
+        waterfallTasks = [journalFinder, journalEntrySave];
 
         async.waterfall(waterfallTasks, function (err, response) {
             if (err) {
@@ -644,6 +645,7 @@ var Module = function (models, event) {
         var findSalaryPayments;
         var matchObject;
         var filterArray;
+        var parallelTasks;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -1027,12 +1029,9 @@ var Module = function (models, event) {
             });
         };
 
-        var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
+        parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
 
         async.parallel(parallelTasks, function (err, result) {
-            if (err) {
-                return mainCallback(err);
-            }
             var invoices = result[0];
             var salary = result[1];
             var jobsFinished = result[3];
@@ -1041,6 +1040,10 @@ var Module = function (models, event) {
             var salaryPaymentsResult = result[5];
             var totalValue = 0;
             var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult);
+
+            if (err) {
+                return mainCallback(err);
+            }
 
             models.forEach(function (model) {
                 totalValue += model.debit;
@@ -1059,7 +1062,7 @@ var Module = function (models, event) {
         var startDate = filter.startDate.value;
         var endDate = filter.endDate.value;
         var matchObject;
-        
+
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
 

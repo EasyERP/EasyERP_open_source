@@ -10288,7 +10288,7 @@ define([
      {
      _id: "56229009184ec5a427913306",
      viewType: "",
-     byDefault: "salesInvoice"
+     byDefault: "salesInvoices"
      },
      {
      _id: "562506bb19a2ecca01ca84b3",
@@ -10444,7 +10444,7 @@ define([
      {
      _id: "56229009184ec5a427913306",
      viewType: "",
-     byDefault: "salesInvoice"
+     byDefault: "salesInvoices"
      },
      {
      _id: "562506bb19a2ecca01ca84b3",
@@ -16803,7 +16803,7 @@ define([
          it('Try to go to quotationView', function () {
          var $quotationBtn;
          var $closeBtn;
-         var orderUrl = new RegExp('\/Order\/form\/', 'i');
+         var orderUrl = new RegExp('\/Orders\/form\/', 'i');
 
          $quotationBtn = $thisEl.find('#projectTeam > tr:nth-child(1) > td > a.quotation');
 
@@ -17243,7 +17243,7 @@ define([
          it('Try to create quotation with error response from server', function () {
 
          var $saveBtn = $('#create-person-dialog');
-         var quotationUrl = '/quotation/';
+         var quotationUrl = '/Quotations/';
 
          server.respondWith('POSTf', quotationUrl, [404, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
          $saveBtn.click();
@@ -17264,7 +17264,7 @@ define([
          var $dialog = $('.ui-dialog');
          var $addNewItemBtn = $dialog.find('.addProductItem > a');
          var $createBtn = $('#create-person-dialog');
-         var quotationUrl = '/quotation/';
+         var quotationUrl = '/Quotations/';
          var jobsForProjectUrl = new RegExp('\/jobs\/getForDD', 'i');
 
          // creating new product row
@@ -17642,7 +17642,7 @@ define([
 
          it('Try to open EditView', function () {
          var $needTd = $thisEl.find('#orderTable > tr[data-id="564cfd8da6e6390160c9f0fe"] > td:nth-child(3)');
-         var orderUrl = new RegExp('\/Order\/form\/', 'i');
+         var orderUrl = new RegExp('\/Orders\/form\/', 'i');
 
          server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrderById)]);
          $needTd.click();

@@ -158,7 +158,7 @@ define([], function () {
             }
         },
 
-        salesInvoice: {
+        salesInvoices: {
             Customer: {
                 view   : 'supplier',
                 backend: 'supplier._id'
@@ -456,7 +456,7 @@ define([], function () {
             }
         },
 
-        Quotation: {
+        Quotations: {
             Supplier: {
                 view   : 'supplier',
                 backend: 'supplier._id'
@@ -468,7 +468,7 @@ define([], function () {
             }
         },
 
-        Invoice: {
+        Invoices: {
             Supplier: {
                 view   : 'supplier',
                 backend: 'supplier._id'
@@ -480,7 +480,7 @@ define([], function () {
             }
         },
 
-        salesQuotation: {
+        salesQuotations: {
             Project: {
                 view   : 'project',
                 backend: 'project._id'
@@ -502,7 +502,7 @@ define([], function () {
             }
         },
 
-        salesOrder: {
+        salesOrders: {
             Project: {
                 view   : 'project',
                 backend: 'project._id'
@@ -524,7 +524,7 @@ define([], function () {
             }
         },
 
-        Order: {
+        Orders: {
             Supplier: {
                 view   : 'supplier',
                 backend: 'supplier._id'
@@ -629,9 +629,9 @@ define([], function () {
         DEPARTMENTS       : 'Departments',
         USERS             : 'Users',
         PROFILES          : 'Profiles',
-        ORDER             : 'Order',
-        INVOICE           : 'Invoice',
-        QUOTATION         : 'Quotation',
+        ORDERS            : 'Orders',
+        INVOICES          : 'Invoices',
+        QUOTATIONS        : 'Quotations',
         DASHBOARD         : 'Dashboard',
         DEGREES           : 'Degrees',
         SOURCEOFAPPLICANTS: 'SourceOfApplicants',
@@ -640,9 +640,9 @@ define([], function () {
         PRODUCT           : 'Product',
         SUPPLIERPAYMENTS  : 'supplierPayments',
         CUSTOMERPAYMENTS  : 'customerPayments',
-        SALESQUOTATION    : 'salesQuotation',
-        SALESORDER        : 'salesOrder',
-        SALESINVOICE      : 'salesInvoice',
+        SALESQUOTATIONS   : 'salesQuotations',
+        SALESORDERS       : 'salesOrders',
+        SALESINVOICES     : 'salesInvoices',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
         PAYROLLEXPENSES   : 'PayrollExpenses',
@@ -704,7 +704,7 @@ define([], function () {
             'Design',
             'PM'
         ],
-        
+
         SELECTP_ROJECT: 'Please select a Project',
 
         IT_SERVICES: 'IT services',
@@ -732,7 +732,7 @@ define([], function () {
             DEPARTMENTS               : '/departments/',
             EVENTS                    : '/Events/',
             HOLIDAY                   : '/Holiday/',
-            INVOICE                   : '/Invoice/',
+            INVOICES                  : '/invoices/',
             JOBPOSITIONS              : '/JobPositions/',
             JOURNALENTRY              : '/journalEntries/',
             JOURNAL                   : '/journals/',
@@ -747,7 +747,7 @@ define([], function () {
             PROJECTS                  : '/projects/',
             PROJECTS_GET_FOR_WTRACK   : '/projects/getForWtrack',
             PROJECTS_GET_FOR_QUOTATION: '/projects/getForQuotation',
-            QUOTATION                 : '/quotation/',
+            QUOTATIONS                : '/quotations/',
             SOURCESOFAPPLICANTS       : '/SourcesOfApplicants/',
             TASKS                     : '/Tasks/',
             VACATION                  : '/vacation/',
@@ -763,7 +763,7 @@ define([], function () {
             DASHBOARD_VACATION        : 'dashboard/vacation',
             EMPLOYEES_GETFORDD        : '/employees/getForDD',
             EMPLOYEES_ALPHABET        : '/employees/getEmployeesAlphabet',
-            INVOICE_STATS             : '/invoice/stats/',
+            INVOICE_STATS             : '/invoices/stats/',
             REVENUE_SYNTHETIC         : 'revenue/synthetic',
             JOBS                      : '/jobs/',
             JOURNAL_ENTRY             : '/journalEntries/',

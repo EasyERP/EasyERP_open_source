@@ -217,7 +217,7 @@ var Module = function (models) {
                                 if (!fire) {
                                     condition = (hire <= dateValue);
                                 } else {
-                                   // (fire >= dateValue && hire <= dateValue);
+                                    // (fire >= dateValue && hire <= dateValue);
                                 }
 
                                 if (condition) {

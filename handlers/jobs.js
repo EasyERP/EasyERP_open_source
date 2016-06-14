@@ -49,6 +49,7 @@ var Module = function (models, event) {
                     filtrElement[key] = {$in: condition.toNumber()};
                     resArray.push(filtrElement);
                     break;
+                // skip default;
             }
         }
 
@@ -499,7 +500,7 @@ var Module = function (models, event) {
                     });
                     ArrayTasks.forEach(function (el) {
                         var name = '$' + el + '.debit';
-                        aggregateArr[3].$project[el] = {$sum: name}
+                        aggregateArr[3].$project[el] = {$sum: name};
                     });
 
                     JournalEntryModel.aggregate(aggregateArr, function (err, result) {

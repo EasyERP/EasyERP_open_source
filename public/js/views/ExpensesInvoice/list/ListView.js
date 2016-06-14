@@ -7,7 +7,7 @@ define([
     'views/ExpensesInvoice/EditView',
     'models/InvoiceModel',
     'views/ExpensesInvoice/list/ListItemView',
-    'collections/salesInvoice/filterCollection',
+    'collections/salesInvoices/filterCollection',
     'views/Filter/FilterView',
     'common',
     'dataService',

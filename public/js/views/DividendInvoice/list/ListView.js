@@ -7,7 +7,7 @@ define([
     'views/DividendInvoice/EditView',
     'models/InvoiceModel',
     'views/DividendInvoice/list/ListItemView',
-    'collections/salesInvoice/filterCollection',
+    'collections/salesInvoices/filterCollection',
     'common',
     'dataService',
     'constants',
@@ -126,7 +126,7 @@ define([
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     viewType   : 'form',
