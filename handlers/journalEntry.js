@@ -5396,8 +5396,8 @@ var Module = function (models, event) {
         var filter = data.filter;
         var filterObj = {};
         var key;
-        var startDate = data.startDate;
-        var endDate = data.endDate;
+        var startDate = data.startDate || filter.startDate.value;
+        var endDate = data.endDate || filter.endDate.value;
         var findJobsFinished;
         var findPayments;
         var findSalaryPayments;
@@ -5516,6 +5516,7 @@ var Module = function (models, event) {
                         date                         : 1,
                         'sourceDocument.model'       : 1,
                         'sourceDocument._id'         : 1,
+                        'sourceDocument.name'        : 1,
                         'sourceDocument.subject.name': '$sourceDocument.subject.name'
                     }
                 }, {
@@ -5634,6 +5635,7 @@ var Module = function (models, event) {
                         date                         : 1,
                         'sourceDocument.model'       : 1,
                         'sourceDocument._id'         : 1,
+                        'sourceDocument.name'        : 1,
                         'sourceDocument.subject.name': '$sourceDocument.subject.name'
                     }
                 }, {
@@ -5753,6 +5755,7 @@ var Module = function (models, event) {
                         date                         : 1,
                         'sourceDocument.model'       : 1,
                         'sourceDocument._id'         : 1,
+                        'sourceDocument.name'        : 1,
                         'sourceDocument.subject.name': '$sourceDocument.subject.name'
                     }
                 }, {
@@ -5875,6 +5878,7 @@ var Module = function (models, event) {
                         date                         : 1,
                         'sourceDocument.model'       : 1,
                         'sourceDocument._id'         : 1,
+                        'sourceDocument.name'        : 1,
                         'sourceDocument.subject.name': '$sourceDocument.subject.name'
                     }
                 }, {
@@ -5994,6 +5998,7 @@ var Module = function (models, event) {
                         date                         : 1,
                         'sourceDocument.model'       : 1,
                         'sourceDocument._id'         : 1,
+                        'sourceDocument.name'        : 1,
                         'sourceDocument.subject.name': '$sourceDocument.subject.name'
                     }
                 }, {
@@ -6112,6 +6117,7 @@ var Module = function (models, event) {
                         date                         : 1,
                         'sourceDocument.model'       : 1,
                         'sourceDocument._id'         : 1,
+                        'sourceDocument.name'        : 1,
                         'sourceDocument.subject.name': '$sourceDocument.subject.name'
                     }
                 }, {
