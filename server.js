@@ -1,45 +1,42 @@
+'use strict';
+
+var mongoose = require('mongoose');
+var dbsObject = {};
+var dbsNames = {};
+var connectOptions;
+var mainDb;
+var app;
+
 require('pmx').init();
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 require('./config/' + process.env.NODE_ENV);
 
-var mongoose = require('mongoose');
-var dbsObject = {};
-var dbsNames = {};
-var connectOptions = {
+connectOptions = {
     db    : {native_parser: true},
     server: {poolSize: 5},
-    //replset: { rs_name: 'myReplicaSetName' },
+    // replset: { rs_name: 'myReplicaSetName' },
     user  : process.env.DB_USER,
     pass  : process.env.DB_PASS,
     w     : 1,
     j     : true
-    //mongos: true
+    // mongos: true
 };
-var mainDb = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAIN_DB_NAME, process.env.DB_PORT, connectOptions);
-
-var app;
-
-//mongoose.set('debug', true);
-
-//var open = require('open');
+mainDb = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAIN_DB_NAME, process.env.DB_PORT, connectOptions);
 mainDb.on('error', function (err) {
-    'use strict';
     err = err || 'connection error';
-
     process.exit(1, err);
 });
 mainDb.once('open', function callback() {
-    'use strict';
     var mainDBSchema;
-    var port = parseInt(process.env.PORT) || 8089;
-    var instance = parseInt(process.env.NODE_APP_INSTANCE) || 0;
+    var port = parseInt(process.env.PORT, 10) || 8089;
+    var instance = parseInt(process.env.NODE_APP_INSTANCE, 10) || 0;
     var main;
 
     port += instance;
     mainDb.dbsObject = dbsObject;
 
-    console.log("Connection to mainDB is success");
+    console.log('Connection to mainDB is success');
 
     require('./models/index.js');
 
@@ -66,20 +63,20 @@ mainDb.once('open', function callback() {
             var opts = {
                 db    : {native_parser: true},
                 server: {poolSize: 5},
-                //replset: { rs_name: 'myReplicaSetName' },
+                // replset: { rs_name: 'myReplicaSetName' },
                 user  : _db.user,
                 pass  : _db.pass,
                 w     : 1,
                 j     : true
-                //mongos: true
+                // mongos: true
             };
             var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
 
             dbObject.on('error', function (err) {
                 console.error(err);
             });
-            dbObject.once('open', function callback() {
-                console.log("Connection to " + _db.DBname + " is success" + index);
+            dbObject.once('open', function () {
+                console.log('Connection to ' + _db.DBname + ' is success' + index);
                 dbInfo.url = result[index].url;
                 dbInfo.DBname = result[index].DBname;
                 dbsObject[_db.DBname] = dbObject;
@@ -87,7 +84,7 @@ mainDb.once('open', function callback() {
             });
         });
     });
-    
+
     mainDb.mongoose = mongoose;
 
     app = require('./app')(mainDb, dbsNames);
@@ -97,6 +94,4 @@ mainDb.once('open', function callback() {
         console.log('|| server start success on port=' + port + ' in ' + process.env.NODE_ENV + ' version ||');
         console.log('==============================================================\n');
     });
-
-    //open('http://localhost:8089', "");
 });

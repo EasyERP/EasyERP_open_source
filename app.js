@@ -1,13 +1,6 @@
-/**
- * # This is myClass
- * @class MyClass
- * @type {exports|module.exports}
- */
 module.exports = function (mainDb, dbsNames) {
     'use strict';
-    // mongoose is delegated because it encapsulated main connection
-
-    // var newrelic = require('newrelic');
+   
     var http = require('http');
     var path = require('path');
     var express = require('express');
@@ -30,8 +23,6 @@ module.exports = function (mainDb, dbsNames) {
     var allowCrossDomain = function (req, res, next) {
         var browser = req.headers['user-agent'];
 
-       /* console.log(browser);*/
-
         if (/Trident|Edge/.test(browser)) {
             res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         }
@@ -49,15 +40,13 @@ module.exports = function (mainDb, dbsNames) {
 
         next();
     };
-
-    /* app.enable('trust proxy'); */
+    
     app.set('dbsObject', dbsObject);
     app.set('dbsNames', dbsNames);
     app.engine('html', consolidate.swig);
     app.set('view engine', 'html');
     app.set('views', __dirname + '/views');
     app.use(logger('dev'));
-    // app.use(subDomainParser);
     app.use(bodyParser.json({strict: false, inflate: false, limit: 1024 * 1024 * 200}));
     app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
     app.use(cookieParser("CRMkey"));
@@ -78,11 +67,10 @@ module.exports = function (mainDb, dbsNames) {
 
     httpServer = http.createServer(app);
     io = require('./helpers/socket')(httpServer);
+    
     app.set('io', io);
 
     require('./routes/index')(app, mainDb);
-
-    //app.locals.newrelic = newrelic;
 
     return httpServer;
 };
