@@ -78,7 +78,7 @@ module.exports = function (app, mainDb) {
 
     app.set('logger', logger);
 
-    requestHandler = require('../requestHandler.js')(app, event, mainDb);
+    // requestHandler = require('../requestHandler.js')(app, event, mainDb);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -160,10 +160,10 @@ module.exports = function (app, mainDb) {
         }
     });
 
-    app.get('/getModules', function (req, res) {
+   /* app.get('/getModules', function (req, res) {
         requestHandler.getModules(req, res);
     });
-
+*/
     app.get('/download/:path', function (req, res) {
         var path = req.param('path');
         
@@ -229,7 +229,7 @@ module.exports = function (app, mainDb) {
         res.type('txt');
         res.send(RESPONSES.PAGE_NOT_FOUND);
 
-    };
+    }
 
     function errorHandler(err, req, res, next) {
         var status = err.status || 500;
@@ -245,7 +245,7 @@ module.exports = function (app, mainDb) {
         }
     }
 
-    requestHandler.initScheduler();
+    // requestHandler.initScheduler();
 
     app.use(notFound);
     app.use(errorHandler);

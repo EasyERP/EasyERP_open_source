@@ -1,15 +1,15 @@
-require('pmx').init();
+var requestHandler;
 
-var requestHandler = function (app, event, mainDb) {
+require('pmx').init();
+requestHandler = function (app, event, mainDb) {
     'use strict';
 
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');
     var async = require('async');
     var _ = require('./node_modules/underscore');
-    var logWriter = require('./Modules/additions/logWriter.js')();
+    var logWriter = require('./logWriter.js');
     var models = require('./models.js')(dbsObject);
-    var access = require('./Modules/additions/access.js')(models);
     var tasksSchema = mongoose.Schemas.Task;
     var projectSchema = mongoose.Schemas.Project;
     var employeeSchema = mongoose.Schemas.Employee;
@@ -26,15 +26,15 @@ var requestHandler = function (app, event, mainDb) {
     var io = app.get('io');
     var redisStore = require('./helpers/redisClient');
     var isoWeekYearComposer = require('./helpers/isoWeekYearComposer');
-    var logger = app.get('logger');
     var moment = require('./public/js/libs/moment/moment');
 
     var JournalEntryHandler = require('./handlers/journalEntry');
     var journalEntry = new JournalEntryHandler(models);
 
-    //binding for remove Workflow
+    // binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
         var query;
+
         switch (wId) {
             case 'Opportunities':
             case 'Leads':
@@ -52,12 +52,13 @@ var requestHandler = function (app, event, mainDb) {
             case 'Jobpositions':
                 query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
                 break;
-
+            // skip default case
         }
+
         if (query) {
             query.update({workflow: id}, {workflow: null}, {multi: true}).exec(function (err, result) {
                 if (err) {
-                    logWriter.log('Removed workflow update ' + err);
+                    logWriter.error(err);
                 }
             });
         }
@@ -68,10 +69,8 @@ var requestHandler = function (app, event, mainDb) {
 
         HoursCashes.remove({}, function (err) {
             if (err) {
-                return logger.error(err);
+                return logWriter.error(err);
             }
-
-            //console.log('HoursCashes removed');
         });
 
     });
@@ -80,13 +79,11 @@ var requestHandler = function (app, event, mainDb) {
         var req = options.req;
 
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-
         var wTrackModel;
         var month;
         var week;
         var year;
         var _id;
-
         var isoYear;
         var dateByWeek;
         var dateByMonth;
@@ -113,7 +110,7 @@ var requestHandler = function (app, event, mainDb) {
 
             wTrack.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (err) {
-                    return logger.error(err);
+                    return logWriter.error(err);
                 }
             });
         }
@@ -137,7 +134,6 @@ var requestHandler = function (app, event, mainDb) {
             var yearFromSalary = params.yearFromSalary;
             var waterfallTasks = [getWTracks, getBaseSalary];
             var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-            var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
             var keyForRetrive;
 
             if (monthFromSalary && yearFromSalary) {
@@ -979,24 +975,24 @@ var requestHandler = function (app, event, mainDb) {
         });
     });
 
-//if name was updated, need update related wTrack, or other models
+// if name was updated, need update related wTrack, or other models
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
-        //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
+        // fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
         var sercObject = {};
         var updateObject = {};
 
         sercObject[searchField] = id;
 
         if (fieldInArray) {
-            updateObject['$set'] = {};
-            updateObject['$set'][fieldName] = fieldValue;
+            updateObject.$set = {};
+            updateObject.$set[fieldName] = fieldValue;
         } else {
             updateObject[fieldName] = fieldValue;
         }
 
         targetModel.update(sercObject, updateObject, {multi: true}, function (err) {
             if (err) {
-                logWriter.log('requestHandler_eventEmiter_updateName', err.message);
+                logWriter.error(err);
             }
         });
     });
@@ -1024,7 +1020,7 @@ var requestHandler = function (app, event, mainDb) {
 
         targetModel.update(searchObject, updateObject, {multi: true}, function (err) {
             if (err) {
-                logWriter.log('requestHandler_eventEmiter_updateName', err.message);
+                logWriter.error(err);
             }
 
             if (projectId) {
@@ -1033,12 +1029,12 @@ var requestHandler = function (app, event, mainDb) {
         });
     });
 
-//binding for Sequence
+// binding for Sequence
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;
         var objFind = {};
         var objChange = {};
-        if (workflowStart == workflowEnd) {//on one workflow
+        if (workflowStart === workflowEnd) {// on one workflow
 
             if (!(isCreate || isDelete)) {
                 var inc = -1;
@@ -1136,7 +1132,7 @@ var requestHandler = function (app, event, mainDb) {
 
         async.each(quotation.products, wTrackUpdater, function (err) {
             if (err) {
-                logger.error(err);
+                logWriter.error(err);
             }
         });
 
