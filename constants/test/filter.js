@@ -18377,7 +18377,7 @@ define([], function () {
                     _id: "56e292585def9136621b7800"
                 }
             ],
-            salesmanager: [
+            salesManager: [
                 {
                     _id: "56e2e83a74ac46664a83e94b",
                     name: "Yevgenia Melnyk"
