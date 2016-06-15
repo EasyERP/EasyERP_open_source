@@ -201,7 +201,7 @@
                 source         : source,
                 whoCanRW       : whoCanRW,
                 groups         : {
-                    owner: this.$el.find('#allUsersSelect').data('id'),
+                    owner: this.$el.find('#allUsersSelect').data('id') || null,
                     users: usersId,
                     group: groupsId
                 }

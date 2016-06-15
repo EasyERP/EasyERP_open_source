@@ -503,7 +503,7 @@
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: $('#allUsersSelect').attr('data-id'),
+                    owner: $('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },
