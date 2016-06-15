@@ -1274,12 +1274,13 @@ var requestHandler = function (app, event, mainDb) {
         var el;
         var _arrayOfNumbers = [];
         var value;
+        var i;
 
-        for (var i = 0; i < this.length; i++) {
+        for (i = 0; i < this.length; i++) {
             el = this[i];
-            value = parseInt(el);
+            value = parseInt(el, 10);
 
-            if (typeof el === 'string' && isFinite(value)) {
+            if (typeof el === 'string' || typeof el === 'number' && isFinite(value)) {
                 _arrayOfNumbers.push(value);
             }
         }
