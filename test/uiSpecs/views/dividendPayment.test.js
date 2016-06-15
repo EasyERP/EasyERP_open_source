@@ -17,187 +17,160 @@ define([
     'use strict';
     var expect;
     var fakeDividend = {
-        total: 15,
-        data: [
+        total: 300,
+        data : [
             {
-                _id: "572ca054487014c939a3d214",
-                total: 15,
-                currency: {
+                _id             : "572ca054487014c939a3d214",
+                total           : 15,
+                currency        : {
                     rate: 1,
                     name: "USD",
-                    _id: "565eab29aeb95fa9c0f9df2d"
+                    _id : "565eab29aeb95fa9c0f9df2d"
                 },
-                invoice: {
-                    _id: "572c9fa7f1311e2739814c4d",
+                invoice         : {
+                    _id     : "572c9fa7f1311e2739814c4d",
                     workflow: {
                         name: "Paid"
                     },
-                    name: "DD15"
+                    name    : "DD15"
                 },
-                forSale: false,
+                forSale         : false,
                 differenceAmount: 0,
-                paidAmount: 153800,
-                workflow: "Paid",
-                date: "2016-04-29T22:00:00.000Z",
-                paymentMethod: {
-                    _id: "565f2e05ab70d49024242e07",
+                paidAmount      : 153800,
+                workflow        : "Paid",
+                date            : "2016-04-29T22:00:00.000Z",
+                paymentMethod   : {
+                    _id : "565f2e05ab70d49024242e07",
                     name: "Erste USD"
                 },
-                paymentRef: "",
-                period: null,
-                _type: "dividendInvoicePayment",
-                removable: true
+                paymentRef      : "",
+                period          : null,
+                _type           : "dividendInvoicePayment",
+                removable       : true
             },
             {
-                _id: "572ca04a55c631a239a57cfc",
-                total: 15,
-                currency: {
+                _id             : "572ca04a55c631a239a57cfc",
+                total           : 15,
+                currency        : {
                     rate: 1,
                     name: "USD",
-                    _id: "565eab29aeb95fa9c0f9df2d"
+                    _id : "565eab29aeb95fa9c0f9df2d"
                 },
-                invoice: {
-                    _id: "572c9f93265f2548392c912e",
+                invoice         : {
+                    _id     : "572c9f93265f2548392c912e",
                     workflow: {
                         name: "Paid"
                     },
-                    name: "DD14"
+                    name    : "DD14"
                 },
-                forSale: false,
+                forSale         : false,
                 differenceAmount: 0,
-                paidAmount: 125700,
-                workflow: "Paid",
-                date: "2016-03-30T22:00:00.000Z",
-                paymentMethod: {
-                    _id: "565f2e05ab70d49024242e07",
+                paidAmount      : 125700,
+                workflow        : "Paid",
+                date            : "2016-03-30T22:00:00.000Z",
+                paymentMethod   : {
+                    _id : "565f2e05ab70d49024242e07",
                     name: "Erste USD"
                 },
-                paymentRef: "",
-                period: null,
-                _type: "dividendInvoicePayment",
-                removable: true
+                paymentRef      : "",
+                period          : null,
+                _type           : "dividendInvoicePayment",
+                removable       : true
             },
             {
-                _id: "572ca03c526c630639837960",
-                total: 15,
-                currency: {
+                _id             : "572ca03c526c630639837960",
+                total           : 15,
+                currency        : {
                     rate: 1,
                     name: "USD",
-                    _id: "565eab29aeb95fa9c0f9df2d"
+                    _id : "565eab29aeb95fa9c0f9df2d"
                 },
-                invoice: {
-                    _id: "572c9f7d487014c939a3d205",
+                invoice         : {
+                    _id     : "572c9f7d487014c939a3d205",
                     workflow: {
                         name: "Paid"
                     },
-                    name: "DD13"
+                    name    : "DD13"
                 },
-                forSale: false,
+                forSale         : false,
                 differenceAmount: 0,
-                paidAmount: 354200,
-                workflow: "Paid",
-                date: "2016-02-28T23:00:00.000Z",
-                paymentMethod: {
-                    _id: "565f2e05ab70d49024242e07",
+                paidAmount      : 354200,
+                workflow        : "Paid",
+                date            : "2016-02-28T23:00:00.000Z",
+                paymentMethod   : {
+                    _id : "565f2e05ab70d49024242e07",
                     name: "Erste USD"
                 },
-                paymentRef: "",
-                period: null,
-                _type: "dividendInvoicePayment",
-                removable: true
+                paymentRef      : "",
+                period          : null,
+                _type           : "dividendInvoicePayment",
+                removable       : true
             }
         ]
     };
-    var fakeDividendAfterDelete = [
-        {
-            _id             : "574400dd355ba73610d82ec0",
-            _type           : "dividendInvoicePayment",
-            period          : null,
-            paymentMethod   : {
-                _id     : "565f2e05ab70d49024242e07",
-                name    : "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
-                account : "HU24 1160 0006 0000 0000 4916 1522",
-                currency: "USD",
-                bank    : "Erste Bank",
-                owner   : "Alexander Sokhanych"
-            },
-            paymentRef      : "",
-            forSale         : false,
-            currency        : {
-                rate: 1,
-                name: "USD",
-                _id : "565eab29aeb95fa9c0f9df2d"
-            },
-            differenceAmount: 0,
-            workflow        : "Paid",
-            date            : "2016-05-23T21:00:00.000Z",
-            paidAmount      : 55500,
-            invoice         : {
-                _id     : "574400cf355ba73610d82ebe",
-                workflow: {
-                    _id         : "55647d982e4aa3804a765ecb",
-                    sequence    : 2,
-                    status      : "Done",
-                    name        : "Paid",
-                    wId         : "Sales Invoice",
-                    color       : "#2C3E50",
-                    __v         : 0,
-                    source      : "purchase",
-                    targetSource: [
-                        "invoice"
-                    ],
-                    wName       : "invoice",
-                    visible     : true
+    var fakeDividendAfterDelete = {
+        total: 300,
+        data : [
+            {
+                _id             : "572ca04a55c631a239a57cfc",
+                total           : 14,
+                currency        : {
+                    rate: 1,
+                    name: "USD",
+                    _id : "565eab29aeb95fa9c0f9df2d"
                 },
-                name    : "DD3"
-            },
-            removable       : true
-        },
-        {
-            _id             : "574400f9355ba73610d82ec4",
-            _type           : "dividendInvoicePayment",
-            period          : null,
-            paymentMethod   : {
-                _id     : "565f2e05ab70d49024242e07",
-                name    : "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
-                account : "HU24 1160 0006 0000 0000 4916 1522",
-                currency: "USD",
-                bank    : "Erste Bank",
-                owner   : "Alexander Sokhanych"
-            },
-            paymentRef      : "",
-            forSale         : false,
-            currency        : {
-                rate: 1,
-                name: "USD",
-                _id : "565eab29aeb95fa9c0f9df2d"
-            },
-            differenceAmount: 0,
-            workflow        : "Paid",
-            date            : "2016-05-23T21:00:00.000Z",
-            paidAmount      : 77700,
-            invoice         : {
-                _id     : "574400d3355ba73610d82ebf",
-                workflow: {
-                    _id         : "55647d982e4aa3804a765ecb",
-                    sequence    : 2,
-                    status      : "Done",
-                    name        : "Paid",
-                    wId         : "Sales Invoice",
-                    color       : "#2C3E50",
-                    __v         : 0,
-                    source      : "purchase",
-                    targetSource: [
-                        "invoice"
-                    ],
-                    wName       : "invoice",
-                    visible     : true
+                invoice         : {
+                    _id     : "572c9f93265f2548392c912e",
+                    workflow: {
+                        name: "Paid"
+                    },
+                    name    : "DD14"
                 },
-                name    : "DD4"
+                forSale         : false,
+                differenceAmount: 0,
+                paidAmount      : 125700,
+                workflow        : "Paid",
+                date            : "2016-03-30T22:00:00.000Z",
+                paymentMethod   : {
+                    _id : "565f2e05ab70d49024242e07",
+                    name: "Erste USD"
+                },
+                paymentRef      : "",
+                period          : null,
+                _type           : "dividendInvoicePayment",
+                removable       : true
             },
-            removable       : true
-        }
-    ];
+            {
+                _id             : "572ca03c526c630639837960",
+                total           : 14,
+                currency        : {
+                    rate: 1,
+                    name: "USD",
+                    _id : "565eab29aeb95fa9c0f9df2d"
+                },
+                invoice         : {
+                    _id     : "572c9f7d487014c939a3d205",
+                    workflow: {
+                        name: "Paid"
+                    },
+                    name    : "DD13"
+                },
+                forSale         : false,
+                differenceAmount: 0,
+                paidAmount      : 354200,
+                workflow        : "Paid",
+                date            : "2016-02-28T23:00:00.000Z",
+                paymentMethod   : {
+                    _id : "565f2e05ab70d49024242e07",
+                    name: "Erste USD"
+                },
+                paymentRef      : "",
+                period          : null,
+                _type           : "dividendInvoicePayment",
+                removable       : true
+            }
+        ]
+    };
     var view;
     var topBarView;
     var listView;
@@ -377,41 +350,71 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create dividendDeclarationListView', function (done) {
-                    var dividendUrl = new RegExp('\/payment\/dividend\/list', 'i');
-                    var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
+                    var $firstRow;
+                    var colCount;
+                    var name;
+                    var declaration;
+                    var paid;
+                    var date;
+                    var $pagination;
+                    var $currentPageList;
 
-                    server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividend)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 3
-                    })]);
                     listView = new ListView({
                         startTime : new Date(),
                         collection: dividendCollection
                     });
-                    server.respond();
-                    server.respond();
+
                     clock.tick(300);
+
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                    eventsBinder.subscribeCollectionEvents(dividendCollection, listView);
+
+                    dividendCollection.trigger('fetchFinished', {
+                        totalRecords: dividendCollection.totalRecords,
+                        currentPage : dividendCollection.currentPage,
+                        pageSize    : dividendCollection.pageSize
+                    });
 
                     $thisEl = listView.$el;
 
                     expect($thisEl.find('#listTable')).to.exist;
                     expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
 
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+                    $firstRow = $thisEl.find('#listTable > tr').first();
+                    colCount = $firstRow.find('td').length;
+                    expect(colCount).to.be.equals(6);
 
-                    dividendCollection.bind('showmore', listView.showMoreContent, listView);
+                    name = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(name).not.to.be.empty;
+                    expect(name).to.not.match(/object Object|undefined/);
+
+                    declaration = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(declaration).not.to.be.empty;
+                    expect(declaration).to.not.match(/object Object|undefined/);
+
+                    paid = $firstRow.find('td:nth-child(5)').text().trim();
+                    expect(paid).not.to.be.empty;
+                    expect(paid).to.not.match(/object Object|undefined/);
+
+                    date = $firstRow.find('td:nth-child(6)').text().trim();
+                    expect(date).not.to.be.empty;
+                    expect(date).to.not.match(/object Object|undefined/);
+
+                    // test pagination container
+
+                    $pagination = $thisEl.find('.pagination');
+
+                    expect($pagination).to.exist;
+                    expect($pagination.find('.countOnPage')).to.be.exist;
+                    expect($pagination.find('.pageList')).to.be.exist;
+
+                    $currentPageList = $thisEl.find('.currentPageList');
+                    $currentPageList.mouseover();
+                    expect($thisEl.find('#pageList')).to.have.css('display', 'block');
+                    expect($thisEl.find('#pageList > li')).to.have.lengthOf(3);
+
+                    $currentPageList.mouseover();
+                    expect($thisEl.find('#pageList')).to.have.css('display', 'none');
 
                     done();
                 });
@@ -430,21 +433,18 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
 
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
                     expect(deleteSpy.calledOnce).to.be.true;
+                    expect(spyResponse).to.have.property('type', 'error');
                 });
 
                 it('Try to delete item', function () {
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var dividendUrl = new RegExp('\/payment\/', 'i');
-                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
-                    var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
+                    var ajaxSecondResponse;
 
-                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 2
-                    })]);
+                    ajaxSpy.reset();
+
+                    server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
                     server.respondWith('DELETE', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         "success": {
                             "_id"             : "5742f2d07afe352f10c11c3e",
@@ -484,70 +484,37 @@ define([
                     $deleteBtn.click();
                     server.respond();
                     server.respond();
-                    server.respond();
+
+                    ajaxSecondResponse = ajaxSpy.args[1][0];
 
                     expect(deleteSpy.calledTwice).to.be.true;
+                    expect(ajaxSecondResponse).to.have.property('type', 'GET');
+                    expect(ajaxSecondResponse).to.have.property('url', '/payment/');
                 });
 
                 it('Try to sort ListView', function () {
                     var $sortBtn = $thisEl.find('th[data-sort="paidAmount"]');
-                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
-                    var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
+                    var dividendUrl = new RegExp('\/payment\/', 'i');
 
-                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeDividendAfterDelete[1], fakeDividendAfterDelete[0]])]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 2
+                    server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        total: 300,
+                        data : [
+                            fakeDividendAfterDelete.data[1],
+                            fakeDividendAfterDelete.data[0]
+                        ]
                     })]);
                     $sortBtn.click();
-                    server.respond();
                     server.respond();
                     expect(sortSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#listTable > tr').first().attr('data-id')).to.be.equals('572ca03c526c630639837960');
 
 
-                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 2
-                    })]);
+                    server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
                     $sortBtn.click();
                     server.respond();
-                    server.respond();
                     expect(sortSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#listTable > tr').first().attr('data-id')).to.be.equals('572ca04a55c631a239a57cfc');
                 });
-
-                it('Try to show more items with error response', function () {
-                    mainSpy.reset();
-
-                    var $pageList = $thisEl.find('.pageList');
-                    var $needBtn = $pageList.find('a').eq(1);
-                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
-                    var spyResponse;
-
-                    server.respondWith('GET', dividendListUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    $needBtn.click();
-                    server.respond();
-
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Some Error.');
-                });
-
-                it('Try to show more items', function () {
-                    var $pageList = $thisEl.find('.pageList');
-                    var $needBtn = $pageList.find('a').eq(1);
-                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
-                    var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
-
-                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 2
-                    })]);
-                    $needBtn.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
-                });
-
             });
         });
     });
