@@ -268,6 +268,7 @@ describe('Invoice Specs', function () {
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
+                        var first;
 
                         if (err) {
                             return done(err);
@@ -275,9 +276,40 @@ describe('Invoice Specs', function () {
                         expect(body)
                             .to.be.instanceOf(Array);
 
+                        first = body[0];
+
                         expect(body)
                             .to.have.deep.property('[0]')
                             .and.to.have.property('_id');
+
+                        expect(first)
+                            .to.have.property('name');
+                        expect(first)
+                            .to.have.property('invoiceDate');
+                        expect(first)
+                            .to.have.property('supplier')
+                            .and.to.have.property('name');
+                        expect(first)
+                            .to.have.property('diffStatus')
+                            .and.to.be.a.number;
+                        expect(first)
+                            .to.have.property('workflow')
+                            .and.not.to.be.equal('573db03b782445233dbe6835');
+                        expect(first)
+                            .to.have.property('paymentInfo')
+                            .and.to.have.property('balance');
+
+                        if (first.project) {
+                            expect(first)
+                                .to.have.property('project')
+                                .and.to.have.property('name');
+                        }
+
+                        if (first.salesManager) {
+                            expect(first)
+                                .to.have.property('salesManager')
+                                .and.to.have.property('name');
+                        }
 
                         done();
                     });
