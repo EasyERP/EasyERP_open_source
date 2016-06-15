@@ -29,14 +29,15 @@ define([
             var files;
             var s;
             var i;
+            var length;
 
             if (this.isCreate) {
                 $attachContainer.empty();
-                $thisEl.find('.input-file').html('<span>Attach</span><input type="file" value="Choose File" class="inputAttach" +' +
+                $thisEl.find('.input-file').html('<span>Attach</span><input type="file" value="Choose File" class="inputAttach"' +
                     ' name="attachfile" multiple="multiple">');
 
                 files = $inputAttach[0].files;
-                for (i = 0; i < files.length; i++) {
+                for (i = 0, length = files.length; i < length; i++) {
                     if (!isNaN(parseInt(i, 10))) {
                         s = files[i].name + ' (' + (files[i].size / (1024 * 1024)).toFixed(3) + ' Mb)';
                         $attachContainer.prepend('<li class="attachFile">' +
@@ -76,7 +77,7 @@ define([
 
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
                         return App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                         });
                     }
@@ -95,7 +96,7 @@ define([
                     this.$el.find('#inputAttach').val('');
 
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                     });
                 }
@@ -117,11 +118,11 @@ define([
 
                 e.preventDefault();
                 addFrmAttach.ajaxSubmit({
-                    url: formURL,
-                    type: 'POST',
+                    url        : formURL,
+                    type       : 'POST',
                     processData: false,
                     contentType: false,
-                    data: [addInptAttach],
+                    data       : [addInptAttach],
 
                     beforeSend: function (xhr) {
                         var statusVal = '0%';
@@ -222,7 +223,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            patch: true, // Send only changed attr(add Roma)
+                            patch  : true, // Send only changed attr(add Roma)
                             success: function () {
                                 self.$el.find('.attachFile_' + id).remove();
                             }
@@ -239,7 +240,7 @@ define([
             }
             this.$el.html(this.template({
                 attachments: attachments,
-                elementId: this.elementId || 'addAttachments'
+                elementId  : this.elementId || 'addAttachments'
             }));
 
             return this;
