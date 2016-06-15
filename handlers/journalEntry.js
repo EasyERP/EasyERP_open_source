@@ -444,7 +444,7 @@ var Module = function (models, event) {
         var Journal = models.get(dbIndex, 'journal', journalSchema);
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
         var journalId = body.journal;
-        var now = moment();
+        var now = moment().endOf('month');
         var date = body.date ? moment(body.date) : now;
         var currency;
         var amount = body.amount;
@@ -2307,7 +2307,7 @@ var Module = function (models, event) {
 
     this.createCostsForJob = function (options) {
         var req = options.req;
-        var jobsArray = options.jobIds;
+        var jobsArray = options.jobId;
         var newReq = req;
 
         var cb = function () {
@@ -2350,7 +2350,7 @@ var Module = function (models, event) {
         if (jobIds && !Array.isArray(jobIds)) {
             jobIds = [jobIds];
             match = {
-                jobs: {$in: jobIds.objectID()}
+                jobs: {$in: jobIds}
             };
         }
 
@@ -2760,9 +2760,9 @@ var Module = function (models, event) {
                             }
                         }
 
-                        /*  if (employee.toString() === '55b92ad221e4b7c40f00008a'){
-                         console.dir(weeklyScheduler);
-                         }*/
+                        if (employee.toString() === '564dac3e9b85f8b16b574fea') {
+                            console.dir(weeklyScheduler);
+                        }
 
                         if (!Object.keys(weeklyScheduler).length) {
                             weeklyScheduler = {
