@@ -7,835 +7,107 @@ define([
     'views/DividendPayments/list/ListView',
     'views/DividendPayments/TopBarView',
     'views/DividendPayments/CreateView',
-    'views/FilterView/Filter',
+    'views/Filter/FilterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
-    var modules = [
-        {
-            _id        : 19,
-            attachments: [],
-            link       : false,
-            mname      : "Sales",
-            parrent    : null,
-            sequence   : 1,
-            visible    : true,
-            ancestors  : [],
-            href       : "Sales"
-        },
-        {
-            _id        : 36,
-            attachments: [],
-            link       : false,
-            mname      : "Project",
-            parrent    : null,
-            sequence   : 2,
-            visible    : true,
-            ancestors  : [],
-            href       : "Project"
-        },
-        {
-            _id        : 9,
-            attachments: [],
-            link       : false,
-            mname      : "HR",
-            parrent    : null,
-            sequence   : 3,
-            visible    : true,
-            ancestors  : [],
-            href       : "HR"
-        },
-        {
-            _id        : 24,
-            attachments: [],
-            link       : true,
-            mname      : "Leads",
-            parrent    : 19,
-            sequence   : 5,
-            visible    : true,
-            ancestors  : [],
-            href       : "Leads"
-        },
-        {
-            _id        : 25,
-            attachments: [],
-            link       : true,
-            mname      : "Opportunities",
-            parrent    : 19,
-            sequence   : 6,
-            visible    : true,
-            ancestors  : [],
-            href       : "Opportunities"
-        },
-        {
-            _id        : 49,
-            attachments: [],
-            htref      : "persons",
-            link       : true,
-            mname      : "Persons",
-            parrent    : 19,
-            sequence   : 7,
-            visible    : true,
-            ancestors  : [],
-            href       : "Persons"
-        },
-        {
-            _id        : 50,
-            attachments: [],
-            htref      : "persons",
-            link       : true,
-            mname      : "Companies",
-            parrent    : 19,
-            sequence   : 8,
-            visible    : true,
-            ancestors  : [],
-            href       : "Companies"
-        },
-        {
-            _id        : 39,
-            attachments: [],
-            link       : true,
-            mname      : "Projects",
-            parrent    : 36,
-            sequence   : 21,
-            visible    : true,
-            ancestors  : [],
-            href       : "Projects"
-        },
-        {
-            _id      : 73,
-            mname    : "Dashboard Vacation",
-            sequence : 22,
-            parrent  : 36,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "DashBoardVacation"
-        },
-        {
-            _id        : 40,
-            attachments: [],
-            link       : true,
-            mname      : "Tasks",
-            parrent    : 36,
-            sequence   : 24,
-            visible    : true,
-            ancestors  : [],
-            href       : "Tasks"
-        },
-        {
-            _id        : 29,
-            attachments: [],
-            link       : true,
-            mname      : "Dashboard",
-            parrent    : 19,
-            sequence   : 29,
-            visible    : true,
-            ancestors  : [],
-            href       : "Dashboard"
-        },
-        {
-            _id        : 42,
-            attachments: [],
-            link       : true,
-            mname      : "Employees",
-            parrent    : 9,
-            sequence   : 29,
-            visible    : true,
-            ancestors  : [],
-            href       : "Employees"
-        },
-        {
-            _id        : 43,
-            attachments: [],
-            link       : true,
-            mname      : "Applications",
-            parrent    : 9,
-            sequence   : 30,
-            visible    : true,
-            ancestors  : [],
-            href       : "Applications"
-        },
-        {
-            _id        : 14,
-            attachments: [],
-            link       : true,
-            mname      : "Job Positions",
-            parrent    : 9,
-            sequence   : 32,
-            visible    : true,
-            ancestors  : [],
-            href       : "JobPositions"
-        },
-        {
-            _id        : 15,
-            attachments: [],
-            link       : true,
-            mname      : "Groups",
-            parrent    : 1,
-            sequence   : 33,
-            visible    : true,
-            ancestors  : [],
-            href       : "Departments"
-        },
-        {
-            _id        : 7,
-            __v        : 0,
-            attachments: [],
-            link       : true,
-            mname      : "Users",
-            parrent    : 1,
-            sequence   : 42,
-            visible    : true,
-            ancestors  : [],
-            href       : "Users"
-        },
-        {
-            _id        : 44,
-            attachments: [],
-            link       : true,
-            mname      : "Workflows",
-            parrent    : 1,
-            sequence   : 44,
-            visible    : true,
-            ancestors  : [],
-            href       : "Workflows"
-        },
-        {
-            _id        : 51,
-            attachments: [],
-            link       : true,
-            mname      : "Profiles",
-            parrent    : 1,
-            sequence   : 51,
-            visible    : true,
-            ancestors  : [],
-            href       : "Profiles"
-        },
-        {
-            _id        : 52,
-            attachments: [],
-            link       : true,
-            mname      : "Birthdays",
-            parrent    : 9,
-            sequence   : 52,
-            visible    : true,
-            ancestors  : [],
-            href       : "Birthdays"
-        },
-        {
-            _id        : 53,
-            attachments: [],
-            link       : true,
-            mname      : "Dashboard",
-            parrent    : 36,
-            sequence   : 53,
-            visible    : true,
-            ancestors  : [],
-            href       : "projectDashboard"
-        },
-        {
-            _id      : 54,
-            mname    : "Purchases",
-            sequence : 54,
-            parrent  : null,
-            link     : false,
-            visible  : true,
-            ancestors: [],
-            href     : "Purchases"
-        },
-        {
-            _id      : 80,
-            mname    : "Jobs Dashboard",
-            sequence : 54,
-            parrent  : 36,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "jobsDashboard"
-        },
-        {
-            _id      : 55,
-            mname    : "Quotations",
-            sequence : 55,
-            parrent  : 54,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Quotations"
-        },
-        {
-            _id      : 57,
-            mname    : "Order",
-            sequence : 56,
-            parrent  : 54,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Order"
-        },
-        {
-            _id      : 56,
-            mname    : "Invoice",
-            sequence : 57,
-            parrent  : 54,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Invoice"
-        },
-        {
-            _id      : 58,
-            mname    : "Product",
-            sequence : 58,
-            parrent  : 54,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Product"
-        },
-        {
-            _id      : 59,
-            mname    : "Accounting",
-            sequence : 59,
-            parrent  : null,
-            link     : false,
-            visible  : true,
-            ancestors: [],
-            href     : "Accounting"
-        },
-        {
-            _id      : 60,
-            mname    : "Supplier Payments",
-            sequence : 60,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "supplierPayments"
-        },
-        {
-            _id      : 61,
-            mname    : "Sales Payments",
-            sequence : 61,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "customerPayments"
-        },
-        {
-            _id      : 62,
-            mname    : "Quotations",
-            sequence : 62,
-            parrent  : 19,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "salesQuotations"
-        },
-        {
-            _id      : 63,
-            mname    : "Order",
-            sequence : 63,
-            parrent  : 19,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "salesOrders"
-        },
-        {
-            _id      : 64,
-            mname    : "Invoice",
-            sequence : 64,
-            parrent  : 19,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "salesInvoice"
-        },
-        {
-            _id      : 99,
-            mname    : "Proforma",
-            sequence : 65,
-            parrent  : 19,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "salesProforma"
-        },
-        {
-            _id      : 67,
-            mname    : "Revenue",
-            sequence : 67,
-            parrent  : 19,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Revenue"
-        },
-        {
-            _id      : 68,
-            mname    : "MonthHours",
-            sequence : 68,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "monthHours"
-        },
-        {
-            _id      : 69,
-            mname    : "Holidays",
-            sequence : 69,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Holiday"
-        },
-        {
-            _id      : 77,
-            mname    : "Capacity",
-            sequence : 69,
-            parrent  : 9,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Capacity"
-        },
-        {
-            _id      : 88,
-            mname    : "Salary Report",
-            sequence : 69,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "salaryReport"
-        },
-        {
-            _id      : 70,
-            mname    : "Vacation",
-            sequence : 70,
-            parrent  : 9,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Vacation"
-        },
-        {
-            _id      : 71,
-            mname    : "Attendance",
-            sequence : 71,
-            parrent  : 9,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Attendance"
-        },
-        {
-            _id      : 76,
-            mname    : "Efficiency",
-            sequence : 72,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "Efficiency"
-        },
-        {
-            _id      : 72,
-            mname    : "Bonus Type",
-            sequence : 73,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "bonusType"
-        },
-        {
-            _id      : 74,
-            mname    : "HrDashboard",
-            sequence : 74,
-            parrent  : 9,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "HrDashboard"
-        },
-        {
-            _id      : 66,
-            mname    : "Payroll Expenses",
-            sequence : 77,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "PayrollExpenses"
-        },
-        {
-            _id      : 78,
-            mname    : "Payroll",
-            sequence : 78,
-            parrent  : null,
-            link     : false,
-            visible  : true,
-            ancestors: [],
-            href     : "Payroll"
-        },
-        {
-            _id      : 79,
-            mname    : "Payroll Payments",
-            sequence : 79,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "PayrollPayments"
-        },
-        {
-            _id      : 82,
-            mname    : "Invoice Aging",
-            sequence : 82,
-            parrent  : 19,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "invoiceAging"
-        },
-        {
-            _id      : 83,
-            mname    : "Chart Of Account",
-            sequence : 83,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "ChartOfAccount"
-        },
-        {
-            _id      : 100,
-            mname    : "Inventory Report",
-            sequence : 83,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "inventoryReport"
-        },
-        {
-            _id      : 85,
-            mname    : "Journal",
-            sequence : 85,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "journal"
-        },
-        {
-            _id      : 86,
-            mname    : "Journal Entry",
-            sequence : 86,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "journalEntry"
-        },
-        {
-            _id      : 87,
-            mname    : "Invoice Charts",
-            sequence : 87,
-            parrent  : 19,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "invoiceCharts"
-        },
-        {
-            _id      : 89,
-            mname    : "Trial Balance",
-            sequence : 89,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "trialBalance"
-        },
-        {
-            _id      : 91,
-            mname    : "Profit And Loss",
-            sequence : 89,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "profitAndLoss"
-        },
-        {
-            _id      : 92,
-            mname    : "Balance Sheet",
-            sequence : 89,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "balanceSheet"
-        },
-        {
-            _id      : 93,
-            mname    : "Cash Flow",
-            sequence : 89,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "cashFlow"
-        },
-        {
-            _id      : 94,
-            mname    : "Close Month",
-            sequence : 89,
-            parrent  : 59,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "closeMonth"
-        },
-        {
-            _id      : 96,
-            mname    : "Expenses",
-            sequence : 96,
-            parrent  : null,
-            link     : false,
-            visible  : true,
-            ancestors: [],
-            href     : "Expenses"
-        },
-        {
-            _id      : 97,
-            mname    : "Invoice",
-            sequence : 97,
-            parrent  : 96,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "ExpensesInvoice"
-        },
-        {
-            _id      : 98,
-            mname    : "Expenses Payments",
-            sequence : 98,
-            parrent  : 96,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "ExpensesPayments"
-        },
-        {
-            _id      : 101,
-            mname    : "Dividend declaration",
-            sequence : 101,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "DividendInvoice"
-        },
-        {
-            _id      : 102,
-            mname    : "Dividend payment",
-            sequence : 101,
-            parrent  : 78,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "DividendPayments"
-        },
-        {
-            _id      : 103,
-            link     : true,
-            mname    : "Employee",
-            parrent  : 1,
-            sequence : 103,
-            visible  : true,
-            ancestors: [],
-            href     : "settingsEmployee"
-        },
-        {
-            _id        : 1,
-            __v        : 0,
-            attachments: [],
-            link       : false,
-            mname      : "Settings",
-            parrent    : null,
-            sequence   : 1000,
-            visible    : true,
-            ancestors  : [],
-            href       : "Settings"
-        },
-        {
-            _id      : 75,
-            mname    : "tCard",
-            sequence : 1000,
-            parrent  : 36,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "wTrack"
-        },
-        {
-            _id      : 84,
-            mname    : "Product Categories",
-            sequence : 1000,
-            parrent  : 1,
-            link     : true,
-            visible  : true,
-            ancestors: [],
-            href     : "productSettings"
-        }
-    ];
-    var fakeDividend = [
-        {
-            _id             : "574400dd355ba73610d82ec0",
-            _type           : "dividendInvoicePayment",
-            period          : null,
-            paymentMethod   : {
-                _id     : "565f2e05ab70d49024242e07",
-                name    : "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
-                account : "HU24 1160 0006 0000 0000 4916 1522",
-                currency: "USD",
-                bank    : "Erste Bank",
-                owner   : "Alexander Sokhanych"
-            },
-            paymentRef      : "",
-            forSale         : false,
-            currency        : {
-                rate: 1,
-                name: "USD",
-                _id : "565eab29aeb95fa9c0f9df2d"
-            },
-            differenceAmount: 0,
-            workflow        : "Paid",
-            date            : "2016-05-23T21:00:00.000Z",
-            paidAmount      : 55500,
-            invoice         : {
-                _id     : "574400cf355ba73610d82ebe",
-                workflow: {
-                    _id         : "55647d982e4aa3804a765ecb",
-                    sequence    : 2,
-                    status      : "Done",
-                    name        : "Paid",
-                    wId         : "Sales Invoice",
-                    color       : "#2C3E50",
-                    __v         : 0,
-                    source      : "purchase",
-                    targetSource: [
-                        "invoice"
-                    ],
-                    wName       : "invoice",
-                    visible     : true
+    var fakeDividend = {
+        total: 15,
+        data: [
+            {
+                _id: "572ca054487014c939a3d214",
+                total: 15,
+                currency: {
+                    rate: 1,
+                    name: "USD",
+                    _id: "565eab29aeb95fa9c0f9df2d"
                 },
-                name    : "DD3"
-            },
-            removable       : true
-        },
-        {
-            _id             : "574400f9355ba73610d82ec4",
-            _type           : "dividendInvoicePayment",
-            period          : null,
-            paymentMethod   : {
-                _id     : "565f2e05ab70d49024242e07",
-                name    : "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
-                account : "HU24 1160 0006 0000 0000 4916 1522",
-                currency: "USD",
-                bank    : "Erste Bank",
-                owner   : "Alexander Sokhanych"
-            },
-            paymentRef      : "",
-            forSale         : false,
-            currency        : {
-                rate: 1,
-                name: "USD",
-                _id : "565eab29aeb95fa9c0f9df2d"
-            },
-            differenceAmount: 0,
-            workflow        : "Paid",
-            date            : "2016-05-23T21:00:00.000Z",
-            paidAmount      : 77700,
-            invoice         : {
-                _id     : "574400d3355ba73610d82ebf",
-                workflow: {
-                    _id         : "55647d982e4aa3804a765ecb",
-                    sequence    : 2,
-                    status      : "Done",
-                    name        : "Paid",
-                    wId         : "Sales Invoice",
-                    color       : "#2C3E50",
-                    __v         : 0,
-                    source      : "purchase",
-                    targetSource: [
-                        "invoice"
-                    ],
-                    wName       : "invoice",
-                    visible     : true
+                invoice: {
+                    _id: "572c9fa7f1311e2739814c4d",
+                    workflow: {
+                        name: "Paid"
+                    },
+                    name: "DD15"
                 },
-                name    : "DD4"
-            },
-            removable       : true
-        },
-        {
-            _id             : "5742f2d07afe352f10c11c3e",
-            _type           : "dividendInvoicePayment",
-            period          : null,
-            paymentMethod   : {
-                _id     : "565f2e05ab70d49024242e07",
-                name    : "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
-                account : "HU24 1160 0006 0000 0000 4916 1522",
-                currency: "USD",
-                bank    : "Erste Bank",
-                owner   : "Alexander Sokhanych"
-            },
-            paymentRef      : "",
-            forSale         : false,
-            currency        : {
-                rate: 1,
-                name: "USD",
-                _id : "565eab29aeb95fa9c0f9df2d"
-            },
-            differenceAmount: -250000,
-            workflow        : "Paid",
-            date            : "2016-05-22T21:00:00.000Z",
-            paidAmount      : 250000,
-            invoice         : {
-                _id     : "5742f26e7afe352f10c11c3d",
-                workflow: {
-                    _id         : "55647d982e4aa3804a765ecb",
-                    sequence    : 2,
-                    status      : "Done",
-                    name        : "Paid",
-                    wId         : "Sales Invoice",
-                    color       : "#2C3E50",
-                    __v         : 0,
-                    source      : "purchase",
-                    targetSource: [
-                        "invoice"
-                    ],
-                    wName       : "invoice",
-                    visible     : true
+                forSale: false,
+                differenceAmount: 0,
+                paidAmount: 153800,
+                workflow: "Paid",
+                date: "2016-04-29T22:00:00.000Z",
+                paymentMethod: {
+                    _id: "565f2e05ab70d49024242e07",
+                    name: "Erste USD"
                 },
-                name    : "DD1"
+                paymentRef: "",
+                period: null,
+                _type: "dividendInvoicePayment",
+                removable: true
             },
-            removable       : true
-        }
-    ];
+            {
+                _id: "572ca04a55c631a239a57cfc",
+                total: 15,
+                currency: {
+                    rate: 1,
+                    name: "USD",
+                    _id: "565eab29aeb95fa9c0f9df2d"
+                },
+                invoice: {
+                    _id: "572c9f93265f2548392c912e",
+                    workflow: {
+                        name: "Paid"
+                    },
+                    name: "DD14"
+                },
+                forSale: false,
+                differenceAmount: 0,
+                paidAmount: 125700,
+                workflow: "Paid",
+                date: "2016-03-30T22:00:00.000Z",
+                paymentMethod: {
+                    _id: "565f2e05ab70d49024242e07",
+                    name: "Erste USD"
+                },
+                paymentRef: "",
+                period: null,
+                _type: "dividendInvoicePayment",
+                removable: true
+            },
+            {
+                _id: "572ca03c526c630639837960",
+                total: 15,
+                currency: {
+                    rate: 1,
+                    name: "USD",
+                    _id: "565eab29aeb95fa9c0f9df2d"
+                },
+                invoice: {
+                    _id: "572c9f7d487014c939a3d205",
+                    workflow: {
+                        name: "Paid"
+                    },
+                    name: "DD13"
+                },
+                forSale: false,
+                differenceAmount: 0,
+                paidAmount: 354200,
+                workflow: "Paid",
+                date: "2016-02-28T23:00:00.000Z",
+                paymentMethod: {
+                    _id: "565f2e05ab70d49024242e07",
+                    name: "Erste USD"
+                },
+                paymentRef: "",
+                period: null,
+                _type: "dividendInvoicePayment",
+                removable: true
+            }
+        ]
+    };
     var fakeDividendAfterDelete = [
         {
             _id             : "574400dd355ba73610d82ec0",
@@ -972,7 +244,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'DividendPayments'});
                 server.respond();
 
@@ -1014,9 +286,11 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var dividendUrl = new RegExp('\/payment\/dividend\/list', 'i');
+                var dividendUrl = new RegExp('\/payment\/', 'i');
 
-                server.respondWith('GET', dividendUrl, [401, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                historyNavigateSpy.reset();
+
+                server.respondWith('GET', dividendUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 dividendCollection = new DividendCollection({
                     viewType   : 'list',
                     contentType: 'DividendPayments',
@@ -1024,23 +298,27 @@ define([
                     count      : 2
                 });
                 server.respond();
+
+                expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
             });
 
             it('Try to create TopBarView', function () {
-                var dividendUrl = new RegExp('\/payment\/dividend\/list', 'i');
-                var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
+                var dividendUrl = new RegExp('\/payment\/', 'i');
 
-                server.respondWith('GET', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividend)]);
-                server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                    count: 1
-                })]);
+                server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividend)]);
                 dividendCollection = new DividendCollection({
-                    viewType   : 'list',
                     contentType: 'DividendPayments',
+                    filter     : null,
+                    viewType   : 'list',
                     page       : 1,
-                    count      : 2
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false
                 });
                 server.respond();
+
+                expect(dividendCollection).to.have.lengthOf(3);
 
                 topBarView = new TopBarView({
                     actionType: 'Content',
@@ -1102,8 +380,8 @@ define([
                     var dividendUrl = new RegExp('\/payment\/dividend\/list', 'i');
                     var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
 
-                    server.respondWith('GET', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividend)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividend)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count: 3
                     })]);
                     listView = new ListView({
@@ -1146,7 +424,7 @@ define([
 
                     $needCheckBox.click();
 
-                    server.respondWith('DELETE', dividendUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('DELETE', dividendUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $deleteBtn.click();
                     server.respond();
 
@@ -1163,11 +441,11 @@ define([
                     var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
                     var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
 
-                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count: 2
                     })]);
-                    server.respondWith('DELETE', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('DELETE', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         "success": {
                             "_id"             : "5742f2d07afe352f10c11c3e",
                             "_type"           : "dividendInvoicePayment",
@@ -1216,8 +494,8 @@ define([
                     var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
                     var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
 
-                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeDividendAfterDelete[1], fakeDividendAfterDelete[0]])]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeDividendAfterDelete[1], fakeDividendAfterDelete[0]])]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count: 2
                     })]);
                     $sortBtn.click();
@@ -1226,8 +504,8 @@ define([
                     expect(sortSpy.calledOnce).to.be.true;
 
 
-                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count: 2
                     })]);
                     $sortBtn.click();
@@ -1244,7 +522,7 @@ define([
                     var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
                     var spyResponse;
 
-                    server.respondWith('GET', dividendListUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('GET', dividendListUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $needBtn.click();
                     server.respond();
 
@@ -1259,8 +537,8 @@ define([
                     var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
                     var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
 
-                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
-                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', dividendListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count: 2
                     })]);
                     $needBtn.click();
