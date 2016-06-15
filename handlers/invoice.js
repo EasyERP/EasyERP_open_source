@@ -32,7 +32,7 @@ var Module = function (models, event) {
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants.js');
     var JournalEntryHandler = require('./journalEntry');
-    var _journalEntryHandler = new JournalEntryHandler(models);
+    var _journalEntryHandler = new JournalEntryHandler(models, event);
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
@@ -1097,9 +1097,9 @@ var Module = function (models, event) {
                         'salesPerson._id' : '$root.salesPerson._id',
                         workflow          : '$root.workflow',
                         supplier          : '$root.supplier',
-                       // project           : '$root.project',
+                        // project           : '$root.project',
                         expense           : '$root.expense',
-                       // forSales          : '$root.forSales',
+                        // forSales          : '$root.forSales',
                         currency          : '$root.currency',
                         paymentInfo       : '$root.paymentInfo',
                         invoiceDate       : '$root.invoiceDate',
@@ -1107,7 +1107,7 @@ var Module = function (models, event) {
                         paymentDate       : '$root.paymentDate',
                         dueDate           : '$root.dueDate',
                         approved          : '$root.approved',
-                       // _type             : '$root._type',
+                        // _type             : '$root._type',
                         removable         : '$root.removable',
                         paid              : '$root.paid',
                         total             : 1
@@ -1701,7 +1701,8 @@ var Module = function (models, event) {
                 forSales             : true,
                 'paymentInfo.balance': {
                     $gt: 0
-                }
+                },
+                workflow             : {$ne: objectId(CONSTANTS.PROFORMA_CANCELLED)}
             }
         }, {
             $lookup: {
@@ -1741,7 +1742,8 @@ var Module = function (models, event) {
                 name       : 1,
                 invoiceDate: 1,
                 paymentInfo: 1,
-                currency   : 1
+                currency   : 1,
+                workflow   : 1
             }
         }, {
             $project: {
@@ -1757,6 +1759,7 @@ var Module = function (models, event) {
                 name       : 1,
                 paymentInfo: 1,
                 currency   : 1,
+                workflow   : 1,
 
                 diffStatus: {
                     $cond: {
@@ -1821,7 +1824,8 @@ var Module = function (models, event) {
                 name           : 1,
                 paymentInfo    : 1,
                 currency       : 1,
-                diffStatus     : 1
+                diffStatus     : 1,
+                workflow       : 1
             }
         }, {
             $project: {
@@ -1836,7 +1840,8 @@ var Module = function (models, event) {
                 name           : 1,
                 paymentInfo    : 1,
                 rate           : '$currency.rate',
-                diffStatus     : 1
+                diffStatus     : 1,
+                workflow       : 1
             }
         }, {
             $project: {
@@ -1850,7 +1855,8 @@ var Module = function (models, event) {
                 'paymentInfo.unTaxed': {$divide: ['$paymentInfo.unTaxed', '$rate']},
                 'paymentInfo.balance': {$divide: ['$paymentInfo.balance', '$rate']},
                 'paymentInfo.total'  : {$divide: ['$paymentInfo.total', '$rate']},
-                diffStatus           : 1
+                diffStatus           : 1,
+                workflow             : 1
             }
         }, {
             $sort: sortObj

@@ -444,7 +444,7 @@ var Module = function (models, event) {
         var Journal = models.get(dbIndex, 'journal', journalSchema);
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
         var journalId = body.journal;
-        var now = moment();
+        var now = moment().endOf('month');
         var date = body.date ? moment(body.date) : now;
         var currency;
         var amount = body.amount;
@@ -2307,7 +2307,7 @@ var Module = function (models, event) {
 
     this.createCostsForJob = function (options) {
         var req = options.req;
-        var jobsArray = options.jobIds;
+        var jobsArray = options.jobId;
         var newReq = req;
 
         var cb = function () {
@@ -2350,7 +2350,7 @@ var Module = function (models, event) {
         if (jobIds && !Array.isArray(jobIds)) {
             jobIds = [jobIds];
             match = {
-                jobs: {$in: jobIds.objectID()}
+                jobs: {$in: jobIds}
             };
         }
 
@@ -2368,7 +2368,10 @@ var Module = function (models, event) {
 
                 jobIds = _.pluck(result, '_id');
 
-                res.status(200).send({success: true});
+                if (res && res.status) {
+                    res.status(200).send({success: true});
+                }
+
                 mainCb();
             });
         };
@@ -2757,9 +2760,9 @@ var Module = function (models, event) {
                             }
                         }
 
-                        /*  if (employee.toString() === '55b92ad221e4b7c40f00008a'){
-                         console.dir(weeklyScheduler);
-                         }*/
+                        if (employee.toString() === '564dac3e9b85f8b16b574fea') {
+                            console.dir(weeklyScheduler);
+                        }
 
                         if (!Object.keys(weeklyScheduler).length) {
                             weeklyScheduler = {
@@ -2870,7 +2873,7 @@ var Module = function (models, event) {
                     }
 
                     async.each(result, function (model, asyncCb) {
-                        var date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
+                        var date;
                         var jobId = model._id;
                         var callback = _.after(3, asyncCb);
                         var startMonthDate;
@@ -2879,6 +2882,8 @@ var Module = function (models, event) {
                         if (!model.invoice) {
                             return asyncCb();
                         }
+
+                        date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
 
                         Model.aggregate([{
                             $match: {

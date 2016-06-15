@@ -32,7 +32,7 @@ Project.collection.update({}, {$rename: {projectName: 'name'}}, {multi: true}, f
 
     console.log(res);
 
-    Project.collection.update({}, {
+   /* Project.collection.update({}, {
         $unset: {
             salesmanager  : '',
             projectmanager: ''
@@ -43,5 +43,5 @@ Project.collection.update({}, {$rename: {projectName: 'name'}}, {multi: true}, f
         }
 
         console.log(updated);
-    });
+    });*/
 });

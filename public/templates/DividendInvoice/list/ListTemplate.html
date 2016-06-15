@@ -5,9 +5,11 @@
 <td><%=invoice.paymentDate%></td>
 <td><%=invoice.dueDate%></td>
 <td><%=invoice.name%></td>
-<td class="balance money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
-<td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
-<td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
+    <%var currencyClassVal;%>
+    <%currencyClassVal = currencyClass(invoice.currency._id)%>
+<td class="balance <%=currencyClassVal%>"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
+<td class="paid <%=currencyClassVal%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
+<td class="total <%=currencyClassVal%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
 <td id='<%=invoice._id%>'>
     <%if(invoice.workflow){%>
     <%if(invoice.workflow.status !== 'Done'){%>

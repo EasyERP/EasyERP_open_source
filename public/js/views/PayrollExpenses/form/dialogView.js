@@ -33,7 +33,7 @@ define([
 
         render: function (options) {
             var self = this;
-            var wagesPayable = this.data;
+            var wagesPayable = options.data;
             var dialog = this.template({
                 wagesPayable    : wagesPayable,
                 currencySplitter: helpers.currencySplitter,
