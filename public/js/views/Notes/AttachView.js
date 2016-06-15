@@ -22,29 +22,30 @@ define([
 
         template: _.template(AttachTemplate),
 
-        addAttach: function (event) { 
-            if (this.isCreate) { 
-                var $thisEl = this.$el;
-                var $attachContainer = $thisEl.find('.attachContainer');
-                var $inputAttach = $thisEl.find('.input-file .inputAttach');
-                var files;
-                var s;
-                
+        addAttach: function (event) {
+            var $thisEl = this.$el;
+            var $attachContainer = $thisEl.find('.attachContainer');
+            var $inputAttach = $thisEl.find('.input-file .inputAttach');
+            var files;
+            var s;
+            var i;
+
+            if (this.isCreate) {
                 $attachContainer.empty();
-                
-                $thisEl.find('.input-file').html('<span>Attach</span><input type="file" value="Choose File" class="inputAttach" name="attachfile" multiple="multiple">'); 
-                
+                $thisEl.find('.input-file').html('<span>Attach</span><input type="file" value="Choose File" class="inputAttach" +' +
+                    ' name="attachfile" multiple="multiple">');
+
                 files = $inputAttach[0].files;
-                
-                for(var i = 0; i < files.length; i++){ 
-                    if(!isNaN(parseInt(i))){ 
-                        s = files[i].name + ' (' + (files[i].size/(1024*1024)).toFixed(3) + ' Mb)'; 
-                        $attachContainer.prepend('<li class="attachFile">' + '<span class="blue">' + s + '</span>' + '<a href="javascript:;" class="deleteAttach">Delete</a></li>' );
-                    } 
-                } 
-            } else { 
-                this.sendToServer(event, null, this); 
-            } 
+                for (i = 0; i < files.length; i++) {
+                    if (!isNaN(parseInt(i, 10))) {
+                        s = files[i].name + ' (' + (files[i].size / (1024 * 1024)).toFixed(3) + ' Mb)';
+                        $attachContainer.prepend('<li class="attachFile">' +
+                            '<span class="blue">' + s + '</span>' + '<a href="javascript:;" class="deleteAttach">Delete</a></li>');
+                    }
+                }
+            } else {
+                this.sendToServer(event, null, this);
+            }
         },
 
         hideDialog: function () {
@@ -75,7 +76,7 @@ define([
 
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
                         return App.render({
-                            type   : 'error',
+                            type: 'error',
                             message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                         });
                     }
@@ -94,7 +95,7 @@ define([
                     this.$el.find('#inputAttach').val('');
 
                     return App.render({
-                        type   : 'error',
+                        type: 'error',
                         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
                     });
                 }
@@ -116,11 +117,11 @@ define([
 
                 e.preventDefault();
                 addFrmAttach.ajaxSubmit({
-                    url        : formURL,
-                    type       : 'POST',
+                    url: formURL,
+                    type: 'POST',
                     processData: false,
                     contentType: false,
-                    data       : [addInptAttach],
+                    data: [addInptAttach],
 
                     beforeSend: function (xhr) {
                         var statusVal = '0%';
@@ -221,7 +222,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            patch  : true, // Send only changed attr(add Roma)
+                            patch: true, // Send only changed attr(add Roma)
                             success: function () {
                                 self.$el.find('.attachFile_' + id).remove();
                             }
@@ -238,7 +239,7 @@ define([
             }
             this.$el.html(this.template({
                 attachments: attachments,
-                elementId  : this.elementId || 'addAttachments'
+                elementId: this.elementId || 'addAttachments'
             }));
 
             return this;
