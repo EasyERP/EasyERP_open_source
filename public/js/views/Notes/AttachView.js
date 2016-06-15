@@ -24,22 +24,22 @@ define([
 
         addAttach: function (event) { 
             if (this.isCreate) { 
-                var $thisEl = this.$el,
-                    attachContainer = $thisEl.find('.attachContainer'),
-                    inputAttach = $thisEl.find('.input-file .inputAttach'),
-                    files, 
-                    s; 
+                var $thisEl = this.$el;
+                var $attachContainer = $thisEl.find('.attachContainer');
+                var $inputAttach = $thisEl.find('.input-file .inputAttach');
+                var files;
+                var s;
                 
-                attachContainer.empty();
+                $attachContainer.empty();
                 
                 $thisEl.find('.input-file').html('<span>Attach</span><input type="file" value="Choose File" class="inputAttach" name="attachfile" multiple="multiple">'); 
                 
-                files = inputAttach[0].files; 
+                files = $inputAttach[0].files;
                 
                 for(var i = 0; i < files.length; i++){ 
                     if(!isNaN(parseInt(i))){ 
                         s = files[i].name + ' (' + (files[i].size/(1024*1024)).toFixed(3) + ' Mb)'; 
-                        attachContainer.prepend('<li class="attachFile">' + '<span class="blue">' + s + '</span>' + '<a href="javascript:;" class="deleteAttach">Delete</a></li>' ); 
+                        $attachContainer.prepend('<li class="attachFile">' + '<span class="blue">' + s + '</span>' + '<a href="javascript:;" class="deleteAttach">Delete</a></li>' );
                     } 
                 } 
             } else { 
