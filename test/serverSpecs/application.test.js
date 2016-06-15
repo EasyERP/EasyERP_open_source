@@ -36,7 +36,7 @@ describe('Application Specs', function () {
                     first: 'test',
                     last : 'test'
                 },
-                
+
                 dateBirth: '28 Dec, 1990'
             };
 
@@ -61,6 +61,16 @@ describe('Application Specs', function () {
                         .to.have.property('id');
                     expect(body.result)
                         .to.have.property('_id');
+                    expect(body.result)
+                        .to.have.property('marital')
+                        .and.to.be.oneOf(['married', 'unmarried']);
+                    expect(body.result)
+                        .to.have.property('gender')
+                        .and.to.be.oneOf(['male', 'female']);
+                    expect(body.result)
+                        .to.have.property('name');
+                    expect(body.result)
+                        .to.have.property('dateBirth');
 
                     id = body.id;
 

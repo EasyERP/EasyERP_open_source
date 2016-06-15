@@ -73,6 +73,8 @@
             Validation.checkPhoneField(errors, false, attrs.workPhones.mobile, 'Mobile');
             Validation.checkMoneyField(errors, false, attrs.expectedSalary, 'Expected salary');
             Validation.checkMoneyField(errors, false, attrs.proposedSalary, 'Proposed salary');
+            Validation.checkGroupsNameField(errors, true, attrs.gender, 'Personal Information/Gender');
+            Validation.checkGroupsNameField(errors, true, attrs.marital, 'Personal Information/Marital status');
             if (errors.length > 0) {
                 return errors;
             }
