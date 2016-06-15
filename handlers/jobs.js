@@ -87,11 +87,6 @@ var Module = function (models, event) {
             jobId = model._id;
             projectId = model.project;
 
-            if (projectId) {
-                event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
-                // event.emit('recollectProjectInfo');
-            }
-
             res.status(200).send({success: model});
         });
     };
@@ -1633,10 +1628,6 @@ var Module = function (models, event) {
                             cb();
                         });
                     }, function () {
-                        if (projectId) {
-                            event.emit('updateProjectDetails', {req: req, _id: projectId});
-                        }
-
                         event.emit('recollectVacationDash');
                     });
 

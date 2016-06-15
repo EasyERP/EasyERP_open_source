@@ -90,11 +90,7 @@ dbObject.once('open', function callback() {
                                     if (err) {
                                         return cb(err);
                                     }
-                                    event.emit('updateProjectDetails', {
-                                        req  : req,
-                                        _id  : updated.project,
-                                        jobId: updated.jobs
-                                    });
+                                    
                                     cb();
                                 });
                             }, function (err) {

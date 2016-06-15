@@ -1,5 +1,5 @@
 ﻿module.exports = (function () {
-    "use strict";
+    'use strict';
     var config = {
         db  : 1,
         host: process.env.SOCKET_DB_HOST || 'localhost',
@@ -13,15 +13,15 @@
             throw new Error(err);
         }
 
-        console.log("----Selected Redis DB With index = " + config.db);
+        console.log('----Selected Redis DB With index = ' + config.db);
     });
 
-    client.on("error", function (err) {
-        console.log("Error " + err);
+    client.on('error', function (err) {
+        console.log('Error ' + err);
     });
 
-    client.on("ready", function () {
-        console.log("Redis server  is now ready to accept connections on port " + process.env.SOCKET_DB_PORT);
+    client.on('ready', function () {
+        console.log('Redis server  is now ready to accept connections on port ' + process.env.SOCKET_DB_PORT);
     });
 
     function writeToStorage(name, key, value) {
@@ -48,9 +48,9 @@
     }
 
     return {
-        writeToStorage   : writeToStorage,
-        removeFromStorage: removeFromStorage,
+        writeToStorage      : writeToStorage,
+        removeFromStorage   : removeFromStorage,
         removeAllFromStorage: removeAllFromStorage,
-        readFromStorage  : readFromStorage
+        readFromStorage     : readFromStorage
     };
 })();
