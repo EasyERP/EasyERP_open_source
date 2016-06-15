@@ -144,6 +144,8 @@ define([
             var formString = this.template();
             var self = this;
             var notDiv;
+            var filterHash;
+            var filter;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -172,6 +174,15 @@ define([
                 contentType: self.contentType,
                 isCreate   : true
             });
+
+            if (!projectID) {
+                filterHash = window.location.hash.split('filter=');
+                filter = filterHash && filterHash.length > 1 ? JSON.parse(decodeURIComponent(filterHash[1])) : null;
+
+                if (filter && filter.project) {
+                    projectID = filter.project.value[0];
+                }
+            }
 
             notDiv.append(this.attachView.render().el);
 

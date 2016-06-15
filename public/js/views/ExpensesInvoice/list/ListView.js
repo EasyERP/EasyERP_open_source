@@ -1,6 +1,6 @@
 define([
     'jQuery',
-    'underscore',
+    'Underscore',
     'views/listViewBase',
     'text!templates/ExpensesInvoice/list/ListHeader.html',
     'views/ExpensesInvoice/CreateView',
@@ -8,12 +8,8 @@ define([
     'models/InvoiceModel',
     'views/ExpensesInvoice/list/ListItemView',
     'collections/salesInvoices/filterCollection',
-    'views/Filter/FilterView',
-    'common',
-    'dataService',
-    'constants',
     'helpers'
-], function ($, _, listViewBase, listTemplate, CreateView, EditView, InvoiceModel, ListItemView, contentCollection, FilterView, common, dataService, CONSTANTS, helpers) {
+], function ($, _, listViewBase, listTemplate, CreateView, EditView, InvoiceModel, ListItemView, contentCollection, helpers) {
     'use strict';
 
     var InvoiceListView = listViewBase.extend({
@@ -38,10 +34,6 @@ define([
             this.contentCollection = contentCollection;
 
             this.render();
-        },
-
-        events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
@@ -75,6 +67,7 @@ define([
 
         render: function () {
             var self;
+            var itemView;
             var $currentEl;
 
             $('.ui-dialog ').remove();
@@ -84,29 +77,22 @@ define([
 
             $currentEl.html('');
 
-            function currentEllistRenderer(self) {
-                var itemView;
+            $currentEl.append(_.template(listTemplate, {currentDb: true}));
+            itemView = new ListItemView({
+                collection : self.collection,
+                page       : self.page,
+                itemsNumber: self.collection.namberToShow
+            });
+            itemView.bind('incomingStages', self.pushStages, self);
 
-                $currentEl.append(_.template(listTemplate, {currentDb: true}));
-                itemView = new ListItemView({
-                    collection : self.collection,
-                    page       : self.page,
-                    itemsNumber: self.collection.namberToShow
-                });
-                itemView.bind('incomingStages', self.pushStages, self);
-
-                $currentEl.append(itemView.render());
-
-            }
-
-            currentEllistRenderer(self);
+            $currentEl.append(itemView.render());
 
             self.renderPagination($currentEl, self);
             self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
 
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + 'ms</div>');
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms</div>');
         },
 
         recalcTotal: function () {
@@ -124,7 +110,7 @@ define([
             });
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
 
@@ -139,8 +125,8 @@ define([
                     forSales : 'false'
                 },
 
-                success: function (model) {
-                    return new EditView({model: model});
+                success: function (response) {
+                    return new EditView({model: response});
                 },
 
                 error: function () {

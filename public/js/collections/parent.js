@@ -139,6 +139,8 @@ define([
                 if (showMore) {
                     self.trigger('showmore', models);
                 }
+
+                self.trigger('resetEditCollection');
             };
 
             _opts.error = function (models, xhr) {

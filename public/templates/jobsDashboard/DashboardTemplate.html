@@ -19,8 +19,8 @@
     <td><%=job.devMargin ? job.devMargin.toFixed(2) : "0"%></td>
     <td><%=job.avDevRate ? job.avDevRate.toFixed(2) : "0"%></td>
     <td class="money"><%=currencySplitter(job.profit ? job.profit.toFixed(2) : "")%></td>
-    <td class="money"><%=currencySplitter(job.quotation ? (job.quotation.paymentInfo.total / 100).toFixed(2) : "")%></td>
-    <td class="money"><%=currencySplitter(job.invoice ? (job.invoice.paymentInfo.total / 100).toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.quotation ? (job.quotation/ 100).toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.invoice ? (job.invoice / 100).toFixed(2) : "")%></td>
     <td class="money"><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
     <td><%=job.payment ? job.payment.count : ""%></td>
 </tr>

@@ -424,12 +424,17 @@ define([
             if (answer) {
                 this.currentModel.destroy({
                     success: function () {
+                        var url = window.location.hash;
+
                         $('.edit-invoice-dialog').remove();
 
                         self.hideDialog();
 
                         if (self.eventChannel) {
                             self.eventChannel.trigger('invoiceRemove');
+                        } else {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         }
                     },
 

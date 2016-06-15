@@ -960,27 +960,224 @@ module.exports = function (models, event) {
 
     this.getById = function (req, res, next) {
         var id = req.params.id;
-        var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
 
-        project.findById(id)
-            .populate('bonus.employeeId', '_id name')
-            .populate('groups.owner', '_id name')
-            .populate('groups.users', '_id login')
-            .populate('groups.group', '_id name')
-            .populate('groups.owner', '_id login')
-            .populate('projectmanager', '_id name fullName')
-            .populate('salesmanager', '_id name fullName')
-            .populate('customer', '_id name fullName')
-            .populate('workflow', '_id name')
-            .populate('paymentMethod', '_id name')
-            .populate('paymentTerms', '_id name')
-            .exec(function (err, project) {
-                if (err) {
-                    return next(err);
+        Project.aggregate([{
+            $match: {
+                _id: objectId(id)
+            }
+        }, {
+            $project: {
+                name            : 1,
+                EndDate         : 1,
+                StartDate       : 1,
+                health          : 1,
+                editedBy        : 1,
+                attachments     : 1,
+                notes           : 1,
+                projecttype     : 1,
+                createdBy       : 1,
+                workflow        : 1,
+                groups          : 1,
+                whoCanRW        : 1,
+                customer        : 1,
+                projectShortDesc: 1,
+                TargetEndDate   : 1,
+                description     : 1,
+                paymentTerms    : 1,
+                paymentMethod   : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'projectMembers',
+                localField  : '_id',
+                foreignField: 'projectId',
+                as          : 'projectMembers'
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $project: {
+                name            : 1,
+                EndDate         : 1,
+                StartDate       : 1,
+                health          : 1,
+                attachments     : 1,
+                notes           : 1,
+                projecttype     : 1,
+                notRemovable    : 1,
+                workflow        : {$arrayElemAt: ['$workflow', 0]},
+                groups          : 1,
+                whoCanRW        : 1,
+                customer        : {$arrayElemAt: ['$customer', 0]},
+                projectShortDesc: 1,
+                TargetEndDate   : 1,
+                description     : 1,
+                paymentTerms    : 1,
+                paymentMethod   : 1,
+
+                salesManagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }
+                    }
+                },
+
+                projectManagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }
+                    }
                 }
+            }
+        }, {
+            $project: {
+                name        : 1,
+                EndDate     : 1,
+                StartDate   : 1,
+                health      : 1,
+                attachments : 1,
+                notes       : 1,
+                projecttype : 1,
+                notRemovable: 1,
 
-                res.status(200).send(project);
-            });
+                workflow: {
+                    _id : '$workflow._id',
+                    name: '$workflow.name'
+                },
+
+                groups  : 1,
+                whoCanRW: 1,
+
+                customer: {
+                    _id     : '$customer._id',
+                    fullName: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
+                },
+
+                projectShortDesc: 1,
+                TargetEndDate   : 1,
+                description     : 1,
+                paymentTerms    : 1,
+                paymentMethod   : 1,
+
+                salesManager: {$arrayElemAt: ['$salesManagers', 0]},
+
+                projectManager: {$arrayElemAt: ['$projectManagers', 0]}
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesManager.employeeId',
+                foreignField: '_id',
+                as          : 'salesManager'
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'projectManager.employeeId',
+                foreignField: '_id',
+                as          : 'projectManager'
+            }
+        }, {
+            $lookup: {
+                from        : 'PaymentMethod',
+                localField  : 'paymentMethod',
+                foreignField: '_id',
+                as          : 'paymentMethod'
+            }
+        }, {
+            $lookup: {
+                from        : 'paymentTerms',
+                localField  : 'paymentTerms',
+                foreignField: '_id',
+                as          : 'paymentTerms'
+            }
+        }, {
+            $project: {
+                name            : 1,
+                EndDate         : 1,
+                StartDate       : 1,
+                health          : 1,
+                attachments     : 1,
+                notes           : 1,
+                projecttype     : 1,
+                notRemovable    : 1,
+                workflow        : 1,
+                groups          : 1,
+                whoCanRW        : 1,
+                customer        : 1,
+                projectShortDesc: 1,
+                TargetEndDate   : 1,
+                description     : 1,
+                paymentTerms    : {$arrayElemAt: ['$paymentTerms', 0]},
+                paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
+
+                salesManager  : {$arrayElemAt: ['$salesManager', 0]},
+                projectManager: {$arrayElemAt: ['$projectManager', 0]}
+            }
+        }, {
+            $project: {
+                name            : 1,
+                EndDate         : 1,
+                StartDate       : 1,
+                health          : 1,
+                attachments     : 1,
+                notes           : 1,
+                projecttype     : 1,
+                notRemovable    : 1,
+                workflow        : 1,
+                groups          : 1,
+                whoCanRW        : 1,
+                customer        : 1,
+                projectShortDesc: 1,
+                TargetEndDate   : 1,
+                description     : 1,
+                paymentTerms    : 1,
+                paymentMethod   : 1,
+
+                salesManager: {
+                    _id     : '$salesManager._id',
+                    fullName: {$concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']}
+                },
+
+                projectManager: {
+                    _id     : '$projectManager._id',
+                    fullName: {$concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']}
+                }
+            }
+        }]).exec(function (err, project) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(project[0]);
+        });
     };
 
     this.getForDd = function (req, res, next) {
@@ -1018,219 +1215,6 @@ module.exports = function (models, event) {
     };
 
     this.updateAllProjects = function (req, res, next) {
-        /* var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-         var paralellTasks;
-         var count = 0;
-
-         var query = Project.find({}, {_id: 1, bonus: 1}).lean();
-
-         query.populate('bonus.employeeId', '_id name')
-         .populate('bonus.bonusId', '_id name value isPercent');
-
-         query.exec(function (err, result) {
-         if (err) {
-         return next(err);
-         }
-
-         async.eachLimit(result, 200, function (project) {
-         var pID = project._id;
-
-         paralellTasks = [getwTrackAndMonthHours];
-
-         function getwTrackAndMonthHours(cb) {
-         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-
-         var query = WTrack.find({'project._id': project._id}).lean();
-         var months = [];
-         var years = [];
-         var uMonth;
-         var uYear;
-
-         query.exec(function (err, result) {
-         if (err) {
-         return cb(err);
-         }
-
-         result.forEach(function (res) {
-         months.push(res.month);
-         years.push(res.year);
-         });
-
-         uMonth = _.uniq(months);
-         uYear = _.uniq(years);
-
-         monthHours.aggregate([{
-         $match: {
-         year : {$in: uYear},
-         month: {$in: uMonth}
-         }
-         }, {
-         $project: {
-         date : {$add: [{$multiply: ['$year', 100]}, '$month']},
-         hours: '$hours'
-
-         }
-         }, {
-         $group: {
-         _id  : '$date',
-         value: {$addToSet: '$hours'}
-         }
-         }], function (err, months) {
-         if (err) {
-         return cb(err);
-         }
-
-         cb(null, {wTrack: result, monthHours: months});
-         });
-
-         });
-         };
-         async.parallel(paralellTasks, function (err, result) {
-         var projectTeam = {};
-         var bonus = [];
-         var projectValues = {};
-         var budgetTotal = {};
-         var wTRack = result[0] ? result[0]['wTrack'] : [];
-         var monthHours = result[0] ? result[0]['monthHours'] : [];
-         var bonuses = project.bonus;
-         var empKeys;
-         var keys;
-         var hoursByMonth = {};
-         var employees = {};
-         var keysForPT;
-         var sortBudget = [];
-         var budget = {};
-
-         budgetTotal.profitSum = 0;
-         budgetTotal.costSum = 0;
-         budgetTotal.rateSum = 0;
-         budgetTotal.revenueSum = 0;
-         budgetTotal.hoursSum = 0;
-
-         wTRack.forEach(function (wTrack) {
-         var key;
-         var employee = wTrack.employee;
-
-         if (!( employee._id in employees)) {
-         employees[employee._id] = employee.name;
-         }
-
-         key = wTrack.year * 100 + wTrack.month;
-
-         if (hoursByMonth[key]) {
-         hoursByMonth[key] += parseFloat(wTrack.worked);
-         } else {
-         hoursByMonth[key] = parseFloat(wTrack.worked);
-         }
-         });
-
-         empKeys = Object.keys(employees);
-
-         empKeys.forEach(function (empId) {
-         wTRack.forEach(function (wTrack) {
-         var emp = (wTrack.employee._id).toString();
-
-         if (empId === emp) {
-         if (projectTeam[empId]) {
-         projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-         projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
-         projectTeam[empId].rate += parseFloat(wTrack.rate);
-         projectTeam[empId].hours += parseFloat(wTrack.worked);
-         projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
-         } else {
-         projectTeam[empId] = {};
-         projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-         projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
-         projectTeam[empId].rate = parseFloat(wTrack.rate);
-         projectTeam[empId].hours = parseFloat(wTrack.worked);
-         projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
-         }
-         }
-         });
-         });
-
-         keys = Object.keys(projectTeam);
-         if (keys.length > 0) {
-
-         keys.forEach(function (key) {
-         budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
-         budgetTotal.costSum += parseFloat(projectTeam[key].cost);
-         budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
-         budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-         });
-         budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
-
-         projectValues.revenue = budgetTotal.revenueSum;
-         projectValues.profit = budgetTotal.profitSum;
-         projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
-         projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
-
-         var empQuery = Employee.find({_id: {$in: keys}}, {
-         'name'            : 1,
-         'jobPosition.name': 1,
-         'department.name' : 1
-         }).lean();
-         empQuery.exec(function (err, response) {
-
-         if (err) {
-         return next(err);
-         }
-
-         bonuses.forEach(function (element) {
-         var objToSave = {};
-
-         objToSave.bonus = 0;
-         objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-         objToSave.percentage = element.bonusId.name;
-
-         if (element.bonusId.isPercent) {
-         objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-         bonus.push(objToSave);
-         } else {
-         monthHours.forEach(function (month) {
-         objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-         });
-
-         objToSave.bonus = objToSave.bonus * 100;
-         bonus.push(objToSave);
-         }
-
-         });
-
-         keysForPT = Object.keys(projectTeam);
-
-         response.forEach(function (employee) {
-         keysForPT.forEach(function (id) {
-         if ((employee._id).toString() === id) {
-         sortBudget.push(projectTeam[id]);
-         }
-         })
-         });
-
-         budget = {
-         // projectTeam: response,
-         bonus: bonus
-         // budget: sortBudget,
-         // projectValues: projectValues,
-         //budgetTotal: budgetTotal
-         };
-
-         Project.update({_id: pID}, {$set: {budget: budget}}, function (err, result) {
-         if (err) {
-         return next(err);
-         }
-
-         console.log(count++);
-         })
-         });
-         }
-         });
-
-         });
-         res.status(200).send('success');
-         });*/
         var projectId;
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);

@@ -437,27 +437,31 @@ var Module = function (models, event) {
                 $unwind: '$root'
             }, {
                 $project: {
-                    _id         : '$root._id',
-                    order       : '$root.order',
-                    name        : '$root.name',
-                    workflow    : '$root.workflow',
-                    type        : '$root.type',
-                    project     : '$root.project',
-                    budget      : '$root.budget',
-                    quotation   : '$root.quotation',
-                    invoice     : '$root.invoice',
-                    payment     : '$root.payment',
-                    hoursQA     : '$root.hoursQA',
-                    hoursDesign : '$root.hoursDesign',
-                    hoursIOS    : '$root.hoursIOS',
-                    hoursAndroid: '$root.hoursAndroid',
-                    hoursUnity  : '$root.hoursUnity',
-                    hoursDotNet : '$root.hoursDotNet',
-                    hoursWeb    : '$root.hoursWeb',
-                    hoursROR    : '$root.hoursROR',
-                    hoursDev    : '$root.hoursDev',
-                    salesManager: '$root.salesManager',
-                    total       : 1
+                    _id                : '$root._id',
+                    order              : '$root.order',
+                    name               : '$root.name',
+                    'workflow._id'     : '$root.workflow._id',
+                    'workflow.name'    : '$root.workflow.name',
+                    'workflow.status'  : '$root.workflow.status',
+                    type               : '$root.type',
+                    'project._id'      : '$root.project._id',
+                    'project.name'     : '$root.project.name',
+                    budget             : '$root.budget',
+                    'quotation'        : '$root.quotation.paymentInfo.total',
+                    invoice            : '$root.invoice.paymentInfo.total',
+                    payment            : '$root.payment',
+                    hoursQA            : '$root.hoursQA',
+                    hoursDesign        : '$root.hoursDesign',
+                    hoursIOS           : '$root.hoursIOS',
+                    hoursAndroid       : '$root.hoursAndroid',
+                    hoursUnity         : '$root.hoursUnity',
+                    hoursDotNet        : '$root.hoursDotNet',
+                    hoursWeb           : '$root.hoursWeb',
+                    hoursROR           : '$root.hoursROR',
+                    hoursDev           : '$root.hoursDev',
+                    'salesManager._id' : '$root.salesManager._id',
+                    'salesManager.name': '$root.salesManager.name',
+                    total              : 1
                 }
             }, {
                 $sort: sort
@@ -611,10 +615,10 @@ var Module = function (models, event) {
                             job[el] = result[0] ? result[0][el] : 0;
                         });
 
-                        job.margin = job.quotation ? ((1 - job.cost / job.quotation.paymentInfo.total) * 100) : 0;
-                        job.devMargin = job.quotation ? ((1 - job.costDev / job.quotation.paymentInfo.total) * 100) : 0;
-                        job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation.paymentInfo.total - job.costQA - job.costDesign) / (100 * job.hoursDev)) : 0;
-                        job.profit = job.quotation ? ((job.quotation.paymentInfo.total - job.cost) / 100) : 0;
+                        job.margin = job.quotation ? ((1 - job.cost / job.quotation) * 100) : 0;
+                        job.devMargin = job.quotation ? ((1 - job.costDev / job.quotation) * 100) : 0;
+                        job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation - job.costQA - job.costDesign) / (100 * job.hoursDev)) : 0;
+                        job.profit = job.quotation ? ((job.quotation - job.cost) / 100) : 0;
 
                         cb();
                     });

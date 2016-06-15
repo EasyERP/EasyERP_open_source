@@ -71,85 +71,6 @@ define([
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        // todo fixit
-        /*  alpabeticalRender: function (e) {  // took off to pagination
-         var target;
-         var itemsNumber = $('.selectedItemsNumber').text();
-         var selectedLetter;
-
-         this.startTime = new Date();
-
-         if (e && e.target) {
-         target = $(e.target);
-         selectedLetter = $(e.target).text();
-
-         if (!this.filter) {
-         this.filter = {};
-         }
-         this.filter.letter = {
-         key  : 'letter',
-         value: selectedLetter,
-         type : null
-         };
-
-         target.parent().find('.current').removeClass('current');
-         target.addClass('current');
-
-         if ($(e.target).text() === 'All') {
-         delete this.filter;
-         delete App.filter.letter;
-         } else {
-         App.filter.letter = this.filter.letter;
-         }
-         }
-
-         this.filter = App.filter;
-
-         this.filterView.renderFilterContent(this.filter);
-         _.debounce(
-         function () {
-         this.trigger('filter', App.filter);
-         }, 10);
-
-         $('#top-bar-deleteBtn').hide();
-         $('#checkAll').prop('checked', false);
-
-         this.changeLocationHash(1, itemsNumber, this.filter);
-         this.collection.getFirstPage({
-         count      : itemsNumber,
-         filter     : this.filter,
-         viewType   : this.viewType,
-         contentType: this.contentType
-         });
-         },
-
-         renderAlphabeticalFilter: function () {
-         var self = this;
-         var currentLetter;
-
-         this.hasAlphabet = true;
-
-         common.buildAphabeticArray(this.collection, function (arr) {
-         self.$el.find('#startLetter').remove();
-         self.alphabeticArray = arr;
-         self.$el.find('#searchContainer').after(_.template(aphabeticTemplate, {
-         alphabeticArray   : self.alphabeticArray,
-         allAlphabeticArray: self.allAlphabeticArray
-         }));
-
-         currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
-
-         if (currentLetter) {
-         $('#startLetter').find('a').each(function () {
-         var target = $(this);
-         if (target.text() === currentLetter) {
-         target.addClass('current');
-         }
-         });
-         }
-         });
-         },*/
-
         renderPagination: function ($currentEl, _self) {
             var self = _self || this;
             var countNumber;
@@ -189,11 +110,13 @@ define([
 
             this.hideSaveCancelBtns();
             this.resetCollection(modelObject);
+            this.changedModels = {};
         },
 
         updatedOptions: function () {
             this.hideSaveCancelBtns();
             this.resetCollection();
+            this.changedModels = {};
         },
 
         resetCollection: function (model) {
@@ -204,6 +127,13 @@ define([
             } else {
                 this.collection.set(this.editCollection.models, {remove: false});
             }
+        },
+
+        resetEditCollection: function () {
+            if (!this.collection || !this.editCollection) {
+                return false;
+            }
+            this.editCollection.reset(this.collection.models);
         },
 
         keyDown: function (e) {
@@ -337,7 +267,6 @@ define([
             }
 
             this.editCollection.save();
-            this.changedModels = {};
 
             this.deleteEditable();
         },
