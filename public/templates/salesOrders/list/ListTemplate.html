@@ -8,7 +8,9 @@
             <input type="checkbox" value="<%=order._id%>" class="checkbox
                 <% if (order.proformaCounter || (order.workflow && order.workflow.name !== 'Not Invoiced')) { %>
                     notRemovable
-                <% } %>"
+                <% } %>" <%if (order.workflow && order.workflow.name !== 'Not Invoiced') { %>
+            disabled='disabled'
+            <% } %>
             />
         </td>
         <td class="centerCell"><%=startNumber + index + 1%></td>
