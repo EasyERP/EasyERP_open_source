@@ -103,7 +103,13 @@ define([
             currentEllistRenderer(self);
 
             // self.renderPagination($currentEl, self);
-            //self.renderFilter(self, );
+            /*self.renderFilter(self, {
+             name : 'forSales',
+             value: {
+             key  : 'forSales',
+             value: [false]
+             }
+             });*/
 
             this.recalcTotal();
 
