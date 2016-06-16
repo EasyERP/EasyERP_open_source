@@ -87,9 +87,9 @@
                 case 27:
                     this.hideDialog();
                     break;
-                case 13:
+                /* case 13:
                     this.validateForm(e);
-                    break;
+                    break;*/
                 default:
                     break;
             }
