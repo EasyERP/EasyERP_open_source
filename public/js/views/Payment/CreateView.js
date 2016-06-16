@@ -91,7 +91,7 @@ define([
             var date = $('#paymentDate').val();
             var data = {};
 
-            changedValue = parseFloat(changedValue);
+            changedValue = parseFloat(helpers.spaceReplacer(changedValue));
 
             data.totalAmount = totalAmount;
             data.paymentAmount = changedValue;
