@@ -41,12 +41,20 @@ define([
         },
 
         afterRender: function (options) {
+            var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';;
+            var $curEl = this.$el;
             var contentType = options.contentType || null;
             var ifFilter = CONSTANTS.FILTERS.hasOwnProperty(contentType);
 
             if (ifFilter) {
                 this.renderFilter();
             }
+
+            if (this.hasAlphabet) {
+                this.renderAlphabeticalFilter();
+            }
+            
+            $curEl.append(createdInTag);
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
@@ -411,8 +419,6 @@ define([
         renderAlphabeticalFilter: function () { // added from listViewBase
             var self = this;
             var currentLetter;
-
-            this.hasAlphabet = true;
 
             common.buildAphabeticArray(this.collection, function (arr) {
                 self.$el.find('#startLetter').remove();

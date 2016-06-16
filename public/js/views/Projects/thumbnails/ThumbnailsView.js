@@ -19,7 +19,6 @@
         countPerPage : 0,
         template     : _.template(thumbnailsItemTemplate),
         newCollection: true,
-        filter       : null,
         contentType  : 'Projects', // needs in view.prototype.changeLocationHash
         viewType     : 'thumbnails', // needs in view.prototype.changeLocationHash
 
@@ -102,21 +101,14 @@
         render: function () {
             var self = this;
             var $currentEl = this.$el;
-            var createdInTag;
 
-            $currentEl.html('');
-            $currentEl.append(this.template({collection: this.collection.toJSON()}));
-
-            self.renderFilter();
+            $currentEl.html(this.template({collection: this.collection.toJSON()}));
 
             common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
                 self.stages = stages || [];
             });
 
             populate.getPriority('#priority', this);
-
-            createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>';
-            $currentEl.append(createdInTag);
 
             return this;
         }

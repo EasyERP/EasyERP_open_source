@@ -533,7 +533,7 @@
             var self = this;
             var workflows = this.workflowsCollection.toJSON();
 
-            if (filter.workflow) {
+            if (filter && filter.workflow) {
                 workflows = [];
                 filter.workflow.value.forEach(function (wId) {
                     workflows.push({
@@ -542,7 +542,7 @@
                 });
             }
 
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
+            this.filter = !filter || Object.keys(filter).length === 0 ? {} : filter;
 
             self.changeLocationHash(false, false, filter);
 

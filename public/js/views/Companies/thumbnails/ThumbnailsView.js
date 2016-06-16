@@ -27,18 +27,14 @@
              CONSTANTS) {
     'use strict';
     var CompaniesThumbnalView = BaseView.extend({
-        el                : '#content-holder',
-        countPerPage      : 0,
-        template          : _.template(ThumbnailsItemTemplate),
-        defaultItemsNumber: null,
-        listLength        : null,
-        filter            : null,
-        newCollection     : null,
-        page              : null,
-        contentType       : 'Companies',
-        viewType          : 'thumbnails',
-        exportToXlsxUrl   : '/Customers/exportToXlsx/?type=Companies',
-        exportToCsvUrl    : '/Customers/exportToCsv/?type=Companies',
+        el             : '#content-holder',
+        countPerPage   : 0,
+        template       : _.template(ThumbnailsItemTemplate),
+        hasAlphabet    : true,
+        contentType    : 'Companies',
+        viewType       : 'thumbnails',
+        exportToXlsxUrl: '/Customers/exportToXlsx/?type=Companies',
+        exportToCsvUrl : '/Customers/exportToCsv/?type=Companies',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
@@ -83,63 +79,11 @@
         },
 
         render: function () {
-            var self = this;
-            var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>';
             var $currentEl = this.$el;
+            
+            $currentEl.html(this.template({collection: this.collection.toJSON()}));
 
-            $currentEl.html('');
-
-            if (this.collection.length > 0) {
-                $currentEl.append(this.template({collection: this.collection.toJSON()}));
-            } else {
-                $currentEl.html('<h2>No companies found</h2>');
-            }
-            common.buildAphabeticArray(this.collection, function (arr) {
-                var currentLetter;
-
-                $('#startLetter').remove();
-                self.alphabeticArray = arr;
-                $('#searchContainer').after(_.template(AphabeticTemplate, {
-                    alphabeticArray   : self.alphabeticArray,
-                    allAlphabeticArray: self.allAlphabeticArray
-                }));
-                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
-                if (currentLetter) {
-                    $('#startLetter a').each(function () {
-                        var target = $(this);
-                        if (target.text() === currentLetter) {
-                            target.addClass('current');
-                        }
-                    });
-                }
-            });
-            $currentEl.append(createdInTag);
-
-            self.filterView = new FilterView({contentType: self.contentType});
-
-            self.filterView.bind('filter', function (filter) {
-                self.showFilteredPage(filter, self);
-            });
-            self.filterView.bind('defaultFilter', function () {
-                self.showFilteredPage({}, self);
-            });
-
-            self.filterView.render();
-
-            $(document).on('click', function (e) {
-                self.hideItemsNumber(e);
-            });
             return this;
-        },
-
-        hideItemsNumber: function (e) {
-            var el = this.$(e.target);  // changed after ui test
-
-            this.$el.find('.allNumberPerPage, .newSelectList').hide();
-            if (!el.closest('.search-view')) {
-                $('.search-content').removeClass('fa-caret-up');
-                this.$el.find('.search-options').addClass('hidden');
-            }
         },
 
         showMoreAlphabet: function (newModels) {

@@ -15,15 +15,12 @@
     'use strict';
 
     var EmployeesThumbnalView = BaseView.extend({
-        el                : '#content-holder',
-        countPerPage      : 0,
-        template          : _.template(thumbnailsItemTemplate),
-        defaultItemsNumber: null,
-        listLength        : null,
-        filter            : null,
-        newCollection     : null,
-        contentType       : 'Employees',
-        viewType          : 'thumbnails',
+        el          : '#content-holder',
+        countPerPage: 0,
+        template    : _.template(thumbnailsItemTemplate),
+        hasAlphabet : true,
+        contentType : 'Employees',
+        viewType    : 'thumbnails',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
@@ -51,20 +48,9 @@
         },
 
         render: function () {
-            var self = this;
             var $currentEl = this.$el;
-            var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + 'ms </div>';
 
-            $currentEl.html('');
-
-            if (this.collection.length > 0) {
-                $currentEl.append(this.template({collection: this.collection.toJSON()}));
-            } else {
-                $currentEl.html('<h2>No Employees found</h2>');
-            }
-
-            this.renderAlphabeticalFilter();
-            $currentEl.append(createdInTag);
+            $currentEl.html(this.template({collection: this.collection.toJSON()}));
 
             return this;
         },
