@@ -135,7 +135,7 @@ define([
                     message: 'Please, save previous changes or cancel them!'
                 });
             }
-            
+
             target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
@@ -629,6 +629,11 @@ define([
             var $checkedInputs;
             var ids = [];
             var answer;
+            var edited = this.edited || this.$el.find('#false');
+
+            if (!edited.length) { // ToDo refactor
+                this.changed = false;
+            }
 
             if (this.changed) {
                 return this.cancelChanges();

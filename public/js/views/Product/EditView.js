@@ -161,7 +161,7 @@ define([
                 },
 
                 groups: {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: $('#allUsersSelect').data('id') || null,
                     users: usersId,
                     group: groupsId
                 },

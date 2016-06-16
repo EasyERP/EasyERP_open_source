@@ -76,7 +76,7 @@ define([
                         var endDateVal = moment(targetInput.datepicker('getDate'));
 
                         endDateVal.add(6, 'week').day('Monday');
-                        endDateVal = endDate.toDate();
+                        endDateVal = endDateVal.toDate();
 
                         endDatePicker.datepicker('option', 'minDate', endDateVal);
 

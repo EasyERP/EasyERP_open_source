@@ -172,7 +172,7 @@ define([
             });
 
             groups = {
-                owner: $thisEl.find('#allUsersSelect').attr('data-id'),
+                owner: $thisEl.find('#allUsersSelect').attr('data-id') || null,
                 users: usersId,
                 group: groupsId
             };
