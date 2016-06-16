@@ -263,7 +263,7 @@ define([
         },
 
         removeFilterFromDB: function (e) {
-            var currentUser = new UserModel(App.currentUser);
+            var currentUser = new UsersModel(App.currentUser);
             var filterObj = {};
             var mid = 39;
             var savedFilters = App.savedFilters[this.parentContentType];
@@ -295,7 +295,7 @@ define([
             $.find('#' + filterID)[0].remove();
             $.find('#' + filterID)[0].remove();
 
-            for (i = savedFilters.length - 1; i >= 0; i--) {
+            for (var i = savedFilters.length - 1; i >= 0; i--) {
                 if (savedFilters[i]['_id']['_id'] === filterID) {
                     App.savedFilters[this.parentContentType].splice(i, 1);
                 }

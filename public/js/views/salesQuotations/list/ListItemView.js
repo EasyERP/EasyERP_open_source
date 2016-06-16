@@ -2,9 +2,8 @@
     'Backbone',
     'Underscore',
     'text!templates/salesQuotations/list/ListTemplate.html',
-    'text!templates/salesQuotations/list/ListTemplate.html',
     'helpers'
-], function (Backbone, _, listTemplate, listForWTrack, helpers) {
+], function (Backbone, _, listForWTrack, helpers) {
     'use strict';
 
     var QuotationListItemView = Backbone.View.extend({
