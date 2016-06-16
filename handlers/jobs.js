@@ -14,7 +14,6 @@ var Module = function (models, event) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').jobs;
-    var access = require('../Modules/additions/access.js')(models);
     var objectId = mongoose.Types.ObjectId;
 
     function caseFilter(filter) {
@@ -86,11 +85,6 @@ var Module = function (models, event) {
 
             jobId = model._id;
             projectId = model.project;
-
-            if (projectId) {
-                event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
-                // event.emit('recollectProjectInfo');
-            }
 
             res.status(200).send({success: model});
         });
@@ -1633,10 +1627,6 @@ var Module = function (models, event) {
                             cb();
                         });
                     }, function () {
-                        if (projectId) {
-                            event.emit('updateProjectDetails', {req: req, _id: projectId});
-                        }
-
                         event.emit('recollectVacationDash');
                     });
 

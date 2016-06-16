@@ -4,14 +4,12 @@ module.exports = function (app, mainDb) {
     'use strict';
 
     // var newrelic = require('newrelic');
-    var events = require('events');
-    var event = new events.EventEmitter();
-    var logWriter = require('../helpers/logWriter');
+    var event = require('../helpers/eventstHandler')(app, mainDb);
     var RESPONSES = require('../constants/responses');
     var fs = require('fs');
     var dbsNames = app.get('dbsNames');
     var dbsObject = mainDb.dbsObject;
-    var models = require('../models.js')(dbsObject);
+    var models = require('../helpers/models.js')(dbsObject);
     var productRouter = require('./product')(models);
     var orderRouter = require('./order')(models, event);
     var invoiceRouter = require('./invoice')(models, event);
@@ -29,7 +27,6 @@ module.exports = function (app, mainDb) {
     var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
-    //var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models, event);
     var employeeRouter = require('./employee')(event, models);
     var applicationRouter = require('./application')(event, models);
@@ -37,7 +34,6 @@ module.exports = function (app, mainDb) {
     var departmentRouter = require('./department')(models, event);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
-    var salaryRouter = require('./salary')(event, models);
     var opportunityRouter = require('./opportunity')(models, event);
     var leadsRouter = require('./leads')(models, event);
     var jobPositionRouter = require('./jobPosition')(models);
@@ -71,14 +67,14 @@ module.exports = function (app, mainDb) {
     var journalEntriesRouter = require('./journalEntries')(models, event);
 
     var logger = require('../helpers/logger');
-
     var async = require('async');
-
     var requestHandler;
+
+    require('../helpers/arrayExtender');
 
     app.set('logger', logger);
 
-    requestHandler = require('../requestHandler.js')(app, event, mainDb);
+    // requestHandler = require('../requestHandler.js')(app, event, mainDb);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -104,7 +100,6 @@ module.exports = function (app, mainDb) {
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
-    //app.use('/importData', importDataRouter);
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/projects', projectRouter);
@@ -160,10 +155,10 @@ module.exports = function (app, mainDb) {
         }
     });
 
-    app.get('/getModules', function (req, res) {
+   /* app.get('/getModules', function (req, res) {
         requestHandler.getModules(req, res);
     });
-
+*/
     app.get('/download/:path', function (req, res) {
         var path = req.param('path');
         
@@ -229,14 +224,14 @@ module.exports = function (app, mainDb) {
         res.type('txt');
         res.send(RESPONSES.PAGE_NOT_FOUND);
 
-    };
+    }
 
     function errorHandler(err, req, res, next) {
         var status = err.status || 500;
 
         if (process.env.NODE_ENV === 'production') {
             if (status === 401) {
-                logWriter.log('', err.message + '\n' + err.message)
+                logger.log('', err.message + '\n' + err.message);
             }
             res.status(status).send({error: err.message});
         } else {
@@ -245,7 +240,7 @@ module.exports = function (app, mainDb) {
         }
     }
 
-    requestHandler.initScheduler();
+    // requestHandler.initScheduler();
 
     app.use(notFound);
     app.use(errorHandler);

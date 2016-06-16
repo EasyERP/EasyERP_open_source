@@ -24,7 +24,6 @@ var objectId = mongoose.Types.ObjectId;
 
 var Module = function (models, event) {
     'use strict';
-    var access = require('../Modules/additions/access.js')(models);
     var composeExpensesAndCache = require('../helpers/expenses')(models);
 
     var rewriteAccess = require('../helpers/rewriteAccess');

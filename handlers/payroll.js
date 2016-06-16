@@ -9,13 +9,10 @@ var Module = function (models) {
     var journalEntrySchema = mongoose.Schemas.journalEntry;
     var ObjectId = mongoose.Types.ObjectId;
 
-    var access = require('../Modules/additions/access.js')(models);
-
     var CONSTANTS = require('../constants/mainConstants.js');
     var _ = require('lodash');
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
-    var mid = 66;
     var departmentArray = CONSTANTS.NOT_DEV_ARRAY;
     var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE)];
     var composeExpensesAndCache = require('../helpers/expenses')(models);

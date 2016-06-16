@@ -86,7 +86,7 @@ var Salary = function (event, models) {
                             monthFromSalary: response.month,
                             yearFromSalary : response.year
                         };
-                        event.emit('updateCost', params);
+                       
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -126,7 +126,7 @@ var Salary = function (event, models) {
                                 monthFromSalary: result.month,
                                 yearFromSalary : result.year
                             };
-                            event.emit('updateCost', params);
+                            
                             cb(null, result);
                         });
 
@@ -199,7 +199,7 @@ var Salary = function (event, models) {
                                     monthFromSalary: month,
                                     yearFromSalary : year
                                 };
-                                event.emit('updateCost', params);
+                                
                                 res.status(200).send({success: results[1]});
                             }
                         }

@@ -202,7 +202,6 @@ var Module = function (models, event) {
                                 async.each(wTracks, function (wTr, callback) {
                                     wTrackModel.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
                                 }, function () {
-                                    event.emit('updateProjectDetails', {req: req, _id: project, jobId: result._id});
                                     cb();
                                 });
                             });
@@ -210,13 +209,6 @@ var Module = function (models, event) {
                         });
                     }
                 });
-
-                event.emit('recalculateRevenue', {   // added for recalculating projectInfo after editing quotation
-                    quotation  : quotation,
-                    wTrackModel: wTrackModel,
-                    req        : req
-                });
-
             });
         });
     }
@@ -632,11 +624,6 @@ var Module = function (models, event) {
                 } else {
                     res.status(201).send(_quotation);
                 }
-                event.emit('recalculateRevenue', {
-                    quotation  : _quotation,
-                    wTrackModel: wTrackModel,
-                    req        : req
-                });
             });
         });
     };
@@ -1071,7 +1058,6 @@ var Module = function (models, event) {
                     async.each(wTracks, function (wTr, callback) {
                         wTrack.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
                     }, function () {
-                        event.emit('updateProjectDetails', {req: req, _id: project, jobId: result._id});
                         cb();
                     });
                 });

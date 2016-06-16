@@ -25,7 +25,7 @@ var Module = function (models, event) {
     var objectId = mongoose.Types.ObjectId;
 
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
-    var access = require('../Modules/additions/access.js')(models);
+    var access = require('../helpers/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
@@ -664,115 +664,103 @@ var Module = function (models, event) {
         var products;
         var project;
 
-        var moduleId = 64;
-
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getApproveAccess(req, req.session.uId, moduleId, function (access) {
-                if (access) {
+        Invoice.findByIdAndUpdate(id, {
+            $set: {
+                approved   : true,
+                invoiceDate: new Date(invoiceDate)
+            }
+        }, {new: true}, function (err, resp) {
+            var parallelTask;
+            var setWorkflow;
+            var updateJobs;
 
-                    Invoice.findByIdAndUpdate(id, {
-                        $set: {
-                            approved   : true,
-                            invoiceDate: new Date(invoiceDate)
-                        }
-                    }, {new: true}, function (err, resp) {
-                        var parallelTask;
-                        var setWorkflow;
-                        var updateJobs;
+            if (err) {
+                return next(err);
+            }
 
-                        if (err) {
-                            return next(err);
-                        }
+            journalEntryComposer(resp, req.session.lastDb, function () {
+            }, req.session.uId);
 
-                        journalEntryComposer(resp, req.session.lastDb, function () {
-                        }, req.session.uId);
+            products = resp.products;
 
-                        products = resp.products;
+            if (resp._type !== 'Proforma') {
+                setWorkflow = function (callback) {
+                    var request = {
+                        query: {
+                            wId   : 'Proforma',
+                            status: 'Cancelled'
+                        },
 
-                        if (resp._type !== 'Proforma') {
-                            setWorkflow = function (callback) {
-                                var request = {
-                                    query: {
-                                        wId   : 'Proforma',
-                                        status: 'Cancelled'
-                                    },
+                        session: req.session
+                    };
 
-                                    session: req.session
-                                };
-
-                                workflowHandler.getFirstForConvert(request, function (err, workflow) {
-                                    Invoice.update({
-                                        sourceDocument: objectId(resp.sourceDocument),
-                                        payments      : []
-                                    }, {
-                                        $set: {
-                                            workflow: workflow._id,
-                                            invoiced: true
-                                        }
-                                    }, {
-                                        multi: true
-                                    }, callback);
-                                });
-                            };
-
-                            updateJobs = function (callback) {
-                                if (products) {
-                                    async.each(products, function (result, cb) {
-                                        var jobs = result.jobs;
-                                        var editedBy = {
-                                            user: req.session.uId,
-                                            date: new Date()
-                                        };
-                                        JobsModel.findByIdAndUpdate(jobs, {
-                                            $set: {
-                                                invoice : resp._id,
-                                                type    : 'Invoiced',
-                                                workflow: CONSTANTS.JOBSFINISHED,
-                                                editedBy: editedBy
-                                            }
-                                        }, {new: true}, function (err, job) {
-                                            if (err) {
-                                                return cb(err);
-                                            }
-                                            project = job.project || null;
-
-                                            _journalEntryHandler.createCostsForJob({
-                                                req     : req,
-                                                jobId   : jobs,
-                                                workflow: CONSTANTS.JOBSFINISHED
-                                            });
-
-                                            cb();
-                                        });
-
-                                    }, function () {
-                                        if (project) {
-                                            event.emit('fetchJobsCollection', {project: project});
-                                        }
-                                        callback();
-                                    });
-                                }
-                            };
-
-                            parallelTask = [updateJobs, setWorkflow];
-                            async.parallel(parallelTask, function (err, response) {
-                                if (err) {
-                                    return next(err);
-                                }
-                                res.status(200).send(response);
-                            });
-                        } else {
-                            res.status(200).send(resp);
-                        }
+                    workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                        Invoice.update({
+                            sourceDocument: objectId(resp.sourceDocument),
+                            payments      : []
+                        }, {
+                            $set: {
+                                workflow: workflow._id,
+                                invoiced: true
+                            }
+                        }, {
+                            multi: true
+                        }, callback);
                     });
+                };
 
-                } else {
-                    res.status(401).send();
-                }
-            });
-        }
+                updateJobs = function (callback) {
+                    if (products) {
+                        async.each(products, function (result, cb) {
+                            var jobs = result.jobs;
+                            var editedBy = {
+                                user: req.session.uId,
+                                date: new Date()
+                            };
+                            JobsModel.findByIdAndUpdate(jobs, {
+                                $set: {
+                                    invoice : resp._id,
+                                    type    : 'Invoiced',
+                                    workflow: CONSTANTS.JOBSFINISHED,
+                                    editedBy: editedBy
+                                }
+                            }, {new: true}, function (err, job) {
+                                if (err) {
+                                    return cb(err);
+                                }
+                                project = job.project || null;
+
+                                _journalEntryHandler.createCostsForJob({
+                                    req     : req,
+                                    jobId   : jobs,
+                                    workflow: CONSTANTS.JOBSFINISHED
+                                });
+
+                                cb();
+                            });
+
+                        }, function () {
+                            if (project) {
+                                event.emit('fetchJobsCollection', {project: project});
+                            }
+                            callback();
+                        });
+                    }
+                };
+
+                parallelTask = [updateJobs, setWorkflow];
+                async.parallel(parallelTask, function (err, response) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send(response);
+                });
+            } else {
+                res.status(200).send(resp);
+            }
+        });
     };
 
     this.getAll = function (req, res, next) {

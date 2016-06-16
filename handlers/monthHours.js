@@ -50,18 +50,7 @@ var MonthHours = function (event, models) {
             }
             composeAndCash(req);
             event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
-
-            event.emit('dropHoursCashes', req);
-            params = {
-                req               : req,
-                year              : result.year,
-                month             : result.month,
-                fixedExpense      : result.fixedExpense,
-                expenseCoefficient: result.expenseCoefficient,
-                hours             : result.hours,
-                dateByMonth       : result.dateByMonth
-            };
-            event.emit('updateCost', params);
+            
             res.status(200).send(result);
         });
     };
@@ -97,7 +86,7 @@ var MonthHours = function (event, models) {
                     hours             : result.hours,
                     dateByMonth       : result.dateByMonth
                 };
-                event.emit('updateCost', params);
+               
                 event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
                 cb(null, result);
             });
@@ -108,7 +97,6 @@ var MonthHours = function (event, models) {
             }
 
             composeAndCash(req);
-            event.emit('dropHoursCashes', req);
             res.status(200).send({success: 'updated'});
         });
     };
@@ -206,7 +194,6 @@ var MonthHours = function (event, models) {
             res.status(200).send({success: result});
 
             composeAndCash(req);
-            event.emit('dropHoursCashes', req);
             event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
         });
     };
@@ -223,7 +210,6 @@ var MonthHours = function (event, models) {
                 }
 
                 composeAndCash(req);
-                event.emit('dropHoursCashes', req);
                 event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
 
                 cb();

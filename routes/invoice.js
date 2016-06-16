@@ -34,7 +34,7 @@ module.exports = function (models, event) {
     router.get('/stats/project', handler.getStatsForProject);
     router.get('/chart', handler.chartForProject);
 
-    router.patch('/approve', handler.approve);
+    router.patch('/approve', accessStackMiddleware, handler.approve);
     router.patch('/:id', handler.updateOnlySelected);
     router.put('/:_id', function (req, res) {
         var data = {};

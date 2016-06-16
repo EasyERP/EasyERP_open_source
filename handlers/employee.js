@@ -518,8 +518,7 @@ var Employee = function (event, models) {
                     if (result.isEmployee) {
                         event.emit('recalculate', req, {}, next);
                     }
-
-                    event.emit('dropHoursCashes', req);
+                    
                     event.emit('recollectVacationDash');
                 });
             });
@@ -1113,7 +1112,7 @@ var Employee = function (event, models) {
                             });
 
                         }
-                        event.emit('dropHoursCashes', req);
+                       
                         event.emit('recollectVacationDash');
 
                         res.status(200).send(result);
@@ -1139,7 +1138,6 @@ var Employee = function (event, models) {
             }
 
             event.emit('recalculate', req, null, next);
-            event.emit('dropHoursCashes', req);
             event.emit('recollectVacationDash', req);
 
             res.status(200).send({success: 'Employees removed'});
@@ -1162,7 +1160,6 @@ var Employee = function (event, models) {
                 }
 
                 event.emit('recalculate', req, null, next);
-                event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash', req);
                 cb();
             });
