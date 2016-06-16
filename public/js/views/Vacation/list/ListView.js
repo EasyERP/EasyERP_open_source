@@ -226,7 +226,7 @@ define([
         },
 
         vacationTypeForDD: function (content) {
-            var array = ['&nbsp', 'Vacation', 'Personal', 'Sick', 'Education'];
+            var array = ['Clear', 'Vacation', 'Personal', 'Sick', 'Education'];
             var firstChar;
 
             array = _.map(array, function (element) {
@@ -234,7 +234,7 @@ define([
                     name: element
                 };
                 firstChar = element.name.charAt(0);
-                if (firstChar !== '&') {
+                if (firstChar !== 'C') {
                     element._id = firstChar;
                 } else {
                     element._id = '';
@@ -325,7 +325,7 @@ define([
                 });
 
                 $target.append(this.selectView.render().el);
-                $target.find('input').show();
+               // $target.find('input').show();
 
             }
 

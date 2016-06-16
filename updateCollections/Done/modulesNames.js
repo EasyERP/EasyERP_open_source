@@ -14,9 +14,9 @@ var connectOptions = {
 
 //var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
 
-//var dbObject = mongoose.createConnection('144.76.56.111', 'dendb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('144.76.56.111', 'micheldb', 28017, connectOptions);
 
-var dbObject = mongoose.createConnection('localhost', 'production');
+//var dbObject = mongoose.createConnection('localhost', 'production');
 
 var Module = dbObject.model('modules', ModuleSchema);
 

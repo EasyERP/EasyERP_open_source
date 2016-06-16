@@ -38,6 +38,7 @@ module.exports = function (app, mainDb) {
     var leadsRouter = require('./leads')(models, event);
     var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(event, models);
+    var modulesRouter = require('./modules')(models);
     var monthHoursRouter = require('./monthHours')(event, models);
     var vacationRouter = require('./vacation')(event, models);
     var bonusTypeRouter = require('./bonusType')(models);
@@ -114,6 +115,7 @@ module.exports = function (app, mainDb) {
     app.use('/holiday', holidayRouter);
     app.use('/vacation', vacationRouter);
     app.use('/monthHours', monthHoursRouter);
+    app.use('/modules', modulesRouter);
     app.use('/bonusType', bonusTypeRouter);
     app.use('/dashboard', dashboardRouter);
     app.use('/category', productCategoriesRouter);
@@ -155,13 +157,9 @@ module.exports = function (app, mainDb) {
         }
     });
 
-   /* app.get('/getModules', function (req, res) {
-        requestHandler.getModules(req, res);
-    });
-*/
     app.get('/download/:path', function (req, res) {
         var path = req.param('path');
-        
+
         res.download(path);
     });
 
