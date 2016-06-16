@@ -629,7 +629,7 @@ define([
             var $checkedInputs;
             var ids = [];
             var answer;
-            var edited = this.edited || this.$el.find('#false');
+            var edited = this.edited || $thisEl.find('tr.false, #false');
 
             if (!edited.length) { // ToDo refactor
                 this.changed = false;
