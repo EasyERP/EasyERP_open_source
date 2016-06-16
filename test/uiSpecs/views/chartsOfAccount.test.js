@@ -217,7 +217,6 @@ define([
         });
 
         describe('ChartsOfAccount list view', function () {
-            var server;
             var mainSpy;
             var fakeClock;
             var windowConfirmStub;
@@ -317,8 +316,6 @@ define([
                     done();
                 });
 
-
-
                 it('Try to sort down list', function () {
                     var $sortAccountBtn = listView.$el.find('th[data-sort="account"]');
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
@@ -350,13 +347,69 @@ define([
 
                 it('Try to check|uncheck all checkboxes', function () {
                     var $checkAllBtn = listView.$el.find('#checkAll');
+                    var $topBarEl = topBarView.$el;
 
                     $checkAllBtn.click();
                     expect(listView.$el.find('input[type="checkbox"]').prop('checked')).to.be.true;
+                    expect($topBarEl.find('#top-bar-createBtn')).to.have.css('display', 'none');
+                    expect($topBarEl.find('#top-bar-saveBtn')).to.have.css('display', 'none');
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'block');
 
                     $checkAllBtn.click();
                     expect(listView.$el.find('input[type="checkbox"]').prop('checked')).to.be.false;
+                    expect($topBarEl.find('#top-bar-createBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-saveBtn')).to.have.css('display', 'none');
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'none');
                 });
+
+
+                it('Try to test behavior topBar Btns when check|uncheck', function () {
+                    var $topBarEl = topBarView.$el;
+                    var $checkAllBtn = $thisEl.find('#checkAll');
+                    var $createBtn = $topBarEl.find('#top-bar-createBtn');
+                    var $deleteBtn = $topBarEl.find('#top-bar-deleteBtn');
+
+                    // create new row (with class false)
+                    $createBtn.click();
+                    expect($thisEl.find('#listTable > tr:nth-child(1)')).to.have.id('false');
+                    expect($topBarEl.find('#top-bar-saveBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-createBtn')).to.have.css('display', 'none');
+
+                    // check all checkboxes
+
+                    $checkAllBtn.click();
+                    expect($thisEl.find(':checkbox').prop('checked')).to.be.true;
+                    expect($topBarEl.find('#top-bar-saveBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-createBtn')).to.have.css('display', 'none');
+
+                    $deleteBtn.click();
+                    expect($thisEl.find(':checkbox').prop('checked')).to.be.true;
+                    expect($topBarEl.find('#top-bar-saveBtn')).to.have.css('display', 'none');
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'none');
+                    expect($topBarEl.find('#top-bar-createBtn')).to.have.css('display', 'block');
+
+                    $createBtn.click();
+                    expect($thisEl.find('#listTable > tr:nth-child(1)')).to.have.id('false');
+                    expect($thisEl.find(':checkbox').prop('checked')).to.be.true;
+                    expect($thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input').prop('checked')).to.be.false;
+                    expect($topBarEl.find('#top-bar-saveBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-createBtn')).to.have.css('display', 'none');
+
+                    $checkAllBtn.click();
+                    expect($thisEl.find('#listTable > tr:nth-child(1)')).to.have.id('false');
+                    expect($thisEl.find(':checkbox').prop('checked')).to.be.false;
+                    expect($thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input').prop('checked')).to.be.false;
+                    expect($topBarEl.find('#top-bar-saveBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'block');
+                    expect($topBarEl.find('#top-bar-createBtn')).to.have.css('display', 'none');
+
+                    $deleteBtn.click();
+                    expect($thisEl.find('#listTable > tr:nth-child(1)')).to.have.not.id('false');
+                });
+
 
                 /*it('Try to delete item with changes(cancelChanges)', function () {
                     var deleteUrl = new RegExp('\/ChartOfAccount\/', 'i');

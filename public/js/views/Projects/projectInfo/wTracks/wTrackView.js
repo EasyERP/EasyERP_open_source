@@ -91,12 +91,11 @@ define([
             var month = now.getMonth() + 1;
             var week = now.getWeek();
             var startData = {
-                year          : year,
-                month         : month,
-                week          : week,
-                project       : projectModel._id,
-                projectModel  : projectModel,
-                mainWtrackView: this
+                year        : year,
+                month       : month,
+                week        : week,
+                project     : projectModel._id,
+                projectModel: projectModel
             };
 
             this.projectModel = projectModel;
