@@ -518,7 +518,7 @@ var Employee = function (event, models) {
                     if (result.isEmployee) {
                         event.emit('recalculate', req, {}, next);
                     }
-                    
+
                     event.emit('recollectVacationDash');
                 });
             });
@@ -734,7 +734,8 @@ var Employee = function (event, models) {
                                 'workPhones.mobile': 1,
                                 name               : 1,
                                 dateBirth          : 1,
-                                isEmployee         : 1
+                                isEmployee         : 1,
+                                'editedBy.date'    : 1
                             };
 
                             projectSecond = {
@@ -749,21 +750,23 @@ var Employee = function (event, models) {
                                 dateBirth          : 1,
                                 isEmployee         : 1,
                                 'department.name'  : '$department.name',
-                                'department._id'   : '$department._id'
+                                'department._id'   : '$department._id',
+                                'editedBy.date'    : 1
                             };
 
                             projectAfterRoot = {
-                                _id        : '$root._id',
-                                jobPosition: '$root.jobPosition',
-                                manager    : '$root.manager',
-                                age        : '$root.age',
-                                relatedUser: '$root.relatedUser',
-                                workPhones : '$root.workPhones',
-                                name       : '$root.name',
-                                department : '$root.department',
-                                dateBirth  : '$root.dateBirth',
-                                isEmployee : '$root.isEmployee',
-                                total      : 1
+                                _id            : '$root._id',
+                                jobPosition    : '$root.jobPosition',
+                                manager        : '$root.manager',
+                                age            : '$root.age',
+                                relatedUser    : '$root.relatedUser',
+                                workPhones     : '$root.workPhones',
+                                name           : '$root.name',
+                                department     : '$root.department',
+                                dateBirth      : '$root.dateBirth',
+                                isEmployee     : '$root.isEmployee',
+                                total          : 1,
+                                'editedBy.date': '$root.editedBy.date'
                             };
                             break;
                         // skip default;
@@ -1112,7 +1115,7 @@ var Employee = function (event, models) {
                             });
 
                         }
-                       
+
                         event.emit('recollectVacationDash');
 
                         res.status(200).send(result);

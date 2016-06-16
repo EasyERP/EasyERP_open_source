@@ -1992,6 +1992,7 @@ define([
                 });
                 server.respond();
                 expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
             });
 
             it('Try to create TopBarView', function () {
@@ -2051,22 +2052,8 @@ define([
                 it('Try to application KanBanView', function (done) {
                     var workflowsUrl = new RegExp('\/Workflows', 'i');
                     var applicationUrl = '/applications/?workflowId=52d2c1369b57890814000005&viewType=kanban';
-                    var applicationLengthUrl = new RegExp('\/applications\/getApplicationsLengthByWorkflows', 'i');
 
                     server.respondWith('GET', workflowsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflows)]);
-                    server.respondWith('GET', applicationLengthUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        showMore      : false,
-                        arrayOfObjects: [
-                            {
-                                _id  : '52d2c1369b57890814000005',
-                                count: 3
-                            },
-                            {
-                                _id  : null,
-                                count: 223
-                            }
-                        ]
-                    })]);
                     workflowCollection = new WorkflowCollection({
                         id: 'Applications'
                     });
