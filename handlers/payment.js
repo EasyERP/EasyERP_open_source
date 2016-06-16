@@ -1155,21 +1155,7 @@ var Module = function (models, event) {
         }
 
         function fetchInvoice(waterfallCallback) {
-            Invoice.aggregate([
-                {
-                    $match: {
-                        _id: objectId(invoiceId)
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'currency',
-                        localField  : 'currency._id',
-                        foreignField: '_id',
-                        as          : 'currency.obj'
-                    }
-                }
-            ], function (err, invoice) {
+            Invoice.find({_id: invoiceId}).populate('currency._id', 'name').populate('payments').exec(function (err, invoice) {
                 waterfallCallback(null, invoice[0]);
             });
         }
@@ -1198,12 +1184,12 @@ var Module = function (models, event) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var paymentCurrency = data.currency.name;
-            var invoiceCurrency = invoice.currency.obj[0].name;
+            var invoiceCurrency = invoice.currency._id.name;
             var isNotFullPaid;
             var wId;
             var paymentDate = new Date(payment.date);
             var invoiceType = invoice._type;
-            var payments;
+            var payments = [];
             var request = {
                 query: {
                     source      : 'purchase',
@@ -1218,6 +1204,14 @@ var Module = function (models, event) {
             }
 
             invoice.payments = invoice.payments || [];
+
+            invoice.payments.forEach(function (paym) {
+                payments.push(paym._id.toString());
+
+                if (paym.date > paymentDate){
+                    paymentDate = paym.date;
+                }
+            });
 
             invoice.removable = removable;
 
@@ -1238,10 +1232,10 @@ var Module = function (models, event) {
 
             request.query.wId = wId;
 
-           /* totalToPay = parseFloat(totalToPay).toFixed(2);
-            paid = parseFloat(paid).toFixed(2);
+            /* totalToPay = parseFloat(totalToPay).toFixed(2);
+             paid = parseFloat(paid).toFixed(2);
 
-            isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);*/
+             isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);*/
 
             totalToPay = parseInt(totalToPay, 10);
             paid = parseInt(paid, 10);
@@ -1265,7 +1259,9 @@ var Module = function (models, event) {
                 invoice.paymentInfo.balance = totalToPay - paid;
                 // invoice.paymentInfo.unTaxed += paid / 100;// commented by Liliya forRoman
                 // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
-                invoice.payments.push(payment._id);
+
+                payments.push(payment._id);
+                invoice.payments = payments;
 
                 invoice.paymentDate = new Date(paymentDate); // Because we have it in post.schema
 
@@ -1584,12 +1580,17 @@ var Module = function (models, event) {
                                             var payments = invoice ? invoice.get('payments') : [];
                                             var removable = true;
                                             var invoiceType = invoice._type;
+                                            var paymentDate = null;
 
                                             paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
 
                                             payments.forEach(function (payment) {
                                                 if (payment._type !== 'ProformaPayment') {
                                                     removable = false;
+                                                }
+
+                                                if (payment.date > paymentDate) {
+                                                    paymentDate = payment.date;
                                                 }
                                             });
 
@@ -1650,6 +1651,8 @@ var Module = function (models, event) {
                                                 query.paymentInfo = paymentInfoNew;
 
                                                 query.removable = removable;
+
+                                                query.paymentDate = paymentDate;
 
                                                 if (!invoice.invoiced) {
                                                     query.workflow = workflowObj;
@@ -1792,12 +1795,17 @@ var Module = function (models, event) {
                                         var payments = invoice ? invoice.get('payments') : [];
                                         var removable = true;
                                         var invoiceType = invoice._type;
+                                        var paymentDate = null;
 
                                         paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
 
                                         payments.forEach(function (payment) {
                                             if (payment._type !== 'ProformaPayment') {
                                                 removable = false;
+                                            }
+
+                                            if (payment.date > paymentDate) {
+                                                paymentDate = payment.date;
                                             }
                                         });
 
@@ -1862,6 +1870,8 @@ var Module = function (models, event) {
                                             if (!invoice.invoiced) {
                                                 query.workflow = workflowObj;
                                             }
+
+                                            query.paymentDate = paymentDate;
 
                                             Invoice.findByIdAndUpdate(invoice._id, {
                                                 $set: query
