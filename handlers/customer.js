@@ -523,6 +523,7 @@ var Module = function (models) {
                 name          : 1,
                 website       : 1,
                 attachments   : 1,
+                notes         : 1,
                 email         : 1,
                 social        : 1,
                 phones        : 1,
