@@ -21,6 +21,7 @@ define([
         contentCollection: contentCollection,
         contentType      : 'DividendInvoice',
         changedModels    : {},
+        hasPagination    : true,
         baseFilter       : {
             name : 'forSales',
             value: {

@@ -245,7 +245,7 @@ define([
             if (!App.filtersObject.filtersValues || !App.filtersObject.filtersValues[self.contentType]) {
                 return setTimeout(function () {
                     self.renderGroup({
-                        key          : key,
+                        displayName  : displayName,
                         filterView   : filterView,
                         filterType   : filterType,
                         filterBackend: filterBackend,

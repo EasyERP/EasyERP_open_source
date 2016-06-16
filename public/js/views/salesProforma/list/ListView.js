@@ -37,6 +37,14 @@ define([
         contentCollection: contentCollection,
         contentType      : CONSTANTS.SALESPROFORMA,
         changedModels    : {},
+        hasPagination    : true,
+        baseFilter       : {
+            name : 'forSales',
+            value: {
+                key  : 'forSales',
+                value: [true]
+            }
+        },
 
         initialize: function (options) {
 
@@ -54,7 +62,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
             this.stages = [];
         },
 
@@ -145,13 +153,13 @@ define([
 
             this.currentEllistRenderer(self);
 
-            self.renderPagination($currentEl, self);
+            // self.renderPagination($currentEl, self);
 
-            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
+            // self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         },
 
         goToEditDialog: function (e) {

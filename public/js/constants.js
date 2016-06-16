@@ -141,7 +141,7 @@ define([], function () {
             }
         },
 
-        JobPositions: {
+        /*JobPositions: {
             name: {
                 displayName: 'Name',
                 backend    : 'name'
@@ -156,7 +156,7 @@ define([], function () {
                 displayName: 'Department',
                 backend    : 'department'
             }
-        },
+        },*/
 
         salesInvoices: {
             supplier: {
