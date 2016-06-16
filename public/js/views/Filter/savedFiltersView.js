@@ -16,26 +16,95 @@ define([
             elementsTemplate: _.template(SavedElementsTemplate),
 
             events: {
-                'click #saveFilterButton': 'saveFilter'
+                'click #saveFilterButton'          : 'saveFilter',
+                'keydown #forFilterName'           : 'keyDown',
+                'click .filters'                   : 'useFilter',
+                'click .filters .removeSavedFilter': 'removeFilterFromDB'
             },
 
             initialize: function (options) {
-                var defSavedFilter;
-
                 this.contentType = options.contentType;
                 this.savedFilters = this.getSavedFilters(App);
-
-                defSavedFilter = _.findWhere(this.savedFilters, {byDefault: true});
-
-                if (defSavedFilter) {
-                    App.filter = defSavedFilter.filters;
-                    this.trigger('savedNewFavorite', defSavedFilter._id, defSavedFilter.name, true);
-                }
-                this.render();
             },
 
-            getSavedFilters: function(object) {
-                var savedFiltersObject = object && object.savedFilters ? object.savedFilters[this.contentType] : [];
+            removeFilterFromDB: function (e) {
+                var self = this;
+                var $target = $(e.target);
+                var $selectedLi = $target.closest('.filters');
+                var filterId = $selectedLi.attr('id');
+                var currentUser = new UserModel(App.currentUser);
+                var mid = 39;
+
+                var currentFilter = _.findWhere(this.savedFilters, {_id: filterId});
+
+                e.stopPropagation();
+
+                currentUser.save(
+                    {
+                        deleteFilter: {
+                            id         : currentFilter._id,
+                            contentType: this.contentType,
+                            byDefault  : currentFilter.byDefault
+                        }
+                    }, {
+                        headers : {
+                            mid: mid
+                        },
+                        wait    : true,
+                        patch   : true,
+                        validate: false,
+                        success : function () {
+                            $selectedLi.remove();
+                            self.savedFilters = _.without(self.savedFilters, currentFilter);
+                        },
+                        error   : function (model, xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+            },
+
+            keyDown: function (e) {
+                if (e.which === 13) {
+                    this.saveFilter();
+                }
+            },
+
+            useFilter: function (e) {
+                var $target;
+                var targetId;
+                var curFilter;
+
+                $target = $(e.target);
+                targetId = $target.attr('id');
+                curFilter = _.findWhere(this.savedFilters, {_id: targetId});
+
+                App.filtersObject.filter = curFilter.filters;
+
+                App.storage.save(this.contentType + '.savedFilter', curFilter.name);
+
+                this.selectFilter(targetId);
+
+                this.trigger('selectFavorite', {
+                    name        : curFilter.name,
+                    triggerState: true
+                });
+            },
+
+            selectFilter: function (id) {
+                var $curEl = this.$el;
+                var $favouritesContent = $curEl.find('#savedFiltersElements');
+
+                $favouritesContent
+                    .find('#' + id)
+                    .addClass('checkedValue')
+                    .siblings('.filters')
+                    .removeClass('checkedValue');
+            },
+
+            getSavedFilters: function (object) {
+                var savedFiltersObject = object && object.filtersObject && object.filtersObject.savedFilters ? object.filtersObject.savedFilters[this.contentType] : [];
                 var savedFilters = savedFiltersObject && savedFiltersObject.length ? savedFiltersObject[0].filter : [];
 
                 return savedFilters;
@@ -45,7 +114,6 @@ define([
                 var $curEl = this.$el;
                 var currentUser = new UserModel(App.currentUser);
                 var key = this.contentType;
-                var id;
                 var filterObj = {};
                 var mid = 39;
                 var $filterNameEl = $curEl.find('#forFilterName');
@@ -66,15 +134,15 @@ define([
                         message: 'Filter with same name already exists! Please, change filter name.'
                     });
                 }
-                if ((Object.keys(App.filter)).length === 0) {
+                if ((Object.keys(App.filtersObject.filter)).length === 0) {
                     return App.render({type: 'error', message: 'Please, use some filter!'});
                 }
 
-                if (!App.savedFilters[key]) {
-                    App.savedFilters[key] = [];
+                if (!App.filtersObject.savedFilters[key]) {
+                    App.filtersObject.savedFilters[key] = [];
                 }
 
-                filterForSave[filterName] = _.extend({}, App.filter);
+                filterForSave[filterName] = _.extend({}, App.filtersObject.filter);
 
                 if (byDefault) {
                     this.savedFilters = _.map(this.savedFilters, function (element) {
@@ -94,8 +162,9 @@ define([
                 currentUser.changed = {newFilter: filterObj};
 
                 currentUser.save(
-                    {newFilter: filterObj},
                     {
+                        newFilter: filterObj
+                    }, {
                         headers : {
                             mid: mid
                         },
@@ -115,7 +184,13 @@ define([
                             $filterNameEl.val('');
                             self.renderSavedFiltersElements();
 
-                            self.trigger('savedNewFavorite', id, filterName);
+                            self.selectFilter(id);
+
+                            App.storage.save(self.contentType + '.savedFilter', filterName);
+
+                            self.trigger('selectFavorite', {
+                                name: filterName
+                            });
                         },
                         error   : function (model, xhr) {
                             console.error(xhr);
@@ -127,8 +202,9 @@ define([
             renderSavedFiltersElements: function () {
                 var $curEl = this.$el;
                 var $favouritesContent = $curEl.find('#savedFiltersElements');
+                var savedFilterChecked = App.storage.find(this.contentType + '.savedFilter');
 
-                $favouritesContent.html(this.elementsTemplate({collection: this.savedFilters}));
+                $favouritesContent.html(this.elementsTemplate({checkedFilterName: savedFilterChecked, collection: this.savedFilters}));
             },
 
             render: function () {

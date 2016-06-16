@@ -3,48 +3,61 @@ define([
     'Underscore',
     'jQuery',
     'text!templates/Filter/FilterTemplate.html',
-    'text!templates/Filter/filterFavourites.html',
     'text!templates/Filter/searchGroupLiTemplate.html',
+    'text!templates/Filter/filterIconElement.html',
     'views/Filter/filtersGroup',
     'views/Filter/savedFiltersView',
     'collections/Filter/filterCollection',
     'custom',
     'common',
     'constants',
-    'models/UsersModel',
-    'dataService'
-], function (Backbone, _, $, ContentFilterTemplate, savedFilterTemplate,
-             searchGroupLiTemplate, valuesView,
+    'async'
+], function (Backbone, _, $, ContentFilterTemplate,
+             searchGroupLiTemplate, FilterIconElement, valuesView,
              SavedFiltersView, filterValuesCollection, custom,
-             Common, CONSTANTS, UsersModel, dataService) {
+             Common, CONSTANTS, async) {
     'use strict';
 
-    var FilterView;
-    FilterView = Backbone.View.extend({
+    var FilterView = Backbone.View.extend({
         el                 : '#searchContainer',
         contentType        : 'Filter',
         savedFilters       : {},
         filterIcons        : {},
         groupsViews        : {},
+        currentCollection  : {},
+        searchResultObject : {},
+        searchResult       : [],
         template           : _.template(ContentFilterTemplate),
         searchGroupTemplate: _.template(searchGroupLiTemplate),
+        filterIcon         : _.template(FilterIconElement),
 
         events: {
             'click .search-content'                : 'showSearchContent',
             'click .filter-dialog-tabs .filterTabs': 'showFilterContent',
             'click .groupName'                     : 'showHideValues',
-            'click .filters'                       : 'useFilter',
-            'click .removeSavedFilter'             : 'removeFilterFromDB',
             'click .removeValues'                  : 'removeFilter',
-            'keydown #forFilterName'               : 'keyDown',
             'click .showLast'                      : 'showManyFilters',
             'keydown #searchInput'                 : 'deleteFilterByBackspace'
         },
 
-        keyDown: function (e) {
-            if (e.which === 13) {
-                this.saveFilter();
+        initialize: function (options) {
+            this.contentType = options.contentType;
+            this.viewType = options.viewType;
+            this.constantsObject = CONSTANTS.FILTERS[this.contentType];
+
+            this.enable = true;
+
+            if (App.filtersObject.savedFilters[this.contentType]) {
+                this.savedFilters = App.filtersObject.savedFilters[this.contentType];
             }
+
+            this.setDbOnce = function () {
+                this.trigger('filter', App.filtersObject.filter);
+            };
+
+            _.bindAll(this, 'setDbOnce');
+
+            _.bindAll(this, 'showAndSelectFilter');
         },
 
         deleteFilterByBackspace: function (e) {
@@ -68,227 +81,116 @@ define([
             this.$el.find('#searchInput').focus();
         },
 
-        initialize: function (options) {
-            this.parentContentType = options.contentType;
-            this.viewType = options.viewType;
-            this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
-
-            this.enable = true;
-            //App.filter = {};
-
-            this.currentCollection = {};
-            this.searchRessult = [];
-
-            if (App.savedFilters[this.parentContentType]) {
-                this.savedFilters = App.savedFilters[this.parentContentType];
-            }
-
-            this.parseFilter();
-
-            this.setDbOnce = function () {
-                this.trigger('filter', App.filter);
-            };
-
-            _.bindAll(this, 'setDbOnce');
-
-            _.bindAll(this, 'showAndSelectFilter');
-        },
-
-        useFilter: function (e) {
-            var target = $(e.target);
-            var savedFilters;
-            var self = this;
-            var length;
-            var targetId = target.attr('id');
-            var keys;
-            var i;
-
-            dataService.getData('/currentUser', null, function (response) {
-                if (response && !response.error) {
-                    App.currentUser = response.user;
-                    App.savedFilters = response.savedFilters;
-
-                    length = App.savedFilters[self.parentContentType].length;
-                    savedFilters = App.savedFilters[self.parentContentType];
-
-                    for (i = length - 1; i >= 0; i--) {
-                        if (savedFilters[i]._id._id === targetId) {
-                            keys = Object.keys(savedFilters[i]._id.filter);
-                            App.filter = savedFilters[i]._id.filter.keys[0];
-                        }
-                    }
-
-                    self.selectedFilter(targetId);
-
-                    self.trigger('filter', App.filter);
-                    self.renderFilterContent();
-                    self.showFilterName(keys[0]);
-                } else {
-                    console.log('can\'t get savedFilters');
-                }
-            });
-
-        },
-
-        /*cloneFilter: function (filter) {
-            var newFilter = {};
-            var filterKeys = Object.keys(filter);
-            var filterKey;
-            var filterValue;
-            var newFilterValue = [];
-            var i;
-
-            _.forEach(filterKeys, function (filterkey) {
-                filterKey = filter[filterkey].key;
-                newFilterValue = [];
-                if (filterKey) {
-                    filterValue = filter[filterkey].value;
-                    for (i = filterValue.length - 1; i >= 0; i--) {
-                        newFilterValue.push(filterValue[i]);
-                    }
-                } else {
-                    filterKey = 'letter';
-                    newFilterValue = filter[filterkey];
-                }
-                newFilter[filterkey] = {
-                    key  : filterKey,
-                    value: newFilterValue
-                };
-            });
-
-            return newFilter;
-        },*/
-
-        removeFilterFromDB: function (e) {
-            var currentUser = new UserModel(App.currentUser);
-            var filterObj = {};
-            var mid = 39;
-            var savedFilters = App.savedFilters[this.parentContentType];
-            var filterID = $(e.target).attr('id'); //chosen current filter id
-
-            filterObj.deleteId = filterID;
-            filterObj.byDefault = this.parentContentType;
-
-            currentUser.changed = filterObj;
-
-            currentUser.save(
-                filterObj,
-                {
-                    headers : {
-                        mid: mid
-                    },
-                    wait    : true,
-                    patch   : true,
-                    validate: false,
-                    success : function (model) {
-                    },
-                    error   : function (model, xhr) {
-                        console.error(xhr);
-                    },
-                    editMode: false
-                }
-            );
-
-            $.find('#' + filterID)[0].remove();
-            $.find('#' + filterID)[0].remove();
-
-            for (i = savedFilters.length - 1; i >= 0; i--) {
-                if (savedFilters[i]['_id']['_id'] === filterID) {
-                    App.savedFilters[this.parentContentType].splice(i, 1);
-                }
-            }
-        },
-
         showFilterIcons: function (filter) {
-            var filterIc = this.$el.find('.filter-icons');
-            var filterValues = this.$el.find('.search-field #searchFilterContainer');
-            var filter = Object.keys(filter);
             var self = this;
+            var $curEl = this.$el;
+            var $filterValues = $curEl.find('#searchFilterContainer');
+            var filterKeys = filter ? Object.keys(filter) : [];
             var groupName;
+            var defaultFilterName = App.storage.find(this.contentType + '.savedFilter');
 
-            filterValues.empty();
-            _.forEach(filter, function (key, value) {
-                if (filterValues.find('.forFilterIcons').length > 2 && !self.$el.find(".showLast").length) {  // toDO  overflow for many filters
-                    filterValues.append('<span class="showLast"> ...&nbsp </span>');
-                }
+            $filterValues.empty();
 
-                groupName = $('#' + key).text();
-
-                if (groupName.length > 0) {
-                    filterIc.addClass('active');
-                    //filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                    filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                } else {
-                    if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
-                        groupName = 'Letter';
-                        filterIc.addClass('active');
-                        //filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+            if (!defaultFilterName) {
+                _.forEach(filterKeys, function (key) {
+                    if ($filterValues.find('.forFilterIcons').length > 2 && !self.$el.find('.showLast').length) {
+                        $filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
-                }
-            });
-        },
 
-        showFilterName: function (filterName) {
-            var filterValues = this.$el.find('.forFilterIcons');
-            filterValues.remove();
+                    if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
+                        groupName = self.constantsObject[key] ? self.constantsObject[key].displayName : 'letter';
+                    } else {
+                        groupName = null;
+                    }
 
-            this.$el.find('#searchFilterContainer').html('<div class="forFilterIcons"></div>');
-
-            filterValues = this.$el.find('.forFilterIcons');
-
-            filterValues.html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
-
+                    if (groupName) {
+                        $filterValues.append(self.filterIcon({
+                            filterName : groupName,
+                            key        : key,
+                            savedFilter: false
+                        }));
+                    }
+                });
+            } else {
+                $filterValues.html(this.filterIcon({
+                    filterName : defaultFilterName,
+                    savedFilter: true
+                }));
+            }
         },
 
         removeFilter: function (e) {
-            var target = $(e.target);
-            var groupName = target.prev().text();
-            var filterView = target.prev().attr('data-value');
-            var alphabetHolder = $('#startLetter');
+            var self = this;
+            var $target = $(e.target);
+            var $forFilterContainer = $target.closest('.forFilterIcons');
+            var favouriteIconState = $forFilterContainer.find('fa.fa-star').length;
+            var $groupEl = $target.prev();
+            var filterView = $groupEl.attr('data-value');
+            var $alphabetHolder = $('#startLetter');
 
-            $('#searchInput').empty();
+            var filtersKeysForRemove;
 
-            var valuesArray;
-            var collectionElement;
+            function setStatusFalse(key, callback) {
+                var valuesArray = App.filtersObject.filter[key].value || App.filtersObject.filter[key];
+                var filterCollection = self.currentCollection[key];
 
-            if (filterView) {
-                valuesArray = App.filter[filterView]['value'] || App.filter[filterView];
-            } else {
-                App.filter = {};
-                this.removeSelectedFilter();
-            }
-
-            if (valuesArray && filterView !== 'letter') {
-                if (this.currentCollection[filterView].length !== 0) {
+                if (filterCollection.length) {
                     for (var i = valuesArray.length - 1; i >= 0; i--) {
-                        collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
-                        collectionElement.set({status: false});
+                        filterCollection
+                            .get(valuesArray[i])
+                            .set({status: false});
                     }
                 }
-                delete App.filter[filterView];
 
-                this.renderGroup(groupName);
-            } else {
-                if (filterView) {
-                    delete App.filter['letter'];
-                    alphabetHolder.children().removeClass('current');
-                    alphabetHolder.find(':first-child').addClass('current');
-                }
+                delete App.filtersObject.filter[key];
+
+                callback();
             }
 
-            $(e.target).closest('div').remove();
+            if (filterView !== 'letter') {
+                if (filterView) {
+                    filtersKeysForRemove = [filterView];
+                } else {
+                    filtersKeysForRemove = Object.keys(App.filtersObject.filter || {});
+                }
 
-            this.renderFilterContent();
-            this.trigger('filter', App.filter);
+                async.each(filtersKeysForRemove, setStatusFalse, function () {
+                    $target
+                        .closest('.forFilterIcons')
+                        .remove();
+
+                    self.$el.find('#searchInput').empty();
+
+                    if (favouriteIconState) {
+                        App.storage.remove(this.contentType + '.savedFilter');
+                    }
+                });
+            } else {
+                delete App.filtersObject.filter.letter;
+
+                $target
+                    .closest('.forFilterIcons')
+                    .remove();
+
+                $alphabetHolder
+                    .children()
+                    .removeClass('current');
+
+                $alphabetHolder
+                    .find(':first-child')
+                    .addClass('current');
+            }
+
+            this.trigger('filter', App.filtersObject.filter);
         },
 
         showHideValues: function (e) {
-
             var filterGroupContainer = $(e.target).closest('.filterGroup');
+
             if (this.previousGroupContainer) {
-                this.toggleGroup(this.previousGroupContainer)
+                this.toggleGroup(this.previousGroupContainer);
             }
+
             this.previousGroupContainer = filterGroupContainer;
             this.toggleGroup(filterGroupContainer);
 
@@ -307,29 +209,27 @@ define([
             if (keys.length) {
                 keys.forEach(function (key) {
                     var constants = self.constantsObject[key];
-                    var filterView = constants.view;
+                    var displayName = constants.displayName;
                     var filterBackend = constants.backend;
                     var filterType = constants.type;
 
-                    groupOptions = options && options[filterView] ? options[filterView] : null;
+                    groupOptions = options && options[key] ? options[key] : null;
 
                     self.renderGroup({
-                        key          : key,
-                        filterView   : filterView,
+                        displayName  : displayName,
+                        filterView   : key,
                         filterBackend: filterBackend,
                         groupOptions : groupOptions,
                         filterType   : filterType
                     }, function () {
-                        self.showFilterIcons(App.filter);
+                        self.showFilterIcons(App.filtersObject.filter);
                     });
                 });
             }
         },
 
         renderGroup: function (options, cb) {
-            var mapData;
-
-            var key = options.key;
+            var displayName = options.displayName || '';
             var filterType = options.filterType || null;
             var filterView = options.filterView;
             var filterBackend = options.filterBackend || null;
@@ -342,7 +242,7 @@ define([
             groupOptions.sort = {};
             groupOptions.sort.order = 1;
 
-            if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
+            if (!App.filtersObject.filtersValues || !App.filtersObject.filtersValues[self.contentType]) {
                 return setTimeout(function () {
                     self.renderGroup({
                         key          : key,
@@ -354,7 +254,7 @@ define([
                 }, 10);
             }
 
-            this.filterObject = App.filtersValues[this.parentContentType];
+            this.filterObject = App.filtersObject.filtersValues[this.contentType];
 
             this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
@@ -363,14 +263,14 @@ define([
                 groupOptions.sort.int = true;
             }
 
-            if (App.filter[filterView]) {
+            if (App.filtersObject.filter && App.filtersObject.filter[filterView]) {
                 this.setStatus(filterView);
             }
 
             this.groupsViews[filterView] = new valuesView({
                 id               : filterView + 'FullContainer',
                 className        : 'filterGroup',
-                groupName        : key,
+                displayName      : displayName,
                 filterViewName   : filterView,
                 filterBackendName: filterBackend,
                 filterType       : filterType,
@@ -379,15 +279,35 @@ define([
             });
 
             this.groupsViews[filterView].on('valueSelected', function () {
+                App.storage.remove(self.contentType + '.savedFilter');
                 self.setDbOnce();
-                self.showFilterIcons(App.filter);
+                self.showFilterIcons(App.filtersObject.filter);
             });
 
             $filtersSelector.append(this.groupsViews[filterView].$el);
 
-            mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
+            this.searchResultObject[filterView] = this.getAutoCompleteResult({
+                filterView   : filterView,
+                displayName  : displayName,
+                filterBackend: filterBackend
+            });
+
+            this.searchResult = this.searchResult.concat(this.searchResultObject[filterView]);
+
+            if (cb && cb === 'function') {
+                cb();
+            }
+
+        },
+
+        getAutoCompleteResult: function (options) {
+            var filterView = options.filterView;
+            var displayName = options.displayName;
+            var filterBackend = options.filterBackend;
+
+            return _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
                 return {
-                    category       : key,
+                    category       : displayName,
                     categoryView   : filterView,
                     categoryBackend: filterBackend,
                     label          : dataItem.name,
@@ -395,13 +315,6 @@ define([
                     data           : dataItem._id
                 };
             });
-
-            this.searchRessult = this.searchRessult.concat(mapData);
-
-            if (cb && cb === 'function') {
-                cb();
-            }
-
         },
 
         toggleSearchResultGroup: function (e) {
@@ -410,13 +323,12 @@ define([
             var elements = target.find('#' + name + 'Ul');
 
             elements.toggle();
-
         },
 
         clickSearchResult: function (e) {
             var intVal;
             var value;
-            var $currentElement = e.target ? $(e.target).closest("li") : e;
+            var $currentElement = e.target ? $(e.target).closest('li') : e;
 
             var container = $currentElement.closest('.ui-autocomplete');
             var checkOnGroup = $currentElement.hasClass('ui-autocomplete-category');
@@ -428,238 +340,62 @@ define([
             var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
             var filterType = this.constantsObject[groupName].type; // filterType searches in types of constantsObject filters
 
-            if (!App.filter[filterObjectName]) {
-                App.filter[filterObjectName] = {
+            if (!App.filtersObject.filter[filterObjectName]) {
+                App.filtersObject.filter[filterObjectName] = {
                     key  : groupType,
                     value: [],
-                    type : filterType ? filterType : null // added type for filterMapper (bug of no searching in searchfield on wTrack)
+                    type : filterType || null // added type for filterMapper (bug of no searching in searchfield on wTrack)
                 };
             }
 
             if (checkOnGroup) {
                 $.each(elements, function (index, element) {
                     value = $(element).attr('data-content');
-                    intVal = parseInt(value);
+                    intVal = parseInt(value, 10);
                     value = (isNaN(intVal) || value.length === 24) ? value : intVal;
 
-                    App.filter[filterObjectName]['value'].push(value);
+                    App.filtersObject.filter[filterObjectName].value.push(value);
                 });
             } else {
                 value = $currentElement.attr('data-content');
-                intVal = parseInt(value);
+                intVal = parseInt(value, 10);
                 value = (isNaN(intVal) || value.length === 24) ? value : intVal;
-                App.filter[filterObjectName]['value'].push(value);
+                App.filtersObject.filter[filterObjectName].value.push(value);
             }
 
             this.setDbOnce();
-            this.showFilterIcons(App.filter);
+            this.showFilterIcons(App.filtersObject.filter);
 
         },
 
-        render: function (options) {
-            var self = this;
-            var $curEl = this.$el;
-            var searchInput;
-            var filterName = this.parentContentType + '.filter';
-            var filters = custom.retriveFromCash(filterName) || App.filter;
-            var allResults;
+        showAndSelectFilter: function (options) {
+            var name = options.name;
+            var triggerState = options.triggerState || false;
 
-            App.filter = filters;
-            $curEl.html(this.template());
-
-            this.renderFilterContent(options);
-            this.showFilterIcons(filters);
-            this.renderSavedFilters();
-
-            $.widget("custom.catcomplete", $.ui.autocomplete, {
-                _create    : function () {
-                    this._super();
-                    this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
-                },
-                _renderMenu: function (ul, items) {
-                    var that = this;
-                    var currentCategory = "";
-
-                    that._renderItemData = function (ul, item) {
-                        ul.hide();
-                        return $("<li>")
-                            .data("item.autocomplete", item)
-                            .append(item.label)
-                            .appendTo(ul);
-                    };
-
-                    $.each(items, function (index, item) {
-                        var li;
-                        var categoryLi;
-
-                        item.text = that.element.text();
-
-                        categoryLi = $(self.searchGroupTemplate({item: item}));
-
-                        if (item.category != currentCategory) {
-                            ul.append(categoryLi);
-                            categoryLi.find('.searchGroupDropDown').click(function (e) {
-                                self.toggleSearchResultGroup(e);
-                            });
-                            categoryLi.find('.searchGroupResult').click(function (e) {
-                                self.clickSearchResult(e);
-                            });
-                            currentCategory = item.category;
-                        }
-                        li = that._renderItemData(ul.find('#' + item.categoryView + 'Ul'), item);
-                        if (item.category) {
-                            li.click(function (e) {
-                                self.clickSearchResult(e);
-                            });
-                            li.attr('data-back', item.categoryBackend);
-                            li.attr('data-view', item.categoryView);
-                            li.attr("class", item.categoryView);
-                            li.attr("data-content", item.data);
-                        }
-                    });
-                }
-            });
-
-            searchInput = $curEl.find("#searchInput");
-
-            searchInput.keydown(function (e) {
-                if (e.which === 13) {
-                    allResults = searchInput.next().find('.ui-autocomplete-category');
-
-                    allResults.each(function () {
-                        var element = $(this);
-
-                        self.clickSearchResult(element);
-                    });
-
-                    if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
-                        App.render({
-                            type   : 'error',
-                            message: 'No such result'
-                        });
-                    }
-
-                    allResults.remove(); // to prevent appearing last filters after selecting new
-                    searchInput.html("");// to prevent appearing value in Search after selecting
-                    e.preventDefault();  // to prevent appearing previous values by pressing Backspace
-                }
-            });
-
-            searchInput.catcomplete({
-                source  : this.searchRessult,
-                appendTo: searchInput.closest('#searchGlobalContainer')
-                /*focus : function (event, ui) {
-                 $(this).closest("#mainSearch").text(ui.item.label);
-                 return false;
-                 },*/
-                /*select: function (event, ui) {
-                 self.clickSearchResult(ui);
-                 return false;
-                 }*/
-            });
-
-            return this;
-        },
-
-        showAndSelectFilter: function(id, name, triggerState) {
             if (triggerState) {
-                this.trigger('filter', App.filter);
+                this.trigger('filter', App.filtersObject.filter);
             }
-            
-            this.showFilterName(name);
-            this.selectedFilter(id);
+
+            this.showFilterIcons(name);
         },
 
         renderSavedFilters: function () {
             var self = this;
 
             this.savedFiltersView = new SavedFiltersView({
-                contentType : this.parentContentType
+                contentType: this.contentType
             });
 
-            this.savedFiltersView.on('savedNewFavorite', self.showAndSelectFilter);
+            this.savedFiltersView.on('selectFavorite', self.showAndSelectFilter);
 
-            
-
-            /*this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
-
-             var content = this.$el.find('#favoritesContent');
-
-             if (App.savedFilters[contentType]) {
-             this.savedFilters = App.savedFilters[contentType];
-
-             for (var j = this.savedFilters.length - 1; j >= 0; j--) {
-             if (this.savedFilters[j]) {
-             if (this.savedFilters[j].byDefault === contentType) {
-             keys = Object.keys(this.savedFilters[j]['_id']['filter']);
-
-             filter = this.savedFilters[j]['_id']['filter'][keys[0]];
-
-             App.filter = filter;
-
-             if (this.savedFilters[j].viewType) {
-             viewType = this.savedFilters[j].viewType;
-             }
-
-             self.trigger('filter', App.filter, viewType);
-             self.renderFilterContent();
-
-             savedID = this.savedFilters[j]['_id']['_id'];
-
-             if (typeof (savedID) === 'object') {
-             filterByDefault = savedID._id;
-             }
-
-             self.showFilterName(keys[0]);
-
-             this.enable = false;
-
-             }
-
-             filterId = this.savedFilters[j]['_id']['_id'];
-
-             keys = Object.keys(this.savedFilters[j]['_id']['filter']);
-             for (var i = keys.length - 1; i >= 0; i--) {
-             content.append('<li class="filters"  id ="' + filterId + '">' + keys[i] + '</li>');
-             }
-             }
-             }
-             }
-
-             this.$el.find('#favoritesContent').append(content);*/
-            // self.selectedFilter(savedID);
-        },
-
-        selectedFilter: function (filterId) {
-            var filterName = this.$el.find('#' + filterId);
-            var filterNames = this.$el.find('.filters');
-
-            if (filterId) {
-
-                filterNames.removeClass('checkedValue');
-
-                filterName.addClass('checkedValue');
-            }
-        },
-
-        removeSelectedFilter: function () {
-            var filterNames = this.$el.find('.filters');
-
-            filterNames.removeClass('checkedValue');
-        },
-
-        parseFilter: function () {
-            var browserString = window.location.hash;
-            var browserFilter = browserString.split('/filter=')[1];
-
-            App.filter = (browserFilter) ? JSON.parse(decodeURIComponent(browserFilter)) : {};
+            this.savedFiltersView.render();
         },
 
         setStatus: function (filterKey) {
             var valuesArray;
             var collectionElement;
 
-            valuesArray = App.filter[filterKey]['value'];
+            valuesArray = App.filtersObject.filter[filterKey]['value'];
 
             if (this.currentCollection[filterKey].length === 0) {
                 return;
@@ -685,7 +421,7 @@ define([
                 el.removeClass(selector);
                 this.$el.find('.search-options').addClass('hidden');
             } else {
-                el.addClass(selector)
+                el.addClass(selector);
             }
         },
 
@@ -697,6 +433,103 @@ define([
                 .siblings()
                 .addClass('hidden');
 
+        },
+
+        render: function (options) {
+            var self = this;
+            var $curEl = this.$el;
+            var searchInput;
+            var filterName = this.contentType + '.filter';
+            var filters = custom.retriveFromCash(filterName) || App.filtersObject.filter;
+            var allResults;
+
+            App.filtersObject.filter = filters;
+            $curEl.html(this.template());
+
+            this.renderFilterContent(options);
+            this.showFilterIcons(filters);
+            this.renderSavedFilters();
+
+            $.widget('custom.catcomplete', $.ui.autocomplete, {
+                _create    : function () {
+                    this._super();
+                    this.widget().menu('option', 'items', '> :not(.ui-autocomplete-category)');
+                },
+                _renderMenu: function (ul, items) {
+                    var that = this;
+                    var currentCategory = '';
+
+                    that._renderItemData = function (ul, item) {
+                        ul.hide();
+                        return $('<li>')
+                            .data('item.autocomplete', item)
+                            .append(item.label)
+                            .appendTo(ul);
+                    };
+
+                    $.each(items, function (index, item) {
+                        var li;
+                        var categoryLi;
+
+                        item.text = that.element.text();
+
+                        categoryLi = $(self.searchGroupTemplate({item: item}));
+
+                        if (item.category !== currentCategory) {
+                            ul.append(categoryLi);
+                            categoryLi.find('.searchGroupDropDown').click(function (e) {
+                                self.toggleSearchResultGroup(e);
+                            });
+                            categoryLi.find('.searchGroupResult').click(function (e) {
+                                self.clickSearchResult(e);
+                            });
+                            currentCategory = item.category;
+                        }
+                        li = that._renderItemData(ul.find('#' + item.categoryView + 'Ul'), item);
+                        if (item.category) {
+                            li.click(function (e) {
+                                self.clickSearchResult(e);
+                            });
+                            li.attr('data-back', item.categoryBackend);
+                            li.attr('data-view', item.categoryView);
+                            li.attr('class', item.categoryView);
+                            li.attr('data-content', item.data);
+                        }
+                    });
+                }
+            });
+
+            searchInput = $curEl.find('#searchInput');
+
+            searchInput.keydown(function (e) {
+                if (e.which === 13) {
+                    allResults = searchInput.next().find('.ui-autocomplete-category');
+
+                    allResults.each(function () {
+                        var element = $(this);
+
+                        self.clickSearchResult(element);
+                    });
+
+                    if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
+                        App.render({
+                            type   : 'error',
+                            message: 'No such result'
+                        });
+                    }
+
+                    allResults.remove(); // to prevent appearing last filters after selecting new
+                    searchInput.html('');// to prevent appearing value in Search after selecting
+                    e.preventDefault();  // to prevent appearing previous values by pressing Backspace
+                }
+            });
+
+            searchInput.catcomplete({
+                source  : this.searchResult,
+                appendTo: searchInput.closest('#searchGlobalContainer')
+            });
+
+            return this;
         }
     });
 

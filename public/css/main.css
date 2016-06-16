@@ -9691,7 +9691,7 @@ textarea#editInput {
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
   color: #000000;
-  background-color: #ffffff;
+  background-color: #f9f9f9;
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup span:before {
   text-align: center;
@@ -9850,13 +9850,6 @@ textarea#editInput {
   width: 20%;
   height: 29px;
 }
-#favoritesContent .removeSavedFilter {
-  float: right;
-  border: 1px solid #7f7f80;
-  background-color: transparent;
-  color: #000000;
-  line-height: 15px;
-}
 #favoritesContent .line {
   height: 1px;
   width: 100%;
@@ -9866,22 +9859,38 @@ textarea#editInput {
 #favoritesContent li {
   list-style: none;
 }
-#favoritesContent .filters {
-  float: left;
-  width: 70%;
+#favoritesContent #savedFiltersElements {
+  border-top: 1px solid #7f7f80;
+  margin-top: 10px;
+  padding: 5px 0;
+}
+#favoritesContent #savedFiltersElements .filters {
   font-size: 12px;
   line-height: 28px;
   height: 28px;
-  padding: 0 15px;
-  margin-bottom: 2px;
+  padding: 0 0 0 5px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#favoritesContent .filters:hover {
-  color: white;
+#favoritesContent #savedFiltersElements .filters.checkedValue {
+  background-color: #f9f9f9;
+}
+#favoritesContent #savedFiltersElements .filters:hover {
+  color: #4d5a75;
   background-color: #ffffff;
 }
-#favoritesContent .checkedValue {
+#favoritesContent #savedFiltersElements .filters:hover .removeSavedFilter {
+  color: #4d5a75;
+  background-color: #ffffff;
+}
+#favoritesContent #savedFiltersElements .filters .removeSavedFilter {
+  float: right;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  color: #000000;
+}
+#favoritesContent #savedFiltersElements .checkedValue {
   background-color: #ffffff;
 }
 #favoritesContent .useByDefault {

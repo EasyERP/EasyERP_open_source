@@ -9,7 +9,9 @@ define([
     'async',
     'dataService',
     'helpers'
-], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, async, dataService, helpers) {
+], function (Backbone, $, _, FilterView,
+             aphabeticTemplate, CONSTANTS,
+             common, async, dataService, helpers) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
@@ -23,7 +25,7 @@ define([
             click                      : 'hide'
         },
 
-        /*makeRender: function (options) {
+        makeRender: function (options) {
             _.bindAll(this, 'render', 'afterRender', 'beforeRender');
             var self = this;
 
@@ -34,17 +36,18 @@ define([
                 return self;
             });
         },
-        
-        beforeRender: function(options) {
-            
-        },
-        
-        afterRender: function (options) {
-            var $curEl = this.$el;
 
-            //this.renderRightFilters();
-            //$curEl.find('.tabs').tabs();
-        },*/
+        beforeRender: function (options) {
+        },
+
+        afterRender: function (options) {
+            var contentType = options.contentType || null;
+            var ifFilter = CONSTANTS.FILTERS.hasOwnProperty(contentType);
+
+            if (ifFilter) {
+                this.renderFilter();
+            }
+        },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
             $('#top-bar-deleteBtn').hide();
@@ -218,6 +221,10 @@ define([
             var $el = $(e.target);
             var $thisEl = this.$el;
 
+            if ($el.attr('id') === 'loading') {
+                return;
+            }
+
             if (this.selectView) {
                 this.selectView.remove();
             }
@@ -373,20 +380,20 @@ define([
 
                 if ($(e.target).text() === 'All') {
                     delete this.filter;
-                    delete App.filter.letter;
+                    delete App.filtersObject.filter.letter;
                 } else {
-                    App.filter.letter = this.filter.letter;
+                    App.filtersObject.filter.letter = this.filter.letter;
                 }
             }
 
-            this.filter = App.filter;
+            this.filter = App.filtersObject.filter;
             this.newCollection = false;
             this.$el.find('.thumbnailElement').remove();
 
             this.filterView.renderFilterContent(this.filter);
             _.debounce(
                 function () {
-                    this.trigger('filter', App.filter);
+                    this.trigger('filter', App.filtersObject.filter);
                 }, 10);
 
             $('#top-bar-deleteBtn').hide();
@@ -932,16 +939,6 @@ define([
             });
 
             self.filterView.render();
-        },
-
-        renderRightFilters: function (baseFilter) {
-            var self = this;
-
-            this.rightFilterView = new RightFiltersView({
-                contentType: this.contentType
-            });
-
-            self.rightFilterView.render();
         }
     });
 

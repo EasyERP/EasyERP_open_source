@@ -143,7 +143,7 @@ define([
 
             this.collection.showMore(searchObject);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             custom.cacheToApp('cashFlow.filter', this.filter);
         },
@@ -238,7 +238,7 @@ define([
 
             $currentEl.append(itemView.render());
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             this.asyncRenderInfo(asyncKeys);
 

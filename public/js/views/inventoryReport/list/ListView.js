@@ -95,7 +95,7 @@ define([
             this.collection.showMore(searchObject);
             this.changeLocationHash(1, itemsNumber, this.filter);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             custom.cacheToApp('inventoryReport.filter', this.filter);
         },
@@ -166,7 +166,7 @@ define([
 
             this.renderPagination($currentEl, this);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }

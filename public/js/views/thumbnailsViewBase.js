@@ -24,7 +24,8 @@
             this.responseObj = {};
             this.filter = options.filter;
 
-            // this.makeRender(options);
+            options.contentType = this.contentType;
+            this.makeRender(options);
 
             this.render();
         },

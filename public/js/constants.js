@@ -1,616 +1,616 @@
 define([], function () {
     var filters = {
         wTrack: {
-            Employee: {
-                view   : 'employee',
-                backend: 'employee._id',
-                type   : 'ObjectId'
+            employee: {
+                displayName: 'Employee',
+                backend    : 'employee._id',
+                type       : 'ObjectId'
             },
 
-            Customer: {
-                view   : 'customer',
-                backend: 'customer._id',
-                type   : 'ObjectId'
+            customer: {
+                displayName: 'Customer',
+                backend    : 'customer._id',
+                type       : 'ObjectId'
             },
 
-            'Project Name': {
-                view   : 'project',
-                backend: 'project._id',
-                type   : 'ObjectId'
+            project: {
+                displayName: 'Project Name',
+                backend    : 'project._id',
+                type       : 'ObjectId'
             },
 
-            Department: {
-                view   : 'department',
-                backend: 'department._id',
-                type   : 'ObjectId'
+            department: {
+                displayName: 'Department',
+                backend    : 'department._id',
+                type       : 'ObjectId'
             },
 
-            Month: {
-                view   : 'month',
-                backend: 'month',
-                type   : 'integer'
+            month: {
+                displayName: 'Month',
+                backend    : 'month',
+                type       : 'integer'
             },
 
-            Year: {
-                view   : 'year',
-                backend: 'year',
-                type   : 'integer'
+            year: {
+                displayName: 'Year',
+                backend    : 'year',
+                type       : 'integer'
             },
 
-            Week: {
-                view   : 'week',
-                backend: 'week',
-                type   : 'integer'
+            week: {
+                displayName: 'Week',
+                backend    : 'week',
+                type       : 'integer'
             },
 
-            Type: {
-                view   : '_type',
-                backend: '_type',
-                type   : 'string'
+            _type: {
+                displayName: 'Type',
+                backend    : '_type',
+                type       : 'string'
             },
 
-            Status: {
-                view   : 'isPaid',
-                backend: 'isPaid',
-                type   : 'boolean'
+            isPaid: {
+                displayName: 'Status',
+                backend    : 'isPaid',
+                type       : 'boolean'
             }
         },
 
         Persons: {
-            'Full Name': {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                displayName: 'Full Name',
+                backend    : '_id'
             },
 
-            Country: {
-                view   : 'country',
-                backend: 'address.country'
+            country: {
+                displayName: 'Country',
+                backend    : 'address.country'
             },
 
-            Services: {
-                view   : 'services',
-                backend: 'services'
+            services: {
+                displayName: 'Services',
+                backend    : 'services'
             }
         },
 
         DashVacation: {
-            Employee: {
-                view   : 'name',
-                backend: 'employee'
+            name: {
+                displayName: 'Employee',
+                backend    : 'employee'
             },
 
-            Department: {
-                view   : 'department',
-                backend: 'department._id'
+            department: {
+                displayName: 'Department',
+                backend    : 'department._id'
             }
         },
 
         Companies: {
-            Name: {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                displayName: 'Name',
+                backend    : '_id'
             },
 
-            Country: {
-                view   : 'country',
-                backend: 'address.country'
+            country: {
+                displayName: 'Country',
+                backend    : 'address.country'
             },
 
-            Services: {
-                view   : 'services',
-                backend: 'services'
+            services: {
+                displayName: 'Services',
+                backend    : 'services'
             }
         },
 
         Employees: {
-            'Full Name': {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                backend    : '_id',
+                displayName: 'Full Name'
             },
 
-            Department: {
-                view   : 'department',
-                backend: 'department._id'
+            department: {
+                backend    : 'department._id',
+                displayName: 'Department'
             },
 
-            Manager: {
-                view   : 'manager',
-                backend: 'manager._id'
+            manager: {
+                backend    : 'manager._id',
+                displayName: 'Manager'
             },
 
-            'Job Position': {
-                view   : 'jobPosition',
-                backend: 'jobPosition._id'
+            jobPosition: {
+                backend    : 'jobPosition._id',
+                displayName: 'Job Position'
             }
         },
 
         Applications: {
-            'Full Name': {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                displayName: 'Full Name',
+                backend    : '_id'
             },
 
-            Department: {
-                view   : 'department',
-                backend: 'department._id'
+            department: {
+                displayName: 'Department',
+                backend    : 'department._id'
             },
 
-            'Job Position': {
-                view   : 'jobPosition',
-                backend: 'jobPosition._id'
+            jobPosition: {
+                displayName: 'Job Position',
+                backend    : 'jobPosition._id'
             }
         },
 
         JobPositions: {
-            Name: {
-                view   : 'name',
-                backend: 'name'
+            name: {
+                displayName: 'Name',
+                backend    : 'name'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
             },
 
-            Department: {
-                view   : 'department',
-                backend: 'department'
+            department: {
+                displayName: 'Department',
+                backend    : 'department'
             }
         },
 
         salesInvoice: {
-            Customer: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Customer',
+                backend    : 'supplier._id'
             },
 
-            Assigned: {
-                view   : 'salesPerson',
-                backend: 'salesPerson._id'
+            salesPerson: {
+                displayName: 'Assigned',
+                backend    : 'salesPerson._id'
             },
 
-            'Project Name': {
-                view   : 'project',
-                backend: 'project._id'
+            project: {
+                displayName: 'Project Name',
+                backend    : 'project._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         ExpensesInvoice: {
-            Supplier: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Supplier',
+                backend    : 'supplier._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         DividendInvoice: {
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         salesProforma: {
-            Customer: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Customer',
+                backend    : 'supplier._id'
             },
 
-            Assigned: {
-                view   : 'salesPerson',
-                backend: 'salesPerson._id'
+            salesPerson: {
+                displayName: 'Assigned',
+                backend    : 'salesPerson._id'
             },
 
-            'Project Name': {
-                view   : 'project',
-                backend: 'project._id'
+            project: {
+                displayName: 'Project Name',
+                backend    : 'project._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         Projects: {
-            'Project Name': {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                displayName: 'Project Name',
+                backend    : '_id'
             },
 
-            Contact: {
-                view   : 'customer',
-                backend: 'customer._id'
+            customer: {
+                displayName: 'Contact',
+                backend    : 'customer._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             },
 
-            'Sales Manager': {
-                view   : 'salesManager',
-                backend: 'salesManager._id'
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager._id'
             },
 
-            'Project Manager': {
-                view   : 'projectManager',
-                backend: 'projectManager._id'
+            projectManager: {
+                displayName: 'Project Manager',
+                backend    : 'projectManager._id'
             }
         },
 
         Leads: {
-            'Contact Name': {
-                view   : 'contactName',
-                backend: 'contactName'
+            contactName: {
+                displayName: 'Contact Name',
+                backend    : 'contactName'
             },
 
-            Source: {
-                view   : 'source',
-                backend: 'source'
+            source: {
+                displayName: 'Source',
+                backend    : 'source'
             },
 
-            Stage: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Stage',
+                backend    : 'workflow._id'
             },
 
-            'Sales Person': {
-                view   : 'salesPerson',
-                backend: 'salesPerson._id'
+            salesPerson: {
+                displayName: 'Sales Person',
+                backend    : 'salesPerson._id'
             }
         },
 
         Opportunities: {
-            Customer: {
-                view   : 'customer',
-                backend: 'customer._id'
+            customer: {
+                displayName: 'Customer',
+                backend    : 'customer._id'
             },
 
-            Stage: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Stage',
+                backend    : 'workflow._id'
             },
 
-            'Sales Person': {
-                view   : 'salesPerson',
-                backend: 'salesPerson._id'
+            salesPerson: {
+                displayName: 'Sales Person',
+                backend    : 'salesPerson._id'
             }
         },
 
         Tasks: {
-            Project: {
-                view   : 'project',
-                backend: 'project'
+            project: {
+                displayName: 'Project',
+                backend    : 'project'
             },
 
-            'Task Summary': {
-                view   : 'summary',
-                backend: 'summary'
+            summary: {
+                displayName: 'Task Summary',
+                backend    : 'summary'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
             },
 
-            'Assigned To': {
-                view   : 'assignedTo',
-                backend: 'assignedTo'
+            assignedTo: {
+                displayName: 'Assigned To',
+                backend    : 'assignedTo'
             },
 
-            Type: {
-                view   : 'type',
-                backend: 'type'
+            type: {
+                displayName: 'Type',
+                backend    : 'type'
             }
         },
 
         customerPayments: {
-            Assigned: {
-                view   : 'assigned',
-                backend: 'assigned._id'
+            assigned: {
+                displayName: 'Assigned',
+                backend    : 'assigned._id'
             },
 
-            Company: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Company',
+                backend    : 'supplier._id'
             },
 
-            'Payment way': {
-                view   : 'paymentMethod',
-                backend: 'paymentMethod._id'
+            paymentMethod: {
+                displayName: 'Payment way',
+                backend    : 'paymentMethod._id'
             },
 
-            Name: {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                displayName: 'Name',
+                backend    : '_id'
             }
         },
 
         supplierPayments: {
-            Employee: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Employee',
+                backend    : 'supplier._id'
             },
 
-            'Bonus Type': {
-                view   : 'paymentRef',
-                backend: 'paymentRef'
+            paymentRef: {
+                displayName: 'Bonus Type',
+                backend    : 'paymentRef'
             },
 
-            Year: {
-                view   : 'year',
-                backend: 'year'
+            year: {
+                displayName: 'Year',
+                backend    : 'year'
             },
 
-            Month: {
-                view   : 'month',
-                backend: 'month'
+            month: {
+                displayName: 'Month',
+                backend    : 'month'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
             }
         },
 
         ExpensesPayments: {
-            Employee: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Employee',
+                backend    : 'supplier._id'
             },
 
-            Year: {
-                view   : 'year',
-                backend: 'year'
+            year: {
+                displayName: 'Year',
+                backend    : 'year'
             },
 
-            Month: {
-                view   : 'month',
-                backend: 'month'
+            month: {
+                displayName: 'Month',
+                backend    : 'month'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
             }
         },
 
         DividendPayments: {
-            Year: {
-                view   : 'year',
-                backend: 'year'
+            year: {
+                displayName: 'Year',
+                backend    : 'year'
             },
 
-            Month: {
-                view   : 'month',
-                backend: 'month'
+            month: {
+                displayName: 'Month',
+                backend    : 'month'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
             }
         },
 
         Product: {
-            'Product Name': {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                displayName: 'Product Name',
+                backend    : '_id'
             },
 
-            'Product Type': {
-                view   : 'productType',
-                backend: 'info.productType'
+            productType: {
+                displayName: 'Product Type',
+                backend    : 'info.productType'
             },
 
-            'Can be Sold': {
-                view   : 'canBeSold',
-                backend: 'canBeSold'
+            canBeSold: {
+                displayName: 'Can be Sold',
+                backend    : 'canBeSold'
             },
 
-            'Can be Expensed': {
-                view   : 'canBeExpensed',
-                backend: 'canBeExpensed'
+            canBeExpensed: {
+                displayName: 'Can be Expensed',
+                backend    : 'canBeExpensed'
             },
 
-            'Can be Purchased': {
-                view   : 'canBePurchased',
-                backend: 'canBePurchased'
+            canBePurchased: {
+                displayName: 'Can be Purchased',
+                backend    : 'canBePurchased'
             }
         },
 
         salesProduct: {
-            'Product Name': {
-                view   : 'name',
-                backend: '_id'
+            name: {
+                displayName: 'Product Name',
+                backend    : '_id'
             },
 
-            'Product Type': {
-                view   : 'productType',
-                backend: 'info.productType'
+            productType: {
+                displayName: 'Product Type',
+                backend    : 'info.productType'
             },
 
-            'Can be Sold': {
-                view   : 'canBeSold',
-                backend: 'canBeSold'
+            canBeSold: {
+                displayName: 'Can be Sold',
+                backend    : 'canBeSold'
             },
 
-            'Can be Expensed': {
-                view   : 'canBeExpensed',
-                backend: 'canBeExpensed'
+            canBeExpensed: {
+                displayName: 'Can be Expensed',
+                backend    : 'canBeExpensed'
             },
 
-            'Can be Purchased': {
-                view   : 'canBePurchased',
-                backend: 'canBePurchased'
+            canBePurchased: {
+                displayName: 'Can be Purchased',
+                backend    : 'canBePurchased'
             }
         },
 
         Quotation: {
-            Supplier: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Supplier',
+                backend    : 'supplier._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         Invoice: {
-            Supplier: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Supplier',
+                backend    : 'supplier._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         salesQuotation: {
-            Project: {
-                view   : 'project',
-                backend: 'project._id'
+            project: {
+                displayName: 'Project',
+                backend    : 'project._id'
             },
 
-            Customer: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Customer',
+                backend    : 'supplier._id'
             },
 
-            'Sales Manager': {
-                view   : 'salesManager',
-                backend: 'salesManager._id'
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         salesOrder: {
-            Project: {
-                view   : 'project',
-                backend: 'project._id'
+            project: {
+                displayName: 'Project',
+                backend    : 'project._id'
             },
 
-            Customer: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Customer',
+                backend    : 'supplier._id'
             },
 
-            'Sales Manager': {
-                view   : 'salesManager',
-                backend: 'salesManager._id'
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         Order: {
-            Supplier: {
-                view   : 'supplier',
-                backend: 'supplier._id'
+            supplier: {
+                displayName: 'Supplier',
+                backend    : 'supplier._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             }
         },
 
         PayrollExpenses: {
-            Employee: {
-                view   : 'employee',
-                backend: 'employee._id'
+            employee: {
+                displayName: 'Employee',
+                backend    : 'employee._id'
             },
 
-            'Payment Type': {
-                view   : 'type',
-                backend: 'type._id'
+            type: {
+                displayName: 'Payment Type',
+                backend    : 'type._id'
             },
 
-            'Data Key': {
-                view   : 'dataKey',
-                backend: 'dataKey'
+            dataKey: {
+                displayName: 'Data Key',
+                backend    : 'dataKey'
             }
         },
 
         jobsDashboard: {
-            'Sales Manager': {
-                view   : 'salesManager',
-                backend: 'salesManager._id'
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager._id'
             },
 
-            Project: {
-                view   : 'project',
-                backend: 'project._id'
+            project: {
+                displayName: 'Project',
+                backend    : 'project._id'
             },
 
-            Status: {
-                view   : 'workflow',
-                backend: 'workflow._id'
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
             },
 
-            Type: {
-                view   : 'type',
-                backend: 'type'
+            type: {
+                displayName: 'Type',
+                backend    : 'type'
             },
 
-            'Payment Count': {
-                view   : 'paymentsCount',
-                backend: 'payment.count'
+            paymentsCount: {
+                displayName: 'Payment Count',
+                backend    : 'payment.count'
             }
         },
 
         salaryReport: {
-            Employee: {
-                view   : 'employee',
-                backend: '_id'
+            employee: {
+                displayName: 'Employee',
+                backend    : '_id'
             },
 
-            Department: {
-                view   : 'department',
-                backend: 'department._id'
+            department: {
+                displayName: 'Department',
+                backend    : 'department._id'
             },
 
-            'Only Employees': {
-                view   : 'onlyEmployees',
-                backend: 'onlyEmployees'
+            onlyEmployees: {
+                displayName: 'Only Employees',
+                backend    : 'onlyEmployees'
             }
         },
 
         journalEntry: {
-            Journal: {
-                view   : 'journalName',
-                backend: 'journal.name'
+            journalName: {
+                displayName: 'Journal',
+                backend    : 'journal.name'
             },
 
-            Subject: {
-                view   : 'sourceDocument',
-                backend: 'sourceDocument.subject._id'
+            sourceDocument: {
+                displayName: 'Subject',
+                backend    : 'sourceDocument.subject._id'
             },
 
-            'Credit Account': {
-                view   : 'creditAccount',
-                backend: 'journal.creditAccount._id'
+            creditAccount: {
+                displayName: 'Credit Account',
+                backend    : 'journal.creditAccount._id'
             }
         }
     };
@@ -704,7 +704,7 @@ define([], function () {
             'Design',
             'PM'
         ],
-        
+
         SELECTP_ROJECT: 'Please select a Project',
 
         IT_SERVICES: 'IT services',

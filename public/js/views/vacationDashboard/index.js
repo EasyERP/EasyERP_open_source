@@ -503,7 +503,7 @@ define([
             var statictics;
             var url = '#easyErp/DashBoardVacation';
 
-            App.filter = filter || {};
+            App.filtersObject.filter = filter || {};
 
             if ('toJSON' in dashboardData) {
                 dashboardData.unbind();

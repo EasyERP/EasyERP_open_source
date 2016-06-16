@@ -4,9 +4,9 @@ define([
     'Underscore',
     'collections/Filter/filterCollection',
     'text!templates/Filter/filtersGroup.html',
-    'text!templates/Filter/rightFiltersGroupElements.html',
+    'text!templates/Filter/filtersGroupElements.html',
     'constants'
-], function (Backbone, $, _, FilterCollection, GroupTemplate, 
+], function (Backbone, $, _, FilterCollection, GroupTemplate,
              GroupElementsTemplate, CONSTANTS) {
     var FilterGroup = Backbone.View.extend({
         mainTemplate         : _.template(GroupTemplate),
@@ -14,15 +14,20 @@ define([
         currentPage          : 1,
 
         events: {
-            "click .filterValues li": "selectValue"
+            'click .filterValues li'      : 'selectValue',
+            'input .ulContent input'      : 'inputEvent',
+            'change .ulContent input'     : 'inputEvent',
+            'click .miniStylePagination a': 'paginationChange'
+
         },
 
         initialize: function (options) {
             var sortOptions = options.sortOptions || {};
 
-            _.bindAll(this, "renderContent");
+            _.bindAll(this, 'renderContent');
+
             this.collection = options.collection;
-            this.groupName = options.groupName;
+            this.displayName = options.displayName;
             this.filterViewName = options.filterViewName;
             this.filterBackendName = options.filterBackendName;
             this.filterType = options.filterType;
@@ -32,10 +37,27 @@ define([
                 this.filteredCollection.set(this.collection.toJSON());
             }, this);
 
+            this.filteredCollectionChange = _.debounce(
+                function () {
+                    this.filteredCollection.sort();
+                    this.trigger('valueSelected');
+                    this.renderContent();
+                }, 700);
+
+            _.bindAll(this, 'filteredCollectionChange');
+
+            this.filteredCollection.on('change', this.filteredCollectionChange);
+
             this.filteredCollection.on('reset', this.renderContent);
 
             this.collectionLength = this.filteredCollection.length;
-            this.elementToShow = options.elementToShow || (CONSTANTS.FILTERVALUESCOUNT > this.collectionLength) ? this.collectionLength : CONSTANTS.FILTERVALUESCOUNT;
+
+            if (options.elementToShow || (CONSTANTS.FILTERVALUESCOUNT > this.collectionLength)) {
+                this.elementToShow = this.collectionLength;
+            } else {
+                this.elementToShow = CONSTANTS.FILTERVALUESCOUNT;
+            }
+
             this.paginationBool = this.collectionLength > this.elementToShow;
 
             this.allPages = Math.ceil(this.collectionLength / this.elementToShow);
@@ -57,7 +79,7 @@ define([
                     this.filteredCollection.reset(newFilteredCollection);
                 }, 500);
 
-            _.bindAll(this, "inputEvent");
+            _.bindAll(this, 'inputEvent');
 
             this.render();
         },
@@ -67,14 +89,12 @@ define([
             var currentValue = $currentElement.attr('data-value');
             var filterGroupElement = $currentElement.closest('.filterGroup');
             var groupType = filterGroupElement.attr('data-value');
-            var $groupNameElement = filterGroupElement.find('.groupName');
             var collectionElement;
             var intVal;
             var index;
-            var self = this;
             var elementState;
-            
-            var filterValues = App.filter[this.filterViewName];
+            var currentFilter = App.filtersObject.filter;
+            var filterValues = currentFilter ? currentFilter[this.filterViewName] : null;
 
             $currentElement.toggleClass('checkedValue');
             elementState = $currentElement.hasClass('checkedValue');
@@ -84,13 +104,17 @@ define([
 
             if (elementState) {
                 if (!filterValues) {
-                    App.filter[this.filterViewName] = {
+                    if (!currentFilter) {
+                        App.filtersObject.filter = {};
+                    }
+
+                    App.filtersObject.filter[this.filterViewName] = {
                         key  : groupType,
                         value: [],
                         type : this.filterType || null
                     };
 
-                    filterValues = App.filter[this.filterViewName];
+                    filterValues = App.filtersObject.filter[this.filterViewName];
                 }
 
                 filterValues.value.push(currentValue);
@@ -99,23 +123,14 @@ define([
 
                 if (index !== -1) {
                     filterValues.value.splice(index, 1);
-                    
+
                     if (filterValues.value.length === 0) {
-                        delete filterValues;
+                        delete App.filtersObject.filter[this.filterViewName];
                     }
                 }
             }
 
             collectionElement.set({status: elementState});
-            $groupNameElement.toggleClass('checkedGroup', !!filterValues.value.length);
-
-            this.trigger('valueSelected');
-            
-            (_.debounce(
-                function () {
-                    self.renderContent();
-                }, 500))();
-
         },
 
         filterCollection: function (value) {
@@ -136,9 +151,17 @@ define([
 
         renderContent: function () {
             var displayCollection;
-            var $ulElement = this.$el.find("#" + this.filterViewName + "Ul");
-            var $ulContent = $ulElement.closest('.ulContent');
+            var $curEl = this.$el;
+            var $ulElement = $curEl.find('#' + this.filterViewName + 'Ul');
+            var $ulContent = $curEl.find('.ulContent');
             var $paginationLi = $ulContent.find('.miniStylePagination');
+
+            var $groupNameElement = $curEl.find('.groupName');
+            var currentFilter = App.filtersObject.filter;
+            var filterValues = currentFilter && currentFilter[this.filterViewName] ? currentFilter[this.filterViewName].value : [];
+
+            var $prevPage;
+            var $nextPage;
 
             this.collectionLength = this.filteredCollection.length;
             this.paginationBool = this.collectionLength > this.elementToShow;
@@ -147,9 +170,6 @@ define([
 
             this.start = (this.currentPage - 1) * this.elementToShow;
             this.end = Math.min(this.currentPage * this.elementToShow, this.collectionLength);
-
-            var $prevPage;
-            var $nextPage;
 
             displayCollection = this.filteredCollection.toJSON();
             displayCollection = displayCollection.slice(this.start, this.end);
@@ -169,55 +189,39 @@ define([
 
             $prevPage.toggleClass('disabled', this.currentPage === 1);
             $nextPage.toggleClass('disabled', this.currentPage === this.allPages);
+
+            $groupNameElement.toggleClass('checkedGroup', !!filterValues.length);
         },
 
-        paginationChange: function (e, context) {
+        paginationChange: function (e) {
             var curEl = $(e.target);
 
             if (curEl.hasClass('prev')) {
-                context.currentPage--;
+                this.currentPage--;
             } else {
-                context.currentPage++;
+                this.currentPage++;
             }
 
-            context.renderContent();
+            this.renderContent();
         },
 
         render: function () {
-            var self = this;
             var $curEl = this.$el;
-            var $searchInput;
 
             $curEl.append(this.mainTemplate({
                 filterViewName   : this.filterViewName,
                 filterBackendName: this.filterBackendName,
                 paginationBool   : this.paginationBool,
-                groupName        : this.groupName
+                groupName        : this.displayName
             }));
 
             $curEl.attr('data-value', this.filterBackendName);
 
             this.renderContent();
 
-            $curEl
-                .find("#" + this.filterViewName + "Container .miniStylePagination a")
-                .click(function (e) {
-                    self.paginationChange(e, self);
-                });
-
-            $searchInput = $curEl.find(".ulContent input");
-
-            $searchInput.on('input', function (e) {
-                self.inputEvent(e);
-            });
-
-            $searchInput.change(function (e) {
-                self.inputEvent(e);
-            });
-
             return this;
         }
     });
 
     return FilterGroup;
-})
+});

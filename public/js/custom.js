@@ -244,8 +244,8 @@ define([
         }
 
         //for default filter && defaultViewType
-        if (option && option.contentType && App.savedFilters[option.contentType]) {
-            savedFilter = App.savedFilters[option.contentType];
+        if (option && option.contentType && App.filtersObject.savedFilters[option.contentType]) {
+            savedFilter = App.filtersObject.savedFilters[option.contentType];
 
             for (var j = savedFilter.length - 1; j >= 0; j--) {
                 if (savedFilter[j]) {
@@ -345,8 +345,8 @@ define([
         var beNamesNaw;
         var filterWithName;
 
-        //if (App && App.savedFilters && App.savedFilters[contentType]) {
-        //    filtersForContent = App.savedFilters[contentType];
+        //if (App && App.filtersObject.savedFilters && App.filtersObject.savedFilters[contentType]) {
+        //    filtersForContent = App.filtersObject.savedFilters[contentType];
         //    length = filtersForContent.length;
         //    filter = filtersForContent[length - 1];
         //    filterWithName =  filter['filter'];
@@ -369,15 +369,15 @@ define([
         dataService.getData(CONTENT_TYPES.URLS.CURRENT_USER, null, function (response) {
             if (response && !response.error) {
                 App.currentUser = response.user;
-                App.savedFilters = response.savedFilters;
+                App.filtersObject.savedFilters = response.savedFilters;
 
-                length = App.savedFilters[contentType].length;
-                savedFilters = App.savedFilters[contentType];
+                length = App.filtersObject.savedFilters[contentType].length;
+                savedFilters = App.filtersObject.savedFilters[contentType];
                 for (var i = length - 1; i >= 0; i--) {
                     if (savedFilters[i]['_id'] === id) {
                         keys = Object.keys(savedFilters[i]['filter']);
-                        App.filter = savedFilters[i]['filter'][keys[0]];
-                        return App.filter;
+                        App.filtersObject.filter = savedFilters[i]['filter'][keys[0]];
+                        return App.filtersObject.filter;
                     }
                 }
             } else {
@@ -401,7 +401,7 @@ define([
             }
         }
 
-        App.savedFilters[contentType] = filtersForContent;
+        App.filtersObject.savedFilters[contentType] = filtersForContent;
         return filtersForContent;
     };
 
@@ -411,10 +411,14 @@ define([
 
         filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
 
-        if (!App || !App.filtersValues || options) {
+        if (!App || !App.filtersObject || options) {
             dataService.getData('/filter/getFiltersValues', filter, function (response) {
                 if (response && !response.error) {
-                    App.filtersValues = response;
+                    if (!App.filtersObject) {
+                        App.filtersObject = {};
+                    }
+                    
+                    App.filtersObject.filtersValues = response;
                 } else {
                     console.log('can\'t fetch filtersValues');
                 }
@@ -479,6 +483,22 @@ define([
         return result;
     };
 
+    var getDefSavedFilterForCT = function (contentType) {
+        var object = App.filtersObject;
+        var savedFiltersObject = object && object.savedFilters ? object.savedFilters[contentType] : [];
+        var savedFiltersValues = savedFiltersObject && savedFiltersObject.length ? savedFiltersObject[0].filter : [];
+        var defSavedFilter = _.findWhere(savedFiltersValues, {byDefault: true});
+        var defSavedFilterValues = defSavedFilter ? defSavedFilter.filters : null;
+
+        if (defSavedFilterValues) {
+            App.filtersObject.curDefSavedFilter = defSavedFilter;
+            
+            App.storage.save(contentType + '.savedFilter', defSavedFilter.name);
+        }
+
+        return defSavedFilterValues;
+    };
+
     App.storage = new Store();
 
     return {
@@ -495,6 +515,7 @@ define([
         getFiltersForContentType: getFiltersForContentType,
         getFilterById           : getFilterById,
         getWeeks                : getWeeks,
-        getFiltersValues        : getFiltersValues
+        getFiltersValues        : getFiltersValues,
+        getDefSavedFilterForCT  : getDefSavedFilterForCT
     };
 });

@@ -36,7 +36,7 @@ var User = function (event, models) {
         var data = req.body;
         var query = {};
         var newFilter = data.newFilter;
-        var deleteId = data.deleteId;
+        var deleteFilter = data.deleteFilter;
         var byDefault;
         var viewType;
         var _id = req.session.uId;
@@ -156,25 +156,25 @@ var User = function (event, models) {
 
             return updateThisUser(_id, query);
         }
-        if (data.deleteId) {
-            SavedFilters.findByIdAndRemove(deleteId, function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
-                if (result) {
-                    id = result.get('_id');
-                    query = {
-                        $pull: {
-                            savedFilters: {
-                                _id      : deleteId,
-                                byDefault: byDefault,
-                                viewType : viewType
-                            }
-                        }
-                    };
+        if (deleteFilter) {
+            SavedFilters.findByIdAndRemove(deleteFilter.id, function (err, result) {
+                var customError;
 
-                    updateThisUser(_id, query);
+                if (err) {
+                    customError = new Error();
+                    customError.status = 400;
+                    customError.message = 'Filter hasn\'t been delete!';
+
+                    return next(customError);
                 }
+                
+                query = {
+                    $pull: {
+                        savedFilters: deleteFilter
+                    }
+                };
+
+                updateThisUser(_id, query);
             });
             return;
         }

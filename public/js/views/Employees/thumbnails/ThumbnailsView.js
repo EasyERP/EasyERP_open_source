@@ -40,7 +40,7 @@
 
             BaseView.prototype.initialize.call(this, options);
 
-            this.filter = options.filter || {};
+            this.filter = options.filter;
         },
 
         asyncLoadImgs: function (collection) {
@@ -62,16 +62,6 @@
             } else {
                 $currentEl.html('<h2>No Employees found</h2>');
             }
-            self.filterView = new FilterView({contentType: self.contentType});
-
-            self.filterView.bind('filter', function (filter) {
-                self.showFilteredPage(filter, self);
-            });
-            self.filterView.bind('defaultFilter', function () {
-                self.showFilteredPage({}, self);
-            });
-
-            self.filterView.render();
 
             this.renderAlphabeticalFilter();
             $currentEl.append(createdInTag);
