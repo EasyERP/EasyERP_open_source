@@ -15,7 +15,7 @@
 
         editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
-            date: {type: Date}
+            date: {type: Date, default: Date.now}
         },
 
         nestingLevel: {type: Number, default: 0},
