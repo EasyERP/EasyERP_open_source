@@ -5,11 +5,6 @@ define([
     'text!templates/Employees/EditTemplate.html',
     'views/Notes/AttachView',
     'views/dialogViewBase',
-    /* 'collections/Employees/EmployeesCollection',
-     'collections/JobPositions/JobPositionsCollection',
-     'collections/Departments/DepartmentsCollection',
-     'collections/Customers/AccountsDdCollection',
-     'collections/Users/UsersCollection',*/
     'common',
     'populate',
     'moment',
@@ -22,11 +17,6 @@ define([
              EditTemplate,
              AttachView,
              ParentView,
-             /* EmployeesCollection,
-              JobPositionsCollection,
-              DepartmentsCollection,
-              AccountsDdCollection,
-              UsersCollection,*/
              common,
              populate,
              moment,
@@ -172,7 +162,6 @@ define([
 
             table.append(newTr);
 
-            //  this.$el.find('#update').hide(); // commented by Pasha:  possibility to put few jobPositions
             $thisEl.find('.withEndContract').hide();
 
             this.renderRemoveBtn();
@@ -346,8 +335,6 @@ define([
             var info;
             var $thisEl = this.$el;
 
-           // self.hideNewSelect();
-
             relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
             coach = $.trim($thisEl.find('#coachDd').attr('data-id')) || null;
             whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
@@ -512,7 +499,7 @@ define([
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: self.$el.find('#allUsersSelect').attr('data-id'),
+                    owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },
@@ -580,7 +567,6 @@ define([
         },
 
         render: function () {
-            var self = this;
             var $lastElement;
             var $firstElement;
             var $jobPosElement;
@@ -591,7 +577,6 @@ define([
                 currencySplitter: helpers.currencySplitter
             });
             var self = this;
-            var model = this.currentModel.toJSON();
             var notDiv;
             var $thisEl;
 
@@ -632,17 +617,13 @@ define([
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(
                 new AttachView({
-                    model: this.currentModel,
+                    model      : this.currentModel,
                     contentType: self.contentType
                 }).render().el
             );
-           /* notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );*/
+
             this.renderAssignees(this.currentModel);
+
             common.getWorkflowContractEnd('Applications', null, null, constants.URLS.WORKFLOWS, null, 'Contract End', function (workflow) {
                 self.$el.find('.endContractReasonList').attr('data-id', workflow[0]._id);
             });
@@ -671,24 +652,8 @@ define([
                 changeYear : true
             });
 
-           // this.removeIcon = $thisEl.find('.fa-trash');
             this.hiredDate = this.currentModel.get('hire')[0];
 
-/*
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    this.$el.find('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $thisEl.find('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
-                        $thisEl.find('#targetGroups').append('<li id="' + item._id + '">' + item.name + '</li>');
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $thisEl.find('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' + item.login + '</td><td class="text-right"></td></tr>');
-                        $thisEl.find('#targetUsers').append('<li id="' + item._id + '">' + item.login + '</li>');
-                    });
-
-                }
-            }*/
             this.delegateEvents(this.events);
 
             $lastElement = $thisEl.find('#last');

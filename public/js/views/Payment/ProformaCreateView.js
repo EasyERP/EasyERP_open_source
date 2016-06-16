@@ -1,20 +1,16 @@
-/**
- * Created by soundstorm on 20.05.15.
- */
 define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Payment/ProformaCreateTemplate.html",
-    "collections/Persons/PersonsCollection",
-    "collections/Departments/DepartmentsCollection",
-    'collections/salesInvoice/filterCollection',
+    'text!templates/Payment/ProformaCreateTemplate.html',
+    'collections/Persons/PersonsCollection',
+    'collections/Departments/DepartmentsCollection',
+    'collections/salesInvoices/filterCollection',
     'collections/customerPayments/filterCollection',
     'views/Projects/projectInfo/payments/paymentView',
-    //"views/Projects/projectInfo/invoices/invoiceView",
-    "models/PaymentModel",
-    "common",
-    "populate",
+    'models/PaymentModel',
+    'common',
+    'populate',
     'dataService',
     'constants',
     'helpers/keyValidator'
@@ -27,16 +23,15 @@ define([
              invoiceCollection,
              paymentCollection,
              PaymentView,
-             /*invoiceView, */
              PaymentModel,
              common,
              populate,
              dataService,
-             constants,
+             CONSTANTS,
              keyValidator) {
     var CreateView = Backbone.View.extend({
-        el         : "#paymentHolder",
-        contentType: "Payment",
+        el         : '#paymentHolder',
+        contentType: 'Payment',
         template   : _.template(CreateTemplate),
 
         initialize: function (options) {
@@ -62,20 +57,18 @@ define([
 
             this.changePaidAmount = _.debounce(this.changePaidAmount, 500);
 
-
             this.render();
         },
 
         events: {
-            'keypress'                                          : 'keypressHandler',
-            "click .current-selected"                          : "showNewSelect",
-            "click"                                            : "hideNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click .newSelectList li.miniStylePagination"      : "notHide",
-            "keyup #paidAmount"                                : "changePaidAmount",
-
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+            keypress                                                          : 'keypressHandler',
+            'click .current-selected'                                         : 'showNewSelect',
+            click                                                             : 'hideNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
+            'click .newSelectList li.miniStylePagination'                     : 'notHide',
+            'keyup #paidAmount'                                               : 'changePaidAmount',
+            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
         },
 
         nextSelect: function (e) {
@@ -105,8 +98,8 @@ define([
             data.invoiceCurrency = this.currency.name;
             data.paymentCurrency = currency;
 
-            dataService.getData(constants.URLS.PAYMENT_AMOUNT_LEFT, data,
-                function(res, self) {
+            dataService.getData(CONSTANTS.URLS.PAYMENT_AMOUNT_LEFT, data,
+                function (res, self) {
                     if (res.difference) {
                         differenceAmount.text(res.difference.toFixed(2));
                         self.differenceAmount = res.difference;
@@ -117,7 +110,7 @@ define([
                     if (!differenceAmountContainer.hasClass('hidden')) {
                         return differenceAmountContainer.addClass('hidden');
                     }
-            }, self);
+                }, self);
 
             App.stopPreload();
         },
@@ -132,11 +125,11 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
         },
 
         chooseOption: function (e) {
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
             this.changePaidAmount();
         },
@@ -146,14 +139,14 @@ define([
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
+            $('.edit-dialog').remove();
         },
 
         saveItem: function () {
 
             var self = this;
             var data;
-            //FixMe change mid value to proper number after inserting it into DB
+            // FixMe change mid value to proper number after inserting it into DB
             var mid = 95;
             var thisEl = this.$el;
             var invoiceModel = this.invoiceModel.toJSON();
@@ -166,7 +159,7 @@ define([
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
             var currency = {
-                _id: thisEl.find('#currencyDd').attr('data-id'),
+                _id : thisEl.find('#currencyDd').attr('data-id'),
                 name: $.trim(thisEl.find('#currencyDd').text())
             };
 
@@ -195,17 +188,20 @@ define([
                     },
                     wait   : true,
                     success: function () {
-                        var redirectUrl = self.forSales ? "easyErp/customerPayments" : "easyErp/supplierPayments";
+                        var redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';
 
                         self.hideDialog();
 
                         if (self.redirect) {
-                            self.eventChannel && self.eventChannel.trigger('newPayment');
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('newPayment');
+                            }
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     },
-                    error  : function (model, xhr) {
+
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });
@@ -222,7 +218,7 @@ define([
             var self = this;
             var model = this.invoiceModel.toJSON();
             var htmBody = this.template({
-                invoice: model,
+                invoice : model,
                 currency: self.currency
             });
 
@@ -230,18 +226,18 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : "edit-dialog",
-                title        : "Create Payment",
+                dialogClass  : 'edit-dialog',
+                title        : 'Create Payment',
                 buttons      : [
                     {
-                        id   : "create-payment-dialog",
-                        text : "Create",
+                        id   : 'create-payment-dialog',
+                        text : 'Create',
                         click: function () {
                             self.saveItem();
                         }
                     },
                     {
-                        text : "Cancel",
+                        text : 'Cancel',
                         click: function () {
                             self.hideDialog();
                         }
@@ -249,13 +245,13 @@ define([
                 ]
             });
 
-            populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
-            populate.get("#period", "/period", {}, 'name', this, true, true);
-            populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, null, null, 2);
-            populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+            populate.get2name('#supplierDd', '/supplier', {}, this, false, true);
+            populate.get('#period', '/period', {}, 'name', this, true, true);
+            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, null, null, 2);
+            populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
 
             this.$el.find('#paymentDate').datepicker({
-                dateFormat : "d M, yy",
+                dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 maxDate    : 0,

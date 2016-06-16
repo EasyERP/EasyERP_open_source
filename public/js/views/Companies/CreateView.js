@@ -37,26 +37,6 @@ define([
             $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
         },
 
-        changeTab: function (e) {
-            var $holder = $(e.target);
-            var n;
-            var $dialogHolder;
-
-            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $holder.addClass('active');
-            n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
-            $dialogHolder = $('.dialog-tabs-items');
-            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        hideDialog: function () {
-            $('.create-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-            $('.crop-images-dialog').remove();
-        },
-
         saveItem: function () {
             var self = this;
             var mid = this.mId;
@@ -135,7 +115,7 @@ define([
                 },
 
                 groups: {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: $('#allUsersSelect').data('id') || null,
                     users: usersId,
                     group: groupsId
                 },
@@ -185,9 +165,7 @@ define([
                     },
                     {
                         text : 'Cancel',
-                        click: function () {
-                            self.hideDialog();
-                        }
+                        click: self.hideDialog
                     }]
             });
 

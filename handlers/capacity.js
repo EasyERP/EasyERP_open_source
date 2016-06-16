@@ -98,10 +98,8 @@ var Module = function (models) {
     this.getForType = function (req, res, next) {
         var viewType = req.query.viewType;
 
-        switch (viewType) {
-            case 'list':
-                getCapacityFilter(mid, req, res, next);
-                break;
+        if (viewType === 'list') {
+            getCapacityFilter(mid, req, res, next);
         }
     };
 
@@ -117,16 +115,6 @@ var Module = function (models) {
 
         var daysCount = date.daysInMonth();
 
-        waterfallTasks = [getEmployees, saveCapacities];
-
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return callback(err);
-            }
-
-            callback(null);
-        });
-
         function getEmployees(callback) {
 
             var queryObject = {
@@ -141,13 +129,6 @@ var Module = function (models) {
                 if (err) {
                     return callback(err);
                 }
-
-                /* result = _.filter(result, function (element) {
-                 hire = element.hire[0];
-                 fire = element.fire[0];
-
-                 return (moment(hire) <= date.endOf('month') && moment(fire) >= date.date(1)) === true;
-                 })*/
 
                 callback(null, result);
             });
@@ -217,7 +198,7 @@ var Module = function (models) {
                                 if (!fire) {
                                     condition = (hire <= dateValue);
                                 } else {
-                                   // (fire >= dateValue && hire <= dateValue);
+                                    // (fire >= dateValue && hire <= dateValue);
                                 }
 
                                 if (condition) {
@@ -303,6 +284,16 @@ var Module = function (models) {
 
             });
         }
+
+        waterfallTasks = [getEmployees, saveCapacities];
+
+        async.waterfall(waterfallTasks, function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null);
+        });
     }
 
     this.createNextMonth = function (req, res, next) {

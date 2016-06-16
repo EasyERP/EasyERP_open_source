@@ -15,7 +15,7 @@ define([
                 name: ''
             },
 
-            project: {
+            project : {
                 _id           : null,
                 projectnamager: {},
                 name          : ''
@@ -40,7 +40,7 @@ define([
         },
 
         urlRoot: function () {
-            return CONSTANTS.URLS.QUOTATION;
+            return CONSTANTS.URLS.QUOTATIONS;
         },
 
         parse: function (model) {

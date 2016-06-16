@@ -1,5 +1,5 @@
 ﻿define([
-    'collections/Invoice/filterCollection'
+    'collections/Invoices/filterCollection'
 ], function (Invoice) {
     return Invoice.extend({
         url: '/Proforma/'

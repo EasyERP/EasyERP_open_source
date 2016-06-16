@@ -4,7 +4,7 @@
     'text!templates/Users/list/ListTemplate.html'
 ], function (Backbone, _, ListTemplate) {
     'use strict';
-    
+
     var ListItemView = Backbone.View.extend({
         el: '#listTable',
 

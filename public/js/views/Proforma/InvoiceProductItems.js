@@ -2,8 +2,8 @@ define([
     'Backbone',
     'Underscore',
     'jQuery',
-    'text!templates/Invoice/InvoiceProductItems.html',
-    'text!templates/Invoice/InvoiceProductInputContent.html',
+    'text!templates/Invoices/InvoiceProductItems.html',
+    'text!templates/Invoices/InvoiceProductInputContent.html',
     'text!templates/Proforma/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
@@ -12,7 +12,7 @@ define([
     'helpers',
     'constants'
 ], function (Backbone, _, $, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate, keyValidator, helpers, CONSTANTS) {
-    'use strict'
+    'use strict';
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 

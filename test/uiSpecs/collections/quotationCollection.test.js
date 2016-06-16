@@ -1,5 +1,5 @@
 define([
-    'collections/Quotation/filterCollection',
+    'collections/quotations/filterCollection',
     'chai'
 ], function (QuotationCollection, chai) {
     'use strict';
@@ -653,8 +653,8 @@ define([
             }
         ];
 
-        it ('Try to create collection with contentType="salesOrder"', function(done){
-            var quotationUrl = new RegExp('/quotation/list', 'i');
+        it ('Try to create collection with contentType="salesOrders"', function(done){
+            var quotationUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
             orderCollection = new QuotationCollection({
@@ -672,7 +672,7 @@ define([
         });
 
         it ('Try showMore collection', function(){
-            var quotationUrl = new RegExp('/quotation/list', 'i');
+            var quotationUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
             orderCollection.showMore();
@@ -682,12 +682,12 @@ define([
         });
 
         it ('Try to create collection with error response', function(done){
-            var quotationUrl = new RegExp('/quotation/list', 'i');
+            var quotationUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', quotationUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
             orderCollection = new QuotationCollection({
                 viewType: 'list',
-                contentType: 'salesOrder',
+                contentType: 'salesOrders',
                 success: function(){
                     done();
                 },
@@ -701,12 +701,12 @@ define([
         });
 
         it ('Try to create collection', function(done){
-            var quotationUrl = new RegExp('/quotation/list', 'i');
+            var quotationUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
             orderCollection = new QuotationCollection({
                 viewType: 'list',
-                contentType: 'salesOrder',
+                contentType: 'salesOrders',
                 success: function(){
                     done();
                 },
@@ -720,14 +720,14 @@ define([
         });
 
         it ('Try showMore collection', function(){
-            var quotationUrl = new RegExp('/quotation/list', 'i');
+            var quotationUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
             orderCollection.showMore({
                 page: 1,
                 count: 2,
                 viewType: 'list',
-                contentType: 'salesQuotation'
+                contentType: 'salesQuotations'
             });
             server.respond();
 
@@ -736,7 +736,7 @@ define([
 
         it ('Try showMore collection with error response', function(){
             var spyResponse;
-            var quotationUrl = new RegExp('/quotation/list', 'i');
+            var quotationUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', quotationUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
             orderCollection.showMore();

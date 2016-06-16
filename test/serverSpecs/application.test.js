@@ -32,10 +32,11 @@ describe('Application Specs', function () {
 
         it('should create application', function (done) {
             var body = {
-                name     : {
+                name: {
                     first: 'test',
                     last : 'test'
                 },
+
                 dateBirth: '28 Dec, 1990'
             };
 
@@ -60,6 +61,16 @@ describe('Application Specs', function () {
                         .to.have.property('id');
                     expect(body.result)
                         .to.have.property('_id');
+                    expect(body.result)
+                        .to.have.property('marital')
+                        .and.to.be.oneOf(['married', 'unmarried']);
+                    expect(body.result)
+                        .to.have.property('gender')
+                        .and.to.be.oneOf(['male', 'female']);
+                    expect(body.result)
+                        .to.have.property('name');
+                    expect(body.result)
+                        .to.have.property('dateBirth');
 
                     id = body.id;
 
@@ -120,19 +131,19 @@ describe('Application Specs', function () {
                     expect(application)
                         .to.exist;
                     /* expect(application)
-                        .to.have.property('department')
-                        .and.to.have.property('_id');*/
+                     .to.have.property('department')
+                     .and.to.have.property('_id');*/
                     /* expect(application)
-                        .to.have.property('department')
-                        .and.to.have.property('name')
-                        .and.to.be.a('string');*/
-                   /* expect(application)
-                        .to.have.property('jobPosition')
-                        .and.to.have.property('_id');
-                    expect(application)
-                        .to.have.property('jobPosition')
-                        .and.to.have.property('name')
-                        .and.to.be.a('string');*/
+                     .to.have.property('department')
+                     .and.to.have.property('name')
+                     .and.to.be.a('string');*/
+                    /* expect(application)
+                     .to.have.property('jobPosition')
+                     .and.to.have.property('_id');
+                     expect(application)
+                     .to.have.property('jobPosition')
+                     .and.to.have.property('name')
+                     .and.to.be.a('string');*/
                     expect(application)
                         .to.have.property('name')
                         .and.to.have.property('last')

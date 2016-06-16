@@ -10,9 +10,9 @@ define([
     'text!templates/Projects/projectInfo/proformaStats.html',
     'views/Projects/projectInfo/journalEntriesForJob/dialogView',
     'views/selectView/selectView',
-    'views/salesOrder/EditView',
-    'views/salesQuotation/EditView',
-    'views/salesInvoice/EditView',
+    'views/salesOrders/EditView',
+    'views/salesQuotations/EditView',
+    'views/salesInvoices/EditView',
     'views/Proforma/EditView',
     'views/Projects/EditView',
     'views/Notes/NoteView',
@@ -28,8 +28,8 @@ define([
     'views/Projects/projectInfo/orders/orderView',
     'views/projectCharts/index',
     'collections/wTrack/filterCollection',
-    'collections/Quotation/filterCollection',
-    'collections/salesInvoice/filterCollection',
+    'collections/Quotations/filterCollection',
+    'collections/salesInvoices/filterCollection',
     'collections/customerPayments/filterCollection',
     'collections/Jobs/filterCollection',
     'collections/Proforma/filterCollection',
@@ -135,38 +135,27 @@ define([
             this.eventChannel = eventChannel;
             this.formModel = options.model;
             this.id = this.formModel.id;
-            this.formModel.urlRoot = '/Projects/';
-            this.salesManager = this.formModel.get('salesmanager');
+            this.formModel.urlRoot = '/projects/';
+            this.salesManager = this.formModel.get('salesManager');
             this.responseObj = {};
             this.proformValues = {};
 
-            this.listenTo(eventChannel, 'newPayment', this.newPayment);
-            this.listenTo(eventChannel, 'paymentRemoved', this.newPayment);
-
+            this.listenTo(eventChannel, 'newPayment paymentRemoved invoiceRemove', this.newPayment);
             this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
-
-            this.listenTo(eventChannel, 'newProforma', this.createProforma);
-            this.listenTo(eventChannel, 'proformaRemove', this.createProforma);
-            this.listenTo(eventChannel, 'savedProforma', this.createProforma);
-
-            this.listenTo(eventChannel, 'quotationUpdated', this.getQuotations);
-            this.listenTo(eventChannel, 'quotationRemove', this.getQuotations);
-
-            this.listenTo(eventChannel, 'orderRemove', this.getOrders);
-            this.listenTo(eventChannel, 'orderUpdate', this.getOrders);
-
-            this.listenTo(eventChannel, 'invoiceRemove', this.newPayment);
+            this.listenTo(eventChannel, 'newProforma proformaRemove savedProforma', this.createProforma);
+            this.listenTo(eventChannel, 'quotationUpdated quotationRemove', this.getQuotations);
+            this.listenTo(eventChannel, 'orderRemove orderUpdate', this.getOrders);
             this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiceProforma);
             this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
-
+            this.listenTo(eventChannel, 'generatedTcards', this.getWTrack);
         },
 
         viewQuotation: function (e) {
             var self = this;
-            var target = e.target;
-            var id = $(target).attr('data-id');
+            var $target = $(e.target);
+            var id = $target.attr('data-id');
             var model;
-            var type = $(target).closest('tr').find('#type').text();
+            var type = $target.closest('tr').find('#type').text();
             var onlyView = false;
 
             e.stopPropagation();
@@ -174,9 +163,12 @@ define([
             if (type === 'Quoted') {
                 model = new QuotationModel({validate: false});
 
-                model.urlRoot = '/quotation/';
+                model.urlRoot = '/quotations/';
                 model.fetch({
-                    id: id
+                    data: {
+                        id      : id,
+                        viewType: 'form'
+                    }
                 }, {
                     success: function (model) {
                         return new EditViewQuotation({
@@ -197,9 +189,12 @@ define([
             } else {
                 model = new QuotationModel({validate: false});
 
-                model.urlRoot = '/Order/';
+                model.urlRoot = '/orders/';
                 model.fetch({
-                    id: id
+                    data: {
+                        id      : id,
+                        viewType: 'form'
+                    }
                 }, {
                     success: function (model) {
 
@@ -233,11 +228,12 @@ define([
 
             e.stopPropagation();
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : id,
-                    currentDb: App.currentDb
+                    currentDb: App.currentDb,
+                    viewType : 'form'
                 },
 
                 success: function (model) {
@@ -266,11 +262,12 @@ define([
 
             e.stopPropagation();
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : id,
-                    currentDb: App.currentDb
+                    currentDb: App.currentDb,
+                    viewType : 'form'
                 },
 
                 success: function (model) {
@@ -306,43 +303,13 @@ define([
             return new ReportView({_id: id});
         },
 
-        editRow: function (e) {
-            var el = $(e.target);
-            var tr = $(e.target).closest('tr');
-            var tempContainer;
-            var editedElement;
-            var editedCol;
-            var editedElementValue;
-            var insertedInput;
-
-            if (el.prop('tagName') !== 'INPUT') {
-                editedElement = $('#projectTeam').find('.editing');
-
-                if (editedElement.length) {
-                    editedCol = editedElement.closest('td');
-                    editedElementValue = editedElement.val();
-
-                    editedCol.text(editedElementValue);
-                    editedElement.remove();
-                }
-            }
-
-            tempContainer = el.text();
-            el.html('<input class="editing" type="text" maxlength="32" value="' + tempContainer + '">' + "<a href='javascript:;' class='fa fa-check' title='Save' id='saveName'></a>");
-
-            insertedInput = el.find('input');
-            insertedInput.focus();
-            insertedInput[0].setSelectionRange(0, insertedInput.val().length);
-
-            return false;
-        },
-
         saveNewJobName: function (e) {
             var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
             var self = this;
+            var $target = $(e.target);
             var _id = window.location.hash.split('form/')[1];
-            var id = $(e.target).parents('td').closest('tr').attr('data-id');
-            var name = $(e.target).prev('input').val() ? $(e.target).prev('input').val() : $(e.target).val();
+            var id = $target.parents('td').closest('tr').attr('data-id');
+            var name = $target.prev('input').val() ? $target.prev('input').val() : $target.val();
             var data = {_id: id, name: name};
 
             e.preventDefault();
@@ -355,11 +322,11 @@ define([
                         return console.log(err);
                     }
 
-                    $('#saveName').hide();
+                    self.$el.find('#saveName').hide();
 
-                    $(e.target).parents('td').text(name);
+                    $target.parents('td').text(name);
 
-                    $(e.target).prev('input').remove();
+                    $target.prev('input').remove();
 
                     filter = {
                         project: {
@@ -419,9 +386,10 @@ define([
 
         removeJobAndWTracks: function (e) {
             var self = this;
+            var $target = $(e.target);
             var _id = window.location.hash.split('form/')[1];
-            var id = $(e.target).attr('id');
-            var tr = $(e.target).closest('tr');
+            var id = $target.attr('id');
+            var tr = $target.closest('tr');
 
             var data = {_id: id};
 
@@ -472,15 +440,15 @@ define([
         },
 
         renderJobWTracks: function (e) {
-            var target = e.target;
-            var jobId = $(target).parents('tr').attr('data-id');
-            var jobContainer = $(target).parents('tr');
+            var $target = $(e.target);
+            var jobId = $target.parents('tr').attr('data-id');
+            var jobContainer = $target.parents('tr');
             var template = _.template(jobsWTracksTemplate);
             var jobsItems = this.jobsCollection.toJSON();
             var icon = $(jobContainer).find('.expand');
             var subId = 'subRow-row' + jobId;
             var subRowCheck = $('#' + subId);
-            var name = $(target).parents('tr').find('#jobsName').text();
+            var name = $target.parents('tr').find('#jobsName').text();
 
             var job = _.find(jobsItems, function (element) {
                 return element._id === jobId;
@@ -501,15 +469,17 @@ define([
                 }));
 
             }
-            $('#createItem').attr('data-value', name);
+            this.$el.find('#createItem').attr('data-value', name);
 
         },
 
         createDialog: function (e) {
             var jobs = {};
+            var self = this;
+            var $target = $(e.target);
 
-            jobs._id = $(e.target).attr('data-id');
-            jobs.name = $(e.target).attr('data-value');
+            jobs._id = $target.attr('data-id');
+            jobs.name = $target.attr('data-value');
 
             if (this.generatedView) {
                 this.generatedView.undelegateEvents();
@@ -518,11 +488,14 @@ define([
             this.generatedView = new GenerateWTrack({
                 model           : this.formModel,
                 wTrackCollection: this.wCollection,
-                jobs            : jobs
+                jobs            : jobs,
+                eventChannel    : self.eventChannel
+
             });
         },
 
         createJob: function () {
+            var self = this;
             this.wCollection.unbind();
             this.wCollection.bind('reset', this.renderContent, this);
 
@@ -534,7 +507,8 @@ define([
                 reset           : true,
                 model           : this.formModel,
                 wTrackCollection: this.wCollection,
-                createJob       : true
+                createJob       : true,
+                eventChannel    : self.eventChannel
             });
 
             App.projectInfo.currentTab = 'timesheet';
@@ -546,6 +520,7 @@ define([
 
         showNewSelect: function (e) {
             var $target = $(e.target);
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
@@ -567,18 +542,18 @@ define([
         },
 
         saveItem: function () {
-            var thisEl = this.$el;
+            var $thisEl = this.$el;
             var validation = true;
             var self = this;
             var mid = 39;
-            var projectName = $.trim(thisEl.find('#projectName').val());
-            var projectShortDesc = $.trim(thisEl.find('#projectShortDesc').val());
+            var projectName = $.trim($thisEl.find('#projectName').val());
+            var projectShortDesc = $.trim($thisEl.find('#projectShortDesc').val());
             var customer = {};
             var workflow = {};
 
-            var projecttype = thisEl.find('#projectTypeDD').data('id');
-            var paymentTerm = thisEl.find('#payment_terms').data('id');
-            var paymentMethod = thisEl.find('#payment_method').data('id');
+            var projecttype = $thisEl.find('#projectTypeDD').data('id');
+            var paymentTerm = $thisEl.find('#payment_terms').data('id');
+            var paymentMethod = $thisEl.find('#payment_method').data('id');
             var $userNodes = $('#usereditDd option:selected');
             var users = [];
 
@@ -587,10 +562,10 @@ define([
             var usersId = [];
             var groupsId = [];
 
-            var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
-            var health = thisEl.find('#health a').data('value');
+            var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
+            var health = $thisEl.find('#health a').data('value');
             var customerName;
-            var description = $.trim(thisEl.find('#description').val());
+            var description = $.trim($thisEl.find('#description').val());
             var data = {
                 name            : projectName,
                 projectShortDesc: projectShortDesc,
@@ -605,7 +580,7 @@ define([
                 },
 
                 groups: {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: $('#allUsersSelect').data('id') || null,
                     users: usersId,
                     group: groupsId
                 },
@@ -615,8 +590,8 @@ define([
                 budget  : budget
             };
 
-            customer._id = thisEl.find('#customerDd').data('id');
-            customerName = thisEl.find('#customerDd').text();
+            customer._id = $thisEl.find('#customerDd').data('id');
+            customerName = $thisEl.find('#customerDd').text();
             customerName = customerName.split(' ');
 
             if (customerName.length) {
@@ -631,8 +606,8 @@ define([
                 };
             }
 
-            workflow._id = thisEl.find('#workflowsDd').data('id');
-            workflow.name = thisEl.find('#workflowsDd').text();
+            workflow._id = $thisEl.find('#workflowsDd').data('id');
+            workflow.name = $thisEl.find('#workflowsDd').text();
 
             $userNodes.each(function (key, val) {
                 users.push({
@@ -657,6 +632,7 @@ define([
                     headers: {
                         mid: mid
                     },
+
                     success: function () {
 
                         self.hideSaveButton();
@@ -678,22 +654,23 @@ define([
         chooseOption: function (e) {
             var id;
             var data;
-            var attrId = $(e.target).parents('td').find('.current-selected').attr('id');
+            var $target = $(e.target);
+            var attrId = $target.parents('td').find('.current-selected').attr('id');
 
             $('.newSelectList').hide();
 
-            if ($(e.target).parents('dd').find('.current-selected').length) {
-                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            if ($target.parents('dd').find('.current-selected').length) {
+                $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             } else {
-                id = $(e.target).parents('td').closest('tr').attr('data-id');
+                id = $target.parents('td').closest('tr').attr('data-id');
 
                 if (attrId === 'workflow') {
-                    data = {_id: id, workflowId: $(e.target).attr('id')};
+                    data = {_id: id, workflowId: $target.attr('id')};
                 } else if (attrId === 'type') {
-                    data = {_id: id, type: $(e.target).text()};
+                    data = {_id: id, type: $target.text()};
                 }
 
-                $(e.target).parents('td').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+                $target.parents('td').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
 
                 dataService.postData('/jobs/update', data, function (err) {
                     if (err) {
@@ -774,7 +751,7 @@ define([
         },
 
         hideSelect: function () {
-            $('#health').find('ul').hide(); // added for hiding list if element in isnt chosen
+            this.$el.find('#health').find('ul').hide(); // added for hiding list if element in isnt chosen
 
             if (this.selectView) {
                 this.selectView.remove();
@@ -841,7 +818,6 @@ define([
 
         getWTrack: function (cb) {
             var self = this;
-            var callback = _.once(cb);
             var _id = this.id;
 
             var filter = {
@@ -872,13 +848,11 @@ define([
                 itemsNumber = !isNaN(itemsNumber) ? itemsNumber : CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
 
-                callback();
-
-                if (self.wTrackView) {
-                    self.wTrackView.undelegateEvents();
+                if (typeof cb === 'function') {
+                    cb();
                 }
 
-                this.wTrackView = new WTrackView({
+                self.wTrackView = new WTrackView({
                     collection        : self.wCollection,
                     defaultItemsNumber: defaultItemsNumber,
                     filter            : filter,
@@ -895,7 +869,6 @@ define([
 
             this.wCollection.unbind();
             this.wCollection.bind('reset', createView);
-
         },
 
         getInvoiceStats: function (cb) {
@@ -908,7 +881,7 @@ define([
                     value: [_id]
                 }
             };
-            dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
+            dataService.getData('invoices/stats/project', {filter: filter}, function (response) {
                 if (response && response.success) {
                     self.renderInvoiceStats(response.success);
                 } else {
@@ -1155,7 +1128,7 @@ define([
                 showMore   : false,
                 reset      : true,
                 viewType   : 'list',
-                contentType: 'salesQuotation',
+                contentType: 'salesQuotations',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/quotations'
             });
 
@@ -1211,7 +1184,7 @@ define([
                 showMore   : false,
                 reset      : true,
                 viewType   : 'list',
-                contentType: 'salesOrder',
+                contentType: 'salesOrders',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/orders'
             });
 
@@ -1322,7 +1295,8 @@ define([
         },
 
         renderTabCounter: function () {
-            var $tabs = $('.countable');
+            var self = this;
+            var $tabs = this.$el.find('.countable');
             var $table;
             var count;
             var id;
@@ -1332,7 +1306,7 @@ define([
 
                 id = $tab.attr('id');
                 id = id.replace('Tab', '');
-                $table = $('#' + id).find('tbody tr');
+                $table = self.$el.find('#' + id).find('tbody tr');
                 count = $table.length;
                 $tab.find('span').text(' (' + count + ')');
             });
@@ -1340,16 +1314,16 @@ define([
 
         editItem: function () {
             var self = this;
-            var inputs = $(':input[readonly="readonly"]');
-            var textArea = $('.projectDescriptionEdit');
-            var selects = $('.disabled');
+            var inputs = this.$el.find(':input[readonly="readonly"]');
+            var textArea = this.$el.find('.projectDescriptionEdit');
+            var selects = this.$el.find('.disabled');
 
             selects.removeClass('disabled');
 
             inputs.attr('readonly', false);
             textArea.attr('readonly', false);
 
-            $('#StartDate').datepicker({
+            this.$el.find('#StartDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
@@ -1359,7 +1333,7 @@ define([
                     $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                 }
             });
-            $('#EndDate').datepicker({
+            this.$el.find('#EndDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
@@ -1369,15 +1343,15 @@ define([
                     $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                 }
             });
-            $('#EndDateTarget').datepicker({
+            this.$el.find('#EndDateTarget').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0
             });
-            $('#StartDate').datepicker('option', 'disabled', false);
-            $('#EndDate').datepicker('option', 'disabled', false);
-            $('#EndDateTarget').datepicker('option', 'disabled', false);
+            this.$el.find('#StartDate').datepicker('option', 'disabled', false);
+            this.$el.find('#EndDate').datepicker('option', 'disabled', false);
+            this.$el.find('#EndDateTarget').datepicker('option', 'disabled', false);
 
             $('#top-bar-saveBtn').show();
             $('#createQuotation').show();
@@ -1492,11 +1466,11 @@ define([
 
         render: function () {
             var formModel = this.formModel.toJSON();
+            var templ = _.template(ProjectsFormTemplate);
             var assignees;
             var paralellTasks;
             var self = this;
-            var templ = _.template(ProjectsFormTemplate);
-            var thisEl = this.$el;
+            var $thisEl = this.$el;
             var notesEl;
             var atachEl;
             var notDiv;
@@ -1514,7 +1488,7 @@ define([
                 contentType: self.contentType
             }).render().el;
 
-            thisEl.html(templ({
+            $thisEl.html(templ({
                 model: formModel
             }));
 
@@ -1534,7 +1508,7 @@ define([
 
             this.formModel.bind('chooseAssignee', this.showSaveButton);
 
-            assignees = thisEl.find('#assignees-container');
+            assignees = $thisEl.find('#assignees-container');
             assignees.html(
                 new AssigneesView({
                     model: this.formModel
@@ -1552,12 +1526,12 @@ define([
                         paralellTasks.push(self.getProforma);
                         paralellTasks.push(self.getPayments);
                     } else {
-                        thisEl.find('#invoicesTab').parent().remove();
-                        thisEl.find('div#invoices').parent().remove();
-                        thisEl.find('#proformaTab').parent().remove();
-                        thisEl.find('div#proforma').parent().remove();
-                        thisEl.find('#paymentsTab').parent().remove();
-                        thisEl.find('div#payments').parent().remove();
+                        $thisEl.find('#invoicesTab').parent().remove();
+                        $thisEl.find('div#invoices').parent().remove();
+                        $thisEl.find('#proformaTab').parent().remove();
+                        $thisEl.find('div#proforma').parent().remove();
+                        $thisEl.find('#paymentsTab').parent().remove();
+                        $thisEl.find('div#payments').parent().remove();
 
                         self.getPayments = function () {
                         };
@@ -1572,8 +1546,8 @@ define([
                     if (accessElement.access.read) {
                         paralellTasks.push(self.getWTrack);
                     } else {
-                        thisEl.find('#timesheetTab').parent().remove();
-                        thisEl.find('div#timesheet').parent().remove();
+                        $thisEl.find('#timesheetTab').parent().remove();
+                        $thisEl.find('div#timesheet').parent().remove();
                     }
                 }
 
@@ -1581,8 +1555,8 @@ define([
                     if (accessElement.access.read) {
                         paralellTasks.push(self.getProjectMembers);
                     } else {
-                        thisEl.find('#projectMembersTab').parent().remove();
-                        thisEl.find('div#projectMembers').parent().remove();
+                        $thisEl.find('#projectMembersTab').parent().remove();
+                        $thisEl.find('div#projectMembers').parent().remove();
                     }
                 }
 
@@ -1604,33 +1578,33 @@ define([
             $('#top-bar-deleteBtn').hide();
             $('#createQuotation').show();
 
-            $('#StartDate').datepicker({
+            $thisEl.find('#StartDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function () {
                     var endDate = $('#StartDate').datepicker('getDate');
                     endDate.setDate(endDate.getDate());
-                    $('#EndDateTarget').datepicker('option', 'minDate', endDate);
-                    $('#EndDate').datepicker('option', 'minDate', endDate); // added minDate after selecting new startDate
+                    $thisEl.find('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    $thisEl.find('#EndDate').datepicker('option', 'minDate', endDate); // added minDate after selecting new startDate
 
                     self.showSaveButton();
                 }
             });
-            $('#EndDate').datepicker({
+            $thisEl.find('#EndDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : $('#StartDate').datepicker('getDate'), // added minDate at start
+                minDate    : $thisEl.find('#StartDate').datepicker('getDate'), // added minDate at start
                 onSelect   : function () {
                     var endDate = $('#StartDate').datepicker('getDate');
                     endDate.setDate(endDate.getDate());
-                    $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    $thisEl.find('#EndDateTarget').datepicker('option', 'minDate', endDate);
 
                     self.showSaveButton();
                 }
             });
-            $('#EndDateTarget').datepicker({
+            $thisEl.find('#EndDateTarget').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,

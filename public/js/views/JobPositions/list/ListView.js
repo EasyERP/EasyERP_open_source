@@ -9,25 +9,21 @@ define([
     'collections/JobPositions/filterCollection',
     'models/JobPositionsModel',
     'views/JobPositions/EditView',
-    'views/Filter/filterView',
     'common',
     'text!templates/stages.html'
-], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, FilterView, common, stagesTamplate) {
+], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, common, stagesTamplate) {
     'use strict';
 
     var JobPositionsListView = listViewBase.extend({
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/JobPositions/totalCollectionLength',
-        formUrl                 : '#easyErp/JobPositions/form/',
-        contentType             : 'JobPositions', // needs in view.prototype.changeLocationHash
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        contentType      : 'JobPositions', // needs in view.prototype.changeLocationHash
 
         events: {
-            'click .stageSelect'          : 'showNewSelect',
-            'click .newSelectList li'     : 'chooseOption'
+            'click .stageSelect'     : 'showNewSelect',
+            'click .newSelectList li': 'chooseOption'
         },
 
         initialize: function (options) {
@@ -43,10 +39,6 @@ define([
             this.render();
             this.contentCollection = contentCollection;
         },
-
-        /*hideNewSelect: function () {
-            $('.newSelectList').remove();  // ui tests
-        },*/
 
         showNewSelect: function (e) {
             if ($('.newSelectList').is(':visible')) {
@@ -132,9 +124,13 @@ define([
             e.preventDefault();
             model.urlRoot = '/JobPositions';
             model.fetch({
-                data   : {id: id, viewType: 'form'},
+                data: {
+                    id      : id,
+                    viewType: 'form'
+                },
+                
                 success: function (response) {
-                    new EditView({model: response});
+                    return new EditView({model: response});
                 },
 
                 error: function () {
@@ -146,6 +142,6 @@ define([
             });
         }
     });
-    
+
     return JobPositionsListView;
 });

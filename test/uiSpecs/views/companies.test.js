@@ -2639,7 +2639,6 @@ define([
 
                 spyResponse = mainSpy.args[5][0];
                 expect(spyResponse).to.have.property('type', 'error');
-                expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
             });
 
             it('Try to delete company from the form', function () {

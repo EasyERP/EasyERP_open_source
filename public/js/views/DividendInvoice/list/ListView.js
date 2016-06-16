@@ -7,18 +7,18 @@ define([
     'views/DividendInvoice/EditView',
     'models/InvoiceModel',
     'views/DividendInvoice/list/ListItemView',
-    'collections/salesInvoice/filterCollection',
-    'views/Filter/filterView',
+    'collections/salesInvoices/filterCollection',
     'common',
     'dataService',
     'constants',
     'helpers'
-], function ($, _, listViewBase, listTemplate, CreateView, EditView, invoiceModel, ListItemView, contentCollection, FilterView, common, dataService, CONSTANTS, helpers) {
+], function ($, _, listViewBase, listTemplate, CreateView, EditView, invoiceModel, ListItemView, contentCollection, common, dataService, CONSTANTS, helpers) {
+    'use strict';
+
     var InvoiceListView = listViewBase.extend({
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        FilterView       : FilterView,
         contentType      : 'DividendInvoice',
         changedModels    : {},
 
@@ -39,16 +39,15 @@ define([
             this.render();
         },
 
-        events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
-        },
-
         saveItem: function () {
             var model;
             var self = this;
             var id;
+            var i;
+            var keys = Object.keys(this.changedModels);
 
-            for (id in this.changedModels) {
+            for (i = keys.length - 1; i >= 0; i--) {
+                id = keys[i];
                 model = this.collection.get(id);
 
                 model.save({
@@ -66,9 +65,7 @@ define([
                 });
             }
 
-            for (id in this.changedModels) {
-                delete this.changedModels[id];
-            }
+            this.changedModels = {};
         },
 
         render: function () {
@@ -83,15 +80,6 @@ define([
 
             $currentEl.html('');
 
-            currentEllistRenderer(self);
-
-            self.renderPagination($currentEl, self);
-            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
-
-            this.recalcTotal();
-
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
             function currentEllistRenderer(self) {
                 $currentEl.append(_.template(listTemplate, {currentDb: true}));
                 itemView = new ListItemView({
@@ -105,6 +93,15 @@ define([
 
             }
 
+            currentEllistRenderer(self);
+
+            self.renderPagination($currentEl, self);
+            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
+
+            this.recalcTotal();
+
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+
         },
 
         recalcTotal: function () {
@@ -115,21 +112,25 @@ define([
                 var sum = 0;
 
                 _.each(self.collection.toJSON(), function (model) {
-                    sum += parseFloat(model.paymentInfo[col]);
+                    if (model && model.currency && model.currency.rate) {
+                        sum += parseFloat(model.paymentInfo[col] / model.currency.rate);
+                    } else {
+                        sum += parseFloat(model.paymentInfo[col]);
+                    }
                 });
 
                 self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
             });
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new invoiceModel({validate: false});
             var self = this;
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     viewType   : 'form',
@@ -140,7 +141,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

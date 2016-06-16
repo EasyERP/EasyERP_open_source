@@ -18,9 +18,9 @@
 
         render: function (options) {
             var el;
-            
+
             options = options || {};
-            
+
             el = options.thisEl || this.$el;
 
             el.append(_.template(listTemplate, {

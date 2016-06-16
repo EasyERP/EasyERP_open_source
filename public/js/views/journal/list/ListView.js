@@ -88,7 +88,6 @@ define([
             }
         },
 
-
         bindingEventsToEditedCollection: function (context) {
             if (context.editCollection) {
                 context.editCollection.unbind();
@@ -171,11 +170,7 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData('/chartOfAccount/getForDd', {}, function (debitAccount) {
-                debitAccount = _.map(debitAccount.data, function (debit) {
-                    debit.name = debit.name;
-                    debit._id = debit._id;
-                    return debit;
-                });
+                debitAccount = debitAccount.data;
                 self.responseObj['#debitAccount'] = debitAccount;
                 self.responseObj['#creditAccount'] = debitAccount;
             });

@@ -20,13 +20,13 @@ define([
         },
 
         events: {
-            'keydown'                                                         : 'keydownHandler',
+            keydown                                                           : 'keydownHandler',
             'click .current-selected'                                         : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
             'click .newSelectList li.miniStylePagination'                     : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click'                                                           : 'hideNewSelect'
+            click                                                             : 'hideNewSelect'
         },
 
         notHide: function () {
@@ -79,12 +79,13 @@ define([
 
             switch (choice) {
                 case 'new':
-                    this.selectedProfile = this.profilesCollection.findWhere({profileName: 'baned'});
+                    this.selectedProfile = this.profilesCollection.findWhere({profileName: 'banned'});
                     break;
                 case 'base':
                     profileId = $('#profilesDd').data('id');
                     this.selectedProfile = this.profilesCollection.get(profileId);
                     break;
+                // skip default;
             }
 
             if (!this.selectedProfile) {

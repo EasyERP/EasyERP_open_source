@@ -14,20 +14,10 @@
         </span>
     </td>
     <% } %>
-    <td data-name="price" class="">
-        <span>
-            <%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%>
-        </span>
-    </td>
-    <td class="taxes">
-        <span>
-            <%=product.taxes ? currencySplitter(product.taxes.toString()): ''%>
-        </span>
-    </td>
-    <td class="amount">
-        <span>
-            <%=product.subTotal ? currencySplitter(product.subTotal.toString()): ''%>
-        </span>
-    </td>
+    <%var currencyClassVal;%>
+    <%currencyClassVal = currencyClass(products.currency._id)%>
+    <td data-name="price" class="<%=currencyClassVal%>"><span><%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%></span></td>
+    <td class="taxes <%=currencyClassVal%>"><span><%=product.taxes ? currencySplitter(product.taxes.toString()): ''%></span></td>
+    <td class="amount <%=currencyClassVal%>"><span><%=product.subTotal ? currencySplitter(product.subTotal.toString()): ''%></span></td>
 </tr>
 <% }); %>

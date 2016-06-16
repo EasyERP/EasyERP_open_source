@@ -1,41 +1,25 @@
 define([
     'jQuery',
     'Underscore',
-    'text!templates/Pagination/PaginationTemplate.html',
     'text!templates/DividendPayments/list/ListTemplate.html',
     'text!templates/DividendPayments/list/ListHeader.html',
-    'text!templates/supplierPayments/list/cancelEdit.html',
-    'views/selectView/selectView',
     'views/supplierPayments/CreateView',
-    'views/Filter/filterView',
     'models/PaymentModel',
     'views/DividendPayments/list/ListItemView',
-    'views/DividendPayments/list/ListTotalView',
+    // 'views/DividendPayments/list/ListTotalView',
     'collections/DividendPayments/filterCollection',
-    'collections/DividendPayments/editCollection',
-    'dataService',
-    'populate',
-    'async',
-    'helpers/keyCodeHelper',
-    'views/listViewBase'
+    'views/listViewBase',
+    'helpers'
 ], function ($, _,
-             paginationTemplate,
              listTemplate,
              ListHeaderForWTrack,
-             cancelEdit,
-             selectView,
              CreateView,
-             FilterView,
              CurrentModel,
              ListItemView,
-             ListTotalView,
+             //ListTotalView,
              paymentCollection,
-             EditCollection,
-             dataService,
-             populate,
-             async,
-             keyCodes,
-             ListViewBase) {
+             ListViewBase,
+             helpers) {
     var PaymentListView = ListViewBase.extend({
         listTemplate : listTemplate,
         ListItemView : ListItemView,
@@ -58,6 +42,20 @@ define([
             this.render();
         },
 
+        recalcTotal: function () {
+            var sum = 0;
+
+            _.each(this.collection.toJSON(), function (model) {
+                if (model && model.currency && model.currency.rate) {
+                    sum += parseFloat(model.paidAmount / model.currency.rate);
+                } else {
+                    sum += parseFloat(model.paidAmount);
+                }
+            });
+
+            this.$el.find('#totalPaid').text(helpers.currencySplitter(sum.toFixed(2)));
+        },
+
         render: function () {
             var self = this;
             var $currentEl = this.$el;
@@ -72,13 +70,15 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render());
 
-            $currentEl.append(new ListTotalView({
+           /* $currentEl.append(new ListTotalView({
                 element : this.$el.find('#listTable'),
                 cellSpan: 4,
                 wTrack  : true
-            }).render());
+            }).render());*/
 
             self.renderPagination($currentEl, self);
+
+            this.recalcTotal();
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }

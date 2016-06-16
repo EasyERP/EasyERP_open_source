@@ -285,7 +285,7 @@ describe('Payment Specs', function () {
                 };
 
                 aggent
-                    .post('quotation')
+                    .post('quotations')
                     .set('type', 'sales')
                     .send(body)
                     .expect(201)
@@ -311,7 +311,7 @@ describe('Payment Specs', function () {
                 };
 
                 aggent
-                    .patch('quotation/' + quotationBody._id)
+                    .patch('quotations/' + quotationBody._id)
                     .set('type', 'sales')
                     .send(body)
                     .set('mid', '63')
@@ -325,7 +325,7 @@ describe('Payment Specs', function () {
                 };
 
                 aggent
-                    .post('invoice/receive')
+                    .post('invoices/receive')
                     .send(body)
                     .expect(201)
                     .end(function (err, res) {
@@ -439,14 +439,14 @@ describe('Payment Specs', function () {
 
             it('should delete invoice', function (done) {
                 aggent
-                    .delete('invoice/' + invoiceBody._id)
+                    .delete('invoices/' + invoiceBody._id)
                     .set('type', 'sales')
                     .expect(200, done);
             });
 
             it('should delete quotation', function (done) {
                 aggent
-                    .delete('quotation/' + quotationBody._id)
+                    .delete('quotations/' + quotationBody._id)
                     .set('type', 'sales')
                     .expect(200, done);
             });

@@ -1,4 +1,6 @@
-define([], function () {
+define([
+    'Underscore'
+], function (_) {
     function minFromDates(arrayOfDates) {
         arrayOfDates = _.map(arrayOfDates, function (date) {
             return new Date(date).valueOf();
@@ -8,7 +10,7 @@ define([], function () {
     }
 
     function currencySplitter(currency) {
-        return currency.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+        return currency.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
     }
 
     function currencyClass(currency) {
@@ -23,12 +25,13 @@ define([], function () {
             case '565eab3faeb95fa9c0f9df2f':
                 currencyName = 'uah';
                 break;
+            // skip default;
         }
         return currencyName;
     }
 
     function weekSplitter(date) {
-        return date.replace(/(\d{4})/, "$1/");
+        return date.replace(/(\d{4})/, '$1/');
     }
 
     function spaceReplacer(value) {

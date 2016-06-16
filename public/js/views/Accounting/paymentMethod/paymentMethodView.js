@@ -61,18 +61,18 @@ define([
             var tr = $(e.target).closest('tr');
             var id = tr.attr('data-id');
             var model = this.collection.get(id);
-            
+
             e.preventDefault();
-            
+
             if (model) {
-                new RditView({model: model});
+                return new RditView({model: model});
             }
         },
 
         createPaymentMethod: function (e) {
             e.preventDefault();
 
-            new CreateView();
+            return new CreateView();
         },
 
         render: function () {

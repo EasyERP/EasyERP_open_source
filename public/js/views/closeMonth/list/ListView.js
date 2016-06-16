@@ -41,7 +41,7 @@ define([
             this.render();
         },
 
-        generate: function (e) {
+        generate: function () {
             var keys = [];
 
             this.collection.toJSON().forEach(function (el) {
@@ -51,7 +51,7 @@ define([
                 keys.push(key.toString());
             });
 
-            new GenerateView({keys: keys, url: 'journalEntries/closeMonth'});
+            return new GenerateView({keys: keys, url: 'journalEntries/closeMonth'});
         },
 
         checked: function (e) {

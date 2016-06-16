@@ -6,7 +6,7 @@ define([
 
 ], function (Backbone, $, _, CreateTemplate) {
     'use strict';
-    
+
     var CreateView = Backbone.View.extend({
         el      : '#listTable',
         template: _.template(CreateTemplate),

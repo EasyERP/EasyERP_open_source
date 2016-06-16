@@ -2,11 +2,11 @@ define([
     'Backbone',
     'modules',
     'text!fixtures/index.html',
-    'collections/salesInvoice/filterCollection',
+    'collections/salesInvoices/filterCollection',
     'views/main/MainView',
-    'views/salesInvoice/list/ListView',
-    'views/salesInvoice/TopBarView',
-    'views/salesInvoice/EditView',
+    'views/salesInvoices/list/ListView',
+    'views/salesInvoices/TopBarView',
+    'views/salesInvoices/EditView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
@@ -915,7 +915,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/salesInvoice');
+                expect(window.location.hash).to.be.equals('#easyErp/salesInvoices');
             });
         });
 

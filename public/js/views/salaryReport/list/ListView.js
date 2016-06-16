@@ -77,7 +77,7 @@ define([
                 target.addClass('sortUp');
                 sortClass = 'sortUp';
             }
-            
+
             switch (sortClass) {
                 case 'sortDn':
                     target.parent().find('th').removeClass('sortDn').removeClass('sortUp');
@@ -89,6 +89,7 @@ define([
                     target.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
                     break;
+                // skip default;
             }
 
             this.collection.sortByOrder(dataSort, sortConst);

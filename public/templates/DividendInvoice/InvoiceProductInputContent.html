@@ -7,20 +7,11 @@
             <input type="text" class="statusInfo" maxlength="40" size="15">
         </span>
     </td>
-    <td data-name="price">
-        <span>
-            <input type="text" class="statusInfo" maxlength="9" size="7" value="0">
-        </span>
+    <%var currencyClassVal;%>
+    <%currencyClassVal = currencyClass(currency._id)%>
+    <td data-name="price" class="<%=currencyClassVal%>"><span><input type="text" class="statusInfo" maxlength="9" size="7" value="0.00"></span>
     </td>
-    <td class="taxes">
-        <span>
-
-        </span>
-    </td>
-    <td class="amount">
-        <span>
-
-        </span>
-    </td>
+    <td class="taxes <%=currencyClassVal%>"><span>0.00</span></td>
+    <td class="amount <%=currencyClassVal%>"><span>0.00</span></td>
 </tr>
 

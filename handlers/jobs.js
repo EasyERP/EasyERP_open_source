@@ -23,8 +23,11 @@ var Module = function (models, event) {
         var filtrElement = {};
         var key;
         var filterName;
+        var filterNameKeys = Object.keys(filter);
+        var i;
 
-        for (filterName in filter) {
+        for (i = filterNameKeys.length - 1; i >= 0; i--) {
+            filterName = filterNameKeys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -49,6 +52,7 @@ var Module = function (models, event) {
                     filtrElement[key] = {$in: condition.toNumber()};
                     resArray.push(filtrElement);
                     break;
+                // skip default;
             }
         }
 
@@ -105,6 +109,8 @@ var Module = function (models, event) {
         var page = parseInt(data.page, 10);
         var skip;
         var sortKey;
+        var key;
+        var i;
         var salesManagerMatch = {
             $and: [
                 {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
@@ -144,9 +150,10 @@ var Module = function (models, event) {
 
         if (data.sort) {
             sort = {};
-
-            for (sortKey in data.sort) {
-                sort[sortKey] = parseInt(data.sort[sortKey], 10);
+            sortKey = Object.keys(data.sort);
+            for (i = sortKey.length - 1; i >= 0; i--) {
+                key = sortKey[i];
+                sort[key] = parseInt(data.sort[key], 10);
             }
         }
 
@@ -216,9 +223,10 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    name    : 1,
-                    workflow: {$arrayElemAt: ['$workflow', 0]},
-
+                    name     : 1,
+                    employee : {$arrayElemAt: ['$employee', 0]},
+                    cost     : {$arrayElemAt: ['$journalEntries.cost', 0]},
+                    workflow : {$arrayElemAt: ['$workflow', 0]},
                     wTracksQa: {
                         $filter: {
                             input: '$wTracksDocs',
@@ -316,7 +324,7 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    order: {
+                    order        : {
                         $cond: {
                             if: {
                                 $eq: ['$type', 'Not Quoted']
@@ -335,17 +343,6 @@ var Module = function (models, event) {
                             }
                         }
                     },
-
-                    cost         : '$wTracks',
-                    costQA       : '$wTracksQa._id',
-                    costDesign   : '$wTracksDesign._id',
-                    costIOS      : '$wTracksIOS._id',
-                    costAndroid  : '$wTracksAndroid._id',
-                    costUnity    : '$wTracksUnity._id',
-                    costDotNet   : '$wTracksDotNet._id',
-                    costWeb      : '$wTracksWeb._id',
-                    costROR      : '$wTracksROR._id',
-                    costDev      : '$wTracksDev._id',
                     hoursQA      : {$sum: '$wTracksQa.worked'},
                     hoursDesign  : {$sum: '$wTracksDesign.worked'},
                     hoursIOS     : {$sum: '$wTracksIOS.worked'},
@@ -386,16 +383,6 @@ var Module = function (models, event) {
                     quotation   : 1,
                     invoice     : 1,
                     payment     : 1,
-                    cost        : 1,
-                    costQA      : 1,
-                    costDesign  : 1,
-                    costIOS     : 1,
-                    costAndroid : 1,
-                    costUnity   : 1,
-                    costDotNet  : 1,
-                    costWeb     : 1,
-                    costROR     : 1,
-                    costDev     : 1,
                     hoursQA     : 1,
                     hoursDesign : 1,
                     hoursIOS    : 1,
@@ -425,16 +412,6 @@ var Module = function (models, event) {
                     quotation   : 1,
                     invoice     : 1,
                     payment     : 1,
-                    cost        : 1,
-                    costQA      : 1,
-                    costDesign  : 1,
-                    costIOS     : 1,
-                    costAndroid : 1,
-                    costUnity   : 1,
-                    costDotNet  : 1,
-                    costWeb     : 1,
-                    costROR     : 1,
-                    costDev     : 1,
                     hoursQA     : 1,
                     hoursDesign : 1,
                     hoursIOS    : 1,
@@ -444,12 +421,48 @@ var Module = function (models, event) {
                     hoursWeb    : 1,
                     hoursROR    : 1,
                     hoursDev    : 1,
-                    salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
+                    salesManager: {$arrayElemAt: ['$salesmanager', 0]}
                 }
             }, {
                 $match: queryObject
             }, {
                 $match: queryObjectStage2
+            },{
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id                : '$root._id',
+                    order              : '$root.order',
+                    name               : '$root.name',
+                    'workflow._id'     : '$root.workflow._id',
+                    'workflow.name'    : '$root.workflow.name',
+                    'workflow.status'  : '$root.workflow.status',
+                    type               : '$root.type',
+                    'project._id'      : '$root.project._id',
+                    'project.name'     : '$root.project.name',
+                    budget             : '$root.budget',
+                    'quotation'        : '$root.quotation.paymentInfo.total',
+                    invoice            : '$root.invoice.paymentInfo.total',
+                    payment            : '$root.payment',
+                    hoursQA            : '$root.hoursQA',
+                    hoursDesign        : '$root.hoursDesign',
+                    hoursIOS           : '$root.hoursIOS',
+                    hoursAndroid       : '$root.hoursAndroid',
+                    hoursUnity         : '$root.hoursUnity',
+                    hoursDotNet        : '$root.hoursDotNet',
+                    hoursWeb           : '$root.hoursWeb',
+                    hoursROR           : '$root.hoursROR',
+                    hoursDev           : '$root.hoursDev',
+                    'salesManager._id' : '$root.salesManager._id',
+                    'salesManager.name': '$root.salesManager.name',
+                    total              : 1
+                }
             }, {
                 $sort: sort
             }, {
@@ -469,25 +482,116 @@ var Module = function (models, event) {
                     aggregateArr = [{
                         $match: {
                             'sourceDocument.model': 'wTrack',
-                            'sourceDocument._id'  : {$in: job.cost}
+                            'sourceDocument._id'  : job._id
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'sourceDocument.employee',
+                            foreignField: '_id',
+                            as          : 'employee'
+                        }
+                    }, {
+                        $project: {
+                            employee: {$arrayElemAt: ['$employee', 0]},
+                            debit   : 1
+                        }
+                    }, {
+                        $project: {
+                            department: '$employee.department',
+                            debit     : 1
                         }
                     }, {
                         $group: {
                             _id     : null,
                             elements: {
                                 $addToSet: {
-                                    _id           : '$_id',
-                                    sourceDocument: '$sourceDocument._id',
-                                    debit         : '$debit'
+                                    _id       : '$_id',
+                                    department: '$department',
+                                    debit     : '$debit'
+                                }
+                            }
+                        }
+                    }, {
+                        $project: {
+                            cost : '$elements',
+                            costQA: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId(CONSTANTS.QADEPARTMENT)]}
+                                }
+                            },
+                            costDesign: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId(CONSTANTS.DESDEPARTMENT)]}
+                                }
+                            },
+
+                            costIOS: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f00000f')]}
+                                }
+                            },
+                            costAndroid: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000010')]}
+                                }
+                            },
+                            costUnity: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('56e175c4d62294582e10ca68')]}
+                                }
+                            },
+                            costDotNet: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000012')]}
+                                }
+                            },
+                            costWeb: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {
+                                        $or: [{$eq: ['$$el.department', objectId('56802eb31afe27f547b7ba52')]},
+                                            {$eq: ['$$el.department', objectId('56802e9d1afe27f547b7ba51')]},
+                                            {$eq: ['$$el.department', objectId('56802ec21afe27f547b7ba53')]},
+                                            {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000016')]}]
+                                    }
+                                }
+                            },
+                            costDev: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {
+                                        $and: [{$ne: ['$$el.department', objectId(CONSTANTS.DESDEPARTMENT)]},
+                                            {$ne: ['$$el.department', objectId(CONSTANTS.QADEPARTMENT)]}]
+                                    }
+                                }
+                            },
+                            costROR: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('566ee11b8453e8b464b70b73')]}
                                 }
                             }
                         }
                     }, {
                         $project: {}
-                    }, {
-                        $project: {}
                     }];
-                    ArrayTasks.forEach(function (el) {
+                   /* ArrayTasks.forEach(function (el) {
                         aggregateArr[2].$project[el] = {
                             $filter: {
                                 input: '$elements',
@@ -496,10 +600,10 @@ var Module = function (models, event) {
                             }
 
                         };
-                    });
+                    });*/
                     ArrayTasks.forEach(function (el) {
                         var name = '$' + el + '.debit';
-                        aggregateArr[3].$project[el] = {$sum: name}
+                        aggregateArr[aggregateArr.length - 1].$project[el] = {$sum: name};
                     });
 
                     JournalEntryModel.aggregate(aggregateArr, function (err, result) {
@@ -511,10 +615,10 @@ var Module = function (models, event) {
                             job[el] = result[0] ? result[0][el] : 0;
                         });
 
-                        job.margin = job.quotation ? ((1 - job.cost / job.quotation.paymentInfo.total) * 100) : 0;
-                        job.devMargin = job.quotation ? ((1 - job.costDev / job.quotation.paymentInfo.total) * 100) : 0;
-                        job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation.paymentInfo.total - job.costQA - job.costDesign) / (100 * job.hoursDev)) : 0;
-                        job.profit = job.quotation ? ((job.quotation.paymentInfo.total - job.cost) / 100) : 0;
+                        job.margin = job.quotation ? ((1 - job.cost / job.quotation) * 100) : 0;
+                        job.devMargin = job.quotation ? ((1 - job.costDev / job.quotation) * 100) : 0;
+                        job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation - job.costQA - job.costDesign) / (100 * job.hoursDev)) : 0;
+                        job.profit = job.quotation ? ((job.quotation - job.cost) / 100) : 0;
 
                         cb();
                     });
@@ -522,6 +626,8 @@ var Module = function (models, event) {
                 }, function (err, result) {
                     var sortField = Object.keys(sort)[0];
                     var sortingFields = ['profit', 'margin', 'devMargin', 'avDevRate', 'cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR', 'costDev'];
+                    var count;
+                    var response = {};
 
                     if (err) {
                         return next(err);
@@ -545,7 +651,11 @@ var Module = function (models, event) {
                             return compareField(b, a);
                         });
                     }
-                    res.status(200).send(jobs);
+                    count = jobs[0] && jobs[0].total ? jobs[0].total : 0;
+
+                    response.total = count;
+                    response.data = jobs;
+                    res.status(200).send(response);
                 });
 
             });
@@ -597,7 +707,7 @@ var Module = function (models, event) {
                 }]
         };
 
-        var filter = data ? data.filter : {};
+        var filter = data ? JSON.parse(data.filter) : {};
 
         if (data && data.project) {
             filter.project = {};
@@ -785,17 +895,6 @@ var Module = function (models, event) {
                             }
                         }
                     },
-
-                    cost         : '$wTracks',
-                    costQA       : '$wTracksQa._id',
-                    costDesign   : '$wTracksDesign._id',
-                    costIOS      : '$wTracksIOS._id',
-                    costAndroid  : '$wTracksAndroid._id',
-                    costUnity    : '$wTracksUnity._id',
-                    costDotNet   : '$wTracksDotNet._id',
-                    costWeb      : '$wTracksWeb._id',
-                    costROR      : '$wTracksROR._id',
-                    costDev      : '$wTracksDev._id',
                     hoursQA      : {$sum: '$wTracksQa.worked'},
                     hoursDesign  : {$sum: '$wTracksDesign.worked'},
                     hoursIOS     : {$sum: '$wTracksIOS.worked'},
@@ -819,7 +918,6 @@ var Module = function (models, event) {
                             cond : salesManagerMatch
                         }
                     },
-
                     payment: {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
@@ -836,16 +934,6 @@ var Module = function (models, event) {
                     quotation   : 1,
                     invoice     : 1,
                     payment     : 1,
-                    cost        : 1,
-                    costQA      : 1,
-                    costDesign  : 1,
-                    costIOS     : 1,
-                    costAndroid : 1,
-                    costUnity   : 1,
-                    costDotNet  : 1,
-                    costWeb     : 1,
-                    costROR     : 1,
-                    costDev     : 1,
                     hoursQA     : 1,
                     hoursDesign : 1,
                     hoursIOS    : 1,
@@ -855,14 +943,14 @@ var Module = function (models, event) {
                     hoursROR    : 1,
                     hoursWeb    : 1,
                     hoursDev    : 1,
-                    salesmanager: {$arrayElemAt: ['$salesmanagers', 0]}
+                    salesManager: {$arrayElemAt: ['$salesmanagers', 0]}
                 }
             }, {
                 $lookup: {
                     from        : 'Employees',
-                    localField  : 'salesmanager.employeeId',
+                    localField  : 'salesManager.employeeId',
                     foreignField: '_id',
-                    as          : 'salesmanager'
+                    as          : 'salesManager'
                 }
             }, {
                 $project: {
@@ -875,16 +963,6 @@ var Module = function (models, event) {
                     quotation   : 1,
                     invoice     : 1,
                     payment     : 1,
-                    cost        : 1,
-                    costQA      : 1,
-                    costDesign  : 1,
-                    costIOS     : 1,
-                    costAndroid : 1,
-                    costUnity   : 1,
-                    costDotNet  : 1,
-                    costWeb     : 1,
-                    costROR     : 1,
-                    costDev     : 1,
                     hoursQA     : 1,
                     hoursDesign : 1,
                     hoursIOS    : 1,
@@ -894,7 +972,7 @@ var Module = function (models, event) {
                     hoursWeb    : 1,
                     hoursROR    : 1,
                     hoursDev    : 1,
-                    salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
+                    salesManager: {$arrayElemAt: ['$salesManager', 0]}
                 }
             }, {
                 $match: queryObject
@@ -913,16 +991,6 @@ var Module = function (models, event) {
                     quotation   : 1,
                     invoice     : 1,
                     payment     : 1,
-                    cost        : 1,
-                    costQA      : 1,
-                    costDesign  : 1,
-                    costIOS     : 1,
-                    costAndroid : 1,
-                    costUnity   : 1,
-                    costDotNet  : 1,
-                    costWeb     : 1,
-                    costROR     : 1,
-                    costDev     : 1,
                     hoursQA     : 1,
                     hoursDesign : 1,
                     hoursIOS    : 1,
@@ -932,7 +1000,7 @@ var Module = function (models, event) {
                     hoursWeb    : 1,
                     hoursROR    : 1,
                     hoursDev    : 1,
-                    salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                    salesManager: {$concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']}
                 }
             }], function (err, jobs) {
                 if (err) {
@@ -947,25 +1015,116 @@ var Module = function (models, event) {
                     aggregateArr = [{
                         $match: {
                             'sourceDocument.model': 'wTrack',
-                            'sourceDocument._id'  : {$in: job.cost}
+                            'sourceDocument._id'  : job._id
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'sourceDocument.employee',
+                            foreignField: '_id',
+                            as          : 'employee'
+                        }
+                    }, {
+                        $project: {
+                            employee: {$arrayElemAt: ['$employee', 0]},
+                            debit   : 1
+                        }
+                    }, {
+                        $project: {
+                            department: '$employee.department',
+                            debit     : 1
                         }
                     }, {
                         $group: {
                             _id     : null,
                             elements: {
                                 $addToSet: {
-                                    _id           : '$_id',
-                                    sourceDocument: '$sourceDocument._id',
-                                    debit         : '$debit'
+                                    _id       : '$_id',
+                                    department: '$department',
+                                    debit     : '$debit'
+                                }
+                            }
+                        }
+                    }, {
+                        $project: {
+                            cost : '$elements',
+                            costQA: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId(CONSTANTS.QADEPARTMENT)]}
+                                }
+                            },
+                            costDesign: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId(CONSTANTS.DESDEPARTMENT)]}
+                                }
+                            },
+
+                            costIOS: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f00000f')]}
+                                }
+                            },
+                            costAndroid: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000010')]}
+                                }
+                            },
+                            costUnity: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('56e175c4d62294582e10ca68')]}
+                                }
+                            },
+                            costDotNet: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000012')]}
+                                }
+                            },
+                            costWeb: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {
+                                        $or: [{$eq: ['$$el.department', objectId('56802eb31afe27f547b7ba52')]},
+                                            {$eq: ['$$el.department', objectId('56802e9d1afe27f547b7ba51')]},
+                                            {$eq: ['$$el.department', objectId('56802ec21afe27f547b7ba53')]},
+                                            {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000016')]}]
+                                    }
+                                }
+                            },
+                            costDev: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {
+                                        $and: [{$ne: ['$$el.department', objectId(CONSTANTS.DESDEPARTMENT)]},
+                                            {$ne: ['$$el.department', objectId(CONSTANTS.QADEPARTMENT)]}]
+                                    }
+                                }
+                            },
+                            costROR: {
+                                $filter: {
+                                    input: '$elements',
+                                    as   : 'el',
+                                    cond : {$eq: ['$$el.department', objectId('566ee11b8453e8b464b70b73')]}
                                 }
                             }
                         }
                     }, {
                         $project: {}
-                    }, {
-                        $project: {}
                     }];
-                    ArrayTasks.forEach(function (el) {
+                   /* ArrayTasks.forEach(function (el) {
                         aggregateArr[2].$project[el] = {
                             $filter: {
                                 input: '$elements',
@@ -974,10 +1133,10 @@ var Module = function (models, event) {
                             }
 
                         };
-                    });
+                    });*/
                     ArrayTasks.forEach(function (el) {
                         var name = '$' + el + '.debit';
-                        aggregateArr[3].$project[el] = {$sum: name};
+                        aggregateArr[aggregateArr.length - 1].$project[el] = {$sum: name};
                     });
                     JournalEntryModel.aggregate(aggregateArr, function (err, result) {
                         if (err) {
@@ -1003,7 +1162,7 @@ var Module = function (models, event) {
                         cb();
                     });
 
-                }, function (err, result) {
+                }, function (err) {
                     if (err) {
                         return next(err);
                     }

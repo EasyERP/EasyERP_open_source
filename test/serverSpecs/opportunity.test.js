@@ -40,7 +40,8 @@ describe('Opportunity Specs', function () {
 
         it('should create opportunity', function (done) {
             var body = {
-                name: 'Subject'
+                name: 'Subject',
+                workflow: '528cdf1cf3f67bc40b00000b'
             };
 
             aggent
@@ -186,7 +187,8 @@ describe('Opportunity Specs', function () {
                     expect(body.data)
                         .to.be.instanceOf(Array);
 
-                    first = body.data[1];
+                    first = body.data[3];
+                    console.log(first);
 
                     expect(first)
                         .and.to.have.property('_id')
@@ -209,8 +211,7 @@ describe('Opportunity Specs', function () {
                         .and.to.have.property('createdBy')
                         .and.to.have.property('date');
                     expect(first)
-                        .and.to.have.property('createdBy')
-                        .and.to.have.property('user');
+                        .and.to.have.property('createdBy');
                     expect(first)
                         .and.to.have.property('editedBy')
                         .and.to.have.property('date');
@@ -227,8 +228,6 @@ describe('Opportunity Specs', function () {
                         .to.have.property('creationDate');
                     expect(first)
                         .to.have.property('expectedRevenue');
-                    expect(first)
-                        .to.have.property('expectedRevenue');
 
                     if (first.salesPerson) {
                         expect(first)
@@ -237,6 +236,10 @@ describe('Opportunity Specs', function () {
                             .and.to.have.property('first')
                             .and.to.be.a('string');
                     }
+
+                    expect(Object.keys(first.editedBy).length).to.be.equal(2);
+                    expect(Object.keys(first.createdBy).length).to.be.gte(1);
+                    expect(Object.keys(first).length).to.be.lte(11);
 
                     done();
                 });
@@ -270,7 +273,7 @@ describe('Opportunity Specs', function () {
         it('should get opportunity for viewType kanban', function (done) {
 
             var query = {
-                workflowId: '528ce5e3f3f67bc40b000018',
+                workflowId: '528cdf1cf3f67bc40b00000b',
                 viewType  : 'kanban'
             };
 

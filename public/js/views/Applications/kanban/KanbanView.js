@@ -194,7 +194,7 @@
             model.fetch({
                 data   : {id: id, viewType: 'form'},
                 success: function (response) {
-                    new EditView({model: response});
+                    return new EditView({model: response});
                 },
 
                 error: function () {
@@ -249,11 +249,11 @@
         },
 
         editItem: function () {
-            new EditView({collection: this.collection});
+            return new EditView({collection: this.collection});
         },
 
         createItem: function () {
-            new CreateView();
+            return new CreateView();
         },
 
         updateSequence: function (item, workflow, sequence, workflowStart, sequenceStart) {
@@ -299,111 +299,111 @@
             }
         },
 
-       /* hideItemsNumber: function (e) {
-            var el = $(e.target);
+        /* hideItemsNumber: function (e) {
+         var el = $(e.target);
 
-            this.$el.find('.allNumberPerPage, .newSelectList').hide();
-            if (!el.closest('.search-view')) {
-                $('.search-content').removeClass('fa-caret-up');
-                this.$el.find('.search-options').addClass('hidden');
-            }
-        },*/
+         this.$el.find('.allNumberPerPage, .newSelectList').hide();
+         if (!el.closest('.search-view')) {
+         $('.search-content').removeClass('fa-caret-up');
+         this.$el.find('.search-options').addClass('hidden');
+         }
+         },*/
 
-       /* showFiltredPage: function (workflows, savedFilter) {
-            var listId;
-            var foldList;
-            var showList;
-            var el;
-            var self = this;
-            var chosen = this.$el.find('.chosen');
-            var checkedElements = $('.drop-down-filter input:checkbox:checked');
-            var condition = this.$el.find('.conditionAND > input')[0];
+        /* showFiltredPage: function (workflows, savedFilter) {
+         var listId;
+         var foldList;
+         var showList;
+         var el;
+         var self = this;
+         var chosen = this.$el.find('.chosen');
+         var checkedElements = $('.drop-down-filter input:checkbox:checked');
+         var condition = this.$el.find('.conditionAND > input')[0];
 
-            this.filter = {};
-            this.filter.condition = 'and';
+         this.filter = {};
+         this.filter.condition = 'and';
 
-            if (condition && !condition.checked) {
-                self.filter.condition = 'or';
-            }
+         if (condition && !condition.checked) {
+         self.filter.condition = 'or';
+         }
 
-            if (chosen.length) {
-                chosen.each(function (index, elem) {
-                    if (self.filter[elem.children[1].value]) {
-                        $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                            self.filter[elem.children[1].value].push(element.value);
-                        });
-                    } else {
-                        self.filter[elem.children[1].value] = [];
-                        $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                            self.filter[elem.children[1].value].push(element.value);
-                        });
-                    }
-                });
+         if (chosen.length) {
+         chosen.each(function (index, elem) {
+         if (self.filter[elem.children[1].value]) {
+         $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+         self.filter[elem.children[1].value].push(element.value);
+         });
+         } else {
+         self.filter[elem.children[1].value] = [];
+         $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+         self.filter[elem.children[1].value].push(element.value);
+         });
+         }
+         });
 
-                _.each(workflows, function (wfModel) {
-                    $('.column').children('.item').remove();
-                    dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
-                        workflowId: wfModel._id,
-                        viewType  : 'kanban',
-                        filter    : this.filter
-                    }, this.asyncRender, this);
-                }, this);
+         _.each(workflows, function (wfModel) {
+         $('.column').children('.item').remove();
+         dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
+         workflowId: wfModel._id,
+         viewType  : 'kanban',
+         filter    : this.filter
+         }, this.asyncRender, this);
+         }, this);
 
-                return false;
-            }
+         return false;
+         }
 
-            listId = _.pluck(workflows, '_id');
+         listId = _.pluck(workflows, '_id');
 
-            if (savedFilter) {
-                showList = savedFilter.workflow;
-            } else {
-                showList = checkedElements.map(function () {
-                    return this.value;
-                }).get();
-            }
+         if (savedFilter) {
+         showList = savedFilter.workflow;
+         } else {
+         showList = checkedElements.map(function () {
+         return this.value;
+         }).get();
+         }
 
-            foldList = _.difference(listId, showList);
+         foldList = _.difference(listId, showList);
 
-            if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || !chosen.length) {
-                self.filter = {};
+         if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || !chosen.length) {
+         self.filter = {};
 
-                _.each(workflows, function (wfModel) {
-                    $('.column').children('.item').remove();
-                    dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
-                        workflowId: wfModel._id,
-                        viewType  : 'kanban',
-                        filter    : this.filter
-                    }, this.asyncRender, this);
-                }, this);
+         _.each(workflows, function (wfModel) {
+         $('.column').children('.item').remove();
+         dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
+         workflowId: wfModel._id,
+         viewType  : 'kanban',
+         filter    : this.filter
+         }, this.asyncRender, this);
+         }, this);
 
-                showList = _.pluck(workflows, '_id');
-                foldList = [];
-            }
+         showList = _.pluck(workflows, '_id');
+         foldList = [];
+         }
 
-            foldList.forEach(function (id) {
-                var w;
-                var k;
+         foldList.forEach(function (id) {
+         var w;
+         var k;
 
-                el = $('td.column[data-id="' + id + '"]');
-                el.addClass('fold');
-                w = el.find('.columnName .text').width();
-                k = w / 2 - 20;
-                if (k <= 0) {
-                    k = 20 - w / 2;
-                }
-                k = -k;
-                el.find('.columnName .text').css({
-                    left: k + 'px',
-                    top : Math.abs(w / 2 + 47) + 'px'
-                });
-            });
+         el = $('td.column[data-id="' + id + '"]');
+         el.addClass('fold');
+         w = el.find('.columnName .text').width();
+         k = w / 2 - 20;
+         if (k <= 0) {
+         k = 20 - w / 2;
+         }
+         k = -k;
+         el.find('.columnName .text').css({
+         left: k + 'px',
+         top : Math.abs(w / 2 + 47) + 'px'
+         });
+         });
 
-            showList.forEach(function (id) {
-                el = $('td.column[data-id="' + id + '"]');
-                el.removeClass('fold');
-            });
+         showList.forEach(function (id) {
+         el = $('td.column[data-id="' + id + '"]');
+         el.removeClass('fold');
+         });
 
-        },*/
+         },*/
 
         render: function () {
             var self = this;
@@ -473,9 +473,9 @@
             $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
             $(document).on('keypress', '#cPerPage', this.isNumberKey);
             $thisEl.unbind();
-           /* $(document).on('click', function (e) {
-                self.hideItemsNumber(e);
-            });*/
+            /* $(document).on('click', function (e) {
+             self.hideItemsNumber(e);
+             });*/
 
             return this;
         }

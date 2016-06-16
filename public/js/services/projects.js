@@ -73,11 +73,12 @@ define([
             patch   : true,
             validate: false,
             success : function () {
-                self.showFilteredPage({}, self);
+                self.showFilteredPage(self.filter);
             }
         });
 
-        this.hide();
+        this.hide(e);
+
         return false;
     }
 
@@ -85,7 +86,7 @@ define([
         var $thisEl = this.$el;
 
         $thisEl.find('.health-wrapper ul').hide();
-        $thisEl.find('.newSelectList').hide();
+        $thisEl.find('.newSelectList').remove();
     }
 
     return {

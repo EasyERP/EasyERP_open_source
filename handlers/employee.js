@@ -60,8 +60,6 @@ var Employee = function (event, models) {
         };
     };
 
-    this.getNameAndDepartment = getNameAndDepartment;
-
     function getNameAndDepartment(db, query, callback) {
         var Model = models.get(db, 'Employees', EmployeeSchema);
         var matchQuery = {};
@@ -115,6 +113,8 @@ var Employee = function (event, models) {
             callback(null, employees);
         });
     }
+
+    this.getNameAndDepartment = getNameAndDepartment;
 
     this.getEmployeesCount = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -208,6 +208,186 @@ var Employee = function (event, models) {
             res.status(200).send(employees);
         });
 
+    };
+
+    this.getEmployeesForChart = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        Employee
+            .aggregate([{
+                $match: {isEmployee: true}
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ['$department', 0]},
+                    gender    : 1,
+                    name      : 1
+                }
+            }, {
+                $group: {
+                    _id           : '$department',
+                    employeesCount: {
+                        $sum: 1
+                    },
+                    maleCount     : {
+                        $sum: {
+                            $cond: {
+                                if  : {
+                                    $eq: ['$gender', 'male']
+                                },
+                                then: 1,
+                                else: 0
+                            }
+                        }
+                    },
+                    femaleCount   : {
+                        $sum: {
+                            $cond: {
+                                if  : {
+                                    $eq: ['$gender', 'female']
+                                },
+                                then: 1,
+                                else: 0
+                            }
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    _id           : '$_id.name',
+                    employeesCount: 1,
+                    maleCount     : 1,
+                    femaleCount   : 1
+                }
+            }], function (err, employees) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(employees);
+            });
+    };
+
+    this.byDepartmentForChart = function (req, res, next) {
+        var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+
+        Department.aggregate([{
+            $lookup: {
+                from        : 'Employees',
+                localField  : '_id',
+                foreignField: 'department',
+                as          : 'employees'
+            }
+        }, {
+            $unwind: '$employees'
+        }, {
+            $match: {
+                "employees.isEmployee": true
+            }
+        }, {
+            $project: {
+                employees       : {
+                    name: {$concat: ['$employees.name.first', ' ', '$employees.name.last']},
+                    _id : '$employees._id'
+                },
+                parentDepartment: 1,
+                _id             : 1,
+                name            : 1
+            }
+        }, {
+            $group: {
+                _id             : '$_id',
+                parentDepartment: {$push: '$parentDepartment'},
+                name            : {$push: '$name'},
+                employees       : {$push: '$employees'}
+            }
+        }, {
+            $project: {
+                employees       : 1,
+                parentDepartment: {$arrayElemAt: ['$parentDepartment', 0]},
+                _id             : 1,
+                name            : {$arrayElemAt: ['$name', 0]}
+            }
+        }, {
+            $group: {
+                _id        : '$parentDepartment',
+                departments: {
+                    $push: {_id: '$_id', name: '$name', employees: '$employees', parentDepartment: '$parentDepartment'}
+                }
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : '_id',
+                foreignField: '_id',
+                as          : 'parent'
+            }
+        }, {
+            $project: {
+                _id        : 1,
+                departments: 1,
+                selfData   : {$arrayElemAt: ['$parent', 0]}
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'selfData.parentDepartment',
+                foreignField: '_id',
+                as          : 'mainParent'
+            }
+        }, {
+            $project: {
+                _id        : 1,
+                departments: 1,
+                name       : '$selfData.name',
+                parent     : {$arrayElemAt: ['$mainParent', 0]}
+            }
+        }, {
+            $match: {_id: {$ne: null}}
+        }], function (err, result) {
+            var data = {};
+
+            if (err) {
+                return next(err);
+            }
+
+            result.forEach(function (item) {
+                if (item && item.departments) {
+                    item.departments.forEach(function (department) {
+                        var d = _.find(result, function (el) {
+                            return department._id && el._id ? department._id.toString() === el._id.toString() : null;
+                        });
+
+                        if (d && d.departments) {
+                            department.departments = d.departments;
+                            result.splice(result.indexOf(d), 1);
+                        }
+
+                        if (department.name === 'Web') {
+                            department.departments.push({
+                                name            : 'JS',
+                                employees       : department.employees,
+                                parentDepartment: department._id
+                            });
+
+                            department.employees = null;
+                        }
+                    });
+                }
+            });
+
+            data._id = null;
+            data.name = 'Departments';
+            data.children = result;
+
+            res.status(200).send(data);
+        });
     };
 
     this.byDepartment = function (req, res, next) {
@@ -336,7 +516,7 @@ var Employee = function (event, models) {
                     res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
                     if (result.isEmployee) {
-                        event.emit('recalculate', req, res, next);
+                        event.emit('recalculate', req, {}, next);
                     }
 
                     event.emit('dropHoursCashes', req);
@@ -353,8 +533,11 @@ var Employee = function (event, models) {
         var filtrElement = {};
         var key;
         var filterName;
+        var keys = Object.keys(filter);
+        var i;
 
-        for (filterName in filter) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            filterName = keys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -379,6 +562,7 @@ var Employee = function (event, models) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                // skip default
             }
         }
 
@@ -583,7 +767,7 @@ var Employee = function (event, models) {
                                 total      : 1
                             };
                             break;
-
+                        // skip default;
                     }
                     break;
                 case ('Applications'):
@@ -662,8 +846,10 @@ var Employee = function (event, models) {
                                 total             : 1
                             };
                             break;
+                        // skip default;
                     }
                     break;
+                // skip default;
             }
 
             Model.aggregate([{
@@ -1085,6 +1271,7 @@ var Employee = function (event, models) {
             case 'list':
                 getFilter(req, res, next);
                 break;
+            // skip default;
         }
     };
 
@@ -1505,7 +1692,7 @@ var Employee = function (event, models) {
 
             result.data = birth.currentEmployees;
 
-            if (res) {
+            if (res && res.status) {
                 res.status(200).send(result);
             }
         });
@@ -1530,6 +1717,7 @@ var Employee = function (event, models) {
                     result.data = employees;
                     res.status(200).send(result);
                     break;
+                // skip default;
             }
         });
     };

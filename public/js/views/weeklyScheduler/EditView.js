@@ -2,13 +2,8 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'text!templates/weeklyScheduler/EditTemplate.html',
-    'models/WeeklySchedulerModel',
-    'common',
-    'populate',
-    'dataService',
-    'constants'
-], function ($, _, Backbone, CreateTemplate, WeeklySchedulerModel, common, populate, dataService, CONSTANTS) {
+    'text!templates/weeklyScheduler/EditTemplate.html'
+], function ($, _, Backbone, CreateTemplate) {
 
     var EditView = Backbone.View.extend({
         el         : '#content-holder',
@@ -33,10 +28,11 @@ define([
             var totalHours = 0;
             var $currentEl = this.$el;
             var hours;
+            var i;
 
             e.preventDefault();
 
-            for (var i = 7; i > 0; i--) {
+            for (i = 7; i > 0; i--) {
                 hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val(), 10);
                 totalHours += isNaN(hours) ? 0 : hours;
             }
@@ -55,6 +51,7 @@ define([
                 name      : name,
                 totalHours: totalHours
             };
+            var i;
 
             if (!name) {
                 return App.render({
@@ -63,7 +60,7 @@ define([
                 });
             }
 
-            for (var i = 7; i > 0; i--) {
+            for (i = 7; i > 0; i--) {
                 hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val(), 10);
                 hours = isNaN(hours) ? 0 : hours;
 
@@ -87,6 +84,7 @@ define([
                 headers: {
                     mid: 103
                 },
+
                 wait   : true,
                 success: function () {
                     self.hideDialog();

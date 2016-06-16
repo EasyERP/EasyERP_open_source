@@ -3,6 +3,7 @@ var expect = require('chai').expect;
 var CONSTANTS = require('../../constants/constantsTest');
 var url = 'http://localhost:8089/';
 var aggent;
+var db = 'production';
 
 describe('Quotation Specs', function () {
     'use strict';
@@ -17,7 +18,7 @@ describe('Quotation Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : db
                 })
                 .expect(200, done);
         });
@@ -82,7 +83,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .post('quotation')
+                .post('quotations')
                 .set('type', 'sales')
                 .send(body)
                 .expect(201)
@@ -120,12 +121,12 @@ describe('Quotation Specs', function () {
                 page       : 1,
                 count      : 4,
                 viewType   : 'list',
-                contentType: 'salesQuotation',
+                contentType: 'salesQuotations',
                 forSales   : true
             };
 
             aggent
-                .get('quotation')
+                .get('quotations')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -150,11 +151,12 @@ describe('Quotation Specs', function () {
                     expect(first)
                         .and.to.have.property('project');
                     expect(first.project)
-                        .and.to.have.property('name');
+                        .to.have.property('name');
                     expect(first)
-                        .and.to.have.property('currency');
+                        .to.have.property('currency');
                     expect(first)
-                        .and.to.have.property('paymentInfo');
+                        .to.have.property('paymentInfo')
+                        .and.to.have.property('total');
                     expect(first)
                         .and.to.have.property('orderDate');
                     expect(first)
@@ -164,22 +166,28 @@ describe('Quotation Specs', function () {
                         .and.to.have.property('workflow')
                         .and.to.have.property('name')
                         .and.to.be.a('string');
-                    expect(first)
-                        .and.to.have.property('workflow')
-                        .and.to.have.property('status')
+                    expect(first.workflow)
+                        .to.have.property('status')
                         .and.to.be.a('string');
                     expect(first)
-                        .and.to.have.property('supplier');
-                    expect(first.supplier)
+                        .to.have.property('supplier')
                         .and.to.have.property('name')
                         .and.to.have.property('first')
                         .and.to.be.a('string');
-                    expect(first)
-                        .and.to.have.property('salesManager');
-                    expect(first.salesManager)
-                        .and.to.have.property('name')
-                        .and.to.have.property('first')
-                        .and.to.be.a('string');
+                    if (first.salesManager) {
+                        expect(first)
+                            .to.have.property('salesManager')
+                            .and.to.have.property('name')
+                            .and.to.have.property('first')
+                            .and.to.be.a('string');
+                        expect(Object.keys(first.salesManager).length).to.be.equal(1);
+                    }
+
+                    expect(Object.keys(first).length).to.be.lte(11);
+                    expect(Object.keys(first.workflow).length).to.be.equal(3);
+                    expect(Object.keys(first.paymentInfo).length).to.be.equal(1);
+                    expect(Object.keys(first.currency).length).to.be.equal(2);
+                    expect(Object.keys(first.project).length).to.be.equal(2);
 
                     done();
                 });
@@ -188,7 +196,7 @@ describe('Quotation Specs', function () {
         it('should get quotations filterValues', function (done) {
 
             aggent
-                .get('quotation/getFilterValues')
+                .get('quotations/getFilterValues')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -215,7 +223,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .get('quotation/')
+                .get('quotations/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -266,7 +274,7 @@ describe('Quotation Specs', function () {
         it('should fail get quotation by id', function (done) {
 
             aggent
-                .get('quotation')
+                .get('quotations')
                 .query({id: '111', viewType: 'form'})
                 .expect(400, done);
         });
@@ -321,7 +329,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .put('quotation/' + id)
+                .put('quotations/' + id)
                 .send(body)
                 .set('type', 'sales')
                 .expect(200)
@@ -346,7 +354,7 @@ describe('Quotation Specs', function () {
             var body = {};
 
             aggent
-                .put('quotation/123cba')
+                .put('quotations/123cba')
                 .set('type', 'sales')
                 .send(body)
                 .expect(500, done);
@@ -360,9 +368,9 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .patch('quotation/' + id)
+                .patch('quotations/' + id)
                 .send(body)
-                .set('type', 'salesOrder')
+                .set('type', 'salesOrders')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -384,22 +392,22 @@ describe('Quotation Specs', function () {
             var body = {};
 
             aggent
-                .patch('quotation/123cba')
-                .set('type', 'salesOrder')
+                .patch('quotations/123cba')
+                .set('type', 'salesOrders')
                 .send(body)
                 .expect(500, done);
         });
 
         it('should delete quotation', function (done) {
             aggent
-                .delete('quotation/' + id)
+                .delete('quotations/' + id)
                 .set('type', 'sales')
                 .expect(200, done);
         });
 
         it('should fail delete quotation', function (done) {
             aggent
-                .delete('quotation/123cba')
+                .delete('quotations/123cba')
                 .set('type', 'sales')
                 .expect(500, done);
         });
@@ -416,7 +424,7 @@ describe('Quotation Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId :  db
                 })
                 .expect(200, done);
         });
@@ -480,7 +488,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .post('quotation')
+                .post('quotations')
                 .set('type', 'sales')
                 .send(body)
                 .expect(403, done);
@@ -495,7 +503,7 @@ describe('Quotation Specs', function () {
             };
 
             aggent
-                .get('quotation')
+                .get('quotations')
                 .query(query)
                 .expect(404, done);
         });

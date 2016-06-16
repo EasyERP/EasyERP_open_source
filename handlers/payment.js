@@ -132,6 +132,7 @@ var Module = function (models, event) {
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
+                // skip default;
             }
         }
 
@@ -368,6 +369,7 @@ var Module = function (models, event) {
                     workflow            : 1,
                     date                : 1,
                     'paymentMethod.name': '$paymentMethod.name',
+                    'paymentMethod._id' : '$paymentMethod._id',
                     isExpense           : 1,
                     bonus               : 1,
                     paymentRef          : 1,
@@ -545,7 +547,8 @@ var Module = function (models, event) {
 
         query
             .populate('supplier', '_id name fullName')
-            .populate('paymentMethod', '_id name');
+            .populate('paymentMethod', '_id name')
+            .populate('currency', '_id name');
 
         query.exec(function (err, payment) {
             if (err) {
@@ -620,6 +623,7 @@ var Module = function (models, event) {
             case 'form':
                 getById(req, res, next);
                 break;
+            // skip default;
         }
     };
 
@@ -1012,10 +1016,18 @@ var Module = function (models, event) {
                     as          : 'salesmanagers'
                 }
             }, {
+                $lookup: {
+                    from        : 'currency',
+                    localField  : 'currency._id',
+                    foreignField: '_id',
+                    as          : 'currency._id'
+                }
+            }, {
                 $project: {
                     assigned        : {$arrayElemAt: ['$salesmanagers', 0]},
                     supplier        : 1,
-                    currency        : 1,
+                    'currencyModel' : {$arrayElemAt: ['$currency._id', 0]},
+                    'currency.rate' : 1,
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
                     forSale         : 1,
@@ -1030,9 +1042,10 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    'supplier.name' : '$sullpier.name',
-                    'supplier._id'  : '$sullpier._id',
-                    currency        : 1,
+                    supplier        : 1,
+                    'currency.rate' : 1,
+                    'currency._id'  : '$currencyModel._id',
+                    'currency.name' : '$currencyModel.name',
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
                     'assigned.name' : '$assigned.name',
@@ -1225,10 +1238,15 @@ var Module = function (models, event) {
 
             request.query.wId = wId;
 
-            totalToPay = parseFloat(totalToPay).toFixed(2);
+           /* totalToPay = parseFloat(totalToPay).toFixed(2);
             paid = parseFloat(paid).toFixed(2);
 
-            isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);
+            isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);*/
+
+            totalToPay = parseInt(totalToPay, 10);
+            paid = parseInt(paid, 10);
+
+            isNotFullPaid = paid < totalToPay;
 
             if (isNotFullPaid) {
                 request.query.status = 'In Progress';
@@ -1316,7 +1334,7 @@ var Module = function (models, event) {
             var paid = payment.paidAmount || 0;
             var wTrackIds = _.pluck(invoice.products, 'product');
 
-            function updateWtrack(id, cb) {
+            function updateWTrack(id, cb) {
                 var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
                 function wTrackFinder(innerWaterfallCb) {
@@ -1373,7 +1391,7 @@ var Module = function (models, event) {
                 return waterfallCallback(null, payment);
             }
 
-            async.eachSeries(wTrackIds, updateWtrack, function (err, result) {
+            async.eachSeries(wTrackIds, updateWTrack, function (err, result) {
                 if (err) {
                     return waterfallCallback(err);
                 }
@@ -1595,7 +1613,7 @@ var Module = function (models, event) {
 
                                             request.query.wId = wId;
 
-                                            isNotFullPaid = paymentInfo.total > (parseInt(paymentInfo.balance, 10) + parseInt(paid, 10));
+                                            isNotFullPaid = paymentInfo.total > parseInt(paymentInfo.balance + paid, 10);
 
                                             if (isNotFullPaid) {
                                                 request.query.status = 'In Progress';
@@ -1624,7 +1642,7 @@ var Module = function (models, event) {
                                                 paymentInfoNew.unTaxed = paymentInfoNew.total;
 
                                                 if (paymentInfo.total !== parseInt(paymentInfo.balance, 10)) {
-                                                    paymentInfoNew.balance = parseInt(paymentInfo.balance, 10) + parseInt(paid, 10);
+                                                    paymentInfoNew.balance = parseInt(paymentInfo.balance + paid, 10);
                                                 } else {
                                                     paymentInfoNew.balance = parseInt(paymentInfo.balance, 10);
                                                 }
@@ -1803,7 +1821,7 @@ var Module = function (models, event) {
 
                                         request.query.wId = wId;
 
-                                        isNotFullPaid = paymentInfo.total > (parseInt(paymentInfo.balance, 10) + parseInt(paid, 10));
+                                        isNotFullPaid = paymentInfo.total > parseInt(paymentInfo.balance + paid, 10);
 
                                         if (isNotFullPaid) {
                                             request.query.status = 'In Progress';
@@ -1832,7 +1850,7 @@ var Module = function (models, event) {
                                             paymentInfoNew.unTaxed = paymentInfoNew.total;
 
                                             if (paymentInfo.total !== parseInt(paymentInfo.balance, 10)) {
-                                                paymentInfoNew.balance = parseInt(paymentInfo.balance, 10) +  parseInt(paid, 10);
+                                                paymentInfoNew.balance = parseInt(paymentInfo.balance + paid, 10);
                                             } else {
                                                 paymentInfoNew.balance = parseInt(paymentInfo.balance, 10);
                                             }

@@ -1,5 +1,5 @@
 define([
-    'collections/Order/filterCollection',
+    'collections/Orders/filterCollection',
     'chai'
 ], function (OrderCollection, chai) {
     'use strict';
@@ -653,8 +653,8 @@ define([
             }
         ];
 
-        it ('Try to create collection with contentType="salesOrder"', function(done){
-            var orderUrl = new RegExp('/quotation/list', 'i');
+        it ('Try to create collection with contentType="salesOrders"', function(done){
+            var orderUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
             orderCollection = new OrderCollection({
@@ -672,8 +672,8 @@ define([
             expect(orderCollection.toJSON().length).to.be.equals(2);
         });
 
-        it ('Try to create collection with contentType="salesOrder"', function(done){
-            var orderUrl = new RegExp('/quotation/list', 'i');
+        it ('Try to create collection with contentType="salesOrders"', function(done){
+            var orderUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
             orderCollection = new OrderCollection({
@@ -691,12 +691,12 @@ define([
         });
 
         it ('Try to create collection with error response', function(done){
-            var orderUrl = new RegExp('/quotation/list', 'i');
+            var orderUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', orderUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
             orderCollection = new OrderCollection({
                 viewType: 'list',
-                contentType: 'salesOrder',
+                contentType: 'salesOrders',
                 success: function(){
                     done();
                 },
@@ -711,7 +711,7 @@ define([
 
         it ('Try showMore collection with error response', function(){
             var spyResponse;
-            var orderUrl = new RegExp('/quotation/list', 'i');
+            var orderUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', orderUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
             orderCollection.showMore();
@@ -723,7 +723,7 @@ define([
         });
 
         it ('Try showMore collection', function(){
-            var orderUrl = new RegExp('/quotation/list', 'i');
+            var orderUrl = new RegExp('/quotations/list', 'i');
 
             server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
             orderCollection.showMore();

@@ -21,6 +21,26 @@ define([
             _.bindAll(this, 'saveItem', 'render');
             this.model = new ApplicationModel();
             this.responseObj = {};
+
+            this.responseObj['#genderDd'] = [
+                {
+                    _id : 'male',
+                    name: 'male'
+                }, {
+                    _id : 'female',
+                    name: 'female'
+                }
+            ];
+            this.responseObj['#maritalDd'] = [
+                {
+                    _id : 'married',
+                    name: 'married'
+                }, {
+                    _id : 'unmarried',
+                    name: 'unmarried'
+                }
+            ];
+            
             this.render();
         },
 
@@ -55,11 +75,11 @@ define([
                 last : $.trim($thisEl.find('#last').val())
             };
 
-            var gender = $thisEl.find('#genderDd').attr('data-id') || null;
+            var gender = $thisEl.find('#genderDd').attr('data-id');
 
             var jobType = $thisEl.find('#jobTypeDd').attr('data-id') || null;
 
-            var marital = $thisEl.find('#maritalDd').attr('data-id') || null;
+            var marital = $thisEl.find('#maritalDd').attr('data-id');
 
             var workAddress = {
                 street : $.trim($thisEl.find('#street').val()),
@@ -152,7 +172,7 @@ define([
             });
 
             groups = {
-                owner: $thisEl.find('#allUsersSelect').attr('data-id'),
+                owner: $thisEl.find('#allUsersSelect').attr('data-id') || null,
                 users: usersId,
                 group: groupsId
             };
@@ -239,14 +259,14 @@ define([
             $thisEl = this.$el;
 
             this.attachView = new AttachView({
-                model   : new ApplicationModel(),
+                model      : new ApplicationModel(),
                 contentType: self.contentType,
-                isCreate: true
+                isCreate   : true
             });
 
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(this.attachView.render().el);
-            
+
             this.renderAssignees(this.currentModel);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this, true, function (data) {
                 var i;

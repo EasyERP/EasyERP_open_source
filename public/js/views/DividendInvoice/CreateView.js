@@ -8,12 +8,13 @@ define([
     'populate',
     'views/DividendInvoice/InvoiceProductItems',
     'views/Payment/list/ListHeaderInvoice',
-    'constants'
-], function ($, _, Backbone, CreateTemplate, ParentView, InvoiceModel, populate, InvoiceItemView, ListHeaderInvoice, CONSTANTS) {
+    'constants',
+    'helpers'
+], function ($, _, Backbone, CreateTemplate, ParentView, InvoiceModel, populate, InvoiceItemView, ListHeaderInvoice, CONSTANTS, helpers) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(CreateTemplate),
 
         initialize: function () {
@@ -22,6 +23,24 @@ define([
             this.responseObj = {};
 
             this.render();
+        },
+
+        chooseOption: function (e) {
+            var holder = $(e.target).parents('dd').find('.current-selected');
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+            var array = this.$el.find('.' + oldCurrencyClass);
+
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
+
+            holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).closest('td').removeClass('errorContent');
         },
 
         saveItem: function () {
@@ -48,9 +67,9 @@ define([
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
 
-            var total = 100 * parseFloat($currentEl.find('#totalAmount').text());
-            var unTaxed = 100 * parseFloat($currentEl.find('#totalUntaxes').text());
-            var balance = 100 * parseFloat($currentEl.find('#balance').text());
+            var total = 100 * parseFloat(($currentEl.find('#totalAmount').text()).replace(/\s/g, ''));
+            var unTaxed = 100 * parseFloat(($currentEl.find('#totalUntaxes').text()).replace(/\s/g, ''));
+            var balance = 100 * parseFloat(($currentEl.find('#balance').text()).replace(/\s/g, ''));
             var i;
             var payments = {
                 total  : total,
@@ -74,8 +93,8 @@ define([
                     if (productId) {
                         price = 100 * parseFloat(targetEl.find('[data-name="price"] input').val());
                         description = targetEl.find('[data-name="productDescr"] input').val();
-                        taxes = targetEl.find('.taxes').text();
-                        amount = 100 * targetEl.find('.amount').text();
+                        taxes = 100 * parseFloat((targetEl.find('.taxes').text()).replace(/\s/g, ''));
+                        amount = 100 * parseFloat((targetEl.find('.amount').text()).replace(/\s/g, ''));
 
                         if (!price) {
                             return App.render({
@@ -117,7 +136,7 @@ define([
                 paymentInfo: payments,
                 currency   : currency,
                 groups     : {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: $('#allUsersSelect').data('id') || null,
                     users: usersId,
                     group: groupsId
                 },

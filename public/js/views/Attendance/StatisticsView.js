@@ -1,6 +1,3 @@
-/**
- * Created by German on 02.07.2015.
- */
 define([
     'Backbone',
     'jQuery',

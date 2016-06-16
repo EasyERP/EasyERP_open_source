@@ -21,7 +21,7 @@ module.exports = (function () {
         collection: 'jobs',
         schema    : 'jobs',
         aliases   : {
-            salesmanager: 'salesmanager',
+            salesManager: 'salesManager',
             project     : 'project',
             name        : 'name',
             workflow    : 'workflow',

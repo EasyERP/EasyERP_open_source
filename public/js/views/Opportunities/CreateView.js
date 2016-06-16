@@ -121,7 +121,7 @@ define([
                     address        : address,
                     whoCanRW       : whoCanRW,
                     groups         : {
-                        owner: this.$el.find('#allUsersSelect').data('id'),
+                        owner: this.$el.find('#allUsersSelect').data('id') || null,
                         users: usersId,
                         group: groupsId
                     }
@@ -175,7 +175,7 @@ define([
             notDiv = this.$el.find('.attach-container');
 
             this.attachView = new AttachView({
-                model    : model,
+                model      : model,
                 contentType: self.contentType,
                 isCreate   : true
             });

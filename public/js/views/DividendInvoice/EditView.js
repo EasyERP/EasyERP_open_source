@@ -5,9 +5,9 @@ define([
     'text!templates/DividendInvoice/EditTemplate.html',
     'views/dialogViewBase',
     'views/DividendInvoice/InvoiceProductItems',
-    'views/salesInvoice/wTrack/wTrackRows',
+    'views/salesInvoices/wTrack/wTrackRows',
     'views/DividendPayments/CreateView',
-    'views/salesInvoice/EmailView',
+    'views/salesInvoices/EmailView',
     'views/Payment/list/ListHeaderInvoice',
     'populate',
     'constants',
@@ -28,7 +28,7 @@ define([
     'use strict';
 
     var EditView = ParentView.extend({
-        contentType: 'Invoice',
+        contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {
@@ -54,7 +54,7 @@ define([
             this.filter = options.filter;
 
             this.currentModel = options.model || options.collection.getElement();
-            this.currentModel.urlRoot = '/Invoice';
+            this.currentModel.urlRoot = '/invoices';
             this.responseObj = {};
 
             this.redirect = options.redirect;
@@ -95,7 +95,7 @@ define([
         cancelInvoice: function (e) {
             var wId;
             var self = this;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
             e.preventDefault();
 
@@ -146,7 +146,7 @@ define([
                 wId = 'Purchase Invoice';
             }
 
-            redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+            redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
             populate.fetchWorkflow({
                 wId: wId
@@ -192,12 +192,16 @@ define([
             if (answer) {
                 this.currentModel.destroy({
                     success: function () {
+
                         $('.edit-dialog').remove();
 
                         self.hideDialog();
 
                         if (self.eventChannel) {
                             self.eventChannel.trigger('invoiceRemove');
+                        } else {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         }
                     },
 

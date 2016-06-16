@@ -23,29 +23,31 @@ define([
     };
 
     var runApplication = function (success) {
+        var url;
+
         if (!Backbone.History.started) {
             Backbone.history.start({silent: true});
         }
         if (success) {
-            var url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
-            if ((url === "") || (url === "login")) {
+            url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
+            if ((url === '') || (url === 'login')) {
                 url = 'easyErp';
             }
 
-            Backbone.history.fragment = "";
+            Backbone.history.fragment = '';
             Backbone.history.navigate(url, {trigger: true});
             getFiltersValues();
         } else {
             if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;
             }
-            Backbone.history.fragment = "";
-            Backbone.history.navigate("login", {trigger: true});
+            Backbone.history.fragment = '';
+            Backbone.history.navigate('login', {trigger: true});
         }
     };
 
     var changeContentViewType = function (event, contentType, collection) {
-        event.preventDefault();
+
         var windowLocation = window.location.hash;
         var windowLocHash = windowLocation.split('/')[3];
         var browserFilter = windowLocation.split('/filter=')[1];
@@ -54,6 +56,9 @@ define([
         var url;
         var filter;
         var kanbanFilter = browserFilter ? JSON.parse(decodeURIComponent(browserFilter)) : null;
+        var model;
+
+        event.preventDefault();
 
         if (contentType) {
             this.contentType = contentType;
@@ -64,20 +69,20 @@ define([
         }
 
         viewType = $(event.target).attr('data-view-type');
-        url = "#easyErp/" + this.contentType + "/" + viewType + (browserFilter ? '/filter=' + browserFilter : '');
+        url = '#easyErp/' + this.contentType + '/' + viewType + (browserFilter ? '/filter=' + browserFilter : '');
 
         if (id) {
-            if (viewType !== "list" && (viewType !== "thumbnails")) {
-                url += "/" + id;
+            if (viewType !== 'list' && (viewType !== 'thumbnails')) {
+                url += '/' + id;
             }
             if (collection) {
                 collection.setElement(id);
             }
         } else {
 
-            if (viewType === "form" && collection) {
-                var model = collection.getElement();
-                url += "/" + model.attributes._id;
+            if (viewType === 'form' && collection) {
+                model = collection.getElement();
+                url += '/' + model.attributes._id;
             }
         }
 
@@ -107,6 +112,7 @@ define([
         var viewType;
         var savedFilter;
         var viewVariants;
+        var j;
 
         if (option && (option.contentType !== App.contentType)) {
             App.ownContentType = false;
@@ -127,14 +133,14 @@ define([
                     case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:
-                    case CONTENT_TYPES.QUOTATION:
-                    case CONTENT_TYPES.ORDER:
-                    case CONTENT_TYPES.INVOICE:
+                    case CONTENT_TYPES.QUOTATIONS:
+                    case CONTENT_TYPES.ORDERS:
+                    case CONTENT_TYPES.INVOICES:
                     case CONTENT_TYPES.SUPPLIERPAYMENTS:
                     case CONTENT_TYPES.CUSTOMERPAYMENTS:
-                    case CONTENT_TYPES.SALESQUOTATION:
-                    case CONTENT_TYPES.SALESORDER:
-                    case CONTENT_TYPES.SALESINVOICE:
+                    case CONTENT_TYPES.SALESQUOTATIONS:
+                    case CONTENT_TYPES.SALESORDERS:
+                    case CONTENT_TYPES.SALESINVOICES:
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:
@@ -163,14 +169,14 @@ define([
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
                     case CONTENT_TYPES.OPPORTUNITIES:
-                        App.currentViewType = "kanban";
+                        App.currentViewType = 'kanban';
                         break;
                     default:
-                        App.currentViewType = "thumbnails";
+                        App.currentViewType = 'thumbnails';
                         break;
                 }
             } else {
-                App.currentViewType = "thumbnails";
+                App.currentViewType = 'thumbnails';
             }
             return App.currentViewType;
         } else {
@@ -189,14 +195,14 @@ define([
                     case CONTENT_TYPES.BIRTHDAYS:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:
-                    case CONTENT_TYPES.QUOTATION:
-                    case CONTENT_TYPES.ORDER:
-                    case CONTENT_TYPES.INVOICE:
+                    case CONTENT_TYPES.QUOTATIONS:
+                    case CONTENT_TYPES.ORDERS:
+                    case CONTENT_TYPES.INVOICES:
                     case CONTENT_TYPES.SUPPLIERPAYMENTS:
                     case CONTENT_TYPES.CUSTOMERPAYMENTS:
-                    case CONTENT_TYPES.SALESQUOTATION:
-                    case CONTENT_TYPES.SALESORDER:
-                    case CONTENT_TYPES.SALESINVOICE:
+                    case CONTENT_TYPES.SALESQUOTATIONS:
+                    case CONTENT_TYPES.SALESORDERS:
+                    case CONTENT_TYPES.SALESINVOICES:
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:
@@ -225,29 +231,29 @@ define([
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
                     case CONTENT_TYPES.OPPORTUNITIES:
-                        App.currentViewType = "kanban";
+                        App.currentViewType = 'kanban';
                         break;
                     default:
-                        App.currentViewType = "thumbnails";
+                        App.currentViewType = 'thumbnails';
                         break;
                 }
             }
         }
 
-        viewVariants = ["kanban", "list", "form", "thumbnails"];
+        viewVariants = ['kanban', 'list', 'form', 'thumbnails'];
 
         if ($.inArray(App.currentViewType, viewVariants) === -1) {
-            App.currentViewType = "thumbnails";
-            viewType = "thumbnails";
+            App.currentViewType = 'thumbnails';
+            viewType = 'thumbnails';
         } else {
             viewType = App.currentViewType;
         }
 
-        //for default filter && defaultViewType
+        // for default filter && defaultViewType
         if (option && option.contentType && App.filtersObject.savedFilters[option.contentType]) {
             savedFilter = App.filtersObject.savedFilters[option.contentType];
 
-            for (var j = savedFilter.length - 1; j >= 0; j--) {
+            for (j = savedFilter.length - 1; j >= 0; j--) {
                 if (savedFilter[j]) {
                     if (savedFilter[j].byDefault === option.contentType) {
 
@@ -263,12 +269,12 @@ define([
     };
 
     var setCurrentVT = function (viewType) {
-        var viewVariants = ["kanban", "list", "form", "thumbnails"];
+        var viewVariants = ['kanban', 'list', 'form', 'thumbnails'];
 
-        if (viewVariants.indexOf(viewType) != -1) {
+        if (viewVariants.indexOf(viewType) !== -1) {
             App.currentViewType = viewType;
         } else {
-            viewType = "thumbnails";
+            viewType = 'thumbnails';
             App.currentViewType = viewType;
         }
 
@@ -276,13 +282,17 @@ define([
     };
 
     var getCurrentCL = function () {
-        if (App.currentContentLength == null) {
+        var testLength;
+        var contentLength;
+
+        if (App.currentContentLength === null) {
             App.currentContentLength = 0;
             return App.currentContentLength;
         }
 
-        var testLength = new RegExp(/^[0-9]{1}[0-9]*$/), contentLength;
-        if (testLength.test(App.currentContentLength) == false) {
+        testLength = new RegExp(/^[0-9]{1}[0-9]*$/);
+
+        if (!testLength.test(App.currentContentLength)) {
             App.currentContentLength = 0;
             contentLength = 0;
         } else {
@@ -294,7 +304,7 @@ define([
     var setCurrentCL = function (length) {
         var testLength = new RegExp(/^[0-9]{1}[0-9]*$/);
 
-        if (testLength.test(length) == false) {
+        if (!testLength.test(length)) {
             length = 0;
         }
         App.currentContentLength = length;
@@ -303,13 +313,13 @@ define([
     };
 
     function applyDefaultSettings(chartControl) {
-        chartControl.setImagePath("/crm_backbone_repo/images/");
+        chartControl.setImagePath('/crm_backbone_repo/images/');
         chartControl.setEditable(false);
         chartControl.showTreePanel(false);
         chartControl.showContextMenu(false);
         chartControl.showDescTask(true, 'd,s-f');
         chartControl.showDescProject(true, 'n,d');
-    };
+    }
 
     function cacheToApp(key, data, notSaveInLocalStorage) {
         App.cashedData = App.cashedData || {};
@@ -334,28 +344,11 @@ define([
         return App.storage.remove(key);
     }
 
-    //ToDo refactor It
+    // ToDo refactor It
     var savedFilters = function (contentType, uIFilter) {
         var savedFilter;
-        var length;
-        var filtersForContent;
-        var key;
-        var filter;
-        var beName;
-        var beNamesNaw;
-        var filterWithName;
 
-        //if (App && App.filtersObject.savedFilters && App.filtersObject.savedFilters[contentType]) {
-        //    filtersForContent = App.filtersObject.savedFilters[contentType];
-        //    length = filtersForContent.length;
-        //    filter = filtersForContent[length - 1];
-        //    filterWithName =  filter['filter'];
-        //    var key = Object.keys(filterWithName)[0];
-        //
-        //    savedFilter = filter[key];
-        //} else {
         savedFilter = uIFilter;
-        // }
 
         return savedFilter;
     };
@@ -374,9 +367,9 @@ define([
                 length = App.filtersObject.savedFilters[contentType].length;
                 savedFilters = App.filtersObject.savedFilters[contentType];
                 for (var i = length - 1; i >= 0; i--) {
-                    if (savedFilters[i]['_id'] === id) {
-                        keys = Object.keys(savedFilters[i]['filter']);
-                        App.filtersObject.filter = savedFilters[i]['filter'][keys[0]];
+                    if (savedFilters[i]._id === id) {
+                        keys = Object.keys(savedFilters[i].filter);
+                        App.filtersObject.filter = savedFilters[i].filter[keys[0]];
                         return App.filtersObject.filter;
                     }
                 }
@@ -393,10 +386,10 @@ define([
         var savedFiltersArray = App.currentUser.savedFilters;
 
         for (var i = length - 1; i >= 0; i--) {
-            if (savedFiltersArray[i]['contentView'] === contentType) {
+            if (savedFiltersArray[i].contentView === contentType) {
                 filterObj = {};
-                filterObj._id = savedFiltersArray[i]['_id'];
-                filterObj.value = savedFiltersArray[i]['filter'][0];
+                filterObj._id = savedFiltersArray[i]._id;
+                filterObj.value = savedFiltersArray[i].filter[0];
                 filtersForContent.push(filterObj);
             }
         }
@@ -407,7 +400,7 @@ define([
 
     var getFiltersValues = function (options) {
         var locationHash = window.location.hash;
-        var filter = locationHash.split('/filter=')[1];//For startDate & endDate in EmployeeFinder for filters in dashVac
+        var filter = locationHash.split('/filter=')[1]; // For startDate & endDate in EmployeeFinder for filters in dashVac
 
         filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
 
@@ -437,6 +430,7 @@ define([
         var daysCount;
         var curWeek;
         var direction = -1;
+        var i;
 
         function iterator(i, diff) {
             curWeek = endWeek - isoWeeksInYear + i * direction;
@@ -453,8 +447,8 @@ define([
             result.push({week: curWeek, daysCount: daysCount});
         }
 
-        year = parseInt(year);
-        month = parseInt(month);
+        year = parseInt(year, 10);
+        month = parseInt(month, 10);
 
         isoWeeksInYear = 0;
         startDate = moment([year, month - 1]);
@@ -471,11 +465,11 @@ define([
             diff += startWeek;
             endWeek = startWeek;
 
-            for (var i = 0; i <= diff; i++) {
+            for (i = 0; i <= diff; i++) {
                 iterator(i, diff);
             }
         } else {
-            for (var i = diff; i >= 0; i--) {
+            for (i = diff; i >= 0; i--) {
                 iterator(i, diff);
             }
         }

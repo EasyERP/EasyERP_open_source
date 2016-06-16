@@ -2,7 +2,7 @@
 <% var ArrayDepartments = ['QA', 'Design', 'IOS', 'Android', 'Unity', 'DotNet', 'Web', 'ROR','Dev']; %>
 <tr data-id="<%=job._id%>" class="<%=getClass(job)%>">
     <td><%=startNumber + count + 1%></a></td>
-    <td><%=job.project && job.salesmanager ? job.salesmanager.name.first + ' ' + job.salesmanager.name.last : "---"%></td>
+    <td><%=job.project && job.salesManager ? job.salesManager.name.first + ' ' + job.salesManager.name.last : "---"%></td>
     <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
         job.project.name : "---"%></a></td>
     <td><a data-id="<%=job._id%>" class="jobs"><%=job.name%></a></td>
@@ -19,8 +19,8 @@
     <td><%=job.devMargin ? job.devMargin.toFixed(2) : "0"%></td>
     <td><%=job.avDevRate ? job.avDevRate.toFixed(2) : "0"%></td>
     <td class="money"><%=currencySplitter(job.profit ? job.profit.toFixed(2) : "")%></td>
-    <td class="money"><%=currencySplitter(job.quotation ? (job.quotation.paymentInfo.total / 100).toFixed(2) : "")%></td>
-    <td class="money"><%=currencySplitter(job.invoice ? (job.invoice.paymentInfo.total / 100).toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.quotation ? (job.quotation/ 100).toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.invoice ? (job.invoice / 100).toFixed(2) : "")%></td>
     <td class="money"><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
     <td><%=job.payment ? job.payment.count : ""%></td>
 </tr>

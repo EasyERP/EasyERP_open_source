@@ -10,7 +10,7 @@
         defaults   : {
             name: ''
         },
-        
+
         urlRoot: function () {
             return CONSTANTS.URLS.COMPANIES;
         }

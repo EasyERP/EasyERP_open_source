@@ -1,10 +1,9 @@
-/**
- * Created by Roman on 12.06.2015.
- */
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/rowEditor.html',
-    "populate"
-], function (rowHtml, populate) {
+    'populate'
+], function (Backbone, _, rowHtml, populate) {
     var View = Backbone.View.extend({
 
         template: _.template(rowHtml),
@@ -18,14 +17,6 @@ define([
             var prev = option.prev;
             var next = option.next;
             var context = option.context;
-
-            /* var isSelect = !!option.isSelect;
-             var optionsArray = option.optionsArray;
-
-             el.html(this.template({
-             isSelect: isSelect,
-             optionsArray: optionsArray
-             }));*/
 
             populate.showSelect(el, prev, next, context);
 

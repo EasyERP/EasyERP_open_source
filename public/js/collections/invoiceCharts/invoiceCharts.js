@@ -1,24 +1,45 @@
 ﻿define([
     'Backbone',
-    'moment',
-    'constants'
-], function (Backbone, moment, CONSTANTS) {
+    'moment'
+], function (Backbone, moment) {
     "use strict";
-
     var Model = Backbone.Model.extend({
         idAttribute: '_id',
 
         parse: function (response) {
             var _Model = Backbone.Model.extend({
-                idAttribute: 'salesPerson'
+                idAttribute: 'salesPerson',
+
+                parse: function (_response) {
+                    if (!_response.salesPerson) {
+                        _response.salesPerson = 'empty';
+                    }
+
+                    return _response;
+                }
+            });
+            var _SupplierModel = Backbone.Model.extend({
+                idAttribute: 'supplier',
+
+                parse: function (_response) {
+                    if (!_response.supplier) {
+                        _response.supplier = 'empty';
+                    }
+
+                    return _response;
+                }
             });
             var Collection = Backbone.Collection.extend({
                 model: _Model
+            });
+            var _SupplierCollection = Backbone.Collection.extend({
+                model: _SupplierModel
             });
             var collection = this.collection || {};
             var sales;
             var paid;
             var revenue;
+            var suppliers;
             var year = response.date.toString().substr(0, 4);
             var monthOrWeek = response.date.toString().substr(4);
 
@@ -40,12 +61,14 @@
             response.revenue /= 100;
 
             sales = response.sales || [];
+            suppliers = response.suppliers || [];
             paid = response.paidBySales || [];
             revenue = response.revenueBySales || [];
 
-            response.sales = new Collection(sales);
-            response.paidBySales = new Collection(paid);
+            response.sales = new Collection(sales, {parse: true});
+            response.paidBySales = new Collection(paid, {parse: true});
             response.revenueBySales = new Collection(revenue);
+            response.suppliers = new _SupplierCollection(suppliers);
 
             return response;
         }
@@ -53,7 +76,7 @@
     var Colection = Backbone.Collection.extend({
         model: Model,
 
-        url: CONSTANTS.URLS.REVENUE_SYNTHETIC,
+        url: 'revenue/synthetic',
 
         initialize: function (options) {
             options = options || {};
@@ -68,6 +91,7 @@
 
         parse: function (response) {
             this.sales = response.sales;
+            this.suppliers = response.suppliers;
 
             return response.payments;
         }

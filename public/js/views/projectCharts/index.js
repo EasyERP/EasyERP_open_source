@@ -3,8 +3,9 @@ define([
     'jQuery',
     'Underscore',
     'd3',
-    'text!templates/projectCharts/index.html'
-], function (Backbone, $, _, d3, mainTemplate) {
+    'text!templates/projectCharts/index.html',
+    'helpers'
+], function (Backbone, $, _, d3, mainTemplate, helpers) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -40,12 +41,14 @@ define([
             $('#chart').empty();
             data = [
                 {
-                    field: 'cost',
-                    value: data.cost
-                },
-                {
                     field: 'revenue',
                     value: data.revenue
+                }, {
+                    field: 'cost',
+                    value: data.cost
+                }, {
+                    field: (data.revenue - data.cost) < 0 ? 'lost' : 'profit',
+                    value: Math.abs(data.revenue - data.cost)
                 }
             ];
 
@@ -70,7 +73,7 @@ define([
             topChart.selectAll('.bar')
                 .data(data)
                 .enter().append('rect')
-                .attr('class', 'bar')
+            // .attr('class', 'bar')
                 .attr('x', function (d) {
                     return margin.left;
                 })
@@ -80,6 +83,9 @@ define([
                 .attr('height', BAR_WIDTH)
                 .attr('width', function (d) {
                     return x(d.value / 100);
+                })
+                .attr('fill', function (d) {
+                    return d.field === 'cost' ? '#8E44AD' : d.field === 'lost' ? 'red' : d.field === 'profit' ? 'green' : '#26a7dd';
                 });
 
             topChart
@@ -88,17 +94,24 @@ define([
                 .enter()
                 .append('svg:text')
                 .attr('x', function (d) {
-                    return x(d.value / 100) / 2 + margin.left - BAR_WIDTH / 2;
+                    var barWidth = x(d.value / 100);
+
+                    return barWidth < 40 ? barWidth + margin.left + 40 : barWidth / 2 + margin.left;
                 })
                 .attr('y', function (d) {
                     return y(d.field);
                 })
                 .attr('dx', 0)
                 .attr('dy', '1.5em')
+                .attr('text-anchor', 'middle')
                 .text(function (data) {
-                    return (data.value / 100).toFixed(0);
+                    return helpers.currencySplitter((data.value / 100).toFixed(0));
                 })
-                .attr('fill', 'white');
+                .attr('fill', function (d) {
+                    var barWidth = x(d.value / 100);
+
+                    return barWidth < 40 ? 'black' : 'white';
+                });
         },
 
         render: function () {

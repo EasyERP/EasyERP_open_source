@@ -1,6 +1,7 @@
 define([
     'text!fixtures/index.html',
     'models/EmployeesModel',
+    'modules',
     'collections/Employees/filterCollection',
     'views/main/MainView',
     'views/Employees/list/ListView',
@@ -17,7 +18,7 @@ define([
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, EmployeeModel, EmployeeCollection, MainView, ListView,/* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, EmployeeModel, modules, EmployeeCollection, MainView, ListView, /* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
@@ -25,702 +26,208 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [
-        {
-            "_id"        : 19,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Sales",
-            "parrent"    : null,
-            "sequence"   : 1,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Sales"
-        }, {
-            "_id"        : 36,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Project",
-            "parrent"    : null,
-            "sequence"   : 2,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Project"
-        }, {
-            "_id"        : 9,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "HR",
-            "parrent"    : null,
-            "sequence"   : 3,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "HR"
-        }, {
-            "_id"        : 49,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Persons",
-            "parrent"    : 19,
-            "sequence"   : 7,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Persons"
-        }, {
-            "_id"        : 50,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Companies",
-            "parrent"    : 19,
-            "sequence"   : 8,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Companies"
-        }, {
-            "_id"        : 24,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Leads",
-            "parrent"    : 19,
-            "sequence"   : 9,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Leads"
-        }, {
-            "_id"        : 25,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Opportunities",
-            "parrent"    : 19,
-            "sequence"   : 10,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Opportunities"
-        }, {
-            "_id"        : 39,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Projects",
-            "parrent"    : 36,
-            "sequence"   : 23,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Projects"
-        }, {
-            "_id"        : 40,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Tasks",
-            "parrent"    : 36,
-            "sequence"   : 24,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Tasks"
-        }, {
-            "_id"        : 29,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 19,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Dashboard"
-        }, {
-            "_id"        : 42,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Employees",
-            "parrent"    : 9,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Employees"
-        }, {
-            "_id"        : 43,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Applications",
-            "parrent"    : 9,
-            "sequence"   : 30,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Applications"
-        }, {
-            "_id"        : 14,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Job Positions",
-            "parrent"    : 9,
-            "sequence"   : 32,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "JobPositions"
-        }, {
-            "_id"        : 15,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Groups",
-            "parrent"    : 1,
-            "sequence"   : 33,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Departments"
-        }, {
-            "_id"        : 7,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Users",
-            "parrent"    : 1,
-            "sequence"   : 42,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Users"
-        }, {
-            "_id"        : 44,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Workflows",
-            "parrent"    : 1,
-            "sequence"   : 44,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Workflows"
-        }, {
-            "_id"        : 51,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Profiles",
-            "parrent"    : 1,
-            "sequence"   : 51,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Profiles"
-        }, {
-            "_id"        : 52,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Birthdays",
-            "parrent"    : 9,
-            "sequence"   : 52,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Birthdays"
-        }, {
-            "_id"        : 53,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 36,
-            "sequence"   : 53,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "projectDashboard"
-        }, {
-            "_id"      : 54,
-            "mname"    : "Purchases",
-            "sequence" : 54,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Purchases"
-        }, {
-            "_id"      : 80,
-            "mname"    : "Jobs Dashboard",
-            "sequence" : 54,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "jobsDashboard"
-        }, {
-            "_id"      : 55,
-            "mname"    : "Quotation",
-            "sequence" : 55,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Quotation"
-        }, {
-            "_id"      : 57,
-            "mname"    : "Order",
-            "sequence" : 56,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Order"
-        }, {
-            "_id"      : 56,
-            "mname"    : "Invoice",
-            "sequence" : 57,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Invoice"
-        }, {
-            "_id"      : 58,
-            "mname"    : "Product",
-            "sequence" : 58,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Product"
-        }, {
-            "_id"      : 59,
-            "mname"    : "Accounting",
-            "sequence" : 59,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Accounting"
-        }, {
-            "_id"      : 60,
-            "mname"    : "Supplier Payments",
-            "sequence" : 60,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "supplierPayments"
-        }, {
-            "_id"      : 61,
-            "mname"    : "Customer Payments",
-            "sequence" : 61,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "customerPayments"
-        }, {
-            "_id"      : 62,
-            "mname"    : "Quotation",
-            "sequence" : 62,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesQuotation"
-        }, {
-            "_id"      : 63,
-            "mname"    : "Order",
-            "sequence" : 63,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesOrder"
-        }, {
-            "_id"      : 64,
-            "mname"    : "Invoice",
-            "sequence" : 64,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesInvoice"
-        }, {
-            "_id"      : 68,
-            "mname"    : "MonthHours",
-            "sequence" : 68,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "monthHours"
-        }, {
-            "_id"      : 69,
-            "mname"    : "Holidays",
-            "sequence" : 69,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Holiday"
-        }, {
-            "_id"      : 77,
-            "mname"    : "Capacity",
-            "sequence" : 69,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Capacity"
-        }, {
-            "_id"      : 88,
-            "mname"    : "Salary Report",
-            "sequence" : 69,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salaryReport"
-        }, {
-            "_id"      : 70,
-            "mname"    : "Vacation",
-            "sequence" : 70,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Vacation"
-        }, {
-            "_id"      : 71,
-            "mname"    : "Attendance",
-            "sequence" : 71,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Attendance"
-        }, {
-            "_id"      : 76,
-            "mname"    : "Efficiency",
-            "sequence" : 72,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Efficiency"
-        }, {
-            "_id"      : 72,
-            "mname"    : "BonusType",
-            "sequence" : 73,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "bonusType"
-        }, {
-            "_id"      : 74,
-            "mname"    : "HrDashboard",
-            "sequence" : 74,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "HrDashboard"
-        }, {
-            "_id"      : 66,
-            "mname"    : "Payroll Expenses",
-            "sequence" : 77,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollExpenses"
-        }, {
-            "_id"      : 78,
-            "mname"    : "Payroll",
-            "sequence" : 78,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Payroll"
-        }, {
-            "_id"      : 79,
-            "mname"    : "Payroll Payments",
-            "sequence" : 79,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollPayments"
-        }, {
-            "_id"      : 82,
-            "mname"    : "Invoice Aging",
-            "sequence" : 82,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceAging"
-        }, {
-            "_id"      : 83,
-            "mname"    : "ChartOfAccount",
-            "sequence" : 83,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "ChartOfAccount"
-        }, {
-            "_id"      : 85,
-            "mname"    : "Journal",
-            "sequence" : 85,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journal"
-        }, {
-            "_id"      : 86,
-            "mname"    : "Journal Entry",
-            "sequence" : 86,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journalEntry"
-        }, {
-            "_id"      : 87,
-            "mname"    : "Invoice Charts",
-            "sequence" : 87,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceCharts"
-        }, {
-            "_id"        : 1,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Settings",
-            "parrent"    : null,
-            "sequence"   : 1000,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Settings"
-        }, {
-            "_id"      : 75,
-            "mname"    : "tCard",
-            "sequence" : 1000,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "wTrack"
-        }, {
-            "_id"      : 84,
-            "mname"    : "Categories",
-            "sequence" : 1000,
-            "parrent"  : 1,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "productSettings"
-        }, {
-            "_id"      : 73,
-            "mname"    : "DashBoardVacation",
-            "sequence" : 1001,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "DashBoardVacation"
-        }];
     var fakeEmployeeForList = {
-        count : 5,
-        data: [
+        total: 300,
+        data : [
             {
-                _id: "560264bb8dc408c632000005",
-                total: 18,
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
+                _id        : "560264bb8dc408c632000005",
+                total      : 18,
+                manager    : {
+                    _id : "55b92ad221e4b7c40f00004f",
                     name: {
-                        last: "Sokhanych",
+                        last : "Sokhanych",
                         first: "Alex"
                     }
                 },
                 jobPosition: {
-                    _id: "55b92acf21e4b7c40f00002e",
+                    _id : "55b92acf21e4b7c40f00002e",
                     name: "Account Manager"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000014",
+                department : {
+                    _id : "55b92ace21e4b7c40f000014",
                     name: "BusinessDev"
                 },
-                createdBy: {
+                createdBy  : {
                     user: "AndrianaLemko",
                     date: "2015-09-23T08:37:15.986Z"
                 },
-                editedBy: {
+                editedBy   : {
                     user: "AnnaLobas",
                     date: "2016-04-18T12:27:57.499Z"
                 },
-                name: {
-                    last: "Lyakh",
+                name       : {
+                    last : "Lyakh",
                     first: "Anastas"
                 },
-                dateBirth: "1991-06-30T00:00:00.000Z",
-                skype: "anastas4321",
-                workEmail: "anastas.lyakh@thinkmobiles.com",
-                workPhones: {
-                    phone: "",
+                dateBirth  : "1991-06-30T00:00:00.000Z",
+                skype      : "anastas4321",
+                workEmail  : "anastas.lyakh@thinkmobiles.com",
+                workPhones : {
+                    phone : "",
                     mobile: "+380506730125"
                 },
-                jobType: "fullTime",
-                isEmployee: true
+                jobType    : "fullTime",
+                isEmployee : true
             },
             {
-                _id: "56029cc950de7f4138000005",
-                total: 18,
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
+                _id        : "56029cc950de7f4138000005",
+                total      : 18,
+                manager    : {
+                    _id : "55b92ad221e4b7c40f00004f",
                     name: {
-                        last: "Sokhanych",
+                        last : "Sokhanych",
                         first: "Alex"
                     }
                 },
                 jobPosition: {
-                    _id: "55b92acf21e4b7c40f00002e",
+                    _id : "55b92acf21e4b7c40f00002e",
                     name: "Account Manager"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000014",
+                department : {
+                    _id : "55b92ace21e4b7c40f000014",
                     name: "BusinessDev"
                 },
-                createdBy: {
+                createdBy  : {
                     user: "AndrianaLemko",
                     date: "2015-09-23T12:36:25.361Z"
                 },
-                editedBy: {
+                editedBy   : {
                     user: "AnnaLobas",
                     date: "2016-04-18T12:27:13.523Z"
                 },
-                name: {
-                    last: "Lendyel",
+                name       : {
+                    last : "Lendyel",
                     first: "Eugen"
                 },
-                dateBirth: "1994-03-06T00:00:00.000Z",
-                skype: "zhenyalendel",
-                workEmail: "eugen.lendyel@thinkmobiles.com",
-                workPhones: {
-                    phone: "",
+                dateBirth  : "1994-03-06T00:00:00.000Z",
+                skype      : "zhenyalendel",
+                workEmail  : "eugen.lendyel@thinkmobiles.com",
+                workPhones : {
+                    phone : "",
                     mobile: "+380950870448"
                 },
-                jobType: "fullTime",
-                isEmployee: true
+                jobType    : "fullTime",
+                isEmployee : true
             },
             {
-                _id: "5602a01550de7f4138000008",
-                total: 18,
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
+                _id        : "5602a01550de7f4138000008",
+                total      : 18,
+                manager    : {
+                    _id : "55b92ad221e4b7c40f00004f",
                     name: {
-                        last: "Sokhanych",
+                        last : "Sokhanych",
                         first: "Alex"
                     }
                 },
                 jobPosition: {
-                    _id: "55b92acf21e4b7c40f00002e",
+                    _id : "55b92acf21e4b7c40f00002e",
                     name: "Account Manager"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000014",
+                department : {
+                    _id : "55b92ace21e4b7c40f000014",
                     name: "BusinessDev"
                 },
-                createdBy: {
+                createdBy  : {
                     user: "AndrianaLemko",
                     date: "2015-09-23T12:50:29.159Z"
                 },
-                editedBy: {
+                editedBy   : {
                     user: "AnnaLobas",
                     date: "2016-04-18T12:26:27.887Z"
                 },
-                name: {
-                    last: "Dufynets",
+                name       : {
+                    last : "Dufynets",
                     first: "Yana"
                 },
-                dateBirth: "1991-04-24T00:00:00.000Z",
-                skype: "janedoe2404",
-                workEmail: "yana.dufynets@thinkmobiles.com",
-                workPhones: {
-                    phone: "",
+                dateBirth  : "1991-04-24T00:00:00.000Z",
+                skype      : "janedoe2404",
+                workEmail  : "yana.dufynets@thinkmobiles.com",
+                workPhones : {
+                    phone : "",
                     mobile: "+380990771049"
                 },
-                jobType: "Full-time",
-                isEmployee: true
+                jobType    : "Full-time",
+                isEmployee : true
             },
             {
-                _id: "561ba8639ebb48212ea838c4",
-                total: 18,
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
+                _id        : "561ba8639ebb48212ea838c4",
+                total      : 18,
+                manager    : {
+                    _id : "55b92ad221e4b7c40f00004f",
                     name: {
-                        last: "Sokhanych",
+                        last : "Sokhanych",
                         first: "Alex"
                     }
                 },
                 jobPosition: {
-                    _id: "55b92acf21e4b7c40f00001f",
+                    _id : "55b92acf21e4b7c40f00001f",
                     name: "Sales"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000014",
+                department : {
+                    _id : "55b92ace21e4b7c40f000014",
                     name: "BusinessDev"
                 },
-                createdBy: {
+                createdBy  : {
                     user: "MariaZasukhina",
                     date: "2015-10-12T12:32:35.919Z"
                 },
-                editedBy: {
+                editedBy   : {
                     user: "AnnaLobas",
                     date: "2016-04-18T12:23:53.601Z"
                 },
-                name: {
-                    last: "Yartysh",
+                name       : {
+                    last : "Yartysh",
                     first: "Nataliya"
                 },
-                dateBirth: "1992-10-05T00:00:00.000Z",
-                skype: "natalia_yartush",
-                workEmail: "natalia.yartysh@thinkmobiles.com",
-                workPhones: {
-                    phone: "",
+                dateBirth  : "1992-10-05T00:00:00.000Z",
+                skype      : "natalia_yartush",
+                workEmail  : "natalia.yartysh@thinkmobiles.com",
+                workPhones : {
+                    phone : "",
                     mobile: "+380974628318"
                 },
-                jobType: "fullTime",
-                isEmployee: true
+                jobType    : "fullTime",
+                isEmployee : true
             },
             {
-                _id: "56e0408e4f9ff8e0737d7c52",
-                total: 18,
-                manager: {
-                    _id: "55b92ad221e4b7c40f00005f",
+                _id        : "56e0408e4f9ff8e0737d7c52",
+                total      : 18,
+                manager    : {
+                    _id : "55b92ad221e4b7c40f00005f",
                     name: {
-                        last: "Voloshchuk",
+                        last : "Voloshchuk",
                         first: "Peter"
                     }
                 },
                 jobPosition: {
-                    _id: "55b92acf21e4b7c40f00002e",
+                    _id : "55b92acf21e4b7c40f00002e",
                     name: "Account Manager"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000014",
+                department : {
+                    _id : "55b92ace21e4b7c40f000014",
                     name: "BusinessDev"
                 },
-                createdBy: {
+                createdBy  : {
                     user: "AndrianaLemko",
                     date: "2016-03-09T15:26:06.265Z"
                 },
-                editedBy: {
+                editedBy   : {
                     user: "MariaZasukhina",
                     date: "2016-03-10T14:22:11.459Z"
                 },
-                name: {
-                    last: "Pylyp",
+                name       : {
+                    last : "Pylyp",
                     first: "Oksana"
                 },
-                dateBirth: "1990-11-18T00:00:00.000Z",
-                skype: "oksanapylyp",
-                workEmail: "oksana.pylyp@thinkmobiles.com",
-                workPhones: {
-                    phone: "",
+                dateBirth  : "1990-11-18T00:00:00.000Z",
+                skype      : "oksanapylyp",
+                workEmail  : "oksana.pylyp@thinkmobiles.com",
+                workPhones : {
+                    phone : "",
                     mobile: "+380665149801"
                 },
-                jobType: "Full-time",
-                isEmployee: true
+                jobType    : "Full-time",
+                isEmployee : true
             }
         ]
     };
@@ -1221,541 +728,541 @@ define([
     };
     var fakeEmployeeForThumb = {
         total: 200,
-        data: [{
-            _id: "5638aa635d23a8eb04e80af0",
-            total: 1,
+        data : [{
+            _id        : "5638aa635d23a8eb04e80af0",
+            total      : 1,
             jobPosition: {
-                _id: "55b92acf21e4b7c40f000021",
+                _id : "55b92acf21e4b7c40f000021",
                 name: "Junior Android"
             },
-            manager: {
-                _id: "55b92ad221e4b7c40f00004e",
+            manager    : {
+                _id : "55b92ad221e4b7c40f00004e",
                 name: {
-                    last: "Shuba",
+                    last : "Shuba",
                     first: "Vitaliy"
                 }
             },
-            age: 29,
-            workPhones: {
+            age        : 29,
+            workPhones : {
                 mobile: "+380506966056"
             },
-            name: {
-                last: "Siladii",
+            name       : {
+                last : "Siladii",
                 first: "Alex"
             },
-            department: {
-                _id: "55b92ace21e4b7c40f000010",
+            department : {
+                _id : "55b92ace21e4b7c40f000010",
                 name: "Android"
             },
-            dateBirth: "1987-06-03T00:00:00.000Z",
-            isEmployee: true
+            dateBirth  : "1987-06-03T00:00:00.000Z",
+            isEmployee : true
         },
             {
-                _id: "55b92ad221e4b7c40f00004e",
-                total: 1,
+                _id        : "55b92ad221e4b7c40f00004e",
+                total      : 1,
                 jobPosition: {
-                    _id: "564438aa70bbc2b740ce8a19",
+                    _id : "564438aa70bbc2b740ce8a19",
                     name: "Head of Android"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
+                manager    : {
+                    _id : "55b92ad221e4b7c40f00004f",
                     name: {
-                        last: "Sokhanych",
+                        last : "Sokhanych",
                         first: "Alex"
                     }
                 },
-                age: 21,
+                age        : 21,
                 relatedUser: {
                     login: "Vitaliy.Shuba"
                 },
-                workPhones: {
+                workPhones : {
                     mobile: "+380950366064"
                 },
-                name: {
-                    last: "Shuba",
+                name       : {
+                    last : "Shuba",
                     first: "Vitaliy"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department : {
+                    _id : "55b92ace21e4b7c40f000010",
                     name: "Android"
                 },
-                dateBirth: "1994-06-16T21:00:00.000Z",
-                isEmployee: true
+                dateBirth  : "1994-06-16T21:00:00.000Z",
+                isEmployee : true
             }
         ]
     };
     var fakeEmpWithId = {
-        _id: "55b92ad221e4b7c40f00004e",
-        dateBirth: "1994-06-16T21:00:00.000Z",
-        ID: 54,
-        isLead: 1,
-        fire: [ ],
-        hire: [
+        _id           : "55b92ad221e4b7c40f00004e",
+        dateBirth     : "1994-06-16T21:00:00.000Z",
+        ID            : 54,
+        isLead        : 1,
+        fire          : [],
+        hire          : [
             "2013-05-24T21:00:00.000Z"
         ],
-        sequence: 0,
-        jobType: "Full-time",
-        gender: "male",
-        marital: "unmarried",
-        attachments: [ ],
-        creationDate: "2015-07-29T19:34:42.437Z",
-        color: "#4d5a75",
-        otherInfo: "",
-        whoCanRW: "everyOne",
-        workflow: null,
-        active: false,
-        referredBy: "",
-        source: "",
-        age: 21,
-        otherId: "",
-        bankAccountNo: "",
-        nationality: "Ukrainian",
-        coach: null,
-        manager: {
-            _id: "55b92ad221e4b7c40f00004f",
-            name: {
-                last: "Sokhanych",
+        sequence      : 0,
+        jobType       : "Full-time",
+        gender        : "male",
+        marital       : "unmarried",
+        attachments   : [],
+        creationDate  : "2015-07-29T19:34:42.437Z",
+        color         : "#4d5a75",
+        otherInfo     : "",
+        whoCanRW      : "everyOne",
+        workflow      : null,
+        active        : false,
+        referredBy    : "",
+        source        : "",
+        age           : 21,
+        otherId       : "",
+        bankAccountNo : "",
+        nationality   : "Ukrainian",
+        coach         : null,
+        manager       : {
+            _id     : "55b92ad221e4b7c40f00004f",
+            name    : {
+                last : "Sokhanych",
                 first: "Alex"
             },
             fullName: "Alex Sokhanych",
-            id: "55b92ad221e4b7c40f00004f"
+            id      : "55b92ad221e4b7c40f00004f"
         },
-        jobPosition: {
-            _id: "564438aa70bbc2b740ce8a19",
+        jobPosition   : {
+            _id : "564438aa70bbc2b740ce8a19",
             name: "Head of Android"
         },
-        department: {
-            _id: "55b92ace21e4b7c40f000010",
+        department    : {
+            _id           : "55b92ace21e4b7c40f000010",
             departmentName: "emptyDepartment"
         },
-        visibility: "Public",
-        relatedUser: {
-            _id: "560d0c46963ba3087363de94",
+        visibility    : "Public",
+        relatedUser   : {
+            _id  : "560d0c46963ba3087363de94",
             login: "Vitaliy.Shuba"
         },
         officeLocation: "",
-        skype: "mikazme",
-        personalEmail: "mikazmes@gmail.com",
-        workEmail: "vitaliy.shuba@thinkmobiles.com",
-        tags: [
+        skype         : "mikazme",
+        personalEmail : "mikazmes@gmail.com",
+        workEmail     : "vitaliy.shuba@thinkmobiles.com",
+        tags          : [
             ""
         ],
-        subject: "",
-        imageSrc: "data:image/jpeg;base64,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",
-        isEmployee: true,
-        __v: 0,
-        transfer: [
+        subject       : "",
+        imageSrc      : "data:image/jpeg;base64,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",
+        isEmployee    : true,
+        __v           : 0,
+        transfer      : [
             {
-                date: "2013-05-25T01:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 350,
-                jobType: "Full-time",
+                date           : "2013-05-25T01:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 350,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "5681592f9cceae182b907757",
+                jobPosition    : {
+                    _id : "5681592f9cceae182b907757",
                     name: "Junior .Net"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000012",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000012",
                     departmentName: "emptyDepartment"
                 },
-                status: "hired"
+                status         : "hired"
             },
             {
-                date: "2013-09-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 450,
-                jobType: "Full-time",
+                date           : "2013-09-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 450,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "5681592f9cceae182b907757",
+                jobPosition    : {
+                    _id : "5681592f9cceae182b907757",
                     name: "Junior .Net"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000012",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000012",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             },
             {
-                date: "2013-11-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 450,
-                jobType: "Full-time",
+                date           : "2013-11-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 450,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "5681592f9cceae182b907757",
+                jobPosition    : {
+                    _id : "5681592f9cceae182b907757",
                     name: "Junior .Net"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000012",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000012",
                     departmentName: "emptyDepartment"
                 },
-                status: "transfer"
+                status         : "transfer"
             },
             {
-                date: "2013-11-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 500,
-                jobType: "Full-time",
+                date           : "2013-11-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 500,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "55b92acf21e4b7c40f000021",
+                jobPosition    : {
+                    _id : "55b92acf21e4b7c40f000021",
                     name: "Junior Android"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000010",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             },
             {
-                date: "2014-09-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 600,
-                jobType: "Full-time",
+                date           : "2014-09-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 600,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "55b92acf21e4b7c40f000022",
+                jobPosition    : {
+                    _id : "55b92acf21e4b7c40f000022",
                     name: "Middle Android"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000010",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             },
             {
-                date: "2015-01-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 800,
-                jobType: "Full-time",
+                date           : "2015-01-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 800,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "564438aa70bbc2b740ce8a19",
+                jobPosition    : {
+                    _id : "564438aa70bbc2b740ce8a19",
                     name: "Head of Android"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000010",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             },
             {
-                date: "2015-09-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 1000,
-                jobType: "Full-time",
+                date           : "2015-09-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 1000,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "564438aa70bbc2b740ce8a19",
+                jobPosition    : {
+                    _id : "564438aa70bbc2b740ce8a19",
                     name: "Head of Android"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000010",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             },
             {
-                date: "2016-01-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 1200,
-                jobType: "Full-time",
+                date           : "2016-01-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 1200,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "564438aa70bbc2b740ce8a19",
+                jobPosition    : {
+                    _id : "564438aa70bbc2b740ce8a19",
                     name: "Head of Android"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000010",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             },
             {
-                date: "2016-03-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 1400,
-                jobType: "Full-time",
+                date           : "2016-03-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 1400,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "564438aa70bbc2b740ce8a19",
+                jobPosition    : {
+                    _id : "564438aa70bbc2b740ce8a19",
                     name: "Head of Android"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000010",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             },
             {
-                date: "2016-04-01T00:00:00.000Z",
-                isDeveloper: true,
-                info: "",
-                salary: 1600,
-                jobType: "Full-time",
+                date           : "2016-04-01T00:00:00.000Z",
+                isDeveloper    : true,
+                info           : "",
+                salary         : 1600,
+                jobType        : "Full-time",
                 weeklyScheduler: {
-                    _id: "57332c3b94ee1140b6bb49e2",
+                    _id : "57332c3b94ee1140b6bb49e2",
                     name: "UA-40"
                 },
-                manager: {
-                    _id: "55b92ad221e4b7c40f00004f",
-                    name: {
-                        last: "Sokhanych",
+                manager        : {
+                    _id     : "55b92ad221e4b7c40f00004f",
+                    name    : {
+                        last : "Sokhanych",
                         first: "Alex"
                     },
                     fullName: "Alex Sokhanych",
-                    id: "55b92ad221e4b7c40f00004f"
+                    id      : "55b92ad221e4b7c40f00004f"
                 },
-                jobPosition: {
-                    _id: "564438aa70bbc2b740ce8a19",
+                jobPosition    : {
+                    _id : "564438aa70bbc2b740ce8a19",
                     name: "Head of Android"
                 },
-                department: {
-                    _id: "55b92ace21e4b7c40f000010",
+                department     : {
+                    _id           : "55b92ace21e4b7c40f000010",
                     departmentName: "emptyDepartment"
                 },
-                status: "updated"
+                status         : "updated"
             }
         ],
-        social: {
+        social        : {
             FB: "",
             LI: ""
         },
-        contractEnd: {
-            date: "2015-07-29T19:34:42.437Z",
+        contractEnd   : {
+            date  : "2015-07-29T19:34:42.437Z",
             reason: ""
         },
-        editedBy: {
+        editedBy      : {
             date: "2016-04-06T07:31:47.915Z",
             user: {
-                _id: "55ba2ef1d79a3a343900001c",
-                profile: 1387275504000,
-                __v: 0,
-                lastAccess: "2016-05-12T13:47:43.746Z",
+                _id            : "55ba2ef1d79a3a343900001c",
+                profile        : 1387275504000,
+                __v            : 0,
+                lastAccess     : "2016-05-12T13:47:43.746Z",
                 relatedEmployee: null,
-                savedFilters: [ ],
-                kanbanSettings: {
-                    tasks: {
-                        foldWorkflows: [ ],
-                        countPerPage: 10
+                savedFilters   : [],
+                kanbanSettings : {
+                    tasks        : {
+                        foldWorkflows: [],
+                        countPerPage : 10
                     },
-                    applications: {
-                        foldWorkflows: [ ],
-                        countPerPage: 10
+                    applications : {
+                        foldWorkflows: [],
+                        countPerPage : 10
                     },
                     opportunities: {
-                        foldWorkflows: [ ],
-                        countPerPage: 10
+                        foldWorkflows: [],
+                        countPerPage : 10
                     }
                 },
-                credentials: {
-                    access_token: "",
+                credentials    : {
+                    access_token : "",
                     refresh_token: ""
                 },
-                pass: "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
-                email: "anna.lobas@thinkmobiles.com",
-                login: "AnnaLobas",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
+                pass           : "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
+                email          : "anna.lobas@thinkmobiles.com",
+                login          : "AnnaLobas",
+                imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
             }
         },
-        createdBy: {
+        createdBy     : {
             date: "2015-07-29T19:34:42.437Z",
             user: {
-                _id: "52203e707d4dba8813000003",
-                __v: 0,
-                attachments: [ ],
-                lastAccess: "2016-06-03T08:18:34.447Z",
-                profile: 1387275598000,
+                _id            : "52203e707d4dba8813000003",
+                __v            : 0,
+                attachments    : [],
+                lastAccess     : "2016-06-03T08:18:34.447Z",
+                profile        : 1387275598000,
                 relatedEmployee: "55b92ad221e4b7c40f00004f",
-                savedFilters: [
+                savedFilters   : [
                     {
-                        _id: "574335bb27725f815747d579",
-                        viewType: "",
+                        _id      : "574335bb27725f815747d579",
+                        viewType : "",
                         byDefault: "Leads"
                     }
                 ],
-                kanbanSettings: {
-                    tasks: {
+                kanbanSettings : {
+                    tasks        : {
                         foldWorkflows: [
                             "528ce3caf3f67bc40b000013",
                             "528ce3acf3f67bc40b000012",
                             "528ce30cf3f67bc40b00000f",
                             "528ce35af3f67bc40b000010"
                         ],
-                        countPerPage: 10
+                        countPerPage : 10
                     },
-                    applications: {
+                    applications : {
                         foldWorkflows: [
                             "Empty"
                         ],
-                        countPerPage: 10
+                        countPerPage : 10
                     },
                     opportunities: {
-                        foldWorkflows: [ ],
-                        countPerPage: 10
+                        foldWorkflows: [],
+                        countPerPage : 10
                     }
                 },
-                credentials: {
-                    access_token: "",
+                credentials    : {
+                    access_token : "",
                     refresh_token: ""
                 },
-                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                email: "info@thinkmobiles.com",
-                login: "admin",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
+                pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                email          : "info@thinkmobiles.com",
+                login          : "admin",
+                imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
             }
         },
-        groups: {
-            group: [ ],
-            users: [ ],
+        groups        : {
+            group: [],
+            users: [],
             owner: {
-                _id: "55ba28c8d79a3a3439000016",
+                _id  : "55ba28c8d79a3a3439000016",
                 login: "AndrianaLemko"
             }
         },
-        homeAddress: {
+        homeAddress   : {
             country: "",
-            zip: "",
-            state: "",
-            city: "",
-            street: ""
+            zip    : "",
+            state  : "",
+            city   : "",
+            street : ""
         },
-        workPhones: {
-            phone: "",
+        workPhones    : {
+            phone : "",
             mobile: "+380950366064"
         },
-        workAddress: {
+        workAddress   : {
             country: "",
-            zip: "",
-            state: "",
-            city: "",
-            street: ""
+            zip    : "",
+            state  : "",
+            city   : "",
+            street : ""
         },
-        name: {
-            last: "Shuba",
+        name          : {
+            last : "Shuba",
             first: "Vitaliy"
         },
-        fullName: "Vitaliy Shuba",
-        id: "55b92ad221e4b7c40f00004e"
+        fullName      : "Vitaliy Shuba",
+        id            : "55b92ad221e4b7c40f00004e"
     };
     var fakeUsersForDD = {
         data: [
@@ -4676,94 +4183,94 @@ define([
     var fakeDepsForDD = {
         data: [
             {
-                _id: "55b92ace21e4b7c40f000012",
+                _id              : "55b92ace21e4b7c40f000012",
                 departmentManager: null,
-                name: ".NET/WP"
+                name             : ".NET/WP"
             },
             {
-                _id: "55b92ace21e4b7c40f000010",
+                _id              : "55b92ace21e4b7c40f000010",
                 departmentManager: null,
-                name: "Android"
+                name             : "Android"
             },
             {
-                _id: "55b92ace21e4b7c40f000014",
+                _id              : "55b92ace21e4b7c40f000014",
                 departmentManager: null,
-                name: "BusinessDev"
+                name             : "BusinessDev"
             },
             {
-                _id: "56802e9d1afe27f547b7ba51",
+                _id              : "56802e9d1afe27f547b7ba51",
                 departmentManager: null,
-                name: "CSS/FrontEnd"
+                name             : "CSS/FrontEnd"
             },
             {
-                _id: "55bb1f14cb76ca630b000006",
+                _id              : "55bb1f14cb76ca630b000006",
                 departmentManager: "55b92ad221e4b7c40f000039",
-                name: "Design"
+                name             : "Design"
             },
             {
-                _id: "56cebdf6541812c07197358f",
+                _id              : "56cebdf6541812c07197358f",
                 departmentManager: null,
-                name: "Development"
+                name             : "Development"
             },
             {
-                _id: "560c0b83a5d4a2e20ba5068c",
+                _id              : "560c0b83a5d4a2e20ba5068c",
                 departmentManager: null,
-                name: "Finance"
+                name             : "Finance"
             },
             {
-                _id: "55b92ace21e4b7c40f000015",
+                _id              : "55b92ace21e4b7c40f000015",
                 departmentManager: null,
-                name: "HR"
+                name             : "HR"
             },
             {
-                _id: "56802eb31afe27f547b7ba52",
+                _id              : "56802eb31afe27f547b7ba52",
                 departmentManager: null,
-                name: "JS"
+                name             : "JS"
             },
             {
-                _id: "55b92ace21e4b7c40f000013",
+                _id              : "55b92ace21e4b7c40f000013",
                 departmentManager: null,
-                name: "Marketing"
+                name             : "Marketing"
             },
             {
-                _id: "56802ec21afe27f547b7ba53",
+                _id              : "56802ec21afe27f547b7ba53",
                 departmentManager: null,
-                name: "PHP/WordPress"
+                name             : "PHP/WordPress"
             },
             {
-                _id: "55bb1f40cb76ca630b000007",
+                _id              : "55bb1f40cb76ca630b000007",
                 departmentManager: "55b92ad221e4b7c40f000030",
-                name: "PM"
+                name             : "PM"
             },
             {
-                _id: "55b92ace21e4b7c40f000011",
+                _id              : "55b92ace21e4b7c40f000011",
                 departmentManager: null,
-                name: "QA"
+                name             : "QA"
             },
             {
-                _id: "566ee11b8453e8b464b70b73",
+                _id              : "566ee11b8453e8b464b70b73",
                 departmentManager: null,
-                name: "Ruby on Rails"
+                name             : "Ruby on Rails"
             },
             {
-                _id: "56e6775c5ec71b00429745a4",
+                _id              : "56e6775c5ec71b00429745a4",
                 departmentManager: null,
-                name: "Service"
+                name             : "Service"
             },
             {
-                _id: "56e175c4d62294582e10ca68",
+                _id              : "56e175c4d62294582e10ca68",
                 departmentManager: null,
-                name: "Unity"
+                name             : "Unity"
             },
             {
-                _id: "55b92ace21e4b7c40f000016",
+                _id              : "55b92ace21e4b7c40f000016",
                 departmentManager: null,
-                name: "Web"
+                name             : "Web"
             },
             {
-                _id: "55b92ace21e4b7c40f00000f",
+                _id              : "55b92ace21e4b7c40f00000f",
                 departmentManager: null,
-                name: "iOS"
+                name             : "iOS"
             }
         ]
     };
@@ -5048,7 +4555,7 @@ define([
             saveFilterSpy.restore();
         });
 
-        before(function(){
+        before(function () {
             selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
             saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
@@ -5170,29 +4677,46 @@ define([
         describe('Employees list view', function () {
             var server;
             var mainSpy;
+            var jQueryAjaxSpy;
+            var $thisEl;
+            var exportStub;
+            var exportStubXlsx;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                jQueryAjaxSpy = sinon.spy($, 'ajax');
+                exportStub = sinon.stub(ListView.prototype, 'exportToCsv');
+                exportStubXlsx = sinon.stub(ListView.prototype, 'exportToXlsx');
+                exportStub.returns(true);
+                exportStubXlsx.returns(true);
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                jQueryAjaxSpy.restore();
+                exportStub.restore();
+                exportStubXlsx.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create Employees listView', function () {
-                    var $listHolder;
+                    var countColumn;
+                    var $firstRow;
                     var employeeListUrl = new RegExp('\/employees', 'i');
                     var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
-
+                    var elementsCount;
+                    var subject;
+                    var $pagination;
+                    var $currentPageList;
+                    var $pageList;
                     server.respondWith('GET', employeeListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForList)]);
 
                     employeeCollection = new EmployeeCollection({
-                        count      : 1,
-                        viewType   : 'thumbnails',
+                        count      : 100,
+                        viewType   : 'list',
                         contentType: 'Employees'
                     });
                     server.respond();
@@ -5206,13 +4730,265 @@ define([
 
                     server.respond();
 
-                    $listHolder = listView.$el;
+                    eventsBinder.subscribeCollectionEvents(employeeCollection, listView);
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
 
-                    expect($listHolder).to.exist;
-                    expect($listHolder.find('#listTable > tr').length).to.be.equals(5);
-                    expect($listHolder.find('#searchContainer')).to.exist;
-                    expect($listHolder.find('#startLetter')).to.exist;
-                    expect($listHolder.find('.pagination')).to.exist;
+                    employeeCollection.trigger('fetchFinished', {
+                        totalRecords: employeeCollection.totalRecords,
+                        currentPage : employeeCollection.currentPage,
+                        pageSize    : employeeCollection.pageSize
+                    });
+
+                    $thisEl = listView.$el;
+
+                    expect($thisEl).to.exist;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    expect($thisEl.find('#startLetter')).to.exist;
+                    expect($thisEl.find('.pagination')).to.exist;
+
+                    elementsCount = $thisEl.find('#listTable > tr').length;
+                    expect(elementsCount).to.be.equals(5);
+
+                    $firstRow = $thisEl.find('#listTable > tr').first();
+                    countColumn = $firstRow.find('td').length;
+                    expect(countColumn).to.be.equals(11);
+
+                    subject = $firstRow.find('td:nth-child(3)').text().trim();
+                    expect(subject).not.to.be.empty;
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(4)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(5)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(6) > a').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(7)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(8)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    subject = $firstRow.find('td:nth-child(9)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    expect($firstRow.find('td:nth-child(10)').find('a')).to.be.not.empty;
+                    /* expect(stage).not.to.be.empty;
+                     expect(stage).to.not.match(/object Object|undefined/);*/
+
+                    subject = $firstRow.find('td:nth-child(11)').text().trim();
+                    expect(subject).to.not.match(/object Object|undefined/);
+
+                    // test list pagination
+
+                    $pagination = $thisEl.find('.pagination');
+
+                    expect($pagination).to.exist;
+                    expect($pagination.find('.countOnPage')).to.exist;
+                    expect($pagination.find('.pageList')).to.exist;
+
+                    $currentPageList = $pagination.find('.currentPageList');
+                    expect($currentPageList).to.exist;
+
+                    $pageList = $pagination.find('#pageList');
+                    expect($pageList).to.exist;
+                    expect($pageList).to.have.css('display', 'none');
+                });
+
+                it('Try to select 25 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').first();
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=25');
+                });
+
+                it('Try to select 2 page on list', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $currentPageList = $pagination.find('.currentPageList');
+                    var $pageList;
+                    var $secondPageBtn;
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $currentPageList.mouseover();
+                    $pageList = $pagination.find('#pageList');
+                    expect($pageList).to.have.css('display', 'block');
+
+                    $secondPageBtn = $pageList.find('li').eq(1);
+
+                    $secondPageBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                    expect(ajaxResponse.data).to.have.property('page', 2);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=2/c=25');
+                });
+
+                it('Try to select 50 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').eq(1);
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '50');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=50');
+                });
+
+                it('Try to select 100 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').eq(2);
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '100');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=100');
+
+                });
+
+                it('Try to select 200 item per page', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $pageList = $pagination.find('.pageList');
+                    var $needBtn = $pageList.find('.itemsNumber').eq(3);
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
+
+                    $needBtn.click();
+                    server.respond();
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '200');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200');
+                });
+
+                it('Try to filter ListView by FullName', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var employeeThumbUrl = new RegExp('\/employees\/', 'i');
+                    var $fullName;
+                    var elementsCount;
+                    var $country;
+                    var $selectedItem;
+                    var $next;
+                    var $prev;
+
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select fullName
+                    $fullName = $searchContainer.find('#nameFullContainer .groupName');
+                    $fullName.click();
+                    $selectedItem = $searchContainer.find('li[data-value="5638aa635d23a8eb04e80af0"]');
+
+                    server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForList)]);
+                    $selectedItem.click();
+                    server.respond();
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    expect($thisEl.find('#startLetter')).to.exist;
+                    elementsCount = $thisEl.find('#listTable > tr').length;
+                    expect(elementsCount).to.be.equals(5);
+
+                });
+
+                it('Try to save favorites filters', function () {
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('Test');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $saveFilterBtn.click();
+                    server.respond();
+                    expect(saveFilterSpy.called).to.be.true;
+
+                    //close filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
+                });
+
+                it('Try to delete FullName filter', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
+                    var employeesThumbUrl = new RegExp('\/employees\/', 'i');
+                    var elementsCount;
+
+                    removeFilterSpy.reset();
+
+                    server.respondWith('GET', employeesThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForList)]);
+                    $closeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.called).to.be.true;
+                    expect($thisEl).to.exist;
+                    elementsCount = $thisEl.find('#listTable > tr').length;
+                    expect(elementsCount).to.be.equals(5);
+                });
+
+                it('Try to export to Csv', function () {
+                    var $needEl = topBarView.$el.find('#top-bar-exportToCsvBtn');
+                    $needEl.click();
+                    expect(exportStub.calledOnce).to.be.true;
+                });
+
+                it('Try to export to Csv', function () {
+                    var $needEl = topBarView.$el.find('#top-bar-exportToXlsxBtn');
+                    $needEl.click();
+                    expect(exportStubXlsx.calledOnce).to.be.true;
                 });
 
                 it('Try to go to EditForm with error', function (done) {
@@ -5266,159 +5042,13 @@ define([
                     $needLetterEl.click();
 
                     if (mozilaRegExp.test(userAgent)) {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                     }
                 });
             });
         });
-
-        /*describe('Form View', function () {
-            var employeeModel;
-            var server;
-            var mainSpy;
-
-            before(function () {
-                server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
-            });
-
-            after(function () {
-                server.restore();
-                mainSpy.restore();
-            });
-
-            it('Try to open form', function (done) {
-                var $formHolder;
-                var employeeUrl = new RegExp('\/employees\/', 'i');
-                var workFlowUrl = new RegExp('\/Workflows', 'i');
-
-                employeeModel = new EmployeeModel();
-
-                employeeModel.urlRoot = employeeModel.url() + '56e696da81046d9741fb66fc';
-
-                server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeWithId)]);
-
-                employeeModel.fetch({
-                    success: function (model) {
-                        server.respondWith('GET', workFlowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            data: [
-                                {
-                                    _id         : "52d2c1369b57890814000005",
-                                    __v         : 0,
-                                    attachments : [],
-                                    name        : "Contract End",
-                                    sequence    : 1,
-                                    status      : "Cancelled",
-                                    wId         : "Applications",
-                                    wName       : "",
-                                    source      : "",
-                                    targetSource: [
-                                        ""
-                                    ],
-                                    visible     : true,
-                                    color       : "#2C3E50"
-                                }
-                            ]
-                        })]);
-
-                        formView = new FormView({
-                            model    : model,
-                            startTime: new Date()
-                        });
-
-                        server.respond();
-
-                        formView.render();
-
-                        done();
-                    },
-
-                    error: function (model, response) {
-                        done(response);
-                    }
-                });
-
-                server.respond();
-
-                $formHolder = formView.$el;
-
-                expect($formHolder).to.exist;
-                expect($formHolder.find('form')).to.exist;
-                expect($formHolder.find('form').attr('data-id')).to.be.equals('56e696da81046d9741fb66fc');
-            });
-
-            it('Try to change tab', function () {
-                var $firstTab = formView.$el.find('.chart-tabs li:nth-child(1) > a');
-                var $secondTab = formView.$el.find('.chart-tabs li:nth-child(2) > a');
-
-                $firstTab.click();
-                expect(formView.$el.find('.chart-tabs li:nth-child(1) > a')).to.have.class('active');
-
-                $secondTab.click();
-                expect(formView.$el.find('.chart-tabs li:nth-child(2) > a')).to.have.class('active');
-            });
-
-            /!*it('Try to click end contract with Error status', function () {
-             var $newSelectEl;
-             var employeeUrl = new RegExp('/employees/', 'i');
-             var $endContractArrowEl = formView.$el.find('ul > li.right.withEndContract > span.arrow');
-
-             $endContractArrowEl.click();
-
-             $newSelectEl = formView.$el.find('ul > li.right.withEndContract > ul > li:nth-child(1)');
-             server.respondWith('PATCH', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
-             $newSelectEl.click();
-             server.respond();
-
-             expect(window.location.hash).to.be.equals('#home');
-             });
-
-             it('Try to click end contract', function () {
-             var $newSelectEl;
-             var employeeUrl = new RegExp('/employees/', 'i');
-             var $endContractArrowEl = formView.$el.find('ul > li.right.withEndContract > span.arrow');
-
-             $endContractArrowEl.click();
-
-             $newSelectEl = formView.$el.find('ul > li.right.withEndContract > ul > li:nth-child(1)');
-             server.respondWith('PATCH', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
-             $newSelectEl.click();
-
-             server.respond();
-
-             expect(window.location.hash).to.be.equals('#easyErp/Applications/kanban');
-
-             });*!/
-
-            it('Try to open EditForm', function () {
-                formView.editItem();
-
-                expect($('.ui-dialog')).to.exist;
-            });
-
-            it('Try to cancel dialog', function () {
-                var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-
-                $cancelBtn.click();
-
-                expect($('.ui-dialog')).to.not.exist;
-            });
-
-            it('Try to delete employee from the form', function () {
-                var employeeUrl = new RegExp('\/employees\/', 'i');
-
-                server.respondWith('DELETE', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                formView.deleteItems();
-                server.respond();
-
-                expect(window.location.hash).to.be.equals('#easyErp/Employees/list');
-
-            });
-
-        });*/
 
         describe('Thumbnails View', function () {
             var server;
@@ -5426,8 +5056,10 @@ define([
             var $dialogEl;
             var clock;
             var exportStub;
+            var exportStubXlsx;
             var windowConfirmStub;
             var windowAlertStub;
+            var $thisEl;
 
             before(function () {
                 window.location.hash = '#easyErp/Employees/thumbnails';
@@ -5435,9 +5067,11 @@ define([
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
                 windowConfirmStub = sinon.stub(window, 'confirm');
-                windowAlertStub= sinon.stub(window, 'alert');;
-                exportStub =  sinon.stub(ThumbnailsView.prototype, 'exportToCsv');
+                windowAlertStub = sinon.stub(window, 'alert');
+                exportStub = sinon.stub(ThumbnailsView.prototype, 'exportToCsv');
+                exportStubXlsx = sinon.stub(ThumbnailsView.prototype, 'exportToXlsx');
                 exportStub.returns(true);
+                exportStubXlsx.returns(true);
                 windowConfirmStub.returns(true);
             });
 
@@ -5448,6 +5082,7 @@ define([
                 windowConfirmStub.restore();
                 windowAlertStub.restore();
                 exportStub.restore();
+                exportStubXlsx.restore();
             });
 
             it('Try to fail create thumbnails view', function () {
@@ -5464,12 +5099,10 @@ define([
 
                 server.respond();
 
-
                 thumbnailView = new ThumbnailsView({
                     collection: employeeCollection,
                     startTime : new Date()
                 });
-
 
                 $thumbHolder = thumbnailView.$el;
 
@@ -5478,12 +5111,10 @@ define([
             });
 
             it('Try to create thumbnails view', function () {
-                var $thumbHolder;
                 var employeeThumbUrl = new RegExp('\/employees', 'i');
                 var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
 
                 server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForThumb)]);
-
 
                 employeeCollection = new EmployeeCollection({
                     count      : 1,
@@ -5513,11 +5144,11 @@ define([
                     pageSize    : employeeCollection.pageSize
                 });
 
-                $thumbHolder = thumbnailView.$el;
+                $thisEl = thumbnailView.$el;
 
-                expect($thumbHolder).to.exist;
-                expect($thumbHolder.find('#searchContainer')).to.exist;
-                expect($thumbHolder.find('#startLetter')).to.exist;
+                expect($thisEl).to.exist;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
             });
 
             it('Try to filter ThumbnailsView by FullName', function () {
@@ -5539,20 +5170,20 @@ define([
                 // select fullName
                 $fullName = $searchContainer.find('#nameFullContainer .groupName');
                 $fullName.click();
-                $selectedItem = $searchContainer.find('li[data-value="55b92ad221e4b7c40f00004e"]');
+                $selectedItem = $searchContainer.find('li[data-value="5638aa635d23a8eb04e80af0"]');
 
                 server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForThumb)]);
                 $selectedItem.click();
                 server.respond();
                 expect(selectSpy.calledOnce).to.be.true;
-                expect(thumbnailView.$el.find('#searchContainer')).to.exist;
-                expect(thumbnailView.$el.find('#startLetter')).to.exist;
-                expect(thumbnailView.$el.find('.thumbnailwithavatar'))
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar'))
                     .to.have.lengthOf(2);
 
             });
 
-            /* it('Try to save favorites filters', function () {
+            it('Try to save favorites filters', function () {
                 var userUrl = new RegExp('\/users\/', 'i');
                 var $searchContainer = $thisEl.find('#searchContainer');
                 var $searchArrow = $searchContainer.find('.search-content');
@@ -5577,30 +5208,28 @@ define([
                 //close filter dropdown
                 $searchArrow.click();
                 expect($searchContainer.find('.search-options')).to.have.class('hidden');
-            });*/
+            });
 
-           /* it('Try to delete FullName filter', function () {
+            it('Try to delete FullName filter', function () {
                 var $searchContainer = $thisEl.find('#searchContainer');
                 var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
-                var personThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
+                var employeesThumbUrl = new RegExp('\/employees\/', 'i');
 
                 removeFilterSpy.reset();
 
-                server.respondWith('GET', personThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
+                server.respondWith('GET', employeesThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForThumb)]);
                 $closeBtn.click();
                 server.respond();
 
                 expect(removeFilterSpy.called).to.be.true;
                 expect($thisEl).to.exist;
-                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(3);
-            });*/
-
-
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(2);
+            });
 
             it('Try to go to EditForm with error', function (done) {
                 this.timeout(4000);
                 var spyResponse;
-                var $needEl = thumbnailView.$el.find('#55b92ad221e4b7c40f00004e');
+                var $needEl = $thisEl.find('#55b92ad221e4b7c40f00004e');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
                 server.respondWith('GET', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
 
@@ -5608,7 +5237,7 @@ define([
 
                 server.respond();
 
-                spyResponse = mainSpy.args[0][0];
+                spyResponse = mainSpy.args[1][0];
                 expect(spyResponse).to.have.property('type', 'error');
                 expect(spyResponse).to.have.property('message', 'Please refresh browser');
 
@@ -5616,10 +5245,16 @@ define([
 
             });
 
-            it('Try to export to Csv', function() {
+            it('Try to export to Csv', function () {
                 var $needEl = topBarView.$el.find('#top-bar-exportToCsvBtn');
                 $needEl.click();
                 expect(exportStub.calledOnce).to.be.true;
+            });
+
+            it('Try to export to Xlsx', function () {
+                var $needEl = topBarView.$el.find('#top-bar-exportToXlsxBtn');
+                $needEl.click();
+                expect(exportStubXlsx.calledOnce).to.be.true;
             });
 
             it('Try to go to EditForm', function (done) {
@@ -5629,6 +5264,7 @@ define([
                 var employeeUrl = new RegExp('\/employees\/', 'i');
                 var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
                 var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
+                this.timeout(3000);
                 server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
                 server.respondWith('GET', depsForDDurl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
 
@@ -5649,7 +5285,7 @@ define([
                 var spyResponse;
 
                 departmentTab.click();
-                spyResponse = mainSpy.args[4][0];
+                spyResponse = mainSpy.args[3][0];
 
                 expect(spyResponse).to.have.property('type', 'notify');
                 expect(spyResponse).to.have.property('message', 'You can edit department at "Job" tab');
@@ -5693,7 +5329,6 @@ define([
                 $hireDateEl.click();
                 $('.editing').val('24 Sep, 2016');
 
-
                 $managerEl = $dialogEl.find('.transfer[data-id="9"] #departmentsDd');
                 $managerEl.click();
                 $newSelect = $dialogEl.find('div.newSelectList');
@@ -5732,21 +5367,6 @@ define([
                 expect($dialogEl.find('[data-content="fired"]')).to.exist;
             });
 
-            /*it('Try to save item with fired (must be redirected to kanban)', function(){
-             var $saveBtn = $dialogEl.find('button:nth-child(1)');
-             var employeeUrl = new RegExp('\/employees\/', 'i');
-
-             server.respondWith('PATCH', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
-             $saveBtn.click();
-
-             server.respond();
-
-             //$dialogEl.remove();
-
-             expect(window.location.hash).to.equals('#easyErp/Applications/kanban');
-
-             });*/
             it('Try to save with error', function () {
                 var employeeUrl = '/employees/';
                 var $saveBtn = $dialogEl.find('button.btn.ui-button:nth-child(1)');
@@ -5853,9 +5473,9 @@ define([
                 server.respond();
 
                 if (mozilaRegExp.test(userAgent)) {
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%2255b92ad221e4b7c40f00004e%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                 } else {
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%2255b92ad221e4b7c40f00004e%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
                 }
             });
 
@@ -5864,7 +5484,7 @@ define([
                 var usersForDDUrl = '/users/forDd';
                 var depsForDDUrl = new RegExp('\/departments\/getForDD', 'i');
                 var managersUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
-                var jobTypesUrl =  new RegExp('\/jobPositions\/jobType', 'i');
+                var jobTypesUrl = new RegExp('\/jobPositions\/jobType', 'i');
 
                 server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPosForDD)]);
                 server.respondWith('GET', usersForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
@@ -5904,7 +5524,7 @@ define([
                 var $createBtnEl = $('#createBtnDialog');
 
                 $createBtnEl.click();
-                spyResponse = mainSpy.args[8][0];
+                spyResponse = mainSpy.args[4][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
 
@@ -5943,7 +5563,6 @@ define([
                 var $nextBtn;
                 var $thirdTab = $dialogEl.find('ul > li:nth-child(3) > a');
 
-
                 this.timeout(4000);
 
                 $firstName.val('test');
@@ -5966,7 +5585,6 @@ define([
                 $selectedItem = $dialogEl.find('#560c099da5d4a2e20ba5068b');
                 $selectedItem.click();
 
-
                 // edit Job
                 $thirdTab.click();
 
@@ -5979,7 +5597,6 @@ define([
                 $newSelect = $dialogEl.find('div.newSelectList #55ddd8a2f09cc2ec0b000030');
                 $newSelect.click();
 
-
                 $managerEl = $dialogEl.find('.transfer[data-id="0"] #departmentsDd');
                 $managerEl.click();
                 $newSelect = $dialogEl.find('div.newSelectList');
@@ -5987,14 +5604,12 @@ define([
                 $nextBtn.click();
                 $newSelect.find('#56802ec21afe27f547b7ba53').click();
 
-
                 $managerEl = $dialogEl.find('.transfer[data-id="0"] #projectManagerDD');
                 $managerEl.click();
                 $newSelect = $dialogEl.find('div.newSelectList');
                 $nextBtn = $newSelect.find('a.next');
                 $nextBtn.click();
                 $newSelect.find('#55b92ad221e4b7c40f00004f').click();
-
 
                 $managerEl = $dialogEl.find('.transfer[data-id="0"] #jobTypeDd');
                 $managerEl.click();
@@ -6013,7 +5628,6 @@ define([
                 $manageUserBtn = $dialogEl.find('.addUser');
                 $manageUserBtn.click();
                 server.respond();
-
 
                 $cancelUserBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.add-user-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
                 $cancelUserBtn.click();
@@ -6053,9 +5667,6 @@ define([
                 $selectedGroup.click();
                 $chooseGroupBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.add-group-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
                 $chooseGroupBtn.click();
-
-
-
 
                 //expect($('.ui-dialog')).to.not.exist;
 

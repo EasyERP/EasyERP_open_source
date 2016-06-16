@@ -166,10 +166,6 @@ define([
                 });
             }
 
-            if (this.editCollection) {
-                this.editCollection.reset();
-            }
-
             target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
@@ -635,6 +631,7 @@ define([
 
             if (!this.isNewRow()) {
                 if (this.editCollection) {
+                    this.changed = true;
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
                 }
@@ -664,6 +661,11 @@ define([
             var $checkedInputs;
             var ids = [];
             var answer;
+            var edited = this.edited || this.$el.find('#false');
+
+            if (!edited.length) { // ToDo refactor
+                this.changed = false;
+            }
 
             if (this.changed) {
                 return this.cancelChanges();
@@ -700,7 +702,7 @@ define([
         cancelChanges: function () {
             var self = this;
             var $copyButton = $('#top-bar-copyBtn');
-            var edited = this.edited;
+            var edited = this.edited || this.$el.find('#false'); // ToDo refactor
             var collection = this.collection || new Backbone.Collection();
             var template = _.template(this.cancelEdit);
             var copiedCreated;

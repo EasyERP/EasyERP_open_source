@@ -402,6 +402,7 @@ define([
                     target.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
                     break;
+                // skip default;
             }
 
             this.collection.sortByOrder(dataSort[0], dataSort[1], sortConst);
@@ -812,7 +813,7 @@ define([
                 this.showSaveCancelBtns();
                 this.editCollection.add(model);
 
-                new CreateView(startData);
+                return new CreateView(startData);
             }
         },
 

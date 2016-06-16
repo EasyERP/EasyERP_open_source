@@ -77,7 +77,7 @@ define([
                 requirements       : requirements,
                 department         : department || null,
                 groups             : {
-                    owner: $thisEl.find('#allUsersSelect').data('id'),
+                    owner: $thisEl.find('#allUsersSelect').data('id') || null,
                     users: usersId,
                     group: groupsId
                 },
@@ -105,7 +105,6 @@ define([
                 }
             });
         },
-
 
         render: function () {
 

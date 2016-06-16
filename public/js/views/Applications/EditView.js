@@ -193,6 +193,7 @@
         refuseEmployee: function (e) {
             var self = this;
             var workflowStart = this.currentModel.get('workflow') && this.currentModel.get('workflow')._id ? this.currentModel.get('workflow')._id : this.currentModel.get('workflow');
+            var counter;
 
             e.preventDefault();
 
@@ -212,13 +213,14 @@
                         case 'kanban':
                             $('.column[data-id="' + self.refuseId + '"]').find('.columnNameDiv').after($('#' + model._id));
                             if (self.refuseId) {
-                                var counter = $('.column[data-id="' + self.refuseId + '"]').closest('.column').find('.totalCount');
+                                counter = $('.column[data-id="' + self.refuseId + '"]').closest('.column').find('.totalCount');
                                 counter.html(parseInt(counter.html(), 10) + 1);
                                 counter = $('.column[data-id="' + workflowStart + '"]').closest('.column').find('.totalCount');
                                 counter.html(parseInt(counter.html(), 10) - 1);
 
                             }
                             break;
+                        // skip default;
                     }
                     self.hideDialog();
                 },
@@ -247,7 +249,7 @@
             }
             return workflows;
         },
-        
+
         saveItem: function (e, toEmployyes) {
             var weeklyScheduler;
             var currentWorkflow;
@@ -315,8 +317,8 @@
             dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
             nextAction = $.trim($thisEl.find('#nextAction').val());
             $jobTable = $thisEl.find('#hireFireTable');
-            marital =  $thisEl.find('#maritalDd').attr('data-id') || null;
-            gender =  $thisEl.find('#genderDd').attr('data-id') || null;
+            marital = $thisEl.find('#maritalDd').attr('data-id') || null;
+            gender = $thisEl.find('#genderDd').attr('data-id') || null;
             nationality = $('#nationality').attr('data-id');
             $jobTrs = $jobTable.find('tr.transfer');
             sourceId = $thisEl.find('#sourceDd').attr('data-id');
@@ -381,7 +383,7 @@
                     weeklyScheduler: weeklyScheduler
                 });
 
-                if ((salary == null) && self.isSalary) {
+                if ((salary === null) && self.isSalary) {
                     App.render({
                         type   : 'error',
                         message: 'Salary can`t be empty'
@@ -410,7 +412,7 @@
             });
 
             if (!transferArray.length) {
-                $el =  $thisEl.find('.edit-employee-info');
+                $el = $thisEl.find('.edit-employee-info');
                 position = $.trim($el.find('#jobPositionDd').text());
                 jobType = $.trim($el.find('#jobTypeDd').text());
                 jobPosition = $el.find('#jobPositionDd').attr('data-id');
@@ -501,7 +503,7 @@
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: $('#allUsersSelect').attr('data-id'),
+                    owner: $('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },
@@ -592,6 +594,7 @@
                             }
                             $('.column[data-id="' + data.workflow + '"]').find('.columnNameDiv').after(kanbanHolder);
                             break;
+                        // skip default;
                     }
                     self.hideDialog();
 
@@ -607,83 +610,83 @@
 
         },
 
-       /* deleteItem: function (event) {
-            var mid = 39;
-            var self = this;
-            var answer = confirm('Really DELETE items ?!');
+        /* deleteItem: function (event) {
+         var mid = 39;
+         var self = this;
+         var answer = confirm('Really DELETE items ?!');
 
-            event.preventDefault();
+         event.preventDefault();
 
-            if (answer == true) {
-                this.currentModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
-                    success: function (model) {
-                        var viewType = custom.getCurrentVT();
-                        var wId;
-                        var total$;
-                        var newTotal;
+         if (answer == true) {
+         this.currentModel.destroy({
+         headers: {
+         mid: mid
+         },
+         success: function (model) {
+         var viewType = custom.getCurrentVT();
+         var wId;
+         var total$;
+         var newTotal;
 
-                        model = model.toJSON();
+         model = model.toJSON();
 
-                        switch (viewType) {
-                            case 'list':
-                                $('tr[data-id="' + model._id + '"] td').remove();
-                                break;
-                            case 'kanban':
-                                $('#' + model._id).remove();
-                                wId = model.workflow._id;
-                                total$ = $('td[data-id="' + wId + '"] .totalCount');
-                                newTotal = total$.html() - 1;
-                                total$.html(newTotal);
-                                break;
-                        }
-                        self.hideDialog();
-                    },
+         switch (viewType) {
+         case 'list':
+         $('tr[data-id="' + model._id + '"] td').remove();
+         break;
+         case 'kanban':
+         $('#' + model._id).remove();
+         wId = model.workflow._id;
+         total$ = $('td[data-id="' + wId + '"] .totalCount');
+         newTotal = total$.html() - 1;
+         total$.html(newTotal);
+         break;
+         }
+         self.hideDialog();
+         },
 
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
-                });
-            }
-        },*/
+         error: function (model, xhr) {
+         self.errorNotification(xhr);
+         }
+         });
+         }
+         },*/
 
-       /* hideNewSelect: function () {
-            var editingDates = this.$el.find('td.date');
+        /* hideNewSelect: function () {
+         var editingDates = this.$el.find('td.date');
 
-            editingDates.each(function () {
-                $(this).text($(this).find('input').val());
-            });
+         editingDates.each(function () {
+         $(this).text($(this).find('input').val());
+         });
 
-            this.$el.find('.newSelectList').hide();
+         this.$el.find('.newSelectList').hide();
 
-            if (this.SelectView) {
-                this.SelectView.remove();
-            }
-        },*/
+         if (this.SelectView) {
+         this.SelectView.remove();
+         }
+         },*/
 
-       /* showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
+        /* showNewSelect: function (e) {
+         var $target = $(e.target);
+         e.stopPropagation();
 
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
+         if ($target.attr('id') === 'selectInput') {
+         return false;
+         }
 
-            if (this.SelectView) {
-                this.SelectView.remove();
-            }
+         if (this.SelectView) {
+         this.SelectView.remove();
+         }
 
-            this.SelectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
+         this.SelectView = new SelectView({
+         e          : e,
+         responseObj: this.responseObj
+         });
 
-            $target.append(this.SelectView.render().el);
+         $target.append(this.SelectView.render().el);
 
-            return false;
-        },*/
+         return false;
+         },*/
 
         chooseOption: function (e) {
             var $target = $(e.target);
@@ -765,7 +768,7 @@
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(
                 new AttachView({
-                    model: this.currentModel,
+                    model      : this.currentModel,
                     contentType: self.contentType
                 }).render().el
             );
@@ -775,7 +778,7 @@
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);
             populate.get('#departmentManagers', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
-            populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, 'name', this);
+            populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this);
             populate.get('#jobTypeDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, '_id', this);
             populate.get('#nationality', CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this);
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
@@ -805,26 +808,11 @@
                 changeYear : true
             });
 
-            // this.removeIcon = this.$el.find('.fa-trash');
             this.hireDate = this.currentModel.get('hire')[0];
             this.fireDate = $thisEl.find('[data-content="fire"]').last().find('.fireDate').text();
 
             this.renderRemoveBtn();
 
-           /* if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
-                        $('#targetGroups').append('<li id="' + item._id + '">' + item.name + '</li>');
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' + item.login + '</td><td class="text-right"></td></tr>');
-                        $('#targetUsers').append('<li id="' + item._id + '">' + item.login + '</li>');
-                    });
-
-                }
-            }*/
             return this;
         }
     });

@@ -4,7 +4,6 @@ define([
     'views/listViewBase',
     'text!templates/trialBalance/list/ListHeader.html',
     'views/trialBalance/list/ListItemView',
-    'views/Filter/filterView',
     'collections/trialBalance/filterCollection',
     'constants',
     'dataService',
@@ -12,7 +11,7 @@ define([
     'custom',
     'async',
     'common'
-], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, dataService, helpers, custom, async, common) {
+], function ($, _, listViewBase, listTemplate, ListItemView, reportCollection, CONSTANTS, dataService, helpers, custom, async, common) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -26,7 +25,6 @@ define([
         contentType       : CONSTANTS.TRIALBALANCE, // needs in view.prototype.changeLocationHash
         viewType          : 'list', // needs in view.prototype.changeLocationHash
         yearElement       : null,
-        FilterView        : FilterView,
 
         events: {
             'click .mainTr': 'showHidden'

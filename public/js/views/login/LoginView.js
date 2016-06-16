@@ -30,6 +30,7 @@ define([
         usernameFocus: function () {
             this.$el.find('.icon-login').toggleClass('active');
         },
+
         passwordFocus: function () {
             this.$el.find('.icon-pass').toggleClass('active');
         },

@@ -21,7 +21,7 @@ define([
             var currentModel = this.collection.models[itemIndex];
             var mid = 39;
             var name = $.trim($('#name').val());
-            
+
             if (itemIndex !== -1) {
 
                 currentModel.set({

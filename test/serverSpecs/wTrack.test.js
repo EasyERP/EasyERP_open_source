@@ -166,7 +166,7 @@ describe("wTrack Specs", function () {
                             .and.to.have.property('_id');
                         expect(body[0])
                             .to.have.property('customer')
-                            .and.to.have.property('_id');
+                            .and.to.have.property('name');
                         expect(body[0])
                             .to.have.property('jobs')
                             .and.to.have.property('name');
@@ -263,7 +263,7 @@ describe("wTrack Specs", function () {
                         expect(body)
                             .to.be.instanceOf(Object)
                             .and.to.have.property('customer')
-                            .and.to.have.property('_id');
+                            .and.to.have.property('name');
                         expect(body)
                             .to.have.property('wTracks')
                             .and.to.be.instanceOf(Array)
@@ -404,7 +404,7 @@ describe("wTrack Specs", function () {
                             .and.to.have.property('_id');
                         expect(data[0])
                             .to.have.property('customer')
-                            .and.to.have.property('_id');
+                            .and.to.have.property('name');
                         expect(data[0])
                             .to.have.property('week', 8);
                         expect(data[0])
@@ -502,8 +502,6 @@ describe("wTrack Specs", function () {
                             .to.have.property('week', 2);
                         expect(data[0])
                             .to.have.property('month', 1);
-                        expect(data[0])
-                            .to.have.property('rate', 0);
 
                         done();
                     });

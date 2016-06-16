@@ -7,13 +7,8 @@ define([
     'views/weeklyScheduler/EditView',
     'views/weeklyScheduler/list/ListItemView',
     'text!templates/weeklyScheduler/list/ListHeader.html',
-    'collections/weeklyScheduler/filterCollection',
-    'common',
-    'dataService',
-    'constants',
-    'helpers'
-], function ($, _, Backbone, ListViewBase, CreateView, EditView, ListItemView,
-             listTemplate, ContentCollection, common, dataService, CONSTANTS, helpers) {
+    'collections/weeklyScheduler/filterCollection'
+], function ($, _, Backbone, ListViewBase, CreateView, EditView, ListItemView, listTemplate, ContentCollection) {
     var WeeklySchedulerListView = ListViewBase.extend({
         el               : '#weeklyScheduler',
         template         : _.template(listTemplate),
@@ -44,7 +39,7 @@ define([
 
             e.preventDefault();
 
-            new CreateView({eventChannel: self.eventChannel});
+            return new CreateView({eventChannel: self.eventChannel});
         },
 
         remove: function (e) {
@@ -69,10 +64,10 @@ define([
             var self = this;
             var modelId = $(e.target).closest('tr').attr('data-id');
             var model = self.collection.get(modelId);
-            
+
             e.preventDefault();
 
-            new EditView({
+            return new EditView({
                 eventChannel: self.eventChannel,
                 model       : model
             });
@@ -95,7 +90,7 @@ define([
             });
 
             $currentEl.append(itemView.render());
-            
+
         }
 
     });

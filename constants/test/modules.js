@@ -244,23 +244,23 @@ define([], function () {
         },
         {
             _id      : 55,
-            mname    : 'Quotation',
+            mname    : 'Quotations',
             sequence : 55,
             parrent  : 54,
             link     : true,
             visible  : true,
             ancestors: [],
-            href     : 'Quotation'
+            href     : 'Quotations'
         },
         {
             _id      : 57,
-            mname    : 'Order',
+            mname    : 'Orders',
             sequence : 56,
             parrent  : 54,
             link     : true,
             visible  : true,
             ancestors: [],
-            href     : 'Order'
+            href     : 'Orders'
         },
         {
             _id      : 56,
@@ -314,23 +314,23 @@ define([], function () {
         },
         {
             _id      : 62,
-            mname    : 'Quotation',
+            mname    : 'Quotations',
             sequence : 62,
             parrent  : 19,
             link     : true,
             visible  : true,
             ancestors: [],
-            href     : 'salesQuotation'
+            href     : 'salesQuotations'
         },
         {
             _id      : 63,
-            mname    : 'Order',
+            mname    : 'Orders',
             sequence : 63,
             parrent  : 19,
             link     : true,
             visible  : true,
             ancestors: [],
-            href     : 'salesOrder'
+            href     : 'salesOrders'
         },
         {
             _id      : 64,
@@ -340,7 +340,7 @@ define([], function () {
             link     : true,
             visible  : true,
             ancestors: [],
-            href     : 'salesInvoice'
+            href     : 'salesInvoices'
         },
         {
             _id      : 99,

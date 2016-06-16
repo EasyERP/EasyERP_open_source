@@ -45,7 +45,7 @@ define([
             model.fetch({
                 data   : {id: id},
                 success: function (response) {
-                    new EditView({model: response});
+                    return new EditView({model: response});
                 },
 
                 error: function () {

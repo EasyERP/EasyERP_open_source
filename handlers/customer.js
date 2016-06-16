@@ -79,8 +79,11 @@ var Module = function (models) {
         var filtrElement = {};
         var key;
         var filterName;
+        var keys = Object.keys(filter);
+        var i;
 
-        for (filterName in filter) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            filterName = keys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -107,6 +110,7 @@ var Module = function (models) {
                         resArray.push(filtrElement);
                     }
                     break;
+                // skip default
             }
         }
 
@@ -178,6 +182,7 @@ var Module = function (models) {
                             })
                         };
                         break;
+                    // skip default
                 }
             });
 
@@ -450,6 +455,7 @@ var Module = function (models) {
                 optionsObject.type = 'Company';
                 optionsObject.isOwn = true;
                 break;
+            // skip default
         }
         if (data && data.ids) {
             Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
@@ -528,7 +534,8 @@ var Module = function (models) {
                 skype         : 1,
                 company       : 1,
                 createdBy     : 1,
-                editedBy      : 1
+                editedBy      : 1,
+                imageSrc      : 1
             })
             .populate('company', '_id name')
             .populate('salesPurchases.salesPerson', '_id name fullName')
@@ -624,6 +631,7 @@ var Module = function (models) {
                                     .select('_id name fullName company')
                                     .populate('company', '_id name');
                                 break;
+                            // skip default
                         }
                         break;
                     case ('Companies'):
@@ -643,7 +651,7 @@ var Module = function (models) {
                                     .select('_id name fullName company')
                                     .populate('company', '_id name address');
                                 break;
-
+                            // skip default
                         }
                         break;
                     case ('ownCompanies'):
@@ -661,8 +669,10 @@ var Module = function (models) {
                                     .populate('company', '_id name address');
 
                                 break;
+                            // skip default
                         }
                         break;
+                    // skip default
                 }
 
                 return query;
@@ -876,9 +886,10 @@ var Module = function (models) {
                         path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                         dir = newDirname + '\/uploads\/' + _id;
                         break;
+                    // skip default
                 }
 
-                fs.unlink(path, function (err) {
+                fs.unlink(path, function () {
                     fs.readdir(dir, function (err, files) {
                         if (files && files.length === 0) {
                             fs.rmdir(dir, function () {
@@ -917,6 +928,7 @@ var Module = function (models) {
                 optionsObject.$and.push({isOwn: true});
                 searchName = '$name.first';
                 break;
+            // skip default
         }
 
         accessRollSearcher = function (cb) {

@@ -8,8 +8,6 @@ var fs = require('fs');
 var pathMod = require('path');
 var pageHelper = require('../helpers/pageHelper');
 
-// var fileUploader = require('../helpers/fileUploader');
-
 var Module = function (models, event) {
     'use strict';
 
@@ -34,7 +32,7 @@ var Module = function (models, event) {
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants.js');
     var JournalEntryHandler = require('./journalEntry');
-    var _journalEntryHandler = new JournalEntryHandler(models);
+    var _journalEntryHandler = new JournalEntryHandler(models, event);
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
@@ -207,6 +205,7 @@ var Module = function (models, event) {
                 case 'Linux':
                     dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
                     break;
+                // skip default;
             }
 
             oldDir = dir + orderId;
@@ -411,17 +410,10 @@ var Module = function (models, event) {
 
         }
 
-        function createJournalEntry(invoice, callback) {
-            journalEntryComposer(invoice, req.session.lastDb, callback, req.session.uId);
-        }
-
         parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow, getRates];
         waterFallTasks = [parallel, createInvoice/* , createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            // var project;
-            // var invoiceId = result._id;
-            // var products = result.products;
 
             if (err) {
                 return next(err);
@@ -437,189 +429,16 @@ var Module = function (models, event) {
                 }
             });
 
-            // result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
-
-            /* Invoice.findByIdAndUpdate(invoiceId, {
-             $set: {
-             attachments: result.attachments
-             }
-             }, {new: true}, function (err, invoice) {
-             if (err) {
-             return next(err);
-             }*/
-
-            // renameFolder(id.toString(), invoiceId.toString());
-
             res.status(201).send(result);
-            // });
         });
 
     };
-
-/*    function uploadFileArray(req, res, callback) {
-        var files = [];
-        var path;
-        var os = require('os');
-        var osType = (os.type().split('_')[0]);
-
-        if (req.files && req.files.attachfile && !req.files.attachfile.length) {
-            req.files.attachfile = [req.files.attachfile];
-        }
-
-        req.files.attachfile.forEach(function (item) {
-            var localPath;
-            switch (osType) {
-                case 'Windows':
-                    localPath = pathMod.join(__dirname, '..\\routes\\uploads\\', req.headers.id);
-                    break;
-                case 'Linux':
-                    localPath = pathMod.join(__dirname, '..\/routes\/uploads\/', req.headers.id);
-                    break;
-            }
-            fs.readdir(localPath, function (err, files) {
-                var k = '';
-                var maxK = 0;
-                var checkIs = false;
-                var intVal;
-                var attachfileName = item.name.slice(0, item.name.lastIndexOf('.'));
-
-                if (err) {
-                    return console.log(err);
-                }
-
-                files.forEach(function (fileName) {
-                    if (fileName === item.name) {
-                        k = 1;
-                        checkIs = true;
-                    } else {
-                        if ((fileName.indexOf(attachfileName) === 0) &&
-                            (fileName.lastIndexOf(attachfileName) === 0) &&
-                            (fileName.lastIndexOf(').') !== -1) &&
-                            (fileName.lastIndexOf('(') !== -1) &&
-                            (fileName.lastIndexOf('(') < fileName.lastIndexOf(').')) &&
-                            (attachfileName.length === fileName.lastIndexOf('('))) {
-                            intVal = fileName.slice(fileName.lastIndexOf('(') + 1, fileName.lastIndexOf(').'));
-                            k = parseInt(intVal, 10) + 1;
-                        }
-                    }
-                    if (maxK < k) {
-                        maxK = k;
-                    }
-                });
-                if (!(maxK === 0) && checkIs) {
-                    item.name = attachfileName + '(' + maxK + ')' + item.name.slice(item.name.lastIndexOf('.'));
-                }
-            });
-
-            fs.readFile(item.path, function (err, data) {
-                var shortPas;
-                switch (osType) {
-                    case 'Windows':
-                        path = pathMod.join(__dirname, '..\\routes\\uploads\\', req.headers.id, item.name);
-                        shortPas = pathMod.join('..\\routes\\uploads\\', req.headers.id, item.name);
-                        break;
-                    case 'Linux':
-                        path = pathMod.join(__dirname, '..\/routes\/uploads\/', req.headers.id, item.name);
-                        shortPas = pathMod.join('..\/routes\/uploads\/', req.headers.id, item.name);
-                        break;
-                }
-                fs.writeFile(path, data, function (err) {
-                    var file = {};
-
-                    if (err) {
-                        return console.log(err);
-                    }
-
-                    file._id = mongoose.Types.ObjectId();
-                    file.name = item.name;
-                    file.shortPas = encodeURIComponent(shortPas);
-
-                    if (item.size >= 1024) {
-                        file.size = (Math.round(item.size / 1024 / 1024 * 1000) / 1000) + '&nbsp;Mb';
-                    } else {
-                        file.size = (Math.round(item.size / 1024 * 1000) / 1000) + '&nbsp;Kb';
-                    }
-
-                    file.uploadDate = new Date();
-                    file.uploaderName = req.session.uName;
-                    files.push(file);
-
-                    if (files.length === req.files.attachfile.length) {
-                        if (callback) {
-                            callback(files);
-                        }
-                    }
-
-                });
-            });
-        });
-
-    }*/
-
-   /* this.attach = function (req, res, next) {
-        var os = require('os');
-        var osType = (os.type().split('_')[0]);
-        var dir;
-
-        switch (osType) {
-            case 'Windows':
-                dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
-                break;
-            case 'Linux':
-                dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
-                break;
-        }
-
-        fs.readdir(dir, function (err, files) {
-            if (err) {
-                fs.mkdir(dir, function (errr) {
-                    if (!errr) {
-                        dir += req.headers.id;
-                    }
-                    fs.mkdir(dir, function (errr) {
-                        if (!errr) {
-                            uploadFileArray(req, res, function (files) {
-                                uploadFile(req, res, req.headers.id, files);
-                            });
-                        }
-                    });
-                });
-            } else {
-                dir += req.headers.id;
-                fs.readdir(dir, function (err) {
-                    if (err) {
-                        fs.mkdir(dir, function (errr) {
-                            if (!errr) {
-                                uploadFileArray(req, res, function (files) {
-                                    uploadFile(req, res, req.headers.id, files);
-                                });
-                            }
-                        });
-                    } else {
-                        uploadFileArray(req, res, function (files) {
-                            uploadFile(req, res, req.headers.id, files);
-                        });
-                    }
-                });
-            }
-        });
-    };
-
-    function uploadFile(req, res, id, file) {
-        models.get(req.session.lastDb, 'Quotation', OrderSchema).findByIdAndUpdate(id, {$set: {attachments: file}}, {new: true}, function (err, response) {
-            if (err) {
-                res.send(401);
-            } else {
-                res.send(200, {success: 'Order update success', data: response});
-            }
-        });
-    }*/
 
     this.uploadFile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var headers = req.headers;
         var id = headers.modelid || 'empty';
-        var contentType = headers.modelname || 'invoice';
+        var contentType = headers.modelname || 'invoices';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
@@ -648,7 +467,6 @@ var Module = function (models, event) {
             });
         });
     };
-
 
     this.updateOnlySelected = function (req, res, next) {
         var db = req.session.lastDb;
@@ -692,8 +510,6 @@ var Module = function (models, event) {
             fileName = data.fileName;
             os = require('os');
             osType = (os.type().split('_')[0]);
-            path;
-            dir;
 
             _id = id;
 
@@ -715,6 +531,8 @@ var Module = function (models, event) {
                     }
                     path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                     dir = newDirname + '\/uploads\/' + _id;
+                    break;
+                //skip default;
             }
 
             fs.unlink(path, function (err) {
@@ -988,8 +806,11 @@ var Module = function (models, event) {
         var filtrElement = {};
         var key;
         var filterName;
+        var keys = Object.keys(filter);
+        var i;
 
-        for (filterName in filter) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            filterName = keys[i];
             condition = filter[filterName].value;
             key = filter[filterName].key;
 
@@ -1025,6 +846,7 @@ var Module = function (models, event) {
                         resArray.push(filtrElement);
                     }
                     break;
+                // skip default;
             }
         }
 
@@ -1038,7 +860,7 @@ var Module = function (models, event) {
         var accessRollSearcher;
         var Invoice;
         var query = req.query;
-        var filter = query.filter;
+        var filter = query.filter || {};
         var optionsObject = {};
         var sort = {};
         var contentSearcher;
@@ -1066,13 +888,25 @@ var Module = function (models, event) {
             Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
         } else if (contentType === 'DividendInvoice') {
             Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
-        } else {
+        } else if (contentType === 'Invoices') {
             Invoice = models.get(db, 'Invoice', InvoiceSchema);
+
+            filter.forSales = {
+                key  : 'forSales',
+                value: ['false']
+            };
+        } else {
+            Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+
+            filter.forSales = {
+                key  : 'forSales',
+                value: ['true']
+            };
         }
 
         if (req.query.sort) {
             key = Object.keys(req.query.sort)[0];
-            req.query.sort[key] = parseInt(req.query.sort[key]);
+            req.query.sort[key] = parseInt(req.query.sort[key], 10);
             sort = req.query.sort;
         } else {
             sort = {'editedBy.date': -1};
@@ -1134,6 +968,8 @@ var Module = function (models, event) {
                 optionsObject.$and.push({_type: 'expensesInvoice'});
             } else if (contentType === 'DividendInvoice') {
                 optionsObject.$and.push({_type: 'dividendInvoice'});
+            } else if (contentType === 'Invoices') {
+                optionsObject.$and.push({_type: 'Invoice'});
             } else {
                 optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
             }
@@ -1258,11 +1094,12 @@ var Module = function (models, event) {
                     $project: {
                         _id               : '$root._id',
                         'salesPerson.name': '$root.salesPerson.name',
+                        'salesPerson._id' : '$root.salesPerson._id',
                         workflow          : '$root.workflow',
                         supplier          : '$root.supplier',
-                        project           : '$root.project',
+                        // project           : '$root.project',
                         expense           : '$root.expense',
-                        forSales          : '$root.forSales',
+                        // forSales          : '$root.forSales',
                         currency          : '$root.currency',
                         paymentInfo       : '$root.paymentInfo',
                         invoiceDate       : '$root.invoiceDate',
@@ -1270,7 +1107,7 @@ var Module = function (models, event) {
                         paymentDate       : '$root.paymentDate',
                         dueDate           : '$root.dueDate',
                         approved          : '$root.approved',
-                        _type             : '$root._type',
+                        // _type             : '$root._type',
                         removable         : '$root.removable',
                         paid              : '$root.paid',
                         total             : 1
@@ -1404,12 +1241,12 @@ var Module = function (models, event) {
                 .populate('payments', '_id name date paymentRef paidAmount')
                 .populate('department', '_id name')
                 .populate('paymentTerms', '_id name')
-                .populate('createdBy.user')
-                .populate('editedBy.user')
+                .populate('createdBy.user', '_id login')
+                .populate('editedBy.user', '_id login')
                 .populate('groups.users')
                 .populate('groups.group')
                 .populate('groups.owner', '_id login')
-                .populate('sourceDocument')
+                .populate('sourceDocument', '_id name')
                 .populate('workflow', '_id name status')
                 .populate('project', '_id name paymentMethod paymentTerms')
                 .populate('supplier', '_id name fullName');
@@ -1443,10 +1280,6 @@ var Module = function (models, event) {
 
             res.status(200).send({success: true});
         });
-    };
-
-    this.removeInvoice = function (req, res, id, next) {
-        removeInvoice(req, res, id, next);
     };
 
     function removeInvoice(req, res, id, next, callback) {
@@ -1722,6 +1555,10 @@ var Module = function (models, event) {
 
     }
 
+    this.removeInvoice = function (req, res, id, next) {
+        removeInvoice(req, res, id, next);
+    };
+
     this.updateInvoice = function (req, res, _id, data, next) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
 
@@ -1738,7 +1575,6 @@ var Module = function (models, event) {
         });
 
     };
-    
 
     this.generateName = function (req, res, next) {
         var project = req.query.projectId;
@@ -1803,6 +1639,7 @@ var Module = function (models, event) {
                     case 'salesPerson':
                         result[0][key] = _.sortBy(value, 'name');
                         break;
+                    // skip default;
                 }
             });
             res.status(200).send(result);
@@ -1813,7 +1650,10 @@ var Module = function (models, event) {
         var sortObj = {'paymentInfo.balance': -1};
         var now = new Date();
         var sortValueInt;
+        var keys;
         var key;
+        var i;
+
         var salesManagerMatch = {
             $and: [
                 {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
@@ -1846,10 +1686,11 @@ var Module = function (models, event) {
                 }]
         };
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-
         sortObj = req.query.sort || sortObj;
+        keys = Object.keys(sortObj);
 
-        for (key in sortObj) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            key = keys[i];
             sortValueInt = parseInt(sortObj[key], 10);
             sortObj[key] = sortValueInt;
             break;
@@ -1860,7 +1701,8 @@ var Module = function (models, event) {
                 forSales             : true,
                 'paymentInfo.balance': {
                     $gt: 0
-                }
+                },
+                workflow             : {$ne: objectId(CONSTANTS.PROFORMA_CANCELLED)}
             }
         }, {
             $lookup: {
@@ -1900,7 +1742,8 @@ var Module = function (models, event) {
                 name       : 1,
                 invoiceDate: 1,
                 paymentInfo: 1,
-                currency   : 1
+                currency   : 1,
+                workflow   : 1
             }
         }, {
             $project: {
@@ -1916,6 +1759,7 @@ var Module = function (models, event) {
                 name       : 1,
                 paymentInfo: 1,
                 currency   : 1,
+                workflow   : 1,
 
                 diffStatus: {
                     $cond: {
@@ -1980,7 +1824,8 @@ var Module = function (models, event) {
                 name           : 1,
                 paymentInfo    : 1,
                 currency       : 1,
-                diffStatus     : 1
+                diffStatus     : 1,
+                workflow       : 1
             }
         }, {
             $project: {
@@ -1995,7 +1840,8 @@ var Module = function (models, event) {
                 name           : 1,
                 paymentInfo    : 1,
                 rate           : '$currency.rate',
-                diffStatus     : 1
+                diffStatus     : 1,
+                workflow       : 1
             }
         }, {
             $project: {
@@ -2009,7 +1855,8 @@ var Module = function (models, event) {
                 'paymentInfo.unTaxed': {$divide: ['$paymentInfo.unTaxed', '$rate']},
                 'paymentInfo.balance': {$divide: ['$paymentInfo.balance', '$rate']},
                 'paymentInfo.total'  : {$divide: ['$paymentInfo.total', '$rate']},
-                diffStatus           : 1
+                diffStatus           : 1,
+                workflow             : 1
             }
         }, {
             $sort: sortObj

@@ -80,6 +80,7 @@ var Module = function (event, models) {
                     case 'E':
                         education++;
                         break;
+                    // skip default;
                 }
             });
         });
@@ -197,6 +198,59 @@ var Module = function (event, models) {
         });
     };
 
+    this.getStatistic = function (req, res, next) {
+        var month = parseInt(req.query.month, 10) + 1;
+        var year = parseInt(req.query.year, 10);
+        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+
+        Vacation.aggregate([{
+            $match: {
+                month: month,
+                year : year
+            }
+        }, {
+            $unwind: '$vacArray'
+        }, {
+            $group: {
+                _id  : '$vacArray',
+                count: {$sum: 1}
+            }
+        }], function (err, result) {
+            var resObj = {};
+            var personal;
+            var education;
+            var vacation;
+            var sick;
+
+            if (err) {
+                return next(err);
+            }
+
+            personal = _.find(result, function (item) {
+                return item._id === 'P';
+            });
+
+            education = _.find(result, function (item) {
+                return item._id === 'E';
+            });
+
+            vacation = _.find(result, function (item) {
+                return item._id === 'V';
+            });
+
+            sick = _.find(result, function (item) {
+                return item._id === 'S';
+            });
+
+            resObj.personal = (personal && personal.count) || 0;
+            resObj.education = (education && education.count) || 0;
+            resObj.vacation = (vacation && vacation.count) || 0;
+            resObj.sick = (sick && sick.count) || 0;
+
+            res.status(200).send(resObj);
+        });
+    };
+
     function getVacationFilter(req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var options = req.query;
@@ -286,14 +340,14 @@ var Module = function (event, models) {
             }
         }, {
             $project: {
-                'department.name'          : 1,
-                'employee.name'            : 1,
-                'employee._id'             : 1,
-                month                      : 1,
-                year                       : 1,
-                vacations                  : 1,
-                vacArray                   : 1,
-                monthTotal                 : 1
+                'department.name': 1,
+                'employee.name'  : 1,
+                'employee._id'   : 1,
+                month            : 1,
+                year             : 1,
+                vacations        : 1,
+                vacArray         : 1,
+                monthTotal       : 1
             }
         }, {
             $match: queryObject

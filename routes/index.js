@@ -34,7 +34,7 @@ module.exports = function (app, mainDb) {
     var employeeRouter = require('./employee')(event, models);
     var applicationRouter = require('./application')(event, models);
     var projectMemberRouter = require('./projectMember')(models, event);
-    var departmentRouter = require('./department')(models);
+    var departmentRouter = require('./department')(models, event);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
     var salaryRouter = require('./salary')(event, models);
@@ -86,13 +86,13 @@ module.exports = function (app, mainDb) {
 
     app.use('/filter', filterRouter);
     app.use('/product', productRouter);
-    app.use('/order', orderRouter);
-    app.use('/invoice', invoiceRouter);
+    app.use('/orders', orderRouter);
+    app.use('/invoices', invoiceRouter);
     app.use('/proforma', proformaRouter);
     app.use('/expensesInvoice', expensesInvoiceRouter);
     app.use('/dividendInvoice', dividendInvoiceRouter);
     app.use('/supplier', supplierRouter);
-    app.use('/quotation', quotationRouter);
+    app.use('/quotations', quotationRouter);
     app.use('/destination', destinationRouter);
     app.use('/incoterm', incotermRouter);
     app.use('/invoicingControl', invoicingControlRouter);

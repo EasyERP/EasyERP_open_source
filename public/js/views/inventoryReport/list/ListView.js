@@ -4,7 +4,6 @@ define([
     'views/listViewBase',
     'text!templates/inventoryReport/list/ListHeader.html',
     'views/inventoryReport/list/ListItemView',
-    'views/Filter/filterView',
     'collections/inventoryReport/filterCollection',
     'constants',
     'helpers',
@@ -12,13 +11,12 @@ define([
     'common',
     'moment',
     'custom'
-], function (_, $, listViewBase, listTemplate, ListItemView, FilterView, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
+], function (_, $, listViewBase, listTemplate, ListItemView, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
     'use strict';
 
     var ListView = listViewBase.extend({
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
-        FilterView       : FilterView,
         contentCollection: contentCollection,
         contentType      : CONSTANTS.INVENTORYREPORT,
 

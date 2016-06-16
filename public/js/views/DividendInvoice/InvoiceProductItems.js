@@ -47,15 +47,25 @@ define([
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr('data-id');
             var trEll = parrent.find('tr.productItem');
+            var templ = _.template(ProductInputContent);
+            var currency = {};
 
             e.preventDefault();
             e.stopPropagation();
-            
+
+            currency._id = $('#currencyDd').attr('data-id');
+
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
-                    return parrent.prepend(_.template(ProductInputContent));
+                    return parrent.prepend(templ({
+                        currencyClass: helpers.currencyClass,
+                        currency     : currency
+                    }));
                 }
-                $(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
+                $(trEll[trEll.length - 1]).after(templ({
+                    currencyClass: helpers.currencyClass,
+                    currency     : currency
+                }));
             }
 
             return false;
@@ -83,7 +93,7 @@ define([
             cost = $parent.find('[data-name="price"] input').val();
             cost = parseFloat(cost);
             amount = (cost);
-            amount = amount.toFixed(2);
+            amount = helpers.currencySplitter(amount.toFixed(2));
 
             $parent.find('.amount').text(amount);
 
@@ -112,13 +122,13 @@ define([
                 }
             }
 
-            totalUntax = totalUntax.toFixed(2);
+            balance = totalUntax - this.paid;
+            balance = helpers.currencySplitter(balance.toFixed(2));
+            totalUntax = helpers.currencySplitter(totalUntax.toFixed(2));
+
             totalUntaxContainer.text(totalUntax);
-            totalUntax = parseFloat(totalUntax);
-
             totalContainer.text(totalUntax);
-
-            balanceContainer.text(totalUntax - this.paid);
+            balanceContainer.text(balance);
         },
 
         render: function (options) {
@@ -130,6 +140,10 @@ define([
 
             if (options && options.model) {
                 products = options.model.products;
+
+                if (options.model.currency) {
+                    products.currency = options.model.currency._id;
+                }
 
                 thisEl.html(_.template(productItemTemplate, {
                     model     : options.model,

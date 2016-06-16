@@ -303,7 +303,7 @@ define([
             "link": true,
             "visible": true,
             "ancestors": [],
-            "href": "salesQuotation"
+            "href": "salesQuotations"
         }, {
             "_id": 63,
             "mname": "Order",
@@ -312,7 +312,7 @@ define([
             "link": true,
             "visible": true,
             "ancestors": [],
-            "href": "salesOrder"
+            "href": "salesOrders"
         }, {
             "_id": 64,
             "mname": "Invoice",
@@ -321,7 +321,7 @@ define([
             "link": true,
             "visible": true,
             "ancestors": [],
-            "href": "salesInvoice"
+            "href": "salesInvoices"
         }, {
             "_id": 68,
             "mname": "MonthHours",

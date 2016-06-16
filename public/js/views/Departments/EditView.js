@@ -121,7 +121,7 @@ define([
 
             $(e.target).closest('.dialog-tabs').find('a.active').removeClass('active');
             $(e.target).addClass('active');
-            var n = $(e.target).parents('.dialog-tabs').find('li').index($(e.target).parent());
+            n = $(e.target).parents('.dialog-tabs').find('li').index($(e.target).parent());
             $('.dialog-tabs-items').find('.dialog-tabs-item.active').removeClass('active');
             $('.dialog-tabs-items').find('.dialog-tabs-item').eq(n).addClass('active');
         },

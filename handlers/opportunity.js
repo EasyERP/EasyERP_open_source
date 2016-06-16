@@ -32,11 +32,8 @@ var Module = function (models, event) {
     var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     function validBody(body) {
-        if (body.name) {
-            return true;
-        }
 
-        return false;
+        return body.name ? true : false;
     }
 
     function sendEmailToAssigned(req, opportunity) {
@@ -535,7 +532,7 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                if (data.notes && data.notes.length != 0) {
+                if (data.notes && data.notes.length !== 0) {
                     obj = data.notes[data.notes.length - 1];
 
                     if (!obj._id) {
@@ -564,24 +561,22 @@ var Module = function (models, event) {
                     if (fileName) {
                         switch (osType) {
                             case 'Windows':
-                            {
                                 newDirname = __dirname.replace('\\Modules', '');
                                 while (newDirname.indexOf('\\') !== -1) {
                                     newDirname = newDirname.replace('\\', '\/');
                                 }
                                 path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                 dir = newDirname + '\/uploads\/' + _id;
-                            }
                                 break;
                             case 'Linux':
-                            {
                                 newDirname = __dirname.replace('/Modules', '');
                                 while (newDirname.indexOf('\\') !== -1) {
                                     newDirname = newDirname.replace('\\', '\/');
                                 }
                                 path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                 dir = newDirname + '\/uploads\/' + _id;
-                            }
+                                break;
+                            //skip default;
                         }
 
                         fs.unlink(path, function (err) {
@@ -615,7 +610,9 @@ var Module = function (models, event) {
             var savetoDb = function (data) {
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
+
                     _opportunitie.isOpportunitie = data.isOpportunitie || false;
+
                     if (data.name) {
                         _opportunitie.name = data.name;
                     }
@@ -757,11 +754,7 @@ var Module = function (models, event) {
                     if (data.reffered) {
                         _opportunitie.reffered = data.reffered;
                     }
-                    if (data.uId) {
-                        _opportunitie.createdBy.user = data.uId;
-                        //uId for edited by field on creation
-                        _opportunitie.editedBy.user = data.uId;
-                    }
+
                     if (data.campaign) {
                         _opportunitie.campaign = data.campaign;
                     }
@@ -783,32 +776,38 @@ var Module = function (models, event) {
                         }
                         _opportunitie.social.FB = data.social.FB;
                     }
+
+                    _opportunitie.createdBy.user = req.session.uId;
+                    //uId for edited by field on creation
+                    _opportunitie.editedBy.user = req.session.uId;
+
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                         _opportunitie.sequence = sequence;
                         _opportunitie.save(function (err, result) {
                             var historyOptions;
                             if (err) {
                                 return next(err);
-                            } else {
-                                historyOptions = {
-                                    contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                                    data       : data,
-                                    req        : req,
-                                    contentId  : result._id
-                                };
-
-                                historyWriter.addEntry(historyOptions);
-
-                                res.status(201).send({
-                                    success: 'A new Opportunities create success',
-                                    id     : result._id
-                                });
-
-                                // send email to _opportunitie.salesPerson
-                                if (_opportunitie.salesPerson) {
-                                    sendEmailToAssigned(req, _opportunitie);
-                                }
                             }
+
+                            historyOptions = {
+                                contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                                data       : data,
+                                req        : req,
+                                contentId  : result._id
+                            };
+
+                            historyWriter.addEntry(historyOptions);
+
+                            res.status(201).send({
+                                success: 'A new Opportunities create success',
+                                id     : result._id
+                            });
+
+                            // send email to _opportunitie.salesPerson
+                            if (_opportunitie.salesPerson) {
+                                sendEmailToAssigned(req, _opportunitie);
+                            }
+
                         });
                     });
                 } catch (error) {
@@ -1042,6 +1041,7 @@ var Module = function (models, event) {
                     day   : {$dateToString: {format: '%d', date: '$date'}}
                 };
                 break;
+            //skip default;
         }
 
         if (type === 'date') {
@@ -2060,15 +2060,18 @@ var Module = function (models, event) {
         var tempObj = {};
         var query = {};
         var ids;
+        var keys = Object.keys(data);
         var key;
+        var i;
 
         query.$or = [];
         filter.$and = [];
 
-        for (key in data) {
+        for (i = keys.length - 1; i >= 0; i--) {
+            key = keys[i];
             ids = [];
 
-            if (key !== 'workflowId') {
+            if ((key !== 'workflowId') && (key !== 'viewType')) {
 
                 if (key === 'contactName') {
 
@@ -2142,6 +2145,7 @@ var Module = function (models, event) {
                     optionsObject.push(filterObj);
                 }
                 break;
+            //skip default;
         }
 
         accessRollSearcher = function (cb) {
@@ -2157,33 +2161,6 @@ var Module = function (models, event) {
                 }];
 
             var query = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-
-            switch (data.contentType) {
-
-                case ('Opportunities'):
-                    aggregateQuery.push({
-                        $lookup: {
-                            from        : 'Customers',
-                            localField  : 'customer',
-                            foreignField: '_id',
-                            as          : 'customer'
-                        }
-                    });
-
-                    break;
-                case ('Leads'):
-
-                    aggregateQuery.push({
-                        $lookup: {
-                            from        : 'Customers',
-                            localField  : 'company',
-                            foreignField: '_id',
-                            as          : 'customer'
-                        }
-                    });
-
-                    break;
-            }
 
             aggregateQuery.push({
                 $lookup: {
@@ -2213,98 +2190,129 @@ var Module = function (models, event) {
                     foreignField: '_id',
                     as          : 'editedBy.user'
                 }
-            }, {
-                $project: {
-                    contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
-                    customer        : {$arrayElemAt: ['$customer', 0]},
-                    salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                    workflow        : {$arrayElemAt: ['$workflow', 0]},
-                    'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
-                    'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                    'createdBy.date': 1,
-                    'editedBy.date' : 1,
-                    creationDate    : 1,
-                    isOpportunitie  : 1,
-                    name            : 1,
-                    expectedRevenue : 1,
-                    attachments     : 1,
-                    notes           : 1,
-                    convertedDate   : 1,
-                    isConverted     : 1,
-                    source          : 1,
-                    campaign        : 1,
-                    sequence        : 1,
-                    reffered        : 1,
-                    optout          : 1,
-                    active          : 1,
-                    color           : 1,
-                    categories      : 1,
-                    priority        : 1,
-                    expectedClosing : 1,
-                    nextAction      : 1,
-                    internalNotes   : 1,
-                    phones          : 1,
-                    email           : 1,
-                    address         : 1,
-                    company         : 1,
-                    skype           : 1,
-                    social          : 1
-                }
-            }, {
-                $match: {
-                    $and: optionsObject
-                }
             });
 
-            aggregateQuery.push({
-                $group: {
-                    _id  : null,
-                    total: {$sum: 1},
-                    root : {$push: '$$ROOT'}
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id             : '$root._id',
-                    contactName     : '$root.contactName',
-                    customer        : '$root.customer',
-                    salesPerson     : '$root.salesPerson',
-                    workflow        : '$root.workflow',
-                    'createdBy.user': '$root.createdBy.user.login',
-                    'editedBy.user' : '$root.editedBy.user.login',
-                    'createdBy.date': '$root.createdBy.date',
-                    'editedBy.date' : '$root.editedBy.date',
-                    creationDate    : '$root.creationDate',
-                    isOpportunitie  : '$root.isOpportunitie',
-                    name            : '$root.name',
-                    expectedRevenue : '$root.expectedRevenue',
-                    attachments     : '$root.attachments',
-                    notes           : '$root.notes',
-                    convertedDate   : '$root.convertedDate',
-                    isConverted     : '$root.isConverted',
-                    source          : '$root.source',
-                    campaign        : '$root.campaign',
-                    sequence        : '$root.sequence',
-                    reffered        : '$root.reffered',
-                    optout          : '$root.optout',
-                    active          : '$root.active',
-                    color           : '$root.color',
-                    categories      : '$root.categories',
-                    priority        : '$root.priority',
-                    expectedClosing : '$root.expectedClosing',
-                    nextAction      : '$root.nextAction',
-                    internalNotes   : '$root.internalNotes',
-                    phones          : '$root.phones',
-                    email           : '$root.email',
-                    address         : '$root.address',
-                    company         : '$root.company',
-                    skype           : '$root.skype',
-                    social          : '$root.social',
-                    total           : 1
+            switch (data.contentType) {
 
-                }
-            });
+                case ('Opportunities'):
+                    aggregateQuery.push({
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'customer',
+                            foreignField: '_id',
+                            as          : 'customer'
+                        }
+                    }, {
+                        $project: {
+                            creationDate    : 1,
+                            name            : 1,
+                            expectedRevenue : 1,
+                            customer        : {$arrayElemAt: ['$customer', 0]},
+                            nextAction      : 1,
+                            sequence        : 1,
+                            workflow        : {$arrayElemAt: ['$workflow', 0]},
+                            salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                            'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                            'createdBy.date': 1,
+                            'editedBy.date' : 1,
+                            isOpportunitie  : 1
+                        }
+                    }, {
+                        $match: {
+                            $and: optionsObject
+                        }
+                    }, {
+                        $group: {
+                            _id  : null,
+                            total: {$sum: 1},
+                            root : {$push: '$$ROOT'}
+                        }
+                    }, {
+                        $unwind: '$root'
+                    }, {
+                        $project: {
+                            _id               : '$root._id',
+                            creationDate      : '$root.creationDate',
+                            name              : '$root.name',
+                            expectedRevenue   : '$root.expectedRevenue',
+                            customer          : '$root.customer',
+                            nextAction        : '$root.nextAction',
+                            sequence          : '$root.sequence',
+                            'workflow._id'    : '$root.workflow._id',
+                            'workflow.name'   : '$root.workflow.name',
+                            'workflow.status' : '$root.workflow.status',
+                            'salesPerson._id' : '$root.salesPerson._id',
+                            'salesPerson.name': '$root.salesPerson.name',
+                            'createdBy.user'  : '$root.createdBy.user.login',
+                            'editedBy.user'   : '$root.editedBy.user.login',
+                            'createdBy.date'  : '$root.createdBy.date',
+                            'editedBy.date'   : '$root.editedBy.date',
+                            total             : 1
+
+                        }
+                    });
+
+                    break;
+                case ('Leads'):
+
+                    aggregateQuery.push({
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'company',
+                            foreignField: '_id',
+                            as          : 'customer'
+                        }
+                    }, {
+                        $project: {
+                            contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
+                            name            : 1,
+                            customer        : {$arrayElemAt: ['$customer', 0]},
+                            salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                            workflow        : {$arrayElemAt: ['$workflow', 0]},
+                            'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                            'createdBy.date': 1,
+                            source          : 1,
+                            address         : 1,
+                            skype           : 1,
+                            social          : 1,
+                            isOpportunitie  : 1
+                        }
+                    }, {
+                        $match: {
+                            $and: optionsObject
+                        }
+                    }, {
+                        $group: {
+                            _id  : null,
+                            total: {$sum: 1},
+                            root : {$push: '$$ROOT'}
+                        }
+                    }, {
+                        $unwind: '$root'
+                    }, {
+                        $project: {
+                            _id               : '$root._id',
+                            contactName       : '$root.contactName',
+                            'salesPerson._id' : '$root.salesPerson._id',
+                            'salesPerson.name': '$root.salesPerson.name',
+                            'workflow._id'    : '$root.workflow._id',
+                            'workflow.name'   : '$root.workflow.name',
+                            'workflow.status' : '$root.workflow.status',
+                            'createdBy.user'  : '$root.createdBy.user.login',
+                            'createdBy.date'  : '$root.createdBy.date',
+                            name              : '$root.name',
+                            source            : '$root.source',
+                            'address.country' : '$root.address.country',
+                            skype             : '$root.skype',
+                            'social.LI'       : '$root.social.LI',
+                            total             : 1
+
+                        }
+                    });
+                    break;
+                // skip default;
+            }
 
             if (data.sort) {
                 key = Object.keys(data.sort)[0];
@@ -2396,7 +2404,7 @@ var Module = function (models, event) {
                             return num;
                         });
                         break;
-
+                    // skip default;
                 }
             });
 
@@ -2560,6 +2568,8 @@ var Module = function (models, event) {
                 break;
             case 'kanban':
                 getForKanban(req, res, next);
+                break;
+            // skip default;
         }
     };
 

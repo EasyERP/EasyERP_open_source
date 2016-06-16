@@ -141,6 +141,8 @@ define([
 
                         $element.text(manager);
                         $element.attr('data-id', managerId);
+
+                        $element.closest('td').removeClass('errorContent');
                     }
                 }
 
@@ -331,7 +333,7 @@ define([
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: $thisEl.find('#allUsersSelect').attr('data-id'),
+                    owner: $thisEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },

@@ -234,7 +234,7 @@ var Module = function (models) {
     };
 
     function getByDataKey(req, res, next) {
-        var id = req.query.id;
+        var id = req.query.id  || req.params.id || req.query.dataKey;
         var data = req.query;
         var error;
         var sort = data.sort || {'employee.name.first': 1, 'employee.name.last': 1};
@@ -334,8 +334,14 @@ var Module = function (models) {
 
     this.getForView = function (req, res, next) {
         var query = req.query;
+        var id = req.params.id;
+        var sort = query.sort || {};
 
-        if (query.id) {
+        if (Object.keys(sort).length){
+            return getByDataKey(req, res, next);
+        }
+
+        if (query.id || id) {
             getByDataKey(req, res, next);
         } else {
             getForView(req, res, next);
@@ -347,7 +353,6 @@ var Module = function (models) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var query = req.query;
-        //var year = parseInt(query.year, 10) || date.getFullYear();
         var filter = query.filter || {};
         var startDate = new Date(query.startDate);
         var endDate = new Date(query.endDate);
@@ -364,8 +369,11 @@ var Module = function (models) {
             var filtrElement = {};
             var filterName;
             var keyCase;
+            var i;
+            var filterNameKeys = Object.keys(filter);
 
-            for (filterName in filter) {
+            for (i = filterNameKeys.length - 1; i >= 0; i--) {
+                filterName = filterNameKeys[i];
                 condition = filter[filterName].value;
                 keyCase = filter[filterName].key;
 
@@ -381,6 +389,7 @@ var Module = function (models) {
                     case 'onlyEmployees':
                         resArray.push({isEmployee: true});
                         break;
+                    // skip default;
                 }
             }
 

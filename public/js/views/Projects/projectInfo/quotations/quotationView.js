@@ -3,10 +3,10 @@ define([
     'jQuery',
     'text!templates/Projects/projectInfo/quotations/quotationTemplate.html',
     'text!templates/Projects/projectInfo/quotations/ListTemplate.html',
-    'views/salesQuotation/EditView',
-    'views/salesQuotation/list/ListView',
+    'views/salesQuotations/EditView',
+    'views/salesQuotations/list/ListView',
     'views/Projects/projectInfo/quotations/CreateView',
-    'collections/Quotation/filterCollection',
+    'collections/Quotations/filterCollection',
     'models/QuotationModel',
     'common',
     'helpers',
@@ -97,7 +97,7 @@ define([
 
             App.startPreload();
 
-            model.urlRoot = '/quotation/';
+            model.urlRoot = '/quotations/';
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {

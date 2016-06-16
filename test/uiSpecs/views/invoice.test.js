@@ -1,10 +1,10 @@
 define([
     'modules',
     'text!fixtures/index.html',
-    'collections/Invoice/filterCollection',
+    'collections/Invoices/filterCollection',
     'views/main/MainView',
-    'views/Invoice/list/ListView',
-    'views/Invoice/TopBarView',
+    'views/Invoices/list/ListView',
+    'views/Invoices/TopBarView',
     'jQuery',
     'chai',
     'chai-jquery',

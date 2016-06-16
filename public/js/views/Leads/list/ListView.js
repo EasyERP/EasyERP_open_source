@@ -7,7 +7,6 @@ define([
     'views/Leads/CreateView',
     'views/Leads/list/ListItemView',
     'views/Leads/EditView',
-    'views/Filter/filterView',
     'models/LeadsModel',
     'collections/Leads/filterCollection',
     'common',
@@ -20,7 +19,6 @@ define([
              CreateView,
              ListItemView,
              EditView,
-             FilterView,
              CurrentModel,
              contentCollection,
              common,
@@ -28,20 +26,16 @@ define([
     'use strict';
 
     var LeadsListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        FilterView              : FilterView,
-        totalCollectionLengthUrl: '/leads/totalCollectionLength',
-        formUrl                 : '#easyErp/Leads/form/',
-        contentType             : CONSTANTS.LEADS,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        formUrl          : '#easyErp/Leads/form/',
+        contentType      : CONSTANTS.LEADS,
 
         events: {
-            'click .stageSelect'          : 'showNewSelect',
-            'click .newSelectList li'     : 'chooseOption',
-            'click .list td:not(.notForm)': 'goToEditDialog',
-            'click #convertToOpportunity' : 'openDialog'
+            'click .stageSelect'         : 'showNewSelect',
+            'click .newSelectList li'    : 'chooseOption',
+            'click #convertToOpportunity': 'openDialog'
         },
 
         initialize: function (options) {
@@ -117,7 +111,7 @@ define([
             });
 
             $currentEl.append(itemView.render());
-            
+
             this.renderFilter();
 
             this.renderPagination($currentEl, this);
@@ -138,7 +132,7 @@ define([
             return false;
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var id;
             var currentModel;
 
@@ -154,7 +148,7 @@ define([
                 },
 
                 success: function (model) {
-                    new EditView({model: model});
+                    return new EditView({model: model});
                 },
 
                 error: function () {

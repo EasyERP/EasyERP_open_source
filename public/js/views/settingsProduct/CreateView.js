@@ -13,12 +13,12 @@ define([
         el         : '#content-holder',
         contentType: 'Departments',
         template   : _.template(CreateTemplate),
-        events: {
+        events     : {
             'click .dialog-tabs a'                                            : 'changeTab',
             'click #sourceUsers li'                                           : 'addUsers',
             'click #targetUsers li'                                           : 'removeUsers',
             'click .current-selected'                                         : 'showNewSelect',
-            'click'                                                           : 'hideNewSelect',
+            click                                                             : 'hideNewSelect',
             'click .prevUserList'                                             : 'prevUserList',
             'click .nextUserList'                                             : 'nextUserList',
             'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
@@ -27,7 +27,7 @@ define([
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
             // 'keydown': 'keydownHandler'
         },
-        
+
         initialize: function (options) {
             _.bindAll(this, 'saveItem', 'render');
             this.model = new Model();
@@ -96,7 +96,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            
+
             $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id')).attr('data-level', $target.data('level')).attr('data-fullname', $target.data('fullname'));
         },
 
@@ -127,10 +127,10 @@ define([
 
             populate.getParrentCategory('#parentCategory', '/category', {}, this, true);
             this.delegateEvents(this.events);
-            
+
             return this;
         }
     });
-    
+
     return CreateView;
 });

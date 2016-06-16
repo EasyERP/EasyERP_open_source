@@ -9,7 +9,7 @@ define([
     'text!templates/wTrack/list/forWeek.html',
     'views/wTrack/CreateView',
     'views/wTrack/list/ListItemView',
-    'views/salesInvoice/wTrack/CreateView',
+    'views/salesInvoices/wTrack/CreateView',
     'models/wTrackModel',
     'collections/wTrack/filterCollection',
     'collections/wTrack/editCollection',
@@ -175,7 +175,7 @@ define([
 
         copyRow: function (e) {
             var self = this;
-            var checkedRows = this.$el.find('input:checked:not(#checkAll)');
+            var checkedRows = this.$el.find('.checkbox:checked:not(#checkAll)');
             var length = checkedRows.length;
             var selectedWtrack;
             var target;
@@ -203,7 +203,7 @@ define([
                 id = target.val();
                 row = target.closest('tr');
                 model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                hours = (model && model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                 $(selectedWtrack).attr('checked', false);
                 projectWorkflow = $.trim(row.find('[data-content="workflow"]').text());
 
@@ -575,7 +575,7 @@ define([
                     $job.text('');
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
-                    tr.find('[data-content="customer"]').text(element.customer && element.customer.name ? element.customer.name.first + ' ' + element.customer.name.last: '');
+                    tr.find('[data-content="customer"]').text(element.customer && element.customer.name ? element.customer.name.first + ' ' + element.customer.name.last : '');
 
                     project = element._id;
 
@@ -730,6 +730,7 @@ define([
             }
 
             context.editCollection = new EditCollection(context.collection.toJSON());
+            context.collection.bind('resetEditCollection', context.resetEditCollection, context);
             context.editCollection.on('saved', context.savedNewModel, context);
             context.editCollection.on('updated', context.updatedOptions, context);
         },
@@ -795,6 +796,15 @@ define([
             }
         },
 
+        hideDeleteBtnAndUnSelectCheckAll: function () {
+            $('#top-bar-deleteBtn').hide();
+            $('#top-bar-generateBtn').hide();
+            $('#top-bar-copyBtn').hide();
+            $('#top-bar-createBtn').show();
+
+            this.$el.find('#checkAll').prop('checked', false);
+        },
+
         setAllTotalVals: function (e) {
             // e.stopPropagation();
 
@@ -818,9 +828,8 @@ define([
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
             $currentEl.append(new ListItemView({
-                collection : this.collection,
-                page       : this.page,
-                itemsNumber: this.collection.namberToShow
+                collection: this.collection,
+                page      : this.page
             }).render());// added two parameters page and items number
 
             this.renderPagination($currentEl, this);

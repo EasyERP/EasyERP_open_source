@@ -1,87 +1,86 @@
 define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        "text!templates/Bonus/CreateTemplate.html",
-        'models/BonusModel'
-    ],
-    function (Backbone, $, _, CreateTemplate, CurrentModel) {
-        'use strict';
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Bonus/CreateTemplate.html',
+    'models/BonusModel'
+], function (Backbone, $, _, CreateTemplate, CurrentModel) {
+    'use strict';
 
-        var CreateView = Backbone.View.extend({
-            el      : '#bonusTable',
-            template: _.template(CreateTemplate),
+    var CreateView = Backbone.View.extend({
+        el      : '#bonusTable',
+        template: _.template(CreateTemplate),
 
-            initialize: function (options) {
-                var model = new CurrentModel();
-                var data = options;
+        initialize: function (options) {
+            var model = new CurrentModel();
+            var data = options;
 
-                this.startDate = data.StartDate;
-                this.endDate = data.EndDate;
+            this.startDate = data.StartDate;
+            this.endDate = data.EndDate;
 
-                model.set({
-                    startDate: data.StartDate,
-                    endDate  : data.EndDate
-                });
+            model.set({
+                startDate: data.StartDate,
+                endDate  : data.EndDate
+            });
 
-                this.render(model);
-            },
+            this.render(model);
+        },
 
-            events: {},
+        events: {},
 
-            render: function (options) {
-                var data = options.toJSON();
-                var self = this;
-                var cid = options.cid;
-                var startPicker = '#' + cid + 'StartDate';
-                var endPicker = '#' + cid + 'EndDate';
+        render: function (options) {
+            var data = options.toJSON();
+            var self = this;
+            var cid = options.cid;
+            var startPicker = '#' + cid + 'StartDate';
+            var endPicker = '#' + cid + 'EndDate';
 
-                this.$el.prepend(this.template({
-                    options  : data,
-                    startDate: this.startDate,
-                    endDate  : this.endDate,
-                    cid      : cid
-                }));
+            this.$el.prepend(this.template({
+                options  : data,
+                startDate: this.startDate,
+                endDate  : this.endDate,
+                cid      : cid
+            }));
 
-                $(startPicker).datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
-                        var startDate = $(self.$el).find(startPicker).datepicker('getDate');
-                        var parrent = $(startPicker).parent('td');
-                        var value = $(self.$el).find(startPicker).val();
+            $(startPicker).datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function () {
+                    var startDate = $(self.$el).find(startPicker).datepicker('getDate');
+                    var parrent = $(startPicker).parent('td');
+                    var value = $(self.$el).find(startPicker).val();
 
-                        startDate.setDate(startDate.getDate());
-                        $(self.$el).find(endPicker).datepicker('option', 'minDate', startDate);
-                        parrent.find('div').html(value).show();
-                        $(startPicker).hide();
-                    }
-                });
+                    startDate.setDate(startDate.getDate());
+                    $(self.$el).find(endPicker).datepicker('option', 'minDate', startDate);
+                    parrent.find('div').html(value).show();
+                    $(startPicker).hide();
+                }
+            });
 
-                $(endPicker).datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
-                        var endDate = $(self.$el).find(endPicker).datepicker('getDate');
-                        var parrent = $(endPicker).parent('td');
-                        var value = $(self.$el).find(endPicker).val();
+            $(endPicker).datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function () {
+                    var endDate = $(self.$el).find(endPicker).datepicker('getDate');
+                    var parrent = $(endPicker).parent('td');
+                    var value = $(self.$el).find(endPicker).val();
 
-                        endDate.setDate(endDate.getDate());
-                        $(self.$el).find(startPicker).datepicker('option', 'maxDate', endDate);
-                        parrent.find('div').html(value).show();
-                        $(endPicker).hide();
-                    }
-                });
+                    endDate.setDate(endDate.getDate());
+                    $(self.$el).find(startPicker).datepicker('option', 'maxDate', endDate);
+                    parrent.find('div').html(value).show();
+                    $(endPicker).hide();
+                }
+            });
 
-                $(startPicker).datepicker('setDate', self.startDate);
-                $(endPicker).datepicker('setDate', self.endDate);
+            $(startPicker).datepicker('setDate', self.startDate);
+            $(endPicker).datepicker('setDate', self.endDate);
 
-                return this;
-            }
+            return this;
+        }
 
-        });
-
-        return CreateView;
     });
+
+    return CreateView;
+});

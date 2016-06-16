@@ -6,8 +6,8 @@
     <td><%=journalEntry.date%></td>
     <td><%=journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name.first + ' ' + (journalEntry.sourceDocument.subject.name.last ? journalEntry.sourceDocument.subject.name.last : '') : journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name : ''%></td>
     <td><a class="<%=journalEntry.sourceDocument.model%>" data-id="<%=journalEntry.sourceDocument._id ? journalEntry.sourceDocument._id._id : ''%>"><%=journalEntry.sourceDocument.name%></a></td>
-    <td><%=journalEntry.journal.debitAccount.name%></td>
-    <td><%=journalEntry.journal.creditAccount.name%></td>
+    <td><%=journalEntry.journal && journalEntry.journal.debitAccount ? journalEntry.journal.debitAccount.name : ''%></td>
+    <td><%=journalEntry.journal && journalEntry.journal.creditAccount ? journalEntry.journal.creditAccount.name : ''%></td>
 
     <%if (journalEntry.debit) {%>
     <td class="value <%=currencyClass(journalEntry.currency._id)%>" data-amount="<%= journalEntry.debit%>"><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>

@@ -12,6 +12,7 @@ module.exports = function (event, models) {
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getForView);
     router.get('/getYears', authStackMiddleware, accessStackMiddleware, handler.getYears);
+    router.get('/getStatistic', authStackMiddleware, accessStackMiddleware, handler.getStatistic);
 
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.patch('/', authStackMiddleware, accessStackMiddleware, handler.putchBulk);
