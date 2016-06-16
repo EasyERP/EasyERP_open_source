@@ -198,7 +198,7 @@ define([
                 },
 
                 groups: {
-                    owner: $('#allUsersSelect').data('id') || null,
+                    owner: targetEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },

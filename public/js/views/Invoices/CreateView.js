@@ -138,7 +138,7 @@ define([
                 currency   : currency,
 
                 groups: {
-                    owner: $('#allUsersSelect').data('id') || null,
+                    owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },

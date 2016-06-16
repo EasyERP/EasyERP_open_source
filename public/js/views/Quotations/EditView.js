@@ -424,7 +424,7 @@ define([
 
             var i;
             var whoCanRW;
-            var owner = $('#allUsersSelect').data('id') || null;
+            var owner = this.$el.find('#allUsersSelect').attr('data-id') || null;
 
             unTaxed = parseFloat(unTaxed) * 100;
             total = parseFloat(total) * 100;

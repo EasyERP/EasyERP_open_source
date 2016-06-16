@@ -121,7 +121,7 @@ define([
                     address        : address,
                     whoCanRW       : whoCanRW,
                     groups         : {
-                        owner: this.$el.find('#allUsersSelect').data('id') || null,
+                        owner: self.$el.find('#allUsersSelect').data('id') || null,
                         users: usersId,
                         group: groupsId
                     }

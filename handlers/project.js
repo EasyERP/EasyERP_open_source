@@ -1009,6 +1009,13 @@ module.exports = function (models, event) {
                 as          : 'workflow'
             }
         }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'groups.owner',
+                foreignField: '_id',
+                as          : 'groups.owner'
+            }
+        }, {
             $project: {
                 name            : 1,
                 EndDate         : 1,
@@ -1019,7 +1026,9 @@ module.exports = function (models, event) {
                 projecttype     : 1,
                 notRemovable    : 1,
                 workflow        : {$arrayElemAt: ['$workflow', 0]},
-                groups          : 1,
+                'groups.owner'  : {$arrayElemAt: ['$groups.owner', 0]},
+                'groups.group'  : 1,
+                'groups.users'  : 1,
                 whoCanRW        : 1,
                 customer        : {$arrayElemAt: ['$customer', 0]},
                 projectShortDesc: 1,
@@ -1072,7 +1081,11 @@ module.exports = function (models, event) {
                     name: '$workflow.name'
                 },
 
-                groups  : 1,
+                'groups.owner._id'  : '$groups.owner._id',
+                'groups.owner.login': '$groups.owner.login',
+                'groups.group'      : 1,
+                'groups.users'      : 1,
+
                 whoCanRW: 1,
 
                 customer: {
