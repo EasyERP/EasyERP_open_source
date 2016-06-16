@@ -187,7 +187,7 @@ define([
                 }
                 self.$el.find('#customer').text(fullName);
 
-                common.getImagesPM([customer], '/getCustomersImages', '#' + id, function (result) {
+                common.getImagesPM([customer], '/customers/getCustomersImages', '#' + id, function (result) {
                     var res = result.data[0];
 
                     self.$el.find('.miniAvatarCustomer').attr('data-id', res._id).find('img').attr('src', res.imageSrc);

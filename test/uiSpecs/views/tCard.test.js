@@ -322,7 +322,8 @@ define([
                 EndDate         : "2016-03-30T21:00:00.000Z",
                 TargetEndDate   : "",
                 description     : ""
-            }, {
+            },
+            {
                 _id             : "562bba6e4a431b5a5a3111fe",
                 StartDate       : null,
                 budget          : {

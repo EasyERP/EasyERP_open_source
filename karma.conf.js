@@ -5,6 +5,8 @@ module.exports = function (config) {
 
         frameworks: ['mocha', 'requirejs', 'sinon'],
 
+        browserNoActivityTimeout : 50000,
+
         files: [
             'test/uiSpecs/testMain.js',
             'public/css/*.css',
@@ -41,7 +43,7 @@ module.exports = function (config) {
             {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false/*, watching: true*/},
             {pattern: 'test/uiSpecs/models/*.test.js', included: false/*, watching: true*/},
             {pattern: 'test/uiSpecs/views/login.test.js', included: false/*, watching: true*/},
-            {pattern: 'test/uiSpecs/views/departments.test.js', included: false/*, watching: true*/}
+            {pattern: 'test/uiSpecs/views/dashboardVacation.test.js', included: false/*, watching: true*/}
 
             // {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
         ],
