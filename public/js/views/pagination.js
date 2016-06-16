@@ -53,6 +53,10 @@ define([
             if (this.hasAlphabet) {
                 this.renderAlphabeticalFilter();
             }
+
+            if (this.hasPagination) {
+                this.renderPagination($curEl, this);
+            }
             
             $curEl.append(createdInTag);
         },
