@@ -64,7 +64,6 @@ define([
     }
 
     socket.on('recollectVacationDash', _.debounce(fetchData, 1000));
-    socket.on('recollectProjectInfo', _.debounce(fetchProjects, 1000));
     socket.on('fetchJobsCollection', _.debounce(fetchJobs, 1000));
     socket.on('fetchInvoiceCollection', _.debounce(fetchInvoice, 1000));
     socket.on('sendMessage', _.debounce(sendMessage, 1000));

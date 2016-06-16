@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var ProductHandler = require('../handlers/product');
-var multipart = require('connect-multiparty');
-var multipartMiddleware = multipart();
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 

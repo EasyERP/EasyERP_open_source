@@ -10,8 +10,7 @@
         data-id="<%= projectModel ? projectModel._id : '' %>"><%= projectModel ? projectModel.name : '' %>
     </td>
     <!--<td data-content="workflow"><%= projectModel ? projectModel.workflow.name : ''%></td>-->
-    <td data-content="customer"><%= projectModel ? projectModel.customer.name.first + ' ' +
-        projectModel.customer.name.last : ''%>
+    <td data-content="customer"><%= projectModel && projectModel.customer ? projectModel.customer.fullName : ''%>
     </td>
     <td class="editable errorContent" data-content="employee"></td>
     <td class="editable errorContent" data-content="department"></td>

@@ -1,25 +1,28 @@
 var winston = require('winston');
 var logger = new (winston.Logger)({
-    transports       : [
+    transports: [
         new (winston.transports.Console)({
             json     : false,
             timestamp: true
         }),
+
         new (winston.transports.File)({
-            name: 'infoFile',
+            name    : 'infoFile',
             filename: 'info.log',
-            level: 'info',
-            json     : false,
-            maxsize: 1024 * 1024 * 10
+            level   : 'info',
+            json    : false,
+            maxsize : 1024 * 1024 * 10
         }),
+
         new (winston.transports.File)({
-            name: 'errorFile',
+            name    : 'errorFile',
             filename: 'error.log',
-            json     : false,
-            level: 'error',
-            maxsize: 1024 * 1024 * 10
+            json    : false,
+            level   : 'error',
+            maxsize : 1024 * 1024 * 10
         })
     ],
+
     exceptionHandlers: [
         new (winston.transports.Console)({
             json     : false,
@@ -30,7 +33,8 @@ var logger = new (winston.Logger)({
             json    : false
         })
     ],
-    exitOnError      : false
+    
+    exitOnError: false
 });
 
 module.exports = logger;

@@ -1,10 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var PayrollComponentTypesHandler = require('../handlers/payrollComponentTypes');
+var authStackMiddleware = require('../helpers/checkAuth');
 
 module.exports = function (models) {
     var handler = new PayrollComponentTypesHandler(models);
+    var moduleId = 103;
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
+    router.use(authStackMiddleware);
+    router.use(accessStackMiddleware);
+    
     router.get('/forDd', handler.getForDd);
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;

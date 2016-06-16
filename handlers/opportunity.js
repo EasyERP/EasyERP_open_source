@@ -8,12 +8,10 @@ var Module = function (models, event) {
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
     var objectId = mongoose.Types.ObjectId;
-
-    var access = require('../Modules/additions/access.js')(models);
+    
     var _ = require('../node_modules/underscore');
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
-    var logWriter = require('../helpers/logWriter.js');
     var async = require('async');
     var validator = require('validator');
     var CONSTANTS = require('../constants/mainConstants.js');
@@ -608,6 +606,8 @@ var Module = function (models, event) {
             var err;
 
             var savetoDb = function (data) {
+                var err;
+                
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
 
@@ -823,9 +823,10 @@ var Module = function (models, event) {
             }
 
             if (!data) {
-                logWriter.log('Opprtunities.create Incorrect Incoming Data');
-                res.status(400).send({error: 'Opprtunities.create Incorrect Incoming Data'});
-                return;
+                err = new Error('Opprtunities.create Incorrect Incoming Data');
+                err.status = 400;
+                
+                return next(err);
             }
             savetoDb(data);
 

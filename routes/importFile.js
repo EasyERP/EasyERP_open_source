@@ -8,7 +8,7 @@ var importMap = require('../helpers/importer/map/csvMap');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 var async = require('async');
-var logWriter = require('../helpers/logWriter.js');
+var logWriter = require('../helpers/logger.js');
 
 module.exports = function (models) {
 
@@ -39,7 +39,6 @@ module.exports = function (models) {
                 if (!modelName || !filePath) {
                     error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
                     error.status = 400;
-                    logWriter.log("importFile.js importFileToDb " + error);
                     next(error);
 
                     return;
@@ -49,7 +48,6 @@ module.exports = function (models) {
                 if (!task) {
                     error = new Error('Model name\"' + modelName + '\" is not valid');
                     error.status = 400;
-                    logWriter.log("importFile.js importFileToDb " + error);
                     next(error);
 
                     return;
@@ -75,16 +73,13 @@ module.exports = function (models) {
                     default:
                         error = new Error('Extension file \"' + getExtension(filePath) + '\" not support');
                         error.status = 400;
-                        logWriter.log("importFile.js importFileToDb " + error);
                         next(error);
                 }
 
             } else {
-                logWriter.log("importFile.js importFileToDb Bad Request");
                 res.status(400).send('Bad Request');
             }
         } else {
-            logWriter.log("importFile.js importFileToDb Unauthorized");
             res.status(401).send('Unauthorized');
         }
 
@@ -101,7 +96,6 @@ module.exports = function (models) {
 
                 async.waterfall(tasksWaterflow, function (err) {
                     if (err) {
-                        logWriter.log("importFile.js importCsvToDb " + error);
                         error = err;
                     }
                     callback();
@@ -118,9 +112,7 @@ module.exports = function (models) {
                         if (headers.length != expertedKey.length) {
                             error = new Error('Different lengths headers');
                             error.status = 400;
-                            logWriter.log("importFile.js importCsvToDb " + error);
-                            next(error);
-                            return false;
+                            return next(error);
                         }
 
                         for (var i = expertedKey.length - 1; i >= 0; i--) {
@@ -129,8 +121,8 @@ module.exports = function (models) {
                                 error = new Error('Field \"' + headers[i] + '\" not valid. Need ' + expertedKey[i]);
                                 error.status = 400;
                                 logWriter.log("importFile.js importCsvToDb " + error);
-                                next(error);
-                                return false;
+
+                                return next(error);
                             }
                         }
                         return false;
@@ -143,7 +135,7 @@ module.exports = function (models) {
                     q.push([data], function (err) {
                         if (err) {
                             error = err;
-                            logWriter.log("importFile.js importCsvToDb " + error);
+                            logWriter.error(error);
                         }
                     });
                 });
@@ -155,10 +147,9 @@ module.exports = function (models) {
                     obj.countRows = rows;
                     res.status(200).send(obj);
                 } else {
-                    logWriter.log("importFile.js importCsvToDb " + error);
                     next(error);
                 }
-            }
+            };
         }
 
         function importXlsxToDb(res, next) {
@@ -168,9 +159,7 @@ module.exports = function (models) {
 
             if (!obj) {
                 error = new Error('Parse Error');
-                logWriter.log("importFile.js importXlsxToDb " + error);
-                next(error);
-                return;
+                return next(error);
             }
             sheet = obj[0];
 
@@ -185,7 +174,6 @@ module.exports = function (models) {
                             if (headers.length !== expertedKey.length) {
                                 error = new Error('Different lengths headers');
                                 error.status = 400;
-                                logWriter.log("importFile.js importXlsxToDb " + error);
                                 cb(error);
                             }
 
@@ -194,7 +182,6 @@ module.exports = function (models) {
                                 if (headers[i] !== expertedKey[i]) {
                                     error = new Error('Field \"' + headers[i] + '\" not valid. Need \"' + expertedKey[i] + '\"');
                                     error.status = 400;
-                                    logWriter.log("importFile.js importXlsxToDb " + error);
                                     cb(error);
                                 }
                             }
@@ -212,7 +199,6 @@ module.exports = function (models) {
                             async.waterfall(tasksWaterflow, function (err) {
 
                                 if (err) {
-                                    logWriter.log("importFile.js importXlsxToDb " + err);
                                     cb(err);
                                 } else {
                                     cb();
@@ -223,7 +209,6 @@ module.exports = function (models) {
                     function (err) {
                         var obj = {};
                         if (err) {
-                            logWriter.log("importFile.js importXlsxToDb " + err);
                             next(err);
                         } else {
                             obj.countRows = rows;
@@ -232,7 +217,6 @@ module.exports = function (models) {
                     }
                 );
             } else {
-                logWriter.log("importFile.js importXlsxToDb \"Bad request\"");
                 res.status(400).send('Bad request');
             }
         }
@@ -291,7 +275,6 @@ module.exports = function (models) {
                                             Model.findOne({'ID': val[index]}, function (err, mod) {
 
                                                 if (err) {
-                                                    logWriter.log("importFile.js findAndReplaceObjectId " + err);
                                                     calb(err);
                                                 } else {
                                                     if (mod) {
@@ -300,7 +283,6 @@ module.exports = function (models) {
                                                     } else {
                                                         error = new Error('ID = ' + val[index] + ' (' + key + ') not exist in BD');
                                                         error.status = 400;
-                                                        logWriter.log("importFile.js findAndReplaceObjectId " + error);
                                                         calb(error);
                                                     }
                                                 }
@@ -311,7 +293,6 @@ module.exports = function (models) {
                                                 replaceObj[key] = objID;
                                                 cb();
                                             } else {
-                                                logWriter.log("importFile.js findAndReplaceObjectId " + err);
                                                 cb(err);
                                             }
                                         });
@@ -321,14 +302,13 @@ module.exports = function (models) {
                             } else {
                                 Model.findOne({'ID': val}, function (err, mod) {
                                     if (err) {
-                                        logWriter.log("importFile.js findAndReplaceObjectId " + err);
                                         return cb(err);
                                     }
 
                                     if (!mod) {
                                         error = new Error('ID = ' + val + ' (' + key + ') not exist in BD');
                                         error.status = 400;
-                                        logWriter.log("importFile.js findAndReplaceObjectId " + error);
+
                                         return cb(error);
                                     }
 
@@ -345,7 +325,6 @@ module.exports = function (models) {
                         if (!err) {
                             callback(null, replaceObj);
                         } else {
-                            logWriter.log("importFile.js findAndReplaceObjectId " + err);
                             callback(err);
                         }
                     });
@@ -362,7 +341,6 @@ module.exports = function (models) {
                 Model.update({ID: id}, objectToDb, {upsert: true}, function (err) {
 
                     if (err) {
-                        logWriter.log("importFile.js saveToDbOrUpdate " + err);
                         callback(err);
                     } else {
                         callback();
@@ -373,12 +351,11 @@ module.exports = function (models) {
                 objectForSave = new Model(objectToDb);
                 objectForSave.save(function (err) {
                     if (err) {
-                        logWriter.log("importFile.js saveToDbOrUpdate " + err);
                         callback(err);
                     } else {
                         callback();
                     }
-                })
+                });
             }
         }
     }
