@@ -11,14 +11,14 @@ define([
     'views/Projects/TopBarView',
     'views/Projects/thumbnails/ThumbnailsView',
     'helpers/eventsBinder',
-    'testConstants/projects'
-    /*'views/Projects/list/ListView',
+    'testConstants/projects',
+    'views/Projects/list/ListView',
      'views/Projects/form/FormView',
      'views/Projects/CreateView',
      'views/Projects/EditView',
      'custom',
-     'async'*/
-], function ($, chai, chaiJquery, sinonChai, modules, fixtures, ProjectModel, ProjectCollection, MainView, topBarView, ThumbnailsView, eventsBinder, PROJECTS/*, ListView, FormView, ThumbnailsView, CreateView, EditView*/) {
+     'async'
+], function ($, chai, chaiJquery, sinonChai, modules, fixtures, ProjectModel, ProjectCollection, MainView, topBarView, ThumbnailsView, eventsBinder, PROJECTS, ListView, FormView, CreateView, EditView, custom, async) {
     'use strict';
 
     var view;
@@ -42,8 +42,8 @@ define([
         after(function () {
             topBarView.remove();
             thumbnailsView.remove();
-            /*formView.remove();
-             listView.remove();*/
+            formView.remove();
+           /*  listView.remove();*/
             view.remove();
         });
 
@@ -274,7 +274,7 @@ define([
                     $selectedItem1.click();
                     server.respond();
                     // server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(6);
 
                     // select project name
                     $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
@@ -507,11 +507,11 @@ define([
                     var projectsUrl = new RegExp('\/Projects\/form', 'i');
                     var jobsUrl = new RegExp('\/jobs\/', 'i');
                     var projectTypeUrl = '/projectType';
-                    var workflowsProjectsUrl = '/workflows/getWorkflowsForDd?id=Projects';
-                    var invoiceUrl = new RegExp('\/Invoice\/list', 'i');
-                    var wTrackUrl = new RegExp('\/wTrack\/list', 'i');
-                    var paymentsUrl = new RegExp('\/payment\/customers\/list', 'i');
-                    var quotationUrl = new RegExp('\/quotation\/list', 'i');
+                    var workflowsProjectsUrl = new RegExp('\/workflows\/fetch', 'i');;
+                    var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+                    var wTrackUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/weTracks', 'i');
+                    var paymentsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/payments', 'i');
+                    var quotationUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/quotations', 'i');
                     var employeesForDDUrl = '/employees/getForDD';
                     var bonusTypeUrl = '/bonusType/list';
 
@@ -520,7 +520,7 @@ define([
                     projectModel = new ProjectModel();
                     projectModel.urlRoot = '/Projects/form';
 
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectByIdForForm)]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectByIdForForm)]);
                     projectModel.fetch({
                         data   : {id: '55b92ad621e4b7c40f00065f'},
                         success: function (model) {
@@ -528,15 +528,15 @@ define([
                                 model: model
                             });
 
-                            server.respondWith('GET', jobsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobs)]);
-                            server.respondWith('GET', projectTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsType)]);
-                            server.respondWith('GET', workflowsProjectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflowsProject)]);
-                            server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoice)]);
-                            server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWTrack)]);
-                            server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePayments)]);
-                            server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotations)]);
-                            server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusType)]);
-                            server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeesForDD)]);
+                            server.respondWith('GET', jobsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeJobs)]);
+                            server.respondWith('GET', projectTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectsType)]);
+                            server.respondWith('GET', workflowsProjectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeWorkflowsProject)]);
+                            server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeInvoice)]);
+                            server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeWTrack)]);
+                            server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakePayments)]);
+                            server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotations)]);
+                            server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeBonusType)]);
+                            server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
                             formView.render();
                             server.respond();
                             server.respond();
@@ -775,7 +775,7 @@ define([
                 $closeBtn.click();
                 expect($('.ui-dialog')).to.not.exist;
        
-                });
+                });*/
        
                 });
        
@@ -800,39 +800,30 @@ define([
        
                 it('Try to sort list', function () {
                 var $sortBtn = $thisEl.find('th[data-sort="employee.name"]');
-                var wTrackUrl = new RegExp('\/wTrack\/list', 'i');
-                var wTrackTotalUrl = new RegExp('\/wTrack\/totalCollectionLength', 'i');
+                var wTrackUrl = new RegExp('\/wTrack\/', 'i');
        
-                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeWTrack[1], fakeWTrack[0]])]);
-                server.respondWith('GET', wTrackTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                count: 2
-                })]);
+                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data : [PROJECTS.fakeWTrack.data[1], PROJECTS.fakeWTrack.data[0]], count : 200})]);
                 $sortBtn.click();
-                server.respond();
                 server.respond();
                 expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ad821e4b7c40f0006e3');
        
-                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWTrack)]);
-                server.respondWith('GET', wTrackTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                count: 2
-                })]);
+                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeWTrack)]);
                 $sortBtn.click();
-                server.respond();
                 server.respond();
                 expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ad821e4b7c40f00072a');
        
                 });
        
-                it('Try to switch page counter with not saved state', function () {
+           /*     it('Try to switch page counter with not saved state', function () {
+
                 var spyResponse;
                 var $selectedItem;
                 var $deleteBtn;
                 var $pageListEl = $thisEl.find('.pageList');
                 var $needRow = $($thisEl.find('#listTable > tr:nth-child(1)')[0]);
-                var $employeeTd = $needRow.find('td[data-content="employee"]');
-                var $firstBtn = $pageListEl.find('a:nth-child(1)');
-       
-                $employeeTd.click();
+                var $MondayTd = $needRow.find('td[data-content="1"]');
+
+                $MondayTd.click();
                 $selectedItem = $thisEl.find('#565f0fa6f6427f253cf6bf19');
                 $selectedItem.click();
        
@@ -844,7 +835,7 @@ define([
                 expect(spyResponse).to.have.property('type', 'notify');
        
                 $deleteBtn.click();
-                });
+                });*/
        
                 it('Try to switch page counter', function () {
                 var $pageListEl = $thisEl.find('.pageList');
@@ -855,12 +846,9 @@ define([
                 var wTrackUrl = new RegExp('\/wTrack\/list', 'i');
                 var wTrackTotalUrl = new RegExp('\/wTrack\/totalCollectionLength', 'i');
        
-                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWTrack)]);
-                server.respondWith('GET', wTrackTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                count: 2
-                })]);
+                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify( PROJECTS.fakeWTrack)]);
+
                 $firstBtn.click();
-                server.respond();
                 server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
@@ -868,20 +856,17 @@ define([
        
                 $secondBtn.click();
                 server.respond();
-                server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
                 expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
        
                 $thirdBtn.click();
                 server.respond();
-                server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
                 expect($pageListEl.find('a:nth-child(3)')).to.have.class('selectedItemsNumber');
        
                 $allBtn.click();
-                server.respond();
                 server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
@@ -897,13 +882,9 @@ define([
                 var wTrackTotalUrl = new RegExp('\/wTrack\/totalCollectionLength', 'i');
                 var event;
        
-                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWTrack)]);
-                server.respondWith('GET', wTrackTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                count: 2
-                })]);
+                server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify( PROJECTS.fakeWTrack)]);
                 $nextPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
                 $nextPageBtn.click();
-                server.respond();
                 server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
@@ -911,20 +892,18 @@ define([
                 $prevPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
                 $prevPageBtn.click();
                 server.respond();
-                server.respond();
+
        
                 expect($thisEl.find('#listTable')).to.exist;
        
                 $firstPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
                 $firstPage.click();
                 server.respond();
-                server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
        
                 $lastPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
                 $lastPage.click();
-                server.respond();
                 server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
@@ -938,7 +917,6 @@ define([
                 $currentPageListEl.mouseover();
                 $selectedItem = $thisEl.find('#pageList > li:nth-child(1)');
                 $selectedItem.click();
-                server.respond();
                 server.respond();
        
                 expect($thisEl.find('#listTable')).to.exist;
@@ -999,7 +977,8 @@ define([
                 $deleteBtn.click();
                 server.respond();
        
-                expect($($thisEl.find('#listTable > tr:nth-child(1)')[0]).attr('data-id')).to.be.equals('55b92ad821e4b7c40f0006e3');
+                expect($($thisEl.find('#listTable > tr:nth-child(1)')[0]).attr('data-id')).to.be.equals('55b92ad821e4b7c40f00072a');
+                $needCheckBox.attr('checked', false);
                 });
        
                 it('Try to copy some row', function () {
@@ -1031,7 +1010,7 @@ define([
                 $createBtn.click();
                 $newRow = $($thisEl.find('#listTable > tr:nth-child(1)')[0]);
                 $sprintTd = $newRow.find('td[data-content="jobs"]');
-                server.respondWith('GET', jobUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsForWTrack)]);
+                server.respondWith('GET', jobUrl, [200, {"Content-Type": "application/json"}, JSON.stringify( PROJECTS.fakeJobsForWTrack)]);
                 $sprintTd.click();
                 server.respond();
                 $selectedItem = $thisEl.find('#570dfbd96625f34212d01f39');
@@ -1588,7 +1567,7 @@ define([
        
                 expect($('.ui-dialog')).to.exist;
        
-                }); */
+                });
             });
 
         });

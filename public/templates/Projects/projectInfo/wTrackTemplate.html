@@ -15,7 +15,7 @@
     </td>-->
     <td data-content="customer"
         data-id="<%=project && project.customer ? project.customer.fullName : ''%>">
-        <%=project && project.customer? project.customer.fullName : ''%>
+        <%=project && project.customer ? project.customer.fullName : ''%>
     </td>
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-content="employee"><%=wTrack.employee && wTrack.employee.name ? wTrack.employee.name.first + ' ' +
         wTrack.employee.name.last: ''%>

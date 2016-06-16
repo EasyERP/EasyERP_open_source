@@ -109,7 +109,7 @@ module.exports = function (models, event) {
             }
 
             // event.emit('recollectProjectInfo');
-            res.status(201).send({success: 'A new Project crate success', result: result, id: result._id});
+            res.status(201).send({success: 'A new Project create success', result: result, id: result._id});
         });
     };
 
