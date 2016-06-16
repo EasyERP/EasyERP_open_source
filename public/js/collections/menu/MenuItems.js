@@ -12,19 +12,20 @@ define([
 
     var MenuItems = Backbone.Collection.extend({
         model        : MyModel,
-        currentModule: "HR",
+        currentModule: 'HR',
         url          : function () {
             return CONSTANTS.URLS.MODULES;
         },
 
         initialize: function () {
             this.fetch({
-                type   : 'GET',
-                reset  : true,
+                reset: true,
+
                 success: function (collection, response) {
                     collection.relationships();
                 },
-                error  : this.fetchError
+
+                error: this.fetchError
             });
         },
 
@@ -38,7 +39,7 @@ define([
         },
 
         fetchError: function () {
-            throw new Error("Not collection received from fetch");
+            throw new Error('No collection received from fetch');
         },
 
         relationships: function () {
@@ -85,7 +86,7 @@ define([
             }
 
             modules = _.sortBy(modules, function (model) {
-                return model.get("sequence");
+                return model.get('sequence');
             });
 
             return modules;
@@ -93,6 +94,7 @@ define([
 
         parent: function (model) {
             var parrent = model.get('parrent');
+            
             return (!parrent) ? 0 : parrent;
         }
     });

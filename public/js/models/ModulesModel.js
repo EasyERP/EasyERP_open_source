@@ -4,7 +4,6 @@ define([
     'use strict';
 
     var ModulesModel = Backbone.Model.extend({
-        urlRoot: 'http://192.168.88.109:8088/getModules',
         defauls: {
             mid    : '',
             mname  : '',
