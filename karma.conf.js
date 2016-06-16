@@ -52,8 +52,8 @@ module.exports = function (config) {
 
         preprocessors: {
             'public/js/models/**/*.js'     : ['coverage'],
-            'public/js/views/**/*.js'      : ['coverage'],
-            'public/js/collections/**/*.js': ['coverage']
+            'public/js/views/!**!/!*.js'      : ['coverage'],
+            'public/js/collections/!**/!*.js': ['coverage']
         },
 
         coverageReporter: {
