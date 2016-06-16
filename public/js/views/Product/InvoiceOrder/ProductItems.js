@@ -17,7 +17,21 @@ define([
     'dataService',
     'constants',
     'helpers/keyValidator'
-], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS, keyValidator) {
+], function (Backbone,
+             $,
+             _,
+             productItemTemplate,
+             ProductInputContent,
+             ProductItemsEditList,
+             ItemsEditList,
+             totalAmount,
+             productCollection,
+             GenerateWTrack,
+             populate,
+             helpers,
+             dataService,
+             CONSTANTS,
+             keyValidator) {
     'use strict';
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
@@ -282,10 +296,11 @@ define([
             var $targetEl = $(e.target);
             var parent = $targetEl.closest('td');
             var inputEl = parent.find('input');
+            var val;
             if (!inputEl.length) {
                 inputEl = parent.find('textarea');
             }
-            var val = inputEl.val();
+            val = inputEl.val();
 
             e.preventDefault();
 
@@ -381,8 +396,8 @@ define([
 
                     $parrent.find('.jobs').text($target.text()).attr('data-id', jobId);
                     $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
-                    //$hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
-                    $hoursContainer.text(1); //for quantity = 1
+                    // $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
+                    $hoursContainer.text(1); // for quantity = 1
 
                     model = this.products.get(_id);
 
@@ -420,7 +435,7 @@ define([
 
                 //  $($parrents[2]).attr('class', 'editable');
                 $trEl.find('#editInput').val(salePrice); // changed on def 0
-                /*if (currentJob && currentJob.budget) {
+                /* if (currentJob && currentJob.budget) {
                     price = currentJob.budget.budgetTotal.revenueSum;
                     if (price) {
                         $trEl.find('[data-name="price"]').find('input').val(price);
@@ -552,7 +567,7 @@ define([
             $parent = $parent.closest('tr');
 
             cost = $parent.find('[data-name="price"] input').val();
-            cost = parseFloat(cost);
+            cost = parseFloat(helpers.spaceReplacer(cost));
 
             total = quantity * cost;
             taxes = total * this.taxesRate;
@@ -603,12 +618,12 @@ define([
 
             totalUntax = totalUntax.toFixed(2);
             totalUntaxContainer.text(helpers.currencySplitter(totalUntax));
-            totalUntax = parseFloat(totalUntax);
+            totalUntax = parseFloat(helpers.spaceReplacer(totalUntax));
 
             taxes = totalUntax * this.taxesRate;
             taxes = taxes.toFixed(2);
             taxesContainer.text(helpers.currencySplitter(taxes));
-            taxes = parseFloat(taxes);
+            taxes = parseFloat(helpers.spaceReplacer(taxes));
 
             total = totalUntax + taxes;
             balance = total - this.paid;
@@ -617,7 +632,7 @@ define([
 
             totalContainer.text(helpers.currencySplitter(total));
 
-            balanceContainer.text(balance);
+            balanceContainer.text(helpers.currencySplitter(balance));
 
             date = helpers.minFromDates(dates);
             thisEl.find('#minScheduleDate span').text(date);

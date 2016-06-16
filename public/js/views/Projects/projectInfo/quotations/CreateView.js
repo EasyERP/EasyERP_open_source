@@ -127,7 +127,7 @@ define([
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"] input').val();
-                        price = parseFloat(price) * 100;
+                        price = parseFloat(helpers.spaceReplacer(price)) * 100;
 
                         if (isNaN(price) || price <= 0) {
                             return App.render({
@@ -137,10 +137,10 @@ define([
                         }
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = targetEl.find('.taxes').text();
-                        taxes = parseFloat(taxes) * 100;
+                        taxes = parseFloat(helpers.spaceReplacer(taxes)) * 100;
                         description = targetEl.find('[data-name="productDescr"]').text();
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
-                        subTotal = parseFloat(subTotal) * 100;
+                        subTotal = parseFloat(helpers.spaceReplacer(subTotal)) * 100;
                         jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                         if (price === '') {
