@@ -1,12 +1,14 @@
-var requestHandler;
+var events = require('events');
+var event = new events.EventEmitter();
+var eventsHandler;
 
 require('pmx').init();
-requestHandler = function (app, event, mainDb) {
+
+eventsHandler = function (app, mainDb) {
     'use strict';
 
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');
-    var async = require('async');
     var _ = require('underscore');
     var logWriter = require('./logger.js');
     var models = require('./models.js')(dbsObject);
@@ -15,12 +17,8 @@ requestHandler = function (app, event, mainDb) {
     var employeeSchema = mongoose.Schemas.Employee;
     var jobPositionSchema = mongoose.Schemas.JobPosition;
     var opportunitiesSchema = mongoose.Schemas.Opportunitie;
-    var HoursCashesSchema = mongoose.Schemas.HoursCashes;
     var wTrackSchema = mongoose.Schemas.wTrack;
-    var ProjectSchema = mongoose.Schemas.Project;
     var jobsSchema = mongoose.Schemas.jobs;
-    var ObjectId = mongoose.Types.ObjectId;
-    var QuotationSchema = mongoose.Schemas.Quotation;
 
     var io = app.get('io');
     var redisStore = require('./redisClient');
@@ -251,7 +249,7 @@ requestHandler = function (app, event, mainDb) {
             objFind[sequenceField] = {$gte: end};
             objChange[sequenceField] = 1;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
-            query.exec(function (err, res) {
+            query.exec(function () {
                 if (callback) {
                     callback(end);
                 }
@@ -259,7 +257,7 @@ requestHandler = function (app, event, mainDb) {
 
         }
     });
-//Emit UI event for information user about some changes
+// Emit UI event for information user about some changes
     event.on('recollectVacationDash', function () {
         io.emit('recollectVacationDash');
         redisStore.removeAllFromStorage('dashboardVacation');
@@ -277,43 +275,7 @@ requestHandler = function (app, event, mainDb) {
         io.emit('sendMessage', options);
     });
 
-    Array.prototype.objectID = function () {
-        var _arrayOfID = [];
-        var objectId = mongoose.Types.ObjectId;
-        var i;
-
-        for (i = 0; i < this.length; i++) {
-            if (this[i] && typeof this[i] === 'object' && this[i].hasOwnProperty('_id')) {
-                _arrayOfID.push(this[i]._id);
-            } else {
-                if (typeof this[i] === 'string' && this[i].length === 24) {
-                    _arrayOfID.push(objectId(this[i]));
-                }
-                if (this[i] === null || this[i] === 'null') {
-                    _arrayOfID.push(null);
-                }
-
-            }
-        }
-        return _arrayOfID;
-    };
-
-    Array.prototype.toNumber = function () {
-        var el;
-        var _arrayOfNumbers = [];
-        var value;
-        var i;
-
-        for (i = 0; i < this.length; i++) {
-            el = this[i];
-            value = parseInt(el, 10);
-
-            if (typeof el === 'string' || typeof el === 'number' && isFinite(value)) {
-                _arrayOfNumbers.push(value);
-            }
-        }
-        return _arrayOfNumbers;
-    };
+    return event;
 };
 
-module.exports = requestHandler;
+module.exports = eventsHandler;

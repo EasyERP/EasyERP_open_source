@@ -4,9 +4,7 @@ module.exports = function (app, mainDb) {
     'use strict';
 
     // var newrelic = require('newrelic');
-    var events = require('events');
-    var event = new events.EventEmitter();
-    var logWriter = require('../helpers/logWriter');
+    var event = require('../helpers/eventstHandler')(app, mainDb);
     var RESPONSES = require('../constants/responses');
     var fs = require('fs');
     var dbsNames = app.get('dbsNames');
@@ -29,7 +27,6 @@ module.exports = function (app, mainDb) {
     var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
-    // var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models, event);
     var employeeRouter = require('./employee')(event, models);
     var applicationRouter = require('./application')(event, models);
@@ -37,7 +34,6 @@ module.exports = function (app, mainDb) {
     var departmentRouter = require('./department')(models, event);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
-    var salaryRouter = require('./salary')(event, models);
     var opportunityRouter = require('./opportunity')(models, event);
     var leadsRouter = require('./leads')(models, event);
     var jobPositionRouter = require('./jobPosition')(models);
@@ -71,10 +67,10 @@ module.exports = function (app, mainDb) {
     var journalEntriesRouter = require('./journalEntries')(models, event);
 
     var logger = require('../helpers/logger');
-
     var async = require('async');
-
     var requestHandler;
+
+    require('../helpers/arrayExtender');
 
     app.set('logger', logger);
 
@@ -104,7 +100,6 @@ module.exports = function (app, mainDb) {
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
-    // app.use('/importData', importDataRouter);
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/projects', projectRouter);
@@ -236,7 +231,7 @@ module.exports = function (app, mainDb) {
 
         if (process.env.NODE_ENV === 'production') {
             if (status === 401) {
-                logWriter.log('', err.message + '\n' + err.message)
+                logger.log('', err.message + '\n' + err.message);
             }
             res.status(status).send({error: err.message});
         } else {
