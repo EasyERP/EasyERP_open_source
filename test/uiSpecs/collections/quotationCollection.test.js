@@ -1,5 +1,5 @@
 define([
-    'collections/quotations/filterCollection',
+    'collections/Quotations/filterCollection',
     'chai'
 ], function (QuotationCollection, chai) {
     'use strict';
