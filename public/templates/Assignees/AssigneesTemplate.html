@@ -18,7 +18,7 @@
     <dl class="assignees-info">
         <dt><label for="allUsersSelect">Owner</label></dt>
         <dd>
-            <a href="javascript:;" class="current-selected" id="allUsersSelect" data-id="<%=owner._id%>"><%=owner?owner.login:"Select"%></a>
+            <a href="javascript:;" class="current-selected" id="allUsersSelect" data-id="<%=owner._id%>"><%=owner && owner.login ?owner.login : "Select"%></a>
         </dd>
     </dl>
 </div>
