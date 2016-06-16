@@ -175,38 +175,6 @@ module.exports = function (app, mainDb) {
 
     app.use('/users', userRouter);
 
-    app.get('/:id', function (req, res, next) {
-        var id = req.param('id');
-        if (!isNaN(parseFloat(id))) {
-            requestHandler.redirectFromModuleId(req, res, id);
-        } else {
-            next();
-        }
-    });
-
-    app.get('/clean', function (req, res, next) {
-        var dbId = req.session.lastDb;
-        var db = dbsObject[dbId];
-        var collections = ['Project', 'wTrack', 'Invoice', 'Quotation', 'Payment', 'jobs', 'savedFilters', 'payOut'];
-        var collection;
-
-        async.each(collections, function (colName, cb) {
-            collection = db.collection(colName);
-            collection.drop(function (err, reply) {
-                if (err) {
-                    return cb(err);
-                }
-
-                cb();
-            });
-        }, function (err) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send('droped');
-        });
-    });
 
     function notFound(req, res, next) {
         res.status(404);

@@ -1,7 +1,8 @@
 define([
     'Backbone',
+    'Underscore',
     'text!templates/menu/TopMenuItemTemplate.html'
-], function (Backbone, ItemTpl) {
+], function (Backbone, _, ItemTpl) {
 
     var TopMenuItemView = Backbone.View.extend({
         tagName : 'li',
@@ -10,7 +11,8 @@ define([
         initialize: function (options) {
 
         },
-        render    : function () {
+        
+        render: function () {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
         }

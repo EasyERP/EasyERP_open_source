@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
+var redisStore = require('../helpers/redisClient');
+
 var Module = function (models) {
     'use strict';
 
@@ -9,6 +11,7 @@ var Module = function (models) {
 
     this.getAllModulesByProfile = function (req, res, next) {
         var userId = req.session ? req.session.uId : null;
+        var key = req.session.profileId;
 
         function userProfileRetriver(waterFallCb) {
             models.get(req.session.lastDb, 'Users', userSchema).findById(userId, function (err, user) {
@@ -73,6 +76,7 @@ var Module = function (models) {
             }
 
             res.status(200).send(modules);
+            redisStore.writeToStorage('modules', key, JSON.stringify(modules));
         });
     };
 };

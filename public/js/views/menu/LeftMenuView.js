@@ -15,7 +15,10 @@ define([
 
         initialize: function (options) {
             if (!options.collection) {
-                throw 'No collection specified!';
+                App.render({
+                    type   : 'error',
+                    message: 'No collection specified!'
+                });
             }
 
             this.collection = options.collection;
