@@ -25,7 +25,7 @@ var Module = function (models, event) {
     var objectId = mongoose.Types.ObjectId;
 
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
-    var access = require('../Modules/additions/access.js')(models);
+    var access = require('../helpers/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);

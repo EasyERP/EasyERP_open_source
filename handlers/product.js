@@ -5,8 +5,7 @@ var Products = function (models) {
     var ProductSchema = mongoose.Schemas.Products;
     var DepartmentSchema = mongoose.Schemas.Department;
     var objectId = mongoose.Types.ObjectId;
-
-    var access = require('../Modules/additions/access.js')(models);
+    
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var async = require('async');
@@ -85,81 +84,7 @@ var Products = function (models) {
 
         getProductImages(req, res, next, data);
     };
-
-   /* this.uploadProductFiles = function (req, res, next) {
-        var os = require('os');
-        var osType = (os.type().split('_')[0]);
-        var dir;
-
-        switch (osType) {
-            case 'Windows':
-                dir = __dirname + '\\uploads\\';
-                break;
-            case 'Linux':
-                dir = __dirname + '\/uploads\/';
-        }
-        fs.readdir(dir, function (err, files) {
-            if (err) {
-                fs.mkdir(dir, function (errr) {
-                    if (!errr) {
-                        dir += req.headers.id;
-                    }
-                    fs.mkdir(dir, function (errr) {
-                        if (!errr) {
-                            uploadFileArray(req, res, function (files) {
-                                uploadProductFile(req, res, next, req.headers.id, files);
-                            });
-                        }
-                    });
-                });
-            } else {
-                dir += req.headers.id;
-                fs.readdir(dir, function (err, files) {
-                    if (err) {
-                        fs.mkdir(dir, function (errr) {
-                            if (!errr) {
-                                uploadFileArray(req, res, function (files) {
-                                    uploadProductFile(req, res, next, req.headers.id, files);
-                                });
-                            }
-                        });
-                    } else {
-                        uploadFileArray(req, res, function (files) {
-                            uploadProductFile(req, res, next, req.headers.id, files);
-                        });
-                    }
-                });
-            }
-        });
-    };*/
-
-   /* function addAtach(req, res, next, _id, files) { // to be deleted
-        models.get(req.session.lastDb, 'Product', ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {
-            new   : true,
-            upsert: true
-        }, function (err, result) {
-            if (err) {
-                next(err);
-            } else {
-                res.status(200).send({success: 'Products updated success', data: result});
-            }
-        });
-    }// end update
-
-    function uploadProductFile(req, res, next, id, files) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 58, function (access) {
-                if (access) {
-                    addAtach(req, res, next, id, files);
-                } else {
-                    res.status(403).send();
-                }
-            });
-        } else {
-            res.status(401).send();
-        }
-    }*/
-
+    
     function remove(req, res, next, id) {
         models.get(req.session.lastDb, 'Products', ProductSchema).remove({_id: id}, function (err, product) {
             if (err) {
