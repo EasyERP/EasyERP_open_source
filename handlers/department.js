@@ -3,7 +3,6 @@ var Module = function (models, event) {
     'use strict';
 
     var DepartmentSchema = mongoose.Schemas.Department;
-    var access = require('../Modules/additions/access.js')(models);
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Department;
 

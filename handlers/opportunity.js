@@ -8,8 +8,7 @@ var Module = function (models, event) {
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
     var objectId = mongoose.Types.ObjectId;
-
-    var access = require('../Modules/additions/access.js')(models);
+    
     var _ = require('../node_modules/underscore');
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);

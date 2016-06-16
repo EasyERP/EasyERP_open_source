@@ -14,7 +14,6 @@ var Module = function (models, event) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').jobs;
-    var access = require('../Modules/additions/access.js')(models);
     var objectId = mongoose.Types.ObjectId;
 
     function caseFilter(filter) {

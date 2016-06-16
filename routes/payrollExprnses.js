@@ -7,7 +7,6 @@ var fs = require('fs');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 var async = require('async');
-var logWriter = require('../helpers/logWriter.js');
 var payrollSchema = mongoose.Schemas['PayRoll'];
 var employeeSchema = mongoose.Schemas['Employee'];
 
@@ -37,7 +36,6 @@ module.exports = function (models) {
                 if (!modelName || !filePath) {
                     error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
                     error.status = 400;
-                    logWriter.log("importFile.js importFileToDb " + error);
                     next(error);
 
                     return;
@@ -50,16 +48,13 @@ module.exports = function (models) {
                     default:
                         error = new Error('Extension file \"' + getExtension(filePath) + '\" not support');
                         error.status = 400;
-                        logWriter.log("importFile.js importFileToDb " + error);
                         next(error);
                 }
 
             } else {
-                logWriter.log("importFile.js importFileToDb Bad Request");
                 res.status(400).send('Bad Request');
             }
         } else {
-            logWriter.log("importFile.js importFileToDb Unauthorized");
             res.status(401).send('Unauthorized');
         }
 
@@ -147,9 +142,7 @@ module.exports = function (models) {
 
             if (!obj) {
                 error = new Error('Parse Error');
-                logWriter.log("importFile.js importXlsxToDb " + error);
-                next(error);
-                return;
+                return next(error);
             }
             sheet = obj[0];
 
@@ -207,11 +200,9 @@ module.exports = function (models) {
                         var response = 'all imported';
 
                         if (err) {
-                            logWriter.log("importFile.js importXlsxToDb " + err);
                             next(err);
                         } else {
                             if (Object.keys(notImportedEmployees).length) {
-                                logWriter.log("unsaved " + notImportedEmployees.toString());
                                 response = notImportedEmployees;
                             }
                             res.status(200).send(response);
@@ -219,7 +210,6 @@ module.exports = function (models) {
                     }
                 );
             } else {
-                logWriter.log("importFile.js importXlsxToDb \"Bad request\"");
                 res.status(400).send('Bad request');
             }
         }
