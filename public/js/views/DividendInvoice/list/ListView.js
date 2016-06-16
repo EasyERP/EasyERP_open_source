@@ -112,7 +112,11 @@ define([
                 var sum = 0;
 
                 _.each(self.collection.toJSON(), function (model) {
-                    sum += parseFloat(model.paymentInfo[col]);
+                    if (model && model.currency && model.currency.rate) {
+                        sum += parseFloat(model.paymentInfo[col] / model.currency.rate);
+                    } else {
+                        sum += parseFloat(model.paymentInfo[col]);
+                    }
                 });
 
                 self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));

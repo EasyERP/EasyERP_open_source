@@ -315,7 +315,7 @@ describe('Project Specs', function () {
                         .and.to.have.property('_id');
                     expect(body)
                         .to.have.property('customer')
-                        .and.to.have.property('name');
+                        .and.to.have.property('fullName');
                     expect(body)
                         .to.have.property('projecttype');
                     expect(body)
@@ -340,6 +340,14 @@ describe('Project Specs', function () {
                         .and.to.have.property('_id');
                     expect(body)
                         .to.have.property('description');
+                    expect(body)
+                        .to.have.property('groups')
+                        .and.to.have.property('owner');
+
+                    if (body.groups.owner) {
+                        expect(body.groups.owner)
+                            .to.have.property('login');
+                    }
 
                     done();
                 });

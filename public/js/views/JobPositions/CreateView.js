@@ -68,7 +68,7 @@ define([
                 workflow           : workflow,
 
                 groups: {
-                    owner: $thisEl.find('#allUsersSelect').data('id'),
+                    owner: $thisEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },

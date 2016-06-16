@@ -338,10 +338,10 @@ define([
             this.$el.html(this.template({owner: owner, whoCanRW: whoCanRW}));
 
             if (owner !== '') {
-                populate.get('#allUsersSelect', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this);
+                populate.get('#allUsersSelect', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, true, true);
 
             } else {
-                populate.get('#allUsersSelect', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, true);
+                populate.get('#allUsersSelect', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, true, true);
             }
             return this;
         }

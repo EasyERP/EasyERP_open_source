@@ -5,6 +5,7 @@ define([
     'views/main/MainView',
     'views/jobsDashboard/list/ListView',
     'views/jobsDashboard/TopBarView',
+    'views/Filter/FilterView',
     'views/Projects/projectInfo/journalEntriesForJob/dialogView',
     'helpers/eventsBinder',
     'jQuery',
@@ -13,7 +14,7 @@ define([
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, JobsCollection,modules, MainView, ListView, TopBarView, ReportView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, JobsCollection,modules, MainView, ListView, TopBarView, FilterView, ReportView,  eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
@@ -504,6 +505,9 @@ define([
     var view;
     var topBarView;
     var listView;
+    var selectSpy;
+    var saveFilterSpy;
+    var removeFilterSpy;
 
 
     describe('JobsDashboard View', function () {
@@ -513,6 +517,9 @@ define([
 
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
+            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
         });
 
         after(function () {
@@ -520,6 +527,9 @@ define([
             listView.remove();
             view.remove();
             ajaxSpy.restore();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -595,7 +605,7 @@ define([
 
         });
 
-        describe('ProjectsDashboardList view', function () {
+        describe('jobsDashboard List view', function () {
             var $thisEl;
             var server;
             var mainSpy;
@@ -625,6 +635,7 @@ define([
                     var colCount;
                     var $pagination;
                     var $pageList;
+                    var elementsCount;
 
                     server.respondWith('GET', jobsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsDashboard)]);
                     jobsCollection = new JobsCollection({});
@@ -649,7 +660,8 @@ define([
                     clock.tick(200);
                     expect($thisEl.find('table')).to.exist;
 
-
+                    elementsCount = $thisEl.find('#listTable > tr').length;
+                    expect(elementsCount).to.be.equals(2);
                     $firstRow = $thisEl.find('#listTable > tr').first();
                     colCount = $firstRow.find('td').length;
 
@@ -776,13 +788,89 @@ define([
 
                 });
 
+                it('Try to filter ListView by sales Manager', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var jobsDashboardUrl = new RegExp('\/jobs\/', 'i');
+                    var $salesManager;
+                    var elementsCount;
+                    var $country;
+                    var $selectedItem;
+                    var $next;
+                    var $prev;
+
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select fullName
+                    $salesManager = $searchContainer.find('#salesManagerFullContainer .groupName');
+                    $salesManager.click();
+                    $selectedItem = $searchContainer.find('li[data-value="55b92ad221e4b7c40f00004f"]');
+
+                    server.respondWith('GET', jobsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsDashboard)]);
+                    $selectedItem.click();
+                    server.respond();
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    elementsCount = $thisEl.find('#listTable > tr').length;
+                    expect(elementsCount).to.be.equals(2);
+
+                });
+
+                it('Try to save favorites filters', function () {
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('Test');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $saveFilterBtn.click();
+                    server.respond();
+                    expect(saveFilterSpy.called).to.be.true;
+
+                    //close filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
+                });
+
+                it('Try to delete salesManager filter', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $closeBtn = $searchContainer.find('span[data-value="salesManager"]').next();
+                    var jobsDashboardUrl = new RegExp('\/jobs\/', 'i');
+                    var elementsCount;
+
+                    removeFilterSpy.reset();
+                    server.respondWith('GET', jobsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsDashboard)]);
+                    $closeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.called).to.be.true;
+                    expect($thisEl).to.exist;
+                    elementsCount = $thisEl.find('#listTable > tr').length;
+                    expect(elementsCount).to.be.equals(2);
+                });
+
                 it('Try to open report', function () {
                     var $jobNameBtn = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(4) > a');
                     var journalEntryUrl = new RegExp('journalEntries\/getForReport', 'i');
 
                     server.respondWith('GET', journalEntryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
                         data: {
-                            wagesPayable: [ ]
+                            wagesPayable: []
                         }
                     })]);
                     $jobNameBtn.click();

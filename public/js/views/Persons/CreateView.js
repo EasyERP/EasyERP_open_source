@@ -123,7 +123,7 @@ define([
                 },
 
                 groups: {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: thisEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },

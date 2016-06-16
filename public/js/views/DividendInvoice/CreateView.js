@@ -67,9 +67,9 @@ define([
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
 
-            var total = 100 * parseFloat($currentEl.find('#totalAmount').text());
-            var unTaxed = 100 * parseFloat($currentEl.find('#totalUntaxes').text());
-            var balance = 100 * parseFloat($currentEl.find('#balance').text());
+            var total = 100 * parseFloat(($currentEl.find('#totalAmount').text()).replace(/\s/g, ''));
+            var unTaxed = 100 * parseFloat(($currentEl.find('#totalUntaxes').text()).replace(/\s/g, ''));
+            var balance = 100 * parseFloat(($currentEl.find('#balance').text()).replace(/\s/g, ''));
             var i;
             var payments = {
                 total  : total,
@@ -93,8 +93,8 @@ define([
                     if (productId) {
                         price = 100 * parseFloat(targetEl.find('[data-name="price"] input').val());
                         description = targetEl.find('[data-name="productDescr"] input').val();
-                        taxes = targetEl.find('.taxes').text();
-                        amount = 100 * targetEl.find('.amount').text();
+                        taxes = 100 * parseFloat((targetEl.find('.taxes').text()).replace(/\s/g, ''));
+                        amount = 100 * parseFloat((targetEl.find('.amount').text()).replace(/\s/g, ''));
 
                         if (!price) {
                             return App.render({
@@ -136,7 +136,7 @@ define([
                 paymentInfo: payments,
                 currency   : currency,
                 groups     : {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },

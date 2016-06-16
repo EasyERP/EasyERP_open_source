@@ -424,6 +424,7 @@ define([
 
             var i;
             var whoCanRW;
+            var owner = this.$el.find('#allUsersSelect').attr('data-id') || null;
 
             unTaxed = parseFloat(unTaxed) * 100;
             total = parseFloat(total) * 100;
@@ -508,7 +509,7 @@ define([
                 },
 
                 groups: {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: owner,
                     users: usersId,
                     group: groupsId
                 },

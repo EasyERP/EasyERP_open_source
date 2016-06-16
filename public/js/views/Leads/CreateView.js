@@ -192,7 +192,7 @@ define([
                 reffered     : reffered,
                 workflow     : workflow,
                 groups       : {
-                    owner: $('#allUsersSelect').data('id'),
+                    owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },

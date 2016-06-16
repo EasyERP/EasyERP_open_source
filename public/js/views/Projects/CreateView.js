@@ -149,7 +149,7 @@ define([
                     paymentTerms    : paymentTerms,
                     description     : description,
                     groups          : {
-                        owner: $('#allUsersSelect').data('id'),
+                        owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
                         users: usersId,
                         group: groupsId
                     },

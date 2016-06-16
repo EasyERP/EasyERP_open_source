@@ -321,7 +321,7 @@ define([
                 },
 
                 groups: {
-                    owner: $('#allUsersSelect').attr('data-id'),
+                    owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 }
@@ -386,7 +386,7 @@ define([
 
                 success: function () {
                     var url = window.location.hash;
-                    
+
                     $('.edit-product-dialog').remove();
 
                     App.projectInfo = App.projectInfo || {};

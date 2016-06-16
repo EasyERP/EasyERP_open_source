@@ -110,9 +110,7 @@ define([
                         }
                     }, {
                         text : 'Cancel',
-                        click: function () {
-                            $(this).dialog('destroy').remove();
-                        }
+                        click: self.hideDialog
                     }]
 
             });

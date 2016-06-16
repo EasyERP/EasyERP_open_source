@@ -380,6 +380,52 @@ define([
             }
         },
 
+        getData: function (cb) {
+            var self = this;
+            var getProjects;
+            var getEmployees;
+            var getDepartments;
+            var parallelTasks;
+
+            getProjects = function (pCb) {
+                dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (res) {
+                    self.responseObj['#project'] = res.data;
+                    pCb();
+                });
+            };
+
+            getEmployees = function (pCb) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {devDepartments: true}, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee;
+                    });
+
+                    self.responseObj['#employee'] = employees;
+                    pCb();
+                });
+            };
+
+            getDepartments = function (pCb) {
+                dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments: true}, function (departments) {
+                    departments = _.map(departments.data, function (department) {
+                        department.name = department.name;
+
+                        return department;
+                    });
+
+                    self.responseObj['#department'] = departments;
+                    pCb();
+                });
+            };
+
+            parallelTasks = [getProjects, getEmployees, getDepartments];
+
+            async.parallel(parallelTasks, cb);
+
+        },
+
         // is overwritten because this logic is more complex
         editRow: function (e) {
             var el = $(e.target);
@@ -400,6 +446,7 @@ define([
             var isOvertime = $tr.hasClass('overtime');
             var month = $tr.find('[data-content="month"]').text() || $tr.find('.editing').val();
             var year = $tr.find('[data-content="year"]').text() || $tr.find('.editing').val();
+            var validateRowFunc;
 
             var editCb = function () {
                 var maxValue = 100;
@@ -506,15 +553,40 @@ define([
                 return false;
             };
 
+            if (!$input.length && isDay && !isEdited) {
+                validateRowFunc = function (cb) {
+                    this.validateRow($tr, editCb);
+
+                    if (typeof cb === 'function') {
+                        cb();
+                    }
+                };
+
+            } else {
+                validateRowFunc = function (cb) {
+                    editCb();
+
+                    if (typeof cb === 'function') {
+                        cb();
+                    }
+                };
+            }
+
             editCb = editCb.bind(this);
+            this.getData = this.getData.bind(this);
 
             e.stopPropagation();
 
-            if (!$input.length && isDay && !isEdited) {
-                this.validateRow($tr, editCb);
+            if (this.responseObj && !this.responseObj['#project']) {
+                App.startPreload();
+                async.waterfall([this.getData, validateRowFunc], function () {
+                });
             } else {
-                editCb();
+                validateRowFunc();
             }
+
+            App.stopPreload();
+
         },
 
         notify: function () {
@@ -835,30 +907,6 @@ define([
             this.renderPagination($currentEl, this);
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (res) {
-                self.responseObj['#project'] = res.data;
-            });
-
-            dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {devDepartments: true}, function (employees) {
-                employees = _.map(employees.data, function (employee) {
-                    employee.name = employee.name.first + ' ' + employee.name.last;
-
-                    return employee;
-                });
-
-                self.responseObj['#employee'] = employees;
-            });
-
-            dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments: true}, function (departments) {
-                departments = _.map(departments.data, function (department) {
-                    department.name = department.name;
-
-                    return department;
-                });
-
-                self.responseObj['#department'] = departments;
-            });
 
             this.renderFilter();
 

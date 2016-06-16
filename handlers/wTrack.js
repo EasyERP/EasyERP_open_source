@@ -824,8 +824,8 @@ var TCard = function (event, models) {
                                 $eq: ['$workflow.name', 'Closed']
                             },
 
-                            then: 1,
-                            else: 0
+                            then: true,
+                            else: false
                         }
                     }
                 }

@@ -578,8 +578,10 @@
 
                     <div class="clearfix"></div>
 
+                    <% if (model.transfer.length) {%>
                     <div class="dialog-tabs-item">
                         <div class="clearfix"></div>
+
                         <table class="list" id="hireFireTable">
                             <thead>
                             <tr>
@@ -668,8 +670,9 @@
                             </tbody>
                         </table>
                         <a id="update">Update</a>
-                    </div>
 
+                    </div>
+                    <%}%>
                     <div class="dialog-tabs-item">
                         <div class="assignees-container"></div>
                     </div>

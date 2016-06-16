@@ -2078,6 +2078,8 @@ define([
     var dividendCollection;
     var historyNavigateSpy;
     var ajaxSpy;
+    var selectFilterSpy;
+    var removeFilterSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -2091,6 +2093,9 @@ define([
         before(function () {
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
             ajaxSpy = sinon.spy($, 'ajax');
+
+            selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
         });
 
         after(function () {
@@ -2098,6 +2103,8 @@ define([
 
             historyNavigateSpy.restore();
             ajaxSpy.restore();
+            selectFilterSpy.restore();
+            removeFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -2213,7 +2220,6 @@ define([
             var windowConfirmStub;
             var alertStub;
             var deleteSpy;
-            var deleteRenderSpy;
             var paymentCreateInitSpy;
             var debounceStub;
 
@@ -2446,6 +2452,40 @@ define([
                     expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice/list/p=1/c=200');
                 });
 
+                it('Try to filter listView', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $statusBtn;
+                    var $selectedItem;
+                    var ajaxFilter;
+                    var $removeFilterBtn;
+
+                    selectFilterSpy.reset();
+                    ajaxSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // filter by status
+                    $statusBtn = $searchContainer.find('#workflowFullContainer > .groupName');
+                    $statusBtn.click();
+                    $selectedItem = $searchContainer.find('#workflowUl > li').first();
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectFilterSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
+                    //expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#workflowUl > li').first()).to.have.class('checkedValue');
+
+                    expect(ajaxSpy.args[0][0].data).to.have.property('filter');
+
+                    ajaxFilter = ajaxSpy.args[0][0].data.filter.workflow;
+                    expect(ajaxFilter).to.have.property('key', 'workflow._id');
+                    expect(ajaxFilter).to.have.property('value');
+                    expect(ajaxFilter.value).to.be.instanceof(Array).and.to.have.lengthOf(1);
+                });
+
                 it('Try to delete item with error response', function () {
                     var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(3) > td.notForm > input');
                     var dividendUrl = new RegExp('\/Invoice\/', 'i');
@@ -2588,7 +2628,7 @@ define([
                 it('Try to delete item', function () {
                     var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
                     var dividendUrl = new RegExp('\/invoices\/', 'i');
-                    ajaxSpy.reset();
+                    historyNavigateSpy.reset();
 
                     server.respondWith('GET', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendAfterDelete)]);
                     server.respondWith('DELETE', dividendUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
@@ -2646,8 +2686,8 @@ define([
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
-                    expect(ajaxSpy.args[1][0]).to.have.property('type', 'GET');
-                    expect(ajaxSpy.args[1][0]).to.have.property('url', '/invoices/');
+                    expect(historyNavigateSpy.calledOnce).to.be.true;
+                    expect(historyNavigateSpy.args[0][0]).to.match(/#easyErp\/DividendInvoice\//);
                 });
 
                 it('Try to open not paid item and open CreatePaymentView', function (done) {

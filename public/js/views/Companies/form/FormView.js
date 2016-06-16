@@ -380,6 +380,14 @@ define([
 
         deleteItems: function () {
             var mid = this.mId;
+            var answer;
+            
+            answer = confirm('Really DELETE item ?!');
+
+            if (answer === false) {
+                return false;
+            }
+            
             this.formModel.destroy({
                 headers: {
                     mid: mid

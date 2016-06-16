@@ -503,7 +503,7 @@
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
                 groups         : {
-                    owner: $('#allUsersSelect').attr('data-id'),
+                    owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },
@@ -778,7 +778,7 @@
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);
             populate.get('#departmentManagers', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
-            populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, 'name', this);
+            populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this);
             populate.get('#jobTypeDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, '_id', this);
             populate.get('#nationality', CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this);
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);

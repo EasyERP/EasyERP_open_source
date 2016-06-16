@@ -6,8 +6,9 @@ define([
     'text!fixtures/index.html',
     'views/login/LoginView',
     'custom',
-    'filter'
-], function ($, chai, chaiJquery, sinonChai, fixtures, LoginView, Custom, fakeFilters) {
+    'filter',
+    'testConstants/currentUser'
+], function ($, chai, chaiJquery, sinonChai, fixtures, LoginView, Custom, fakeFilters, fakeCurrentUser) {
     'use strict';
     var expect;
     
@@ -39,12 +40,15 @@ define([
             it('should have div tagName', function () {
                 expect(view.tagName).to.be.equal('div');
             });
+
             it('view should have usernameFocus method', function () {
                 expect(view).to.have.property('usernameFocus');
             });
+
             it('view should have passwordFocus method', function () {
                 expect(view).to.have.property('passwordFocus');
             });
+
             it('this.$el id should be #wrapper', function () {
                 expect(view.$el).to.have.attr('id');
                 expect(view.$el).to.have.id('wrapper');
@@ -80,6 +84,7 @@ define([
 
             before(function () {
                 var filterUrl = new RegExp('/filter/getFiltersValues', 'i');
+                var currentUserUrl = '/users/current';
 
                 $fixture = $(fixtures);
                 $fixture.appendTo(document.body);
@@ -88,6 +93,7 @@ define([
                 server = sinon.fakeServer.create();
                 server.autoRespond = true;
                 server.respondWith("GET", filterUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeFilters)]);
+                server.respondWith("GET", currentUserUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCurrentUser)]);
                 server.respondWith("GET", "/getDBS", [200, {"Content-Type": "application/json"}, JSON.stringify({
                     dbsNames: {
                         development: {
@@ -104,6 +110,9 @@ define([
                 loginSpy = sinon.spy(LoginView.prototype, "login");
                 customSpy = sinon.spy(Custom, "runApplication");
                 view = new LoginView({el: $elFixture, dbs: ['production', 'development']});
+
+                App.currentUser = fakeCurrentUser.user;
+                App.savedFilters = fakeCurrentUser.savedFilters;
             });
 
             after(function () {

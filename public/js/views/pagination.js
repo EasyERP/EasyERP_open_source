@@ -70,11 +70,13 @@ define([
             var $createButton = $topBar.find('#top-bar-createBtn');
             var $copyButton = $topBar.find('#top-bar-copyBtn');
             var $saveButton = $topBar.find('#top-bar-saveBtn');
-            var spesialContentTypes = ['wTrack'];
+            var spesialContentTypes = CONSTANTS.SPECIAL_CONTENT_TYPES;
             var contentType = this.contentType;
             var changedRows;
+            var haveNewRow;
 
             changedRows = this.changedModels ? Object.keys(this.changedModels) : null;
+            haveNewRow = $thisEl.find('#false, .false').length;
 
             if (e) {
                 e.stopPropagation();
@@ -92,9 +94,11 @@ define([
                 $createButton.show();
             }
 
-            if (contentType && spesialContentTypes.indexOf(contentType) !== -1) {
-                if (changedRows && changedRows.length) {
+            if (contentType && spesialContentTypes.indexOf(contentType) !== -1 && haveNewRow) {
+                if ((changedRows && changedRows.length) || haveNewRow) {
                     $saveButton.show();
+                    $createButton.hide();
+                    $deleteButton.show();
                 } else {
                     $saveButton.hide();
                 }
@@ -131,7 +135,7 @@ define([
                     message: 'Please, save previous changes or cancel them!'
                 });
             }
-            
+
             target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
@@ -625,6 +629,11 @@ define([
             var $checkedInputs;
             var ids = [];
             var answer;
+            var edited = this.edited || this.$el.find('#false');
+
+            if (!edited.length) { // ToDo refactor
+                this.changed = false;
+            }
 
             if (this.changed) {
                 return this.cancelChanges();
