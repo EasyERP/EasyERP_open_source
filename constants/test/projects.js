@@ -12723,3238 +12723,8921 @@ define([], function () {
     var fakeEmployeesForDD = {
         data: [
             {
-                _id       : "55b92ad221e4b7c40f000030",
+                _id: "55b92ad221e4b7c40f000030",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
+                name: {
                     first: "Alex",
-                    last : "Svatuk"
-                }
+                    last: "Svatuk"
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000031",
+                _id: "55b92ad221e4b7c40f000031",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Gleba",
+                name: {
+                    last: "Gleba",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00003e",
+                _id: "55b92ad221e4b7c40f00003e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Lapchuk",
+                name: {
+                    last: "Lapchuk",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000044",
+                _id: "55b92ad221e4b7c40f000044",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Devezenko",
+                name: {
+                    last: "Devezenko",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00004f",
+                _id: "55b92ad221e4b7c40f00004f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Sokhanych",
+                name: {
+                    last: "Sokhanych",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000057",
+                _id: "55b92ad221e4b7c40f000057",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Roman",
+                name: {
+                    last: "Roman",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000058",
+                _id: "55b92ad221e4b7c40f000058",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Makhanets",
+                name: {
+                    last: "Makhanets",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00006c",
+                _id: "55b92ad221e4b7c40f00006c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Sich",
+                name: {
+                    last: "Sich",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00006d",
+                _id: "55b92ad221e4b7c40f00006d",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Tutunnik",
+                name: {
+                    last: "Tutunnik",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000084",
+                _id: "55b92ad221e4b7c40f000084",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Dahno",
+                name: {
+                    last: "Dahno",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00009e",
+                _id: "55b92ad221e4b7c40f00009e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Michenko",
+                name: {
+                    last: "Michenko",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a7",
+                _id: "55b92ad221e4b7c40f0000a7",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Ryabcev",
+                name: {
+                    last: "Ryabcev",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000ac",
+                _id: "55b92ad221e4b7c40f0000ac",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Volkov",
+                name: {
+                    last: "Volkov",
                     first: "Alex"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000ce",
+                _id: "55b92ad221e4b7c40f0000ce",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Storojenko",
+                name: {
+                    last: "Storojenko",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5638aa635d23a8eb04e80af0",
+                _id: "5638aa635d23a8eb04e80af0",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Siladii",
+                name: {
+                    last: "Siladii",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "564dac3e9b85f8b16b574fea",
+                _id: "564dac3e9b85f8b16b574fea",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Filchak",
+                name: {
+                    last: "Filchak",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "565f0fa6f6427f253cf6bf19",
+                _id: "565f0fa6f6427f253cf6bf19",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Lysachenko",
+                name: {
+                    last: "Lysachenko",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "566ede9e8453e8b464b70b71",
+                _id: "566ede9e8453e8b464b70b71",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Tonkovid",
+                name: {
+                    last: "Tonkovid",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56b8b99e6c411b590588feb9",
+                _id: "56b8b99e6c411b590588feb9",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Ovcharenko",
+                name: {
+                    last: "Ovcharenko",
                     first: "Alex"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000ba",
+                _id: "5731e1bed7f20d29294d850f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Klochkova",
+                name: {
+                    last: "Vinogradov",
+                    first: "Alex"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000ba",
+                department: {
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
+                },
+                name: {
+                    last: "Klochkova",
                     first: "Alexandra"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55c330d529bd6ccd0b000007",
+                _id: "55c330d529bd6ccd0b000007",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Yurenko",
+                name: {
+                    last: "Yurenko",
                     first: "Alina"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000cb",
+                _id: "5720741bd4761c212289b7ea",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Yelahina",
+                name: {
+                    last: "Slavska",
+                    first: "Alina"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000cb",
+                department: {
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
+                },
+                name: {
+                    last: "Yelahina",
                     first: "Alona"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "565c66633410ae512364dc00",
+                _id: "565c66633410ae512364dc00",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Timochchenko",
+                name: {
+                    last: "Timochchenko",
                     first: "Alona"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "560264bb8dc408c632000005",
+                _id: "560264bb8dc408c632000005",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Lyakh",
+                name: {
+                    last: "Lyakh",
                     first: "Anastas"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55ded6b3ae2b22730b00004e",
+                _id: "55ded6b3ae2b22730b00004e",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Dimova",
+                name: {
+                    last: "Dimova",
                     first: "Anastasia"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000059",
+                _id: "573f1bbca2d114e5561c3bc7",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Dalekorey",
+                name: {
+                    last: "Novikova",
+                    first: "Anastasiya"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f000059",
+                department: {
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
+                },
+                name: {
+                    last: "Dalekorey",
                     first: "Anatoliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b5",
+                _id: "55b92ad221e4b7c40f0000b5",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Lemko",
+                name: {
+                    last: "Lemko",
                     first: "Andriana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000045",
+                _id: "55b92ad221e4b7c40f000045",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Tivodar",
+                name: {
+                    last: "Tivodar",
                     first: "Andriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00006e",
+                _id: "55b92ad221e4b7c40f00006e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Hanchak",
+                name: {
+                    last: "Hanchak",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000096",
+                _id: "55b92ad221e4b7c40f000096",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Herasymyuk",
+                name: {
+                    last: "Herasymyuk",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000098",
+                _id: "55b92ad221e4b7c40f000098",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Krupka",
+                name: {
+                    last: "Krupka",
                     first: "Andriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a3",
+                _id: "55b92ad221e4b7c40f0000a3",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Karpenko",
+                name: {
+                    last: "Karpenko",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a8",
+                _id: "55b92ad221e4b7c40f0000a8",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
+                name: {
                     first: "Andriy",
-                    last : "Korneychuk"
-                }
+                    last: "Korneychuk"
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a9",
+                _id: "55b92ad221e4b7c40f0000a9",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Loboda",
+                name: {
+                    last: "Loboda",
                     first: "Andriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b3",
+                _id: "55b92ad221e4b7c40f0000b3",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Sarkanych",
+                name: {
+                    last: "Sarkanych",
                     first: "Andriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000bf",
+                _id: "55b92ad221e4b7c40f0000bf",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Fizer",
+                name: {
+                    last: "Fizer",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c2",
+                _id: "55b92ad221e4b7c40f0000c2",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Mistetskiy",
+                name: {
+                    last: "Mistetskiy",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000cd",
+                _id: "55b92ad221e4b7c40f0000cd",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
+                name: {
                     first: "Andriy",
-                    last : "Vovk"
-                }
+                    last: "Vovk"
+                },
+                isEmployee: true
             },
             {
-                _id       : "561bb90a9ebb48212ea838c7",
+                _id: "561bb90a9ebb48212ea838c7",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Svyd",
+                name: {
+                    last: "Svyd",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "561bc5ca9ebb48212ea838c8",
+                _id: "561bc5ca9ebb48212ea838c8",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Sokalskiy",
+                name: {
+                    last: "Sokalskiy",
                     first: "Andriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "564da59f9b85f8b16b574fe9",
+                _id: "564da59f9b85f8b16b574fe9",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Chuprov",
+                name: {
+                    last: "Chuprov",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "566fe2348453e8b464b70ba6",
+                _id: "566fe2348453e8b464b70ba6",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Lukashchuk",
+                name: {
+                    last: "Lukashchuk",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5693b24bd87c9004552b63a1",
+                _id: "5693b24bd87c9004552b63a1",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Horak",
+                name: {
+                    last: "Horak",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56965733d87c9004552b63be",
+                _id: "56965733d87c9004552b63be",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Samokhin",
+                name: {
+                    last: "Samokhin",
                     first: "Andriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "569cce1dcf1f31f925c026fa",
+                _id: "569cce1dcf1f31f925c026fa",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Stupchuk",
+                name: {
+                    last: "Stupchuk",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56c19971dfd8a81466e2f6dc",
+                _id: "56c19971dfd8a81466e2f6dc",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Khainus",
+                name: {
+                    last: "Khainus",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56c59ba4d2b48ede4ba42266",
+                _id: "56c59ba4d2b48ede4ba42266",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Lytvynenko",
+                name: {
+                    last: "Lytvynenko",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56dd4b727bd21335130c4f95",
+                _id: "56dd4b727bd21335130c4f95",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Merentsov",
+                name: {
+                    last: "Merentsov",
                     first: "Andriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56dd4d8eea0939141336783f",
+                _id: "56dd4d8eea0939141336783f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Vasyliev",
+                name: {
+                    last: "Vasyliev",
                     first: "Andriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b8",
+                _id: "5733477de30990df6c5ce106",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Lobas",
+                name: {
+                    last: "Banyk",
+                    first: "Andriy"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000b8",
+                department: {
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
+                },
+                name: {
+                    last: "Lobas",
                     first: "Anna"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00006f",
+                _id: "55b92ad221e4b7c40f00006f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Karabeinikov",
+                name: {
+                    last: "Karabeinikov",
                     first: "Anton"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00008c",
+                _id: "55b92ad221e4b7c40f00008c",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Gychka",
+                name: {
+                    last: "Gychka",
                     first: "Anton"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000094",
+                _id: "55b92ad221e4b7c40f000094",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Yarosh",
+                name: {
+                    last: "Yarosh",
                     first: "Anton"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55c0656ad011746b0b000006",
+                _id: "55c0656ad011746b0b000006",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
                 },
-                name      : {
-                    last : "Nizhegorodov",
+                name: {
+                    last: "Nizhegorodov",
                     first: "Anton"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000083",
+                _id: "57334db42fc64e916c25a1a3",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Zhuk",
+                name: {
+                    last: "Smirnov",
+                    first: "Anton"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f000083",
+                department: {
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
+                },
+                name: {
+                    last: "Zhuk",
                     first: "Antonina"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "5629e27046bca6e4591f4919",
+                _id: "5629e27046bca6e4591f4919",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Petrov",
+                name: {
+                    last: "Petrov",
                     first: "Artem"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56b9ccd88f23c5696159cd09",
+                _id: "56b9ccd88f23c5696159cd09",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Antonenko",
+                name: {
+                    last: "Antonenko",
                     first: "Artem"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000042",
+                _id: "55b92ad221e4b7c40f000042",
                 department: {
-                    _id           : "560c0b83a5d4a2e20ba5068c",
-                    departmentName: "Finance"
+                    _id: "560c0b83a5d4a2e20ba5068c",
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:18.225Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-09-30T16:19:15.986Z",
+                        user: "560c099da5d4a2e20ba5068b"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Finance"
                 },
-                name      : {
-                    last : "Myhalko",
+                name: {
+                    last: "Myhalko",
                     first: "Artur"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000032",
+                _id: "55b92ad221e4b7c40f000032",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Sakalo",
+                name: {
+                    last: "Sakalo",
                     first: "Bogdan"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00005a",
+                _id: "55b92ad221e4b7c40f00005a",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Cheypesh",
+                name: {
+                    last: "Cheypesh",
                     first: "Bogdan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "569e63df044ae38173244cfd",
+                _id: "569e63df044ae38173244cfd",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Danyliuk",
+                name: {
+                    last: "Danyliuk",
                     first: "Bogdan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56e17661177f76f72edf774c",
+                _id: "56e17661177f76f72edf774c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Stets",
+                name: {
+                    last: "Stets",
                     first: "Bogdana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56cc7cb7541812c07197357b",
+                _id: "56cc7cb7541812c07197357b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Opanasiuk",
+                name: {
+                    last: "Opanasiuk",
                     first: "Bohdana"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000070",
+                _id: "55b92ad221e4b7c40f000070",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Pozhidaev",
+                name: {
+                    last: "Pozhidaev",
                     first: "Daniil"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b1",
+                _id: "55b92ad221e4b7c40f0000b1",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Korniyenko",
+                name: {
+                    last: "Korniyenko",
                     first: "Daniil"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55fbcb65f9210c860c000005",
+                _id: "55fbcb65f9210c860c000005",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Shamolina",
+                name: {
+                    last: "Shamolina",
                     first: "Daria"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000046",
+                _id: "55b92ad221e4b7c40f000046",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Udod",
+                name: {
+                    last: "Udod",
                     first: "Denis"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b6",
+                _id: "55b92ad221e4b7c40f0000b6",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Vengrin",
+                name: {
+                    last: "Vengrin",
                     first: "Denis"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55ca0145cbb0f4910b000009",
+                _id: "55ca0145cbb0f4910b000009",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Zinkovskyi",
+                name: {
+                    last: "Zinkovskyi",
                     first: "Denis"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55effafa8f1e10e50b000006",
+                _id: "55effafa8f1e10e50b000006",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Pavlenko",
+                name: {
+                    last: "Pavlenko",
                     first: "Denis"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "5640741570bbc2b740ce89ec",
+                _id: "5640741570bbc2b740ce89ec",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Lukashov",
+                name: {
+                    last: "Lukashov",
                     first: "Denis"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "565c2793f4dcd63b5dbd7372",
+                _id: "565c2793f4dcd63b5dbd7372",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Yaremenko",
+                name: {
+                    last: "Yaremenko",
                     first: "Denis"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "566add9aa74aaf316eaea6fc",
+                _id: "566add9aa74aaf316eaea6fc",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Saranyuk",
+                name: {
+                    last: "Saranyuk",
                     first: "Denis"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "57036bc2ed3f15af0782f168",
+                _id: "57036bc2ed3f15af0782f168",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Orelskiy",
+                name: {
+                    last: "Orelskiy",
                     first: "Denis"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000033",
+                _id: "5756bb6dc77240a775e7dfd0",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Bruso",
+                name: {
+                    last: "Barylko",
+                    first: "Denis"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f000033",
+                department: {
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
+                },
+                name: {
+                    last: "Bruso",
                     first: "Dmitriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00006b",
+                _id: "55b92ad221e4b7c40f00006b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Kanivets",
+                name: {
+                    last: "Kanivets",
                     first: "Dmitriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000071",
+                _id: "55b92ad221e4b7c40f000071",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Masalovich",
+                name: {
+                    last: "Masalovich",
                     first: "Dmitriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00009f",
+                _id: "55b92ad221e4b7c40f00009f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Dzuba",
+                name: {
+                    last: "Dzuba",
                     first: "Dmitriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000bc",
+                _id: "55b92ad221e4b7c40f0000bc",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Demchenko",
+                name: {
+                    last: "Demchenko",
                     first: "Dmitriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55cdffa59b42266a4f000015",
+                _id: "55cdffa59b42266a4f000015",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Magar",
+                name: {
+                    last: "Magar",
                     first: "Dmitriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "5600031ba36a8ca10c000028",
+                _id: "5600031ba36a8ca10c000028",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Mostiv",
+                name: {
+                    last: "Mostiv",
                     first: "Dmitriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5614d4c7ab24a83b1dc1a7a8",
+                _id: "5614d4c7ab24a83b1dc1a7a8",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Babilia",
+                name: {
+                    last: "Babilia",
                     first: "Dmytro"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "567ac0a48365c9a205406f33",
+                _id: "567ac0a48365c9a205406f33",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Kolochynsky",
+                name: {
+                    last: "Kolochynsky",
                     first: "Dmytro"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "564a03d1ad4bc9e53f1f6195",
+                _id: "570b72468f1cf7c354040534",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Tanchenec",
+                name: {
+                    last: "Lylyk",
+                    first: "Dmytro"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "564a03d1ad4bc9e53f1f6195",
+                department: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
+                },
+                name: {
+                    last: "Tanchenec",
                     first: "Edgard"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00005b",
+                _id: "55b92ad221e4b7c40f00005b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Chori",
+                name: {
+                    last: "Chori",
                     first: "Eduard"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000067",
+                _id: "55b92ad221e4b7c40f000067",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Rudenko",
+                name: {
+                    last: "Rudenko",
                     first: "Eduard"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000092",
+                _id: "55b92ad221e4b7c40f000092",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Dedenok",
+                name: {
+                    last: "Dedenok",
                     first: "Eduard"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000066",
+                _id: "55b92ad221e4b7c40f000066",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Gromadskiy",
+                name: {
+                    last: "Gromadskiy",
                     first: "Egor"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000041",
+                _id: "55b92ad221e4b7c40f000041",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Oleynikov",
+                name: {
+                    last: "Oleynikov",
                     first: "Eugen"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000072",
+                _id: "55b92ad221e4b7c40f000072",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Bernikevich",
+                name: {
+                    last: "Bernikevich",
                     first: "Eugen"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00008b",
+                _id: "55b92ad221e4b7c40f00008b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Ugolkov",
+                name: {
+                    last: "Ugolkov",
                     first: "Eugen"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a4",
+                _id: "55b92ad221e4b7c40f0000a4",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Sokolenko",
+                name: {
+                    last: "Sokolenko",
                     first: "Eugen"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55c32e0d29bd6ccd0b000005",
+                _id: "55c32e0d29bd6ccd0b000005",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Alexeev",
+                name: {
+                    last: "Alexeev",
                     first: "Eugen"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55c98aa7cbb0f4910b000005",
+                _id: "55c98aa7cbb0f4910b000005",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Rechun",
+                name: {
+                    last: "Rechun",
                     first: "Eugen"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56029cc950de7f4138000005",
+                _id: "56029cc950de7f4138000005",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Lendyel",
+                name: {
+                    last: "Lendyel",
                     first: "Eugen"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56e696da81046d9741fb66fc",
+                _id: "56e696da81046d9741fb66fc",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Kovbel",
+                name: {
+                    last: "Kovbel",
                     first: "Fedir"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "57036c92ec814f7c039b8070",
+                _id: "57036c92ec814f7c039b8070",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Hal",
+                name: {
+                    last: "Hal",
                     first: "Ferents"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000090",
+                _id: "55b92ad221e4b7c40f000090",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Shterr",
+                name: {
+                    last: "Shterr",
                     first: "Gabriella"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56b9d3eb8f23c5696159cd0b",
+                _id: "56b9d3eb8f23c5696159cd0b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Mykhailova",
+                name: {
+                    last: "Mykhailova",
                     first: "Galina"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56e045e943fcd85c74307060",
+                _id: "56e045e943fcd85c74307060",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Milchevych",
+                name: {
+                    last: "Milchevych",
                     first: "Galina"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00003d",
+                _id: "55b92ad221e4b7c40f00003d",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Kravets",
+                name: {
+                    last: "Kravets",
                     first: "German"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "568158fc9cceae182b907756",
+                _id: "568158fc9cceae182b907756",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Belous",
+                name: {
+                    last: "Belous",
                     first: "Herman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a2",
+                _id: "55b92ad221e4b7c40f0000a2",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Stan",
+                name: {
+                    last: "Stan",
                     first: "Igor"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000bb",
+                _id: "55b92ad221e4b7c40f0000bb",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Shepinka",
+                name: {
+                    last: "Shepinka",
                     first: "Igor"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56966c82d87c9004552b63c7",
+                _id: "56966c82d87c9004552b63c7",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
                 },
-                name      : {
-                    last : "Kuzma",
+                name: {
+                    last: "Kuzma",
                     first: "Ihor"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56a0d4b162d172544baf0e3a",
+                _id: "56a0d4b162d172544baf0e3a",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Ilnytskyi",
+                name: {
+                    last: "Ilnytskyi",
                     first: "Ihor"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c6",
+                _id: "575fc0bb7330dff16a340390",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Kramarenko",
+                name: {
+                    last: "Kalashniuk",
+                    first: "Ihor"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000c6",
+                department: {
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
+                },
+                name: {
+                    last: "Kramarenko",
                     first: "Illia"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000035",
+                _id: "55b92ad221e4b7c40f000035",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Mondok",
+                name: {
+                    last: "Mondok",
                     first: "Ilya"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000047",
+                _id: "55b92ad221e4b7c40f000047",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Khymych",
+                name: {
+                    last: "Khymych",
                     first: "Ilya"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56090fae86e2435a33000008",
+                _id: "56090fae86e2435a33000008",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Nukhova",
+                name: {
+                    last: "Nukhova",
                     first: "Inna"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000073",
+                _id: "57334bdfc20581126d0b182b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Grab",
+                name: {
+                    last: "Vorobiova",
+                    first: "Inna"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f000073",
+                department: {
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
+                },
+                name: {
+                    last: "Grab",
                     first: "Irina"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000034",
+                _id: "55b92ad221e4b7c40f000034",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Nazarovich",
+                name: {
+                    last: "Nazarovich",
                     first: "Ishtvan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00005c",
+                _id: "55b92ad221e4b7c40f00005c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Irchak",
+                name: {
+                    last: "Irchak",
                     first: "Ivan"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000074",
+                _id: "55b92ad221e4b7c40f000074",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Kornyk",
+                name: {
+                    last: "Kornyk",
                     first: "Ivan"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000087",
+                _id: "55b92ad221e4b7c40f000087",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Kostromin",
+                name: {
+                    last: "Kostromin",
                     first: "Ivan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00008e",
+                _id: "55b92ad221e4b7c40f00008e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Grab",
+                name: {
+                    last: "Grab",
                     first: "Ivan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00009c",
+                _id: "55b92ad221e4b7c40f00009c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Feltsan",
+                name: {
+                    last: "Feltsan",
                     first: "Ivan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a0",
+                _id: "55b92ad221e4b7c40f0000a0",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Bilak",
+                name: {
+                    last: "Bilak",
                     first: "Ivan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000aa",
+                _id: "55b92ad221e4b7c40f0000aa",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Lyashenko",
+                name: {
+                    last: "Lyashenko",
                     first: "Ivan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c8",
+                _id: "55b92ad221e4b7c40f0000c8",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Bizilya",
+                name: {
+                    last: "Bizilya",
                     first: "Ivan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000cc",
+                _id: "55b92ad221e4b7c40f0000cc",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
+                name: {
                     first: "Ivan",
-                    last : "Lyakh"
-                }
+                    last: "Lyakh"
+                },
+                isEmployee: true
             },
             {
-                _id       : "55c98b86cbb0f4910b000006",
+                _id: "55c98b86cbb0f4910b000006",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Kovalenko",
+                name: {
+                    last: "Kovalenko",
                     first: "Ivan"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55dd71eaf09cc2ec0b000007",
+                _id: "55dd71eaf09cc2ec0b000007",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
                 },
-                name      : {
-                    last : "Khartov",
+                name: {
+                    last: "Khartov",
                     first: "Ivan"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56a5ef86aa157ca50f21fb1d",
+                _id: "56a5ef86aa157ca50f21fb1d",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Pasichnyuk",
+                name: {
+                    last: "Pasichnyuk",
                     first: "Ivan"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56f1629ce7c600fe4fbae592",
+                _id: "575829d7389dfb67764a4ab6",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Bosenko",
+                name: {
+                    last: "Margita",
+                    first: "Ivan"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "56f1629ce7c600fe4fbae592",
+                department: {
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
+                },
+                name: {
+                    last: "Bosenko",
                     first: "Julia"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000048",
+                _id: "55b92ad221e4b7c40f000048",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Chupova",
+                name: {
+                    last: "Chupova",
                     first: "Katerina"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000068",
+                _id: "55b92ad221e4b7c40f000068",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Bartish",
+                name: {
+                    last: "Bartish",
                     first: "Katerina"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00009a",
+                _id: "55b92ad221e4b7c40f00009a",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Pasichnyuk",
+                name: {
+                    last: "Pasichnyuk",
                     first: "Katerina"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000ab",
+                _id: "55b92ad221e4b7c40f0000ab",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Olkhovik",
+                name: {
+                    last: "Olkhovik",
                     first: "Katerina"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000085",
+                _id: "5732ecb5e48f46cf37a55d45",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Gorbushko",
+                name: {
+                    last: "Fuchko",
+                    first: "Katerina"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "5745aae39429cafb2c386724",
+                department: {
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
+                },
+                name: {
+                    last: "Zarickaya",
+                    first: "Kaya"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f000085",
+                department: {
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
+                },
+                name: {
+                    last: "Gorbushko",
                     first: "Kirill"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55e419094983acdd0b000012",
+                _id: "55e419094983acdd0b000012",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
+                name: {
                     first: "Kirill",
-                    last : "Paliiuk"
-                }
+                    last: "Paliiuk"
+                },
+                isEmployee: true
             },
             {
-                _id       : "56b9d49d8f23c5696159cd0c",
+                _id: "56b9d49d8f23c5696159cd0c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Bed",
+                name: {
+                    last: "Bed",
                     first: "Kirill"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56b2287b99ce8d706a81b2bc",
+                _id: "56b2287b99ce8d706a81b2bc",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
                 },
-                name      : {
-                    last : "Mudrenok",
+                name: {
+                    last: "Mudrenok",
                     first: "Kostiantyn"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55d1e234dda01e250c000015",
+                _id: "55d1e234dda01e250c000015",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Rimar",
+                name: {
+                    last: "Rimar",
                     first: "Kristian"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00009b",
+                _id: "55b92ad221e4b7c40f00009b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Popp",
+                name: {
+                    last: "Popp",
                     first: "Larysa"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000075",
+                _id: "55b92ad221e4b7c40f000075",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Gvozdyo",
+                name: {
+                    last: "Gvozdyo",
                     first: "Lilia"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c7",
+                _id: "55b92ad221e4b7c40f0000c7",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Mykhailova",
+                name: {
+                    last: "Mykhailova",
                     first: "Liliya"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55bf45cf65cda0810b00000a",
+                _id: "55bf45cf65cda0810b00000a",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
+                name: {
                     first: "Liliya",
-                    last : "Shustur"
-                }
+                    last: "Shustur"
+                },
+                isEmployee: true
             },
             {
-                _id       : "564a0186ad4bc9e53f1f6193",
+                _id: "564a0186ad4bc9e53f1f6193",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Orlenko",
+                name: {
+                    last: "Orlenko",
                     first: "Liliya"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56d06aef541812c0719735c8",
+                _id: "56d06aef541812c0719735c8",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Garagonich",
+                name: {
+                    last: "Garagonich",
                     first: "Liza"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00005d",
+                _id: "55b92ad221e4b7c40f00005d",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Gerevich",
+                name: {
+                    last: "Gerevich",
                     first: "Lubomir"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c1",
+                _id: "55b92ad221e4b7c40f0000c1",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Zasukhina",
+                name: {
+                    last: "Zasukhina",
                     first: "Maria"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5684ec1a1fec73d05393a2a4",
+                _id: "5684ec1a1fec73d05393a2a4",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Zaitseva",
+                name: {
+                    last: "Zaitseva",
                     first: "Maria"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "560115cf536bd29228000006",
+                _id: "560115cf536bd29228000006",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Myhalko",
+                name: {
+                    last: "Myhalko",
                     first: "Marianna"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00003f",
+                _id: "55b92ad221e4b7c40f00003f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Kubichka",
+                name: {
+                    last: "Kubichka",
                     first: "Marina"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56cdd631541812c071973584",
+                _id: "56cdd631541812c071973584",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Sheverya",
+                name: {
+                    last: "Sheverya",
                     first: "Maryna"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000043",
+                _id: "55b92ad221e4b7c40f000043",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Geraschenko",
+                name: {
+                    last: "Geraschenko",
                     first: "Maxim"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000089",
+                _id: "55b92ad221e4b7c40f000089",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Sychov",
+                name: {
+                    last: "Sychov",
                     first: "Maxim"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a5",
+                _id: "55b92ad221e4b7c40f0000a5",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Holubka",
+                name: {
+                    last: "Holubka",
                     first: "Maxim"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55c06411d011746b0b000005",
+                _id: "55c06411d011746b0b000005",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Rachytskyy",
+                name: {
+                    last: "Rachytskyy",
                     first: "Maxim"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "566ada96a74aaf316eaea69d",
+                _id: "566ada96a74aaf316eaea69d",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Gladovskyy",
+                name: {
+                    last: "Gladovskyy",
                     first: "Maxim"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000036",
+                _id: "55b92ad221e4b7c40f000036",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Yemets",
+                name: {
+                    last: "Yemets",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000049",
+                _id: "55b92ad221e4b7c40f000049",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Kapustey",
+                name: {
+                    last: "Kapustey",
                     first: "Michael"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000055",
+                _id: "55b92ad221e4b7c40f000055",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Rogach",
+                name: {
+                    last: "Rogach",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00005e",
+                _id: "55b92ad221e4b7c40f00005e",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Didenko",
+                name: {
+                    last: "Didenko",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000069",
+                _id: "55b92ad221e4b7c40f000069",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Afendikov",
+                name: {
+                    last: "Afendikov",
                     first: "Michael"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000076",
+                _id: "55b92ad221e4b7c40f000076",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Glagola",
+                name: {
+                    last: "Glagola",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000077",
+                _id: "55b92ad221e4b7c40f000077",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Soyma",
+                name: {
+                    last: "Soyma",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b2",
+                _id: "55b92ad221e4b7c40f0000b2",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Yeremenko",
+                name: {
+                    last: "Yeremenko",
                     first: "Michael"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000bd",
+                _id: "55b92ad221e4b7c40f0000bd",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Vashkeba",
+                name: {
+                    last: "Vashkeba",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c4",
+                _id: "55b92ad221e4b7c40f0000c4",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Myronyshyn",
+                name: {
+                    last: "Myronyshyn",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c5",
+                _id: "55b92ad221e4b7c40f0000c5",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Gajdan",
+                name: {
+                    last: "Gajdan",
                     first: "Michael"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55dd7776f09cc2ec0b000009",
+                _id: "55dd7776f09cc2ec0b000009",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
                 },
-                name      : {
-                    last : "Kavka",
+                name: {
+                    last: "Kavka",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5600042ca36a8ca10c000029",
+                _id: "5600042ca36a8ca10c000029",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Filchak",
+                name: {
+                    last: "Filchak",
                     first: "Michael"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "5667f310a3fc012a68f0d5f5",
+                _id: "5667f310a3fc012a68f0d5f5",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Sopko",
+                name: {
+                    last: "Sopko",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56e2b53e896e98a661aa8326",
+                _id: "56e2b53e896e98a661aa8326",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Ptitsyn",
+                name: {
+                    last: "Ptitsyn",
                     first: "Michael"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56b3412299ce8d706a81b2cd",
+                _id: "56b3412299ce8d706a81b2cd",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Kholtobin",
+                name: {
+                    last: "Kholtobin",
                     first: "Mykola"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56cb3695541812c071973546",
+                _id: "56cb3695541812c071973546",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Vasylyna",
+                name: {
+                    last: "Vasylyna",
                     first: "Mykola"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "565c306af4dcd63b5dbd7373",
+                _id: "565c306af4dcd63b5dbd7373",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Matrafayilo",
+                name: {
+                    last: "Matrafayilo",
                     first: "Myroslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b7",
+                _id: "55b92ad221e4b7c40f0000b7",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Polovka",
+                name: {
+                    last: "Polovka",
                     first: "Myroslava"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56bdf283dfd8a81466e2f6d0",
+                _id: "56bdf283dfd8a81466e2f6d0",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Shishko",
+                name: {
+                    last: "Shishko",
                     first: "Nadiya"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56938d2cd87c9004552b639e",
+                _id: "56938d2cd87c9004552b639e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Makarova",
+                name: {
+                    last: "Makarova",
                     first: "Nastya"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "561ba8639ebb48212ea838c4",
+                _id: "561ba8639ebb48212ea838c4",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Yartysh",
+                name: {
+                    last: "Yartysh",
                     first: "Nataliya"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "566aa49f4f817b7f51746ec0",
+                _id: "566aa49f4f817b7f51746ec0",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Burtnyk",
+                name: {
+                    last: "Burtnyk",
                     first: "Nataliya"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56af32e174d57e0d56d6bee5",
+                _id: "56af32e174d57e0d56d6bee5",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Sichko",
+                name: {
+                    last: "Sichko",
                     first: "Nataliya"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56cdd88b541812c071973585",
+                _id: "5733506ec20c10136c3ecbff",
                 department: {
-                    _id           : "560c0b83a5d4a2e20ba5068c",
-                    departmentName: "Finance"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Plovayko",
+                name: {
+                    last: "Androsova",
+                    first: "Nataliya"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "5758277ca6d2f5e97546320d",
+                department: {
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
+                },
+                name: {
+                    last: "Maliar",
+                    first: "Nataliya"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "56cdd88b541812c071973585",
+                department: {
+                    _id: "560c0b83a5d4a2e20ba5068c",
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:18.225Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-09-30T16:19:15.986Z",
+                        user: "560c099da5d4a2e20ba5068b"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Finance"
+                },
+                name: {
+                    last: "Plovayko",
                     first: "Nelya"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a6",
+                _id: "55b92ad221e4b7c40f0000a6",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Citrak",
+                name: {
+                    last: "Citrak",
                     first: "Norbert"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000be",
+                _id: "55b92ad221e4b7c40f0000be",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Borys",
+                name: {
+                    last: "Borys",
                     first: "Oksana"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c0",
+                _id: "55b92ad221e4b7c40f0000c0",
                 department: {
-                    _id           : "560c0b83a5d4a2e20ba5068c",
-                    departmentName: "Finance"
+                    _id: "560c0b83a5d4a2e20ba5068c",
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:18.225Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-09-30T16:19:15.986Z",
+                        user: "560c099da5d4a2e20ba5068b"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Finance"
                 },
-                name      : {
-                    last : "Kordas",
+                name: {
+                    last: "Kordas",
                     first: "Oksana"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56e0408e4f9ff8e0737d7c52",
+                _id: "56e0408e4f9ff8e0737d7c52",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Pylyp",
+                name: {
+                    last: "Pylyp",
                     first: "Oksana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56f3a202ff088d9a50148aa2",
+                _id: "56f3a202ff088d9a50148aa2",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Zhylka",
+                name: {
+                    last: "Zhylka",
                     first: "Oksana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00003c",
+                _id: "55b92ad221e4b7c40f00003c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Stasiv",
+                name: {
+                    last: "Stasiv",
                     first: "Oleg"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00004a",
+                _id: "55b92ad221e4b7c40f00004a",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Ostroverkh",
+                name: {
+                    last: "Ostroverkh",
                     first: "Oleg"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000078",
+                _id: "55b92ad221e4b7c40f000078",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Boyanivskiy",
+                name: {
+                    last: "Boyanivskiy",
                     first: "Oleg"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00008a",
+                _id: "55b92ad221e4b7c40f00008a",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Mahobey",
+                name: {
+                    last: "Mahobey",
                     first: "Oleg"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "561ba7039ebb48212ea838c3",
+                _id: "561ba7039ebb48212ea838c3",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Maliavska",
+                name: {
+                    last: "Maliavska",
                     first: "Oleksandra"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56b9cbb48f23c5696159cd08",
+                _id: "56b9cbb48f23c5696159cd08",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Kovalenko",
+                name: {
+                    last: "Kovalenko",
                     first: "Oleksii"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000037",
+                _id: "55b92ad221e4b7c40f000037",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Shanghin",
+                name: {
+                    last: "Shanghin",
                     first: "Oleksiy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000079",
+                _id: "55b92ad221e4b7c40f000079",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Gerasimov",
+                name: {
+                    last: "Gerasimov",
                     first: "Oleksiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000095",
+                _id: "55b92ad221e4b7c40f000095",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Kuropyatnik",
+                name: {
+                    last: "Kuropyatnik",
                     first: "Oleksiy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c9",
+                _id: "55b92ad221e4b7c40f0000c9",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
+                name: {
                     first: "Oleksiy",
-                    last : "Fedosov"
-                }
+                    last: "Fedosov"
+                },
+                isEmployee: false
             },
             {
-                _id       : "56e2b6a21f2850d361927dd8",
+                _id: "56e2b6a21f2850d361927dd8",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Protsenko",
+                name: {
+                    last: "Protsenko",
                     first: "Oleksiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b9",
+                _id: "571a0643156a3d7a75a39f95",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Melnyk",
+                name: {
+                    last: "Ageev",
+                    first: "Oleksiy"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "5731c54a5924d063287d773d",
+                department: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
+                },
+                name: {
+                    last: "Fomin",
+                    first: "Oleksiy"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000b9",
+                department: {
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
+                },
+                name: {
+                    last: "Melnyk",
                     first: "Olena"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55e96ab13f3ae4fd0b000009",
+                _id: "55e96ab13f3ae4fd0b000009",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Pavliuk",
+                name: {
+                    last: "Pavliuk",
                     first: "Oles"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000c3",
+                _id: "55b92ad221e4b7c40f0000c3",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
+                name: {
                     first: "Olesia",
-                    last : "Prokoshkina"
-                }
+                    last: "Prokoshkina"
+                },
+                isEmployee: true
             },
             {
-                _id       : "56123232c90e2fb026ce064b",
+                _id: "56123232c90e2fb026ce064b",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Sikora",
+                name: {
+                    last: "Sikora",
                     first: "Olga"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56f1636d99952f1f505902a1",
+                _id: "5756ba090daaa62b762e951c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Fizer",
+                name: {
+                    last: "Diachuk",
+                    first: "Olga"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "56f1636d99952f1f505902a1",
+                department: {
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
+                },
+                name: {
+                    last: "Fizer",
                     first: "Olha"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55c84a4aaa36a0e60a000005",
+                _id: "575fbc66c5d7fcf869b24c80",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Muratov",
+                name: {
+                    last: "Opalinskiy",
+                    first: "Ostap"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "57206f8e2387d7b821a694c1",
+                department: {
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
+                },
+                name: {
+                    last: "Danch",
+                    first: "Patritsiia"
+                },
+                isEmployee: false
+            },
+            {
+                _id: "55c84a4aaa36a0e60a000005",
+                department: {
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
+                },
+                name: {
+                    last: "Muratov",
                     first: "Pavlo"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56964a03d87c9004552b63ba",
+                _id: "56964a03d87c9004552b63ba",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Skyba",
+                name: {
+                    last: "Skyba",
                     first: "Pavlo"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56a7956faa157ca50f21fb25",
+                _id: "56a7956faa157ca50f21fb25",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Demko",
+                name: {
+                    last: "Demko",
                     first: "Pavlo"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00005f",
+                _id: "55b92ad221e4b7c40f00005f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Voloshchuk",
+                name: {
+                    last: "Voloshchuk",
                     first: "Peter"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55e549309624477a0b000005",
+                _id: "55e549309624477a0b000005",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Rospopa",
+                name: {
+                    last: "Rospopa",
                     first: "Petro"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56cc7ad8541812c071973579",
+                _id: "56cc7ad8541812c071973579",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Tesliuk",
+                name: {
+                    last: "Tesliuk",
                     first: "Petro"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56a78c75aa157ca50f21fb24",
+                _id: "56a78c75aa157ca50f21fb24",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Iyber",
+                name: {
+                    last: "Iyber",
                     first: "Renata"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000051",
+                _id: "55b92ad221e4b7c40f000051",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Mozes",
+                name: {
+                    last: "Mozes",
                     first: "Richard"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56e298ab5def9136621b7803",
+                _id: "56e298ab5def9136621b7803",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Shinkovych",
+                name: {
+                    last: "Shinkovych",
                     first: "Rikhard"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00007a",
+                _id: "55b92ad221e4b7c40f00007a",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Fogash",
+                name: {
+                    last: "Fogash",
                     first: "Robert"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56e6b7d7977124d34db5829c",
+                _id: "56e6b7d7977124d34db5829c",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Bachynska",
+                name: {
+                    last: "Bachynska",
                     first: "Roksana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00004b",
+                _id: "55b92ad221e4b7c40f00004b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Katona",
+                name: {
+                    last: "Katona",
                     first: "Roland"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000038",
+                _id: "55b92ad221e4b7c40f000038",
                 department: {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    _id: "566ee11b8453e8b464b70b73",
+                    sequence: 8,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-04-12T07:48:44.518Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-14T15:32:43.470Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Ruby on Rails"
                 },
-                name      : {
-                    last : "Babunich",
+                name: {
+                    last: "Babunich",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000060",
+                _id: "55b92ad221e4b7c40f000060",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Buchuk",
+                name: {
+                    last: "Buchuk",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00007b",
+                _id: "55b92ad221e4b7c40f00007b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Guti",
+                name: {
+                    last: "Guti",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000086",
+                _id: "55b92ad221e4b7c40f000086",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Kubichka",
+                name: {
+                    last: "Kubichka",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b0",
+                _id: "55b92ad221e4b7c40f0000b0",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Donchenko",
+                name: {
+                    last: "Donchenko",
                     first: "Roman"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55dd73d1f09cc2ec0b000008",
+                _id: "55dd73d1f09cc2ec0b000008",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Vizenko",
+                name: {
+                    last: "Vizenko",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55eef3fd6dceaee10b000020",
+                _id: "55eef3fd6dceaee10b000020",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Saldan",
+                name: {
+                    last: "Saldan",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5667f43da3fc012a68f0d5f6",
+                _id: "5667f43da3fc012a68f0d5f6",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Katsala",
+                name: {
+                    last: "Katsala",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "568bbdfd5827e3b24d8123a7",
+                _id: "568bbdfd5827e3b24d8123a7",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Chaban",
+                name: {
+                    last: "Chaban",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "568cd341b2bcba971ba6f5c4",
+                _id: "568cd341b2bcba971ba6f5c4",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Rosul",
+                name: {
+                    last: "Rosul",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "568cd4c0b2bcba971ba6f5c5",
+                _id: "568cd4c0b2bcba971ba6f5c5",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Osadchuk",
+                name: {
+                    last: "Osadchuk",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "569e3a73044ae38173244cfb",
+                _id: "569e3a73044ae38173244cfb",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Martyniuk",
+                name: {
+                    last: "Martyniuk",
                     first: "Roman"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56d5a0c45132d292750a5e7e",
+                _id: "572074f171d367e52185bd3a",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Ukrainskiy",
+                name: {
+                    last: "Siladii",
+                    first: "Roman"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "573351f8e30990df6c5ce107",
+                department: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
+                },
+                name: {
+                    last: "Kopanskyi",
+                    first: "Roman"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "573b05a46d5057cc60a1b1ce",
+                department: {
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
+                },
+                name: {
+                    last: "Pylyp",
+                    first: "Roman"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "56d5a0c45132d292750a5e7e",
+                department: {
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
+                },
+                name: {
+                    last: "Ukrainskiy",
                     first: "Rostyslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000056",
+                _id: "55b92ad221e4b7c40f000056",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Labjak",
+                name: {
+                    last: "Labjak",
                     first: "Ruslan"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000097",
+                _id: "55b92ad221e4b7c40f000097",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Abylgazinov",
+                name: {
+                    last: "Abylgazinov",
                     first: "Samgash"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "568cdd375527d6691cb68b22",
+                _id: "568cdd375527d6691cb68b22",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Melnik",
+                name: {
+                    last: "Melnik",
                     first: "Sergey"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000064",
+                _id: "55b92ad221e4b7c40f000064",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Tilishevsky",
+                name: {
+                    last: "Tilishevsky",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00007c",
+                _id: "55b92ad221e4b7c40f00007c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Sheba",
+                name: {
+                    last: "Sheba",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000a1",
+                _id: "55b92ad221e4b7c40f0000a1",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Stepaniuk",
+                name: {
+                    last: "Stepaniuk",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55d1a2b18f61e2c90b000023",
+                _id: "55d1a2b18f61e2c90b000023",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Degtyar",
+                name: {
+                    last: "Degtyar",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55dd63f8f09cc2ec0b000006",
+                _id: "55dd63f8f09cc2ec0b000006",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Ihnatko",
+                name: {
+                    last: "Ihnatko",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5649b8ccad4bc9e53f1f6192",
+                _id: "5649b8ccad4bc9e53f1f6192",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Gevelev",
+                name: {
+                    last: "Gevelev",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5652dd95c4d12cf51e7f7e0b",
+                _id: "5652dd95c4d12cf51e7f7e0b",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Petakh",
+                name: {
+                    last: "Petakh",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56e17848f625de2a2f9cacd1",
+                _id: "56e17848f625de2a2f9cacd1",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Biloborodov",
+                name: {
+                    last: "Biloborodov",
                     first: "Sergiy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00004c",
+                _id: "55b92ad221e4b7c40f00004c",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Nayda",
+                name: {
+                    last: "Nayda",
                     first: "Sofia"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "56d823e78230197c0e089038",
+                _id: "56d823e78230197c0e089038",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Marenych",
+                name: {
+                    last: "Marenych",
                     first: "Sofiya"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "561b756f9ebb48212ea838c0",
+                _id: "561b756f9ebb48212ea838c0",
                 department: {
-                    _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Romanyuk",
+                name: {
+                    last: "Romanyuk",
                     first: "Stanislav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000039",
+                _id: "55b92ad221e4b7c40f000039",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Rikun",
+                name: {
+                    last: "Rikun",
                     first: "Stas"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00007d",
+                _id: "55b92ad221e4b7c40f00007d",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Volskiy",
+                name: {
+                    last: "Volskiy",
                     first: "Stas"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000ad",
+                _id: "55b92ad221e4b7c40f0000ad",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Krovspey",
+                name: {
+                    last: "Krovspey",
                     first: "Stepan"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00008d",
+                _id: "55b92ad221e4b7c40f00008d",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Kira",
+                name: {
+                    last: "Kira",
                     first: "Svitlana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000ae",
+                _id: "55b92ad221e4b7c40f0000ae",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Dolottseva",
+                name: {
+                    last: "Dolottseva",
                     first: "Tamara"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000061",
+                _id: "55b92ad221e4b7c40f000061",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Mondok",
+                name: {
+                    last: "Mondok",
                     first: "Tamas"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000050",
+                _id: "55b92ad221e4b7c40f000050",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Holovatska",
+                name: {
+                    last: "Holovatska",
                     first: "Tamila"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00007e",
+                _id: "55b92ad221e4b7c40f00007e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Zmiy",
+                name: {
+                    last: "Zmiy",
                     first: "Taras"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "564a02e0ad4bc9e53f1f6194",
+                _id: "564a02e0ad4bc9e53f1f6194",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Dvorian",
+                name: {
+                    last: "Dvorian",
                     first: "Taras"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56813fe29cceae182b907755",
+                _id: "56813fe29cceae182b907755",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    _id: "55b92ace21e4b7c40f000012",
+                    ID: 4,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:48.233Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: ".NET/WP"
                 },
-                name      : {
-                    last : "Ukrainskiy",
+                name: {
+                    last: "Ukrainskiy",
                     first: "Taras"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56d9497dae35cc4f0e721074",
+                _id: "5714e5ff4b1f720a63ae7e93",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "TESTING",
-                    first: "Test"
-                }
+                name: {
+                    last: "Korpanets",
+                    first: "Taras"
+                },
+                isEmployee: true
             },
             {
-                _id       : "56cf0928541812c071973593",
+                _id: "575819b452e8f40a76befd65",
                 department: {
-                    _id           : "560c0b83a5d4a2e20ba5068c",
-                    departmentName: "Finance"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Shepitko",
+                name: {
+                    last: "Serdiuk",
+                    first: "Taras"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "56cf0928541812c071973593",
+                department: {
+                    _id: "560c0b83a5d4a2e20ba5068c",
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:18.225Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-09-30T16:19:15.986Z",
+                        user: "560c099da5d4a2e20ba5068b"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Finance"
+                },
+                name: {
+                    last: "Shepitko",
                     first: "Tetiana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000099",
+                _id: "55b92ad221e4b7c40f000099",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Smertina",
+                name: {
+                    last: "Smertina",
                     first: "Tetyana"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55c98df0cbb0f4910b000007",
+                _id: "55c98df0cbb0f4910b000007",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Berezhnoi",
+                name: {
+                    last: "Berezhnoi",
                     first: "Timur"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00006a",
+                _id: "55b92ad221e4b7c40f00006a",
                 department: {
-                    _id           : "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    _id: "56e175c4d62294582e10ca68",
+                    sequence: 7,
+                    nestingLevel: 1,
+                    editedBy: {
+                        user: null
+                    },
+                    createdBy: {
+                        date: "2016-03-10T13:25:24.979Z",
+                        user: "56dda0599fb95fbe18e3f8ed"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Unity"
                 },
-                name      : {
-                    last : "Tsipf",
+                name: {
+                    last: "Tsipf",
                     first: "Vadim"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56011186536bd29228000005",
+                _id: "56011186536bd29228000005",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Khruslov",
+                name: {
+                    last: "Khruslov",
                     first: "Valentyn"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "561bb5329ebb48212ea838c6",
+                _id: "561bb5329ebb48212ea838c6",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
                 },
-                name      : {
-                    last : "Ladomiryak",
+                name: {
+                    last: "Ladomiryak",
                     first: "Valerii"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000af",
+                _id: "55b92ad221e4b7c40f0000af",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Tokareva",
+                name: {
+                    last: "Tokareva",
                     first: "Valeriya"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f00007f",
+                _id: "55b92ad221e4b7c40f00007f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Klimchenko",
+                name: {
+                    last: "Klimchenko",
                     first: "Vasilisa"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00003a",
+                _id: "55b92ad221e4b7c40f00003a",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Agosta",
+                name: {
+                    last: "Agosta",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000040",
+                _id: "55b92ad221e4b7c40f000040",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Almashiy",
+                name: {
+                    last: "Almashiy",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000053",
+                _id: "55b92ad221e4b7c40f000053",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Seredniy",
+                name: {
+                    last: "Seredniy",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000062",
+                _id: "55b92ad221e4b7c40f000062",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Cheypesh",
+                name: {
+                    last: "Cheypesh",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000080",
+                _id: "55b92ad221e4b7c40f000080",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Barchiy",
+                name: {
+                    last: "Barchiy",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000093",
+                _id: "55b92ad221e4b7c40f000093",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Lupchey",
+                name: {
+                    last: "Lupchey",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000b4",
+                _id: "55b92ad221e4b7c40f0000b4",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Prokopyshyn",
+                name: {
+                    last: "Prokopyshyn",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55d1d860dda01e250c000010",
+                _id: "55d1d860dda01e250c000010",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Hoshovsky",
+                name: {
+                    last: "Hoshovsky",
                     first: "Vasiliy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000088",
+                _id: "574bf9f5432a1070208d73a1",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Buchok",
+                name: {
+                    last: "Ilto",
+                    first: "Vasiliy"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f000088",
+                department: {
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
+                },
+                name: {
+                    last: "Buchok",
                     first: "Viktor"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000091",
+                _id: "55b92ad221e4b7c40f000091",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Kiver",
+                name: {
+                    last: "Kiver",
                     first: "Viktor"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55f9298456f79c9c0c000006",
+                _id: "55f9298456f79c9c0c000006",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Manhur",
+                name: {
+                    last: "Manhur",
                     first: "Viktor"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56c2f2a7dfd8a81466e2f71f",
+                _id: "56c2f2a7dfd8a81466e2f71f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Mateleshka",
+                name: {
+                    last: "Mateleshka",
                     first: "Viktor"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "5626278d750d38934bfa1313",
+                _id: "5626278d750d38934bfa1313",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Rogachenko",
+                name: {
+                    last: "Rogachenko",
                     first: "Viktoria"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5637710e5d23a8eb04e80aed",
+                _id: "5637710e5d23a8eb04e80aed",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Kovalenko",
+                name: {
+                    last: "Kovalenko",
                     first: "Viktoria"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00003b",
+                _id: "55b92ad221e4b7c40f00003b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Bizilya",
+                name: {
+                    last: "Bizilya",
                     first: "Vitaliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00004e",
+                _id: "55b92ad221e4b7c40f00004e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Shuba",
+                name: {
+                    last: "Shuba",
                     first: "Vitaliy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000081",
+                _id: "55b92ad221e4b7c40f000081",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Sokhanych",
+                name: {
+                    last: "Sokhanych",
                     first: "Vitaliy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000052",
+                _id: "5715ee359f1136bd3af3b662",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Gerasimenko",
+                name: {
+                    last: "Driuchenko",
+                    first: "Vitaliy"
+                },
+                isEmployee: false
+            },
+            {
+                _id: "5734961361e05f2b768e6090",
+                department: {
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
+                },
+                name: {
+                    last: "Senevych",
+                    first: "Vitaliy"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f000052",
+                department: {
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
+                },
+                name: {
+                    last: "Gerasimenko",
                     first: "Vladimir"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "561bb1269ebb48212ea838c5",
+                _id: "561bb1269ebb48212ea838c5",
                 department: {
-                    _id           : "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    _id: "56802e9d1afe27f547b7ba51",
+                    sequence: 1,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:12.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:31:57.230Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "CSS/FrontEnd"
                 },
-                name      : {
-                    last : "Pogorilyak",
+                name: {
+                    last: "Pogorilyak",
                     first: "Vladimir"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55eeed546dceaee10b00001e",
+                _id: "55eeed546dceaee10b00001e",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Turytskyi",
+                name: {
+                    last: "Turytskyi",
                     first: "Vladyslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "568bbf935827e3b24d8123a8",
+                _id: "568bbf935827e3b24d8123a8",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Hamalii",
+                name: {
+                    last: "Hamalii",
                     first: "Vladyslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55eee9c26dceaee10b00001d",
+                _id: "55eee9c26dceaee10b00001d",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Stepanchuk",
+                name: {
+                    last: "Stepanchuk",
                     first: "Volodymyr"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00004d",
+                _id: "5714e7584b1f720a63ae7e94",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55bb1f40cb76ca630b000007",
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-30T11:20:27.579Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:52.155Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000030",
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "PM"
                 },
-                name      : {
-                    last : "Kopinets",
+                name: {
+                    last: "Trytko",
+                    first: "Volodymyr"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "55b92ad221e4b7c40f00004d",
+                department: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
+                },
+                name: {
+                    last: "Kopinets",
                     first: "Vyacheslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f000063",
+                _id: "55b92ad221e4b7c40f000063",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
-                    last : "Gusti",
+                name: {
+                    last: "Gusti",
                     first: "Yana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000ca",
+                _id: "55b92ad221e4b7c40f0000ca",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Vengerova",
+                name: {
+                    last: "Vengerova",
                     first: "Yana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55f7c20a6d43203d0c000005",
+                _id: "55f7c20a6d43203d0c000005",
                 department: {
-                    _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    _id: "55bb1f14cb76ca630b000006",
+                    sequence: 6,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:42:20.626Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-31T07:09:08.957Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: "55b92ad221e4b7c40f000039",
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Design"
                 },
-                name      : {
-                    last : "Samaryk",
+                name: {
+                    last: "Samaryk",
                     first: "Yana"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "5602a01550de7f4138000008",
+                _id: "5602a01550de7f4138000008",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Dufynets",
+                name: {
+                    last: "Dufynets",
                     first: "Yana"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000082",
+                _id: "55b92ad221e4b7c40f000082",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Fuchko",
+                name: {
+                    last: "Fuchko",
                     first: "Yaroslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f0000cf",
+                _id: "55b92ad221e4b7c40f0000cf",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Denysiuk",
+                name: {
+                    last: "Denysiuk",
                     first: "Yaroslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "568bc0b55827e3b24d8123a9",
+                _id: "568bc0b55827e3b24d8123a9",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    _id: "55b92ace21e4b7c40f000010",
+                    ID: 2,
+                    sequence: 4,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:11.006Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Android"
                 },
-                name      : {
-                    last : "Syrota",
+                name: {
+                    last: "Syrota",
                     first: "Yaroslav"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56014cc8536bd29228000007",
+                _id: "56014cc8536bd29228000007",
                 department: {
-                    _id           : "560c0b83a5d4a2e20ba5068c",
-                    departmentName: "Finance"
+                    _id: "560c0b83a5d4a2e20ba5068c",
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:18.225Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-09-30T16:19:15.986Z",
+                        user: "560c099da5d4a2e20ba5068b"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Finance"
                 },
-                name      : {
-                    last : "Bezyk",
+                name: {
+                    last: "Bezyk",
                     first: "Yevgenia"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56e2e83a74ac46664a83e94b",
+                _id: "56e2e83a74ac46664a83e94b",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    _id: "55b92ace21e4b7c40f000014",
+                    ID: 6,
+                    sequence: 1,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:00.655Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "BusinessDev"
                 },
-                name      : {
-                    last : "Melnyk",
+                name: {
+                    last: "Melnyk",
                     first: "Yevgenia"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55ed5a437221afe30b000006",
+                _id: "55ed5a437221afe30b000006",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    _id: "55b92ace21e4b7c40f000013",
+                    ID: 5,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:33:47.375Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "Marketing"
                 },
-                name      : {
-                    last : "Porokhnitska",
+                name: {
+                    last: "Porokhnitska",
                     first: "Yulia"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000054",
+                _id: "55b92ad221e4b7c40f000054",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
                 },
-                name      : {
-                    last : "Derevenko",
+                name: {
+                    last: "Derevenko",
                     first: "Yuriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55b92ad221e4b7c40f000065",
+                _id: "55b92ad221e4b7c40f000065",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Sirko",
+                name: {
+                    last: "Sirko",
                     first: "Yuriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00008f",
+                _id: "55b92ad221e4b7c40f00008f",
                 department: {
-                    _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    _id: "55b92ace21e4b7c40f00000f",
+                    ID: 1,
+                    sequence: 3,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:05.787Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.907Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "iOS"
                 },
-                name      : {
-                    last : "Holovatskyi",
+                name: {
+                    last: "Holovatskyi",
                     first: "Yuriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "55b92ad221e4b7c40f00009d",
+                _id: "55b92ad221e4b7c40f00009d",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    _id: "55b92ace21e4b7c40f000015",
+                    ID: 7,
+                    sequence: 2,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-03-14T08:34:09.729Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.909Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56e6775c5ec71b00429745a4",
+                    __v: 0,
+                    isDevelopment: false,
+                    name: "HR"
                 },
-                name      : {
-                    last : "Fedynec",
+                name: {
+                    last: "Fedynec",
                     first: "Yuriy"
-                }
+                },
+                isEmployee: false
             },
             {
-                _id       : "55f7c3736d43203d0c000006",
+                _id: "55f7c3736d43203d0c000006",
                 department: {
-                    _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    _id: "56802ec21afe27f547b7ba53",
+                    sequence: 2,
+                    nestingLevel: 2,
+                    editedBy: {
+                        date: "2016-04-14T07:37:18.546Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-12-27T18:32:34.872Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "55b92ace21e4b7c40f000016",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "PHP/WordPress"
                 },
-                name      : {
-                    last : "Bodak",
+                name: {
+                    last: "Bodak",
                     first: "Yuriy"
-                }
+                },
+                isEmployee: true
             },
             {
-                _id       : "56090d77066d979a33000009",
+                _id: "56090d77066d979a33000009",
                 department: {
-                    _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    _id: "55b92ace21e4b7c40f000011",
+                    ID: 3,
+                    sequence: 5,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:41:16.215Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "QA"
                 },
-                name      : {
+                name: {
                     first: "Yuriy",
-                    last : "Bysaha"
-                }
+                    last: "Bysaha"
+                },
+                isEmployee: true
+            },
+            {
+                _id: "573b222fe5b0d3fb09363a87",
+                department: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    ID: 8,
+                    sequence: 0,
+                    nestingLevel: 1,
+                    editedBy: {
+                        date: "2016-02-25T08:40:40.193Z",
+                        user: "563f673270bbc2b740ce89ae"
+                    },
+                    createdBy: {
+                        date: "2015-07-29T19:34:38.910Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    users: [ ],
+                    departmentManager: null,
+                    parentDepartment: "56cebdf6541812c07197358f",
+                    __v: 0,
+                    isDevelopment: true,
+                    name: "Web"
+                },
+                name: {
+                    last: "Kachalaba",
+                    first: "Yuriy"
+                },
+                isEmployee: true
             }
         ]
     };
