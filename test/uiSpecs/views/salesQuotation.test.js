@@ -34,111 +34,111 @@ define([
     var expect;
     var fakeQuotation = {
         total: 300,
-        data: [
+        data : [
             {
-                _id: "574ecda5675726b0356600a9",
-                total: 60,
-                salesManager: {
+                _id            : "574ecda5675726b0356600a9",
+                total          : 60,
+                salesManager   : {
                     name: {
-                        last: "Lendyel",
+                        last : "Lendyel",
                         first: "Eugen"
                     }
                 },
-                name: "PO1093",
-                paymentInfo: {
+                name           : "PO1093",
+                paymentInfo    : {
                     total: 620000
                 },
-                orderDate: "2016-05-31T22:00:00.000Z",
-                workflow: {
-                    _id: "5555bf276a3f01acae0b5560",
-                    name: "Not Ordered",
+                orderDate      : "2016-05-31T22:00:00.000Z",
+                workflow       : {
+                    _id   : "5555bf276a3f01acae0b5560",
+                    name  : "Not Ordered",
                     status: "New"
                 },
-                supplier: {
-                    _id: "56e290f1896e98a661aa831a",
+                supplier       : {
+                    _id : "56e290f1896e98a661aa831a",
                     name: {
-                        last: "",
+                        last : "",
                         first: "Game scale"
                     }
                 },
-                currency: {
+                currency       : {
                     rate: 1,
-                    _id: "565eab29aeb95fa9c0f9df2d"
+                    _id : "565eab29aeb95fa9c0f9df2d"
                 },
-                project: {
-                    _id: "57455e519da6ef635b97196e",
+                project        : {
+                    _id : "57455e519da6ef635b97196e",
                     name: "Black Jack"
                 },
                 proformaCounter: 1
             },
             {
-                _id: "574ec8cecafdf9d135cfd666",
-                total: 60,
-                salesManager: {
+                _id            : "574ec8cecafdf9d135cfd666",
+                total          : 60,
+                salesManager   : {
                     name: {
-                        last: "Stan",
+                        last : "Stan",
                         first: "Igor"
                     }
                 },
-                name: "PO1092",
-                paymentInfo: {
+                name           : "PO1092",
+                paymentInfo    : {
                     total: 108000
                 },
-                orderDate: "2016-05-29T22:00:00.000Z",
-                workflow: {
-                    _id: "5555bf276a3f01acae0b5560",
-                    name: "Not Ordered",
+                orderDate      : "2016-05-29T22:00:00.000Z",
+                workflow       : {
+                    _id   : "5555bf276a3f01acae0b5560",
+                    name  : "Not Ordered",
                     status: "New"
                 },
-                supplier: {
-                    _id: "56a0d53b62d172544baf0e3c",
+                supplier       : {
+                    _id : "56a0d53b62d172544baf0e3c",
                     name: {
-                        last: "Liden",
+                        last : "Liden",
                         first: "Ivar"
                     }
                 },
-                currency: {
+                currency       : {
                     rate: 1,
-                    _id: "565eab29aeb95fa9c0f9df2d"
+                    _id : "565eab29aeb95fa9c0f9df2d"
                 },
-                project: {
-                    _id: "56a0d60062d172544baf0e3d",
+                project        : {
+                    _id : "56a0d60062d172544baf0e3d",
                     name: "BuddyBet"
                 },
                 proformaCounter: 0
             },
             {
-                _id: "57485df96466b2d41fc8170a",
-                total: 60,
-                salesManager: {
+                _id            : "57485df96466b2d41fc8170a",
+                total          : 60,
+                salesManager   : {
                     name: {
-                        last: "Katona",
+                        last : "Katona",
                         first: "Roland"
                     }
                 },
-                name: "PO1083",
-                paymentInfo: {
+                name           : "PO1083",
+                paymentInfo    : {
                     total: 232400
                 },
-                orderDate: "2016-05-26T22:00:00.000Z",
-                workflow: {
-                    _id: "5555bf276a3f01acae0b5560",
-                    name: "Not Ordered",
+                orderDate      : "2016-05-26T22:00:00.000Z",
+                workflow       : {
+                    _id   : "5555bf276a3f01acae0b5560",
+                    name  : "Not Ordered",
                     status: "New"
                 },
-                supplier: {
-                    _id: "5735e9f4044544e64738e595",
+                supplier       : {
+                    _id : "5735e9f4044544e64738e595",
                     name: {
-                        last: "",
+                        last : "",
                         first: "Carussel Group"
                     }
                 },
-                currency: {
+                currency       : {
                     rate: 0.896881,
-                    _id: "565eab34aeb95fa9c0f9df2e"
+                    _id : "565eab34aeb95fa9c0f9df2e"
                 },
-                project: {
-                    _id: "55b92ad621e4b7c40f0006d1",
+                project        : {
+                    _id : "55b92ad621e4b7c40f0006d1",
                     name: "Sales Tool"
                 },
                 proformaCounter: 0
@@ -621,57 +621,18 @@ define([
 
                 });
 
-                it('Try to open CreateView', function () {
-                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                it('Try to check disabled checkbox', function () {
+                    var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
+                    var $topBarEl = topBarView.$el;
 
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.exist;
-                    $('.ui-dialog').remove();
-                });
-
-                it('Try to go to edit form with error response', function () {
-                    var spyResponse;
-                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
-                    var $needTd = listView.$el.find('tr:nth-child(1) > td:nth-child(3)');
-
-                    server.respondWith('GET', quotationFormUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotationForm)]);
-                    $needTd.click();
-                    server.respond();
-
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                });
-
-                it('Try to go to edit form', function () {
-                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
-                    var currencyUrl = new RegExp('\/currency\/getForDd', 'i');
-                    var $needTd = listView.$el.find('tr:nth-child(1) > td:nth-child(3)');
-
-                    server.respondWith('GET', quotationFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotationForm)]);
-                    server.respondWith('GET', currencyUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCurrencies)]);
-                    $needTd.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.exist;
-                });
-
-                it('Try to change tabs', function () {
-                    var $dialogEl = $('.ui-dialog');
-                    var $firstTab = $dialogEl.find('ul.dialog-tabs > li:nth-child(1) > a');
-                    var $secondTab = $dialogEl.find('ul.dialog-tabs > li:nth-child(2) > a');
-
-                    expect($firstTab).to.have.class('active');
-
-                    $secondTab.click();
-                    expect($dialogEl.find('ul.dialog-tabs > li:nth-child(2) > a')).to.have.class('active');
-
-                    $firstTab.click();
-                    expect($dialogEl.find('ul.dialog-tabs > li:nth-child(1) > a')).to.have.class('active');
+                    $needCheckBox.click();
+                    expect($needCheckBox.prop('disabled')).to.be.true;
+                    expect($needCheckBox.prop('checked')).to.be.false;
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'none');
                 });
 
                 it('Try to delete item with error', function () {
-                    var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
+                    var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(2) > td.notForm > input');
                     var quotationUrl = new RegExp('\/quotations\/', 'i');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
@@ -752,6 +713,56 @@ define([
 
                     expect(deleteSpy.calledTwice).to.be.true;
                 });
+
+                it('Try to open CreateView', function () {
+                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+
+                    $createBtn.click();
+                    expect($('.ui-dialog')).to.exist;
+                    $('.ui-dialog').remove();
+                });
+
+                it('Try to go to edit form with error response', function () {
+                    var spyResponse;
+                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
+                    var $needTd = listView.$el.find('tr:nth-child(1) > td:nth-child(3)');
+
+                    server.respondWith('GET', quotationFormUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotationForm)]);
+                    $needTd.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                });
+
+                it('Try to go to edit form', function () {
+                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
+                    var currencyUrl = new RegExp('\/currency\/getForDd', 'i');
+                    var $needTd = listView.$el.find('tr:nth-child(1) > td:nth-child(3)');
+
+                    server.respondWith('GET', quotationFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotationForm)]);
+                    server.respondWith('GET', currencyUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCurrencies)]);
+                    $needTd.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+                });
+
+                it('Try to change tabs', function () {
+                    var $dialogEl = $('.ui-dialog');
+                    var $firstTab = $dialogEl.find('ul.dialog-tabs > li:nth-child(1) > a');
+                    var $secondTab = $dialogEl.find('ul.dialog-tabs > li:nth-child(2) > a');
+
+                    expect($firstTab).to.have.class('active');
+
+                    $secondTab.click();
+                    expect($dialogEl.find('ul.dialog-tabs > li:nth-child(2) > a')).to.have.class('active');
+
+                    $firstTab.click();
+                    expect($dialogEl.find('ul.dialog-tabs > li:nth-child(1) > a')).to.have.class('active');
+                });
+
             });
         });
     });

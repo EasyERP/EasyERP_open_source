@@ -862,12 +862,13 @@ define([
         });
 
         after(function () {
+            var $dialogs = $('.ui-dialog');
             topBarView.remove();
             listView.remove();
             view.remove();
 
-            if ($('.ui-dialog').length) {
-                $('.ui-dialog').remove();
+            if ($dialogs.length) {
+                $dialogs.remove();
             }
 
             ajaxSpy.restore();
@@ -894,7 +895,7 @@ define([
                 var $expectedMenuEl;
 
                 server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
-                view = new MainView({el: $elFixture, contentType: 'salesInvoice'});
+                view = new MainView({el: $elFixture, contentType: 'salesInvoices'});
                 server.respond();
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
@@ -931,7 +932,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                var invoiceUrl = new RegExp('\/Invoices\/', 'i');
 
                 historyNavigateSpy.reset();
 
@@ -952,7 +953,7 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                var invoiceUrl = new RegExp('\/Invoices\/', 'i');
 
                 server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoice)]);
                 invoiceCollection = new InvoiceCollection({
@@ -1108,7 +1109,7 @@ define([
                     var spyResponse;
                     var $pageList = $thisEl.find('.pageList');
                     var $needBtn = $pageList.find('a:nth-child(2)');
-                    var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                    var invoiceUrl = new RegExp('\/Invoices\/', 'i');
 
                     server.respondWith('GET', invoiceUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoice)]);
                     $needBtn.click();
@@ -1193,7 +1194,7 @@ define([
                 it('Try to delete item with error response', function () {
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
-                    var invoiceUrl = new RegExp('\/Invoice\/');
+                    var invoiceUrl = new RegExp('\/Invoices\/', 'i');
 
                     deleteSpy.reset();
 
@@ -1209,7 +1210,7 @@ define([
                 it('Try to delete item', function () {
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
-                    var invoiceUrl = new RegExp('\/Invoice\/');
+                    var invoiceUrl = new RegExp('\/Invoices\/', 'i');
 
                     $needCheckBox.click();
                     server.respondWith('DELETE', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Deleted success'})]);
@@ -1223,7 +1224,7 @@ define([
                 it('Try to go to edit dialog with error response', function () {
                     var spyResponse;
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
-                    var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
+                    var invoiceUrl = new RegExp('\/Invoices\/', 'i');
 
                     mainSpy.reset();
 
@@ -1237,7 +1238,7 @@ define([
 
                 it('Try to go to edit dialog', function () {
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(6)');
-                    var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                    var invoiceUrl = new RegExp('\/Invoices\/', 'i');
                     var productUrl = new RegExp('\/product\/', 'i');
 
                     App.currentDb = 'micheldb';
@@ -1257,9 +1258,7 @@ define([
                     expect(editViewSpy.called).to.be.true;
                     expect($('.ui-dialog')).to.exist;
                 });
-
             });
         });
-
     });
 });

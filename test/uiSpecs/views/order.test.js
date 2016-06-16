@@ -23,111 +23,111 @@ define([
     var orderCollection;
     var fakeOrders = {
         total: 300,
-        data: [
+        data : [
             {
-                _id: "574d9134719269313676d891",
-                total: 693,
-                salesManager: {
+                _id            : "574d9134719269313676d891",
+                total          : 693,
+                salesManager   : {
                     name: {
-                        last: "Lendyel",
+                        last : "Lendyel",
                         first: "Eugen"
                     }
                 },
-                name: "PO1090",
-                paymentInfo: {
+                name           : "PO1090",
+                paymentInfo    : {
                     total: 120000
                 },
-                orderDate: "2016-05-30T22:00:00.000Z",
-                workflow: {
-                    _id: "55647b962e4aa3804a765ec6",
-                    name: "Invoiced",
+                orderDate      : "2016-05-30T22:00:00.000Z",
+                workflow       : {
+                    _id   : "55647b962e4aa3804a765ec6",
+                    name  : "Invoiced",
                     status: "Done"
                 },
-                supplier: {
-                    _id: "57482308190678f866710453",
+                supplier       : {
+                    _id : "57482308190678f866710453",
                     name: {
-                        last: "Tingstrom",
+                        last : "Tingstrom",
                         first: "Nicklas"
                     }
                 },
-                currency: {
+                currency       : {
                     _id: "565eab29aeb95fa9c0f9df2d"
                 },
-                project: {
-                    _id: "574823a1d4e3d608249c8105",
+                project        : {
+                    _id : "574823a1d4e3d608249c8105",
                     name: "Recovan"
                 },
                 proformaCounter: 0
             },
             {
-                _id: "574c586988a366d779b01601",
-                total: 693,
-                salesManager: {
+                _id            : "574c586988a366d779b01601",
+                total          : 693,
+                salesManager   : {
                     name: {
-                        last: "Dufynets",
+                        last : "Dufynets",
                         first: "Yana"
                     }
                 },
-                name: "PO1087",
-                paymentInfo: {
+                name           : "PO1087",
+                paymentInfo    : {
                     total: 96600
                 },
-                orderDate: "2016-05-29T22:00:00.000Z",
-                workflow: {
-                    _id: "55647b962e4aa3804a765ec6",
-                    name: "Invoiced",
+                orderDate      : "2016-05-29T22:00:00.000Z",
+                workflow       : {
+                    _id   : "55647b962e4aa3804a765ec6",
+                    name  : "Invoiced",
                     status: "Done"
                 },
-                supplier: {
-                    _id: "56dff2c6622d25002676ffcd",
+                supplier       : {
+                    _id : "56dff2c6622d25002676ffcd",
                     name: {
-                        last: "Tauman",
+                        last : "Tauman",
                         first: "Menachem"
                     }
                 },
-                currency: {
+                currency       : {
                     _id: "565eab29aeb95fa9c0f9df2d"
                 },
-                project: {
-                    _id: "56dff43eb07e2ad226b6893b",
+                project        : {
+                    _id : "56dff43eb07e2ad226b6893b",
                     name: "Smart360"
                 },
                 proformaCounter: 0
             },
             {
-                _id: "574c00fe8f7e1eb31f9dfdb1",
-                total: 693,
-                salesManager: {
+                _id            : "574c00fe8f7e1eb31f9dfdb1",
+                total          : 693,
+                salesManager   : {
                     name: {
-                        last: "Popp",
+                        last : "Popp",
                         first: "Larysa"
                     }
                 },
-                name: "PO1085",
-                paymentInfo: {
+                name           : "PO1085",
+                paymentInfo    : {
                     total: 74800
                 },
-                orderDate: "2016-05-29T22:00:00.000Z",
-                workflow: {
-                    _id: "55647b962e4aa3804a765ec6",
-                    name: "Invoiced",
+                orderDate      : "2016-05-29T22:00:00.000Z",
+                workflow       : {
+                    _id   : "55647b962e4aa3804a765ec6",
+                    name  : "Invoiced",
                     status: "Done"
                 },
-                supplier: {
-                    _id: "570f54362927bcd57ec29251",
+                supplier       : {
+                    _id : "570f54362927bcd57ec29251",
                     name: {
-                        last: "",
+                        last : "",
                         first: "OnePageCRM"
                     }
                 },
-                currency: {
+                currency       : {
                     _id: "565eab29aeb95fa9c0f9df2d"
                 },
-                project: {
-                    _id: "57396de5b77243ed6040ec2d",
+                project        : {
+                    _id : "57396de5b77243ed6040ec2d",
                     name: "OnePageCRM"
                 },
-                proformaCounter: 0
+                proformaCounter: 1
             }
         ]
     };
@@ -539,9 +539,15 @@ define([
         });
 
         after(function () {
+            var $dialogs = $('.ui-dialog');
+
             listView.remove();
             topBarView.remove();
             view.remove();
+
+            if ($dialogs.length) {
+                $dialogs.remove();
+            }
 
             ajaxSpy.restore();
             historyNavigateSpy.restore();
@@ -829,9 +835,20 @@ define([
                     expect($searchContainer.find('#salesManagerUl > li').first()).to.have.not.class('checkedValue');
                 });
 
+                it('Try to check disabled checkbox', function () {
+                    var $checkBox = $thisEl.find('#listTable > tr:nth-child(3) > td.notForm > input');
+                    var $topBarEl = topBarView.$el;
+
+                    expect($checkBox.prop('disabled')).to.be.true;
+
+                    $checkBox.click();
+                    expect($checkBox.prop('checked')).to.be.false;
+                    expect($topBarEl.find('#top-bar-deleteBtn')).to.have.css('display', 'none');
+                });
+
                 it('Try to delete item', function () {
                     var $deleteBtn;
-                    var $checkBox = listView.$el.find('#listTable > tr:nth-child(1) > td.notForm > input');
+                    var $checkBox = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
                     var orderUrl = new RegExp('\/quotation\/', 'i');
 
                     $checkBox.click();
@@ -926,7 +943,7 @@ define([
                     expect($firstTab).to.have.class('active');
                 });
 
-                it('Try to delete NotInvoiced Order with error response', function () {
+                it('Try to delete NotInvoiced Order with error response from editView', function () {
                     var spyResponse;
                     var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
                     var orderUrl = new RegExp('\/orders\/', 'i');
@@ -939,7 +956,7 @@ define([
                     expect(spyResponse).to.have.property('type', 'error');
                 });
 
-                it('Try to delete NotInvoiced Order ', function () {
+                it('Try to delete NotInvoiced Order from editView', function () {
                     var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
                     var orderUrl = new RegExp('\/orders\/', 'i');
 
@@ -1069,11 +1086,11 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                   /* if (userAgentPattern.test(userAgent)) {
-                        expect(window.location.hash).to.be.equals('#easyErp/salesOrders/list/p=1/c=100/filter={"forSales":{"key":"forSales","value":["true"]}}');
-                    } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/salesOrders/list/p=1/c=100/filter=%7B%22forSales%22%3A%7B%22key%22%3A%22forSales%22%2C%22value%22%3A%5B%22true%22%5D%7D%7D');
-                    }*/
+                    /* if (userAgentPattern.test(userAgent)) {
+                     expect(window.location.hash).to.be.equals('#easyErp/salesOrders/list/p=1/c=100/filter={"forSales":{"key":"forSales","value":["true"]}}');
+                     } else {
+                     expect(window.location.hash).to.be.equals('#easyErp/salesOrders/list/p=1/c=100/filter=%7B%22forSales%22%3A%7B%22key%22%3A%22forSales%22%2C%22value%22%3A%5B%22true%22%5D%7D%7D');
+                     }*/
 
                     expect(window.location.hash).to.be.equals('#easyErp/salesOrders/list/p=1/c=100');
                 });
