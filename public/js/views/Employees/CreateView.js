@@ -240,7 +240,7 @@ define([
                 homeAddress[el.attr('name')] = $.trim(el.val());
             });
 
-            salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text(), 10) : null;
+            salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
             dateText = $.trim($tr.find('td').eq(2).text());
             date = dateText ? new Date(dateText) : new Date();
@@ -359,8 +359,8 @@ define([
 
                     self.attachView.sendToServer(null, model.changed);
 
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+                    //Backbone.history.fragment = '';
+                    //Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     self.hideDialog();
                 },
 
