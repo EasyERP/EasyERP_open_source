@@ -774,7 +774,7 @@ define([], function () {
             JOBS_DASHBOARD            : '/jobs/getForOverview',
             JOURNAL_ENTRY             : '/journalEntries/',
             WORKFLOWS                 : '/workflows/',
-            MODULES                   : '/getModules',
+            MODULES                   : '/modules/',
             PAYMENT_SALARY            : '/payment/',
             PRIORITY                  : '/Priority',
             PRODUCT_ALPHABET          : '/product/getProductsAlphabet',

@@ -6,15 +6,17 @@ define([
     'use strict';
 
     var MenuItems = Backbone.Collection.extend({
-        url       : function () {
+        url: function () {
             return CONSTANTS.URLS.MODULES;
         },
+
         initialize: function () {
             this.fetch({
                 reset: true
             });
         },
-        parse     : function (response) {
+
+        parse: function (response) {
             return response.data;
         }
     });
