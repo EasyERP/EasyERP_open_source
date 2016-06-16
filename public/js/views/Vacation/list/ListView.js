@@ -325,7 +325,7 @@ define([
                 });
 
                 $target.append(this.selectView.render().el);
-                $target.find('input').show();
+               // $target.find('input').show();
 
             }
 
