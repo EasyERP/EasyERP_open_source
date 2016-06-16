@@ -47,7 +47,7 @@ define([
             var ifFilter = CONSTANTS.FILTERS.hasOwnProperty(contentType);
 
             if (ifFilter) {
-                this.renderFilter();
+                this.renderFilter(this.baseFilter);
             }
 
             if (this.hasAlphabet) {

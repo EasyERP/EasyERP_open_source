@@ -1,6 +1,3 @@
-/**
- * Created by soundstorm on 12.08.15.
- */
 define([
     'Backbone',
     'models/FilterModel'
@@ -17,6 +14,9 @@ define([
             var statusA = modelA.get('status');
             var statusB = modelB.get('status');
 
+            var parseIntA = parseInt(nameA, 10);
+            var parseIntB = parseInt(nameB, 10);
+
             if (statusA > statusB) {
                 return this.sortOrder * (-1);
             }
@@ -26,13 +26,9 @@ define([
             }
 
             if ((nameA === 0 || nameA) && (nameB === 0 || nameB)) {
-                if (this.int) {
-                    nameA = parseInt(nameA, 10);
-                    nameB = parseInt(nameB, 10);
-                } else {
-                    nameA = nameA.toLowerCase();
-                    nameB = nameB.toLowerCase();
-                }
+
+                nameA = isNaN(parseIntA) ? nameA.toLowerCase() : parseIntA;
+                nameB = isNaN(parseIntB) ? nameB.toLowerCase() : parseIntB;
 
                 if (nameA === nameB) {
                     return 0;
@@ -40,14 +36,6 @@ define([
 
                 return nameA > nameB ? this.sortOrder : this.sortOrder * (-1);
             }
-        },
-
-        sortBy: function (options) {
-            this.sortName = options.key || 'name';
-            this.sortOrder = options.order || 1;
-            this.int = options.int ? true : false;
-
-            this.sort();
         },
 
         initialize: function (models, options) {
