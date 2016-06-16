@@ -6482,7 +6482,9 @@ define([], function () {
             name          : "PO1"
         }
     ];
-    var fakeWTrack = [
+    var fakeWTrack =  {
+        total : 200,
+        data :[
         {
             1             : 2,
             2             : 4,
@@ -7589,7 +7591,7 @@ define([], function () {
                 visible     : true
             }
         }
-    ];
+    ]};
     var fakePayments = [
         {
             _id             : "55b92ae321e4b7c40f0013cd",
@@ -16045,6 +16047,17 @@ define([], function () {
         fakeCustomers                               : fakeCustomers,
         fakeEmployees                               : fakeEmployees,
         fakeProjectById                             : fakeProjectById,
-        fakeProjectByIdForForm                      : fakeProjectByIdForForm
+        fakeProjectByIdForForm                      : fakeProjectByIdForForm,
+        fakeJobs                                    : fakeJobs,
+        fakeProjectsType : fakeProjectsType,
+        fakeWorkflowsProject: fakeWorkflowsProject,
+        fakeInvoice: fakeInvoice,
+        fakeWTrack: fakeWTrack,
+        fakePayments: fakePayments,
+        fakeQuotations : fakeQuotations,
+        fakeBonusType : fakeBonusType,
+        fakeEmployeesForDD: fakeEmployeesForDD,
+        fakeJobsForWTrack : fakeJobsForWTrack
+
     };
 });
