@@ -108,19 +108,19 @@ define([
         asyncLoadImgs: function (model) {
             var currentModel = model.id ? model.toJSON() : model;
             var id = currentModel._id;
-            var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
+           // var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
             var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
-            if (pm) {
+          /*  if (pm) {
                 common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
                     var res = result.data[0];
 
                     $('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
                 });
-            }
+            }*/
 
             if (customer) {
-                common.getImagesPM([customer], '/getCustomersImages', '#' + id, function (result) {
+                common.getImagesPM([customer], '/customers/getCustomersImages', '#' + id, function (result) {
                     var res = result.data[0];
 
                     $('.miniAvatarCustomer').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
@@ -313,7 +313,7 @@ define([
             });
         },
 
-        autoHoursPerDay: function (e) {
+        /*autoHoursPerDay: function (e) {
             var targetEl = $(e.target);
             var isInput = targetEl.prop('tagName') === 'INPUT';
             var tr = targetEl.closest('tr');
@@ -348,7 +348,7 @@ define([
             edited.remove();
 
             workedEl.text(worked);
-        },
+        },*/
 
         editRow: function (e) {
             var self = this;
