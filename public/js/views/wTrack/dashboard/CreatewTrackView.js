@@ -39,13 +39,14 @@ define([
         row        : null,
 
         events: {
+            click                                              : 'removeInputs',
             'click .stageSelect'                               : 'showNewSelect',
             'click td.editable:not(.disabled)'                 : 'editRow',
             'click td.disabled'                                : 'notify',
             'keydown input.editing'                            : 'keyDown',
             'keyup input.editing'                              : 'onKeyUpInput',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            click                                              : 'removeInputs'
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+
         },
 
         initialize: function (options) {
@@ -382,7 +383,7 @@ define([
             });
         },
 
-        autoHoursPerDay: function (e) {
+       /* autoHoursPerDay: function (e) {
             var targetEl = $(e.target);
             var isInput = targetEl.prop('tagName') === 'INPUT';
             var tr = targetEl.closest('tr');
@@ -417,7 +418,7 @@ define([
             edited.remove();
 
             workedEl.text(worked);
-        },
+        },*/
 
         editRow: function (e) {
             var self = this;

@@ -494,7 +494,7 @@ define([
                 id: "569f5fbf62d172544baf0d56"
             }
         ]
-    }
+    };
     var expect;
     var view;
     var topBarView;
@@ -595,6 +595,10 @@ define([
         });
 
         describe('DashBoard IndexView', function () {
+            var customerImagesUrl = new RegExp('\/customers\/getCustomersImages', 'i');
+            var wTrackUrl = new RegExp('\/wTrack\/', 'i');
+            var jobsUrl = new RegExp('\/jobs\/', 'i');
+            var jobsDDUrl = new RegExp('\/jobs\/getForDD', 'i');
             var server;
             var depOpenSpy;
             var devOpenSpy;
@@ -819,11 +823,9 @@ define([
                     done();
                 });
 
-                it('Try to create tCard', function () {
+                it('Try to edit createView tCard', function () {
                     var $needLiEl;
                     var $chooseGroupBtn;
-                    var jobsUrl = new RegExp('\/jobs\/getForDD', 'i');
-                    var customerImagesUrl = new RegExp('\/customers\/getCustomersImages', 'i');
                     var $select;
                     var $jobsTd;
                     var generateJob;
@@ -833,9 +835,12 @@ define([
                     var $row = $dialogEl.find('#wTrackCreateTable tr:nth-child(1)');
                     var $typeTcard = $dialogEl.find('#wTrackCreateTable td:nth-child(1)');
                     var $mondayTd = $dialogEl.find('#wTrackCreateTable td:nth-child(9)');
+                    var $sundayTd = $dialogEl.find('#wTrackCreateTable td:nth-child(15)');
                     var $jobsTd = $dialogEl.find('td[data-content="jobs"]');
+                    var $weekTd = $dialogEl.find('td[data-content="week"]');
                     var $project = $dialogEl.find('#project');
                     var keyDownEvent = $.Event('keydown');
+                    var keyDownEventLetter = $.Event('keydown', {keyCode: 69});
                     var keyUpEvent = $.Event('keyup');
                     var $editInput;
                     var spyResponse;
@@ -851,12 +856,18 @@ define([
 
                     // select Project
                     $select = $dialogEl.find('#56e689c75ec71b00429745a9');
-                    server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsForProject)]);
+                    server.respondWith('GET', jobsDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsForProject)]);
                     server.respondWith('GET', customerImagesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomerImage)]);
                     $select.click();
                     server.respond();
                     server.respond();
 
+                    // try to edit input with letter
+                    $mondayTd.click();
+                    $editInput = $mondayTd.find('input');
+                    $editInput.val('');
+                    $editInput.trigger(keyDownEventLetter);
+                    expect($editInput.val()).to.be.equal('');
                     //try to edit days of week in OR
 
                     $mondayTd.click();
@@ -870,6 +881,12 @@ define([
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Сreate Overtime tCard for input more than 8 hours');
                     expect($editInput.val()).to.be.equal('8');
+
+                    $sundayTd.click();
+                    expect(mainSpy.calledThrice).to.be.true;
+                    spyResponse = mainSpy.args[2][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Please create Overtime tCard');
 
                     // try to change type of tCard to overtime
                     $typeTcard.click();
@@ -887,6 +904,11 @@ define([
                     $editInput.trigger('change');
                     expect($editInput.val()).to.be.equal('9');
 
+                    //try to removeInputs
+                    $weekTd.click();
+                    expect($dialogEl.find('input').length).to.be.equal(0);
+
+
                     //  $chooseGroupBtn.click();
 
                     //expect($('.ui-dialog')).to.not.exist;
@@ -899,7 +921,6 @@ define([
                     var $jobsTd;
                     var $nameInput;
                     var $saveButton;
-                    var jobsUrl = new RegExp('\/jobs\/', 'i');
 
                     $jobsTd = $dialogEl.find('td[data-id="56e6f1ae0d773c634e918b68"]');
 
@@ -919,27 +940,37 @@ define([
                     done();
                 });
 
+
+                it('Try to save tCard in editView with error', function (done){
+                    var $dialogEl = $('.ui-dialog');
+                    var $saveButton = $dialogEl.find('div.ui-dialog-buttonpane button:nth-child(1)');
+
+                    // generate Job
+                    server.respondWith('POST', wTrackUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $saveButton.click();
+                    server.respond();
+                    done();
+                    expect($dialogEl).to.exist;
+                });
+
                 it('Try to save tCard in createView', function (done){
                     var $dialogEl = $('.ui-dialog');
-                    var $saveButton;
-                    var wTrackUrl = new RegExp('\/wTrack\/', 'i');
-
-                    $saveButton = $dialogEl.find('div.ui-dialog-buttonpane button:nth-child(1)');
+                    var  $saveButton = $dialogEl.find('div.ui-dialog-buttonpane button:nth-child(1)');
 
                     // generate Job
                     server.respondWith('POST', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $saveButton.click();
                     server.respond();
                     done();
+                    expect($dialogEl).to.not.exist;
                 });
 
 
-/*
                 it('Try to get Wtrack Info with error', function (done) {
                     var wTrackUrl = new RegExp('\/wTrack\/dash', 'i');
                     var $needEmployeeRow = indexView.$el.find('#dashboardBody > tr[data-id="55b92ad221e4b7c40f00004d"] .employeesRow');
-                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
-                    var holidayUrl = new RegExp('\/holiday\/list', 'i');
+                    var vacationUrl = new RegExp('\/vacation\/', 'i');
+                    var holidayUrl = new RegExp('\/holiday\/', 'i');
                     var $wTrackInfoEl;
                     var $projectsRow;
                     var spyResponse;
@@ -965,8 +996,8 @@ define([
                     server.respond();
                     server.respond();
                     server.respond();
-                    expect(mainSpy.calledThrice).to.be.true;
-                    spyResponse = mainSpy.args[2][0];
+                    expect(mainSpy.callCount).to.be.equals(5);
+                    spyResponse = mainSpy.args[4][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Bad Request');
 
@@ -976,8 +1007,8 @@ define([
                 it('Try to get Wtrack Info', function () {
                     var wTrackUrl = new RegExp('\/wTrack\/dash', 'i');
                     var $needEmployeeRow = indexView.$el.find('#dashboardBody > tr[data-id="55b92ad221e4b7c40f00004d"] .employeesRow');
-                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
-                    var holidayUrl = new RegExp('\/holiday\/list', 'i');
+                    var vacationUrl = new RegExp('\/vacation\/', 'i');
+                    var holidayUrl = new RegExp('\/holiday\/', 'i');
                     var $wTrackInfoEl;
                     var $projectsRow;
 
@@ -996,10 +1027,18 @@ define([
 
                     $wTrackInfoEl = $projectsRow.find('td').eq(1).find('span').first();
 
-                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    server.respondWith('GET', holidayUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                       3: "H"
+                    })]);
+                    server.respondWith('GET', holidayUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        3: null,
+                        4: "V",
+                        5: "V"
+                    })]);
                     server.respondWith('GET', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWTrackDash)]);
+                    server.respondWith('GET', customerImagesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomerImage)]);
                     $wTrackInfoEl.click();
+                    server.respond();
                     server.respond();
                     server.respond();
                     server.respond();
@@ -1008,28 +1047,176 @@ define([
                 });
 
                 it('Try to edit wTrackInfo', function () {
-                    var $dialogEl = $('.ui-dialog');
-                    var $wednesdayInput;
                     var $saveBtn;
-                    var $needTr = $dialogEl.find('tr[data-id="56efcd99371928ed3349003b"]');
-                    var $wednesdayEl = $needTr.find('td[data-content="3"]');
-                    var wTrackUrl = new RegExp('\/wTrack\/', 'i');
                     var $wTrackInfoEl = $(indexView.$el.find('#dashboardBody > tr[data-employee="55b92ad221e4b7c40f00004d"] > td.wTrackInfo')[0]);
 
-                    $wednesdayEl.click();
-                    $wednesdayInput = $wednesdayEl.find('input');
-                    $wednesdayInput.val(8);
-                    $wednesdayInput.click();
+                    var $needLiEl;
+                    var $chooseGroupBtn;
+                    var $select;
+                    var $jobsTd;
+                    var generateJob;
 
-                    $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
 
-                    server.respondWith('PATCH', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Edited success'})]);
-                    $saveBtn.click();
+                    var $dialogEl = $('.ui-dialog');
+                    var $row = $dialogEl.find('tr:nth-child(1)');
+                    var $typeTcard = $dialogEl.find('td:nth-child(1)');
+                    var $mondayTd = $dialogEl.find('td:nth-child(9)');
+                    var $wednesdayHolidayTd = $dialogEl.find('td:nth-child(11)');
+                    var $thursdayVacationTd = $dialogEl.find('td:nth-child(12)');
+                    var $sundayTd = $dialogEl.find('td:nth-child(15)');
+                    var $worked = $dialogEl.find('td[data-content="worked"]');
+                    var $jobsTd = $dialogEl.find('td[data-content="jobs"]');
+                    var $weekTd = $dialogEl.find('td[data-content="week"]');
+                    var $project = $dialogEl.find('#project');
+                    var keyDownEvent = $.Event('keydown');
+                    var keyDownEventLetter = $.Event('keydown', {keyCode: 69});
+                    var keyDownEventEnter = $.Event('keydown', {keyCode: 13});
+                    var keyUpEvent = $.Event('keyup');
+                    var $editInput;
+                    var spyResponse;
+
+                    this.timeout(4000);
+
+                    // try to edit input with letter
+                    $mondayTd.click();
+                    $editInput = $mondayTd.find('input');
+                    $editInput.val('');
+                    $editInput.trigger(keyDownEventLetter);
+                    expect($editInput.val()).to.be.equal('');
+
+                    //try to edit days of week in OR
+
+                    $mondayTd.click();
+                    $editInput = $mondayTd.find('input');
+                    $editInput.trigger(keyDownEvent);
+                    $editInput.val('9');
+                    $editInput.trigger(keyUpEvent);
+                    $editInput.trigger('change');
+                    expect(mainSpy.callCount).to.be.equal(6);
+                    spyResponse = mainSpy.args[5][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Сreate Overtime tCard for input more than 8 hours');
+                    expect($editInput.val()).to.be.equal('8');
+
+                    $sundayTd.click();
+                    expect(mainSpy.callCount).to.be.equal(7);
+                    spyResponse = mainSpy.args[6][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Please create Overtime tCard');
+
+                    //try to edit vacations and holidays in OR
+
+                    $wednesdayHolidayTd.click();
+                    expect(mainSpy.callCount).to.be.equal(8);
+                    spyResponse = mainSpy.args[7][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Please create Overtime tCard');
+                    expect($editInput.val()).to.be.equal('8');
+
+                    $thursdayVacationTd.click();
+                    expect(mainSpy.callCount).to.be.equal(9);
+                    spyResponse = mainSpy.args[8][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Please create Overtime tCard');
+
+                    // try to change type of tCard to overtime
+                    $typeTcard.click();
+                    $select = $dialogEl.find('ul.newSelectList > li:nth-child(2)');
+                    $select.click();
+                    expect($row).to.have.class('overtime');
+
+                    //try to edit working days in OT
+
+                    $mondayTd.click();
+                    $editInput = $mondayTd.find('input');
+                    $editInput.trigger(keyDownEvent);
+                    $editInput.val('9');
+                    $editInput.trigger(keyUpEvent);
+                    $editInput.trigger('change');
+                    expect($editInput.val()).to.be.equal('9');
+
+                    // try to edit vacations,holidays and weekends in OT
+
+                    $wednesdayHolidayTd.click();
+                    $editInput = $wednesdayHolidayTd.find('input');
+
+                    $editInput.val(25);
+                    $editInput.trigger(keyDownEvent);
+                    $editInput.trigger(keyUpEvent);
+                    $editInput.trigger('change');
+                    expect($editInput.val()).to.be.equal('24');
+
+
+                    $thursdayVacationTd.click();
+                    $editInput = $thursdayVacationTd.find('input');
+                    $editInput.val(9);
+                    $editInput.trigger(keyDownEventEnter);
+                    $editInput.trigger(keyUpEvent);
+                    $editInput.trigger('change');
+                    expect($editInput.val()).to.be.equal('9');
+
+                    $sundayTd.click();
+                    $editInput = $sundayTd.find('input');
+                    $editInput.trigger(keyDownEvent);
+                    $editInput.val(9);
+                    $editInput.trigger(keyUpEvent);
+                    $editInput.trigger('change');
+                    expect($editInput.val()).to.be.equal('9');
+                    //try to removeInputs
+                    $weekTd.click();
+                    expect($dialogEl.find('input').length).to.be.equal(0);
+                    expect($worked.text()).to.be.equal('58');
+
+                   // expect($wTrackInfoEl.find('.projectHours').text()).to.be.equals('39');
+                   // $('.ui-dialog').remove();
+                });
+
+                it('Try to open Job Generate View in editView wTrack', function (done){
+                    var $generateJob;
+                    var $dialogEl = $('.ui-dialog');
+                    var $jobsTd;
+                    var $nameInput;
+                    var $cancelButton;
+
+                    $jobsTd = $dialogEl.find('td[data-id="564cfd8ba6e6390160c9ef57"]');
+
+                    // generate Job
+                    server.respondWith('GET', jobsDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsForProject)]);
+                    $jobsTd.click();
                     server.respond();
+                    $generateJob = $dialogEl.find('#createJob');
+                    $generateJob.click();
+                    $dialogEl = $('.ui-dialog').last();
+                    $nameInput = $dialogEl.find('#jobName');
+                    $nameInput.val('new Test job');
+                    $cancelButton = $dialogEl.find('#cancelBtn');
+                    $cancelButton.click();
+                    done();
+                });
 
-                    expect($wTrackInfoEl.find('.projectHours').text()).to.be.equals('39');
-                    $('.ui-dialog').remove();
-                });*/
+                it('Try to save tCard in editView with error', function (done) {
+                    var $dialogEl = $('.ui-dialog');
+                    var $saveButton = $('div.ui-dialog-buttonpane button:nth-child(1)');
+
+                    // generate Job
+                    server.respondWith('PATCH', wTrackUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $saveButton.click();
+                    server.respond();
+                    done();
+                    expect($dialogEl).to.exist;
+                });
+
+                it('Try to save tCard in editView success', function (done){
+                    var $dialogEl = $('.ui-dialog');
+                    var $saveButton = $('div.ui-dialog-buttonpane button:nth-child(1)');
+
+                    // generate Job
+                    server.respondWith('PATCH', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $saveButton.click();
+                    server.respond();
+                    done();
+                    expect($dialogEl).to.not.exist;
+                });
             });
         });
     });
