@@ -305,7 +305,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'Holiday'});
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
                 $expectedSubMenuEl = view.$el.find('#submenu-holder');
