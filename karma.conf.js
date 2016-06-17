@@ -24,9 +24,9 @@ module.exports = function (config) {
             {pattern: 'node_modules/sinon-chai/lib/sinon-chai.js', included: false, watching: false},
 
             {pattern: 'constants/test/*.js', included: false, watching: false},
-            /*{pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
+            /* {pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
             {pattern: 'constants/test/filter.js', included: false, watching: false},
-            {pattern: 'constants/test/projects.js', included: false, watching: false},*/
+            {pattern: 'constants/test/projects.js', included: false, watching: false}, */
 
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
@@ -67,9 +67,9 @@ module.exports = function (config) {
 
         logLevel: config.LOG_INFO,
 
-        /*autoWatch: true,*/
+        /* autoWatch: true, */
 
-        browsers: ['Firefox', 'Chrome', /*'Safari', 'IE',*/ 'PhantomJS'],
+        browsers: ['Firefox', 'Chrome', /* 'Safari', */ 'IE', 'PhantomJS'],
 
         singleRun: true,
 
