@@ -131,7 +131,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'Birthdays'});
 
@@ -234,13 +234,13 @@ define([
 
                 });
 
-                it('Try to go to the form', function () {
+               /* it('Try to go to the form', function () {
                     var $readMoreBtn = listView.$el.find('.thumbnail_birthday_list > li').first().find('a');
 
                     $readMoreBtn.click();
 
                     expect(window.location.hash).to.be.equals('#easyErp/Employees/form/55b92ad221e4b7c40f00004d');
-                });
+                });*/
 
             });
 

@@ -39,13 +39,14 @@ define([
         row        : null,
 
         events: {
+            click                                              : 'removeInputs',
             'click .stageSelect'                               : 'showNewSelect',
             'click td.editable:not(.disabled)'                 : 'editRow',
             'click td.disabled'                                : 'notify',
             'keydown input.editing'                            : 'keyDown',
             'keyup input.editing'                              : 'onKeyUpInput',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            click                                              : 'removeInputs'
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+
         },
 
         initialize: function (options) {
@@ -158,7 +159,7 @@ define([
             var pm;
             var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
             var fullName;
-
+/*
             if (currentModel.projectmanager && currentModel.projectmanager._id) {
                 pm = currentModel.projectmanager._id;
             } else {
@@ -177,7 +178,7 @@ define([
 
                     self.$el.find('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
                 });
-            }
+            }*/
 
             if (customer) {
                 if (currentModel.customer && currentModel.customer.name) {
@@ -187,7 +188,7 @@ define([
                 }
                 self.$el.find('#customer').text(fullName);
 
-                common.getImagesPM([customer], '/getCustomersImages', '#' + id, function (result) {
+                common.getImagesPM([customer], '/customers/getCustomersImages', '#' + id, function (result) {
                     var res = result.data[0];
 
                     self.$el.find('.miniAvatarCustomer').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
@@ -382,7 +383,7 @@ define([
             });
         },
 
-        autoHoursPerDay: function (e) {
+       /* autoHoursPerDay: function (e) {
             var targetEl = $(e.target);
             var isInput = targetEl.prop('tagName') === 'INPUT';
             var tr = targetEl.closest('tr');
@@ -417,7 +418,7 @@ define([
             edited.remove();
 
             workedEl.text(worked);
-        },
+        },*/
 
         editRow: function (e) {
             var self = this;
