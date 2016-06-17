@@ -9,13 +9,13 @@ module.exports = function (config) {
             'test/uiSpecs/testMain.js',
             'public/css/*.css',
 
-            {pattern: 'test/uiSpecs/fixtures/**/*' /*, included: false*/},
+            {pattern: 'test/uiSpecs/fixtures/**/*' /* , included: false*/},
 
             {pattern: 'public/js/libs/*.js', included: false, watching: false},
             {pattern: 'public/js/libs/**/*.js', included: false, watching: false},
 
             {pattern: 'test/uiSpecs/jqueryPrivate.js', included: false, watching: false},
-            /*{pattern: 'public/js/populate.js', included: false, watching: false},
+            /* {pattern: 'public/js/populate.js', included: false, watching: false},
              {pattern: 'public/js/dataService.js', included: false, watching: false},
              {pattern: 'public/js/router.js', included: false, watching: false},*/
 
@@ -25,8 +25,8 @@ module.exports = function (config) {
 
             {pattern: 'constants/test/*.js', included: false, watching: false},
             /* {pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
-            {pattern: 'constants/test/filter.js', included: false, watching: false},
-            {pattern: 'constants/test/projects.js', included: false, watching: false}, */
+             {pattern: 'constants/test/filter.js', included: false, watching: false},
+             {pattern: 'constants/test/projects.js', included: false, watching: false}, */
 
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
@@ -37,11 +37,11 @@ module.exports = function (config) {
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
 
-            {pattern: 'test/uiSpecs/collection/*.test.js', included: false/*, watching: true*/},
-            {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false/*, watching: true*/},
-            {pattern: 'test/uiSpecs/models/*.test.js', included: false/*, watching: true*/},
-            {pattern: 'test/uiSpecs/views/login.test.js', included: false/*, watching: true*/},
-            {pattern: 'test/uiSpecs/views/inventoryReport.test.js', included: false/*, watching: true*/}
+            {pattern: 'test/uiSpecs/collection/*.test.js', included: false /* , watching: true*/},
+            {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false /* , watching: true*/},
+            {pattern: 'test/uiSpecs/models/*.test.js', included: false /* , watching: true*/},
+            {pattern: 'test/uiSpecs/views/login.test.js', included: false /* , watching: true*/},
+            {pattern: 'test/uiSpecs/views/inventoryReport.test.js', included: false /* , watching: true*/}
 
             // {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
         ],
