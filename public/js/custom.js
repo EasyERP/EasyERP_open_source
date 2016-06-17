@@ -249,7 +249,7 @@ define([
         }
 
         // for default filter && defaultViewType
-        if (option && option.contentType && App.filtersObject.savedFilters[option.contentType]) {
+        /*if (option && option.contentType && App.filtersObject.savedFilters[option.contentType]) {
             savedFilter = App.filtersObject.savedFilters[option.contentType];
 
             for (j = savedFilter.length - 1; j >= 0; j--) {
@@ -262,7 +262,7 @@ define([
                     }
                 }
             }
-        }
+        }*/
 
         return viewType;
     };

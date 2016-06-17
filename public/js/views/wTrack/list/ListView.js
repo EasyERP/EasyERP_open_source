@@ -68,6 +68,7 @@ define([
         selectedProjectId: [],
         genInvoiceEl     : null,
         changedModels    : {},
+        hasPagination    : true,
         exportToCsvUrl   : '/wTrack/exportToCsv',
         exportToXlsxUrl  : '/wTrack/exportToXlsx',
 
@@ -80,7 +81,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.currentPage;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
 
             this.ContentCollection = ContentCollection;
             this.stages = [];
@@ -832,9 +833,9 @@ define([
                 page      : this.page
             }).render());// added two parameters page and items number
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            // $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
             dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (res) {
                 self.responseObj['#project'] = res.data;
@@ -860,7 +861,7 @@ define([
                 self.responseObj['#department'] = departments;
             });
 
-            this.renderFilter();
+            // this.renderFilter();
 
             setTimeout(function () {
                 self.bindingEventsToEditedCollection(self);

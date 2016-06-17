@@ -32,6 +32,7 @@ define([
         contentCollection: contentCollection,
         formUrl          : '#easyErp/Opportunities/form/',
         contentType      : 'Opportunities', // needs in view.prototype.changeLocationHash
+        hasPagination    : true,
 
         initialize: function (options) {
             $(document).off('click');
@@ -48,7 +49,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         events: {
@@ -129,11 +130,11 @@ define([
 
             $currentEl.append(itemView.render());
 
-            this.renderFilter();
+            // this.renderFilter();
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         gotoForm: function (e) {

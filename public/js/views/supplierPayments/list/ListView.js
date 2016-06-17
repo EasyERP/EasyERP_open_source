@@ -34,6 +34,7 @@ define([
         changedModels    : {},
         responseObj      : {},
         cancelEdit       : cancelEdit,
+        hasPagination    : true,
 
         events: {
             'click td.editable'                                : 'editRow',
@@ -57,7 +58,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = paymentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         bindingEventsToEditedCollection: function (context) {
@@ -268,9 +269,9 @@ define([
                 wTrack  : true
             }).render());
 
-            self.renderFilter(self);
+            // self.renderFilter(self);
 
-            self.renderPagination($currentEl, self);
+            // self.renderPagination($currentEl, self);
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
@@ -294,7 +295,7 @@ define([
                 self.$listTable = $('#listTable');
             }, 10);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         }
     });
 

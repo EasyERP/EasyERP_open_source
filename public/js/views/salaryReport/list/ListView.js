@@ -58,7 +58,7 @@ define([
             this.startDate = new Date(this.filter.startDate.value);
             this.endDate = new Date(this.filter.endDate.value);
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = reportCollection;
             custom.cacheToApp('salaryReport.filter', this.filter);
@@ -228,7 +228,7 @@ define([
 
             App.filtersObject.filter = this.filter;
 
-            this.renderFilter();
+            // this.renderFilter();
 
             this.getMinDate(this);
 

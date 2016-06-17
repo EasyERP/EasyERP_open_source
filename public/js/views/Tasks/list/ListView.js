@@ -22,6 +22,7 @@ define([
         ListItemView            : ListItemView,
         contentCollection       : ContentCollection,
         filterView              : FilterView,
+        hasPagination           : true,
         contentType             : 'Tasks',
         totalCollectionLengthUrl: '/totalCollectionLength/Tasks',
         // formUrl                 : "#easyErp/Tasks/form/",
@@ -48,7 +49,7 @@ define([
             this.page = options.collection.page;
             this.contentCollection = ContentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         goToProject: function (e) {
@@ -133,7 +134,7 @@ define([
             var id;
             var modelJSON;
             var type;
-            
+
             if (selectType === 'stages') {
                 if ($(target).attr('data-status') === 'done') {
                     id = targetParrentElement.attr('id').replace('stages_', '');
@@ -152,7 +153,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            
+
                             patch   : true,
                             validate: false,
                             success : function () {
@@ -177,7 +178,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            
+
                             patch   : true,
                             validate: false,
                             success : function () {
@@ -198,7 +199,7 @@ define([
                         headers: {
                             mid: 39
                         },
-                        
+
                         patch   : true,
                         validate: false,
                         success : function (newModel) {
@@ -236,14 +237,14 @@ define([
 
             common.populateWorkflowsList('Tasks', '.filter-check-list', '#workflowNamesDd', '/Workflows', null, function (stages) {
                 var stage = (self.filter) ? self.filter.workflow || [] : [];
-                
+
                 itemView.trigger('incomingStages', stages);
             });
-            
-            this.renderFilter();
-            this.renderPagination($currentEl, this);
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // this.renderFilter();
+            // this.renderPagination($currentEl, this);
+
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }
 
     });
