@@ -269,17 +269,16 @@ define([
                     // select contact
                     $contactBtn = $searchContainer.find('#customerFullContainer >.groupName');
                     $contactBtn.click();
-                    $selectedItem1 = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
+                    $selectedItem1 = $searchContainer.find('#customerFullContainer li:nth-child(1)');
                     server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
                     $selectedItem1.click();
                     server.respond();
-                    // server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(6);
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
 
                     // select project name
                     $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
                     $projectNameBtn.click();
-                    $selectedItem2 = $searchContainer.find('li[data-value="56e689c75ec71b00429745a9"]');
+                    $selectedItem2 = $searchContainer.find('#nameFullContainer li:nth-child(1)');
 
                     server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [PROJECTS.fakeProjectsForThumbnails.data[0]]})]);
                     $selectedItem2.click();
@@ -506,7 +505,6 @@ define([
                     var jobsUrl = new RegExp('\/jobs\/', 'i');
                     var projectTypeUrl = '/projectType';
                     var workflowsProjectsUrl = new RegExp('\/workflows\/fetch', 'i');
-                    ;
                     var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
                     var wTrackUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/weTracks', 'i');
                     var paymentsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/payments', 'i');
@@ -518,7 +516,7 @@ define([
                     projectModel = new ProjectModel();
                     projectModel.urlRoot = '/Projects/form';
 
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectByIdForForm)]);
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectByIdForForm)]);
                     projectModel.fetch({
                         data   : {id: '55b92ad621e4b7c40f00065f'},
                         success: function (model) {
@@ -526,14 +524,14 @@ define([
                                 model: model
                             });
 
-                            server.respondWith('GET', jobsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeJobs)]);
-                            server.respondWith('GET', projectTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectsType)]);
-                            server.respondWith('GET', workflowsProjectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeWorkflowsProject)]);
-                            server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeInvoice)]);
-                            server.respondWith('GET', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeWTrack)]);
-                            server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakePayments)]);
-                            server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotations)]);
-                            server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeBonusType)]);
+                            server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeJobs)]);
+                            server.respondWith('GET', projectTypeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsType)]);
+                            server.respondWith('GET', workflowsProjectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeWorkflowsProject)]);
+                            server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeInvoice)]);
+                            server.respondWith('GET', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeWTrack)]);
+                            server.respondWith('GET', paymentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakePayments)]);
+                            server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeQuotations)]);
+                            server.respondWith('GET', bonusTypeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeBonusType)]);
                             //  server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
                             formView.render();
                             server.respond();
@@ -553,11 +551,11 @@ define([
 
                             done();
                         },
-                        error  : function (model, response) {
-                            done(response)
+
+                        error: function (model, response) {
+                            done(response);
                         }
                     });
-
                     server.respond();
                 });
 
@@ -775,9 +773,9 @@ define([
 
                 });*/
 
-                });
+            });
 
-                describe('TimeCardView', function () {
+            describe('TimeCardView', function () {
                 var server;
                 var mainSpy;
                 var windowConfirmStub;
@@ -898,31 +896,31 @@ define([
                     expect($thisEl.find('#listTable')).to.exist;
                 });
 
-                 it('Try to switch page counter with not saved state', function () {
-                 var spyResponse;
-                 var $selectedItem;
-                 var $deleteBtn;
-                 var $pageListEl = $thisEl.find('.pageList');
-                 var $needRow = $($thisEl.find('#listTable > tr:nth-child(1)')[0]);
-                 var $employeeTd = $needRow.find('td[data-content="employee"]');
-                 var $firstBtn = $pageListEl.find('a:nth-child(1)');
-                 var employeesForDDUrl = new RegExp('\/employees\/getForDD', 'i');
-                 server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
+                it('Try to switch page counter with not saved state', function () {
+                    var spyResponse;
+                    var $selectedItem;
+                    var $deleteBtn;
+                    var $pageListEl = $thisEl.find('.pageList');
+                    var $needRow = $($thisEl.find('#listTable > tr:nth-child(1)')[0]);
+                    var $employeeTd = $needRow.find('td[data-content="employee"]');
+                    var $firstBtn = $pageListEl.find('a:nth-child(1)');
+                    var employeesForDDUrl = new RegExp('\/employees\/getForDD', 'i');
+                    server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
 
-                 $employeeTd.click();
-                 server.respond();
-                 $selectedItem = $thisEl.find('#565f0fa6f6427f253cf6bf19');
-                 $selectedItem.click();
+                    $employeeTd.click();
+                    server.respond();
+                    $selectedItem = $thisEl.find('#565f0fa6f6427f253cf6bf19');
+                    $selectedItem.click();
 
-                 $deleteBtn = $thisEl.find('#deletewTrack');
+                    $deleteBtn = $thisEl.find('#deletewTrack');
 
-                 $firstBtn.click();
-                 spyResponse = mainSpy.args[2][0];
+                    $firstBtn.click();
+                    spyResponse = mainSpy.args[2][0];
 
-                 expect(spyResponse).to.have.property('type', 'notify');
+                    expect(spyResponse).to.have.property('type', 'notify');
 
-                 $deleteBtn.click();
-                 });
+                    $deleteBtn.click();
+                });
 
                 it('Try to cancel some changes', function () {
                     var $selectedItem;
