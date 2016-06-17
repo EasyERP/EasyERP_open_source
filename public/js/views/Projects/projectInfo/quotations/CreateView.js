@@ -213,10 +213,12 @@ define([
                         mid: mid
                     },
                     wait   : true,
-                    success: function (model) {
-                        self.redirectAfterSave(self, model);
+                    success: function () {
+
+                        self.hideDialog();
+
                         if (self.eventChannel) {
-                            self.eventChannel.trigger('elemCountChanged');
+                            self.eventChannel.trigger('quotationUpdated');
                         }
                     },
 
@@ -258,9 +260,9 @@ define([
                 }).render().el
             );
 
-        },
+        }
 
-        redirectAfterSave: function (content, model) {
+        /* redirectAfterSave: function (content, model) {
             var $currentEl = $('#listTableQuotation');
             var number = $currentEl.find('.countNumber');
             var numberLength = number.length ? number.length : 0;
@@ -279,7 +281,7 @@ define([
                 currencySplitter: helpers.currencySplitter,
                 currencyClass   : helpers.currencyClass
             }));
-        }
+        }*/
     });
 
     return CreateView;
