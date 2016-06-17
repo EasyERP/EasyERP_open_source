@@ -1,10 +1,12 @@
-var mongoose = require('mongoose');
 var Filters = function (models) {
+    'use strict';
+
+    var mongoose = require('mongoose');
+    var FilterMapper = require('../helpers/filterMapper');
+
     var wTrackSchema = mongoose.Schemas.wTrack;
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
     var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
-    var CustomerSchema = mongoose.Schemas.Customer;
-    var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var TaskSchema = mongoose.Schemas.Tasks;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
@@ -23,14 +25,165 @@ var Filters = function (models) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var moment = require('../public/js/libs/moment/moment');
 
+    this.getEmployeesFilters = function (req, res, next) {
+        var query = {}; // = req.query ? req.query.filter || req.query : {};
+        var lastDB = req.session.lastDb;
+        var EmployeeSchema = mongoose.Schemas.Employee;
+        var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
+        var pipeLine;
+
+        query.isEmployee = true;
+        
+        pipeLine = [
+            {
+                $match: query
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'manager',
+                    foreignField: '_id',
+                    as          : 'manager'
+                }
+            }, {
+                $lookup: {
+                    from        : 'JobPosition',
+                    localField  : 'jobPosition',
+                    foreignField: '_id',
+                    as          : 'jobPosition'
+                }
+            }, {
+                $project: {
+                    department : {$arrayElemAt: ['$department', 0]},
+                    manager    : {$arrayElemAt: ['$manager', 0]},
+                    jobPosition: {$arrayElemAt: ['$jobPosition', 0]},
+                    name       : 1
+                }
+            }, {
+                $project: {
+                    department    : 1,
+                    'manager._id' : 1,
+                    'manager.name': {
+                        $concat: ['$manager.name.first', ' ', '$manager.name.last']
+                    },
+
+                    jobPosition: 1,
+                    name       : {
+                        $concat: ['$name.first', ' ', '$name.last']
+                    }
+                }
+            }, {
+                $group: {
+                    _id: null,
+
+                    name: {
+                        $addToSet: {
+                            _id : '$_id',
+                            name: {$ifNull: ['$name', 'None']}
+                        }
+                    },
+
+                    department: {
+                        $addToSet: {
+                            _id : '$department._id',
+                            name: {$ifNull: ['$department.name', 'None']}
+                        }
+                    },
+
+                    jobPosition: {
+                        $addToSet: {
+                            _id : '$jobPosition._id',
+                            name: {
+                                $ifNull: ['$jobPosition.name', 'None']
+                            }
+                        }
+                    },
+
+                    manager: {
+                        $addToSet: {
+                            _id : '$manager._id',
+                            name: {
+                                $ifNull: ['$manager.name', 'None']
+                            }
+                        }
+                    }
+                }
+            }];
+
+        Employee.aggregate(pipeLine, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.getPersonFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var CustomerSchema = mongoose.Schemas.Customer;
+        var Customer = models.get(lastDB, 'Customers', CustomerSchema);
+        var pipeLine = [];
+
+        Customer.aggregate([{
+            $match: {type: 'Person'}
+        }, {
+            $group: {
+                _id: null,
+
+                name: {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: {$concat: ['$name.first', ' ', '$name.last']}
+                    }
+                },
+
+                country: {
+                    $addToSet: {
+                        _id : '$address.country',
+                        name: {$ifNull: ['$address.country', 'None']}
+                    }
+                }
+            }
+        }], function (err, result) {
+            if (err) {
+                return callback(err);
+            }
+
+            if (!result.length) {
+                return callback(null, result);
+            }
+
+            result = result[0];
+
+            if (result) {
+                result.services = [{
+                    _id : 'isSupplier',
+                    name: 'Supplier'
+                }, {
+                    _id : 'isCustomer',
+                    name: 'Customer'
+                }];
+            }
+
+            callback(null, result);
+        });
+    };
+
     this.getFiltersValues = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var query = req.query;
 
         var startFilter;
         var WTrack = models.get(lastDB, 'wTrack', wTrackSchema);
-        var Customer = models.get(lastDB, 'Customers', CustomerSchema);
-        var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
         var Project = models.get(lastDB, 'Project', ProjectSchema);
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);

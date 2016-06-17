@@ -8,10 +8,11 @@ define([
     'common',
     'async',
     'dataService',
-    'helpers'
+    'helpers',
+    'custom'
 ], function (Backbone, $, _, FilterView,
              aphabeticTemplate, CONSTANTS,
-             common, async, dataService, helpers) {
+             common, async, dataService, helpers, custom) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
@@ -26,28 +27,29 @@ define([
         },
 
         makeRender: function (options) {
-            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
+            _.bindAll(this, 'render', 'afterRender');
             var self = this;
 
             this.render = _.wrap(this.render, function (render) {
-                self.beforeRender(options);
                 render();
                 self.afterRender(options);
+
                 return self;
             });
         },
 
-        beforeRender: function (options) {
-        },
-
         afterRender: function (options) {
-            var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';;
+            var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
             var $curEl = this.$el;
             var contentType = options.contentType || null;
             var ifFilter = CONSTANTS.FILTERS.hasOwnProperty(contentType);
 
             if (ifFilter) {
-                this.renderFilter(this.baseFilter);
+                if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+                    custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+                } else {
+                    this.renderFilter(this.baseFilter);
+                }
             }
 
             if (this.hasAlphabet) {
@@ -57,7 +59,7 @@ define([
             if (this.hasPagination) {
                 this.renderPagination($curEl, this);
             }
-            
+
             $curEl.append(createdInTag);
         },
 

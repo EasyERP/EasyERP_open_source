@@ -36,7 +36,6 @@ define([
 
             Backbone.history.fragment = '';
             Backbone.history.navigate(url, {trigger: true});
-            getFiltersValues();
         } else {
             if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;
@@ -398,25 +397,32 @@ define([
         return filtersForContent;
     };
 
-    var getFiltersValues = function (options) {
+    var getFiltersValues = function (options, cb) {
+        var contentType = options.contentType;
         var locationHash = window.location.hash;
         var filter = locationHash.split('/filter=')[1]; // For startDate & endDate in EmployeeFinder for filters in dashVac
 
         filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
 
-        if (!App || !App.filtersObject || options) {
-            dataService.getData('/filter/getFiltersValues', filter, function (response) {
-                if (response && !response.error) {
-                    if (!App.filtersObject) {
-                        App.filtersObject = {};
-                    }
-                    
-                    App.filtersObject.filtersValues = response;
-                } else {
-                    console.log('can\'t fetch filtersValues');
+        dataService.getData('/filter/' + contentType, filter, function (response) {
+            if (response && !response.error) {
+                if (!App.filtersObject) {
+                    App.filtersObject = {};
                 }
-            });
-        }
+
+                if (!App.filtersObject.filtersValues) {
+                    App.filtersObject.filtersValues = {};
+                }
+
+                App.filtersObject.filtersValues[contentType] = response;
+
+                if (cb && typeof cb === 'function') {
+                    cb();
+                }
+            } else {
+                console.log('can\'t fetch filtersValues');
+            }
+        });
     };
 
     var getWeeks = function (month, year) {
@@ -486,7 +492,7 @@ define([
 
         if (defSavedFilterValues) {
             App.filtersObject.curDefSavedFilter = defSavedFilter;
-            
+
             App.storage.save(contentType + '.savedFilter', defSavedFilter.name);
         }
 

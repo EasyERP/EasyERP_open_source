@@ -282,6 +282,8 @@ define([
                 App.storage.remove(self.contentType + '.savedFilter');
                 self.setDbOnce();
                 self.showFilterIcons(App.filtersObject.filter);
+                delete App.filtersObject.filtersValues[self.contentType];
+                custom.getFiltersValues({contentType: self.contentType}, self.renderFilterContent);
             });
 
             $filtersSelector.append(this.groupsViews[filterView].$el);

@@ -8,26 +8,23 @@ var _ = require('lodash');
 var FilterMapper = function () {
     function ConvertType(array, type) {
         var result = {};
+        var currentType = type && type !== '' ? type : 'ObjectId';
 
-        switch (type) {
+        switch (currentType) {
             case 'ObjectId':
-                result['$in'] = array.objectID();
+                result.$in = array.objectID();
                 break;
             case 'string':
-                result['$in'] = array;
+                result.$in = array;
                 break;
             case 'integer':
-                result['$in'] = _.map(array, function (element) {
+                result.$in = _.map(array, function (element) {
                     return parseInt(element);
                 });
                 break;
             case 'boolean':
-                result['$in'] = _.map(array, function (element) {
-                    if (element === 'true') {
-                        return true;
-                    }
-
-                    return false;
+                result.$in = _.map(array, function (element) {
+                    return element === 'true';
                 });
         }
 
@@ -59,17 +56,17 @@ var FilterMapper = function () {
         }
 
         for (var filterName in filter) {
-            filterValues = filter[filterName]['value'];
-            filterType = filter[filterName]['type'];
-            filterBackend = filter[filterName]['key'];
+            filterValues = filter[filterName].value;
+            filterType = filter[filterName].type;
+            filterBackend = filter[filterName].key;
 
             filterObject[filterBackend] = ConvertType(filterValues, filterType);
-            filterResult.push(filterObject);
+            // filterResult.push(filterObject);
         }
 
-        queryObject[condition] = filterResult;
+        // queryObject[condition] = filterResult;
 
-        return queryObject;
+        return filterObject;
     };
 
 };

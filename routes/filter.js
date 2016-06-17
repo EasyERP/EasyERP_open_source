@@ -9,6 +9,7 @@ module.exports = function (models) {
     router.use(authStackMiddleware);
 
     router.get('/getFiltersValues', handler.getFiltersValues);
+    router.get('/Employees', handler.getEmployeesFilters);
 
     return router;
 };
