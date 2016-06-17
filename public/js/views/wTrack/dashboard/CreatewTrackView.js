@@ -158,7 +158,7 @@ define([
             var pm;
             var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
             var fullName;
-
+/*
             if (currentModel.projectmanager && currentModel.projectmanager._id) {
                 pm = currentModel.projectmanager._id;
             } else {
@@ -177,7 +177,7 @@ define([
 
                     self.$el.find('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
                 });
-            }
+            }*/
 
             if (customer) {
                 if (currentModel.customer && currentModel.customer.name) {

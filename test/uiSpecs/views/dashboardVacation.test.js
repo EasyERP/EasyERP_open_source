@@ -485,6 +485,16 @@ define([
             name: "March"
         }
     ];
+    var fakeCustomerImage = {
+        data: [
+            {
+                _id: "569f5fbf62d172544baf0d56",
+                imageSrc: "data:image/jpeg;base64,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",
+                fullName: "undefined undefined",
+                id: "569f5fbf62d172544baf0d56"
+            }
+        ]
+    }
     var expect;
     var view;
     var topBarView;
@@ -813,6 +823,7 @@ define([
                     var $needLiEl;
                     var $chooseGroupBtn;
                     var jobsUrl = new RegExp('\/jobs\/getForDD', 'i');
+                    var customerImagesUrl = new RegExp('\/customers\/getCustomersImages', 'i');
                     var $select;
                     var $jobsTd;
                     var generateJob;
@@ -822,6 +833,7 @@ define([
                     var $row = $dialogEl.find('#wTrackCreateTable tr:nth-child(1)');
                     var $typeTcard = $dialogEl.find('#wTrackCreateTable td:nth-child(1)');
                     var $mondayTd = $dialogEl.find('#wTrackCreateTable td:nth-child(9)');
+                    var $jobsTd = $dialogEl.find('td[data-content="jobs"]');
                     var $project = $dialogEl.find('#project');
                     var keyDownEvent = $.Event('keydown');
                     var keyUpEvent = $.Event('keyup');
@@ -830,11 +842,19 @@ define([
 
                     this.timeout(4000);
                     $project.click();
+                    //try to edit job without select Project
+                    $jobsTd.click();
+                    expect(mainSpy.calledOnce).to.be.true;
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Please, choose project first.');
 
                     // select Project
                     $select = $dialogEl.find('#56e689c75ec71b00429745a9');
                     server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsForProject)]);
+                    server.respondWith('GET', customerImagesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomerImage)]);
                     $select.click();
+                    server.respond();
                     server.respond();
 
                     //try to edit days of week in OR
@@ -845,8 +865,8 @@ define([
                     $editInput.val('9');
                     $editInput.trigger(keyUpEvent);
                     $editInput.trigger('change');
-                    expect(mainSpy.calledOnce).to.be.true;
-                    spyResponse = mainSpy.args[0][0];
+                    expect(mainSpy.calledTwice).to.be.true;
+                    spyResponse = mainSpy.args[1][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Сreate Overtime tCard for input more than 8 hours');
                     expect($editInput.val()).to.be.equal('8');
@@ -898,6 +918,22 @@ define([
                     server.respond();
                     done();
                 });
+
+                it('Try to save tCard in createView', function (done){
+                    var $dialogEl = $('.ui-dialog');
+                    var $saveButton;
+                    var wTrackUrl = new RegExp('\/wTrack\/', 'i');
+
+                    $saveButton = $dialogEl.find('div.ui-dialog-buttonpane button:nth-child(1)');
+
+                    // generate Job
+                    server.respondWith('POST', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $saveButton.click();
+                    server.respond();
+                    done();
+                });
+
+
 /*
                 it('Try to get Wtrack Info with error', function (done) {
                     var wTrackUrl = new RegExp('\/wTrack\/dash', 'i');
@@ -929,8 +965,8 @@ define([
                     server.respond();
                     server.respond();
                     server.respond();
-                    expect(mainSpy.calledTwice).to.be.true;
-                    spyResponse = mainSpy.args[1][0];
+                    expect(mainSpy.calledThrice).to.be.true;
+                    spyResponse = mainSpy.args[2][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Bad Request');
 
