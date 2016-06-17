@@ -334,6 +334,7 @@ define([
             var date;
             var info;
             var $thisEl = this.$el;
+            var haveSalary;
 
             relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
             coach = $.trim($thisEl.find('#coachDd').attr('data-id')) || null;
@@ -356,6 +357,8 @@ define([
                 var $el = $thisEl.find(addressLine);
                 homeAddress[$el.attr('name')] = $.trim($el.val());
             });
+
+            haveSalary = !!$jobTrs.find('td[data-id="salary"]').length;
 
             $.each($jobTrs, function (index, $tr) {
                 var $previousTr;
@@ -509,6 +512,10 @@ define([
                 fire    : fireArray,
                 transfer: transferArray
             };
+
+            if (!haveSalary) {
+                delete data.transfer;
+            }
 
             if (!isEmployee) {
                 data.workflow = constants.END_CONTRACT_WORKFLOW_ID;
