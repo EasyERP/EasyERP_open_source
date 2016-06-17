@@ -375,47 +375,50 @@ define([
                 info = $tr.find('#statusInfoDd').val();
                 event = $tr.attr('data-content');
 
-                if (!previousDep) {
-                    previousDep = department;
-                }
+                if (haveSalary) {
 
-                if (previousDep !== department) {
-                    $previousTr = self.$el.find($jobTrs[index - 1]);
+                    if (!previousDep) {
+                        previousDep = department;
+                    }
+
+                    if (previousDep !== department) {
+                        $previousTr = self.$el.find($jobTrs[index - 1]);
+
+                        transferArray.push({
+                            status         : 'transfer',
+                            date           : moment(date).subtract(1, 'day'),
+                            department     : previousDep,
+                            jobPosition    : $previousTr.find('#jobPositionDd').attr('data-id') || null,
+                            manager        : $previousTr.find('#projectManagerDD').attr('data-id') || null,
+                            jobType        : $.trim($previousTr.find('#jobTypeDd').text()),
+                            salary         : salary,
+                            info           : $previousTr.find('#statusInfoDd').val(),
+                            weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
+                        });
+
+                        previousDep = department;
+                    }
 
                     transferArray.push({
-                        status         : 'transfer',
-                        date           : moment(date).subtract(1, 'day'),
-                        department     : previousDep,
-                        jobPosition    : $previousTr.find('#jobPositionDd').attr('data-id') || null,
-                        manager        : $previousTr.find('#projectManagerDD').attr('data-id') || null,
-                        jobType        : $.trim($previousTr.find('#jobTypeDd').text()),
+                        status         : event,
+                        date           : date,
+                        department     : department,
+                        jobPosition    : jobPosition,
+                        manager        : manager,
+                        jobType        : jobType,
                         salary         : salary,
-                        info           : $previousTr.find('#statusInfoDd').val(),
-                        weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
+                        info           : info,
+                        weeklyScheduler: weeklyScheduler
                     });
 
-                    previousDep = department;
-                }
-
-                transferArray.push({
-                    status         : event,
-                    date           : date,
-                    department     : department,
-                    jobPosition    : jobPosition,
-                    manager        : manager,
-                    jobType        : jobType,
-                    salary         : salary,
-                    info           : info,
-                    weeklyScheduler: weeklyScheduler
-                });
-
-                if (!salary && self.isSalary) {
-                    App.render({
-                        type   : 'error',
-                        message: 'Salary can`t be empty'
-                    });
-                    quit = true;
-                    return false;
+                    if (!salary && self.isSalary) {
+                        App.render({
+                            type   : 'error',
+                            message: 'Salary can`t be empty'
+                        });
+                        quit = true;
+                        return false;
+                    }
                 }
 
                 if (event === 'fired') {
