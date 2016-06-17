@@ -1061,10 +1061,17 @@ var Employee = function (event, models) {
                     if (ids.indexOf(req.session.uId) === -1) {
                         data.transfer = data.transfer.map(function (tr, i) {
                             if (i !== 0) {
-                                tr.salary = (emp.transfer[i] && emp.transfer[i].salary) || emp.transfer[i - 1].salary;
+                                if (emp.transfer[i] && emp.transfer[i].salary) {
+                                    tr.salary = emp.transfer[i].salary;
+                                } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
+                                    tr.salary = emp.transfer[i - 1].salary;
+                                } else {
+                                    tr.salary = 0;
+                                }
                             } else {
                                 tr.salary = 0;
                             }
+
                             return tr;
                         });
                     }
