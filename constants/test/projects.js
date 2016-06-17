@@ -4360,718 +4360,52 @@ define([], function () {
     };
     var fakeJobs = [
         {
-            _id           : "564cfd8ba6e6390160c9ee1c",
-            budget        : {
-                budgetTotal: {
-                    minDate    : 201433,
-                    maxDate    : 201433,
-                    hoursByQA  : 28,
-                    revenueByQA: 1.96,
-                    hoursSum   : 28,
-                    revenueSum : 196,
-                    costSum    : 111.66,
-                    profitSum  : 84.34
-                },
-                budget     : [
-                    {
-                        revenue: 98,
-                        hours  : 14,
-                        cost   : 63.33,
-                        profit : 34.67,
-                        byQA   : {
-                            hours  : 14,
-                            revenue: 98
-                        }
-                    },
-                    {
-                        revenue: 98,
-                        hours  : 14,
-                        cost   : 48.33,
-                        profit : 49.67,
-                        byQA   : {
-                            hours  : 14,
-                            revenue: 98
-                        }
-                    }
-                ],
-                projectTeam: [
-                    {
-                        name       : {
-                            first: "Anton",
-                            last : "Karabeinikov"
-                        },
-                        department : {
-                            departmentName: "QA",
-                            _id           : "55b92ace21e4b7c40f000011"
-                        },
-                        jobPosition: {
-                            name: "Junior QA",
-                            _id : "55b92acf21e4b7c40f000018"
-                        },
-                        _id        : "55b92ad221e4b7c40f00006f"
-                    },
-                    {
-                        name       : {
-                            first: "Vasilisa",
-                            last : "Klimchenko"
-                        },
-                        department : {
-                            departmentName: "QA",
-                            _id           : "55b92ace21e4b7c40f000011"
-                        },
-                        jobPosition: {
-                            name: "Junior QA",
-                            _id : "55b92acf21e4b7c40f000018"
-                        },
-                        _id        : "55b92ad221e4b7c40f00007f"
-                    }
-                ]
+            _id: "564cfd8ba6e6390160c9ee1c",
+            revenueTotal: 19600,
+            profitTotal: -7995.67021803766,
+            costTotal: 27595.67021803766,
+            workedTotal: 28,
+            name: "IOS/Android QA1-15/01/15",
+            invoice: {
+                _id: "55b92ae121e4b7c40f001265",
+                name: "1-15/01/15"
             },
-            project       : {
-                _id             : "55b92ad621e4b7c40f00065f",
-                EndDate         : "2014-08-15T09:10:39.579Z",
-                StartDate       : "2014-08-11T09:10:39.578Z",
-                ID              : 1,
-                bonus           : [
-                    {
-                        employeeId: "55b92ad221e4b7c40f000031",
-                        bonusId   : "55b92ad521e4b7c40f00060a",
-                        _id       : "5604fc2082ca87623a000008",
-                        endDate   : null,
-                        startDate : null
-                    },
-                    {
-                        employeeId: "55b92ad221e4b7c40f000063",
-                        bonusId   : "55b92ad521e4b7c40f000607",
-                        _id       : "5604fc2082ca87623a000007",
-                        endDate   : "2014-08-13T22:00:00.000Z",
-                        startDate : "2014-08-09T22:00:00.000Z"
-                    },
-                    {
-                        employeeId: "55b92ad221e4b7c40f00004a",
-                        bonusId   : "55b92ad521e4b7c40f000604",
-                        _id       : "5604fc2082ca87623a000006",
-                        endDate   : "2014-08-13T22:00:00.000Z",
-                        startDate : "2014-08-09T22:00:00.000Z"
-                    }
-                ],
-                health          : 1,
-                editedBy        : {
-                    date: "2016-04-13T07:58:24.787Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                attachments     : [],
-                notes           : [],
-                projecttype     : "",
-                createdBy       : {
-                    date: "2015-07-29T19:34:46.291Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                progress        : 0,
-                remaining       : 0,
-                logged          : 0,
-                estimated       : 0,
-                workflow        : "528ce7f2f3f67bc40b000023",
-                parent          : null,
-                sequence        : 0,
-                groups          : {
-                    owner: "55ba28c8d79a3a3439000016",
-                    users: [],
-                    group: []
-                },
-                whoCanRW        : "everyOne",
-                projectmanager  : "55b92ad221e4b7c40f000063",
-                customer        : "55b92ad521e4b7c40f00060c",
-                task            : [],
-                projectName     : "IOS/Android QA",
-                projectShortDesc: "emptyProject",
-                __v             : 0,
-                teams           : {},
-                info            : {},
-                description     : "",
-                TargetEndDate   : null,
-                budget          : {
-                    projectTeam: [
-                        "570dfc206625f34212d01f3f",
-                        "570dfc016625f34212d01f3c",
-                        "570dfbd96625f34212d01f39",
-                        "570dfb7d6625f34212d01f37",
-                        "570de3596625f34212d01f32",
-                        "570ddef86625f34212d01f2d",
-                        "570cc46ecf6668c214f2ba4b",
-                        "564cfd8ba6e6390160c9ee1c"
-                    ],
-                    bonus      : [
-                        {
-                            percentage: "PM Junior/Usual 1.5%",
-                            resource  : "Alex Gleba",
-                            bonus     : 294
-                        },
-                        {
-                            percentage: "Sales/QA 8%",
-                            resource  : "Yana Gusti",
-                            bonus     : 1568
-                        },
-                        {
-                            percentage: "Sales/Ref 2%",
-                            resource  : "Oleg Ostroverkh",
-                            bonus     : 392
-                        }
-                    ]
-                },
-                salesManagers   : [
-                    {
-                        date   : "2014-08-11T12:27:35.056Z",
-                        _id    : "5707533ecbb17f48214c769c",
-                        manager: "55b92ad221e4b7c40f000063"
-                    }
-                ]
+            type: "Invoiced",
+            quotation: {
+                _id: "564cfd8da6e6390160c9f0fe",
+                name: "PO364"
             },
-            wTracks       : [
-                "55b92ad821e4b7c40f00072a",
-                "55b92ad821e4b7c40f0006e3"
-            ],
-            type          : "Invoiced",
-            workflow      : {
-                _id    : "56337c675d49d8d6537832ea",
-                wId    : "Jobs",
-                name   : "Finished",
-                status : "Done",
-                source : "jobs",
-                visible: true
+            workflow: {
+                _id: "56337c675d49d8d6537832ea",
+                name: "Finished"
             },
-            name          : "IOS/Android QA1-15/01/15",
-            quotation     : {
-                _id           : "564cfd8da6e6390160c9f0fe",
-                editedBy      : {
-                    date: "2015-11-18T22:37:01.579Z",
-                    user: null
+            cost: 27595.67021803766,
+            jobPrice: 19600,
+            totalWorked: 28,
+            revenue: [
+                {
+                    employee: {
+                        _id: "55b92ad221e4b7c40f00006f",
+                        name: "Anton Karabeinikov",
+                        jobPosition: "Junior QA",
+                        worked: 14
+                    },
+                    department: "QA",
+                    revenue: 9800
                 },
-                createdBy     : {
-                    date: "2015-11-18T22:37:01.579Z",
-                    user: null
-                },
-                creationDate  : "2015-11-18T22:37:01.579Z",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: null
-                },
-                whoCanRW      : "everyOne",
-                workflow      : "55647b962e4aa3804a765ec6",
-                products      : [
-                    {
-                        scheduledDate: "2015-01-15T14:09:21.796Z",
-                        taxes        : 0,
-                        subTotal     : 196,
-                        unitPrice    : 196,
-                        jobs         : "564cfd8ba6e6390160c9ee1c",
-                        description  : "",
-                        product      : "5540d528dacb551c24000003",
-                        quantity     : 28
-                    }
-                ],
-                paymentInfo   : {
-                    taxes  : 0,
-                    unTaxed: 196,
-                    total  : 196
-                },
-                paymentTerm   : null,
-                invoiceRecived: true,
-                invoiceControl: null,
-                incoterm      : null,
-                destination   : null,
-                name          : "PO364",
-                orderDate     : "2015-01-15T14:09:21.796Z",
-                deliverTo     : null,
-                project       : "55b92ad621e4b7c40f00065f",
-                supplier      : "55b92ad521e4b7c40f00060c",
-                isOrder       : true,
-                forSales      : true,
-                __v           : 0,
-                type          : "Invoiced",
-                currency      : {
-                    rate: 1,
-                    _id : "565eab29aeb95fa9c0f9df2d"
+                {
+                    employee: {
+                        _id: "55b92ad221e4b7c40f00007f",
+                        name: "Vasilisa Klimchenko",
+                        jobPosition: "Junior QA",
+                        worked: 14
+                    },
+                    department: "QA",
+                    revenue: 9800
                 }
-            },
-            invoice       : {
-                _id             : "55b92ae121e4b7c40f001265",
-                paymentDate     : "2015-01-14T00:00:00.000Z",
-                dueDate         : "2015-01-29T14:09:21.796Z",
-                ID              : 7,
-                editedBy        : {
-                    date: "2015-07-29T19:34:57.510Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy       : {
-                    date: "2015-07-29T19:34:57.510Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate    : "2015-07-29T19:34:57.510Z",
-                groups          : {
-                    group: [],
-                    users: [],
-                    owner: null
-                },
-                whoCanRW        : "everyOne",
-                workflow        : "55647d982e4aa3804a765ecb",
-                products        : [
-                    {
-                        subTotal   : 19600,
-                        unitPrice  : 19600,
-                        taxes      : 0,
-                        jobs       : "564cfd8ba6e6390160c9ee1c",
-                        description: "",
-                        product    : "5540d528dacb551c24000003",
-                        quantity   : 1
-                    }
-                ],
-                payments        : [
-                    "55b92ae321e4b7c40f0013cd"
-                ],
-                paymentInfo     : {
-                    taxes  : 0,
-                    unTaxed: 19600,
-                    balance: 0,
-                    total  : 19600
-                },
-                paymentTerms    : null,
-                salesPerson     : "55b92ad221e4b7c40f000063",
-                invoiceDate     : "2015-01-14T00:00:00.000Z",
-                project         : "55b92ad621e4b7c40f00065f",
-                paymentReference: "free",
-                sourceDocument  : "564cfd8da6e6390160c9f0fe",
-                supplier        : "55b92ad521e4b7c40f00060c",
-                forSales        : true,
-                invoiceType     : "wTrack",
-                name            : "1-15/01/15",
-                __v             : 0,
-                _type           : "wTrackInvoice",
-                currency        : {
-                    rate: 1,
-                    _id : "565eab29aeb95fa9c0f9df2d"
-                }
-            },
-            projectmanager: {
-                _id           : "55b92ad221e4b7c40f000063",
-                dateBirth     : "1990-07-30T00:00:00.000Z",
-                ID            : 57,
-                isLead        : 2,
-                fire          : [],
-                hire          : [
-                    "2013-11-17T22:00:00.000Z"
-                ],
-                social        : {
-                    FB: "",
-                    LI: "https://ua.linkedin.com/pub/yana"
-                },
-                sequence      : 0,
-                jobType       : "fullTime",
-                gender        : "male",
-                marital       : "married",
-                contractEnd   : {
-                    date  : "2015-07-29T19:34:42.464Z",
-                    reason: ""
-                },
-                attachments   : [],
-                editedBy      : {
-                    date: "2016-03-31T09:31:59.608Z",
-                    user: "563f673270bbc2b740ce89ae"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:42.464Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2015-07-29T19:34:42.464Z",
-                color         : "#4d5a75",
-                otherInfo     : "",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : null,
-                active        : false,
-                referredBy    : "",
-                source        : "",
-                age           : 25,
-                homeAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                otherId       : "",
-                bankAccountNo : "",
-                nationality   : "Ukrainian",
-                coach         : null,
-                manager       : "55b92ad221e4b7c40f00004f",
-                jobPosition   : "5644388770bbc2b740ce8a18",
-                department    : "55b92ace21e4b7c40f000011",
-                visibility    : "Public",
-                relatedUser   : null,
-                officeLocation: "",
-                skype         : "yanochka_3007",
-                workPhones    : {
-                    phone : "",
-                    mobile: "+380508754761"
-                },
-                personalEmail : "yana.gusti@gmail.com",
-                workEmail     : "yana.gusti@thinkmobiles.com",
-                workAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                tags          : [
-                    ""
-                ],
-                name          : {
-                    last : "Gusti",
-                    first: "Yana"
-                },
-                subject       : "",
-                imageSrc      : "data:image/jpeg;base64,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",
-                isEmployee    : true,
-                __v           : 0,
-                transferred   : [
-                    {
-                        date      : "2015-11-12T07:01:22.647Z",
-                        department: " BusinessDev"
-                    }
-                ],
-                transfer      : [
-                    {
-                        date       : "2013-11-17T22:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 350,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "hired"
-                    },
-                    {
-                        date       : "2014-06-30T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 450,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    },
-                    {
-                        date       : "2015-08-31T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 1000,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    }
-                ]
-            },
-            order         : 1,
-            payment       : {
-                paid : 19600,
-                count: 1
-            }
-        }, {
-            _id           : "570cc46ecf6668c214f2ba4b",
-            budget        : {
-                budgetTotal: {
-                    minDate    : 201614,
-                    maxDate    : 201615,
-                    hoursByQA  : 0,
-                    revenueByQA: 0,
-                    hoursSum   : 40,
-                    revenueSum : 0,
-                    costSum    : 0,
-                    profitSum  : 0
-                },
-                budget     : [
-                    {
-                        revenue: 0,
-                        hours  : 40,
-                        cost   : 0,
-                        profit : 0
-                    }
-                ],
-                projectTeam: [
-                    {
-                        name       : {
-                            first: "Alex",
-                            last : "Gleba"
-                        },
-                        department : {
-                            departmentName: "iOS",
-                            _id           : "55b92ace21e4b7c40f00000f"
-                        },
-                        jobPosition: {
-                            name: "Middle iOS",
-                            _id : "55b92acf21e4b7c40f00001d"
-                        },
-                        _id        : "55b92ad221e4b7c40f000031"
-                    }
-                ]
-            },
-            project       : {
-                _id             : "55b92ad621e4b7c40f00065f",
-                EndDate         : "2014-08-15T09:10:39.579Z",
-                StartDate       : "2014-08-11T09:10:39.578Z",
-                ID              : 1,
-                bonus           : [
-                    {
-                        employeeId: "55b92ad221e4b7c40f000031",
-                        bonusId   : "55b92ad521e4b7c40f00060a",
-                        _id       : "5604fc2082ca87623a000008",
-                        endDate   : null,
-                        startDate : null
-                    },
-                    {
-                        employeeId: "55b92ad221e4b7c40f000063",
-                        bonusId   : "55b92ad521e4b7c40f000607",
-                        _id       : "5604fc2082ca87623a000007",
-                        endDate   : "2014-08-13T22:00:00.000Z",
-                        startDate : "2014-08-09T22:00:00.000Z"
-                    },
-                    {
-                        employeeId: "55b92ad221e4b7c40f00004a",
-                        bonusId   : "55b92ad521e4b7c40f000604",
-                        _id       : "5604fc2082ca87623a000006",
-                        endDate   : "2014-08-13T22:00:00.000Z",
-                        startDate : "2014-08-09T22:00:00.000Z"
-                    }
-                ],
-                health          : 1,
-                editedBy        : {
-                    date: "2016-04-13T07:58:24.787Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                attachments     : [],
-                notes           : [],
-                projecttype     : "",
-                createdBy       : {
-                    date: "2015-07-29T19:34:46.291Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                progress        : 0,
-                remaining       : 0,
-                logged          : 0,
-                estimated       : 0,
-                workflow        : "528ce7f2f3f67bc40b000023",
-                parent          : null,
-                sequence        : 0,
-                groups          : {
-                    owner: "55ba28c8d79a3a3439000016",
-                    users: [],
-                    group: []
-                },
-                whoCanRW        : "everyOne",
-                projectmanager  : "55b92ad221e4b7c40f000063",
-                customer        : "55b92ad521e4b7c40f00060c",
-                task            : [],
-                projectName     : "IOS/Android QA",
-                projectShortDesc: "emptyProject",
-                __v             : 0,
-                teams           : {},
-                info            : {},
-                description     : "",
-                TargetEndDate   : null,
-                budget          : {
-                    projectTeam: [
-                        "570dfc206625f34212d01f3f",
-                        "570dfc016625f34212d01f3c",
-                        "570dfbd96625f34212d01f39",
-                        "570dfb7d6625f34212d01f37",
-                        "570de3596625f34212d01f32",
-                        "570ddef86625f34212d01f2d",
-                        "570cc46ecf6668c214f2ba4b",
-                        "564cfd8ba6e6390160c9ee1c"
-                    ],
-                    bonus      : [
-                        {
-                            percentage: "PM Junior/Usual 1.5%",
-                            resource  : "Alex Gleba",
-                            bonus     : 294
-                        },
-                        {
-                            percentage: "Sales/QA 8%",
-                            resource  : "Yana Gusti",
-                            bonus     : 1568
-                        },
-                        {
-                            percentage: "Sales/Ref 2%",
-                            resource  : "Oleg Ostroverkh",
-                            bonus     : 392
-                        }
-                    ]
-                },
-                salesManagers   : [
-                    {
-                        date   : "2014-08-11T12:27:35.056Z",
-                        _id    : "5707533ecbb17f48214c769c",
-                        manager: "55b92ad221e4b7c40f000063"
-                    }
-                ]
-            },
-            wTracks       : [
-                "570cc46ecf6668c214f2ba4d",
-                "570cc46ecf6668c214f2ba4c"
             ],
-            type          : "Not Quoted",
-            workflow      : {
-                _id    : "56337c705d49d8d6537832eb",
-                wId    : "Jobs",
-                name   : "In Progress",
-                status : "In Progress",
-                source : "jobs",
-                visible: true
-            },
-            name          : "Test",
-            projectmanager: {
-                _id           : "55b92ad221e4b7c40f000063",
-                dateBirth     : "1990-07-30T00:00:00.000Z",
-                ID            : 57,
-                isLead        : 2,
-                fire          : [],
-                hire          : [
-                    "2013-11-17T22:00:00.000Z"
-                ],
-                social        : {
-                    FB: "",
-                    LI: "https://ua.linkedin.com/pub/yana"
-                },
-                sequence      : 0,
-                jobType       : "fullTime",
-                gender        : "male",
-                marital       : "married",
-                contractEnd   : {
-                    date  : "2015-07-29T19:34:42.464Z",
-                    reason: ""
-                },
-                attachments   : [],
-                editedBy      : {
-                    date: "2016-03-31T09:31:59.608Z",
-                    user: "563f673270bbc2b740ce89ae"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:42.464Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2015-07-29T19:34:42.464Z",
-                color         : "#4d5a75",
-                otherInfo     : "",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : null,
-                active        : false,
-                referredBy    : "",
-                source        : "",
-                age           : 25,
-                homeAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                otherId       : "",
-                bankAccountNo : "",
-                nationality   : "Ukrainian",
-                coach         : null,
-                manager       : "55b92ad221e4b7c40f00004f",
-                jobPosition   : "5644388770bbc2b740ce8a18",
-                department    : "55b92ace21e4b7c40f000011",
-                visibility    : "Public",
-                relatedUser   : null,
-                officeLocation: "",
-                skype         : "yanochka_3007",
-                workPhones    : {
-                    phone : "",
-                    mobile: "+380508754761"
-                },
-                personalEmail : "yana.gusti@gmail.com",
-                workEmail     : "yana.gusti@thinkmobiles.com",
-                workAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                tags          : [
-                    ""
-                ],
-                name          : {
-                    last : "Gusti",
-                    first: "Yana"
-                },
-                subject       : "",
-                imageSrc      : "data:image/jpeg;base64,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",
-                isEmployee    : true,
-                __v           : 0,
-                transferred   : [
-                    {
-                        date      : "2015-11-12T07:01:22.647Z",
-                        department: " BusinessDev"
-                    }
-                ],
-                transfer      : [
-                    {
-                        date       : "2013-11-17T22:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 350,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "hired"
-                    },
-                    {
-                        date       : "2014-06-30T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 450,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    },
-                    {
-                        date       : "2015-08-31T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 1000,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    }
-                ]
-            },
-            order         : -1,
-            payment       : {
-                paid : 0,
-                count: 0
-            }
+            totalRevenue: 19600,
+            profit: -7995.67021803766
         }
     ];
     var fakeWorkflowsProject = {
@@ -21720,6 +21054,130 @@ define([], function () {
             }
         }
     };
+    var fakeDeparmentsForDD = {
+        data: [
+            {
+                _id: "55b92ace21e4b7c40f000012",
+                departmentManager: null,
+                name: ".NET/WP"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000010",
+                departmentManager: null,
+                name: "Android"
+            },
+            {
+                _id: "56802e9d1afe27f547b7ba51",
+                departmentManager: null,
+                name: "CSS/FrontEnd"
+            },
+            {
+                _id: "55bb1f14cb76ca630b000006",
+                departmentManager: "55b92ad221e4b7c40f000039",
+                name: "Design"
+            },
+            {
+                _id: "56802eb31afe27f547b7ba52",
+                departmentManager: null,
+                name: "JS"
+            },
+            {
+                _id: "56802ec21afe27f547b7ba53",
+                departmentManager: null,
+                name: "PHP/WordPress"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000011",
+                departmentManager: null,
+                name: "QA"
+            },
+            {
+                _id: "566ee11b8453e8b464b70b73",
+                departmentManager: null,
+                name: "Ruby on Rails"
+            },
+            {
+                _id: "56e175c4d62294582e10ca68",
+                departmentManager: null,
+                name: "Unity"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000016",
+                departmentManager: null,
+                name: "Web"
+            },
+            {
+                _id: "55b92ace21e4b7c40f00000f",
+                departmentManager: null,
+                name: "iOS"
+            }
+        ]
+    };
+    var fakeCustomerImage =  {
+        data: [
+            {
+                _id: "5747fc7cf300cbd7665761f0",
+                imageSrc: "data:image/jpeg;base64,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",
+                fullName: "undefined undefined",
+                id: "5747fc7cf300cbd7665761f0"
+            }
+        ]
+    };
+    var fakeProjectMembers = [
+        {
+            _id: "5719d799b45f39a40eb1720c",
+            projectId: "55b92ad621e4b7c40f00065f",
+            employeeId: {
+                _id: "55b92ad221e4b7c40f000063",
+                name: {
+                    last: "Gusti",
+                    first: "Yana"
+                },
+                fullName: "Yana Gusti",
+                id: "55b92ad221e4b7c40f000063"
+            },
+            bonusId: {
+                _id: "55b92ad521e4b7c40f000607",
+                isPercent: true,
+                value: 8,
+                name: "Sales/QA 8%"
+            },
+            projectPositionId: {
+                _id: "570e9a75785753b3f1d9c86e",
+                name: "Sales manager"
+            },
+            startDate: null,
+            endDate: null,
+            __v: 0
+        },
+        {
+            _id: "5719d799b45f39a40eb1720d",
+            projectId: "55b92ad621e4b7c40f00065f",
+            employeeId: {
+                _id: "55b92ad221e4b7c40f00004a",
+                name: {
+                    last: "Ostroverkh",
+                    first: "Oleg"
+                },
+                fullName: "Oleg Ostroverkh",
+                id: "55b92ad221e4b7c40f00004a"
+            },
+            bonusId: {
+                _id: "55b92ad521e4b7c40f000604",
+                isPercent: true,
+                value: 2,
+                name: "Sales/Ref 2%"
+            },
+            projectPositionId: {
+                _id: "570e9a75785753b3f1d9c873",
+                name: "Reference person"
+            },
+            startDate: "2014-08-09T22:00:00.000Z",
+            endDate: "2014-08-13T22:00:00.000Z",
+            __v: 0
+        }
+    ];
+
 
     return {
         fakeProjects                                : fakeProjects,
@@ -21738,9 +21196,13 @@ define([], function () {
         fakeWTrack: fakeWTrack,
         fakePayments: fakePayments,
         fakeQuotations : fakeQuotations,
+        fakeQuotationById : fakeQuotationById,
         fakeBonusType : fakeBonusType,
         fakeEmployeesForDD: fakeEmployeesForDD,
-        fakeJobsForWTrack : fakeJobsForWTrack
+        fakeJobsForWTrack : fakeJobsForWTrack,
+        fakeDepartmentsForDD : fakeDeparmentsForDD,
+        fakeCustomerImage : fakeCustomerImage,
+        fakeProjectMembers : fakeProjectMembers
 
     };
 });

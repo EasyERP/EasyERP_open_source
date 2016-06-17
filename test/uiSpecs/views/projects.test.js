@@ -16,8 +16,8 @@ define([
     'views/Projects/form/FormView',
     'views/Projects/CreateView',
     'views/Projects/EditView'/* ,
-    'custom',
-    'async'*/
+     'custom',
+     'async'*/
 ], function ($, chai, chaiJquery, sinonChai, modules, fixtures, ProjectModel, ProjectCollection, MainView, topBarView, ThumbnailsView, eventsBinder, PROJECTS, ListView, FormView, CreateView, EditView/*, custom, async*/) {
     'use strict';
 
@@ -502,14 +502,16 @@ define([
 
                 it('Try to create FormView', function (done) {
                     var projectsUrl = new RegExp('\/Projects\/form', 'i');
-                    var jobsUrl = new RegExp('\/jobs\/', 'i');
-                    var projectTypeUrl = '/projectType';
+                    var jobsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/info', 'i');
+                    var projectTypeUrl = '/projects/projectType';
                     var workflowsProjectsUrl = new RegExp('\/workflows\/fetch', 'i');
                     var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
                     var wTrackUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/weTracks', 'i');
                     var paymentsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/payments', 'i');
                     var quotationUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/quotations', 'i');
-                    var bonusTypeUrl = '/bonusType/list';
+
+                    var projectMemberUrl = new RegExp('\/projectMember\/', 'i');
+                    var bonusTypeUrl = '/bonusType/';
 
                     // create FormView
 
@@ -532,7 +534,7 @@ define([
                             server.respondWith('GET', paymentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakePayments)]);
                             server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeQuotations)]);
                             server.respondWith('GET', bonusTypeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeBonusType)]);
-                            //  server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
+                            server.respondWith('GET', projectMemberUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectMembers)]);
                             formView.render();
                             server.respond();
                             server.respond();
@@ -542,9 +544,9 @@ define([
                             server.respond();
                             server.respond();
                             server.respond();
-                            //   server.respond();
+                            server.respond();
 
-                            fakeClock.tick(500);
+                            fakeClock.tick(2000);
 
                             $thisEl = formView.$el;
                             expect($thisEl.find('.form-holder')).to.exist;
@@ -559,217 +561,231 @@ define([
                     server.respond();
                 });
 
-                /* it('Try to delete job row', function () {
-                var $dialogEl;
-                var $needRow;
-                var $addItemBtn;
-                var $trashBtn;
-                var $createJob = $thisEl.find('#createJob');
-                var employeesForDDUrl = new RegExp('\/employees\/getForDD', 'i');
 
-                server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeesForDD)]);
-                $createJob.click();
-                server.respond();
 
-                expect($('.ui-dialog')).to.exist;
+                    it('Try to delete job row', function () {
+                        var $dialogEl;
+                        var $needRow;
+                        var $addItemBtn;
+                        var $trashBtn;
+                        var $createJob = $thisEl.find('#createJob');
+                        var employeesForDDUrl = new RegExp('\/employees\/getForDD', 'i');
+                        var departmentsForDDUrl = new RegExp('\/departments\/getForDD', 'i');
+                        var fakecustomersImageUrl = new RegExp('\/customers\/getCustomersImages', 'i');
 
-                $dialogEl = $('.ui-dialog');
-                $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
-                $addItemBtn.click();
+                        server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
+                        server.respondWith('GET', departmentsForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeDepartmentsForDD)]);
+                        server.respondWith('GET', fakecustomersImageUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeCustomerImage)]);
+                        $createJob.click();
+                        server.respond();
+                        server.respond();
+                        server.respond();
 
-                $needRow = $dialogEl.find('tbody > tr:nth-child(1)');
-                $trashBtn = $dialogEl.find('td.remove > a');
+                        expect($('.ui-dialog')).to.exist;
 
-                expect($trashBtn).to.have.class('hidden');
-                $needRow.mouseover();
-                expect($trashBtn).to.not.have.class('hidden');
-                $needRow.mouseleave();
-                expect($trashBtn).to.have.class('hidden');
+                        $dialogEl = $('.ui-dialog');
+                        $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
+                        $addItemBtn.click();
 
-                $needRow.mouseover();
+                        $needRow = $dialogEl.find('tbody > tr:nth-child(1)');
+                        $trashBtn = $dialogEl.find('td.remove > a');
 
-                $trashBtn.click();
-                expect($dialogEl.find('tbody > tr').length).to.be.equals(1);
-                });
+                        expect($trashBtn).to.have.class('hidden');
+                        $needRow.mouseover();
+                        expect($trashBtn).to.not.have.class('hidden');
+                        $needRow.mouseleave();
+                        expect($trashBtn).to.have.class('hidden');
 
-                it('Try to add job without required data', function () {
-                var spyResponse;
-                var $dialogEl = $('.ui-dialog');
-                var $generateBtn = $dialogEl.find('#generateBtn');
-                var $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
+                        $needRow.mouseover();
 
-                $addItemBtn.click();
+                        $trashBtn.click();
+                        expect($dialogEl.find('tbody > tr').length).to.be.equals(1);
+                    });
 
-                $generateBtn.click();
-                spyResponse = mainSpy.args[0][0];
+                    it('Try to add job without required data', function () {
+                        var spyResponse;
+                        var $dialogEl = $('.ui-dialog');
+                        var $generateBtn = $dialogEl.find('#generateBtn');
+                        var $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
 
-                expect(spyResponse).to.have.property('type', 'notify');
-                expect(spyResponse).to.have.property('message', 'Please, enter all information first.');
+                        $addItemBtn.click();
 
-                });
+                        $generateBtn.click();
+                        spyResponse = mainSpy.args[0][0];
 
-                it('Try to add job with bad JobName', function () {
-                var $jobNameEl;
-                var $dialogEl;
-                var $addItemBtn;
-                var $next;
-                var $prev;
-                var $employeeSelect;
-                var $selectedItem;
-                var $startDate;
-                var $endDate;
-                var spyResponse;
-                var $generateBtn;
-                var $generateType;
+                        expect(spyResponse).to.have.property('type', 'notify');
+                        expect(spyResponse).to.have.property('message', 'Please, enter all information first.');
 
-                $dialogEl = $('.ui-dialog');
-                $jobNameEl = $dialogEl.find('#jobName');
-                $jobNameEl.val('<input>');
-                $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
+                    });
 
-                $addItemBtn.click();
+                    it('Try to add job with bad JobName', function () {
+                        var $jobNameEl;
+                        var $dialogEl;
+                        var $addItemBtn;
+                        var $next;
+                        var $prev;
+                        var $employeeSelect;
+                        var $selectedItem;
+                        var $startDate;
+                        var $endDate;
+                        var spyResponse;
+                        var $generateBtn;
+                        var $generateType;
 
-                $employeeSelect = $dialogEl.find('td[data-content="employee"] > a.current-selected');
-                $employeeSelect.click();
-                $next = $dialogEl.find('.next');
-                $next.click();
-                $prev = $dialogEl.find('.prev');
-                $prev.click();
-                $selectedItem = $dialogEl.find('#564dac3e9b85f8b16b574fea');
-                $selectedItem.click();
-                $startDate = $dialogEl.find('.startDate');
-                $startDate.val('11 Apr, 2016');
-                $startDate.closest('td').removeClass('errorContent');
-                $generateType = $dialogEl.find('a.generateType');
-                $generateType.click();
-                $selectedItem = $dialogEl.find('.generateTypeUl > li[data-content="byHours"]');
-                $selectedItem.click();
-                $endDate = $dialogEl.find('.endDate');
-                $endDate.val('40');
-                $endDate.closest('td').removeClass('errorContent');
-                $generateBtn = $dialogEl.find('#generateBtn');
+                        $dialogEl = $('.ui-dialog');
+                        $jobNameEl = $dialogEl.find('#jobName');
+                        $jobNameEl.val('<input>');
+                        $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
 
-                $generateBtn.click();
-                spyResponse = mainSpy.args[1][0];
+                        $addItemBtn.click();
 
-                expect(spyResponse).to.have.property('type', 'notify');
-                expect(spyResponse).to.have.property('message', 'Please, enter correct Job name!');
+                        $employeeSelect = $dialogEl.find('td[data-content="employee"] > a.current-selected');
+                        $employeeSelect.click();
+                        $next = $dialogEl.find('.next');
+                        $next.click();
+                        $prev = $dialogEl.find('.prev');
+                        $prev.click();
+                        $selectedItem = $dialogEl.find('#564dac3e9b85f8b16b574fea');
+                        $selectedItem.click();
+                        $startDate = $dialogEl.find('.startDate');
+                        $startDate.val('11 Apr, 2016');
+                        $startDate.closest('td').removeClass('errorContent');
+                        $generateType = $dialogEl.find('a.generateType');
+                        $generateType.click();
+                        $selectedItem = $dialogEl.find('.generateTypeUl > li[data-content="byHours"]');
+                        $selectedItem.click();
+                        $endDate = $dialogEl.find('.endDate');
+                        $endDate.val('40');
+                        $endDate.closest('td').removeClass('errorContent');
+                        $generateBtn = $dialogEl.find('#generateBtn');
 
-                });
+                        $generateBtn.click();
+                        spyResponse = mainSpy.args[1][0];
 
-                it('Try to add job', function () {
-                var $jobNameEl;
-                var $generateBtn;
-                var $mondayInput;
-                var $dialogEl = $('.ui-dialog');
-                var $needRow = $dialogEl.find('tbody > tr:nth-child(1) > td[data-content="1"]');
-                var wTrackUrl = '/wTrack/generateWTrack';
+                        expect(spyResponse).to.have.property('type', 'error');
+                        expect(spyResponse).to.have.property('message', 'Please, enter correct Job name!');
 
-                $jobNameEl = $dialogEl.find('#jobName');
-                $jobNameEl.val('Test');
+                    });
 
-                $needRow.click();
-                $mondayInput = $needRow.find('input');
-                $mondayInput.val('7');
+                    it('Try to add job', function () {
+                        var $jobNameEl;
+                        var $generateBtn;
+                        var $mondayInput;
+                        var $dialogEl = $('.ui-dialog');
+                        var $needRow = $dialogEl.find('tbody > tr:nth-child(1) > td[data-content="1"]');
+                        var wTrackUrl = '/wTrack/generateWTrack';
+                        var wTracksUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/weTracks', 'i');
+                        var tCardTab = $thisEl.find('a#timesheetTab');
 
-                $generateBtn = $dialogEl.find('#generateBtn');
-                server.respondWith('POST', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
-                $generateBtn.click();
-                server.respond();
+                        $jobNameEl = $dialogEl.find('#jobName');
+                        $jobNameEl.val('Test');
 
-                //expect($('.ui-dialog')).to.not.exist;
-                });
+                        $needRow.click();
+                        $mondayInput = $needRow.find('input');
+                        $mondayInput.val('7');
+
+                        $generateBtn = $dialogEl.find('#generateBtn');
+                        server.respondWith('POST', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
+                        server.respondWith('GET', wTracksUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeWTrack)]);
+                        $generateBtn.click();
+                        server.respond();
+                        server.respond();
+
+                        expect($('.ui-dialog')).to.not.exist;
+                        expect(tCardTab).to.have.class('active');
+                        fakeClock.tick(1000);
+                    });
 
                 it('Try to expand wTrack list', function () {
-                var $firstTab = $thisEl.find('#overviewTab');
-                var $needTd = $thisEl.find('#projectTeam > tr:nth-child(1) > td:nth-child(7)');
+                    var $firstTab = $thisEl.find('#overviewTab');
+                    var $needTd = $thisEl.find('#projectTeam > tr:nth-child(1) > td:nth-child(7)');
 
-                $firstTab.click();
-                $needTd.click();
-                expect($('#projectTeam .subRow')).to.exist;
+                    $firstTab.click();
+                    $needTd.click();
+                    expect($('#projectTeam .subRow')).to.exist;
 
-                $needTd.click();
-                expect($('#projectTeam .subRow')).to.not.exist;
+                    $needTd.click();
+                    expect($('#projectTeam .subRow')).have.css('display').match(/none/);
 
                 });
 
-                it('Try to quick edit job name', function () {
-                var $jobInput;
-                var $saveBtn;
-                var $needRow = $thisEl.find('#jobsItem[data-id="570cc46ecf6668c214f2ba4b"]');
-                var $needTd = $needRow.find('td.editableJobs');
-                var jobsUpdateUrl = '/jobs/update';
+              /*  it('Try to quick edit job name', function () {
+                    var $jobInput;
+                    var $saveBtn;
+                    var $needRow = $thisEl.find('#jobsItem[data-id="564cfd8ba6e6390160c9ee1c"]');
+                    var $needTd = $needRow.find('td.editableJobs');
+                    var jobsUpdateUrl = '/jobs/update';
 
-                $needTd.dblclick();
+                    $needTd.dblclick();
 
-                $jobInput = $needTd.find('input');
-                $jobInput.val('Test2');
-                $saveBtn = $needTd.find('#saveName');
+                    $jobInput = $needTd.find('input');
+                    $jobInput.val('Test2');
+                    $saveBtn = $needTd.find('#saveName');
 
-                server.respondWith('POST', jobsUpdateUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-                $saveBtn.click();
-                server.respond();
+                    server.respondWith('POST', jobsUpdateUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                    $saveBtn.click();
+                    server.respond();
 
-                expect($needRow.find('#jobsName').text().trim()).to.be.equals('Test2');
-                });
+                    expect($needRow.find('#jobsName').text().trim()).to.be.equals('Test2');
+                });*/
 
                 it('Try to delete job item', function () {
-                var $needRow = $thisEl.find('#jobsItem[data-id="570cc46ecf6668c214f2ba4b"]');
-                var $deleteBtn = $needRow.find('.fa-trash');
-                var jobsRemoveUrl = '/jobs/remove';
+                    var $needRow = $thisEl.find('#jobsItem[data-id="564cfd8ba6e6390160c9ee1c"]');
+                    var $deleteBtn = $needRow.find('.fa-trash');
+                    var jobsRemoveUrl = '/jobs/remove';
 
-                windowConfirmStub.returns(true);
+                    windowConfirmStub.returns(true);
 
-                $needRow.mouseover();
-                //expect($needRow.find('.fa-trash')).to.have.not.class('hidden');
+                    $needRow.mouseover();
+                    //expect($needRow.find('.fa-trash')).to.have.not.class('hidden');
 
-                $needRow.mouseleave();
-                //expect($needRow.find('.fa-trash')).to.have.class('hidden');
+                    $needRow.mouseleave();
+                    //expect($needRow.find('.fa-trash')).to.have.class('hidden');
 
-                server.respondWith('POST', jobsRemoveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
-                $deleteBtn.click();
-                server.respond();
+                    server.respondWith('POST', jobsRemoveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                    $deleteBtn.click();
+                    server.respond();
 
-                expect($thisEl.find('#jobsItem[data-id="570cc46ecf6668c214f2ba4b"]')).to.not.exist;
-                expect(window.location.hash).to.be.equals('#easyErp/Projects/form/570cc46ecf6668c214f2ba4b');
+                    expect($thisEl.find('#jobsItem[data-id="570cc46ecf6668c214f2ba4b"]')).to.not.exist;
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/55b92ad621e4b7c40f00065f');
                 });
 
-                it('Try to go to quotationView', function () {
-                var $quotationBtn;
-                var $closeBtn;
-                var orderUrl = new RegExp('\/Order\/form\/', 'i');
+               /* it('Try to go to quotationView', function () {
+                    var $quotationBtn;
+                    var $closeBtn;
+                    var orderUrl = new RegExp('\/Order\/form\/', 'i');
 
-                $quotationBtn = $thisEl.find('#projectTeam > tr:nth-child(1) > td > a.quotation');
+                    $quotationBtn = $thisEl.find('#projectTeam > tr:nth-child(1) > td > a.quotation');
 
-                server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrder)]);
-                $quotationBtn.click();
-                server.respond();
+                    server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotations)]);
+                    $quotationBtn.click();
+                    server.respond();
 
-                expect($('.ui-dialog')).to.exist;
-                $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
+                    expect($('.ui-dialog')).to.exist;
+                    $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
 
-                $closeBtn.click();
-                expect($('.ui-dialog')).to.not.exist;
+                    $closeBtn.click();
+                    expect($('.ui-dialog')).to.not.exist;
 
                 });
 
                 it('Try to go to invoiceView', function () {
-                var $invoiceBtn;
-                var $closeBtn;
-                var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
+                    var $invoiceBtn;
+                    var $closeBtn;
+                    var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
 
-                $invoiceBtn = $thisEl.find('#projectTeam > tr:nth-child(1) > td > a.invoice');
+                    $invoiceBtn = $thisEl.find('#projectTeam > tr:nth-child(1) > td > a.invoice');
 
-                server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoice)]);
-                $invoiceBtn.click();
-                server.respond();
+                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoice)]);
+                    $invoiceBtn.click();
+                    server.respond();
 
-                expect($('.ui-dialog')).to.exist;
+                    expect($('.ui-dialog')).to.exist;
 
-                $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
+                    $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
 
-                $closeBtn.click();
-                expect($('.ui-dialog')).to.not.exist;
+                    $closeBtn.click();
+                    expect($('.ui-dialog')).to.not.exist;
 
                 });*/
 
@@ -1065,7 +1081,7 @@ define([
                     var quotationUrl = new RegExp('\/quotation\/list', 'i');
                     var $sortBtn = $thisEl.find('#quotationTable tr > th[data-sort="name"]');
 
-                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotations)]);
+                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotations)]);
                     $sortBtn.click();
                     server.respond();
                     expect($thisEl.find('#quotationTable')).to.exist;
@@ -1081,7 +1097,7 @@ define([
                     var $needItem = $thisEl.find('#quotationTable tr[data-id="570f9563ccb41cca20cd9261"] > td:nth-child(3)');
                     var quotationFormUrl = new RegExp('\/quotation\/form\/', 'i');
 
-                    server.respondWith('GET', quotationFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotationById)]);
+                    server.respondWith('GET', quotationFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotationById)]);
                     $needItem.click();
                     server.respond();
 
@@ -1135,9 +1151,9 @@ define([
                     var projectsForWTrackUrl = '/project/getForWtrack';
                     var customersUrl = '/customers/';
 
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProduct)]);
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectForDd)]);
-                    server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProduct)]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectForDd)]);
+                    server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeCustomers)]);
                     $createBtn.click();
                     server.respond();
                     server.respond();
@@ -1193,7 +1209,7 @@ define([
                     $currentRow = $dialog.find('tbody > tr.productItem:nth-child(1)');
                     $jobSelectBtn = $currentRow.find('td[data-name="jobs"] > .current-selected.jobs');
 
-                    server.respondWith('GET', jobsForProjectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsById)]);
+                    server.respondWith('GET', jobsForProjectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeJobsById)]);
                     $jobSelectBtn.click();
                     server.respond();
                     $selectedItem = $dialog.find('#570ddef86625f34212d01f2d');
@@ -1229,348 +1245,348 @@ define([
                     expect($('.ui-dialog')).to.not.exist;
 
                 });
-            });
-
-            describe('PaymentsView', function () {
-                var server;
-                var mainSpy;
-                var windowConfirmStub;
-
-                before(function () {
-                    var $paymentTab = $thisEl.find('#paymentsTab');
-
-                    $paymentTab.click();
-
-                    server = sinon.fakeServer.create();
-                    mainSpy = sinon.spy(App, 'render');
-                    windowConfirmStub = sinon.stub(window, 'confirm');
-                });
-
-                after(function () {
-                    server.restore();
-                    mainSpy.restore();
-                    windowConfirmStub.restore();
-                });
-
-                it('Try to sort payments list', function () {
-                    var paymentsUrl = new RegExp('\/payment\/customers\/list', 'i');
-                    var $sortBtn = $thisEl.find('#paymentsTable tr > th[data-sort="supplier.name.first"]');
-
-                    server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePayments)]);
-                    $sortBtn.click();
-                    server.respond();
-                    expect($thisEl.find('#paymentsTable #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae321e4b7c40f0013cd');
-
-                    $sortBtn.click();
-                    server.respond();
-                    expect($thisEl.find('#paymentsTable #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae321e4b7c40f0013cd');
-                });
-
-                it('Try to open EditView', function () {
-                    var $closeBtn;
-                    var $needTd = $thisEl.find('#paymentsTable #listTable tr:nth-child(1) > td:nth-child(3)');
-
-                    $needTd.click();
-
-                    expect($('.ui-dialog')).to.exist;
-                    $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-payment-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
-                    $closeBtn.click();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                it('Try to change and save payment', function () {
-                    var $dateInput;
-                    var $saveBtn;
-                    var $dateTd = $thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"] > td[data-content="date"]');
-                    var paymentsUrl = '/payment/customers/';
-
-                    $dateTd.click();
-                    $dateInput = $dateTd.find('input');
-                    $dateInput.val('23 Apr, 2016');
-
-                    $saveBtn = $thisEl.find('#savePayment');
-
-                    server.respondWith('PATCH', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-                    $saveBtn.click();
-                    server.respond();
-
-                    // expect($thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"] > td[data-content="date"]').text()).to.be.equals('23 Apr, 2016');
-                });
-
-                it('Try to delete item with 403 error', function () {
-                    var spyResponse;
-                    var $deleteBtn = $thisEl.find('#removePayment');
-                    var paymentsUrl = new RegExp('\/customerPayments\/', 'i');
-                    var $needCheckBox = $thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"] > td.notForm > input');
-                    $needCheckBox.click();
-
-                    windowConfirmStub.returns(true);
-
-                    server.respondWith('DELETE', paymentsUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $deleteBtn.click();
-                    server.respond();
-
-                    spyResponse = mainSpy.args[0][0];
-
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
-
-                });
-
-                it('Try to delete item', function () {
-
-                    var $deleteBtn = $thisEl.find('#removePayment');
-                    var paymentsUrl = new RegExp('\/customerPayments\/', 'i');
-
-                    windowConfirmStub.returns(true);
-
-                    server.respondWith('DELETE', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-                    $deleteBtn.click();
-                    server.respond();
-
-                    expect($thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"]')).to.not.exist;
-                });
-
-            });
-
-            describe('InvoiceView', function () {
-                var server;
-                var mainSpy;
-                var windowConfirmStub;
-
-                before(function () {
-                    var $invoiceTab = $thisEl.find('#invoicesTab');
-
-                    $invoiceTab.click();
-
-                    server = sinon.fakeServer.create();
-                    mainSpy = sinon.spy(App, 'render');
-                    windowConfirmStub = sinon.stub(window, 'confirm');
-                });
-
-                after(function () {
-                    server.restore();
-                    mainSpy.restore();
-                    windowConfirmStub.restore();
-                });
-
-                it('Try to sort invoice list', function () {
-                    var invoiceUrl = new RegExp('\/Invoice\/list', 'i');
-                    var $sortBtn = $thisEl.find('#invoices tr > th[data-sort="name"]');
-
-                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeInvoice[1], fakeInvoice[0]])]);
-                    $sortBtn.click();
-                    server.respond();
-                    expect($thisEl.find('#invoices #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('5710e5873a8d9e4a38be9f11');
-
-                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoice)]);
-                    $sortBtn.click();
-                    server.respond();
-                    expect($thisEl.find('#invoices #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae121e4b7c40f001265');
-                });
-
-                it('Try to delete item with 403 error', function () {
-                    var $deleteBtn;
-                    var spyResponse;
-                    var $needRow = $thisEl.find('#invoices #listTable > tr:nth-child(2)');
-                    var $needCheckBox = $needRow.find('.notForm > input');
-                    var invoiceUrl = new RegExp('\/invoice\/', 'i');
-
-                    windowConfirmStub.returns(true);
-
-                    $needCheckBox.click();
-                    $deleteBtn = $thisEl.find('#removeInvoice');
-
-                    server.respondWith('DELETE', invoiceUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $deleteBtn.click();
-                    server.respond();
-                    spyResponse = mainSpy.args[0][0];
-
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
-                });
-
-                it('Try to delete item', function () {
-                    var $deleteBtn;
-                    var invoiceUrl = new RegExp('\/invoice\/', 'i');
-
-                    windowConfirmStub.returns(true);
-
-                    $deleteBtn = $thisEl.find('#removeInvoice');
-
-                    server.respondWith('DELETE', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
-                    $deleteBtn.click();
-                    server.respond();
-
-                    expect($thisEl.find('#invoices #listTable > tr[data-id="5710e5873a8d9e4a38be9f11"]')).to.not.exist;
-                });
-
-                it('Try to open EditView', function () {
-                    var $needTd = $thisEl.find('#invoices #listTable tr[data-id="55b92ae121e4b7c40f001265"] > td:nth-child(3)');
-                    var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
-
-                    server.respondWith('GET', '/currentDb', [200, {"Content-Type": "application/json"}, 'micheldb']);
-                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoiceById)]);
-                    $needTd.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.be.exist;
-
-                });
-
-            });
-
-            describe('BonusView', function () {
-                var server;
-                var mainSpy;
-                var windowConfirmStub;
-
-                before(function () {
-                    var $bonusTab = $thisEl.find('#bonusTab');
-
-                    $bonusTab.click();
-
-                    server = sinon.fakeServer.create();
-                    mainSpy = sinon.spy(App, 'render');
-                    windowConfirmStub = sinon.stub(window, 'confirm');
-                });
-
-                after(function () {
-                    server.restore();
-                    mainSpy.restore();
-                    windowConfirmStub.restore();
-                });
-
-                it('Try to delete item', function () {
-                    var $deleteBtn;
-                    var $needRow = $thisEl.find('#bonusTable > tr:nth-child(3)');
-                    var $needCheckBox = $needRow.find('td:nth-child(1) > input');
-                    var projectsUrl = new RegExp('\/Projects\/', 'i');
-
-                    $needCheckBox.click();
-
-                    $deleteBtn = $thisEl.find('#removeBonus');
-
-                    server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Update success'})]);
-                    $deleteBtn.click();
-                    server.respond();
-
-                    expect($thisEl.find('tr[data-id="570e4aa461cae96537ef44ab"]')).to.not.exist;
-                });
-
-                it('Check|uncheck all items', function () {
-                    var $checkAllItemBtn = $thisEl.find('#checkAll_bonus');
-
-                    $checkAllItemBtn.click();
-                    expect($thisEl.find('#bonusTable input[type="checkbox"]').prop('checked')).to.be.true;
-
-                    $checkAllItemBtn.click();
-                    expect($thisEl.find('#bonusTable input[type="checkbox"]').prop('checked')).to.be.false;
-                });
-
-                it('Try to update some bonus', function () {
-                    var $selectedItem;
-                    var $next;
-                    var $prev;
-                    var $saveBtn;
-                    var $needRow = $thisEl.find('#bonusTable > tr:nth-child(1)');
-                    var $bonusName = $needRow.find('td[data-content="bonus"]');
-                    var $employee = $needRow.find('td[data-content="employee"]');
-
-                    // select bonus
-                    $bonusName.click();
-                    $next = $thisEl.find('.next');
-                    $next.click();
-                    $prev = $thisEl.find('.prev');
-                    $prev.click();
-                    $selectedItem = $thisEl.find('#55b92ad521e4b7c40f00060a');
-                    $selectedItem.click();
-
-                    // select employee
-                    $employee.click();
-                    $next = $thisEl.find('.next');
-                    $next.click();
-                    $prev = $thisEl.find('.prev');
-                    $prev.click();
-                    $selectedItem = $thisEl.find('#55b92ad221e4b7c40f000084');
-                    $selectedItem.click();
-
-                    $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
-                    $saveBtn.click();
-
-                    //server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Update success'})]);
-                    formView.saveItem();
-                    server.respond();
-
-                    expect($thisEl.find('#bonusTable > tr[data-id="5604fc2082ca87623a000008"] > td[data-content="bonus"]').attr('data-id')).to.be.equals('55b92ad521e4b7c40f00060a');
-                    expect($thisEl.find('#bonusTable > tr[data-id="5604fc2082ca87623a000008"] > td[data-content="employee"]').attr('data-id')).to.be.equals('55b92ad221e4b7c40f000084');
-
-                });
-
-                it('Try to add bonus item', function () {
-                    var $addItemBtn = $thisEl.find('#createBonus');
-
-                    $addItemBtn.click();
-
-                    expect($('#false')).to.exist;
-                });
-
-            });
-
-            describe('OrdersView', function () {
-                var server;
-                var mainSpy;
-                var windowConfirmStub;
-
-                before(function () {
-                    var $ordersTab = $thisEl.find('#ordersTab');
-
-                    $ordersTab.click();
-
-                    server = sinon.fakeServer.create();
-                    mainSpy = sinon.spy(App, 'render');
-                    windowConfirmStub = sinon.stub(window, 'confirm');
-                });
-
-                after(function () {
-                    server.restore();
-                    mainSpy.restore();
-                    windowConfirmStub.restore();
-                });
-
-                it('Try to sort orders list', function () {
-                    var $sortBtn = $thisEl.find('#ordersTable tr > th[data-sort="paymentInfo.total"]');
-                    var orderUrl = new RegExp('\/quotation\/list', 'i');
-                    var orderTotal = new RegExp('\/quotation\/totalCollectionLength', 'i');
-
-                    server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeQuotations[1], fakeQuotations[0]])]);
-                    server.respondWith('GET', orderTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 2
-                    })]);
-                    $sortBtn.click();
-                    server.respond();
-                    expect($thisEl.find('#orderTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8da6e6390160c9f0fe');
-
-                    server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotations)]);
-                    $sortBtn.click();
-                    server.respond();
-                    expect($thisEl.find('#orderTable > tr:nth-child(1)').attr('data-id')).to.be.equals('570f9563ccb41cca20cd9261');
-                });
-
-                it('Try to open EditView', function () {
-                    var $needTd = $thisEl.find('#orderTable > tr[data-id="564cfd8da6e6390160c9f0fe"] > td:nth-child(3)');
-                    var orderUrl = new RegExp('\/Order\/form\/', 'i');
-
-                    server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrderById)]);
-                    $needTd.click();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.exist;
-
-                });
             });*/
+
+            /*   describe('PaymentsView', function () {
+             var server;
+             var mainSpy;
+             var windowConfirmStub;
+
+             before(function () {
+             var $paymentTab = $thisEl.find('#paymentsTab');
+
+             $paymentTab.click();
+
+             server = sinon.fakeServer.create();
+             mainSpy = sinon.spy(App, 'render');
+             windowConfirmStub = sinon.stub(window, 'confirm');
+             });
+
+             after(function () {
+             server.restore();
+             mainSpy.restore();
+             windowConfirmStub.restore();
+             });
+
+             it('Try to sort payments list', function () {
+             var paymentsUrl = new RegExp('\/payment\/customers\/list', 'i');
+             var $sortBtn = $thisEl.find('#paymentsTable tr > th[data-sort="supplier.name.first"]');
+
+             server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePayments)]);
+             $sortBtn.click();
+             server.respond();
+             expect($thisEl.find('#paymentsTable #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae321e4b7c40f0013cd');
+
+             $sortBtn.click();
+             server.respond();
+             expect($thisEl.find('#paymentsTable #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae321e4b7c40f0013cd');
+             });
+
+             it('Try to open EditView', function () {
+             var $closeBtn;
+             var $needTd = $thisEl.find('#paymentsTable #listTable tr:nth-child(1) > td:nth-child(3)');
+
+             $needTd.click();
+
+             expect($('.ui-dialog')).to.exist;
+             $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-payment-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
+             $closeBtn.click();
+
+             expect($('.ui-dialog')).to.not.exist;
+             });
+
+             it('Try to change and save payment', function () {
+             var $dateInput;
+             var $saveBtn;
+             var $dateTd = $thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"] > td[data-content="date"]');
+             var paymentsUrl = '/payment/customers/';
+
+             $dateTd.click();
+             $dateInput = $dateTd.find('input');
+             $dateInput.val('23 Apr, 2016');
+
+             $saveBtn = $thisEl.find('#savePayment');
+
+             server.respondWith('PATCH', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+             $saveBtn.click();
+             server.respond();
+
+             // expect($thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"] > td[data-content="date"]').text()).to.be.equals('23 Apr, 2016');
+             });
+
+             it('Try to delete item with 403 error', function () {
+             var spyResponse;
+             var $deleteBtn = $thisEl.find('#removePayment');
+             var paymentsUrl = new RegExp('\/customerPayments\/', 'i');
+             var $needCheckBox = $thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"] > td.notForm > input');
+             $needCheckBox.click();
+
+             windowConfirmStub.returns(true);
+
+             server.respondWith('DELETE', paymentsUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+             $deleteBtn.click();
+             server.respond();
+
+             spyResponse = mainSpy.args[0][0];
+
+             expect(spyResponse).to.have.property('type', 'error');
+             expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+
+             });
+
+             it('Try to delete item', function () {
+
+             var $deleteBtn = $thisEl.find('#removePayment');
+             var paymentsUrl = new RegExp('\/customerPayments\/', 'i');
+
+             windowConfirmStub.returns(true);
+
+             server.respondWith('DELETE', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+             $deleteBtn.click();
+             server.respond();
+
+             expect($thisEl.find('#paymentsTable tr[data-id="55b92ae321e4b7c40f0013cd"]')).to.not.exist;
+             });
+
+             });*/
+            /*
+             describe('InvoiceView', function () {
+             var server;
+             var mainSpy;
+             var windowConfirmStub;
+
+             before(function () {
+             var $invoiceTab = $thisEl.find('#invoicesTab');
+
+             $invoiceTab.click();
+
+             server = sinon.fakeServer.create();
+             mainSpy = sinon.spy(App, 'render');
+             windowConfirmStub = sinon.stub(window, 'confirm');
+             });
+
+             after(function () {
+             server.restore();
+             mainSpy.restore();
+             windowConfirmStub.restore();
+             });
+
+             it('Try to sort invoice list', function () {
+             var invoiceUrl = new RegExp('\/Invoice\/list', 'i');
+             var $sortBtn = $thisEl.find('#invoices tr > th[data-sort="name"]');
+
+             server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeInvoice[1], fakeInvoice[0]])]);
+             $sortBtn.click();
+             server.respond();
+             expect($thisEl.find('#invoices #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('5710e5873a8d9e4a38be9f11');
+
+             server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoice)]);
+             $sortBtn.click();
+             server.respond();
+             expect($thisEl.find('#invoices #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae121e4b7c40f001265');
+             });
+
+             it('Try to delete item with 403 error', function () {
+             var $deleteBtn;
+             var spyResponse;
+             var $needRow = $thisEl.find('#invoices #listTable > tr:nth-child(2)');
+             var $needCheckBox = $needRow.find('.notForm > input');
+             var invoiceUrl = new RegExp('\/invoice\/', 'i');
+
+             windowConfirmStub.returns(true);
+
+             $needCheckBox.click();
+             $deleteBtn = $thisEl.find('#removeInvoice');
+
+             server.respondWith('DELETE', invoiceUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+             $deleteBtn.click();
+             server.respond();
+             spyResponse = mainSpy.args[0][0];
+
+             expect(spyResponse).to.have.property('type', 'error');
+             expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+             });
+
+             it('Try to delete item', function () {
+             var $deleteBtn;
+             var invoiceUrl = new RegExp('\/invoice\/', 'i');
+
+             windowConfirmStub.returns(true);
+
+             $deleteBtn = $thisEl.find('#removeInvoice');
+
+             server.respondWith('DELETE', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+             $deleteBtn.click();
+             server.respond();
+
+             expect($thisEl.find('#invoices #listTable > tr[data-id="5710e5873a8d9e4a38be9f11"]')).to.not.exist;
+             });
+
+             it('Try to open EditView', function () {
+             var $needTd = $thisEl.find('#invoices #listTable tr[data-id="55b92ae121e4b7c40f001265"] > td:nth-child(3)');
+             var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
+
+             server.respondWith('GET', '/currentDb', [200, {"Content-Type": "application/json"}, 'micheldb']);
+             server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoiceById)]);
+             $needTd.click();
+             server.respond();
+             server.respond();
+
+             expect($('.ui-dialog')).to.be.exist;
+
+             });
+
+             });*/
+
+            /*describe('BonusView', function () {
+             var server;
+             var mainSpy;
+             var windowConfirmStub;
+
+             before(function () {
+             var $bonusTab = $thisEl.find('#bonusTab');
+
+             $bonusTab.click();
+
+             server = sinon.fakeServer.create();
+             mainSpy = sinon.spy(App, 'render');
+             windowConfirmStub = sinon.stub(window, 'confirm');
+             });
+
+             after(function () {
+             server.restore();
+             mainSpy.restore();
+             windowConfirmStub.restore();
+             });
+
+             it('Try to delete item', function () {
+             var $deleteBtn;
+             var $needRow = $thisEl.find('#bonusTable > tr:nth-child(3)');
+             var $needCheckBox = $needRow.find('td:nth-child(1) > input');
+             var projectsUrl = new RegExp('\/Projects\/', 'i');
+
+             $needCheckBox.click();
+
+             $deleteBtn = $thisEl.find('#removeBonus');
+
+             server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Update success'})]);
+             $deleteBtn.click();
+             server.respond();
+
+             expect($thisEl.find('tr[data-id="570e4aa461cae96537ef44ab"]')).to.not.exist;
+             });
+
+             it('Check|uncheck all items', function () {
+             var $checkAllItemBtn = $thisEl.find('#checkAll_bonus');
+
+             $checkAllItemBtn.click();
+             expect($thisEl.find('#bonusTable input[type="checkbox"]').prop('checked')).to.be.true;
+
+             $checkAllItemBtn.click();
+             expect($thisEl.find('#bonusTable input[type="checkbox"]').prop('checked')).to.be.false;
+             });
+
+             it('Try to update some bonus', function () {
+             var $selectedItem;
+             var $next;
+             var $prev;
+             var $saveBtn;
+             var $needRow = $thisEl.find('#bonusTable > tr:nth-child(1)');
+             var $bonusName = $needRow.find('td[data-content="bonus"]');
+             var $employee = $needRow.find('td[data-content="employee"]');
+
+             // select bonus
+             $bonusName.click();
+             $next = $thisEl.find('.next');
+             $next.click();
+             $prev = $thisEl.find('.prev');
+             $prev.click();
+             $selectedItem = $thisEl.find('#55b92ad521e4b7c40f00060a');
+             $selectedItem.click();
+
+             // select employee
+             $employee.click();
+             $next = $thisEl.find('.next');
+             $next.click();
+             $prev = $thisEl.find('.prev');
+             $prev.click();
+             $selectedItem = $thisEl.find('#55b92ad221e4b7c40f000084');
+             $selectedItem.click();
+
+             $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
+             $saveBtn.click();
+
+             //server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Update success'})]);
+             formView.saveItem();
+             server.respond();
+
+             expect($thisEl.find('#bonusTable > tr[data-id="5604fc2082ca87623a000008"] > td[data-content="bonus"]').attr('data-id')).to.be.equals('55b92ad521e4b7c40f00060a');
+             expect($thisEl.find('#bonusTable > tr[data-id="5604fc2082ca87623a000008"] > td[data-content="employee"]').attr('data-id')).to.be.equals('55b92ad221e4b7c40f000084');
+
+             });
+
+             it('Try to add bonus item', function () {
+             var $addItemBtn = $thisEl.find('#createBonus');
+
+             $addItemBtn.click();
+
+             expect($('#false')).to.exist;
+             });
+
+             });*/
+
+            /*  describe('OrdersView', function () {
+             var server;
+             var mainSpy;
+             var windowConfirmStub;
+
+             before(function () {
+             var $ordersTab = $thisEl.find('#ordersTab');
+
+             $ordersTab.click();
+
+             server = sinon.fakeServer.create();
+             mainSpy = sinon.spy(App, 'render');
+             windowConfirmStub = sinon.stub(window, 'confirm');
+             });
+
+             after(function () {
+             server.restore();
+             mainSpy.restore();
+             windowConfirmStub.restore();
+             });
+
+             it('Try to sort orders list', function () {
+             var $sortBtn = $thisEl.find('#ordersTable tr > th[data-sort="paymentInfo.total"]');
+             var orderUrl = new RegExp('\/quotation\/list', 'i');
+             var orderTotal = new RegExp('\/quotation\/totalCollectionLength', 'i');
+
+             server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeQuotations[1], fakeQuotations[0]])]);
+             server.respondWith('GET', orderTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+             count: 2
+             })]);
+             $sortBtn.click();
+             server.respond();
+             expect($thisEl.find('#orderTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8da6e6390160c9f0fe');
+
+             server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotations)]);
+             $sortBtn.click();
+             server.respond();
+             expect($thisEl.find('#orderTable > tr:nth-child(1)').attr('data-id')).to.be.equals('570f9563ccb41cca20cd9261');
+             });
+
+             it('Try to open EditView', function () {
+             var $needTd = $thisEl.find('#orderTable > tr[data-id="564cfd8da6e6390160c9f0fe"] > td:nth-child(3)');
+             var orderUrl = new RegExp('\/Order\/form\/', 'i');
+
+             server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrderById)]);
+             $needTd.click();
+             server.respond();
+
+             expect($('.ui-dialog')).to.exist;
+
+             });
+             });*/
 
         });
 
