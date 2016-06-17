@@ -41,7 +41,7 @@ module.exports = function (config) {
             {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false/*, watching: true*/},
             {pattern: 'test/uiSpecs/models/*.test.js', included: false/*, watching: true*/},
             {pattern: 'test/uiSpecs/views/login.test.js', included: false/*, watching: true*/},
-            {pattern: 'test/uiSpecs/views/user.test.js', included: false/*, watching: true*/}
+            {pattern: 'test/uiSpecs/views/inventoryReport.test.js', included: false/*, watching: true*/}
 
             // {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
         ],
