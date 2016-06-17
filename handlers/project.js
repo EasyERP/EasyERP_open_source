@@ -103,7 +103,7 @@ module.exports = function (models, event) {
             if (err) {
                 return next(err);
             }
-            
+
             res.status(201).send({success: 'A new Project crate success', result: result, id: result._id});
         });
     };
@@ -223,12 +223,13 @@ module.exports = function (models, event) {
 
         var projectThumbPipeline = [{
             $project: {
-                name         : 1,
-                workflow     : {$arrayElemAt: ['$workflow', 0]},
-                task         : 1,
-                customer     : {$arrayElemAt: ['$customer', 0]},
-                health       : 1,
-                salesManagers: {
+                name           : 1,
+                workflow       : {$arrayElemAt: ['$workflow', 0]},
+                task           : 1,
+                customer       : {$arrayElemAt: ['$customer', 0]},
+                health         : 1,
+                'editedBy.date': 1,
+                salesManagers  : {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
@@ -244,13 +245,14 @@ module.exports = function (models, event) {
             }
         }, {
             $project: {
-                _id         : 1,
-                name        : 1,
-                task        : 1,
-                workflow    : 1,
-                salesManager: {$arrayElemAt: ['$salesManagers', 0]},
-                customer    : 1,
-                health      : 1
+                _id            : 1,
+                name           : 1,
+                task           : 1,
+                workflow       : 1,
+                salesManager   : {$arrayElemAt: ['$salesManagers', 0]},
+                customer       : 1,
+                health         : 1,
+                'editedBy.date': 1
             }
         }, {
             $lookup: {
@@ -261,13 +263,14 @@ module.exports = function (models, event) {
             }
         }, {
             $project: {
-                _id         : 1,
-                name        : 1,
-                task        : 1,
-                workflow    : 1,
-                salesManager: {$arrayElemAt: ['$salesManager', 0]},
-                customer    : 1,
-                health      : 1
+                _id            : 1,
+                name           : 1,
+                task           : 1,
+                workflow       : 1,
+                salesManager   : {$arrayElemAt: ['$salesManager', 0]},
+                customer       : 1,
+                health         : 1,
+                'editedBy.date': 1
             }
         }];
 
@@ -373,6 +376,7 @@ module.exports = function (models, event) {
             salesManager: '$root.salesManager',
             customer    : '$root.customer',
             health      : '$root.health',
+            editedBy    : '$root.editedBy',
             total       : 1
         };
         var keysSort = Object.keys(sort);

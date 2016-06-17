@@ -258,6 +258,7 @@ var User = function (event, models) {
                 req.session.uId = _user._id;
                 req.session.uName = _user.login;
                 req.session.lastDb = data.dbId;
+                req.session.profileId = _user.profile;
                 req.session.kanbanSettings = _user.kanbanSettings;
 
                 lastAccess = new Date();

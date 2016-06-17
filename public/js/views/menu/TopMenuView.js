@@ -12,14 +12,16 @@ define([
         selectedModule: null,
         initialize    : function (options) {
             if (!options.collection) {
-                throw 'No collection specified!';
+                App.render({
+                    type   : 'error',
+                    message: 'No collection specified!'
+                });
             }
             this.collection = options.collection;
             this.currentRoot = options.currentRoot;
             this.leftMenu = options.leftMenu;
             this.render();
             _.bindAll(this, 'render', 'clickItem');
-
         },
 
         events: {
@@ -63,14 +65,17 @@ define([
             }
 
             this.$el.empty();
+
             _.each(this.collection, function (model) {
                 var view = new TopMenuItemView({model: model});
                 var item = view.render().el;
+
                 if (model.get('mname') === self.selectedModule) {
                     $(item).addClass('selected');
                 }
                 self.$el.append(item);
             });
+
             return this;
         }
     });

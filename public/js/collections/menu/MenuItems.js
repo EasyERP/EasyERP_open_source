@@ -34,10 +34,6 @@ define([
             this.trigger('change:currentModule', this.currentModule, this);
         },
 
-        parse: function (response) {
-            return response;
-        },
-
         fetchError: function () {
             throw new Error('No collection received from fetch');
         },
@@ -50,6 +46,7 @@ define([
             if (!this.relations) {
                 this.relationships();
             }
+            
             return this.relations[0];
         },
 
@@ -77,7 +74,7 @@ define([
 
             if (this.relations[model.id] !== undefined) {
                 _.each(this.relations[model.id], function (module) {
-                    if (module.get("link")) {
+                    if (module.get('link')) {
                         modules.push(module);
                     } else {
                         this.children(module, modules);
