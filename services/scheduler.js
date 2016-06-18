@@ -1,9 +1,9 @@
-module.exports = function (db, model) {
+module.exports = function (model) {
     'use strict';
     var nodeScheduler = require('node-schedule');
     var mongoose = require('mongoose');
     var employeeSchema = mongoose.Schemas.Employee;
-    var logWriter = require('../helpers/logWriter');
+    var logWriter = require('../helpers/logger');
 
     var rule = {
         hour  : 9,
@@ -78,23 +78,16 @@ module.exports = function (db, model) {
         });
     }
 
-    function updateYearEmployees() {
-        var dbIds = Object.keys(db);
-        var length = dbIds.length;
-        var i;
-        var dbId;
-
-        for (i = 0; i < length; i++) {
-            dbId = db;
-            findBirthdayToday(model.get(dbId, 'Employees', employeeSchema));
-        }
+    function updateYearEmployees(dbId) {
+        return findBirthdayToday(model.get(dbId, 'Employees', employeeSchema));
     }
 
-    function Scheduler() {
+    function Scheduler(dbId) {
         this.initEveryDayScheduler = function () {
+            var _updateYearEmployees = updateYearEmployees.bind(this, dbId);
 
             if (!process.env.INITED_SCHEDULER) {
-                nodeScheduler.scheduleJob(rule, updateYearEmployees);
+                nodeScheduler.scheduleJob(rule, _updateYearEmployees);
                 process.env.INITED_SCHEDULER = true;
                 console.log('=================== initEveryDayScheduler ===================');
             } else {

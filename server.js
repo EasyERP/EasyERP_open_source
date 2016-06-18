@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var dbsObject = {};
+var models = require('./helpers/models')(dbsObject);
 var dbsNames = {};
 var connectOptions;
 var mainDb;
@@ -77,11 +78,16 @@ mainDb.once('open', function callback() {
                 console.error(err);
             });
             dbObject.once('open', function () {
+                var Scheduler = require('./services/scheduler')();
+                var scheduler = new Scheduler(_db.DBname);
+
                 console.log('Connection to ' + _db.DBname + ' is success' + index);
                 dbInfo.url = result[index].url;
                 dbInfo.DBname = result[index].DBname;
                 dbsObject[_db.DBname] = dbObject;
                 dbsNames[_db.DBname] = dbInfo;
+
+                scheduler.initEveryDayScheduler();
             });
         });
     });
