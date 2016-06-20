@@ -7,7 +7,6 @@ var Filters = function (models) {
 
 
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
-    var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var PayRollSchema = mongoose.Schemas.PayRoll;
     var JobsSchema = mongoose.Schemas.jobs;
@@ -2066,13 +2065,64 @@ var Filters = function (models) {
         });
     };
 
+    this.getDividendInvoiceFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
+        var DividendInvoice = models.get(lastDB, 'dividendInvoice', DividendInvoiceSchema);
+        var pipeLine;
+        var aggregation;
+        var query = {
+            _type: 'dividendInvoice'
+        };
+
+        pipeLine = [{
+            $match: query
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $project: {
+                workflow: {$arrayElemAt: ['$workflow', 0]}
+            }
+        }, {
+            $group: {
+                _id     : null,
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    }
+                }
+            }
+        }];
+
+        aggregation = DividendInvoice.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getFiltersValues = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var query = req.query;
 
         var startFilter;
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
-        var DividendInvoice = models.get(lastDB, 'dividendInvoice', DividendInvoiceSchema);
         var ExpensesPayments = models.get(lastDB, 'expensesInvoicePayment', ExpensesInvoicePaymentSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
         var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
@@ -2209,47 +2259,6 @@ var Filters = function (models) {
                 }
             }
             ], function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-
-                if (!result.length) {
-                    return callback(null, result);
-                }
-
-                result = result[0];
-
-                callback(null, result);
-            });
-        }
-
-        function getDividendInvoiceFiltersValues(callback) {
-            DividendInvoice.aggregate([{
-                $match: {
-                    _type: 'dividendInvoice'
-                }
-            }, {
-                $lookup: {
-                    from        : 'workflows',
-                    localField  : 'workflow',
-                    foreignField: '_id',
-                    as          : 'workflow'
-                }
-            }, {
-                $project: {
-                    workflow: {$arrayElemAt: ['$workflow', 0]}
-                }
-            }, {
-                $group: {
-                    _id     : null,
-                    workflow: {
-                        $addToSet: {
-                            _id : '$workflow._id',
-                            name: '$workflow.name'
-                        }
-                    }
-                }
-            }], function (err, result) {
                 if (err) {
                     return callback(err);
                 }
@@ -3018,7 +3027,6 @@ var Filters = function (models) {
         }
 
         async.parallel({
-            DividendInvoice : getDividendInvoiceFiltersValues,
             ExpensesPayments: getExpensesPaymentsFiltersValues,
             DividendPayments: getDividendPaymentsFiltersValues,
             PayrollExpenses : getPayRollFiltersValues,
