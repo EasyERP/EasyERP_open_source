@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'router',
@@ -14,7 +15,8 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules,
+], function (Backbone,
+             modules,
              fixtures,
              router,
              DepartmentsCollection,
@@ -32,7 +34,8 @@ define([
     'use strict';
 
     var fakeDepartments = {
-        data: [
+        total: 300,
+        data : [
             {
                 _id              : "55b92ace21e4b7c40f000012",
                 ID               : 4,
@@ -3133,19 +3136,24 @@ define([
     var listView;
     var depsCollection;
     var expect;
+    var historyNavigateSpy;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
     expect = chai.expect;
-    
+
     describe('Departments view', function () {
         var $fixture;
         var $elFixture;
         var alertStub;
 
-        before(function(){
+        before(function () {
             alertStub = sinon.stub(window, 'alert');
             alertStub.returns(true);
+
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            ajaxSpy = sinon.spy($, 'ajax');
         });
 
         after(function () {
@@ -3154,6 +3162,8 @@ define([
             listView.remove();
 
             alertStub.restore();
+            historyNavigateSpy.restore();
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -3215,18 +3225,21 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var depsUrl = new RegExp('\/Departments\/list', 'i');
+                var depsUrl = new RegExp('\/Departments\/', 'i');
 
                 server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
-
                 depsCollection = new DepartmentsCollection({
-                    count      : 0,
-                    page       : 1,
+                    contentType: 'Departments',
+                    filter     : null,
                     viewType   : 'list',
-                    contentType: 'Departments'
-
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false
                 });
                 server.respond();
+
+                expect(depsCollection).to.have.lengthOf(15);
 
                 topBarView = new TopBarView({
                     collection: depsCollection
@@ -3262,24 +3275,13 @@ define([
             it('Try to create departments list view', function (done) {
                 var $contentHolderEl;
                 var $listContainerEl;
-                var depsUrl = new RegExp('\/Departments\/', 'i');
 
-                server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
-
-                depsCollection = new DepartmentsCollection({
-                    count      : 0,
-                    page       : 1,
-                    viewType   : 'list',
-                    contentType: 'Departments'
-                });
-                server.respond();
                 listView = new ListView({
                     collection   : depsCollection,
                     startTime    : new Date(),
                     newCollection: true,
                     page         : 1
                 });
-
 
                 eventsBinder.subscribeTopBarEvents(topBarView, listView);
                 eventsBinder.subscribeCollectionEvents(depsCollection, listView);
