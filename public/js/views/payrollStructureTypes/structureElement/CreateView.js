@@ -78,8 +78,8 @@ define([
         },
 
         events: {
-            'click #addFormulaElement'                                       : 'addFormulaElement',
-            'click .fa-trash-o'                                              : 'removeEl'
+            'click #addFormulaElement': 'addFormulaElement',
+            'click .fa-trash-o'       : 'removeEl'
         },
 
         removeEl: function (e) {

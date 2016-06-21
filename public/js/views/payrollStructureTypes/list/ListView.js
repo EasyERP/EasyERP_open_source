@@ -4,7 +4,7 @@ define([
     'Backbone',
     'views/listViewBase',
     'views/payrollStructureTypes/CreateView',
-    // 'views/payrollStructureTypes/EditView',
+    'views/payrollStructureTypes/EditView',
     'views/payrollStructureTypes/list/ListItemView',
     'text!templates/payrollStructureTypes/list/ListHeader.html',
     'collections/payrollStructure/filterCollection'
@@ -13,7 +13,7 @@ define([
              Backbone,
              listViewBase,
              CreateView,
-             /* editView,*/
+             EditView,
              ListItemView,
              listTemplate,
              ContentCollection) {
@@ -76,7 +76,7 @@ define([
 
             e.preventDefault();
 
-            return new editView({
+            return new EditView({
                 eventChannel: self.eventChannel,
                 model       : model
             });

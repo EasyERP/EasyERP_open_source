@@ -2,9 +2,9 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'text!templates/payrollComponentTypes/EditTemplate.html',
-    'models/PayrollComponentTypeModel'
-], function ($, _, Backbone, EditTemplate) {
+    'text!templates/payrollStructureTypes/EditTemplate.html',
+    'models/PayrollStructureTypesModel'
+], function ($, _, Backbone, EditTemplate, PayrollStructureTypesModel) {
 
     var EditView = Backbone.View.extend({
         el         : '#content-holder',
@@ -13,7 +13,7 @@ define([
 
         initialize: function (options) {
             var self = this;
-            
+
             options = options || {};
 
             self.model = options.model;
@@ -27,12 +27,11 @@ define([
             var self = this;
             var model;
             var $currentEl = this.$el;
-            var name = $.trim($currentEl.find('#payrollComponentTypeName').val());
-            var description = $currentEl.find('#payrollComponentTypeComment').val();
+
+            var name = $.trim($currentEl.find('#payrollStructureName').val());
+
             var data = {
-                name       : name,
-                description: description,
-                type       : self.type
+                name: name
             };
 
             if (!name) {
@@ -42,25 +41,17 @@ define([
                 });
             }
 
-            model = self.model;
+            model = new PayrollStructureTypesModel();
             model.urlRoot = function () {
-                return 'payrollComponentTypes';
+                return 'payrollStructureTypes';
             };
 
             model.save(data, {
                 patch  : true,
-                headers: {
-                    mid: 103
-                },
                 wait   : true,
                 success: function () {
                     self.hideDialog();
-
-                    if (self.type === 'deductions') {
-                        self.eventChannel.trigger('updatePayrollDeductionsType');
-                    } else if (self.type === 'earnings') {
-                        self.eventChannel.trigger('updatePayrollEarningsType');
-                    }
+                    self.eventChannel.trigger('updatePayrollStructureTypes');
                 },
 
                 error: function (model, xhr) {
@@ -88,12 +79,11 @@ define([
                 autoOpen     : true,
                 resizable    : true,
                 dialogClass  : 'edit-dialog',
-                title        : 'Create WeeklyScheduler',
+                title        : 'Edit Payroll Structure Types',
                 width        : '900px',
                 position     : {within: $('#wrapper')},
                 buttons      : [
                     {
-                        id   : 'create-weeklyScheduler-dialog',
                         text : 'Save',
                         click: function () {
                             self.saveItem();
