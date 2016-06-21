@@ -11,6 +11,7 @@ define([
         template   : _.template(CreateTemplate),
 
         events: {
+            keydown: 'keyDownHandler'
         },
 
         initialize: function (options) {
@@ -22,16 +23,24 @@ define([
             self.render();
         },
 
-        saveItem: function () {
+        keyDownHandler: function (e) {
+            if (e.which === 13) {
+                this.saveItem(e);
+            }
+        },
+
+        saveItem: function (e) {
             var self = this;
             var model;
-            var hours;
             var $currentEl = this.$el;
             var name = $.trim($currentEl.find('#scheduledPayName').val());
             var data = {
-                name      : name
+                name: name
             };
-            var i;
+
+            if (e) {
+                e.preventDefault();
+            }
 
             if (!name) {
                 return App.render({
