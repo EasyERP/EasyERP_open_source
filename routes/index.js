@@ -69,7 +69,8 @@ module.exports = function (app, mainDb) {
 
     var logger = require('../helpers/logger');
     var async = require('async');
-    var requestHandler;
+    var ModulesHandler = require('../handlers/modules');
+    var modulesHandler = new ModulesHandler(models);
 
     require('../helpers/arrayExtender');
 
@@ -137,6 +138,8 @@ module.exports = function (app, mainDb) {
     app.use('/degrees', degreesRouter);
     app.use('/profiles', profilesRouter);
     app.use('/tasks', tasksRouter);
+    app.use('/users', userRouter);
+
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -164,8 +167,13 @@ module.exports = function (app, mainDb) {
     });
 
     app.get('/logout', function (req, res, next) {
-        if (req.session) {
-            req.session.destroy(function () {
+        var session = req.session;
+
+        if (session) {
+            session.destroy(function (err) {
+                if (err) {
+                    return next(err);
+                }
             });
 
         }
@@ -173,8 +181,17 @@ module.exports = function (app, mainDb) {
         res.redirect('/#login');
     });
 
-    app.use('/users', userRouter);
+    app.get('/:id', function (req, res, next) {
+        var id = req.params.id;
 
+        id = parseInt(id, 10);
+
+        if (isNaN(id)) {
+            return next();
+        }
+        
+        modulesHandler.redirectTo(req, res, next);
+    });
 
     function notFound(req, res, next) {
         res.status(404);

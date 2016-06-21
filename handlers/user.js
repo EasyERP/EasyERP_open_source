@@ -237,7 +237,7 @@ var User = function (event, models) {
                 ]
             };
 
-            UserModel.findOne(queryObject, {login: 1, pass: 1, kanbanSettings: 1}, function (err, _user) {
+            UserModel.findOne(queryObject, {login: 1, pass: 1, kanbanSettings: 1, profile: 1}, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
                 var lastAccess;
 

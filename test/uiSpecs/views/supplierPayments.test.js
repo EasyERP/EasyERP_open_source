@@ -3472,7 +3472,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'supplierPayments'});
 
@@ -3793,36 +3793,36 @@ define([
                 });
 
                 /*it('Try to cancel change when created new row', function () {
-                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                 var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                 var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                    $createBtn.click();
+                 $createBtn.click();
 
-                    $deleteBtn.click();
-                    server.respond();
+                 $deleteBtn.click();
+                 server.respond();
 
-                    expect(cancelChangesSpy.called).to.be.true;
-                });
+                 expect(cancelChangesSpy.called).to.be.true;
+                 });
 
-                it('Try to cancel change', function () {
-                    var $yearInput;
-                    var $firstRow = $thisEl.find('#listTable > tr:nth-child(1)');
-                    var $yearEl = $firstRow.find('td[data-content="year"]');
-                    var $bonusEl = $yearEl.prev();
-                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-                    var cancelChangesSpy = sinon.spy(listView, 'cancelChanges');
+                 it('Try to cancel change', function () {
+                 var $yearInput;
+                 var $firstRow = $thisEl.find('#listTable > tr:nth-child(1)');
+                 var $yearEl = $firstRow.find('td[data-content="year"]');
+                 var $bonusEl = $yearEl.prev();
+                 var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                 var cancelChangesSpy = sinon.spy(listView, 'cancelChanges');
 
-                    $yearEl.click();
-                    $yearInput = $yearEl.find('input');
-                    $yearInput.val('2015');
-                    $yearInput.trigger('change');
-                    $bonusEl.click();
+                 $yearEl.click();
+                 $yearInput = $yearEl.find('input');
+                 $yearInput.val('2015');
+                 $yearInput.trigger('change');
+                 $bonusEl.click();
 
-                    $deleteBtn.click();
-                    expect(cancelChangesSpy.called).to.be.true;
+                 $deleteBtn.click();
+                 expect(cancelChangesSpy.called).to.be.true;
 
-                    cancelChangesSpy.restore();
-                });*/
+                 cancelChangesSpy.restore();
+                 });*/
 
                 it('Try to delete item with 403 server error', function () {
                     var spyResponse;
@@ -3879,7 +3879,7 @@ define([
                     expect($searchContainer.find('#supplierUl > li').first()).to.have.class('checkedValue');
                     expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
 
-                    //select BonusType
+                    // select BonusType
                     $bonusType = $searchContainer.find('#paymentRefFullContainer > .groupName');
                     $bonusType.click();
                     $selectedItem = $searchContainer.find('#paymentRefUl > li').first();
@@ -3975,7 +3975,6 @@ define([
                     server.respondWith('POST', '/payments/ ', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $saveBtn.click();
                     server.respond();
-
 
                     expect(listView.$el.find('input[type="text"].editing').length).to.equals(0);
                 });

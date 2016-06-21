@@ -894,7 +894,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'salesInvoices'});
                 server.respond();
 
@@ -974,7 +974,7 @@ define([
                 });
 
                 expect(topBarView.$el.find('h3')).to.exist;
-                expect(topBarView.$el.find('h3').text()).to.be.equals('Invoice');
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Invoices');
             });
         });
 

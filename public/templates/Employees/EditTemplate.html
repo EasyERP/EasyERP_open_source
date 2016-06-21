@@ -496,7 +496,9 @@
                             </tbody>
                         </table>
                         <div class="ui-dialog-buttonset">
-                            <button id="update" class="btn"><span>Add</span></button>
+                            <% if (model.transfer.length && model.transfer[0].hasOwnProperty('salary')) {%>
+                                <button id="update" class="btn"><span>Add</span></button>
+                            <%}%>
                         </div>
                         <!--<a id="update">Add</a> &lt;!&ndash;changed by Pasha from Update to Add&ndash;&gt;-->
                     </div>

@@ -1001,7 +1001,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'salesProforma'});
                 server.respond();
 
@@ -1269,7 +1269,7 @@ define([
 
                 it('Try to go to edit form', function (done) {
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
-                    var invoiceUrl = new RegExp('\/Invoice\/', 'i');
+                    var invoiceUrl = new RegExp('\/Invoices\/', 'i');
 
                     App.currentDb = 'michelDb';
                     App.currentUser = {
