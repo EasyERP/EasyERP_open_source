@@ -1,6 +1,6 @@
 define([
-    'Backbone' +
-    ''], function (Backbone) {
+    'Backbone'
+], function (Backbone) {
     var InvoiceModel = Backbone.Model.extend({
         idAttribute: '_id',
         initialize : function () {
@@ -8,8 +8,8 @@ define([
         },
 
         defaults: {
-            deduction: {},
-            earning  : {}
+            deduction: [],
+            earning  : []
         },
 
         urlRoot: function () {

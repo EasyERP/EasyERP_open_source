@@ -5,10 +5,10 @@ define([
     'views/dialogViewBase',
     'text!templates/payrollStructureTypes/structureElement/CreateTemplate.html',
     'text!templates/payrollStructureTypes/structureElement/FormulaElementTemplate.html',
-    'views/selectView/selectView',
+    'models/PayrollComponentTypeModel',
     'common',
     'populate'
-], function ($, _, Backbone, Parent, CreateTemplate, FormulaElementTemplate, selectView, common, populate) {
+], function ($, _, Backbone, Parent, CreateTemplate, FormulaElementTemplate, PayrollComponentTypeModel, common, populate) {
 
     var CreateView = Parent.extend({
         el             : '#content-holder',
@@ -100,28 +100,6 @@ define([
             $('#formula').append(self.elementTemplate({seq: self.seq++}));
         },
 
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
         chooseOption: function (e) {
             var $target = $(e.target);
             var parentUl = $target.parent();
@@ -145,6 +123,7 @@ define([
             var name = $.trim($currentEl.find('#structureComponentName').val());
             var data = self.data;
             var err;
+            var model;
 
             data.name = name;
             data.type = self.type;
@@ -178,9 +157,23 @@ define([
                 });
             }
 
-            self.eventChannel.trigger('newStructureComponent', data);
+            model = new PayrollComponentTypeModel();
+            model.urlRoot = function () {
+                return 'payrollComponentTypes';
+            };
 
-            self.remove();
+            model.save(data, {
+                patch  : true,
+                success: function (model) {
+                    self.remove();
+
+                    self.eventChannel.trigger('newStructureComponent', data, model);
+                },
+
+                error: function (model, xhr) {
+                    self.errorNotification(xhr);
+                }
+            });
         },
 
         hideDialog: function () {

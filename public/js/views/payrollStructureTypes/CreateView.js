@@ -37,9 +37,11 @@ define([
             'click .fa-trash-o': 'remove'
         },
 
-        newStructureComponent: function (component) {
+        newStructureComponent: function (component, modelComponent) {
             var self = this;
             var model = self.model;
+
+            component._id = modelComponent.id;
 
             (model.get([component.type]))[component.id] = component;
 
@@ -103,9 +105,23 @@ define([
             var $currentEl = this.$el;
 
             var name = $.trim($currentEl.find('#payrollStructureName').val());
+            var $earnings = $currentEl.find('[data-id="earning"]').find('li');
+            var $deductions = $currentEl.find('[data-id="deduction"]').find('li');
+            var earnings = [];
+            var deductions = [];
+
+            $earnings.each(function () {
+                earnings.push($(this).attr('id'));
+            });
+
+            $deductions.each(function () {
+                deductions.push($(this).attr('id'));
+            });
 
             var data = {
-                name: name
+                name: name,
+                earning: earnings,
+                deduction: deductions
             };
 
             if (!name) {

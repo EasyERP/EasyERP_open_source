@@ -45,6 +45,7 @@ var PayrollComponentType = function (models) {
 
     this.delete = function (req, res, next) {
         var db = req.session.lastDb;
+        var id = req.params.id;
         var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
 
         PayrollComponentType.findByIdAndRemove(id, function (err, result) {
