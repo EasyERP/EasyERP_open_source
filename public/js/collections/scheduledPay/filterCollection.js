@@ -1,9 +1,10 @@
 ﻿define([
+    'Backbone',
     'models/ScheduledPayModel'
-], function (ScheduledPayModel) {
+], function (Backbone, ScheduledPayModel) {
     var ScheduledPayCollection = Backbone.Collection.extend({
         model       : ScheduledPayModel,
-        url         : '/scheduledPay/list/',
+        url         : '/scheduledPay/',
         page        : null,
         namberToShow: null,
         viewType    : null,

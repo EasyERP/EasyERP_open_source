@@ -5,8 +5,8 @@ var ScheduledPayHandler = require('../handlers/scheduledPay');
 module.exports = function (models) {
     var handler = new ScheduledPayHandler(models);
 
+    router.get('/', handler.getForView);
     router.get('/forDd', handler.getForDd);
-    router.get('/:viewType', handler.getForView);
 
     router.post('/', handler.create);
     router.patch('/:id', handler.update);
