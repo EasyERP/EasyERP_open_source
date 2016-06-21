@@ -2544,15 +2544,6 @@ define([
 
                 });
 
-                /*it('Try to delete row in job table', function () {
-                 var $dialogEl = $('.ui-dialog');
-                 var $deleteRowBtn = $dialogEl.find('.fa-trash');
-
-                 windowConfirmStub.returns(true);
-
-                 $deleteRowBtn.click();
-                 });*/
-
                 it('Try to edit job row', function () {
                     var $needInput;
                     var $dialogEl = $('.ui-dialog');
@@ -2565,14 +2556,14 @@ define([
                 });
 
                 it('Try to save application', function () {
-                    var $next;
-                    var $prev;
-                    var $selectedItem;
-                    var $saveBtn;
                     var $dialogEl = $('.ui-dialog');
                     var $nameInput = $dialogEl.find('#first');
                     var $relatedUserSelect = $dialogEl.find('#relatedUsersDd');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
+                    var $next;
+                    var $prev;
+                    var $selectedItem;
+                    var $saveBtn;
 
                     window.location.hash = '#easyErp/Applications';
 
@@ -2624,7 +2615,6 @@ define([
 
         describe('Application CreateView', function () {
             var server;
-            var mainSpy;
             var windowConfirmStub;
             var createView;
 
@@ -2643,13 +2633,16 @@ define([
 
             it('Try to create CreateView', function () {
                 var usersUrl = '/users/forDd';
+                var $dialog;
 
                 server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsers)]);
                 createView = new CreateView();
                 server.respond();
 
-                expect($('.ui-dialog')).to.exist;
+                $dialog = $('.ui-dialog');
 
+                expect($dialog).to.exist;
+                expect($dialog).to.have.lengthOf(1);
             });
 
             it('Try to switch tabs', function () {

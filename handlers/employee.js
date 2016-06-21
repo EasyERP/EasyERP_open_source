@@ -60,6 +60,11 @@ var Employee = function (event, models) {
         };
     };
 
+    function accessEmployeeSalary(profileId) {
+        var profiles = CONSTANTS.ACCESS_EMPLOYEE_SALARY;
+        return !(profiles.indexOf(profileId.toString()) < 0);
+    }
+
     function getNameAndDepartment(db, query, callback) {
         var Model = models.get(db, 'Employees', EmployeeSchema);
         var matchQuery = {};
@@ -571,9 +576,10 @@ var Employee = function (event, models) {
     function getById(req, res, next) {
         var project = {};
         var data = req.query;
+        var profileId = req.session.profileId;
         var query;
 
-        if (ids.indexOf(req.session.uId) === -1) {
+        if (!accessEmployeeSalary(profileId)) {
             project = {'transfer.salary': 0};
         }
 
@@ -960,6 +966,7 @@ var Employee = function (event, models) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var _id = req.params.id;
         var dbName = req.session.lastDb;
+        var profileId = req.session.profileId;
         var UsersSchema = mongoose.Schemas.User;
         var UsersModel = models.get(dbName, 'Users', UsersSchema);
         var Department = models.get(dbName, 'Department', DepartmentSchema);
@@ -1058,16 +1065,21 @@ var Employee = function (event, models) {
                         return next(err);
                     }
 
-                    if (ids.indexOf(req.session.uId) === -1) {
+                    /*if (!accessEmployeeSalary(profileId)) {
                         data.transfer = data.transfer.map(function (tr, i) {
                             if (i !== 0) {
-                                tr.salary = (emp.transfer[i] && emp.transfer[i].salary) || emp.transfer[i - 1].salary;
+                                if (emp.transfer[i] && emp.transfer[i].salary) {
+                                    tr.salary = emp.transfer[i].salary;
+                                } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
+                                    tr.salary = emp.transfer[i - 1].salary;
+                                }
                             } else {
                                 tr.salary = 0;
                             }
+
                             return tr;
                         });
-                    }
+                    }*/
 
                     Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                         var os = require('os');
