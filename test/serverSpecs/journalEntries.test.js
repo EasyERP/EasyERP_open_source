@@ -19,7 +19,7 @@ describe('journalEntries Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
