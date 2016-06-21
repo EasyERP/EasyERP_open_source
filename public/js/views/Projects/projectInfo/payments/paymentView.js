@@ -61,6 +61,7 @@ define([
             var listTableCheckedInput;
             var answer;
 
+            
             listTableCheckedInput = $('#paymentsTable').find("input:not('#checkAll_payments'):checked");
             this.collectionLength = this.collection.length;
 
