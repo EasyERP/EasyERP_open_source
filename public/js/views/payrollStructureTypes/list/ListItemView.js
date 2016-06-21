@@ -12,15 +12,15 @@ define([
 
             this.collection = options.collection;
             this.page = isNaN(this.page) ? 1 : this.page;
-            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
+            this.startNumber = (this.page - 1) * options.itemsNumber;
         },
 
         render: function (options) {
             var el = (options && options.thisEl) ? options.thisEl : this.$el;
 
             el.append(_.template(listTemplate, {
-                weeklySchedulers: this.collection.toJSON(),
-                startNumber     : this.startNumber
+                payrollComponentTypes: this.collection.toJSON(),
+                startNumber          : this.startNumber
             }));
         }
     });

@@ -58,4 +58,5 @@ module.exports = (function () {
     require('./weeklyScheduler.js');
     require('./payrollComponentType.js');
     require('./historyEntry.js');
+    require('./payrollStructureTypes.js');
 })();

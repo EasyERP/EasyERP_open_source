@@ -7,7 +7,7 @@ define([
     // 'views/payrollStructureTypes/EditView',
     'views/payrollStructureTypes/list/ListItemView',
     'text!templates/payrollStructureTypes/list/ListHeader.html',
-    'collections/weeklyScheduler/filterCollection'
+    'collections/payrollStructure/filterCollection'
 ], function ($,
              _,
              Backbone,
@@ -59,11 +59,11 @@ define([
             e.preventDefault();
             e.stopPropagation();
 
-            if (confirm('Are you sure you want to DELETE this Weekly Scheduler?')) {
+            if (confirm('Are you sure you want to DELETE this Payroll Structure?')) {
                 model = self.collection.get(modelId);
                 model.destroy({
                     success: function () {
-                        self.eventChannel.trigger('updateWeeklyScheduler');
+                        self.eventChannel.trigger('updatePayrollStructureTypes');
                     }
                 });
             }
@@ -93,8 +93,6 @@ define([
             $currentEl.html('');
 
             currentEllistRenderer(self);
-
-            self.renderCheckboxes();
 
             function currentEllistRenderer(self) {
                 var itemView;

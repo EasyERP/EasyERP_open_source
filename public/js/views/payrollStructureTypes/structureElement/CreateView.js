@@ -2,14 +2,15 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'views/dialogViewBase',
     'text!templates/payrollStructureTypes/structureElement/CreateTemplate.html',
     'text!templates/payrollStructureTypes/structureElement/FormulaElementTemplate.html',
     'views/selectView/selectView',
     'common',
     'populate'
-], function ($, _, Backbone, CreateTemplate, FormulaElementTemplate, selectView, common, populate) {
+], function ($, _, Backbone, Parent, CreateTemplate, FormulaElementTemplate, selectView, common, populate) {
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = Parent.extend({
         el             : '#content-holder',
         contentType    : 'payrollStructureType',
         template       : _.template(CreateTemplate),
@@ -77,8 +78,6 @@ define([
         },
 
         events: {
-            'click .current-selected'                                        : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
             'click #addFormulaElement'                                       : 'addFormulaElement',
             'click .fa-trash-o'                                              : 'removeEl'
         },

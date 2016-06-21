@@ -11,7 +11,7 @@ module.exports = function (models) {
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
     
-    router.get('/forDd', handler.getForDd);
+    router.get('/forDd/:type', handler.getForDd);
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {

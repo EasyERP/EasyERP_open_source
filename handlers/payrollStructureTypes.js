@@ -1,15 +1,16 @@
 var mongoose = require('mongoose');
 
-var PayrollComponentType = function (models) {
+var Module = function (models) {
     'use strict';
-    var PayrollComponentTypesSchema = mongoose.Schemas.payrollComponentType;
+
+    var payrollStructureTypesSchema = mongoose.Schemas.payrollStructureTypes;
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
-        var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
-        var type = req.query.type;
 
-        PayrollComponentType.find({type: type}, function (err, result) {
+        var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
+
+        payrollStructureTypes.find({}, function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -19,10 +20,9 @@ var PayrollComponentType = function (models) {
 
     this.getForDd = function (req, res, next) {
         var db = req.session.lastDb;
-        var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
-        var type = req.params.type;
+        var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
 
-        PayrollComponentType.find({type: type}, {name: 1}, function (err, result) {
+        payrollStructureTypes.find({}, {name: 1}, function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -32,10 +32,11 @@ var PayrollComponentType = function (models) {
 
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
-        var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
-        var payrollComponentType = new PayrollComponentType(req.body);
+        var PayrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
+        var payrollStructureTypes;
 
-        payrollComponentType.save(function (err, result) {
+        payrollStructureTypes = new PayrollStructureTypes(req.body);
+        payrollStructureTypes.save(function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -45,9 +46,10 @@ var PayrollComponentType = function (models) {
 
     this.delete = function (req, res, next) {
         var db = req.session.lastDb;
-        var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
+        var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
+        var id = req.params.id;
 
-        PayrollComponentType.findByIdAndRemove(id, function (err, result) {
+        payrollStructureTypes.findByIdAndRemove(id, function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -57,11 +59,11 @@ var PayrollComponentType = function (models) {
 
     this.update = function (req, res, next) {
         var db = req.session.lastDb;
-        var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
+        var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
         var id = req.params.id;
         var data = req.body;
 
-        PayrollComponentType.findByIdAndUpdate(id, data, function (err, result) {
+        payrollStructureTypes.findByIdAndUpdate(id, data, function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -71,4 +73,4 @@ var PayrollComponentType = function (models) {
 
 };
 
-module.exports = PayrollComponentType;
+module.exports = Module;

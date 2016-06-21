@@ -24,6 +24,7 @@ define([
             self.eventChannel.on('updateWeeklyScheduler', self.getWeeklyScheduler, self);
             self.eventChannel.on('updatePayrollDeductionsType', self.getPayrollDeductionsType, self);
             self.eventChannel.on('updatePayrollEarningsType', self.getPayrollEarningsType, self);
+            self.eventChannel.on('updatePayrollStructureTypes', self.getPayrollStructureType, self);
         },
 
         getWeeklyScheduler: function () {

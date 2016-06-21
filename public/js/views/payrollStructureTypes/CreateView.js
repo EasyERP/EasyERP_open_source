@@ -14,11 +14,10 @@ define([
     function ($, _, Backbone, CreateTemplate, PayrollStructureTypesModel, StructureElementView, componentTemplate, common, populate, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
-            el         : '#content-holder',
-            contentType: 'payrollStructureType',
-            template   : _.template(CreateTemplate),
+            el               : '#content-holder',
+            contentType      : 'payrollStructureType',
+            template         : _.template(CreateTemplate),
             componentTemplate: _.template(componentTemplate),
-
 
             initialize: function (options) {
                 var self = this;
@@ -38,12 +37,12 @@ define([
             },
 
             events: {
-                "click li": "goToEditDialog",
-                "click .fa-plus": "create",
+                "click li"         : "goToEditDialog",
+                "click .fa-plus"   : "create",
                 "click .fa-trash-o": "remove"
             },
 
-            newStructureComponent: function(component) {
+            newStructureComponent: function (component) {
                 var self = this;
                 var model = self.model;
 
@@ -62,8 +61,8 @@ define([
 
                 new StructureElementView({
                     eventChannel: self.eventChannel,
-                    type: type,
-                    data: (self.model.get(type))[id]
+                    type        : type,
+                    data        : (self.model.get(type))[id]
                 });
             },
 
@@ -95,9 +94,9 @@ define([
 
                 new StructureElementView({
                     eventChannel: self.eventChannel,
-                    type: type,
-                    data: {
-                        id: Date.now(),
+                    type        : type,
+                    data        : {
+                        id : Date.now(),
                         seq: self.seq[type]++
                     }
                 });
@@ -109,38 +108,22 @@ define([
                 var hours;
                 var $currentEl = this.$el;
 
-                var name = $.trim($currentEl.find('#weeklySchedulerName input').val());
-                var totalHours = $currentEl.find('#totalHours span').text();
+                var name = $.trim($currentEl.find('#payrollStructureName').val());
 
                 var data = {
-                    name: name,
-                    totalHours: totalHours
+                    name: name
                 };
 
                 if (!name) {
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'name can\'t be empty'
                     });
                 }
 
-                for (var i = 7; i > 0; i--) {
-                    hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val());
-                    hours = isNaN(hours) ? 0 : hours;
-
-                    if (hours < 0 || hours > 24) {
-                        return App.render({
-                            type: 'error',
-                            message: 'hours should be in 0-24 range'
-                        });
-                    }
-
-                    data[i] = hours;
-                }
-
                 model = new PayrollStructureTypesModel();
                 model.urlRoot = function () {
-                    return 'weeklyScheduler';
+                    return 'payrollStructureTypes';
                 };
 
                 model.save(data, {
@@ -151,7 +134,7 @@ define([
                     wait   : true,
                     success: function () {
                         self.hideDialog();
-                        self.eventChannel.trigger('updateWeeklyScheduler');
+                        self.eventChannel.trigger('updatePayrollStructureTypes');
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
