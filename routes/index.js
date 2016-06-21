@@ -19,6 +19,7 @@ module.exports = function (app, mainDb) {
     var destinationRouter = require('./destination')(models);
     var incotermRouter = require('./incoterm')(models);
     var weeklySchedulerRouter = require('./weeklyScheduler')(models);
+    var scheduledPayRouter = require('./scheduledPay')(models);
     var payrollComponentTypesRouter = require('./payrollComponentTypes')(models);
     var invoicingControlRouter = require('./invoicingControl')(models);
     var paymentTermRouter = require('./paymentTerm')(models);
@@ -97,6 +98,7 @@ module.exports = function (app, mainDb) {
     app.use('/paymentTerm', paymentTermRouter);
     app.use('/deliverTo', deliverToTermRouter);
     app.use('/weeklyScheduler', weeklySchedulerRouter);
+    app.use('/scheduledPay', scheduledPayRouter);
     app.use('/payrollComponentTypes', payrollComponentTypesRouter);
     app.use('/workflows', workflowRouter);
     app.use('/payment', paymentRouter);
