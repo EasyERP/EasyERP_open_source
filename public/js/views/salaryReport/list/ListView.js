@@ -168,16 +168,16 @@ define([
             $currentEl.append(itemView.render());
         },
 
-        showFilteredPage: function (filter, context) {
+        showFilteredPage: function (filter) {
             var itemsNumber = $('#itemsNumber').text();
 
-            context.startTime = new Date();
-            context.newCollection = false;
+            this.startTime = new Date();
+            this.newCollection = false;
 
             this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
-            context.changeLocationHash(1, itemsNumber, filter);
-            context.collection.showMore({
+            this.changeLocationHash(1, itemsNumber, filter);
+            this.collection.showMore({
                 count    : itemsNumber,
                 page     : 1,
                 filter   : filter,
@@ -233,5 +233,6 @@ define([
             return this;
         }
     });
+
     return ListView;
 });

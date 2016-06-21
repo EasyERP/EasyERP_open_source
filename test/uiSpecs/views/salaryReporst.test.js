@@ -13,7 +13,7 @@ define([
     'chai-jquery',
     'sinon-chai',
     'custom'
-], function (Backbone, modules, fixtures, SalaryReportCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, SalaryReportCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, custom) {
     'use strict';
 
     var fakeSalaryReport = [
@@ -437,6 +437,9 @@ define([
     var salaryReportCollection;
     var ajaxSpy;
     var historyNavigateSpy;
+    var selectFilterSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -447,8 +450,13 @@ define([
         var $elFixture;
 
         before(function () {
+            selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
             ajaxSpy = sinon.spy($, 'ajax');
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+
+            custom.removeFromCash('salaryReport.filter');
         });
 
         after(function () {
@@ -458,6 +466,9 @@ define([
 
             ajaxSpy.restore();
             historyNavigateSpy.restore();
+            selectFilterSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -522,7 +533,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var salaryReportUrl = new RegExp('\/salaryReport\/list', 'i');
+                var salaryReportUrl = new RegExp('\/salaryReport\/', 'i');
 
                 server.respondWith('GET', salaryReportUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeSalaryReport)]);
                 salaryReportCollection = new SalaryReportCollection();
@@ -625,20 +636,136 @@ define([
                 it('Try to filter listView', function () {
                     var $searchContainer = $thisEl.find('#searchContainer');
                     var $searchArrow = $searchContainer.find('.search-content');
+                    var salaryReportUrl = new RegExp('\/salaryReport\/', 'i');
                     var $employeeBtn;
-                    var $department;
+                    var $departmentBtn;
                     var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+                    var $removeEmployeeFilterBtn;
 
+                    server.respondWith('GET', salaryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeSalaryReport)]);
+
+
+                    selectFilterSpy.reset();
 
                     $searchArrow.click();
                     expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
                     // filter by employee
+                    ajaxSpy.reset();
+
                     $employeeBtn = $searchContainer.find('#employeeFullContainer > .groupName');
                     $employeeBtn.click();
                     expect($searchContainer.find('#employeeContainer')).to.have.not.class('hidden');
+                    $selectedItem = $searchContainer.find('#employeeUl > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectFilterSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#employeeUl > li:nth-child(1)')).to.have.class('checkedValue');
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject.employee).to.exist;
+                    expect(filterObject.employee).to.have.property('key', '_id');
+                    expect(filterObject.employee).to.have.property('value');
+                    expect(filterObject.employee.value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+                    expect(filterObject.endDate).to.exist;
+                    expect(filterObject.endDate).to.have.property('key');
+                    expect(filterObject.endDate).to.have.property('value');
+                    expect(filterObject.startDate).to.exist;
+                    expect(filterObject.startDate).to.have.property('key');
+                    expect(filterObject.startDate).to.have.property('value');
+
+                    // filter by department
+
+                    ajaxSpy.reset();
+
+                    $departmentBtn = $searchContainer.find('#departmentFullContainer > .groupName');
+                    $departmentBtn.click();
+                    expect($searchContainer.find('#departmentContainer')).to.have.not.class('hidden');
                     $selectedItem = $searchContainer.find('#departmentUl > li:nth-child(1)');
                     $selectedItem.click();
+                    server.respond();
+
+                    expect(selectFilterSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#departmentUl > li:nth-child(1)')).to.have.class('checkedValue');
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject.department).to.exist;
+                    expect(filterObject.employee).to.exist;
+                    expect(filterObject.department).to.have.property('key', 'department._id');
+                    expect(filterObject.department).to.have.property('value');
+                    expect(filterObject.department.value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+                    expect(filterObject.endDate).to.exist;
+                    expect(filterObject.endDate).to.have.property('key');
+                    expect(filterObject.endDate).to.have.property('value');
+                    expect(filterObject.startDate).to.exist;
+                    expect(filterObject.startDate).to.have.property('key');
+                    expect(filterObject.startDate).to.have.property('value');
+
+                    // unselect deparment filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find('#departmentUl > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectFilterSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#departmentUl > li:nth-child(1)')).to.have.not.class('checkedValue');
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject.employee).to.exist;
+                    expect(filterObject).to.not.have.property('department');
+
+                    // try to close employee filter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeEmployeeFilterBtn = $searchContainer.find('span.removeValues');
+                    $removeEmployeeFilterBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    expect(ajaxResponse.data.filter).to.be.empty;
                 });
 
                 it('Try to sort list', function () {
@@ -653,12 +780,14 @@ define([
                     expect(sortSpy.calledOnce).to.be.true;
                     expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ad221e4b7c40f000032');
 
-                    server.respondWith('GET', salaryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeSalaryReport[1], fakeSalaryReport[0]])]);
+                    server.respondWith('GET', salaryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
+                        fakeSalaryReport[1],
+                        fakeSalaryReport[0]
+                    ])]);
                     $employeeSortBtn.click();
                     server.respond();
                     expect(sortSpy.calledTwice).to.be.true;
                     expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ad221e4b7c40f000098');
-
                 });
 
                 it('Try to change date range', function () {
@@ -685,7 +814,7 @@ define([
                     server.respond();
 
                     expect(changeDateRangeSpy.calledOnce).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp/salaryReport');
+                    expect(window.location.hash).to.be.equals('#easyErp/salaryReport/list/p=1/c=100/');
                 });
             });
         });
