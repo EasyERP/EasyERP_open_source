@@ -1,0 +1,34 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="clearfix"></div>
+            <br>
+            <h3><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h3>
+            <div class="clearfix"></div>
+            <br>
+            <div class="half-block left">
+                <span>Name: </span>
+                <input id="structureComponentName" maxlength="40" size="40" type="text" value="<%= name || ''%>">
+            </div>
+            <div class="half-block right">
+                <dl class="opp-info">
+                    <dt><label for="<%= type %>TypeDd">Type</label></dt>
+                    <dd>
+                        <span>
+                            <a id="<%= type %>TypeDd" class="current-selected" data-id="<%= componentType ? componentType._id : '' %>"
+                               href="javascript:;"><%= componentType ? componentType.name : 'Select' %></a>
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <span>Formula: </span>
+            <br>
+            <br>
+            <span id="formula"></span><span><a href="javascript;" id="addFormulaElement">...</a></span>
+        </fieldset>
+    </form>
+</div>

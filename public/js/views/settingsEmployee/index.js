@@ -4,8 +4,9 @@ define([
     'Backbone',
     'text!templates/settingsEmployee/list/ListTemplate.html',
     'views/weeklyScheduler/list/ListView',
-    'views/payrollComponentTypes/list/ListView'
-], function ($, _, Backbone, listTemplate, WeeklySchedulerView, PayrollComponentTypeView) {
+    'views/payrollComponentTypes/list/ListView',
+    'views/payrollStructureTypes/list/ListView'
+], function ($, _, Backbone, listTemplate, WeeklySchedulerView, PayrollComponentTypeView, PayrollStructureTypeView) {
 
     var SettingsEmployeeListView = Backbone.View.extend({
         el      : '#content-holder',
@@ -63,6 +64,18 @@ define([
             });
         },
 
+        getPayrollStructureType: function () {
+            var self = this;
+
+            if (self.payrollStructureType) {
+                self.payrollStructureType.undelegateEvents();
+            }
+
+            self.payrollStructureType = new PayrollStructureTypeView({
+                eventChannel: self.eventChannel
+            });
+        },
+
         render: function () {
             var self = this;
             var $currentEl = this.$el;
@@ -73,6 +86,7 @@ define([
             self.getWeeklyScheduler();
             self.getPayrollEarningsType();
             self.getPayrollDeductionsType();
+            self.getPayrollStructureType();
         }
 
     });

@@ -1,0 +1,18 @@
+<div class="formulaElement" data-seq="<%= seq %>">
+    <% var elData = elData || {prefix:{}, operand:{}, operation:{}, ratio:1} %>
+    <span>
+        <a id="sumSubDd" class="current-selected" data-id="<%= elData.prefix.id || 'add' %>" href="javascript:;"><%= elData.prefix.name || '+' %></a>
+    </span>
+    <span class="formulaElementOperand">
+        (
+        <span>
+            <a id="operandDd" class="current-selected" data-id="<%= elData.operand.id || '' %>" href="javascript:;"><%= elData.operand.name || 'Select' %></a>
+        </span>
+        <span>
+            <a id="mulDivDd" class="current-selected" data-id="<%= elData.operation.id || 'multiply' %>" href="javascript:;"><%= elData.operation.name || 'x' %></a>
+        </span>
+        <input id="ratio" type="number" size="5" value="<%= elData.ratio %>">
+        <span class="fa fa-trash-o">
+        )
+    </span>
+</div>
