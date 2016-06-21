@@ -18,6 +18,7 @@ define([
         changedModels    : {},
         contentCollection: JobsCollection,
         exportToXlsxUrl  : '/jobs/exportToXlsx/',
+        hasPAgination    : true,
 
         events: {
             'click .jobs': 'showReport'
@@ -33,7 +34,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         showReport: function (e) {
@@ -54,10 +55,10 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render());
 
-            this.renderFilter();
-            this.renderPagination($currentEl, this);
+            // this.renderFilter();
+            // this.renderPagination($currentEl, this);
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             return this;
         }

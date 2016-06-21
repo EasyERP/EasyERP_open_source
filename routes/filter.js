@@ -7,8 +7,7 @@ module.exports = function (models) {
     var handler = new filterHandler(models);
 
     router.use(authStackMiddleware);
-
-    router.get('/getFiltersValues', handler.getFiltersValues);
+    
     router.get('/Employees', handler.getEmployeesFilters);
     router.get('/Persons', handler.getPersonFilters);
     router.get('/Companies', handler.getCompaniesFilters);
@@ -31,6 +30,12 @@ module.exports = function (models) {
     router.get('/wTrack', handler.getWtrackFilters);
     router.get('/ExpensesInvoice', handler.getExpensesInvoiceFilters);
     router.get('/DividendInvoice', handler.getDividendInvoiceFilters);
+    router.get('/DashVacation', handler.getDashVacationFilters);
+    router.get('/ExpensesPayments', handler.getExpensesPaymentsFilters);
+    router.get('/DividendPayments', handler.getDividendPaymentsFilters);
+    router.get('/PayrollExpenses', handler.getPayRollFilters);
+    router.get('/jobsDashboard', handler.getDashJobsFilters);
+    router.get('/journalEntry', handler.getJournalEntryFilters);
 
     return router;
 };

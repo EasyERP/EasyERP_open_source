@@ -209,7 +209,15 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            this.renderFilter();
+            // this.renderFilter();
+
+            if (!this.filterView) {
+                if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+                    custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+                } else {
+                    this.renderFilter(this.baseFilter);
+                }
+            }
 
             this.renderPagination($currentEl, this);
 

@@ -5,13 +5,14 @@ define([
     'views/Filter/filterView',
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
+    'constantsDir/filters',
     'common',
     'async',
     'dataService',
     'helpers',
     'custom'
 ], function (Backbone, $, _, FilterView,
-             aphabeticTemplate, CONSTANTS,
+             aphabeticTemplate, CONSTANTS, FILTERS,
              common, async, dataService, helpers, custom) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
@@ -42,7 +43,7 @@ define([
             var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
             var $curEl = this.$el;
             var contentType = options.contentType || null;
-            var ifFilter = CONSTANTS.FILTERS.hasOwnProperty(contentType);
+            var ifFilter = FILTERS.hasOwnProperty(contentType);
 
             if (ifFilter) {
                 if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {

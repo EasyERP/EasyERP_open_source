@@ -10,12 +10,12 @@ define([
     'collections/Filter/filterCollection',
     'custom',
     'common',
-    'constants',
+    'constantsDir/filters',
     'async'
 ], function (Backbone, _, $, ContentFilterTemplate,
              searchGroupLiTemplate, FilterIconElement, valuesView,
              SavedFiltersView, filterValuesCollection, custom,
-             Common, CONSTANTS, async) {
+             Common, FILTERS, async) {
     'use strict';
 
     var FilterView = Backbone.View.extend({
@@ -43,7 +43,7 @@ define([
         initialize: function (options) {
             this.contentType = options.contentType;
             this.viewType = options.viewType;
-            this.constantsObject = CONSTANTS.FILTERS[this.contentType];
+            this.constantsObject = FILTERS[this.contentType];
 
             this.enable = true;
 
@@ -56,6 +56,8 @@ define([
             };
 
             _.bindAll(this, 'setDbOnce');
+
+            _.bindAll(this, 'renderFilterContent');
 
             _.bindAll(this, 'showAndSelectFilter');
         },
@@ -266,7 +268,6 @@ define([
             if (App.filtersObject.filter && App.filtersObject.filter[filterView]) {
                 this.setStatus(filterView);
             }
-
             this.groupsViews[filterView] = new valuesView({
                 id               : filterView + 'FullContainer',
                 className        : 'filterGroup',
@@ -282,8 +283,8 @@ define([
                 App.storage.remove(self.contentType + '.savedFilter');
                 self.setDbOnce();
                 self.showFilterIcons(App.filtersObject.filter);
-                delete App.filtersObject.filtersValues[self.contentType];
-                custom.getFiltersValues({contentType: self.contentType}, self.renderFilterContent);
+                // delete App.filtersObject.filtersValues[self.contentType];
+                // custom.getFiltersValues({contentType: self.contentType}, self.renderFilterContent);
             });
 
             $filtersSelector.append(this.groupsViews[filterView].$el);

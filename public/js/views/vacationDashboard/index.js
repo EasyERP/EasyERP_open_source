@@ -542,18 +542,38 @@ define([
             }
 
             if (!this.filterView) {
-                this.filterView = new FilterView({contentType: 'DashVacation'});
-                this.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter);
-                });
-                this.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({});
-                });
-
-                this.filterView.render();
+                if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues.DashVacation) {
+                    custom.getFiltersValues({contentType: 'DashVacation'}, this.renderFilter(this.baseFilter));
+                } else {
+                    thiss.renderFilter(this.baseFilter);
+                }
             }
 
             return this;
+        },
+
+        renderFilter: function (baseFilter) {
+            var self = this;
+
+            this.filterView = new FilterView({
+                contentType: 'DashVacation'
+            });
+
+            this.filterView.bind('filter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage(filter);
+            });
+
+            this.filterView.bind('defaultFilter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage({});
+            });
+
+            this.filterView.render();
         }
     });
 
