@@ -4,8 +4,9 @@ define([
     'Backbone',
     'text!templates/settingsEmployee/list/ListTemplate.html',
     'views/weeklyScheduler/list/ListView',
+    'views/scheduledPay/list/ListView',
     'views/payrollComponentTypes/list/ListView'
-], function ($, _, Backbone, listTemplate, WeeklySchedulerView, PayrollComponentTypeView) {
+], function ($, _, Backbone, listTemplate, WeeklySchedulerView, ScheduledPayView, PayrollComponentTypeView) {
 
     var SettingsEmployeeListView = Backbone.View.extend({
         el      : '#content-holder',
@@ -21,6 +22,7 @@ define([
             this.render();
 
             self.eventChannel.on('updateWeeklyScheduler', self.getWeeklyScheduler, self);
+            self.eventChannel.on('updateScheduledPay', self.getScheduledPay, self);
             self.eventChannel.on('updatePayrollDeductionsType', self.getPayrollDeductionsType, self);
             self.eventChannel.on('updatePayrollEarningsType', self.getPayrollEarningsType, self);
         },
@@ -33,6 +35,16 @@ define([
             }
 
             self.weeklySchedulerView = new WeeklySchedulerView({eventChannel: self.eventChannel});
+        },
+
+        getScheduledPay: function () {
+            var self = this;
+
+            if (self.scheduledPayView) {
+                self.scheduledPayView.undelegateEvents();
+            }
+
+            self.scheduledPayView = new ScheduledPayView({eventChannel: self.eventChannel});
         },
 
         getPayrollEarningsType: function () {
@@ -71,6 +83,7 @@ define([
             $currentEl.append(self.template());
 
             self.getWeeklyScheduler();
+            self.getScheduledPay();
             self.getPayrollEarningsType();
             self.getPayrollDeductionsType();
         }
