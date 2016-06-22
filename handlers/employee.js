@@ -37,6 +37,8 @@ var Employee = function (event, models) {
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
 
+    var FilterMapper = require('../helpers/filterMapper');
+
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var filter = req.params.filter;
@@ -530,8 +532,10 @@ var Employee = function (event, models) {
 
         });
     };
+    
+    /*TODO remove after filters check*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -571,7 +575,7 @@ var Employee = function (event, models) {
         }
 
         return resArray;
-    }
+    }*/
 
     function getById(req, res, next) {
         var project = {};
@@ -631,13 +635,11 @@ var Employee = function (event, models) {
         var project;
         var projectSecond;
         var projectAfterRoot;
+        
+        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject.$or = caseFilter(filter);
-            } else {
-                optionsObject.$and = caseFilter(filter);
-            }
+            optionsObject = filterMapper.mapFilter(filter); // caseFilter(filter);
         }
 
         if (data.sort) {
@@ -657,7 +659,7 @@ var Employee = function (event, models) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject) {
                 queryObject.$and.push(optionsObject);
             }
 
@@ -1066,20 +1068,20 @@ var Employee = function (event, models) {
                     }
 
                     /*if (!accessEmployeeSalary(profileId)) {
-                        data.transfer = data.transfer.map(function (tr, i) {
-                            if (i !== 0) {
-                                if (emp.transfer[i] && emp.transfer[i].salary) {
-                                    tr.salary = emp.transfer[i].salary;
-                                } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
-                                    tr.salary = emp.transfer[i - 1].salary;
-                                }
-                            } else {
-                                tr.salary = 0;
-                            }
+                     data.transfer = data.transfer.map(function (tr, i) {
+                     if (i !== 0) {
+                     if (emp.transfer[i] && emp.transfer[i].salary) {
+                     tr.salary = emp.transfer[i].salary;
+                     } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
+                     tr.salary = emp.transfer[i - 1].salary;
+                     }
+                     } else {
+                     tr.salary = 0;
+                     }
 
-                            return tr;
-                        });
-                    }*/
+                     return tr;
+                     });
+                     }*/
 
                     Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                         var os = require('os');

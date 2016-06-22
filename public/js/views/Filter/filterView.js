@@ -58,8 +58,6 @@ define([
             _.bindAll(this, 'setDbOnce');
 
             _.bindAll(this, 'renderFilterContent');
-
-            _.bindAll(this, 'showAndSelectFilter');
         },
 
         deleteFilterByBackspace: function (e) {
@@ -157,10 +155,6 @@ define([
                 }
 
                 async.each(filtersKeysForRemove, setStatusFalse, function () {
-                    $target
-                        .closest('.forFilterIcons')
-                        .remove();
-
                     self.$el.find('#searchInput').empty();
 
                     if (favouriteIconState) {
@@ -182,8 +176,6 @@ define([
                     .find(':first-child')
                     .addClass('current');
             }
-
-            this.trigger('filter', App.filtersObject.filter);
         },
 
         showHideValues: function (e) {
@@ -205,7 +197,7 @@ define([
 
         renderFilterContent: function (options) {
             var self = this;
-            var keys = Object.keys(this.constantsObject);
+            var keys = this.constantsObject.array || Object.keys(this.constantsObject);
             var groupOptions;
 
             if (keys.length) {
@@ -389,7 +381,17 @@ define([
                 contentType: this.contentType
             });
 
-            this.savedFiltersView.on('selectFavorite', self.showAndSelectFilter);
+            this.savedFiltersView.on('selectFavorite', self.showAndSelectFilter, self);
+            this.savedFiltersView.on('savedFilterDeleted', function (name) {
+                var savedFilterName = App.storage.find(this.contentType + '.savedFilter');
+
+                if (savedFilterName === name) {
+                    App.storage.remove(this.contentType + '.savedFilter');
+                    return this.showFilterIcons(App.filtersObject.filter);
+                }
+
+                this.showFilterIcons();
+            }, self);
 
             this.savedFiltersView.render();
         },
@@ -398,7 +400,7 @@ define([
             var valuesArray;
             var collectionElement;
 
-            valuesArray = App.filtersObject.filter[filterKey]['value'];
+            valuesArray = App.filtersObject.filter[filterKey].value;
 
             if (this.currentCollection[filterKey].length === 0) {
                 return;

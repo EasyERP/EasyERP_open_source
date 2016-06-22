@@ -56,6 +56,7 @@ define([
                         success : function () {
                             $selectedLi.remove();
                             self.savedFilters = _.without(self.savedFilters, currentFilter);
+                            self.trigger('savedFilterDeleted', currentFilter.name);
                         },
                         error   : function (model, xhr) {
                             console.error(xhr);
@@ -149,7 +150,7 @@ define([
                         element.byDefault = false;
 
                         return element;
-                    })
+                    });
                 }
 
                 filterObj = {

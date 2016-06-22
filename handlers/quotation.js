@@ -24,7 +24,9 @@ var Module = function (models, event) {
 
     var FilterMapper = require('../helpers/filterMapper');
 
-    function convertType(array, type) {
+    /*TODO remove after filters check*/
+
+    /*function convertType(array, type) {
         var i;
 
         if (type === 'integer') {
@@ -42,9 +44,9 @@ var Module = function (models, event) {
                 }
             }
         }
-    }
+    }*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -98,7 +100,7 @@ var Module = function (models, event) {
         }
 
         return resArray;
-    }
+    }*/
 
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);

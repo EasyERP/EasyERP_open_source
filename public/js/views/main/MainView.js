@@ -95,6 +95,11 @@ define([
                     currentUser = response.user || {};
 
                     App.currentUser = currentUser;
+
+                    if (!App.filtersObject) {
+                        App.filtersObject = {};
+                    }
+
                     App.filtersObject.savedFilters = response.savedFilters || {};
 
                     if (currentUser.profile && currentUser.profile.profileName === 'baned') {

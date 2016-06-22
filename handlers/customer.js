@@ -74,7 +74,9 @@ var Module = function (models) {
         'companyInfo.industry'          : 1
     };
 
-    function caseFilter(filter) {
+    /*TODO remove after filters check*/
+
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -116,7 +118,7 @@ var Module = function (models) {
         }
 
         return resArray;
-    }
+    }*/
 
     this.getSuppliersForDD = function (req, res, next) {
         /**

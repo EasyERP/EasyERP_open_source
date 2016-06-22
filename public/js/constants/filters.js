@@ -53,7 +53,9 @@
                 displayName: 'Status',
                 backend    : 'isPaid',
                 type       : 'boolean'
-            }
+            },
+
+            array: ['employee', 'customer', 'project', 'department', 'month', 'year', 'week', '_type', 'isPaid']
         },
 
         Persons: {
@@ -71,7 +73,9 @@
                 displayName: 'Services',
                 backend    : 'services',
                 type       : 'boolean'
-            }
+            },
+
+            array: ['name', 'country', 'services']
         },
 
         DashVacation: {
@@ -83,7 +87,9 @@
             department: {
                 displayName: 'Department',
                 backend    : 'department._id'
-            }
+            },
+
+            array: ['name', 'department']
         },
 
         Companies: {
@@ -100,7 +106,9 @@
             services: {
                 displayName: 'Services',
                 backend    : 'services'
-            }
+            },
+
+            array: ['name', 'country', 'services']
         },
 
         Employees: {
@@ -122,7 +130,9 @@
             jobPosition: {
                 backend    : 'jobPosition._id',
                 displayName: 'Job Position'
-            }
+            },
+            
+            array: ['name', 'department', 'manager', 'jobPosition']
         },
 
         Applications: {
@@ -139,7 +149,9 @@
             jobPosition: {
                 displayName: 'Job Position',
                 backend    : 'jobPosition._id'
-            }
+            },
+
+            array: ['name', 'department', 'jobPosition']
         },
 
         /*JobPositions: {
@@ -178,7 +190,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['supplier', 'salesPerson', 'project', 'workflow']
         },
 
         ExpensesInvoice: {
@@ -190,7 +204,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['supplier', 'workflow']
         },
 
         DividendInvoice: {
@@ -219,7 +235,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['supplier', 'salesPerson', 'project', 'workflow']
         },
 
         Projects: {
@@ -246,7 +264,9 @@
             projectManager: {
                 displayName: 'Project Manager',
                 backend    : 'projectManager._id'
-            }
+            },
+
+            array: ['name', 'customer', 'workflow', 'salesManager', 'projectManager']
         },
 
         Leads: {
