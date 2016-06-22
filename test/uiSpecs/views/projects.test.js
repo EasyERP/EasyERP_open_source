@@ -140,336 +140,6 @@ define([
 
         });
 
-        describe('ThumbnailsView', function () {
-            var server;
-            var mainSpy;
-            var windowConfirmStub;
-            var $thisEl;
-            var clock;
-
-            before(function () {
-                window.location.hash = '#easyErp/Projects/thumbnails';
-                server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
-                windowConfirmStub = sinon.stub(window, 'confirm');
-                clock = sinon.useFakeTimers();
-            });
-
-            after(function () {
-                server.restore();
-                mainSpy.restore();
-                windowConfirmStub.restore();
-                clock.restore();
-            });
-
-            describe('INITIALIZE', function () {
-
-                it('Try to create ThumbnailsView', function (done) {
-                    var projectsUrl = new RegExp('\/projects\/', 'i');
-                    var worlflowUrl = new RegExp('\/Workflows', 'i');
-                    var $thumbnailsContainer;
-                    var $thumbnails;
-                    var $firstThumbnail;
-                    var projectName;
-                    var customerName;
-                    var $health;
-                    var $stageSelect;
-                    var $showMoreBtn;
-
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
-                    projectsThumbCollection = new ProjectCollection({
-                        viewType   : 'thumbnails',
-                        reset      : true,
-                        count      : 3,
-                        contentType: 'Projects'
-                    });
-
-                    server.respond();
-
-                    expect(projectsThumbCollection)
-                        .to.have.lengthOf(3);
-
-                    server.respondWith('GET', worlflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeWorkflows)]);
-                    thumbnailsView = new ThumbnailsView({
-                        startTime : new Date(),
-                        collection: projectsThumbCollection
-                    });
-
-                    server.respond();
-
-                    eventsBinder.subscribeTopBarEvents(topBarView, thumbnailsView);
-                    eventsBinder.subscribeCollectionEvents(projectsThumbCollection, thumbnailsView);
-
-                    projectsThumbCollection.trigger('fetchFinished', {
-                        totalRecords: projectsThumbCollection.totalRecords,
-                        currentPage : projectsThumbCollection.currentPage,
-                        pageSize    : projectsThumbCollection.pageSize
-                    });
-
-                    $thisEl = thumbnailsView.$el;
-
-                    $thumbnailsContainer = $thisEl.find('#thumbnailContent');
-                    $thumbnails = $thumbnailsContainer.find('.thumbnail');
-
-                    expect($thumbnailsContainer).to.exist;
-                    expect($thumbnails).to.have.lengthOf(3);
-
-                    $firstThumbnail = $($thumbnails[0]);
-                    projectName = $firstThumbnail.find('span[data-content="project"]').text();
-                    customerName = $firstThumbnail.find('span[data-content="customer"]').text();
-                    $health = $firstThumbnail.find('span.health-container a');
-                    $stageSelect = $firstThumbnail.find('a.stageSelect');
-
-                    expect(projectName).not.to.be.empty;
-                    expect(customerName).not.to.be.empty;
-                    expect(projectName).to.not.match(/object Object|undefined/);
-                    expect(customerName).to.not.match(/object Object|undefined/);
-                    expect($health).to.exist;
-                    expect($health)
-                        .to.have.attr('data-value')
-                        .and.not.be.empty;
-
-                    expect($stageSelect).to.exist;
-                    expect($stageSelect.text())
-                        .not.to.be.empty
-                        .and.not.to.match(/object Object|undefined/);
-
-                    $showMoreBtn = $thisEl.find('#showMore');
-
-                    expect($showMoreBtn).to.exist;
-
-                    done();
-                });
-
-                it('Try to showMore', function () {
-                    var projectsUrl = new RegExp('\/projects\/', 'i');
-                    var $thisEl = thumbnailsView.$el;
-                    var $showMoreBtn = $thisEl.find('#showMore');
-
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
-                    $showMoreBtn.click();
-                    server.respond();
-
-                    expect($thisEl.find('#thumbnailContent')).to.exist;
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(6);
-                });
-
-                it('Try to filtered projects', function () {
-                    var $selectedItem1;
-                    var $selectedItem2;
-                    var $contactBtn;
-                    var $projectNameBtn;
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var projectsUrl = new RegExp('\/projects\/', 'i');
-                    var $selectedFilters;
-
-                    $searchArrow.click();
-
-                    // select contact
-                    $contactBtn = $searchContainer.find('#customerFullContainer >.groupName');
-                    $contactBtn.click();
-                    $selectedItem1 = $searchContainer.find('#customerFullContainer li:nth-child(1)');
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
-                    $selectedItem1.click();
-                    server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
-
-                    // select project name
-                    $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
-                    $projectNameBtn.click();
-                    $selectedItem2 = $searchContainer.find('#nameFullContainer li:nth-child(1)');
-
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [PROJECTS.fakeProjectsForThumbnails.data[0]]})]);
-                    $selectedItem2.click();
-                    server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(1);
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
-                    $selectedItem2.click();
-                    server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
-                    $selectedFilters = $searchContainer.find('.removeValues');
-
-                    expect($selectedFilters).to.have.lengthOf(1);
-                    // close project name filter
-
-                    $selectedFilters.click();
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
-                    server.respond();
-                    $selectedFilters = $searchContainer.find('.removeValues');
-                    expect($selectedFilters).to.have.lengthOf(0);
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
-                });
-
-                it('Try to change project status', function () {
-                    var $statusSelectedItem;
-                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    var $projectStatusBtn = $needItem.find('.stageSelect');
-                    var projectUrl = new RegExp('\/projects\/', 'i');
-                    var stage;
-
-                    server.respondWith('PATCH', projectUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
-                    server.respondWith('GET', projectUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnailsAfterChooseWorkflow)]);
-                    $projectStatusBtn.click();
-                    $statusSelectedItem = $needItem.find('.newSelectList li[data-status="inprogress"]');
-                    $statusSelectedItem.click();
-                    server.respond();
-                    server.respond();
-
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
-
-                    $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    stage = $needItem.find('a.stageSelect').text().toLowerCase();
-                    expect(stage).to.be.equals('in progress');
-                });
-
-                it('Try to change health of project', function () {
-                    var $healthSelectedItem;
-                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    var $projectHealthBtn = $needItem.find('.health-container');
-                    var projectUrl = new RegExp('\/projects\/', 'i');
-
-                    $projectHealthBtn.click();
-                    $healthSelectedItem = $needItem.find('ul li div.health1');
-
-                    server.respondWith('PATCH', projectUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
-                    $healthSelectedItem.click();
-                    server.respond();
-
-                    expect($needItem.find('.health-container a')).to.have.class('health1');
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
-                });
-
-                it('Try to open CreateView', function () {
-                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-                    var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
-                    var customerUrl = '/customers/';
-                    var $dialog;
-
-                    server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeUsers)]);
-                    server.respondWith('GET', employeesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeEmployees)]);
-                    server.respondWith('GET', customerUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeCustomers)]);
-
-                    $createBtn.click();
-
-                    $dialog = $('.ui-dialog');
-                    // thumbnailsView.createItem();
-
-                    server.respond();
-                    server.respond();
-
-                    expect($dialog).to.exist;
-                    expect($dialog).to.have.length.below(2);
-                });
-
-                it('Try to change tabs', function () {
-                    var $dialogEl = $('.ui-dialog');
-                    var $tabs = $dialogEl.find('ul.dialog-tabs > li');
-                    var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
-                    var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
-
-                    expect($tabs).to.exist;
-                    expect($tabs).to.have.lengthOf(3);
-
-                    expect($firstTab).to.have.class('active');
-
-                    $secondTab.click();
-                    expect($secondTab).to.have.class('active');
-
-                    $firstTab.click();
-                    expect($firstTab).to.have.class('active');
-
-                });
-
-                it('Try to create item without required data', function () {
-                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-                    var spyResponse;
-
-                    $createBtn.click();
-                    spyResponse = mainSpy.args[0][0];
-
-                    expect(spyResponse).to.have.property('type', 'error');
-                });
-
-                it('Try to set set required data to CreateView', function () {
-                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-                    var $dialogEl = $('.ui-dialog');
-                    var $projectNameEl = $dialogEl.find('#projectName');
-                    var $projectDescEl = $dialogEl.find('#projectShortDesc');
-                    var $startDate = $dialogEl.find('#StartDate');
-                    var $endDate = $dialogEl.find('#EndDateTarget');
-                    var projectsUrl = '/projects/';
-                    var $selectedItem;
-                    var $salesManagerSelect;
-                    var $projectHealthSelect;
-                    var $customerSelect;
-                    var $next;
-                    var $prev;
-
-                    $projectNameEl.val('Test');
-                    $projectDescEl.val('Test');
-                    $startDate.val('5 Apr, 2016');
-                    $endDate.val('25 Apr, 2016');
-
-                    // select sales manager
-                    $salesManagerSelect = $dialogEl.find('#projectManagerDD');
-                    $salesManagerSelect.click();
-                    $next = $dialogEl.find('.next');
-                    $next.click();
-                    $prev = $dialogEl.find('.prev');
-                    $prev.click();
-                    $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
-                    $selectedItem.click();
-
-                    // select customer
-                    $customerSelect = $dialogEl.find('#customerDd');
-                    $customerSelect.click();
-                    $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
-                    $selectedItem.click();
-
-                    // select project health
-                    $projectHealthSelect = $dialogEl.find('#health a');
-                    $projectHealthSelect.click();
-                    $selectedItem = $dialogEl.find('.health2');
-                    $selectedItem.click();
-
-                    server.respondWith('POST', projectsUrl, [201, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Created success'})]);
-                    $createBtn.click();
-                    server.respond();
-
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
-                });
-
-                it('Close CreateView', function () {
-                    var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-
-                    $cancelBtn.click();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                it('Try to open EditView', function () {
-                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    var projectFormUrl = new RegExp('\/projects\/', 'i');
-                    var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
-                    var customerUrl = '/customers/';
-
-                    server.respondWith('GET', projectFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectById)]);
-                    server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeUsers)]);
-                    server.respondWith('GET', employeesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeEmployees)]);
-                    server.respondWith('GET', customerUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeCustomers)]);
-                    $needItem.click();
-                    server.respond();
-                    server.respond();
-
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/55b92ad621e4b7c40f00065f');
-                });
-            });
-
-        });
-
         describe('FormView', function () {
             var $thisEl;
             var projectModel;
@@ -504,11 +174,13 @@ define([
                     var projectsUrl = new RegExp('\/Projects\/form', 'i');
                     var jobsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/info', 'i');
                     var projectTypeUrl = '/projects/projectType';
-                    var workflowsProjectsUrl = new RegExp('\/workflows\/fetch', 'i');
+                    var customersUrl = new RegExp('\/customers\/', 'i');
+                    var workflowsProjectsUrl = new RegExp('\/workflows\/getWorkflowsForDd', 'i');
                     var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
                     var wTrackUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/weTracks', 'i');
                     var paymentsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/payments', 'i');
                     var quotationUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/quotations', 'i');
+                    var projectTypeUrl = new RegExp('\/projects\/projectType', 'i');
 
                     var projectMemberUrl = new RegExp('\/projectMember\/', 'i');
                     var bonusTypeUrl = '/bonusType/';
@@ -532,10 +204,13 @@ define([
                             server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeInvoice)]);
                             server.respondWith('GET', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeWTrack)]);
                             server.respondWith('GET', paymentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakePayments)]);
+                            server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeCustomers)]);
                             server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeQuotations)]);
                             server.respondWith('GET', bonusTypeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeBonusType)]);
                             server.respondWith('GET', projectMemberUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectMembers)]);
+                            server.respondWith('GET', projectTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectsType)]);
                             formView.render();
+                            server.respond();
                             server.respond();
                             server.respond();
                             server.respond();
@@ -561,62 +236,92 @@ define([
                     server.respond();
                 });
 
+                it ('try to change status', function (){
 
+                    var $status = $thisEl.find('#workflowsDd');
+                    var $workflow;
+                    $status.click();
+                    $workflow = $thisEl.find('li#528ce7d0f3f67bc40b000021');
+                    $workflow.click();
+                    expect($status.attr('data-id')).to.be.equal('528ce7d0f3f67bc40b000021');
 
-                    it('Try to delete job row', function () {
-                        var $dialogEl;
-                        var $needRow;
-                        var $addItemBtn;
-                        var $trashBtn;
-                        var $createJob = $thisEl.find('#createJob');
-                        var employeesForDDUrl = new RegExp('\/employees\/getForDD', 'i');
-                        var departmentsForDDUrl = new RegExp('\/departments\/getForDD', 'i');
-                        var fakecustomersImageUrl = new RegExp('\/customers\/getCustomersImages', 'i');
+                });
 
-                        server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
-                        server.respondWith('GET', departmentsForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeDepartmentsForDD)]);
-                        server.respondWith('GET', fakecustomersImageUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeCustomerImage)]);
-                        $createJob.click();
-                        server.respond();
-                        server.respond();
-                        server.respond();
+                it ('try to change type', function (){
 
-                        expect($('.ui-dialog')).to.exist;
+                    var $type = $thisEl.find('#projectTypeDD');
+                    var $listEl;
+                    $type.click();
+                    $listEl = $thisEl.find('li#mixed');
+                    $listEl.click();
+                    expect($type.attr('data-id')).to.be.equal('mixed');
 
-                        $dialogEl = $('.ui-dialog');
-                        $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
-                        $addItemBtn.click();
+                });
 
-                        $needRow = $dialogEl.find('tbody > tr:nth-child(1)');
-                        $trashBtn = $dialogEl.find('td.remove > a');
+                it ('try to change project Customer', function (){
+                    var $customer = $thisEl.find('#customerDd');
+                    var $listEl;
+                    $customer.click();
+                    $listEl = $thisEl.find('li#55cdc93c9b42266a4f000005');
+                    $listEl.click();
+                    expect($customer.attr('data-id')).to.be.equal('55cdc93c9b42266a4f000005');
 
-                        expect($trashBtn).to.have.class('hidden');
-                        $needRow.mouseover();
-                        expect($trashBtn).to.not.have.class('hidden');
-                        $needRow.mouseleave();
-                        expect($trashBtn).to.have.class('hidden');
+                });
 
-                        $needRow.mouseover();
+                it('Try to delete job row', function () {
+                    var $dialogEl;
+                    var $needRow;
+                    var $addItemBtn;
+                    var $trashBtn;
+                    var $createJob = $thisEl.find('#createJob');
+                    var employeesForDDUrl = new RegExp('\/employees\/getForDD', 'i');
+                    var departmentsForDDUrl = new RegExp('\/departments\/getForDD', 'i');
+                    var fakecustomersImageUrl = new RegExp('\/customers\/getCustomersImages', 'i');
 
-                        $trashBtn.click();
-                        expect($dialogEl.find('tbody > tr').length).to.be.equals(1);
-                    });
+                    server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
+                    server.respondWith('GET', departmentsForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeDepartmentsForDD)]);
+                    server.respondWith('GET', fakecustomersImageUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeCustomerImage)]);
+                    $createJob.click();
+                    server.respond();
+                    server.respond();
+                    server.respond();
 
-                    it('Try to add job without required data', function () {
-                        var spyResponse;
-                        var $dialogEl = $('.ui-dialog');
-                        var $generateBtn = $dialogEl.find('#generateBtn');
-                        var $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
+                    expect($('.ui-dialog')).to.exist;
 
-                        $addItemBtn.click();
+                    $dialogEl = $('.ui-dialog');
+                    $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
+                    $addItemBtn.click();
 
-                        $generateBtn.click();
-                        spyResponse = mainSpy.args[0][0];
+                    $needRow = $dialogEl.find('tbody > tr:nth-child(1)');
+                    $trashBtn = $dialogEl.find('td.remove > a');
 
-                        expect(spyResponse).to.have.property('type', 'notify');
-                        expect(spyResponse).to.have.property('message', 'Please, enter all information first.');
+                    expect($trashBtn).to.have.class('hidden');
+                    $needRow.mouseover();
+                    expect($trashBtn).to.not.have.class('hidden');
+                    $needRow.mouseleave();
+                    expect($trashBtn).to.have.class('hidden');
 
-                    });
+                    $needRow.mouseover();
+
+                    $trashBtn.click();
+                    expect($dialogEl.find('tbody > tr').length).to.be.equals(1);
+                });
+
+                it('Try to add job without required data', function () {
+                    var spyResponse;
+                    var $dialogEl = $('.ui-dialog');
+                    var $generateBtn = $dialogEl.find('#generateBtn');
+                    var $addItemBtn = $dialogEl.find('#addNewEmployeeRow');
+
+                    $addItemBtn.click();
+
+                    $generateBtn.click();
+                    spyResponse = mainSpy.args[0][0];
+
+                    expect(spyResponse).to.have.property('type', 'notify');
+                    expect(spyResponse).to.have.property('message', 'Please, enter all information first.');
+
+                });
 
                     it('Try to add job with bad JobName', function () {
                         var $jobNameEl;
@@ -931,7 +636,7 @@ define([
                     $deleteBtn = $thisEl.find('#deletewTrack');
 
                     $firstBtn.click();
-                    spyResponse = mainSpy.args[2][0];
+                    spyResponse = mainSpy.args[0][0];
 
                     expect(spyResponse).to.have.property('type', 'notify');
 
@@ -1057,7 +762,7 @@ define([
 
             });
 
-            /*describe('QuotationView', function () {
+            describe('QuotationView', function () {
                 var server;
                 var mainSpy;
                 var windowConfirmStub;
@@ -1078,24 +783,26 @@ define([
                 });
 
                 it('Try to sort quotation list', function () {
-                    var quotationUrl = new RegExp('\/quotation\/list', 'i');
+                    var quotationUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/quotations', 'i');
                     var $sortBtn = $thisEl.find('#quotationTable tr > th[data-sort="name"]');
 
                     server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotations)]);
                     $sortBtn.click();
                     server.respond();
                     expect($thisEl.find('#quotationTable')).to.exist;
+                    expect($thisEl.find('#listTableQuotation tr').length).to.be.equal(2);
 
                     $sortBtn.click();
                     server.respond();
                     expect($thisEl.find('#quotationTable')).to.exist;
+                    expect($thisEl.find('#listTableQuotation tr').length).to.be.equal(2);
                 });
 
                 it('Try to go to EditQuotationView', function () {
 
                     var $cancelBtn;
-                    var $needItem = $thisEl.find('#quotationTable tr[data-id="570f9563ccb41cca20cd9261"] > td:nth-child(3)');
-                    var quotationFormUrl = new RegExp('\/quotation\/form\/', 'i');
+                    var $needItem = $thisEl.find('#quotationTable tr[data-id="576a6a929c408e7d16c3ddf6"] > td:nth-child(3)');
+                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
 
                     server.respondWith('GET', quotationFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotationById)]);
                     $needItem.click();
@@ -1113,9 +820,9 @@ define([
                 it('Try to delete item with 403 error', function () {
                     var $deleteBtn;
                     var spyResponse;
-                    var $needRow = $thisEl.find('#quotationTable tr[data-id="570f9563ccb41cca20cd9261"]');
+                    var $needRow = $thisEl.find('#quotationTable tr[data-id="576a6a929c408e7d16c3ddf6"]');
                     var $needCheckBox = $needRow.find('.notForm > input');
-                    var quotationFormUrl = new RegExp('\/quotation\/', 'i');
+                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
 
                     windowConfirmStub.returns(true);
 
@@ -1132,7 +839,7 @@ define([
 
                 it('Try to delete item', function () {
                     var $deleteBtn;
-                    var quotationFormUrl = new RegExp('\/quotation\/', 'i');
+                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
 
                     $deleteBtn = $thisEl.find('#removeQuotation');
 
@@ -1140,21 +847,24 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect($thisEl.find('#quotationTable tr[data-id="570f9563ccb41cca20cd9261"]')).to.not.exist;
+                    expect($thisEl.find('#quotationTable tr[data-id="576a6a929c408e7d16c3ddf6"]')).to.not.exist;
 
                 });
 
                 it('Try to open CreateView', function () {
                     var $createBtn = $thisEl.find('#createQuotation');
                     var productUrl = new RegExp('\/product\/', 'i');
-                    var projectsUrl = '/getProjectsForDd';
-                    var projectsForWTrackUrl = '/project/getForWtrack';
+                    var projectsUrl = '/projects/getForDd';
+                    var projectsForWTrackUrl = '/projects/getForWtrack';
                     var customersUrl = '/customers/';
+                    var currencyUrl = '/currency/getForDd';
 
                     server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProduct)]);
                     server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProjectForDd)]);
                     server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeCustomers)]);
+                    server.respondWith('GET', currencyUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeCurrency)]);
                     $createBtn.click();
+                    server.respond();
                     server.respond();
                     server.respond();
                     server.respond();
@@ -1179,13 +889,13 @@ define([
                 it('Try to create quotation with error response from server', function () {
 
                     var $saveBtn = $('#create-person-dialog');
-                    var quotationUrl = '/quotation/';
+                    var quotationUrl = '/quotations/';
 
                     server.respondWith('POSTf', quotationUrl, [404, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/570f9563ccb41cca20cd9261');
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/55b92ad621e4b7c40f00065f');
                 });
 
                 it('Try to create quotation', function () {
@@ -1200,8 +910,9 @@ define([
                     var $dialog = $('.ui-dialog');
                     var $addNewItemBtn = $dialog.find('.addProductItem > a');
                     var $createBtn = $('#create-person-dialog');
-                    var quotationUrl = '/quotation/';
+                    var quotationUrl = '/quotations/';
                     var jobsForProjectUrl = new RegExp('\/jobs\/getForDD', 'i');
+                    var keyUpEvent = $.Event('keyup');
 
                     // creating new product row
                     $addNewItemBtn.click();
@@ -1215,25 +926,9 @@ define([
                     $selectedItem = $dialog.find('#570ddef86625f34212d01f2d');
                     $selectedItem.click();
 
-                    $unitPriceTd = $currentRow.find('td[data-name="price"]');
-                    $unitPriceTd.mouseover();
-                    $editPriceBtn = $currentRow.find('#editSpan');
-                    $editPriceBtn.click();
-                    $cancelPriceBtn = $currentRow.find('#cancelSpan');
-
-                    $cancelPriceBtn.click();
-                    $unitPriceTd.mouseover();
-                    $editPriceBtn = $currentRow.find('#editSpan');
-
-                    expect($currentRow.find('#saveSpan')).to.not.exist;
-                    expect($currentRow.find('#cancelSpan')).to.not.exist;
-                    expect($currentRow.find('#editInput')).to.not.exist;
-
-                    $editPriceBtn.click();
-                    $savePriceBtn = $currentRow.find('#saveSpan');
                     $priceInput = $currentRow.find('#editInput');
                     $priceInput.val('5000');
-                    $savePriceBtn.click();
+                    $priceInput.trigger(keyUpEvent);
 
                     expect($currentRow.find('td[data-name="price"]').text().trim()).to.be.equals('5000');
                     expect($currentRow.find('td.subtotal').text().trim()).to.be.equals('5000.00');
@@ -1245,7 +940,7 @@ define([
                     expect($('.ui-dialog')).to.not.exist;
 
                 });
-            });*/
+            });
 
             /*   describe('PaymentsView', function () {
              var server;
@@ -1587,6 +1282,336 @@ define([
 
              });
              });*/
+
+        });
+
+        describe('ThumbnailsView', function () {
+            var server;
+            var mainSpy;
+            var windowConfirmStub;
+            var $thisEl;
+            var clock;
+
+            before(function () {
+                window.location.hash = '#easyErp/Projects/thumbnails';
+                server = sinon.fakeServer.create();
+                mainSpy = sinon.spy(App, 'render');
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                clock = sinon.useFakeTimers();
+            });
+
+            after(function () {
+                server.restore();
+                mainSpy.restore();
+                windowConfirmStub.restore();
+                clock.restore();
+            });
+
+            describe('INITIALIZE', function () {
+
+                it('Try to create ThumbnailsView', function (done) {
+                    var projectsUrl = new RegExp('\/projects\/', 'i');
+                    var worlflowUrl = new RegExp('\/Workflows', 'i');
+                    var $thumbnailsContainer;
+                    var $thumbnails;
+                    var $firstThumbnail;
+                    var projectName;
+                    var customerName;
+                    var $health;
+                    var $stageSelect;
+                    var $showMoreBtn;
+
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
+                    projectsThumbCollection = new ProjectCollection({
+                        viewType   : 'thumbnails',
+                        reset      : true,
+                        count      : 3,
+                        contentType: 'Projects'
+                    });
+
+                    server.respond();
+
+                    expect(projectsThumbCollection)
+                        .to.have.lengthOf(3);
+
+                    server.respondWith('GET', worlflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeWorkflows)]);
+                    thumbnailsView = new ThumbnailsView({
+                        startTime : new Date(),
+                        collection: projectsThumbCollection
+                    });
+
+                    server.respond();
+
+                    eventsBinder.subscribeTopBarEvents(topBarView, thumbnailsView);
+                    eventsBinder.subscribeCollectionEvents(projectsThumbCollection, thumbnailsView);
+
+                    projectsThumbCollection.trigger('fetchFinished', {
+                        totalRecords: projectsThumbCollection.totalRecords,
+                        currentPage : projectsThumbCollection.currentPage,
+                        pageSize    : projectsThumbCollection.pageSize
+                    });
+
+                    $thisEl = thumbnailsView.$el;
+
+                    $thumbnailsContainer = $thisEl.find('#thumbnailContent');
+                    $thumbnails = $thumbnailsContainer.find('.thumbnail');
+
+                    expect($thumbnailsContainer).to.exist;
+                    expect($thumbnails).to.have.lengthOf(3);
+
+                    $firstThumbnail = $($thumbnails[0]);
+                    projectName = $firstThumbnail.find('span[data-content="project"]').text();
+                    customerName = $firstThumbnail.find('span[data-content="customer"]').text();
+                    $health = $firstThumbnail.find('span.health-container a');
+                    $stageSelect = $firstThumbnail.find('a.stageSelect');
+
+                    expect(projectName).not.to.be.empty;
+                    expect(customerName).not.to.be.empty;
+                    expect(projectName).to.not.match(/object Object|undefined/);
+                    expect(customerName).to.not.match(/object Object|undefined/);
+                    expect($health).to.exist;
+                    expect($health)
+                        .to.have.attr('data-value')
+                        .and.not.be.empty;
+
+                    expect($stageSelect).to.exist;
+                    expect($stageSelect.text())
+                        .not.to.be.empty
+                        .and.not.to.match(/object Object|undefined/);
+
+                    $showMoreBtn = $thisEl.find('#showMore');
+
+                    expect($showMoreBtn).to.exist;
+
+                    done();
+                });
+
+                it('Try to showMore', function () {
+                    var projectsUrl = new RegExp('\/projects\/', 'i');
+                    var $thisEl = thumbnailsView.$el;
+                    var $showMoreBtn = $thisEl.find('#showMore');
+
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
+                    $showMoreBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#thumbnailContent')).to.exist;
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(6);
+                });
+
+                it('Try to filtered projects', function () {
+                    var $selectedItem1;
+                    var $selectedItem2;
+                    var $contactBtn;
+                    var $projectNameBtn;
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var projectsUrl = new RegExp('\/projects\/', 'i');
+                    var $selectedFilters;
+
+                    $searchArrow.click();
+
+                    // select contact
+                    $contactBtn = $searchContainer.find('#customerFullContainer >.groupName');
+                    $contactBtn.click();
+                    $selectedItem1 = $searchContainer.find('#customerFullContainer li:nth-child(1)');
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
+                    $selectedItem1.click();
+                    server.respond();
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
+
+                    // select project name
+                    $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
+                    $projectNameBtn.click();
+                    $selectedItem2 = $searchContainer.find('#nameFullContainer li:nth-child(1)');
+
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [PROJECTS.fakeProjectsForThumbnails.data[0]]})]);
+                    $selectedItem2.click();
+                    server.respond();
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(1);
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
+                    $selectedItem2.click();
+                    server.respond();
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
+                    $selectedFilters = $searchContainer.find('.removeValues');
+
+                    expect($selectedFilters).to.have.lengthOf(1);
+                    // close project name filter
+
+                    $selectedFilters.click();
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnails)]);
+                    server.respond();
+                    $selectedFilters = $searchContainer.find('.removeValues');
+                    expect($selectedFilters).to.have.lengthOf(0);
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+                });
+
+                it('Try to change project status', function () {
+                    var $statusSelectedItem;
+                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    var $projectStatusBtn = $needItem.find('.stageSelect');
+                    var projectUrl = new RegExp('\/projects\/', 'i');
+                    var stage;
+
+                    server.respondWith('PATCH', projectUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
+                    server.respondWith('GET', projectUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectsForThumbnailsAfterChooseWorkflow)]);
+                    $projectStatusBtn.click();
+                    $statusSelectedItem = $needItem.find('.newSelectList li[data-status="inprogress"]');
+                    $statusSelectedItem.click();
+                    server.respond();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+
+                    $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    stage = $needItem.find('a.stageSelect').text().toLowerCase();
+                    expect(stage).to.be.equals('in progress');
+                });
+
+                it('Try to change health of project', function () {
+                    var $healthSelectedItem;
+                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    var $projectHealthBtn = $needItem.find('.health-container');
+                    var projectUrl = new RegExp('\/projects\/', 'i');
+
+                    $projectHealthBtn.click();
+                    $healthSelectedItem = $needItem.find('ul li div.health1');
+
+                    server.respondWith('PATCH', projectUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
+                    $healthSelectedItem.click();
+                    server.respond();
+
+                    expect($needItem.find('.health-container a')).to.have.class('health1');
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+                });
+
+                it('Try to open CreateView', function () {
+                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                    var usersUrl = '/users/forDd';
+                    var employeesUrl = '/employees/getPersonsForDd';
+                    var customerUrl = '/customers/';
+                    var $dialog;
+
+                    server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeUsers)]);
+                    server.respondWith('GET', employeesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeEmployees)]);
+                    server.respondWith('GET', customerUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeCustomers)]);
+
+                    $createBtn.click();
+
+                    $dialog = $('.ui-dialog');
+                    // thumbnailsView.createItem();
+
+                    server.respond();
+                    server.respond();
+
+                    expect($dialog).to.exist;
+                    expect($dialog).to.have.length.below(2);
+                });
+
+                it('Try to change tabs', function () {
+                    var $dialogEl = $('.ui-dialog');
+                    var $tabs = $dialogEl.find('ul.dialog-tabs > li');
+                    var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
+                    var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
+
+                    expect($tabs).to.exist;
+                    expect($tabs).to.have.lengthOf(3);
+
+                    expect($firstTab).to.have.class('active');
+
+                    $secondTab.click();
+                    expect($secondTab).to.have.class('active');
+
+                    $firstTab.click();
+                    expect($firstTab).to.have.class('active');
+
+                });
+
+                it('Try to create item without required data', function () {
+                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                    var spyResponse;
+
+                    $createBtn.click();
+                    spyResponse = mainSpy.args[0][0];
+
+                    expect(spyResponse).to.have.property('type', 'error');
+                });
+
+                it('Try to set set required data to CreateView', function () {
+                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                    var $dialogEl = $('.ui-dialog');
+                    var $projectNameEl = $dialogEl.find('#projectName');
+                    var $projectDescEl = $dialogEl.find('#projectShortDesc');
+                    var $startDate = $dialogEl.find('#StartDate');
+                    var $endDate = $dialogEl.find('#EndDateTarget');
+                    var projectsUrl = '/projects/';
+                    var $selectedItem;
+                    var $salesManagerSelect;
+                    var $projectHealthSelect;
+                    var $customerSelect;
+                    var $next;
+                    var $prev;
+
+                    $projectNameEl.val('Test');
+                    $projectDescEl.val('Test');
+                    $startDate.val('5 Apr, 2016');
+                    $endDate.val('25 Apr, 2016');
+
+                    // select sales manager
+                    $salesManagerSelect = $dialogEl.find('#projectManagerDD');
+                    $salesManagerSelect.click();
+                    $next = $dialogEl.find('.next');
+                    $next.click();
+                    $prev = $dialogEl.find('.prev');
+                    $prev.click();
+                    $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
+                    $selectedItem.click();
+
+                    // select customer
+                    $customerSelect = $dialogEl.find('#customerDd');
+                    $customerSelect.click();
+                    $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
+                    $selectedItem.click();
+
+                    // select project health
+                    $projectHealthSelect = $dialogEl.find('#health a');
+                    $projectHealthSelect.click();
+                    $selectedItem = $dialogEl.find('.health2');
+                    $selectedItem.click();
+
+                    server.respondWith('POST', projectsUrl, [201, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Created success'})]);
+                    $createBtn.click();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+                });
+
+                it('Close CreateView', function () {
+                    var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+
+                    $cancelBtn.click();
+
+                    expect($('.ui-dialog')).to.not.exist;
+                });
+
+                it('Try to open EditView', function () {
+                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    var projectFormUrl = new RegExp('\/projects\/', 'i');
+                    var usersUrl = '/users/forDd';
+                    var employeesUrl = '/employees/getPersonsForDd';
+                    var customerUrl = '/customers/';
+
+                    server.respondWith('GET', projectFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectById)]);
+                    server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeUsers)]);
+                    server.respondWith('GET', employeesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeEmployees)]);
+                    server.respondWith('GET', customerUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeCustomers)]);
+                    $needItem.click();
+                    server.respond();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/55b92ad621e4b7c40f00065f');
+                });
+            });
 
         });
 
