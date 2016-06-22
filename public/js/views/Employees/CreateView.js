@@ -4,6 +4,7 @@ define([
     'Underscore',
     'text!templates/Employees/CreateTemplate.html',
     'models/EmployeesModel',
+    'models/TransferModel',
     'common',
     'populate',
     'views/Notes/AttachView',
@@ -11,7 +12,7 @@ define([
     'views/dialogViewBase',
     'constants',
     'moment'
-], function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment) {
+], function (Backbone, $, _, CreateTemplate, EmployeeModel, TransferModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -176,8 +177,9 @@ define([
 
         saveItem: function () {
             var weeklyScheduler;
-            var transferArray;
+            var transfer;
             var employeeModel;
+            var transferModel;
             var homeAddress;
             var dateBirthSt;
             var self = this;
@@ -250,18 +252,6 @@ define([
             jobType = $.trim($tr.find('#jobTypeDd').text());
             info = $tr.find('#statusInfoDd').val();
             event = $tr.attr('data-content');
-
-            transferArray = [{
-                status         : event,
-                date           : date,
-                department     : department,
-                jobPosition    : jobPosition,
-                manager        : manager,
-                jobType        : jobType,
-                salary         : salary,
-                info           : info,
-                weeklyScheduler: weeklyScheduler
-            }];
 
             hireArray.push(date);
 
@@ -340,8 +330,8 @@ define([
 
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
-                fire    : fireArray,
-                transfer: transferArray
+                fire    : fireArray
+                // transfer: transferArray
             };
 
             employeeModel.save(data, {
@@ -359,9 +349,34 @@ define([
 
                     self.attachView.sendToServer(null, model.changed);
 
-                    //Backbone.history.fragment = '';
-                    //Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+                    // Backbone.history.fragment = '';
+                    // Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     self.hideDialog();
+
+                    transfer = {
+                        status              : event,
+                        date                : date,
+                        department          : department,
+                        jobPosition         : jobPosition,
+                        manager             : manager,
+                        jobType             : jobType,
+                        salary              : salary,
+                        info                : info,
+                        weeklyScheduler     : weeklyScheduler,
+                        employee            : model.get('id'),
+                        scheduledPay        : null,
+                        payrollStructureType: null
+                    };
+
+                    transferModel = new TransferModel();
+                    transferModel.save(transfer, {
+                        success: function (model) {
+
+                        },
+                        error: function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
                 },
 
                 error: function (model, xhr) {
