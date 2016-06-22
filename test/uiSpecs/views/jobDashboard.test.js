@@ -5,7 +5,7 @@ define([
     'views/main/MainView',
     'views/jobsDashboard/list/ListView',
     'views/jobsDashboard/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'views/Projects/projectInfo/journalEntriesForJob/dialogView',
     'helpers/eventsBinder',
     'jQuery',

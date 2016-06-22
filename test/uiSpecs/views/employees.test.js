@@ -11,14 +11,15 @@ define([
     'views/Employees/EditView',
     'views/Employees/TopBarView',
     'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
-    'custom',
-    'async'
-], function (fixtures, EmployeeModel, modules, EmployeeCollection, MainView, ListView, /* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
+    'testConstants/filtersEmployees'
+], function (fixtures, EmployeeModel, modules, EmployeeCollection, MainView, ListView, /* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, FilterGroup, SavedFilters, eventsBinder, $, chai, chaiJquery, sinonChai, fakeFilters) {
     'use strict';
     var expect;
 
@@ -4556,9 +4557,9 @@ define([
         });
 
         before(function () {
-            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
-            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
         })
 
         describe('#initialize()', function () {
@@ -4707,6 +4708,7 @@ define([
                     var $firstRow;
                     var employeeListUrl = new RegExp('\/employees', 'i');
                     var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
+                    var employeeFiltersUrl = '/filter/Employees';
                     var elementsCount;
                     var subject;
                     var $pagination;
@@ -4722,12 +4724,14 @@ define([
                     server.respond();
 
                     server.respondWith('GET', employeeAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAphabet)]);
+                    server.respondWith('GET', employeeFiltersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeFilters)]);
 
                     listView = new ListView({
                         collection: employeeCollection,
                         startTime : new Date()
                     });
 
+                    server.respond();
                     server.respond();
 
                     eventsBinder.subscribeCollectionEvents(employeeCollection, listView);

@@ -8,7 +8,7 @@ define([
     'views/wTrack/list/createJob',
     'views/wTrack/TopBarView',
     'views/wTrack/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'chai',
     'chai-jquery',

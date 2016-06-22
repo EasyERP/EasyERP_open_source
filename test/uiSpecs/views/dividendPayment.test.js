@@ -7,7 +7,7 @@ define([
     'views/DividendPayments/list/ListView',
     'views/DividendPayments/TopBarView',
     'views/DividendPayments/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

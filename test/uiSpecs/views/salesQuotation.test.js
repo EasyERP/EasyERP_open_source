@@ -8,7 +8,7 @@ define([
     'views/salesQuotations/TopBarView',
     'views/salesQuotations/CreateView',
     'views/salesQuotations/EditView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

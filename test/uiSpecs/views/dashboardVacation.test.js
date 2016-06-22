@@ -6,7 +6,7 @@ define([
     'views/main/MainView',
     'views/vacationDashboard/index',
     'views/vacationDashboard/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'views/vacationDashboard/statisticsView',
     'jQuery',
     'chai',

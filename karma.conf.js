@@ -36,12 +36,13 @@ module.exports = function (config) {
             {pattern: 'public/js/services/**/*.js', included: false, watching: false},
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
+            {pattern: 'public/js/constants/*.js', included: false, watching: false},
 
-            {pattern: 'test/uiSpecs/collection/*.test.js', included: false /* , watching: true*/},
-            {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false /* , watching: true*/},
-            {pattern: 'test/uiSpecs/models/*.test.js', included: false /* , watching: true*/},
-            {pattern: 'test/uiSpecs/views/login.test.js', included: false /* , watching: true*/},
-            {pattern: 'test/uiSpecs/views/inventoryReport.test.js', included: false /* , watching: true*/}
+            {pattern: 'test/uiSpecs/collection/*.test.js', included: false/*, watching: true*/},
+            {pattern: 'test/uiSpecs/fixtures/!*.test.js', included: false/*, watching: true*/},
+            {pattern: 'test/uiSpecs/models/!*.test.js', included: false/*, watching: true*/},
+            {pattern: 'test/uiSpecs/views/login.test.js', included: false/*, watching: true*/},
+            {pattern: 'test/uiSpecs/views/employees.test.js', included: false/*, watching: true*/}
 
             // {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
         ],
@@ -69,7 +70,7 @@ module.exports = function (config) {
 
         /* autoWatch: true, */
 
-        browsers: ['Firefox', 'Chrome', /* 'Safari', */ 'IE', 'PhantomJS'],
+        browsers: ['Firefox', 'Chrome', /* 'Safari',  'IE', */ 'PhantomJS'],
 
         singleRun: true,
 

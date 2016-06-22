@@ -7,7 +7,7 @@ define([
     'views/supplierPayments/list/ListView',
     'views/supplierPayments/TopBarView',
     'views/supplierPayments/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

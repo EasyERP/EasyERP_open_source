@@ -1167,7 +1167,8 @@ require.config({
         modules          : './constants/test/modules',
         testConstants    : './constants/test',
         dashboardVacation: './constants/test/dashboardVacation',
-        filter           : './constants/test/filter'
+        filter           : './constants/test/filter',
+        constantsDir     : './public/js/constants',
     },
     shim   : {
         jQuery       : {

@@ -112,7 +112,12 @@ define([
                 view = new LoginView({el: $elFixture, dbs: ['production', 'development']});
 
                 App.currentUser = fakeCurrentUser.user;
-                App.savedFilters = fakeCurrentUser.savedFilters;
+                
+                if (!App.filtersObject) {
+                    App.filtersObject = {};
+                }
+
+                App.filtersObject.savedFilters = fakeCurrentUser.savedFilters;
             });
 
             after(function () {
