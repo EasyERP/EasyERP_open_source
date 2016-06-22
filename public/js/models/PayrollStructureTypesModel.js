@@ -8,8 +8,8 @@ define([
         },
 
         defaults: {
-            deduction: [],
-            earning  : []
+            deductions: [],
+            earnings  : []
         },
 
         urlRoot: function () {

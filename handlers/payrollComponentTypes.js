@@ -21,8 +21,18 @@ var PayrollComponentType = function (models) {
         var db = req.session.lastDb;
         var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
         var type = req.params.type;
+        var formula = req.query.formula;
+        var query = {};
 
-        PayrollComponentType.find({type: type}, {name: 1}, function (err, result) {
+        if (type) {
+            query.type = type;
+        }
+
+        if (formula) {
+            query.formula = {$ne: []};
+        }
+
+        PayrollComponentType.find(query, function (err, result) {
             if (err) {
                 return next(err);
             }

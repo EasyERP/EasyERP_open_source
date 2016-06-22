@@ -18,6 +18,19 @@ var Module = function (models) {
         });
     };
 
+    this.getById = function (req, res, next) {
+        var db = req.session.lastDb;
+        var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
+        var id = req.params.id;
+
+        payrollStructureTypes.findById(id).populate('deductions').populate('earnings').exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
+    };
+
     this.getForDd = function (req, res, next) {
         var db = req.session.lastDb;
         var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);

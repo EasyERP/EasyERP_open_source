@@ -6,6 +6,7 @@ module.exports = function (models) {
     var handler = new WeeklySchedulerHandler(models);
 
     router.get('/', handler.getForView);
+    router.get('/:id', handler.getById);
     router.get('/forDd', handler.getForDd);
     router.post('/', handler.create);
     router.patch('/:id', handler.update);

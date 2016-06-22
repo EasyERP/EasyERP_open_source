@@ -126,7 +126,7 @@ define([
             var model;
 
             data.name = name;
-            data.type = self.type;
+            data.type = self.type + 's';
             data.formula = [];
 
             if (!name) {

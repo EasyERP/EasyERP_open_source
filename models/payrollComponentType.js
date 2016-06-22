@@ -5,8 +5,8 @@ module.exports = (function () {
         name: {type: String, default: ''},
         type: {
             type   : String,
-            default: 'earning',
-            enum   : ['earning', 'deduction']
+            default: 'earnings',
+            enum   : ['earnings', 'deductions']
         },
         
         description: {type: String, default: ''},

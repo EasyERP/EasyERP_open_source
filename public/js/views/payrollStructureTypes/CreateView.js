@@ -2,17 +2,20 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'views/dialogViewBase',
     'text!templates/payrollStructureTypes/CreateTemplate.html',
     'models/PayrollStructureTypesModel',
     'views/payrollStructureTypes/structureElement/CreateView',
-    'text!templates/payrollStructureTypes/componentTemplate.html'
-], function ($, _, Backbone, CreateTemplate, PayrollStructureTypesModel, StructureElementView, componentTemplate) {
+    'text!templates/payrollStructureTypes/componentTemplate.html',
+    'populate'
+], function ($, _, Backbone, Parent, CreateTemplate, PayrollStructureTypesModel, StructureElementView, componentTemplate, populate) {
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = Parent.extend({
         el               : '#content-holder',
         contentType      : 'payrollStructureType',
         template         : _.template(CreateTemplate),
         componentTemplate: _.template(componentTemplate),
+        responseObj      : {},
 
         initialize: function (options) {
             var self = this;
@@ -21,8 +24,8 @@ define([
 
             self.seq = {};
 
-            self.seq.deduction = Object.keys(self.model.get('deduction')).length;
-            self.seq.earning = Object.keys(self.model.get('earning')).length;
+            self.seq.deduction = Object.keys(self.model.get('deductions')).length;
+            self.seq.earning = Object.keys(self.model.get('earnings')).length;
 
             self.eventChannel = options.eventChannel;
 
@@ -103,7 +106,7 @@ define([
             var self = this;
             var model;
             var $currentEl = this.$el;
-
+            var data;
             var name = $.trim($currentEl.find('#payrollStructureName').val());
             var $earnings = $currentEl.find('[data-id="earning"]').find('li');
             var $deductions = $currentEl.find('[data-id="deduction"]').find('li');
@@ -118,10 +121,10 @@ define([
                 deductions.push($(this).attr('id'));
             });
 
-            var data = {
-                name: name,
-                earning: earnings,
-                deduction: deductions
+            data = {
+                name     : name,
+                earnings  : earnings,
+                deductions: deductions
             };
 
             if (!name) {
@@ -164,8 +167,8 @@ define([
             $earningComponents.html('');
             $deductionComponents.html('');
 
-            Object.keys(model.deduction).forEach(function (deduction) {
-                arr.push(model.deduction[deduction]);
+            Object.keys(model.deductions).forEach(function (deduction) {
+                arr.push(model.deductions[deduction]);
             });
 
             arr = _.sortBy(arr, 'seq');
@@ -176,8 +179,8 @@ define([
 
             arr = [];
 
-            Object.keys(model.earning).forEach(function (earning) {
-                arr.push(model.earning[earning]);
+            Object.keys(model.earnings).forEach(function (earning) {
+                arr.push(model.earnings[earning]);
             });
 
             arr = _.sortBy(arr, 'seq');
@@ -192,6 +195,10 @@ define([
             var self = this;
             var model = self.model.toJSON();
             var formString = self.template(model);
+            var url;
+            var ddId;
+            var typeEarning = 'earning';
+            var typeDeduction = 'deduction';
 
             self.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -207,9 +214,7 @@ define([
                         click: function () {
                             self.saveItem();
                         }
-                    },
-
-                    {
+                    }, {
                         text : 'Cancel',
                         click: function () {
                             self.hideDialog();
@@ -219,6 +224,16 @@ define([
             });
 
             self.$el.find('ul').sortable();
+
+            url = '/payrollComponentTypes/forDd/' + typeEarning + 's';
+            ddId = '#' + typeEarning + 'TypeDd';
+
+            populate.get(ddId, url, {formula: true}, 'name', self);
+
+            url = '/payrollComponentTypes/forDd/' + typeDeduction + 's';
+            ddId = '#' + typeDeduction + 'TypeDd';
+
+            populate.get(ddId, url, {formula: true}, 'name', self);
 
             self.renderComponents();
 

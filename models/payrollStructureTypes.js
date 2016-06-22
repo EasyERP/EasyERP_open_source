@@ -1,10 +1,11 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
+    var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var payrollStructureTypesSchema = mongoose.Schema({
         name     : {type: String, default: ''},
-        earning  : {type: Array, default: []},
-        deduction: {type: Array, default: []}
+        earnings  : [{type: ObjectId, ref: 'payrollComponentType', default: null}],
+        deductions: [{type: ObjectId, ref: 'payrollComponentType', default: null}]
     }, {collection: 'payrollStructureTypes'});
 
     mongoose.model('payrollStructureTypes', payrollStructureTypesSchema);
