@@ -15,11 +15,12 @@ define([
     'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
+    'Underscore',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'testConstants/filtersEmployees'
-], function (fixtures, EmployeeModel, modules, EmployeeCollection, MainView, ListView, /* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, FilterGroup, SavedFilters, eventsBinder, $, chai, chaiJquery, sinonChai, fakeFilters) {
+], function (fixtures, EmployeeModel, modules, EmployeeCollection, MainView, ListView, /* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, FilterGroup, SavedFilters, eventsBinder, $, _, chai, chaiJquery, sinonChai, fakeFilters) {
     'use strict';
     var expect;
 
@@ -4543,6 +4544,7 @@ define([
         var selectSpy;
         var removeFilterSpy;
         var saveFilterSpy;
+        var debOnceStub;
 
         after(function () {
             view.remove();
@@ -4554,10 +4556,14 @@ define([
             selectSpy.restore();
             removeFilterSpy.restore();
             saveFilterSpy.restore();
+            debOnceStub.restore();
         });
 
         before(function () {
             selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            debOnceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
             saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
         })
@@ -4905,7 +4911,7 @@ define([
                     expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200');
                 });
 
-                it('Try to filter ListView by FullName', function () {
+                it('Try to filter ListView by FullName & Department', function () {
                     var $searchContainer = $thisEl.find('#searchContainer');
                     var $searchArrow = $searchContainer.find('.search-content');
                     var employeeThumbUrl = new RegExp('\/employees\/', 'i');
@@ -4915,6 +4921,8 @@ define([
                     var $selectedItem;
                     var $next;
                     var $prev;
+                    var ajaxResponse;
+                    var filterObject;
 
                     selectSpy.reset();
 
@@ -4923,9 +4931,10 @@ define([
                     expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
                     // select fullName
+                    jQueryAjaxSpy.reset();
                     $fullName = $searchContainer.find('#nameFullContainer .groupName');
                     $fullName.click();
-                    $selectedItem = $searchContainer.find('li[data-value="5638aa635d23a8eb04e80af0"]');
+                    $selectedItem = $searchContainer.find('#nameUl>li:nth-child(1)');
 
                     server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForList)]);
                     $selectedItem.click();
@@ -4933,8 +4942,26 @@ define([
                     expect(selectSpy.calledOnce).to.be.true;
                     expect($thisEl.find('#searchContainer')).to.exist;
                     expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#nameUl>li:nth-child(1)')).to.have.class('checkedValue');
                     elementsCount = $thisEl.find('#listTable > tr').length;
                     expect(elementsCount).to.be.equals(5);
+
+                    expect(jQueryAjaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/employees/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject.name).to.exist;
+                    expect(filterObject.name).to.have.property('key', '_id');
+                    expect(filterObject.name).to.have.property('value');
+                    expect(filterObject.name.value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
 
                 });
 
