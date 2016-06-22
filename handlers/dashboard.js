@@ -27,6 +27,8 @@ var wTrack = function (models) {
         var departmentQuery = {
             $or: [{_id: {$in: departmentsArray}}, {parentDepartment: {$in: departmentsArray}}]
         };
+        var objectFilter = {};
+
         var employeeQueryForEmployeeByDep;
 
         var weeksArr = [];
@@ -53,6 +55,31 @@ var wTrack = function (models) {
             departmentQuery = {
                 _id: {$in: filter.department.value.objectID()}
             };
+        }
+
+        if (filter.salesManager && filter.salesManager.value) {
+            objectFilter.$and = [];
+            filter.salesManager.value.forEach(function (item, index, object) {
+                if (item === 'empty') {
+                    objectFilter.$and.push({
+                        salesManager: null
+                    });
+                    object.splice(index, 1);
+                }
+            });
+
+            if (filter.salesManager.value.length) {
+                objectFilter.$and.push({
+                    'salesManager.employeeId': {$in: filter.salesManager.value.objectID()}
+                });
+            }
+
+        }
+        if (filter.projecttype && filter.projecttype.value) {
+            objectFilter.$and = [];
+            objectFilter.$and.push({
+                'project.projecttype': {$in: filter.projecttype.value}
+            });
         }
 
         if (filter && filter.startDate && filter.endDate) {
@@ -276,7 +303,7 @@ var wTrack = function (models) {
                     resultData.sortDepartments = sortDepartments;
 
                     res.status(200).send(resultData);
-                    redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
+                    //redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
                 });
             }
 
@@ -284,7 +311,8 @@ var wTrack = function (models) {
             // res.status(200).send(employeesByDep);
         }
 
-        async.waterfall([function (wfCb) {
+        async.waterfall([
+            function (wfCb) {
             var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
 
             Department.find(departmentQuery, {_id: 1}).sort({nestingLevel: 1, sequence: -1}).exec(function (err, depIds) {
@@ -531,6 +559,39 @@ var wTrack = function (models) {
                 }
 
                 function wTrackComposer(employeesArray, waterfallCb) {
+
+                    var salesManagerMatch = {
+                        $and: [
+                            {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
+                            {
+                                $or: [{
+                                    $and: [{
+                                        $eq: ['$$projectMember.startDate', null]
+                                    }, {
+                                        $eq: ['$$projectMember.endDate', null]
+                                    }]
+                                }, {
+                                    $and: [{
+                                        $lte: ['$$projectMember.startDate', startDate]
+                                    }, {
+                                        $eq: ['$$projectMember.endDate', null]
+                                    }]
+                                }, {
+                                    $and: [{
+                                        $eq: ['$$projectMember.startDate', null]
+                                    }, {
+                                        $gte: ['$$projectMember.endDate', endDate]
+                                    }]
+                                }, {
+                                    $and: [{
+                                        $lte: ['$$projectMember.startDate', startDate]
+                                    }, {
+                                        $gte: ['$$projectMember.endDate', endDate]
+                                    }]
+                                }]
+                            }]
+                    };
+
                     WTrack.aggregate([
                         {
                             $match: {
@@ -546,8 +607,14 @@ var wTrack = function (models) {
                                     dateByWeek: '$dateByWeek',
                                     project   : '$project'
                                 },
-
                                 hours: {$sum: '$worked'}
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'projectMembers',
+                                localField  : '_id.project',
+                                foreignField: 'projectId',
+                                as          : 'projectMembers'
                             }
                         }, {
                             $lookup: {
@@ -562,9 +629,23 @@ var wTrack = function (models) {
                                 employee  : '$_id.employee',
                                 dateByWeek: '$_id.dateByWeek',
                                 project   : {$arrayElemAt: ['$project', 0]},
+                                salesManager: {
+                                    $filter: {
+                                        input: '$projectMembers',
+                                        as   : 'projectMember',
+                                        cond : salesManagerMatch
+                                    }
+                                },
                                 hours     : 1,
                                 _id       : 0
                             }
+                        }, {
+                            $unwind: {
+                                path                      : '$salesManager',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        }, {
+                           $match : objectFilter
                         }, {
                             $project: {
                                 department: 1,

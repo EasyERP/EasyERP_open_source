@@ -82,6 +82,14 @@ define([], function () {
             Department: {
                 view   : 'department',
                 backend: 'department._id'
+            },
+            'Sales Manager': {
+                view   : 'salesManager',
+                backend: 'salesManager._id'
+            },
+            'Project Type': {
+                view   : 'projecttype',
+                backend: 'projecttype'
             }
         },
 
