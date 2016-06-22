@@ -15,7 +15,8 @@
     'collections/Opportunities/filterCollection',
     'constants',
     'helpers',
-    'views/pagination'
+    'views/pagination',
+    'custom'
 ], function (Backbone,
              _,
              $,
@@ -32,7 +33,8 @@
              ContentCollection,
              CONSTANTS,
              helpers,
-             Pagination) {
+             Pagination,
+             custom) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Pagination.extend({
         el               : '#content-holder',
@@ -638,7 +640,11 @@
                 self.hideItemsNumber(e);
             });
 
-            this.renderFilter();
+            if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+                custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+            } else {
+                this.renderFilter(this.baseFilter);
+            }
 
             return this;
         }

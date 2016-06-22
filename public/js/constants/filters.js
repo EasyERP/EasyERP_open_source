@@ -69,7 +69,8 @@
 
             services: {
                 displayName: 'Services',
-                backend    : 'services'
+                backend    : 'services',
+                type       : 'boolean'
             }
         },
 
@@ -549,7 +550,8 @@
 
             dataKey: {
                 displayName: 'Data Key',
-                backend    : 'dataKey'
+                backend    : 'dataKey',
+                type       : 'string'
             }
         },
 
@@ -571,12 +573,14 @@
 
             type: {
                 displayName: 'Type',
-                backend    : 'type'
+                backend    : 'type',
+                type       : 'string'
             },
 
             paymentsCount: {
                 displayName: 'Payment Count',
-                backend    : 'payment.count'
+                backend    : 'payment.count',
+                type       : 'integer'
             }
         },
 
@@ -593,7 +597,8 @@
 
             onlyEmployees: {
                 displayName: 'Only Employees',
-                backend    : 'onlyEmployees'
+                backend    : 'onlyEmployees',
+                type       : 'boolean'
             }
         },
 

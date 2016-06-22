@@ -18,6 +18,7 @@ var Module = function (models) {
     var fs = require('fs');
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
+    var FilterMapper = require('../helpers/filterMapper');
 
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
@@ -574,14 +575,22 @@ var Module = function (models) {
         var query = {};
         var countQuery;
         var getData;
-        var getTotal;
+        var getTotal
+        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject.$or = caseFilter(filter);
-            } else {
-                optionsObject.$and = caseFilter(filter);
+            optionsObject = filterMapper.mapFilter(filter);
+
+            if (filter && filter.services) {
+                if (filter.services.value.indexOf('isCustomer') !== -1) {
+                    optionsObject['salesPurchases.isCustomer'] = true;
+                }
+                if (filter.services.value.indexOf('isSupplier') !== -1) {
+                    optionsObject['salesPurchases.isSupplier'] = true;
+                }
             }
+
+            delete optionsObject.services;
         }
 
         if (data.sort) {
@@ -601,7 +610,7 @@ var Module = function (models) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and && optionsObject.$and.length) {
+            if (optionsObject) {
                 queryObject.$and.push(optionsObject);
             }
 
@@ -1009,13 +1018,25 @@ var Module = function (models) {
         var options;
         var matchObject = {};
         var data = {};
+        var filterMapper = new FilterMapper();
 
         filter = JSON.parse(filter);
 
         data.filter = filter;
 
-        if (filter) {
-            filterObj = caseFilter(data, type, matchObject);
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter);
+
+            if (filter && filter.services) {
+                if (filter.services.value.indexOf('isCustomer') !== -1) {
+                    filterObj['salesPurchases.isCustomer'] = true;
+                }
+                if (filter.services.value.indexOf('isSupplier') !== -1) {
+                    filterObj['salesPurchases.isSupplier'] = true;
+                }
+            }
+
+            delete filterObj.services;
         }
 
         options = {
@@ -1067,13 +1088,25 @@ var Module = function (models) {
         var options;
         var matchObject = {};
         var data = {};
+        var filterMapper = new FilterMapper();
 
         filter = JSON.parse(filter);
 
         data.filter = filter;
 
-        if (filter) {
-            filterObj = caseFilter(data, type, matchObject);
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter);
+
+            if (filter && filter.services) {
+                if (filter.services.value.indexOf('isCustomer') !== -1) {
+                    filterObj['salesPurchases.isCustomer'] = true;
+                }
+                if (filter.services.value.indexOf('isSupplier') !== -1) {
+                    filterObj['salesPurchases.isSupplier'] = true;
+                }
+            }
+
+            delete filterObj.services;
         }
 
         options = {

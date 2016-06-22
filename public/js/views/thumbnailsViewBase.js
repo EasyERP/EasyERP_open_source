@@ -68,17 +68,20 @@
         // trigger by collection
         showMoreContent: function (newModels) {
             var $holder = this.$el;
-            var $showMore = $holder.find('#showMoreDiv');
+            // var $showMore = $holder.find('#showMoreDiv');
             var $created = $holder.find('#timeRecivingDataFromServer');
             var $content = $holder.find('#thumbnailContent');
+            var showMore = this.collection.currentPage <= this.collection.totalPages;
 
-            if ($showMore.length !== 0) {
-                $showMore.before(this.template({collection: this.collection.toJSON()}));
+            var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
 
-                $showMore.after($created);
+            if (showMore) {
+                $content.append(this.template({collection: this.collection.toJSON()}));
             } else {
                 $content.html(this.template({collection: this.collection.toJSON()}));
             }
+
+            $created.replaceWith(createdInTag);
             this.asyncLoadImgs(newModels);
         },
 
@@ -92,11 +95,9 @@
             if (showMore) {
                 if ($showMore.length === 0) {
                     $created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
-                } else {
-                    $showMore.show();
                 }
             } else {
-                $showMore.hide();
+                $showMore.remove();
             }
 
             this.changeLocationHash(null, this.collection.pageSize, this.filter);

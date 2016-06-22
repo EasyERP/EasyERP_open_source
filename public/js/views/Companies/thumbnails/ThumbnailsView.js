@@ -35,6 +35,7 @@
         viewType       : 'thumbnails',
         exportToXlsxUrl: '/Customers/exportToXlsx/?type=Companies',
         exportToCsvUrl : '/Customers/exportToCsv/?type=Companies',
+        letterKey      : 'name.first',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];

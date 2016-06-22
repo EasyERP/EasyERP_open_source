@@ -22,6 +22,8 @@ var Module = function (models, event) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var pageHelper = require('../helpers/pageHelper');
 
+    var FilterMapper = require('../helpers/filterMapper');
+
     function convertType(array, type) {
         var i;
 
@@ -689,37 +691,24 @@ var Module = function (models, event) {
         var filter = data.filter || {};
         var key;
         var queryObject = {};
+        var filterMapper = new FilterMapper();
 
-        if ((contentType === 'Orders') || (contentType === 'Quotations')) {
-            filter.forSales = {
-                key  : 'forSales',
-                value: ['false']
-            };
-        } else {
-            filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-        }
-
-        if (isOrder) {
-            filter.isOrder = {
-                key  : 'isOrder',
-                value: ['true']
-            };
-        } else {
-            filter.isOrder = {
-                key  : 'isOrder',
-                value: ['false']
-            };
-        }
+        queryObject.$and = [];
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject.$or = caseFilter(filter);
+            if ((contentType === 'Orders') || (contentType === 'Quotations')) {
+                queryObject.$and.push({forSales: false});
             } else {
-                queryObject.$and = caseFilter(filter);
+                queryObject.$and.push({forSales: true});
             }
+
+            if (isOrder) {
+                queryObject.$and.push({isOrder: true});
+            } else {
+                queryObject.$and.push({isOrder: false});
+            }
+
+            queryObject.$and.push(filterMapper.mapFilter(filter)); // caseFilter(filter);
         }
 
         if (data.sort) {

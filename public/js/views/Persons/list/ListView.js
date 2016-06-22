@@ -23,6 +23,7 @@ define([
         viewType         : 'list', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Persons',
         exportToCsvUrl   : '/Customers/exportToCsv/?type=Persons',
+        letterKey        : 'name.first',
 
         events: {
             'click .letter:not(.empty)': 'alpabeticalRender'

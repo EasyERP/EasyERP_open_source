@@ -127,20 +127,50 @@ var Filters = function (models) {
             pipeLine = [{
                 $match: query
             }, {
+                $project: {
+                    _id    : '$_id',
+                    name   : {$concat: ['$name.first', ' ', '$name.last']},
+                    address: '$address'
+                }
+            }, {
                 $group: {
                     _id: null,
 
                     name: {
                         $addToSet: {
                             _id : '$_id',
-                            name: {$ifNull: [{$concat: ['$name.first', ' ', '$name.last']}, 'None']}
+                            name: {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$name', ' ']
+                                    },
+                                    then: 'None',
+                                    else: '$name'
+                                }
+                            }
                         }
                     },
 
                     country: {
                         $addToSet: {
-                            _id : '$address.country',
-                            name: {$ifNull: ['$address.country', 'None']}
+                            _id : {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$address.country', '']
+                                    },
+                                    then: 'None',
+                                    else: {$ifNull: ['$address.country', 'None']}
+                                }
+                            },
+                            name: {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$address.country', '']
+                                    },
+                                    then: 'None',
+                                    else: {$ifNull: ['$address.country', 'None']}
+                                }
+                            }
                         }
                     }
                 }
@@ -184,13 +214,27 @@ var Filters = function (models) {
             pipeLine = [{
                 $match: query
             }, {
+                $project: {
+                    _id    : '$_id',
+                    name   : {$concat: ['$name.first', ' ', '$name.last']},
+                    address: '$address'
+                }
+            }, {
                 $group: {
                     _id: null,
 
                     name: {
                         $addToSet: {
                             _id : '$_id',
-                            name: {$ifNull: [{$concat: ['$name.first', ' ', '$name.last']}, 'None']}
+                            name: {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$name', ' ']
+                                    },
+                                    then: 'None',
+                                    else: '$name'
+                                }
+                            }
                         }
                     },
 
@@ -215,6 +259,15 @@ var Filters = function (models) {
                 }
 
                 result = result.length ? result[0] : {};
+
+                result.services = [
+                    {
+                        name: 'Supplier',
+                        _id : 'isSupplier'
+                    }, {
+                        name: 'Customer',
+                        _id : 'isCustomer'
+                    }];
 
                 res.status(200).send(result);
             });
@@ -1643,13 +1696,31 @@ var Filters = function (models) {
                     salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
                 }
             }, {
+                $project: {
+                    workflow   : 1,
+                    source     : 1,
+                    contactName: 1,
+                    salesPerson: {
+                        _id : '$salesPerson._id',
+                        name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                    }
+                }
+            }, {
                 $group: {
                     _id: null,
 
                     contactName: {
                         $addToSet: {
                             _id : '$contactName',
-                            name: '$contactName'
+                            name: {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$contactName', ' ']
+                                    },
+                                    then: 'None',
+                                    else: '$contactName'
+                                }
+                            }
                         }
                     },
 
@@ -1670,7 +1741,15 @@ var Filters = function (models) {
                     salesPerson: {
                         $addToSet: {
                             _id : '$salesPerson._id',
-                            name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                            name: {
+                                $cond: {
+                                    if  : {
+                                        $eq: ['$contactName', ' ']
+                                    },
+                                    then: 'None',
+                                    else: '$contactName'
+                                }
+                            }
                         }
                     }
                 }

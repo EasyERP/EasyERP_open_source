@@ -381,9 +381,9 @@ define([
                     this.filter = {};
                 }
                 this.filter.letter = {
-                    key  : 'letter',
+                    key  : this.letterKey || 'name',
                     value: selectedLetter,
-                    type : null
+                    type : 'letter'
                 };
 
                 target.parent().find('.current').removeClass('current');
@@ -393,6 +393,14 @@ define([
                     delete this.filter;
                     delete App.filtersObject.filter.letter;
                 } else {
+                    if (!App.filtersObject) {
+                        App.filtersObject = {};
+                    }
+
+                    if (!App.filtersObject.filter) {
+                        App.filtersObject.filter = {};
+                    }
+
                     App.filtersObject.filter.letter = this.filter.letter;
                 }
             }
@@ -401,11 +409,11 @@ define([
             this.newCollection = false;
             this.$el.find('.thumbnailElement').remove();
 
-            this.filterView.renderFilterContent(this.filter);
-            _.debounce(
+            this.filterView.showFilterIcons(this.filter);
+            /*_.debounce(
                 function () {
                     this.trigger('filter', App.filtersObject.filter);
-                }, 10);
+                }, 10);*/
 
             $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);

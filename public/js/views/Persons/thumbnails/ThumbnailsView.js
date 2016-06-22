@@ -23,6 +23,7 @@
         viewType       : 'thumbnails', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
         exportToCsvUrl : '/Customers/exportToCsv/?type=Persons',
+        letterKey      : 'name.first',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];

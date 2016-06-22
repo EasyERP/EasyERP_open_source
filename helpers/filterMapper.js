@@ -6,26 +6,35 @@ var _ = require('lodash');
  */
 
 var FilterMapper = function () {
-    function ConvertType(array, type) {
+    function ConvertType(values, type) {
         var result = {};
         var currentType = type && type !== '' ? type : 'ObjectId';
 
         switch (currentType) {
             case 'ObjectId':
-                result.$in = array.objectID();
+                result.$in = values.objectID();
                 break;
             case 'string':
-                result.$in = array;
+                if (values.indexOf('None') !== -1) {
+                    values.push('');
+                    values.push(null);
+                }
+
+                result.$in = values;
                 break;
             case 'integer':
-                result.$in = _.map(array, function (element) {
+                result.$in = _.map(values, function (element) {
                     return parseInt(element);
                 });
                 break;
             case 'boolean':
-                result.$in = _.map(array, function (element) {
+                result.$in = _.map(values, function (element) {
                     return element === 'true';
                 });
+                break;
+            case 'letter':
+                result = new RegExp('^[' + values.toLowerCase() + values.toUpperCase() + '].*');
+                break;
         }
 
         return result;
@@ -40,20 +49,10 @@ var FilterMapper = function () {
      */
 
     this.mapFilter = function (filter) {
-        var queryObject = {};
-        var condition = '$and';
-        var filterResult = [];
         var filterObject = {};
         var filterValues;
         var filterType;
         var filterBackend;
-
-        if (filter.condition) {
-            if (filter.condition === 'or') {
-                condition = '$or';
-            }
-            delete filter.condition;
-        }
 
         for (var filterName in filter) {
             filterValues = filter[filterName].value;
@@ -61,10 +60,7 @@ var FilterMapper = function () {
             filterBackend = filter[filterName].key;
 
             filterObject[filterBackend] = ConvertType(filterValues, filterType);
-            // filterResult.push(filterObject);
         }
-
-        // queryObject[condition] = filterResult;
 
         return filterObject;
     };

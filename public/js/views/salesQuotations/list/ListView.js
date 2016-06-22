@@ -36,7 +36,7 @@ define([
         contentCollection: contentCollection,
         viewType         : 'list',
         contentType      : CONSTANTS.SALESQUOTATIONS,
-        gasPagination    : true,
+        hasPagination    : true,
 
         events: {
             'click .stageSelect'                 : 'showNewSelect',
