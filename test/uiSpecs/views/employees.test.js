@@ -10,7 +10,7 @@ define([
     'views/Employees/CreateView',
     'views/Employees/EditView',
     'views/Employees/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

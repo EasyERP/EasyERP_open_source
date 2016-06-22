@@ -1,5 +1,8 @@
 <div id="searchContainer"></div>
 <div id="thumbnailContent">
+    <% if (!collection.length) { %>
+    <h2>No projects found</h2>
+    <% } %>
     <% collection.forEach(function(project){ %>
     <div class="thumbnail thumbnailElement" id="<%=project._id%>">
         <div class="dropDown">

@@ -10,7 +10,7 @@ define([
     'views/Tasks/TopBarView',
     'views/Tasks/CreateView',
     'views/Tasks/EditView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

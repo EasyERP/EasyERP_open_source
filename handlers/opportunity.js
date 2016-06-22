@@ -23,6 +23,8 @@ var Module = function (models, event) {
     var HistoryWriter = require('../helpers/historyWriter.js');
     var historyWriter = new HistoryWriter(models);
 
+    var FilterMapper = require('../helpers/filterMapper');
+
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
@@ -2127,27 +2129,24 @@ var Module = function (models, event) {
         var filter = data.filter || {};
         var key;
 
+        var filterMapper = new FilterMapper();
+
         if (filter) {
-            filterObj = caseFilterOpp(filter);
+            filterObj = filterMapper.mapFilter(filter); // caseFilterOpp(filter);
         }
 
         switch (data.contentType) {
 
             case ('Opportunities'):
                 optionsObject.push({isOpportunitie: true});
-                if (data && data.filter) {
-                    optionsObject.push(filterObj);
-                }
                 break;
 
             case ('Leads'):
                 optionsObject.push({isOpportunitie: false});
-                if (data && data.filter) {
-                    optionsObject.push(filterObj);
-                }
                 break;
-            //skip default;
         }
+
+        optionsObject.push(filterObj);
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Opportunities, cb);
@@ -2312,7 +2311,6 @@ var Module = function (models, event) {
                         }
                     });
                     break;
-                // skip default;
             }
 
             if (data.sort) {

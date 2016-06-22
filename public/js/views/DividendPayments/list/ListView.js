@@ -16,7 +16,7 @@ define([
              CreateView,
              CurrentModel,
              ListItemView,
-             //ListTotalView,
+             // ListTotalView,
              paymentCollection,
              ListViewBase,
              helpers) {
@@ -25,6 +25,7 @@ define([
         ListItemView : ListItemView,
         contentType  : 'DividendPayments',
         changedModels: {},
+        hasPagination: true,
 
         initialize: function (options) {
             $(document).off('click');
@@ -39,7 +40,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = paymentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         recalcTotal: function () {
@@ -57,7 +58,7 @@ define([
         },
 
         render: function () {
-            var self = this;
+            // var self = this;
             var $currentEl = this.$el;
 
             $('.ui-dialog ').remove();
@@ -70,17 +71,17 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render());
 
-           /* $currentEl.append(new ListTotalView({
-                element : this.$el.find('#listTable'),
-                cellSpan: 4,
-                wTrack  : true
-            }).render());*/
+            /* $currentEl.append(new ListTotalView({
+             element : this.$el.find('#listTable'),
+             cellSpan: 4,
+             wTrack  : true
+             }).render());*/
 
-            self.renderPagination($currentEl, self);
+            // self.renderPagination($currentEl, self);
 
             this.recalcTotal();
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }
     });
 

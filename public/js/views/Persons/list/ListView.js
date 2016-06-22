@@ -6,7 +6,7 @@ define([
     'views/Persons/CreateView',
     'views/Persons/list/ListItemView',
     'collections/Persons/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'constants'
 ], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
@@ -23,6 +23,7 @@ define([
         viewType         : 'list', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Persons',
         exportToCsvUrl   : '/Customers/exportToCsv/?type=Persons',
+        letterKey        : 'name.first',
 
         events: {
             'click .letter:not(.empty)': 'alpabeticalRender'

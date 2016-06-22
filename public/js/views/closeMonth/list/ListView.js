@@ -5,7 +5,7 @@ define([
     'views/PayrollExpenses/generate/GenerateView',
     'text!templates/closeMonth/list/ListHeader.html',
     'views/closeMonth/list/ListItemView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/closeMonth/filterCollection',
     'constants',
     'dataService',

@@ -25,6 +25,7 @@ define([
         responseObj  : {},
         changedModels: {},
         cancelEdit   : cancelEdit,
+        hasPagination: true,
 
         initialize: function (options) {
             $(document).off('click');
@@ -40,7 +41,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
         },
 
         events: {
@@ -233,9 +234,9 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
             setTimeout(function () {
                 self.editCollection = new EditCollection(self.collection.toJSON());

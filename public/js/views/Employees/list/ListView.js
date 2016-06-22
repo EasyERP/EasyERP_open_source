@@ -16,6 +16,8 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
+        hasAlphabet      : true,
+        hasPagination    : true,
         contentType      : 'Employees',
         formUrl          : '#easyErp/Employees/',
         exportToXlsxUrl  : '/employees/exportToXlsx',
@@ -32,7 +34,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         gotoForm: function (e) {
@@ -70,13 +72,6 @@ define([
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
             }).render());
-
-            this.renderAlphabeticalFilter();
-            this.renderPagination($currentEl, this);
-            this.renderFilter();
-
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
         }
 
     });

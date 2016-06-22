@@ -11,11 +11,12 @@
     'collections/Opportunities/OpportunitiesCollection',
     'models/OpportunitiesModel',
     'dataService',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/Opportunities/filterCollection',
     'constants',
     'helpers',
-    'views/pagination'
+    'views/pagination',
+    'custom'
 ], function (Backbone,
              _,
              $,
@@ -32,7 +33,8 @@
              ContentCollection,
              CONSTANTS,
              helpers,
-             Pagination) {
+             Pagination,
+             custom) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Pagination.extend({
         el               : '#content-holder',
@@ -60,7 +62,7 @@
 
             this.render();
 
-            this.filterView.trigger('filter', App.filter);
+            this.filterView.trigger('filter', App.filtersObject.filter);
 
             // this.asyncFetc(options.workflowCollection.toJSON());
             // this.getCollectionLengthByWorkflows(this);
@@ -533,7 +535,7 @@
             var self = this;
             var workflows = this.workflowsCollection.toJSON();
 
-            if (filter.workflow) {
+            if (filter && filter.workflow) {
                 workflows = [];
                 filter.workflow.value.forEach(function (wId) {
                     workflows.push({
@@ -542,7 +544,7 @@
                 });
             }
 
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
+            this.filter = !filter || Object.keys(filter).length === 0 ? {} : filter;
 
             self.changeLocationHash(false, false, filter);
 
@@ -638,7 +640,11 @@
                 self.hideItemsNumber(e);
             });
 
-            this.renderFilter();
+            if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+                custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+            } else {
+                this.renderFilter(this.baseFilter);
+            }
 
             return this;
         }

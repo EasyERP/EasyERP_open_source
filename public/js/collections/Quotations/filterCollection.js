@@ -37,11 +37,13 @@
                 if (regex.test(this.contentType)) {
                     options.filter.forSales = {
                         key  : 'forSales',
+                        type: 'boolean',
                         value: ['true']
                     };
                 } else {
                     options.filter.forSales = {
                         key  : 'forSales',
+                        type: 'boolean',
                         value: ['false']
                     };
                 }
