@@ -34,302 +34,418 @@ define([
     'use strict';
 
     var fakeDepartments = {
-        total: 300,
-        data : [
+        data: [
             {
-                _id              : "55b92ace21e4b7c40f000012",
-                ID               : 4,
-                __v              : 0,
-                sequence         : 10,
-                nestingLevel     : 0,
-                editedBy         : {
-                    date: "2015-11-19T11:09:15.406Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.909Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : ".NET/WP"
-            },
-            {
-                _id              : "560c0b83a5d4a2e20ba5068c",
-                __v              : 0,
-                sequence         : 10,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: null
-                },
-                createdBy        : {
-                    date: "2015-09-30T16:19:15.986Z",
-                    user: "560c099da5d4a2e20ba5068b"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "Finance"
-            },
-            {
-                _id              : "55bb1f14cb76ca630b000006",
-                __v              : 0,
-                sequence         : 9,
-                nestingLevel     : 0,
-                editedBy         : {
-                    date: "2015-09-17T09:57:56.972Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-31T07:09:08.957Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: {
-                    _id     : "55b92ad221e4b7c40f000039",
-                    name    : {
-                        last : "Rikun",
-                        first: "Stas"
-                    },
-                    fullName: "Stas Rikun",
-                    id      : "55b92ad221e4b7c40f000039"
-                },
-                parentDepartment : null,
-                departmentName   : "Design"
-            },
-            {
-                _id              : "55bb1f40cb76ca630b000007",
-                __v              : 0,
-                sequence         : 9,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: null
-                },
-                createdBy        : {
-                    date: "2015-07-31T07:09:52.155Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: {
-                    _id     : "55b92ad221e4b7c40f000030",
-                    name    : {
-                        last : "Svatuk",
-                        first: "Alex"
-                    },
-                    fullName: "Alex Svatuk",
-                    id      : "55b92ad221e4b7c40f000030"
-                },
-                parentDepartment : null,
-                departmentName   : "PM"
-            },
-            {
-                _id              : "55b92ace21e4b7c40f00000f",
-                ID               : 1,
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.907Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "iOS"
-            },
-            {
-                _id              : "55b92ace21e4b7c40f000010",
-                ID               : 2,
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.908Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "Android"
-            },
-            {
-                _id              : "55b92ace21e4b7c40f000011",
-                ID               : 3,
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.908Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "QA"
-            },
-            {
-                _id              : "55b92ace21e4b7c40f000013",
-                ID               : 5,
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.909Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "Marketing"
-            },
-            {
-                _id              : "55b92ace21e4b7c40f000014",
-                ID               : 6,
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.909Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "BusinessDev"
-            },
-            {
-                _id              : "55b92ace21e4b7c40f000015",
-                ID               : 7,
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.909Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "HR"
-            },
-            {
-                _id              : "55b92ace21e4b7c40f000016",
-                ID               : 8,
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 0,
-                editedBy         : {
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy        : {
-                    date: "2015-07-29T19:34:38.910Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : null,
-                departmentName   : "Web"
-            },
-            {
-                _id              : "56802eb31afe27f547b7ba52",
-                __v              : 0,
-                sequence         : 3,
-                nestingLevel     : 1,
-                editedBy         : {
-                    user: null
-                },
-                createdBy        : {
-                    date: "2015-12-27T18:32:19.543Z",
+                _id: "56cebdf6541812c07197358f",
+                __v: 0,
+                sequence: 9,
+                nestingLevel: 0,
+                editedBy: {
+                    date: "2016-02-25T08:40:29.051Z",
                     user: "563f673270bbc2b740ce89ae"
                 },
-                users            : [],
-                departmentManager: null,
-                parentDepartment : {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
-                },
-                departmentName   : "JS"
-            },
-            {
-                _id              : "566ee11b8453e8b464b70b73",
-                __v              : 0,
-                sequence         : 2,
-                nestingLevel     : 1,
-                editedBy         : {
-                    date: "2015-12-27T18:32:01.531Z",
+                createdBy: {
+                    date: "2016-02-25T08:40:22.784Z",
                     user: "563f673270bbc2b740ce89ae"
                 },
-                createdBy        : {
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: null,
+                name: "Development"
+            },
+            {
+                _id: "56e6775c5ec71b00429745a4",
+                __v: 0,
+                isDevelopment: false,
+                sequence: 1,
+                nestingLevel: 0,
+                editedBy: {
+                    date: "2016-05-06T13:59:56.345Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                createdBy: {
+                    date: "2016-03-14T08:33:32.754Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: null,
+                name: "Service"
+            },
+            {
+                _id: "566ee11b8453e8b464b70b73",
+                __v: 0,
+                isDevelopment: true,
+                sequence: 8,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-04-12T07:48:44.518Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
                     date: "2015-12-14T15:32:43.470Z",
                     user: "52203e707d4dba8813000003"
                 },
-                users            : [],
+                users: [ ],
                 departmentManager: null,
-                parentDepartment : {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
                 },
-                departmentName   : "Ruby on Rails"
+                name: "Ruby on Rails"
             },
             {
-                _id              : "56802e9d1afe27f547b7ba51",
-                __v              : 0,
-                sequence         : 1,
-                nestingLevel     : 1,
-                editedBy         : {
+                _id: "56e175c4d62294582e10ca68",
+                __v: 0,
+                isDevelopment: true,
+                sequence: 7,
+                nestingLevel: 1,
+                editedBy: {
                     user: null
                 },
-                createdBy        : {
-                    date: "2015-12-27T18:31:57.230Z",
-                    user: "563f673270bbc2b740ce89ae"
+                createdBy: {
+                    date: "2016-03-10T13:25:24.979Z",
+                    user: "56dda0599fb95fbe18e3f8ed"
                 },
-                users            : [],
+                users: [ ],
                 departmentManager: null,
-                parentDepartment : {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
                 },
-                departmentName   : "CSS/FrontEnd"
+                name: "Unity"
             },
             {
-                _id              : "56802ec21afe27f547b7ba53",
-                __v              : 0,
-                sequence         : 0,
-                nestingLevel     : 1,
-                editedBy         : {
-                    date: "2015-12-27T18:32:40.776Z",
+                _id: "55bb1f14cb76ca630b000006",
+                __v: 0,
+                isDevelopment: true,
+                sequence: 6,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-02-25T08:42:20.626Z",
                     user: "563f673270bbc2b740ce89ae"
                 },
-                createdBy        : {
+                createdBy: {
+                    date: "2015-07-31T07:09:08.957Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: {
+                    _id: "55b92ad221e4b7c40f000039",
+                    name: {
+                        last: "Rikun",
+                        first: "Stas"
+                    },
+                    fullName: "Stas Rikun",
+                    id: "55b92ad221e4b7c40f000039"
+                },
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
+                },
+                name: "Design"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000011",
+                ID: 3,
+                __v: 0,
+                isDevelopment: true,
+                sequence: 5,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-02-25T08:41:16.215Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.908Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
+                },
+                name: "QA"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000010",
+                ID: 2,
+                __v: 0,
+                isDevelopment: true,
+                sequence: 4,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-02-25T08:41:11.006Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.908Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
+                },
+                name: "Android"
+            },
+            {
+                _id: "55bb1f40cb76ca630b000007",
+                __v: 0,
+                isDevelopment: false,
+                sequence: 4,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-03-30T11:20:27.579Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
+                    date: "2015-07-31T07:09:52.155Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: {
+                    _id: "55b92ad221e4b7c40f000030",
+                    name: {
+                        last: "Svatuk",
+                        first: "Alex"
+                    },
+                    fullName: "Alex Svatuk",
+                    id: "55b92ad221e4b7c40f000030"
+                },
+                parentDepartment: {
+                    _id: "56e6775c5ec71b00429745a4",
+                    name: "Service"
+                },
+                name: "PM"
+            },
+            {
+                _id: "55b92ace21e4b7c40f00000f",
+                ID: 1,
+                __v: 0,
+                isDevelopment: true,
+                sequence: 3,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-02-25T08:41:05.787Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.907Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
+                },
+                name: "iOS"
+            },
+            {
+                _id: "560c0b83a5d4a2e20ba5068c",
+                __v: 0,
+                isDevelopment: false,
+                sequence: 3,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-03-14T08:34:18.225Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
+                    date: "2015-09-30T16:19:15.986Z",
+                    user: "560c099da5d4a2e20ba5068b"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56e6775c5ec71b00429745a4",
+                    name: "Service"
+                },
+                name: "Finance"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000015",
+                ID: 7,
+                __v: 0,
+                isDevelopment: false,
+                sequence: 2,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-03-14T08:34:09.729Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.909Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56e6775c5ec71b00429745a4",
+                    name: "Service"
+                },
+                name: "HR"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000012",
+                ID: 4,
+                __v: 0,
+                isDevelopment: true,
+                sequence: 1,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-02-25T08:40:48.233Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.909Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
+                },
+                name: ".NET/WP"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000014",
+                ID: 6,
+                __v: 0,
+                isDevelopment: false,
+                sequence: 1,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-03-14T08:34:00.655Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.909Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56e6775c5ec71b00429745a4",
+                    name: "Service"
+                },
+                name: "BusinessDev"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000013",
+                ID: 5,
+                __v: 0,
+                isDevelopment: false,
+                sequence: 0,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-03-14T08:33:47.375Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.909Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56e6775c5ec71b00429745a4",
+                    name: "Service"
+                },
+                name: "Marketing"
+            },
+            {
+                _id: "55b92ace21e4b7c40f000016",
+                ID: 8,
+                __v: 0,
+                isDevelopment: true,
+                sequence: 0,
+                nestingLevel: 1,
+                editedBy: {
+                    date: "2016-02-25T08:40:40.193Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                createdBy: {
+                    date: "2015-07-29T19:34:38.910Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "56cebdf6541812c07197358f",
+                    name: "Development"
+                },
+                name: "Web"
+            },
+            {
+                _id: "56802ec21afe27f547b7ba53",
+                __v: 0,
+                isDevelopment: true,
+                sequence: 2,
+                nestingLevel: 2,
+                editedBy: {
+                    date: "2016-04-14T07:37:18.546Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
                     date: "2015-12-27T18:32:34.872Z",
                     user: "563f673270bbc2b740ce89ae"
                 },
-                users            : [],
+                users: [ ],
                 departmentManager: null,
-                parentDepartment : {
-                    _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                parentDepartment: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    name: "Web"
                 },
-                departmentName   : "PHP/WordPress"
+                name: "PHP/WordPress"
+            },
+            {
+                _id: "56802e9d1afe27f547b7ba51",
+                __v: 0,
+                isDevelopment: true,
+                sequence: 1,
+                nestingLevel: 2,
+                editedBy: {
+                    date: "2016-04-14T07:37:12.116Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
+                    date: "2015-12-27T18:31:57.230Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    name: "Web"
+                },
+                name: "CSS/FrontEnd"
+            },
+            {
+                _id: "56802eb31afe27f547b7ba52",
+                __v: 0,
+                isDevelopment: true,
+                sequence: 0,
+                nestingLevel: 2,
+                editedBy: {
+                    date: "2016-04-14T07:36:58.416Z",
+                    user: "52203e707d4dba8813000003"
+                },
+                createdBy: {
+                    date: "2015-12-27T18:32:19.543Z",
+                    user: "563f673270bbc2b740ce89ae"
+                },
+                users: [ ],
+                departmentManager: null,
+                parentDepartment: {
+                    _id: "55b92ace21e4b7c40f000016",
+                    name: "Web"
+                },
+                name: "JS"
             }
         ]
     };
@@ -3157,9 +3273,14 @@ define([
         });
 
         after(function () {
+            var $dialogs = $('.ui-dialog');
             view.remove();
             topBarView.remove();
             listView.remove();
+
+            if ($dialogs.length) {
+                $dialogs.remove();
+            }
 
             alertStub.restore();
             historyNavigateSpy.restore();
@@ -3239,7 +3360,7 @@ define([
                 });
                 server.respond();
 
-                expect(depsCollection).to.have.lengthOf(15);
+                expect(depsCollection).to.have.lengthOf(18);
 
                 topBarView = new TopBarView({
                     collection: depsCollection
@@ -3257,6 +3378,7 @@ define([
             var mainSpy;
             var windowConfirmStub;
             var clock;
+            var $thisEl;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -3273,7 +3395,6 @@ define([
             });
 
             it('Try to create departments list view', function (done) {
-                var $contentHolderEl;
                 var $listContainerEl;
 
                 listView = new ListView({
@@ -3294,28 +3415,30 @@ define([
 
                 clock.tick(500);
 
-                $contentHolderEl = view.$el.find('#content-holder');
-                $listContainerEl = $contentHolderEl.find('ul');
-
-                expect($contentHolderEl).to.exist;
+                $thisEl = listView.$el;
+                $listContainerEl = $thisEl.find('ul');
+                403
                 expect($listContainerEl).to.exist;
-                expect($listContainerEl.find('li').length).to.be.not.equals(0);
+                expect($listContainerEl.find('li').length).to.be.above(1);
                 expect($listContainerEl).to.have.class('ui-sortable');
                 expect($listContainerEl).to.have.id('groupList');
 
                 done();
             });
 
-            it('Try to delete item with some error', function () {
+            it('Try to delete item with some error with error response not equals 403', function () {
                 var $deleteBtn = listView.$el.find('#groupList > li:nth-child(1) > span > span.text > span.trash');
                 var departmentsUrl = new RegExp('\/Departments\/', 'i');
+
+                historyNavigateSpy.reset();
 
                 windowConfirmStub.returns(true);
                 server.respondWith('DELETE', departmentsUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $deleteBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#home');
+                expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('home');
             });
 
             it('Try to delete item with 403 error', function () {
@@ -3334,10 +3457,10 @@ define([
             });
 
             it('Try to delete item', function () {
-                window.location.hash = '#easyErp/Departments';
-
                 var $deleteBtn = listView.$el.find('#groupList > li:nth-child(1) > span > span.text > span.trash');
                 var departmentsUrl = new RegExp('\/Departments\/', 'i');
+
+                window.location.hash = '#easyErp/Departments';
 
                 windowConfirmStub.returns(true);
                 server.respondWith('DELETE', departmentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
@@ -3346,7 +3469,7 @@ define([
 
                 expect(windowConfirmStub.called).to.be.true;
                 expect(window.location.hash).to.equals('#easyErp/Departments');
-                expect(listView.$el.find('#groupList > li:nth-child(1)').attr('data-id')).to.be.equals('560c0b83a5d4a2e20ba5068c');
+                expect(listView.$el.find('#groupList > li:nth-child(1)').attr('data-id')).to.be.equals('56e6775c5ec71b00429745a4');
             });
 
             it('Try to edit item with error of  /Departments/form/?id=55b92ace21e4b7c40f000012', function () {
@@ -3361,16 +3484,14 @@ define([
                 spyResponse = mainSpy.args[1][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
-
-
             });
 
             it('Try to open edit form', function () {
-                var $dialogContainerEl;
                 var $needLiEl = listView.$el.find('#groupList > li:nth-child(1)');
                 var depFormUrl = new RegExp('\/Departments\/', 'i');
                 var usersUrl = new RegExp('\/users\/forDd', 'i');
                 var employeesUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var $dialogContainerEl;
 
                 server.respondWith('GET', depFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartmentForm)]);
                 server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
@@ -3385,7 +3506,6 @@ define([
                 expect($('.dialog-tabs')).to.exist;
                 expect($('#parentDepartment')).to.have.text('Select');
                 expect($('#departmentManager')).to.have.text('Select');
-
             });
 
             it('Try change tab', function () {
@@ -3435,7 +3555,6 @@ define([
                 $deleteSelect = $dialogEl.find('#55cb7302fea413b50b000007');
                 $deleteSelect.click();
 
-
                 server.respondWith('PUT', departmentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
                 $saveBtn.click();
                 server.respond();
@@ -3454,7 +3573,6 @@ define([
                 spyResponse = mainSpy.args[2][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
-
             });
 
             it('Try to delete item from edit form', function () {
@@ -3526,7 +3644,6 @@ define([
 
                 $firstDialogTabEl.click();
                 expect($('.dialog-tabs > li:nth-child(1) > a')).to.have.class('active');
-
             });
 
             it('Try to create item with error result', function (done) {
