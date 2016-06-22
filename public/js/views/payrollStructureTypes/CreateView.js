@@ -16,6 +16,10 @@ define([
         template         : _.template(CreateTemplate),
         componentTemplate: _.template(componentTemplate),
         responseObj      : {},
+        componentObject  : {
+            earnings  : [],
+            deductions: []
+        },
 
         initialize: function (options) {
             var self = this;
@@ -43,6 +47,12 @@ define([
         newStructureComponent: function (component, modelComponent) {
             var self = this;
             var model = self.model;
+
+            if (!this.componentObject[component.type]) {
+                this.componentObject[component.type] = [];
+            }
+
+            this.componentObject[component.type].push(component);
 
             component._id = modelComponent.id;
 
@@ -108,21 +118,19 @@ define([
             var $currentEl = this.$el;
             var data;
             var name = $.trim($currentEl.find('#payrollStructureName').val());
-            var $earnings = $currentEl.find('[data-id="earning"]').find('li');
-            var $deductions = $currentEl.find('[data-id="deduction"]').find('li');
             var earnings = [];
             var deductions = [];
 
-            $earnings.each(function () {
-                earnings.push($(this).attr('id'));
+            this.componentObject.earnings.forEach(function (el) {
+                earnings = _.union(earnings, el.formula);
             });
 
-            $deductions.each(function () {
-                deductions.push($(this).attr('id'));
+            this.componentObject.deductions.forEach(function (el) {
+                deductions = _.union(deductions, el.formula);
             });
 
             data = {
-                name     : name,
+                name      : name,
                 earnings  : earnings,
                 deductions: deductions
             };
