@@ -62,7 +62,7 @@ module.exports = function (models) {
         });
     }
 
-    router.get('/vacation', authStackMiddleware, accessStackMiddlewareVacation, cacheRetriver, handler.composeForVacation);
+    router.get('/vacation', authStackMiddleware, accessStackMiddlewareVacation, /*cacheRetriver,*/ handler.composeForVacation);
     // router.get('/vacation', handler.getFromCache);
     router.get('/hr', authStackMiddleware, accessStackMiddlewareHR, handler.composeForHr);
 
