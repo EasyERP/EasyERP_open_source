@@ -59,45 +59,55 @@ define([
             var that = this;
             var model;
             var listTableCheckedInput;
-            listTableCheckedInput = $('#paymentsTable').find("input:not('#checkAll_payments'):checked");
+            var answer;
 
+            
+            listTableCheckedInput = $('#paymentsTable').find("input:not('#checkAll_payments'):checked");
             this.collectionLength = this.collection.length;
 
-            App.startPreload();
+            if (listTableCheckedInput.length == 1) {
+                answer = confirm('Do you really want to remove this payment?');
+            } else {
+                answer = confirm('Do you really want to remove those payments?');
+            }
 
-            async.eachSeries(listTableCheckedInput, function (checkbox, cb) {
-                model = that.collection.get(checkbox.value);
-                model.destroy({
-                    wait   : true,
-                    success: function (model) {
-                        var id = model.get('_id');
+            if (answer) {
+                App.startPreload();
 
-                        that.$listTable.find('[data-id="' + id + '"]').remove();
+                async.eachSeries(listTableCheckedInput, function (checkbox, cb) {
+                    model = that.collection.get(checkbox.value);
+                    model.destroy({
+                        wait   : true,
+                        success: function (model) {
+                            var id = model.get('_id');
 
-                        $('#removePayment').hide();
-                        $('#checkAll_payments').prop('checked', false);
+                            that.$listTable.find('[data-id="' + id + '"]').remove();
 
-                        that.collection.remove(checkbox.value);
+                            $('#removePayment').hide();
+                            $('#checkAll_payments').prop('checked', false);
 
-                        cb();
-                    },
+                            that.collection.remove(checkbox.value);
 
-                    error: function (model, res) {
-                        if (res.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'You do not have permission to perform this action'
-                            });
+                            cb();
+                        },
+
+                        error: function (model, res) {
+                            if (res.status === 403) {
+                                App.render({
+                                    type   : 'error',
+                                    message: 'You do not have permission to perform this action'
+                                });
+                            }
+
+                            cb();
                         }
-
-                        cb();
+                    });
+                }, function () {
+                    if (that.eventChannel) {
+                        that.eventChannel.trigger('paymentRemoved');
                     }
                 });
-            }, function () {
-                if (that.eventChannel) {
-                    that.eventChannel.trigger('paymentRemoved');
-                }
-            });
+            }
         },
 
         recalcTotal: function () {
