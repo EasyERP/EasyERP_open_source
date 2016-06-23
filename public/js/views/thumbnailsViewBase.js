@@ -62,6 +62,8 @@
         showMore: function (e) {
             e.preventDefault();
 
+            this.startTime = new Date();
+
             this.collection.getNextPage({filter: this.filter, viewType: this.viewType, contentType: this.contentType});
         },
 
@@ -71,7 +73,9 @@
             // var $showMore = $holder.find('#showMoreDiv');
             var $created = $holder.find('#timeRecivingDataFromServer');
             var $content = $holder.find('#thumbnailContent');
-            var showMore = this.collection.currentPage <= this.collection.totalPages;
+            var currentPage = this.collection.currentPage;
+            var totalPages = this.collection.totalPages;
+            var showMore = currentPage <= totalPages && totalPages !== 1;
 
             var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
 

@@ -28,19 +28,29 @@ define([
         },
 
         makeRender: function (options) {
-            _.bindAll(this, 'render', 'afterRender');
+            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
             var self = this;
 
             this.render = _.wrap(this.render, function (render) {
+                self.beforeRender(options);
                 render();
                 self.afterRender(options);
 
                 return self;
             });
         },
+        
+        beforeRender: function(options) {
+            if (this.viewType === 'thumbnails') {
+                this.$el.html('');
+                this.$el
+                    .append('<div id="searchContainer"></div>')
+                    .append('<div id="thumbnailContent"></div>');
+            }
+        },
 
         afterRender: function (options) {
-            var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
+            var createdInTag;
             var $curEl = this.$el;
             var contentType = options.contentType || null;
             var ifFilter = FILTERS.hasOwnProperty(contentType);
@@ -61,6 +71,7 @@ define([
                 this.renderPagination($curEl, this);
             }
 
+            createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
             $curEl.append(createdInTag);
         },
 

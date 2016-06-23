@@ -102,7 +102,9 @@
             var self = this;
             var $currentEl = this.$el;
 
-            $currentEl.html(this.template({collection: this.collection.toJSON()}));
+            $currentEl
+                .find('#thumbnailContent')
+                .append(this.template({collection: this.collection.toJSON()}));
 
             common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
                 self.stages = stages || [];

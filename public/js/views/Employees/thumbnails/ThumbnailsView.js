@@ -50,7 +50,9 @@
         render: function () {
             var $currentEl = this.$el;
 
-            $currentEl.html(this.template({collection: this.collection.toJSON()}));
+            $currentEl
+                .find('#thumbnailContent')
+                .append(this.template({collection: this.collection.toJSON()}));
 
             return this;
         },
