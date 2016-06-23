@@ -639,7 +639,7 @@ var Employee = function (event, models) {
         var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            optionsObject = filterMapper.mapFilter(filter); // caseFilter(filter);
+            optionsObject = filterMapper.mapFilter(filter, contentType); // caseFilter(filter);
         }
 
         if (data.sort) {

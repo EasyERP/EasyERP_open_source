@@ -201,7 +201,7 @@ var TCard = function (event, models) {
         });
     };
 
-    function convertType(array, type) {
+    /*function convertType(array, type) {
         var i;
 
         if (type === 'integer') {
@@ -219,9 +219,9 @@ var TCard = function (event, models) {
                 }
             }
         }
-    }
+    }*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -284,7 +284,7 @@ var TCard = function (event, models) {
         }
 
         return resArray;
-    }
+    }*/
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -299,7 +299,7 @@ var TCard = function (event, models) {
         };
 
         if (filter) {
-            filterObj.$and = caseFilter(filter);
+            filterObj.$and = filterMapper.mapFilter(filter, 'wTrack'); // caseFilter(filter);
         }
 
         contentSearcher = function (wTrackIDs, waterfallCallback) {
@@ -631,7 +631,7 @@ var TCard = function (event, models) {
         };
 
         var sort = {};
-        var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        var filterObj = filter ? filterMapper.mapFilter(filter, 'wTrack') : null;
         var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
         var skip;
