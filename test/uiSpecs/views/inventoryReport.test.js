@@ -6,12 +6,13 @@ define([
     'views/main/MainView',
     'views/inventoryReport/list/ListView',
     'views/inventoryReport/TopBarView',
+    'views/Filter/FilterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, modules, fixtures, FilterCollection, MainView, ListView, TopBarView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, FilterCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -62,12 +63,18 @@ define([
     describe('inventoryReportView', function () {
         var $fixture;
         var $elFixture;
+        var selectSpy;
+        var saveFilterSpy;
+        var removeFilterSpy;
 
         before(function () {
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
             ajaxSpy = sinon.spy($, 'ajax');
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
+            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
         });
 
         after(function () {
@@ -75,6 +82,9 @@ define([
             setDateRangeSpy.restore();
             showDatePickerSpy.restore();
             historyNavigateSpy.restore();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
             ajaxSpy.restore();
 
             if ($('.ui-dialog').length) {
@@ -208,7 +218,7 @@ define([
                 describe('INITIALIZE', function () {
 
                     it('Try to create inventoryReportView', function (done) {
-                        var asyncDataUrl = new RegExp('\/inventoryReport\/', 'i');
+                        var asyncDataUrl = new RegExp('journalEntries\/getInventoryReport', 'i');
 
                         server.respondWith('GET', asyncDataUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
                         listView = new ListView({
@@ -233,6 +243,83 @@ define([
                         expect($thisEl.find('#listTable > tr')).to.not.equals(0);
 
                         done();
+                    });
+
+                    it('Try to filter ListView by Project', function () {
+                        var $searchContainer = $thisEl.find('#searchContainer');
+                        var $searchArrow = $searchContainer.find('.search-content');
+                        var inventoryReportUrl = new RegExp('journalEntries\/getInventoryReport', 'i');
+                        var $projectName;
+                        var elementsCount;
+                        var $country;
+                        var $selectedItem;
+                        var $next;
+                        var $prev;
+
+                        selectSpy.reset();
+
+                        // open filter dropdown
+                        $searchArrow.click();
+                        expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                        // select fullName
+                        $projectName = $searchContainer.find('#projectFullContainer .groupName');
+                        $projectName.click();
+                        $selectedItem = $searchContainer.find('li[data-value="56e689c75ec71b00429745a9"]');
+
+                        server.respondWith('GET', inventoryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
+                        $selectedItem.click();
+                        server.respond();
+                        expect(selectSpy.calledOnce).to.be.true;
+                        expect($thisEl.find('#searchContainer')).to.exist;
+                        elementsCount = $thisEl.find('#listTable > tr').length;
+                        expect(elementsCount).to.be.equals(3);
+
+                    });
+
+                    it('Try to save favorites filters', function () {
+                        var userUrl = new RegExp('\/users\/', 'i');
+                        var $searchContainer = $thisEl.find('#searchContainer');
+                        var $searchArrow = $searchContainer.find('.search-content');
+                        var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
+                        var $filterNameInput;
+                        var $saveFilterBtn;
+
+                        saveFilterSpy.reset();
+
+                        $favoritesBtn.click();
+                        expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                        $filterNameInput = $searchContainer.find('#forFilterName');
+                        $filterNameInput.val('Test');
+                        $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                        server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                        $saveFilterBtn.click();
+                        server.respond();
+                        expect(saveFilterSpy.called).to.be.true;
+
+                        //close filter dropdown
+                        $searchArrow.click();
+                        expect($searchContainer.find('.search-options')).to.have.class('hidden');
+                    });
+
+                    it('Try to delete Project filter', function () {
+                        var $searchContainer = $thisEl.find('#searchContainer');
+                        var $closeBtn = $searchContainer.find('span[data-value="project"]').next();
+                        var inventoryReportUrl = new RegExp('journalEntries\/getInventoryReport', 'i');
+                        var elementsCount;
+
+                        removeFilterSpy.reset();
+
+                        server.respondWith('GET', inventoryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
+                        $closeBtn.click();
+                        server.respond();
+
+                        expect(removeFilterSpy.called).to.be.true;
+                        expect($thisEl).to.exist;
+                        elementsCount = $thisEl.find('#listTable > tr').length;
+                        expect(elementsCount).to.be.equals(3);
                     });
 
                     it('Try to change dateRange', function () {

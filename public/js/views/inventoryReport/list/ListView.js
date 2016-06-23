@@ -160,6 +160,8 @@ define([
 
             $currentEl.prepend(itemView.render());
 
+            this.renderFilter();
+
             this.recalcTotal();
 
             this.renderPagination($currentEl, this);

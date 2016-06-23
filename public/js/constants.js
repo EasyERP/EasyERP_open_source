@@ -612,6 +612,22 @@ define([], function () {
                 view   : 'creditAccount',
                 backend: 'journal.creditAccount._id'
             }
+        },
+        inventoryReport: {
+            Project: {
+                view   : 'project',
+                backend: 'project.name'
+            },
+
+            'Sales Manager': {
+                view   : 'salesManager',
+                backend: 'salesManager._id'
+            },
+
+            'Project Type': {
+                view   : 'type',
+                backend: 'project.projecttype'
+            }
         }
     };
 

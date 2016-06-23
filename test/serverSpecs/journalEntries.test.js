@@ -7,6 +7,7 @@ require('../../config/development');
 
 describe('journalEntries Specs', function () {
     'use strict';
+
     var id;
 
     describe('journalEntries with admin', function () {
@@ -290,12 +291,18 @@ describe('journalEntries Specs', function () {
         it('should get data for Inventory Report view', function (done) {
             var query = {
                 'startDate': '1 Feb, 2016',
-                'endDate'  : '2 Feb, 2016'
+                'endDate'  : '2 Feb, 2016',
+                filter  : {
+                    salesManager: {
+                        key  : "salesManager._id"
+                    }
+                }
             };
 
             aggent
                 .get('journalEntries/getInventoryReport')
                 .query(query)
+                .query({'filter[salesManager][value][0]': '55b92ad221e4b7c40f00004f'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -309,7 +316,13 @@ describe('journalEntries Specs', function () {
                     expect(body)
                         .to.be.have.property('total');
                     expect(body)
-                        .to.be.have.property('data');
+                        .to.be.have.property('data')
+                        .and.to.be.instanceOf(Array);
+                    expect(body.data[0])
+                        .to.exist;
+                    expect(body.data[0])
+                        .to.be.have.property('salesmanager')
+                        .and.to.be.equal('Alex Sokhanych');
 
                     done();
                 });

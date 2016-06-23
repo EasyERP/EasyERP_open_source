@@ -4559,7 +4559,7 @@ define([
             selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
             saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
-        })
+        });
 
         describe('#initialize()', function () {
             var server;
