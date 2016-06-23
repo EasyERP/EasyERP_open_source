@@ -22,6 +22,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         contentType      : 'Orders',
+        hasPagination    : true,
 
         events: {
             'click .list tbody td:not(.notForm)': 'goToEditDialog'
@@ -42,7 +43,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
         },
@@ -116,10 +117,10 @@ define([
             }).render()); // added two parameters page and items number
             $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 4}).render());
 
-            this.renderPagination($currentEl, this);
-            this.renderFilter();
+            // this.renderPagination($currentEl, this);
+            // this.renderFilter();
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Purchase Order',
@@ -127,7 +128,6 @@ define([
                 targetSource: 'order'
             }, function (stages) {
                 self.stages = stages;
-
             });
         },
 

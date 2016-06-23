@@ -7,7 +7,7 @@
         'views/Product/CreateView',
         'dataService',
         'models/ProductModel',
-        'views/Filter/FilterView',
+        'views/Filter/filterView',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
@@ -101,18 +101,18 @@
                     target.addClass("current");
                     if ($(e.target).text() === "All") {
                         delete this.filter;
-                        delete App.filter.letter;
+                        delete App.filtersObject.filter.letter;
                     } else {
-                        App.filter.letter = this.filter.letter;
+                        App.filtersObject.filter.letter = this.filter.letter;
                     }
                 }
 
-                this.filter = App.filter;
+                this.filter = App.filtersObject.filter;
 
                 this.filterView.renderFilterContent(this.filter);
                 _.debounce(
                     function () {
-                        this.trigger('filter', App.filter);
+                        this.trigger('filter', App.filtersObject.filter);
                     }, 10);
 
                 this.startTime = new Date();

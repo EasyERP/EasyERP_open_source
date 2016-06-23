@@ -20,6 +20,14 @@ define([
         contentCollection: contentCollection,
         contentType      : 'Proforma',
         changedModels    : {},
+        hasPagination    : true,
+        baseFilter       : {
+            name : 'forSales',
+            value: {
+                key  : 'forSales',
+                value: [true]
+            }
+        },
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -33,7 +41,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
             this.stages = [];
@@ -110,8 +118,8 @@ define([
 
             currentEllistRenderer(self);
 
-            self.renderPagination($currentEl, self);
-            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
+            // self.renderPagination($currentEl, self);
+            // self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
             dataService.getData(CONSTANTS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Invoice',
@@ -121,7 +129,7 @@ define([
                 self.stages = stages;
             });
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             function currentEllistRenderer(self) {
                 var itemView;

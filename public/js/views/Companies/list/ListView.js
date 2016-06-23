@@ -21,6 +21,7 @@ define([
         formUrl          : '#easyErp/Companies/form/',
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Companies',
         exportToCsvUrl   : '/Customers/exportToCsv/?type=Companies',
+        letterKey        : 'name.first',
 
         events: {
             'click .letter:not(.empty)': 'alpabeticalRender'

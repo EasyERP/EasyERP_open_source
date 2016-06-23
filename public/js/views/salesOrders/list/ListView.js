@@ -39,6 +39,7 @@ define([
         ContentCollection: ContentCollection,
         CreateView       : CreateView,
         EditView         : EditView,
+        hasPagination    : true,
 
         viewType   : 'list',
         contentType: CONSTANTS.SALESORDERS, // needs in view.prototype.changeLocationHash
@@ -60,7 +61,7 @@ define([
             this.sort = options.sort;
             this.page = options.collection.currentPage;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         chooseOption: function (e) {
@@ -125,11 +126,11 @@ define([
                 cellSpan: 5
             }).render());
 
-            this.renderFilter();
-            this.renderPagination($thisEl, this);
+            // this.renderFilter();
+            // this.renderPagination($thisEl, this);
             this.recalcTotal();
-            
-            $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+
+            // $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         goToEditDialog: function (event) {
@@ -162,7 +163,7 @@ define([
                         onlyView: onlyView
                     });
                 },
-                
+
                 error: function () {
                     App.render({
                         type   : 'error',

@@ -7,7 +7,7 @@ define([
     'text!templates/supplierPayments/list/cancelEdit.html',
     'views/selectView/selectView',
     'views/supplierPayments/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'models/PaymentModel',
     'views/ExpensesPayments/list/ListItemView',
     'views/ExpensesPayments/list/ListTotalView',

@@ -11,7 +11,7 @@
     'collections/Tasks/TasksCollection',
     'models/TasksModel',
     'dataService',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'populate',
     'constants'

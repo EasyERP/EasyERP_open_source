@@ -33,6 +33,7 @@ define([
         contentCollection: contentCollection,
         contentType      : 'Applications',
         formUrl          : '#easyErp/Applications/',
+        hasPagination    : true,
 
         events: {
             'click .stageSelect'     : 'showNewSelect',
@@ -53,7 +54,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
         },
@@ -129,9 +130,9 @@ define([
                 itemView.trigger('incomingStages', stages);
             });
 
-            this.renderPagination($currentEl, this);
-            this.renderFilter();
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // this.renderPagination($currentEl, this);
+            // this.renderFilter();
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         gotoForm: function (e) {

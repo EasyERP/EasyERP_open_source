@@ -4,7 +4,7 @@ define([
     'views/listViewBase',
     'text!templates/balanceSheet/list/ListHeader.html',
     'views/balanceSheet/list/ListItemView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/balanceSheet/filterCollection',
     'constants',
     'dataService',
@@ -142,7 +142,7 @@ define([
 
             this.collection.showMore(searchObject);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             custom.cacheToApp('balanceSheet.filter', this.filter);
         },
@@ -237,7 +237,7 @@ define([
 
             $currentEl.append(itemView.render());
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             this.asyncRenderInfo(asyncKeys);
 

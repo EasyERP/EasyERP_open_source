@@ -21,6 +21,14 @@ define([
         contentCollection: contentCollection,
         contentType      : 'DividendInvoice',
         changedModels    : {},
+        hasPagination    : true,
+        baseFilter       : {
+            name : 'forSales',
+            value: {
+                key  : 'forSales',
+                value: [false]
+            }
+        },
 
         initialize: function (options) {
             $(document).off('click');
@@ -36,7 +44,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
         },
 
         saveItem: function () {
@@ -95,12 +103,18 @@ define([
 
             currentEllistRenderer(self);
 
-            self.renderPagination($currentEl, self);
-            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
+            // self.renderPagination($currentEl, self);
+            /*self.renderFilter(self, {
+             name : 'forSales',
+             value: {
+             key  : 'forSales',
+             value: [false]
+             }
+             });*/
 
             this.recalcTotal();
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
         },
 

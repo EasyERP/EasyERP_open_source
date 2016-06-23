@@ -115,7 +115,7 @@ define([
             this.collection.getFirstPage(searchObject);
             this.changeLocationHash(1, itemsNumber, this.filter);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             custom.cacheToApp('journalEntry.filter', this.filter);
         },
@@ -209,11 +209,19 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            this.renderFilter();
+            // this.renderFilter();
+
+            if (!this.filterView) {
+                if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+                    custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+                } else {
+                    this.renderFilter(this.baseFilter);
+                }
+            }
 
             this.renderPagination($currentEl, this);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }

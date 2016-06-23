@@ -6,7 +6,7 @@ define([
     'views/main/MainView',
     'views/salaryReport/list/ListView',
     'views/salaryReport/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

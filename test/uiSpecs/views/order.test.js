@@ -7,7 +7,7 @@ define([
     'views/salesOrders/list/ListView',
     'views/salesOrders/EditView',
     'views/salesOrders/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

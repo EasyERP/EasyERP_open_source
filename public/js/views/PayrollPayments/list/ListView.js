@@ -4,7 +4,7 @@ define([
     'views/listViewBase',
     'text!templates/Pagination/PaginationTemplate.html',
     'text!templates/PayrollPayments/list/ListHeader.html',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'views/PayrollPayments/DialogView',
     'models/PaymentModel',
     'views/PayrollPayments/list/ListItemView',

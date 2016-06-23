@@ -10,7 +10,7 @@ define([
     'views/DividendInvoice/CreateView',
     'views/DividendInvoice/EditView',
     'views/DividendPayments/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',

@@ -31,6 +31,7 @@ define([
         contentCollection: contentCollection,
         formUrl          : '#easyErp/Leads/form/',
         contentType      : CONSTANTS.LEADS,
+        hasPagination    : true,
 
         events: {
             'click .stageSelect'         : 'showNewSelect',
@@ -53,7 +54,7 @@ define([
             this.contentCollection = contentCollection;
             this.stages = [];
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
         },
 
         chooseOption: function (e) {
@@ -112,11 +113,11 @@ define([
 
             $currentEl.append(itemView.render());
 
-            this.renderFilter();
+            // this.renderFilter();
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         },
 
         hideNewSelect: function () {

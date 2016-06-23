@@ -7,7 +7,7 @@ define([
     'views/ChartOfAccount/list/ListView',
     'views/ChartOfAccount/TopBarView',
     'views/ChartOfAccount/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
