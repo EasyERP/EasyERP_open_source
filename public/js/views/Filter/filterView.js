@@ -157,9 +157,6 @@ define([
                 }
 
                 async.each(filtersKeysForRemove, setStatusFalse, function () {
-                    $target
-                        .closest('.forFilterIcons')
-                        .remove();
 
                     self.$el.find('#searchInput').empty();
 

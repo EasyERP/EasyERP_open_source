@@ -62,7 +62,11 @@ var Employee = function (event, models) {
 
     function accessEmployeeSalary(profileId) {
         var profiles = CONSTANTS.ACCESS_EMPLOYEE_SALARY;
-        return !(profiles.indexOf(profileId.toString()) < 0);
+        if (profileId) {
+            return !(profiles.indexOf(profileId.toString()) < 0);
+        }
+
+        return false;
     }
 
     function getNameAndDepartment(db, query, callback) {
@@ -1066,20 +1070,20 @@ var Employee = function (event, models) {
                     }
 
                     /*if (!accessEmployeeSalary(profileId)) {
-                        data.transfer = data.transfer.map(function (tr, i) {
-                            if (i !== 0) {
-                                if (emp.transfer[i] && emp.transfer[i].salary) {
-                                    tr.salary = emp.transfer[i].salary;
-                                } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
-                                    tr.salary = emp.transfer[i - 1].salary;
-                                }
-                            } else {
-                                tr.salary = 0;
-                            }
+                     data.transfer = data.transfer.map(function (tr, i) {
+                     if (i !== 0) {
+                     if (emp.transfer[i] && emp.transfer[i].salary) {
+                     tr.salary = emp.transfer[i].salary;
+                     } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
+                     tr.salary = emp.transfer[i - 1].salary;
+                     }
+                     } else {
+                     tr.salary = 0;
+                     }
 
-                            return tr;
-                        });
-                    }*/
+                     return tr;
+                     });
+                     }*/
 
                     Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                         var os = require('os');

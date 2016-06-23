@@ -28,7 +28,8 @@ define([
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             FilterTest) {
     'use strict';
 
     var fakeDepartments = {
@@ -3137,13 +3138,13 @@ define([
     chai.use(chaiJquery);
     chai.use(sinonChai);
     expect = chai.expect;
-    
+
     describe('Departments view', function () {
         var $fixture;
         var $elFixture;
         var alertStub;
 
-        before(function(){
+        before(function () {
             alertStub = sinon.stub(window, 'alert');
             alertStub.returns(true);
         });
