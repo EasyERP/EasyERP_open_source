@@ -14,493 +14,492 @@ define([
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, JobsCollection,modules, MainView, ListView, TopBarView, FilterView, ReportView,  eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, JobsCollection, modules, MainView, ListView, TopBarView, FilterView, ReportView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
-
-    chai.use(chaiJquery);
-    chai.use(sinonChai);
-    expect = chai.expect;
-    var fakeJobsDashboard = {total : 300,
-        data : [{
-        _id: "564cfd8ba6e6390160c9ee23",
-        total: 834,
-        order: 1,
-        name: "iOS/Tribesta2-28/01/15",
-        workflow: {
-            _id: "56337c675d49d8d6537832ea",
-            name: "Finished",
-            status: "Done"
-        },
-        type: "Invoiced",
-        project: {
-            _id: "55b92ad621e4b7c40f000687",
-            name: "iOS/Tribesta"
-        },
-        budget: {
-            budgetTotal: {
-                minDate: 201432,
-                maxDate: 201444,
-                hoursSum: 1424,
-                revenueSum: 1188000,
-                costSum: 21960869
+    var fakeJobsDashboard = {
+        total: 300,
+        data : [
+            {
+                _id         : "564cfd8ba6e6390160c9ee23",
+                total       : 834,
+                order       : 1,
+                name        : "iOS/Tribesta2-28/01/15",
+                workflow    : {
+                    _id   : "56337c675d49d8d6537832ea",
+                    name  : "Finished",
+                    status: "Done"
+                },
+                type        : "Invoiced",
+                project     : {
+                    _id : "55b92ad621e4b7c40f000687",
+                    name: "iOS/Tribesta"
+                },
+                budget      : {
+                    budgetTotal: {
+                        minDate   : 201432,
+                        maxDate   : 201444,
+                        hoursSum  : 1424,
+                        revenueSum: 1188000,
+                        costSum   : 21960869
+                    },
+                    projectTeam: [
+                        {
+                            budget    : {
+                                hoursSum  : 488,
+                                revenueSum: 407123.59550561785,
+                                costSum   : 4706464
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Michael",
+                                    last : "Glagola"
+                                },
+                                jobPosition: {
+                                    name: "Middle iOS",
+                                    _id : "55b92acf21e4b7c40f00001d"
+                                },
+                                _id        : "55b92ad221e4b7c40f000076"
+                            },
+                            department: {
+                                departmentName: "iOS",
+                                _id           : "55b92ace21e4b7c40f00000f"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 168,
+                                revenueSum: 140157.3033707865,
+                                costSum   : 5204837
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Vasiliy",
+                                    last : "Agosta"
+                                },
+                                jobPosition: {
+                                    name: "Senior iOS",
+                                    _id : "55b92acf21e4b7c40f000027"
+                                },
+                                _id        : "55b92ad221e4b7c40f00003a"
+                            },
+                            department: {
+                                departmentName: "iOS",
+                                _id           : "55b92ace21e4b7c40f00000f"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 120,
+                                revenueSum: 100112.35955056178,
+                                costSum   : 105714
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Vasiliy",
+                                    last : "Cheypesh"
+                                },
+                                jobPosition: {
+                                    name: "Middle JS",
+                                    _id : "55b92acf21e4b7c40f00001c"
+                                },
+                                _id        : "55b92ad221e4b7c40f000062"
+                            },
+                            department: {
+                                departmentName: "iOS",
+                                _id           : "55b92ace21e4b7c40f00000f"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 472,
+                                revenueSum: 393775.2808988765,
+                                costSum   : 10048700
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Ilya",
+                                    last : "Khymych"
+                                },
+                                jobPosition: {
+                                    name: "Senior iOS",
+                                    _id : "55b92acf21e4b7c40f000027"
+                                },
+                                _id        : "55b92ad221e4b7c40f000047"
+                            },
+                            department: {
+                                departmentName: "iOS",
+                                _id           : "55b92ace21e4b7c40f00000f"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 160,
+                                revenueSum: 133483.1460674157,
+                                costSum   : 1881058
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Anton",
+                                    last : "Karabeinikov"
+                                },
+                                jobPosition: {
+                                    name: "Junior QA",
+                                    _id : "55b92acf21e4b7c40f000018"
+                                },
+                                _id        : "55b92ad221e4b7c40f00006f"
+                            },
+                            department: {
+                                departmentName: "QA",
+                                _id           : "55b92ace21e4b7c40f000011"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 16,
+                                revenueSum: 13348.314606741573,
+                                costSum   : 14096
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Vasiliy",
+                                    last : "Cheypesh"
+                                },
+                                jobPosition: {
+                                    name: "Middle JS",
+                                    _id : "55b92acf21e4b7c40f00001c"
+                                },
+                                _id        : "55b92ad221e4b7c40f000062"
+                            },
+                            department: {
+                                departmentName: "Web",
+                                _id           : "55b92ace21e4b7c40f000016"
+                            }
+                        }
+                    ]
+                },
+                quotation   : 1188000,
+                invoice     : 1188000,
+                payment     : {
+                    paid : 1188000,
+                    count: 1
+                },
+                hoursQA     : 160,
+                hoursDesign : 0,
+                hoursIOS    : 1248,
+                hoursAndroid: 0,
+                hoursUnity  : 0,
+                hoursDotNet : 0,
+                hoursWeb    : 16,
+                hoursROR    : 0,
+                hoursDev    : 1264,
+                salesManager: {
+                    _id : "55b92ad221e4b7c40f00004a",
+                    name: {
+                        last : "Ostroverkh",
+                        first: "Oleg"
+                    }
+                },
+                cost        : 1619548.1296717022,
+                costQA      : 170174.47194496228,
+                costDesign  : 0,
+                costIOS     : 1257962.5452391286,
+                costAndroid : 0,
+                costUnity   : 0,
+                costDotNet  : 0,
+                costWeb     : 191411.1124876115,
+                costROR     : 0,
+                costDev     : 1449373.65772674,
+                margin      : -36.325600140715665,
+                devMargin   : -22.001149640297978,
+                avDevRate   : 8.05241715233416,
+                profit      : -4315.481296717022
             },
-            projectTeam: [
-                {
-                    budget: {
-                        hoursSum: 488,
-                        revenueSum: 407123.59550561785,
-                        costSum: 4706464
+            {
+                _id         : "564cfd8ba6e6390160c9eead",
+                total      : 834,
+                order      : 1,
+                name       : "Oculus Player975/2015",
+                workflow   : {
+                    _id   : "56337c675d49d8d6537832ea",
+                    name  : "Finished",
+                    status: "Done"
+                },
+                type       : "Invoiced",
+                project    : {
+                    _id : "55b92ad621e4b7c40f00066f",
+                    name: "Oculus Player"
+                },
+                budget     : {
+                    budgetTotal: {
+                        minDate   : 201514,
+                        maxDate   : 201518,
+                        hoursSum  : 1219,
+                        revenueSum: 1585900.0000000005,
+                        costSum   : 18476304
                     },
-                    employee: {
-                        name: {
-                            first: "Michael",
-                            last: "Glagola"
+                    projectTeam: [
+                        {
+                            budget    : {
+                                hoursSum  : 92,
+                                revenueSum: 119588.00342759212,
+                                costSum   : 1421618
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Vyacheslav",
+                                    last : "Kopinets"
+                                },
+                                jobPosition: {
+                                    name: "Senior JS",
+                                    _id : "55b92acf21e4b7c40f00002b"
+                                },
+                                _id        : "55b92ad221e4b7c40f00004d"
+                            },
+                            department: {
+                                departmentName: "Web",
+                                _id           : "55b92ace21e4b7c40f000016"
+                            }
                         },
-                        jobPosition: {
-                            name: "Middle iOS",
-                            _id: "55b92acf21e4b7c40f00001d"
+                        {
+                            budget    : {
+                                hoursSum  : 72,
+                                revenueSum: 97844.73007712082,
+                                costSum   : 35181
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Alex",
+                                    last : "Lapchuk"
+                                },
+                                jobPosition: {
+                                    name: "Junior JS",
+                                    _id : "55b92acf21e4b7c40f000017"
+                                },
+                                _id        : "55b92ad221e4b7c40f00003e"
+                            },
+                            department: {
+                                departmentName: "Web",
+                                _id           : "55b92ace21e4b7c40f000016"
+                            }
                         },
-                        _id: "55b92ad221e4b7c40f000076"
-                    },
-                    department: {
-                        departmentName: "iOS",
-                        _id: "55b92ace21e4b7c40f00000f"
+                        {
+                            budget    : {
+                                hoursSum  : 176,
+                                revenueSum: 228304.3701799486,
+                                costSum   : 3900801
+                            },
+                            employee  : {
+                                name       : {
+                                    first: "Eugen",
+                                    last : "Bernikevich"
+                                },
+                                jobPosition: {
+                                    name: "Middle Unity 3D",
+                                    _id : "55c32e2a29bd6ccd0b000006"
+                                },
+                                _id        : "55b92ad221e4b7c40f000072"
+                            },
+                            department: {
+                                departmentName: ".NET/WP",
+                                _id           : "55b92ace21e4b7c40f000012"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 176,
+                                revenueSum: 228304.3701799486,
+                                costSum   : 2306301
+                            },
+                            employee: {
+                                name       : {
+                                    first: "Daniil",
+                                    last : "Pozhidaev"
+                                },
+                                jobPosition: {
+                                    name: "Middle Android",
+                                    _id : "55b92acf21e4b7c40f000022"
+                                },
+                                _id        : "55b92ad221e4b7c40f000070"
+                            },
+                            department: {
+                                departmentName: "Android",
+                                _id           : "55b92ace21e4b7c40f000010"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 143,
+                                revenueSum: 183458.86889460153,
+                                costSum   : 2815375
+                            },
+                            employee: {
+                                name       : {
+                                    first: "Denis",
+                                    last : "Udod"
+                                },
+                                jobPosition: {
+                                    name: "Middle Unity 3D",
+                                    _id : "55c32e2a29bd6ccd0b000006"
+                                },
+                                _id        : "55b92ad221e4b7c40f000046"
+                            },
+                            department: {
+                                departmentName: ".NET/WP",
+                                _id           : "55b92ace21e4b7c40f000012"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 176,
+                                revenueSum: 228304.37017994857,
+                                costSum   : 2306301
+                            },
+                            employee: {
+                                name       : {
+                                    first: "Kirill",
+                                    last : "Gorbushko"
+                                },
+                                jobPosition: {
+                                    name: "Middle iOS",
+                                    _id : "55b92acf21e4b7c40f00001d"
+                                },
+                                _id        : "55b92ad221e4b7c40f000085"
+                            },
+                            department: {
+                                departmentName: "iOS",
+                                _id           : "55b92ace21e4b7c40f00000f"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 16,
+                                revenueSum: 21743.273350471296,
+                                costSum   : 8836
+                            },
+                            employee: {
+                                name       : {
+                                    first: "Oleg",
+                                    last : "Boyanivskiy"
+                                },
+                                jobPosition: {
+                                    name: "Junior QA",
+                                    _id : "55b92acf21e4b7c40f000018"
+                                },
+                                _id        : "55b92ad221e4b7c40f000078"
+                            },
+                            department: {
+                                departmentName: "QA",
+                                _id           : "55b92ace21e4b7c40f000011"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 16,
+                                revenueSum: 21743.273350471296,
+                                costSum   : 6291
+                            },
+                            employee: {
+                                name       : {
+                                    first: "German",
+                                    last : "Kravets"
+                                },
+                                jobPosition: {
+                                    name: "Junior JS",
+                                    _id : "55b92acf21e4b7c40f000017"
+                                },
+                                _id        : "55b92ad221e4b7c40f00003d"
+                            },
+                            department: {
+                                departmentName: "Web",
+                                _id           : "55b92ace21e4b7c40f000016"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 176,
+                                revenueSum: 228304.3701799486,
+                                costSum   : 2837800
+                            },
+                            employee: {
+                                name       : {
+                                    first: "Michael",
+                                    last : "Kapustey"
+                                },
+                                jobPosition: {
+                                    name: "Middle JS",
+                                    _id : "55b92acf21e4b7c40f00001c"
+                                },
+                                _id        : "55b92ad221e4b7c40f000049"
+                            },
+                            department: {
+                                departmentName: ".NET/WP",
+                                _id           : "55b92ace21e4b7c40f000012"
+                            }
+                        },
+                        {
+                            budget    : {
+                                hoursSum  : 176,
+                                revenueSum: 228304.3701799486,
+                                costSum   : 2837800
+                            },
+                            employee: {
+                                name       : {
+                                    first: "Egor",
+                                    last : "Gromadskiy"
+                                },
+                                jobPosition: {
+                                    name: "Middle .NET/WP",
+                                    _id : "56433d7c70bbc2b740ce8a15"
+                                },
+                                _id        : "55b92ad221e4b7c40f000066"
+                            },
+                            department: {
+                                departmentName: ".NET/WP",
+                                _id           : "55b92ace21e4b7c40f000012"
+                            }
+                        }
+                    ]
+                },
+                quotation  : 1585900,
+                invoice    : 1585900,
+                payment    : {
+                    paid : 1585900,
+                    count: 1
+                },
+                hoursQA    : 16,
+                hoursDesign: 0,
+                hoursIOS   : 176,
+                hoursAndroid: 176,
+                hoursUnity  : 0,
+                hoursDotNet : 671,
+                hoursWeb    : 180,
+                hoursROR    : 0,
+                hoursDev    : 1203,
+                salesManager: {
+                    _id : "55b92ad221e4b7c40f00004a",
+                    name: {
+                        last : "Ostroverkh",
+                        first: "Oleg"
                     }
                 },
-                {
-                    budget: {
-                        hoursSum: 168,
-                        revenueSum: 140157.3033707865,
-                        costSum: 5204837
-                    },
-                    employee: {
-                        name: {
-                            first: "Vasiliy",
-                            last: "Agosta"
-                        },
-                        jobPosition: {
-                            name: "Senior iOS",
-                            _id: "55b92acf21e4b7c40f000027"
-                        },
-                        _id: "55b92ad221e4b7c40f00003a"
-                    },
-                    department: {
-                        departmentName: "iOS",
-                        _id: "55b92ace21e4b7c40f00000f"
-                    }
-                },
-                {
-                    budget: {
-                        hoursSum: 120,
-                        revenueSum: 100112.35955056178,
-                        costSum: 105714
-                    },
-                    employee: {
-                        name: {
-                            first: "Vasiliy",
-                            last: "Cheypesh"
-                        },
-                        jobPosition: {
-                            name: "Middle JS",
-                            _id: "55b92acf21e4b7c40f00001c"
-                        },
-                        _id: "55b92ad221e4b7c40f000062"
-                    },
-                    department: {
-                        departmentName: "iOS",
-                        _id: "55b92ace21e4b7c40f00000f"
-                    }
-                },
-                {
-                    budget: {
-                        hoursSum: 472,
-                        revenueSum: 393775.2808988765,
-                        costSum: 10048700
-                    },
-                    employee: {
-                        name: {
-                            first: "Ilya",
-                            last: "Khymych"
-                        },
-                        jobPosition: {
-                            name: "Senior iOS",
-                            _id: "55b92acf21e4b7c40f000027"
-                        },
-                        _id: "55b92ad221e4b7c40f000047"
-                    },
-                    department: {
-                        departmentName: "iOS",
-                        _id: "55b92ace21e4b7c40f00000f"
-                    }
-                },
-                {
-                    budget: {
-                        hoursSum: 160,
-                        revenueSum: 133483.1460674157,
-                        costSum: 1881058
-                    },
-                    employee: {
-                        name: {
-                            first: "Anton",
-                            last: "Karabeinikov"
-                        },
-                        jobPosition: {
-                            name: "Junior QA",
-                            _id: "55b92acf21e4b7c40f000018"
-                        },
-                        _id: "55b92ad221e4b7c40f00006f"
-                    },
-                    department: {
-                        departmentName: "QA",
-                        _id: "55b92ace21e4b7c40f000011"
-                    }
-                },
-                {
-                    budget: {
-                        hoursSum: 16,
-                        revenueSum: 13348.314606741573,
-                        costSum: 14096
-                    },
-                    employee: {
-                        name: {
-                            first: "Vasiliy",
-                            last: "Cheypesh"
-                        },
-                        jobPosition: {
-                            name: "Middle JS",
-                            _id: "55b92acf21e4b7c40f00001c"
-                        },
-                        _id: "55b92ad221e4b7c40f000062"
-                    },
-                    department: {
-                        departmentName: "Web",
-                        _id: "55b92ace21e4b7c40f000016"
-                    }
-                }
-            ]
-        },
-        quotation: 1188000,
-        invoice: 1188000,
-        payment: {
-            paid: 1188000,
-            count: 1
-        },
-        hoursQA: 160,
-        hoursDesign: 0,
-        hoursIOS: 1248,
-        hoursAndroid: 0,
-        hoursUnity: 0,
-        hoursDotNet: 0,
-        hoursWeb: 16,
-        hoursROR: 0,
-        hoursDev: 1264,
-        salesManager: {
-            _id: "55b92ad221e4b7c40f00004a",
-            name: {
-                last: "Ostroverkh",
-                first: "Oleg"
+                cost        : 999706.0046065362,
+                costQA      : 11466.901736309865,
+                costDesign  : 0,
+                costIOS     : 126135.91909940851,
+                costAndroid : 0,
+                costUnity   : 119509.24379207895,
+                costDotNet  : 147088.30005178947,
+                costWeb     : 280376.65887098975,
+                costROR     : 0,
+                costDev     : 988239.1028702263,
+                margin      : 36.96285991509325,
+                devMargin   : 37.68591318051414,
+                avDevRate   : 13.087556926547716,
+                profit      : 5861.939953934638
             }
-        },
-        cost: 1619548.1296717022,
-        costQA: 170174.47194496228,
-        costDesign: 0,
-        costIOS: 1257962.5452391286,
-        costAndroid: 0,
-        costUnity: 0,
-        costDotNet: 0,
-        costWeb: 191411.1124876115,
-        costROR: 0,
-        costDev: 1449373.65772674,
-        margin: -36.325600140715665,
-        devMargin: -22.001149640297978,
-        avDevRate: 8.05241715233416,
-        profit: -4315.481296717022
-    },
-        {
-            _id: "564cfd8ba6e6390160c9eead",
-            total: 834,
-            order: 1,
-            name: "Oculus Player975/2015",
-            workflow: {
-                _id: "56337c675d49d8d6537832ea",
-                name: "Finished",
-                status: "Done"
-            },
-            type: "Invoiced",
-            project: {
-                _id: "55b92ad621e4b7c40f00066f",
-                name: "Oculus Player"
-            },
-            budget: {
-                budgetTotal: {
-                    minDate: 201514,
-                    maxDate: 201518,
-                    hoursSum: 1219,
-                    revenueSum: 1585900.0000000005,
-                    costSum: 18476304
-                },
-                projectTeam: [
-                    {
-                        budget: {
-                            hoursSum: 92,
-                            revenueSum: 119588.00342759212,
-                            costSum: 1421618
-                        },
-                        employee: {
-                            name: {
-                                first: "Vyacheslav",
-                                last: "Kopinets"
-                            },
-                            jobPosition: {
-                                name: "Senior JS",
-                                _id: "55b92acf21e4b7c40f00002b"
-                            },
-                            _id: "55b92ad221e4b7c40f00004d"
-                        },
-                        department: {
-                            departmentName: "Web",
-                            _id: "55b92ace21e4b7c40f000016"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 72,
-                            revenueSum: 97844.73007712082,
-                            costSum: 35181
-                        },
-                        employee: {
-                            name: {
-                                first: "Alex",
-                                last: "Lapchuk"
-                            },
-                            jobPosition: {
-                                name: "Junior JS",
-                                _id: "55b92acf21e4b7c40f000017"
-                            },
-                            _id: "55b92ad221e4b7c40f00003e"
-                        },
-                        department: {
-                            departmentName: "Web",
-                            _id: "55b92ace21e4b7c40f000016"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 176,
-                            revenueSum: 228304.3701799486,
-                            costSum: 3900801
-                        },
-                        employee: {
-                            name: {
-                                first: "Eugen",
-                                last: "Bernikevich"
-                            },
-                            jobPosition: {
-                                name: "Middle Unity 3D",
-                                _id: "55c32e2a29bd6ccd0b000006"
-                            },
-                            _id: "55b92ad221e4b7c40f000072"
-                        },
-                        department: {
-                            departmentName: ".NET/WP",
-                            _id: "55b92ace21e4b7c40f000012"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 176,
-                            revenueSum: 228304.3701799486,
-                            costSum: 2306301
-                        },
-                        employee: {
-                            name: {
-                                first: "Daniil",
-                                last: "Pozhidaev"
-                            },
-                            jobPosition: {
-                                name: "Middle Android",
-                                _id: "55b92acf21e4b7c40f000022"
-                            },
-                            _id: "55b92ad221e4b7c40f000070"
-                        },
-                        department: {
-                            departmentName: "Android",
-                            _id: "55b92ace21e4b7c40f000010"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 143,
-                            revenueSum: 183458.86889460153,
-                            costSum: 2815375
-                        },
-                        employee: {
-                            name: {
-                                first: "Denis",
-                                last: "Udod"
-                            },
-                            jobPosition: {
-                                name: "Middle Unity 3D",
-                                _id: "55c32e2a29bd6ccd0b000006"
-                            },
-                            _id: "55b92ad221e4b7c40f000046"
-                        },
-                        department: {
-                            departmentName: ".NET/WP",
-                            _id: "55b92ace21e4b7c40f000012"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 176,
-                            revenueSum: 228304.37017994857,
-                            costSum: 2306301
-                        },
-                        employee: {
-                            name: {
-                                first: "Kirill",
-                                last: "Gorbushko"
-                            },
-                            jobPosition: {
-                                name: "Middle iOS",
-                                _id: "55b92acf21e4b7c40f00001d"
-                            },
-                            _id: "55b92ad221e4b7c40f000085"
-                        },
-                        department: {
-                            departmentName: "iOS",
-                            _id: "55b92ace21e4b7c40f00000f"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 16,
-                            revenueSum: 21743.273350471296,
-                            costSum: 8836
-                        },
-                        employee: {
-                            name: {
-                                first: "Oleg",
-                                last: "Boyanivskiy"
-                            },
-                            jobPosition: {
-                                name: "Junior QA",
-                                _id: "55b92acf21e4b7c40f000018"
-                            },
-                            _id: "55b92ad221e4b7c40f000078"
-                        },
-                        department: {
-                            departmentName: "QA",
-                            _id: "55b92ace21e4b7c40f000011"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 16,
-                            revenueSum: 21743.273350471296,
-                            costSum: 6291
-                        },
-                        employee: {
-                            name: {
-                                first: "German",
-                                last: "Kravets"
-                            },
-                            jobPosition: {
-                                name: "Junior JS",
-                                _id: "55b92acf21e4b7c40f000017"
-                            },
-                            _id: "55b92ad221e4b7c40f00003d"
-                        },
-                        department: {
-                            departmentName: "Web",
-                            _id: "55b92ace21e4b7c40f000016"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 176,
-                            revenueSum: 228304.3701799486,
-                            costSum: 2837800
-                        },
-                        employee: {
-                            name: {
-                                first: "Michael",
-                                last: "Kapustey"
-                            },
-                            jobPosition: {
-                                name: "Middle JS",
-                                _id: "55b92acf21e4b7c40f00001c"
-                            },
-                            _id: "55b92ad221e4b7c40f000049"
-                        },
-                        department: {
-                            departmentName: ".NET/WP",
-                            _id: "55b92ace21e4b7c40f000012"
-                        }
-                    },
-                    {
-                        budget: {
-                            hoursSum: 176,
-                            revenueSum: 228304.3701799486,
-                            costSum: 2837800
-                        },
-                        employee: {
-                            name: {
-                                first: "Egor",
-                                last: "Gromadskiy"
-                            },
-                            jobPosition: {
-                                name: "Middle .NET/WP",
-                                _id: "56433d7c70bbc2b740ce8a15"
-                            },
-                            _id: "55b92ad221e4b7c40f000066"
-                        },
-                        department: {
-                            departmentName: ".NET/WP",
-                            _id: "55b92ace21e4b7c40f000012"
-                        }
-                    }
-                ]
-            },
-            quotation: 1585900,
-            invoice: 1585900,
-            payment: {
-                paid: 1585900,
-                count: 1
-            },
-            hoursQA: 16,
-            hoursDesign: 0,
-            hoursIOS: 176,
-            hoursAndroid: 176,
-            hoursUnity: 0,
-            hoursDotNet: 671,
-            hoursWeb: 180,
-            hoursROR: 0,
-            hoursDev: 1203,
-            salesManager: {
-                _id: "55b92ad221e4b7c40f00004a",
-                name: {
-                    last: "Ostroverkh",
-                    first: "Oleg"
-                }
-            },
-            cost: 999706.0046065362,
-            costQA: 11466.901736309865,
-            costDesign: 0,
-            costIOS: 126135.91909940851,
-            costAndroid: 0,
-            costUnity: 119509.24379207895,
-            costDotNet: 147088.30005178947,
-            costWeb: 280376.65887098975,
-            costROR: 0,
-            costDev: 988239.1028702263,
-            margin: 36.96285991509325,
-            devMargin: 37.68591318051414,
-            avDevRate: 13.087556926547716,
-            profit: 5861.939953934638
-        }]};
-
+        ]
+    };
     var jobsCollection;
     var view;
     var topBarView;
@@ -509,6 +508,9 @@ define([
     var saveFilterSpy;
     var removeFilterSpy;
 
+    chai.use(chaiJquery);
+    chai.use(sinonChai);
+    expect = chai.expect;
 
     describe('JobsDashboard View', function () {
         var $fixture;
@@ -629,7 +631,6 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create ListView', function (done) {
-                    var $listHolder;
                     var jobsDashboardUrl = new RegExp('\/jobs\/', 'i');
                     var $firstRow;
                     var colCount;
@@ -642,7 +643,7 @@ define([
                     server.respond();
 
                     listView = new ListView({
-                        startTime: new Date(),
+                        startTime : new Date(),
                         collection: jobsCollection
 
                     });

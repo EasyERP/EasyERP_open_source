@@ -47,7 +47,6 @@
             this.EditView = EditView;
             this.CreateView = CreateView;
 
-            _.bind(this.collection.showMoreAlphabet, this.collection);
             this.allAlphabeticArray = common.buildAllAphabeticArray();
 
             this.asyncLoadImgs(this.collection);
@@ -88,6 +87,7 @@
             var $currentEl = this.$el;
 
             $currentEl.html('');
+            $currentEl.append('<div id="searchContainer"></div>');
 
             if (this.collection.length > 0) {
                 $currentEl.append(this.template({collection: this.collection.toJSON()}));
@@ -141,28 +141,6 @@
                 this.$el.find('.search-options').addClass('hidden');
             }
         },
-
-        showMoreAlphabet: function (newModels) {
-            var $holder = this.$el;
-            var $created = $holder.find('#timeRecivingDataFromServer');
-            var $showMore = $holder.find('#showMoreDiv');
-
-            this.defaultItemsNumber += newModels.length;
-            this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
-
-            $holder.append(this.template({collection: newModels.toJSON()}));
-            $holder.append($created);
-            $created.before($showMore);
-            this.asyncLoadImgs(newModels);
-        },
-
-        /* createItem: function () {
-         new CreateView();
-         },
-
-         editItem: function () {
-         new EditView({collection: this.collection});
-         },*/
 
         deleteItems: function () {
             var mid = this.mId;

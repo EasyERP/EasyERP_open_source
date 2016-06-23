@@ -56,6 +56,7 @@
             var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + 'ms </div>';
 
             $currentEl.html('');
+            $currentEl.append('<div id="searchContainer"></div>');
 
             if (this.collection.length > 0) {
                 $currentEl.append(this.template({collection: this.collection.toJSON()}));

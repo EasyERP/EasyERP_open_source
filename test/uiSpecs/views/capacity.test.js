@@ -1,17 +1,18 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Capacity/filterCollection',
     'views/main/MainView',
     'views/Capacity/list/ListView',
     'views/Capacity/TopBarView',
-    /*'views/Capacity/CreateView',*/
+    /!*'views/Capacity/CreateView',*!/
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, CapacityCollection, MainView, ListView, TopBarView, /*CreateView,*/ $, chai, chaiJquery, sinonChai) {
+], function (fixtures, CapacityCollection, MainView, ListView, TopBarView, /!*CreateView,*!/ $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -6221,11 +6222,11 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    /*if (firefoxPattern.test(userAgent)) {
+                    /!*if (firefoxPattern.test(userAgent)) {
                         expect(window.location.hash).to.be.equals('#easyErp/Capacity');
-                    } else {*/
+                    } else {*!/
                         expect(hashUrlCapacity.test(window.location.hash)).to.be.true;
-                    /*}*/
+                    /!*}*!/
                 });
 
                 it('Try to delete items', function () {
@@ -6276,3 +6277,4 @@ define([
         });
     });
 });
+*/

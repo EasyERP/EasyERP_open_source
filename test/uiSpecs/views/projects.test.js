@@ -95,7 +95,6 @@ define([
         });
 
         describe('topBarView', function () {
-            var clock = sinon.useFakeTimers();
             var server;
 
             before(function () {
@@ -532,17 +531,8 @@ define([
                             server.respondWith('GET', paymentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakePayments)]);
                             server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeQuotations)]);
                             server.respondWith('GET', bonusTypeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeBonusType)]);
-                            //  server.respondWith('GET', employeesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeEmployeesForDD)]);
                             formView.render();
                             server.respond();
-                            server.respond();
-                            server.respond();
-                            server.respond();
-                            server.respond();
-                            server.respond();
-                            server.respond();
-                            server.respond();
-                            //   server.respond();
 
                             fakeClock.tick(500);
 

@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'collections/salaryReport/filterCollection',
@@ -12,421 +13,421 @@ define([
     'chai-jquery',
     'sinon-chai',
     'custom'
-], function (modules, fixtures, SalaryReportCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, SalaryReportCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, custom) {
     'use strict';
 
     var fakeSalaryReport = [
         {
-            _id: "55b92ad221e4b7c40f000098",
+            _id       : "55b92ad221e4b7c40f000098",
             department: ".NET/WP",
-            name: "Andriy Krupka",
-            transfer: [
+            name      : "Andriy Krupka",
+            transfer  : [
                 {
-                    _id: "55b92ad221e4b7c40f000098",
+                    _id       : "55b92ad221e4b7c40f000098",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Krupka",
+                    name      : {
+                        last : "Krupka",
                         first: "Andriy"
                     },
                     isEmployee: false,
-                    transfer: {
-                        date: "2015-04-06T01:00:00.000Z",
-                        isDeveloper: true,
-                        info: "",
-                        salary: 700,
-                        jobType: "fullTime",
+                    transfer  : {
+                        date           : "2015-04-06T01:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "",
+                        salary         : 700,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "55b92acf21e4b7c40f00001a",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "hired"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "55b92acf21e4b7c40f00001a",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "hired"
                     },
-                    lastFire: 201614,
-                    year: 2015,
-                    month: 4,
-                    hireDate: 201504
+                    lastFire  : 201614,
+                    year      : 2015,
+                    month     : 4,
+                    hireDate  : 201504
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000098",
+                    _id       : "55b92ad221e4b7c40f000098",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Krupka",
+                    name      : {
+                        last : "Krupka",
                         first: "Andriy"
                     },
                     isEmployee: false,
-                    transfer: {
-                        date: "2015-06-01T00:00:00.000Z",
-                        isDeveloper: true,
-                        info: "",
-                        salary: 800,
-                        jobType: "fullTime",
+                    transfer  : {
+                        date           : "2015-06-01T00:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "",
+                        salary         : 800,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "55b92acf21e4b7c40f00001a",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "updated"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "55b92acf21e4b7c40f00001a",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "updated"
                     },
-                    lastFire: 201614,
-                    year: 2015,
-                    month: 6,
-                    hireDate: 201506
+                    lastFire  : 201614,
+                    year      : 2015,
+                    month     : 6,
+                    hireDate  : 201506
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000098",
+                    _id       : "55b92ad221e4b7c40f000098",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Krupka",
+                    name      : {
+                        last : "Krupka",
                         first: "Andriy"
                     },
                     isEmployee: false,
-                    transfer: {
-                        date: "2015-12-01T00:00:00.000Z",
-                        isDeveloper: true,
-                        info: "",
-                        salary: 900,
-                        jobType: "fullTime",
+                    transfer  : {
+                        date           : "2015-12-01T00:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "",
+                        salary         : 900,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "55b92acf21e4b7c40f00001a",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "updated"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "55b92acf21e4b7c40f00001a",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "updated"
                     },
-                    lastFire: 201614,
-                    year: 2015,
-                    month: 12,
-                    hireDate: 201512
+                    lastFire  : 201614,
+                    year      : 2015,
+                    month     : 12,
+                    hireDate  : 201512
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000098",
+                    _id       : "55b92ad221e4b7c40f000098",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Krupka",
+                    name      : {
+                        last : "Krupka",
                         first: "Andriy"
                     },
                     isEmployee: false,
-                    transfer: {
-                        date: "2016-01-01T00:00:00.000Z",
-                        isDeveloper: true,
-                        info: "",
-                        salary: 1000,
-                        jobType: "fullTime",
+                    transfer  : {
+                        date           : "2016-01-01T00:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "",
+                        salary         : 1000,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "55b92acf21e4b7c40f00001a",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "updated"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "55b92acf21e4b7c40f00001a",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "updated"
                     },
-                    lastFire: 201614,
-                    year: 2016,
-                    month: 1,
-                    hireDate: 201601
+                    lastFire  : 201614,
+                    year      : 2016,
+                    month     : 1,
+                    hireDate  : 201601
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000098",
+                    _id       : "55b92ad221e4b7c40f000098",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Krupka",
+                    name      : {
+                        last : "Krupka",
                         first: "Andriy"
                     },
                     isEmployee: false,
-                    transfer: {
-                        date: "2016-02-01T00:00:00.000Z",
-                        isDeveloper: true,
-                        info: "",
-                        salary: 1100,
-                        jobType: "fullTime",
+                    transfer  : {
+                        date           : "2016-02-01T00:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "",
+                        salary         : 1100,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "55b92acf21e4b7c40f00001a",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "updated"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "55b92acf21e4b7c40f00001a",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "updated"
                     },
-                    lastFire: 201614,
-                    year: 2016,
-                    month: 2,
-                    hireDate: 201602
+                    lastFire  : 201614,
+                    year      : 2016,
+                    month     : 2,
+                    hireDate  : 201602
                 }
             ],
-            lastFire: 201614
+            lastFire  : 201614
         },
         {
-            _id: "55b92ad221e4b7c40f000032",
+            _id       : "55b92ad221e4b7c40f000032",
             department: ".NET/WP",
-            name: "Bogdan Sakalo",
-            transfer: [
+            name      : "Bogdan Sakalo",
+            transfer  : [
                 {
-                    _id: "55b92ad221e4b7c40f000032",
+                    _id       : "55b92ad221e4b7c40f000032",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Sakalo",
+                    name      : {
+                        last : "Sakalo",
                         first: "Bogdan"
                     },
                     isEmployee: false,
-                    lastFire: 201607,
-                    transfer: {
-                        date: "2013-12-02T02:00:00.000Z",
-                        isDeveloper: true,
-                        info: "",
-                        salary: 350,
-                        jobType: "fullTime",
+                    lastFire  : 201607,
+                    transfer  : {
+                        date           : "2013-12-02T02:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "",
+                        salary         : 350,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "56433d7c70bbc2b740ce8a15",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "hired"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "56433d7c70bbc2b740ce8a15",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "hired"
                     },
-                    year: 2013,
-                    month: 12,
-                    hireDate: 201312
+                    year      : 2013,
+                    month     : 12,
+                    hireDate  : 201312
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000032",
+                    _id       : "55b92ad221e4b7c40f000032",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Sakalo",
+                    name      : {
+                        last : "Sakalo",
                         first: "Bogdan"
                     },
                     isEmployee: false,
-                    lastFire: 201607,
-                    transfer: {
-                        date: "2014-10-01T00:00:00.000Z",
-                        isDeveloper: true,
-                        info: "Update",
-                        salary: 500,
-                        jobType: "fullTime",
+                    lastFire  : 201607,
+                    transfer  : {
+                        date           : "2014-10-01T00:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "Update",
+                        salary         : 500,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "56433d7c70bbc2b740ce8a15",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "updated"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "56433d7c70bbc2b740ce8a15",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "updated"
                     },
-                    year: 2014,
-                    month: 10,
-                    hireDate: 201410
+                    year      : 2014,
+                    month     : 10,
+                    hireDate  : 201410
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000032",
+                    _id       : "55b92ad221e4b7c40f000032",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Sakalo",
+                    name      : {
+                        last : "Sakalo",
                         first: "Bogdan"
                     },
                     isEmployee: false,
-                    lastFire: 201607,
-                    transfer: {
-                        date: "2014-12-01T00:00:00.000Z",
-                        isDeveloper: true,
-                        info: "Update",
-                        salary: 600,
-                        jobType: "fullTime",
+                    lastFire  : 201607,
+                    transfer  : {
+                        date           : "2014-12-01T00:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "Update",
+                        salary         : 600,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "56433d7c70bbc2b740ce8a15",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "updated"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "56433d7c70bbc2b740ce8a15",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "updated"
                     },
-                    year: 2014,
-                    month: 12,
-                    hireDate: 201412
+                    year      : 2014,
+                    month     : 12,
+                    hireDate  : 201412
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000032",
+                    _id       : "55b92ad221e4b7c40f000032",
                     department: {
-                        _id: "55b92ace21e4b7c40f000012",
-                        ID: 4,
-                        sequence: 1,
-                        nestingLevel: 1,
-                        editedBy: {
+                        _id              : "55b92ace21e4b7c40f000012",
+                        ID               : 4,
+                        sequence         : 1,
+                        nestingLevel     : 1,
+                        editedBy         : {
                             date: "2016-02-25T08:40:48.233Z",
                             user: "563f673270bbc2b740ce89ae"
                         },
-                        createdBy: {
+                        createdBy        : {
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users            : [],
                         departmentManager: null,
-                        parentDepartment: "56cebdf6541812c07197358f",
-                        __v: 0,
-                        isDevelopment: true,
-                        name: ".NET/WP"
+                        parentDepartment : "56cebdf6541812c07197358f",
+                        __v              : 0,
+                        isDevelopment    : true,
+                        name             : ".NET/WP"
                     },
-                    name: {
-                        last: "Sakalo",
+                    name      : {
+                        last : "Sakalo",
                         first: "Bogdan"
                     },
                     isEmployee: false,
-                    lastFire: 201607,
-                    transfer: {
-                        date: "2015-04-01T00:00:00.000Z",
-                        isDeveloper: true,
-                        info: "Update",
-                        salary: 800,
-                        jobType: "fullTime",
+                    lastFire  : 201607,
+                    transfer  : {
+                        date           : "2015-04-01T00:00:00.000Z",
+                        isDeveloper    : true,
+                        info           : "Update",
+                        salary         : 800,
+                        jobType        : "fullTime",
                         weeklyScheduler: "57332c3b94ee1140b6bb49e2",
-                        manager: "55b92ad221e4b7c40f000038",
-                        jobPosition: "56433d7c70bbc2b740ce8a15",
-                        department: "55b92ace21e4b7c40f000012",
-                        status: "updated"
+                        manager        : "55b92ad221e4b7c40f000038",
+                        jobPosition    : "56433d7c70bbc2b740ce8a15",
+                        department     : "55b92ace21e4b7c40f000012",
+                        status         : "updated"
                     },
-                    year: 2015,
-                    month: 4,
-                    hireDate: 201504
+                    year      : 2015,
+                    month     : 4,
+                    hireDate  : 201504
                 }
             ],
-            lastFire: 201607
+            lastFire  : 201607
         }
     ];
     var view;
@@ -434,6 +435,11 @@ define([
     var listView;
     var expect;
     var salaryReportCollection;
+    var ajaxSpy;
+    var historyNavigateSpy;
+    var selectFilterSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -443,10 +449,26 @@ define([
         var $fixture;
         var $elFixture;
 
+        before(function () {
+            selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
+            ajaxSpy = sinon.spy($, 'ajax');
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+
+            custom.removeFromCash('salaryReport.filter');
+        });
+
         after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
+
+            ajaxSpy.restore();
+            historyNavigateSpy.restore();
+            selectFilterSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -510,8 +532,8 @@ define([
                 consoleSpy.restore();
             });
 
-            it('Try to fetch collection with error', function(){
-                var salaryReportUrl = new RegExp('\/salaryReport\/list', 'i');
+            it('Try to fetch collection with error', function () {
+                var salaryReportUrl = new RegExp('\/salaryReport\/', 'i');
 
                 server.respondWith('GET', salaryReportUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeSalaryReport)]);
                 salaryReportCollection = new SalaryReportCollection();
@@ -614,19 +636,136 @@ define([
                 it('Try to filter listView', function () {
                     var $searchContainer = $thisEl.find('#searchContainer');
                     var $searchArrow = $searchContainer.find('.search-content');
+                    var salaryReportUrl = new RegExp('\/salaryReport\/', 'i');
                     var $employeeBtn;
-                    var $department;
+                    var $departmentBtn;
                     var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+                    var $removeEmployeeFilterBtn;
+
+                    server.respondWith('GET', salaryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeSalaryReport)]);
+
+
+                    selectFilterSpy.reset();
 
                     $searchArrow.click();
                     expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
                     // filter by employee
+                    ajaxSpy.reset();
+
                     $employeeBtn = $searchContainer.find('#employeeFullContainer > .groupName');
                     $employeeBtn.click();
-                    expect($searchContainer.find('#employeeContainer')).to.have.class('hidden');
+                    expect($searchContainer.find('#employeeContainer')).to.have.not.class('hidden');
+                    $selectedItem = $searchContainer.find('#employeeUl > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectFilterSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#employeeUl > li:nth-child(1)')).to.have.class('checkedValue');
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject.employee).to.exist;
+                    expect(filterObject.employee).to.have.property('key', '_id');
+                    expect(filterObject.employee).to.have.property('value');
+                    expect(filterObject.employee.value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+                    expect(filterObject.endDate).to.exist;
+                    expect(filterObject.endDate).to.have.property('key');
+                    expect(filterObject.endDate).to.have.property('value');
+                    expect(filterObject.startDate).to.exist;
+                    expect(filterObject.startDate).to.have.property('key');
+                    expect(filterObject.startDate).to.have.property('value');
+
+                    // filter by department
+
+                    ajaxSpy.reset();
+
+                    $departmentBtn = $searchContainer.find('#departmentFullContainer > .groupName');
+                    $departmentBtn.click();
+                    expect($searchContainer.find('#departmentContainer')).to.have.not.class('hidden');
                     $selectedItem = $searchContainer.find('#departmentUl > li:nth-child(1)');
                     $selectedItem.click();
+                    server.respond();
+
+                    expect(selectFilterSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#departmentUl > li:nth-child(1)')).to.have.class('checkedValue');
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject.department).to.exist;
+                    expect(filterObject.employee).to.exist;
+                    expect(filterObject.department).to.have.property('key', 'department._id');
+                    expect(filterObject.department).to.have.property('value');
+                    expect(filterObject.department.value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+                    expect(filterObject.endDate).to.exist;
+                    expect(filterObject.endDate).to.have.property('key');
+                    expect(filterObject.endDate).to.have.property('value');
+                    expect(filterObject.startDate).to.exist;
+                    expect(filterObject.startDate).to.have.property('key');
+                    expect(filterObject.startDate).to.have.property('value');
+
+                    // unselect deparment filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find('#departmentUl > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectFilterSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#departmentUl > li:nth-child(1)')).to.have.not.class('checkedValue');
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject.employee).to.exist;
+                    expect(filterObject).to.not.have.property('department');
+
+                    // try to close employee filter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeEmployeeFilterBtn = $searchContainer.find('span.removeValues');
+                    $removeEmployeeFilterBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    expect(ajaxResponse.data.filter).to.be.empty;
                 });
 
                 it('Try to sort list', function () {
@@ -641,12 +780,14 @@ define([
                     expect(sortSpy.calledOnce).to.be.true;
                     expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ad221e4b7c40f000032');
 
-                    server.respondWith('GET', salaryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeSalaryReport[1], fakeSalaryReport[0]])]);
+                    server.respondWith('GET', salaryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
+                        fakeSalaryReport[1],
+                        fakeSalaryReport[0]
+                    ])]);
                     $employeeSortBtn.click();
                     server.respond();
                     expect(sortSpy.calledTwice).to.be.true;
                     expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ad221e4b7c40f000098');
-
                 });
 
                 it('Try to change date range', function () {
@@ -673,7 +814,7 @@ define([
                     server.respond();
 
                     expect(changeDateRangeSpy.calledOnce).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp/salaryReport');
+                    expect(window.location.hash).to.be.equals('#easyErp/salaryReport/list/p=1/c=100/');
                 });
             });
         });

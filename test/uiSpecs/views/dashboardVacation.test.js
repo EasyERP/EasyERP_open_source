@@ -528,6 +528,7 @@ define([
 
         describe('#initialize()', function () {
             var server;
+            var clock;
 
             before(function () {
                 $fixture = $(fixtures);
@@ -535,10 +536,12 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
+                clock.restore();
             });
 
             it('Should create main view', function () {
@@ -548,6 +551,8 @@ define([
                 server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'DashBoardVacation'});
                 server.respond();
+
+                clock.tick(1000);
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
                 $expectedSubMenuEl = view.$el.find('#submenu-holder');
@@ -590,7 +595,7 @@ define([
                 expect(topBarView.$el.find('.vocationFilter')).to.exist;
                 expect(topBarView.$el.find('#searchContainer')).to.exist;
                 expect(topBarView.$el.find('h3')).to.exist;
-                expect(topBarView.$el.find('h3').text()).to.be.equals('Dashboard Vacation');
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Dashboard');
             });
         });
 
