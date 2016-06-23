@@ -101,7 +101,7 @@ define([
             'mouseleave .avatar'                                             : 'hideEdit',
             'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
             'click .withEndContract .newSelectList li'                       : 'endContract',
-            'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
+            //'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
             'click td.editable'                                              : 'editJob',
             'click #update'                                                  : 'addNewRow',
             'keyup .editing'                                                 : 'validateNumbers',
@@ -250,7 +250,7 @@ define([
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').attr('data-id');
+                editedElementRowId = editedElement.closest('tr').attr('id');
                 editedElementContent = editedCol.data('content');
                 editedElementValue = editedElement.val();
 
@@ -286,7 +286,8 @@ define([
             var $parentUl = $target.parent();
             var $element = $target.closest('a') || $parentUl.closest('a');
             var id = $element.attr('id') || $parentUl.attr('id');
-            var model = this.editCollection.get(id);
+            var modelId = $element.closest('tr').attr('id');
+            var model = this.editCollection.get(modelId);
             var valueId = $target.attr('id');
             var managersIds = this.responseObj['#departmentManagers'];
             var managers = this.responseObj['#projectManagerDD'];
@@ -299,11 +300,11 @@ define([
 
                 this.setEditable($element);
 
-                if (!this.changedModels[id]) {
+                if (!this.changedModels[modelId]) {
                     if (!model.id) {
-                        this.changedModels[id] = model.attributes;
+                        this.changedModels[modelId] = model.attributes;
                     } else {
-                        this.changedModels[id] = {};
+                        this.changedModels[modelId] = {};
                     }
                 }
 
@@ -311,7 +312,7 @@ define([
                 $element.attr('data-id', valueId);
                 datacontent = $element.attr('data-content');
 
-                changedAttr = this.changedModels[id];
+                changedAttr = this.changedModels[modelId];
                 changedAttr[datacontent] = valueId;
 
                 if (id === 'departmentsDd') {
@@ -604,7 +605,7 @@ define([
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
                 fire    : fireArray,
-                transfer: transferArray
+                //transfer: transferArray
             };
 
             if (!haveSalary) {

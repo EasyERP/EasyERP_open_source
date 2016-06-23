@@ -39,7 +39,7 @@ module.exports = function (event, models) {
     router.post('/', accessStackMiddleware, handler.create);
     router.post('/transfer/', accessStackMiddleware, handler.createTransfer);
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
-    router.patch('/transfer/:id', accessStackMiddleware, handler.updateTransfer);
+    router.patch('/transfer/', accessStackMiddleware, handler.updateTransfer);
     router.patch('/:id', accessStackMiddleware, handler.updateOnlySelectedFields);
 
     router.delete('/:id', accessStackMiddleware, handler.remove);

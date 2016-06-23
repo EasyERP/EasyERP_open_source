@@ -549,7 +549,7 @@ var Employee = function (event, models) {
 
     this.updateTransfer = function (req, res, next) {
 
-
+        res.send(200, {success: 'A Transfer update success'});
 
     };
 
