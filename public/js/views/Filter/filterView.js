@@ -155,6 +155,7 @@ define([
                 }
 
                 async.each(filtersKeysForRemove, setStatusFalse, function () {
+
                     self.$el.find('#searchInput').empty();
 
                     if (favouriteIconState) {

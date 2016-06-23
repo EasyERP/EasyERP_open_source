@@ -1168,7 +1168,8 @@ require.config({
         testConstants    : './constants/test',
         dashboardVacation: './constants/test/dashboardVacation',
         filter           : './constants/test/filter',
-        constantsDir     : './public/js/constants'
+        constantsDir     : './public/js/constants',
+        filterTest       : './test/uiSpecs/views/filterTest'
     },
     shim   : {
         jQuery       : {

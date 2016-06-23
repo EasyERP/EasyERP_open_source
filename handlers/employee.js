@@ -64,7 +64,11 @@ var Employee = function (event, models) {
 
     function accessEmployeeSalary(profileId) {
         var profiles = CONSTANTS.ACCESS_EMPLOYEE_SALARY;
-        return !(profiles.indexOf(profileId.toString()) < 0);
+        if (profileId) {
+            return !(profiles.indexOf(profileId.toString()) < 0);
+        }
+
+        return false;
     }
 
     function getNameAndDepartment(db, query, callback) {
