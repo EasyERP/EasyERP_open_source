@@ -131,7 +131,7 @@
                 backend    : 'jobPosition._id',
                 displayName: 'Job Position'
             },
-            
+
             array: ['name', 'department', 'manager', 'jobPosition']
         },
 
@@ -266,18 +266,33 @@
                 backend    : 'projectManager._id'
             },
 
+            summary: {
+                backend: '_id'
+            },
+
+            type: {
+                backend: 'projecttype',
+                type   : 'string'
+            },
+
+            assignedTo: {
+                backend: 'assignedTo._id'
+            },
+
             array: ['name', 'customer', 'workflow', 'salesManager', 'projectManager']
         },
 
         Leads: {
             contactName: {
                 displayName: 'Contact Name',
-                backend    : 'contactName'
+                backend    : 'contactName',
+                type       : 'string'
             },
 
             source: {
                 displayName: 'Source',
-                backend    : 'source'
+                backend    : 'source',
+                type       : 'string'
             },
 
             workflow: {
@@ -431,22 +446,26 @@
 
             productType: {
                 displayName: 'Product Type',
-                backend    : 'info.productType'
+                backend    : 'info.productType',
+                type       : 'string'
             },
 
             canBeSold: {
                 displayName: 'Can be Sold',
-                backend    : 'canBeSold'
+                backend    : 'canBeSold',
+                type       : 'boolean'
             },
 
             canBeExpensed: {
                 displayName: 'Can be Expensed',
-                backend    : 'canBeExpensed'
+                backend    : 'canBeExpensed',
+                type       : 'boolean'
             },
 
             canBePurchased: {
                 displayName: 'Can be Purchased',
-                backend    : 'canBePurchased'
+                backend    : 'canBePurchased',
+                type       : 'boolean'
             }
         },
 

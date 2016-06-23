@@ -216,14 +216,12 @@ define([
                         filterBackend: filterBackend,
                         groupOptions : groupOptions,
                         filterType   : filterType
-                    }, function () {
-                        self.showFilterIcons(App.filtersObject.filter);
                     });
                 });
             }
         },
 
-        renderGroup: function (options, cb) {
+        renderGroup: function (options) {
             var displayName = options.displayName || '';
             var filterType = options.filterType || null;
             var filterView = options.filterView;
@@ -245,7 +243,7 @@ define([
                         filterType   : filterType,
                         filterBackend: filterBackend,
                         groupStatus  : groupStatus
-                    }, cb);
+                    });
                 }, 10);
             }
 
@@ -261,6 +259,7 @@ define([
             if (App.filtersObject.filter && App.filtersObject.filter[filterView]) {
                 this.setStatus(filterView);
             }
+
             this.groupsViews[filterView] = new valuesView({
                 id               : filterView + 'FullContainer',
                 className        : 'filterGroup',
@@ -276,8 +275,6 @@ define([
                 App.storage.remove(self.contentType + '.savedFilter');
                 self.setDbOnce();
                 self.showFilterIcons(App.filtersObject.filter);
-                // delete App.filtersObject.filtersValues[self.contentType];
-                // custom.getFiltersValues({contentType: self.contentType}, self.renderFilterContent);
             });
 
             $filtersSelector.append(this.groupsViews[filterView].$el);
@@ -289,10 +286,6 @@ define([
             });
 
             this.searchResult = this.searchResult.concat(this.searchResultObject[filterView]);
-
-            if (cb && cb === 'function') {
-                cb();
-            }
 
         },
 
