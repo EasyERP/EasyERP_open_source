@@ -24,7 +24,7 @@ define([
         chai.use(sinonChai);
         expect = chai.expect;
 
-        function selectFilter (ajaxSpy, filterValuesArray, options, fakeData, responseForSaveFilter) {
+        function selectFilter(ajaxSpy, filterValuesArray, options, fakeData, responseForSaveFilter) {
             url = options.url;
             contentType = options.contentType;
             firstValue = filterValuesArray[0];
@@ -40,13 +40,13 @@ define([
                     var $searchContainer = $('#searchContainer');
                     var $thisEl = $('#content-holder');
                     var $searchArrow = $searchContainer.find('.search-content');
-                    var employeeThumbUrl = new RegExp(url, 'i');
+                    var contentUrl = new RegExp(url, 'i');
                     var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
                     var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
                     var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
                     var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
-                    var $fullName;
-                    var $department;
+                    var $firstGroup;
+                    var $secondGroup;
                     var elementsCount;
                     var $selectedItem;
                     var ajaxResponse;
@@ -60,18 +60,18 @@ define([
 
                     // select fullName
                     ajaxSpy.reset();
-                    $fullName = $searchContainer.find($firstContainer);
-                    $fullName.click();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
 
                     $selectedItem = $searchContainer.find($firstSelector);
 
-                    server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeData)]);
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeData)]);
                     $selectedItem.click();
                     server.respond();
 
                     expect(selectSpy.calledOnce).to.be.true;
                     expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('#startLetter')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
                     expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
                     expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
                     elementsCount = $thisEl.find('#listTable > tr').length;
@@ -96,15 +96,15 @@ define([
                     // filter by department
                     ajaxSpy.reset();
 
-                    $department = $thisEl.find($secondContainer);
-                    $department.click();
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
                     $selectedItem = $searchContainer.find($secondSelector);
                     $selectedItem.click();
                     server.respond();
 
                     expect(selectSpy.calledTwice).to.be.true;
                     expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('#startLetter')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
                     expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
                     expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
                     elementsCount = $thisEl.find('#listTable > tr').length;
@@ -132,7 +132,7 @@ define([
 
                     expect(selectSpy.calledThrice).to.be.true;
                     expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('#startLetter')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
                     expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
                     expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
                     elementsCount = $thisEl.find('#listTable > tr').length;
@@ -198,6 +198,6 @@ define([
 
         return {
             selectFilter: selectFilter
-        }
+        };
     };
 });
