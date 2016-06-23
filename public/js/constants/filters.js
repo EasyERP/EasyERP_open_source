@@ -350,7 +350,8 @@
 
             type: {
                 displayName: 'Type',
-                backend    : 'type'
+                backend    : 'type',
+                type       : 'string'
             }
         },
 
@@ -384,22 +385,26 @@
 
             paymentRef: {
                 displayName: 'Bonus Type',
-                backend    : 'paymentRef'
+                backend    : 'paymentRef',
+                type       : 'string'
             },
 
             year: {
                 displayName: 'Year',
-                backend    : 'year'
+                backend    : 'year',
+                type       : 'integer'
             },
 
             month: {
                 displayName: 'Month',
-                backend    : 'month'
+                backend    : 'month',
+                type       : 'integer'
             },
 
             workflow: {
                 displayName: 'Status',
-                backend    : 'workflow'
+                backend    : 'workflow',
+                type       : 'string'
             }
         },
 
