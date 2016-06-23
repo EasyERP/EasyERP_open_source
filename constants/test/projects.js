@@ -1105,84 +1105,6 @@ define([], function () {
             }
         ]
     };
-    var fakeCustomers = {
-        data: [
-            {
-                _id           : "55b92ad521e4b7c40f00060e",
-                ID            : 11,
-                __v           : 0,
-                companyInfo   : {
-                    size    : null,
-                    industry: null
-                },
-                editedBy      : {
-                    date: "2015-07-29T19:34:45.991Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:45.991Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                history       : [],
-                attachments   : [],
-                notes         : [],
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: null
-                },
-                whoCanRW      : "everyOne",
-                social        : {
-                    LI: "",
-                    FB: ""
-                },
-                color         : "#4d5a75",
-                relatedUser   : null,
-                salesPurchases: {
-                    receiveMessages: 0,
-                    language       : "English",
-                    reference      : "",
-                    active         : true,
-                    implementedBy  : null,
-                    salesTeam      : null,
-                    salesPerson    : null,
-                    isSupplier     : false,
-                    isCustomer     : true
-                },
-                title         : "",
-                internalNotes : "",
-                contacts      : [],
-                phones        : {
-                    fax   : "",
-                    mobile: "",
-                    phone : ""
-                },
-                skype         : "",
-                jobPosition   : "",
-                website       : "",
-                address       : {
-                    country: "USA",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                timezone      : "UTC",
-                department    : null,
-                company       : null,
-                email         : "",
-                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                name          : {
-                    last : "",
-                    first: "Pekaboo/D.Kaufman"
-                },
-                isOwn         : false,
-                type          : "Person",
-                fullName      : "Pekaboo/D.Kaufman ",
-                id            : "55b92ad521e4b7c40f00060e"
-            }
-        ]
-    };
     var fakeProjectsType = {
         data: [
             {
@@ -4099,251 +4021,53 @@ define([], function () {
         projectShortDesc: "emptyProject"
     };
     var fakeProjectByIdForForm = {
-        _id             : '55b92ad621e4b7c40f00065f',
-        EndDate         : '2014-08-15T09:10:39.579Z',
-        StartDate       : '2014-08-11T09:10:39.578Z',
-        description     : '',
-        TargetEndDate   : null,
-        salesManagers   : [
-            {
-                manager: '55b92ad221e4b7c40f000063',
-                _id    : "5707533ecbb17f48214c769c",
-                date   : "2014-08-11T12:27:35.056Z"
-            }
-        ],
-        budget          : {
-            projectTeam: [
-                {
-                    _id      : "564cfd8ba6e6390160c9ee1c",
-                    __v      : 0,
-                    payments : [
-                        "55b92ae321e4b7c40f0013cd"
-                    ],
-                    createdBy: {
-                        date: "2015-07-29T19:34:48.648Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    editedBy : {
-                        date: "2016-04-11T09:01:18.338Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    invoice  : "55b92ae121e4b7c40f001265",
-                    quotation: "564cfd8da6e6390160c9f0fe",
-                    budget   : {
-                        budgetTotal  : {
-                            profitSum  : 84.34,
-                            costSum    : 111.66,
-                            revenueSum : 196,
-                            hoursSum   : 28,
-                            revenueByQA: 1.96,
-                            hoursByQA  : 28,
-                            maxDate    : 201433,
-                            minDate    : 201433
-                        },
-                        budget       : [
-                            {
-                                byQA   : {
-                                    revenue: 98,
-                                    hours  : 14
-                                },
-                                profit : 34.67,
-                                cost   : 63.33,
-                                hours  : 14,
-                                revenue: 98
-                            },
-                            {
-                                byQA   : {
-                                    revenue: 98,
-                                    hours  : 14
-                                },
-                                profit : 49.67,
-                                cost   : 48.33,
-                                hours  : 14,
-                                revenue: 98
-                            }
-                        ],
-                        projectValues: [],
-                        projectTeam  : [
-                            {
-                                _id        : "55b92ad221e4b7c40f00006f",
-                                jobPosition: {
-                                    _id : "55b92acf21e4b7c40f000018",
-                                    name: "Junior QA"
-                                },
-                                department : {
-                                    _id           : "55b92ace21e4b7c40f000011",
-                                    departmentName: "QA"
-                                },
-                                name       : {
-                                    last : "Karabeinikov",
-                                    first: "Anton"
-                                }
-                            },
-                            {
-                                _id        : "55b92ad221e4b7c40f00007f",
-                                jobPosition: {
-                                    _id : "55b92acf21e4b7c40f000018",
-                                    name: "Junior QA"
-                                },
-                                department : {
-                                    _id           : "55b92ace21e4b7c40f000011",
-                                    departmentName: "QA"
-                                },
-                                name       : {
-                                    last : "Klimchenko",
-                                    first: "Vasilisa"
-                                }
-                            }
-                        ]
-                    },
-                    project  : "55b92ad621e4b7c40f00065f",
-                    wTracks  : [
-                        "55b92ad821e4b7c40f00072a",
-                        "55b92ad821e4b7c40f0006e3"
-                    ],
-                    type     : "Invoiced",
-                    workflow : "56337c675d49d8d6537832ea",
-                    name     : "IOS/Android QA1-15/01/15"
-                }
-            ],
-            bonus      : [
-                {
-                    bonus     : 294,
-                    resource  : "Alex Gleba",
-                    percentage: "PM Junior/Usual 1.5%"
-                },
-                {
-                    bonus     : 1568,
-                    resource  : "Yana Gusti",
-                    percentage: "Sales/QA 8%"
-                },
-                {
-                    bonus     : 392,
-                    resource  : "Oleg Ostroverkh",
-                    percentage: "Sales/Ref 2%"
-                }
-            ]
+        _id: "55b92ad621e4b7c40f00065f",
+        EndDate: null,
+        StartDate: null,
+        health: 3,
+        attachments: [ ],
+        notes: [ ],
+        projecttype: "",
+        workflow: {
+            _id: "528ce7d0f3f67bc40b000021",
+            name: "New"
         },
-        bonus           : [
-            {
-                employeeId: {
-                    _id     : "55b92ad221e4b7c40f000031",
-                    name    : {
-                        last : "Gleba",
-                        first: "Alex"
-                    },
-                    fullName: "Alex Gleba",
-                    id      : "55b92ad221e4b7c40f000031"
-                },
-                bonusId   : {
-                    _id      : "55b92ad521e4b7c40f00060a",
-                    isPercent: true,
-                    value    : 1.5,
-                    name     : "PM Junior/Usual 1.5%"
-                },
-                _id       : "5604fc2082ca87623a000008",
-                endDate   : null,
-                startDate : null
-            },
-            {
-                employeeId: {
-                    _id     : "55b92ad221e4b7c40f000063",
-                    name    : {
-                        last : "Gusti",
-                        first: "Yana"
-                    },
-                    fullName: "Yana Gusti",
-                    id      : "55b92ad221e4b7c40f000063"
-                },
-                bonusId   : {
-                    _id      : "55b92ad521e4b7c40f000607",
-                    isPercent: true,
-                    value    : 8,
-                    name     : "Sales/QA 8%"
-                },
-                _id       : "5604fc2082ca87623a000007",
-                endDate   : "2014-08-13T22:00:00.000Z",
-                startDate : "2014-08-09T22:00:00.000Z"
-            },
-            {
-                employeeId: {
-                    _id     : "55b92ad221e4b7c40f00004a",
-                    name    : {
-                        last : "Ostroverkh",
-                        first: "Oleg"
-                    },
-                    fullName: "Oleg Ostroverkh",
-                    id      : "55b92ad221e4b7c40f00004a"
-                },
-                bonusId   : {
-                    _id      : "55b92ad521e4b7c40f000604",
-                    isPercent: true,
-                    value    : 2,
-                    name     : "Sales/Ref 2%"
-                },
-                _id       : "5604fc2082ca87623a000006",
-                endDate   : "2014-08-13T22:00:00.000Z",
-                startDate : "2014-08-09T22:00:00.000Z"
-            }
-        ],
-        health          : 1,
-        editedBy        : {
-            date: "2016-04-11T09:01:17.793Z",
-            user: {
-                _id  : "52203e707d4dba8813000003",
-                login: "admin"
-            }
-        },
-        attachments     : [],
-        notes           : [],
-        projecttype     : "",
-        createdBy       : {
-            date: "2015-07-29T19:34:46.291Z",
-            user: {
-                _id  : "52203e707d4dba8813000003",
-                login: "admin"
-            }
-        },
-        progress        : 0,
-        remaining       : 0,
-        logged          : 0,
-        estimated       : 0,
-        workflow        : {
-            _id : "528ce7f2f3f67bc40b000023",
-            name: "In Progress"
-        },
-        parent          : null,
-        sequence        : 0,
-        groups          : {
-            group: [],
-            users: [],
+        groups: {
             owner: {
-                _id  : "55ba28c8d79a3a3439000016",
+                _id: "55ba28c8d79a3a3439000016",
                 login: "AndrianaLemko"
-            }
-        },
-        whoCanRW        : "everyOne",
-        projectManager  : {
-            _id     : "55b92ad221e4b7c40f000063",
-            name    : {
-                last : "Gusti",
-                first: "Yana"
             },
-            fullName: "Yana Gusti",
-            id      : "55b92ad221e4b7c40f000063"
+            users: [ ],
+            group: [ ]
         },
-        customer        : {
-            _id     : "55b92ad521e4b7c40f00060c",
-            name    : {
-                last : "Blinov",
-                first: "Alexey"
-            },
-            fullName: "Alexey Blinov",
-            id      : "55b92ad521e4b7c40f00060c"
+        whoCanRW: "everyOne",
+        customer: {
+            _id: "55b92ad521e4b7c40f00060c",
+            fullName: "Alexey Blinov"
         },
-        task            : [],
-        projectName     : "IOS/Android QA",
-        projectShortDesc: "emptyProject"
+        projectShortDesc: "emptyProject",
+        description: "",
+        TargetEndDate: null,
+        paymentTerms: {
+            _id: "55536e52475b7be475f335f6",
+            name: "15 Days"
+        },
+        paymentMethod: {
+            _id: "565f2e05ab70d49024242e07",
+            name: "Erste USD",
+            account: "HU24 1160 0006 0000 0000 4916 1522",
+            currency: "USD",
+            bank: "Erste Bank",
+            owner: "Alexander Sokhanych"
+        },
+        name: "IOS/Android QA",
+        salesManager: {
+            _id: "55b92ad221e4b7c40f000063",
+            fullName: "Yana Gusti"
+        },
+        projectManager: {
+            fullName: null
+        }
     };
     var fakeJobs = [
         {
@@ -4424,1385 +4148,94 @@ define([], function () {
             }
         ]
     };
-    var fakeInvoice = [
-        {
-            _id           : "55b92ae121e4b7c40f001265",
-            paymentDate   : "2015-01-14T00:00:00.000Z",
-            dueDate       : "2015-01-29T14:09:21.796Z",
-            editedBy      : {
-                user: {
-                    _id            : "52203e707d4dba8813000003",
-                    __v            : 0,
-                    attachments    : [],
-                    credentials    : {
-                        access_token : "",
-                        refresh_token: ""
-                    },
-                    email          : "info@thinkmobiles.com",
-                    kanbanSettings : {
-                        applications : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "Empty"
-                            ]
-                        },
-                        opportunities: {
-                            countPerPage: 10
-                        },
-                        tasks        : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "528ce3caf3f67bc40b000013",
-                                "528ce3acf3f67bc40b000012",
-                                "528ce30cf3f67bc40b00000f",
-                                "528ce35af3f67bc40b000010"
-                            ]
-                        }
-                    },
-                    lastAccess     : "2016-04-15T09:02:52.689Z",
-                    login          : "admin",
-                    pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                    profile        : 1387275598000,
-                    imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    savedFilters   : [
-                        {
-                            _id      : "56213057c558b13c1bbf874d",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5621307bc558b13c1bbf874f",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213103c558b13c1bbf8750",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213197c558b13c1bbf8751",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56215e86c558b13c1bbf8755",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56229009184ec5a427913306",
-                            viewType : "",
-                            byDefault: "salesInvoice"
-                        },
-                        {
-                            _id      : "562506bb19a2ecca01ca84b3",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56265005d53978de6e9ea440",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "562b83ccb4677e225aa31df6",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "564dd4ce9fb8bc3f2195662c",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56570d714d96962262fd4b55",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56572368bfd103f108eb4a24",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56604795ccc590f32c577ece",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566047c6ccc590f32c577ed1",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5661a7bf7d284423697e34a8",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5665429e9294f4d728bcafaa",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566eba768453e8b464b70a40",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56c711ab0769bba2647ae710",
-                            viewType : "",
-                            byDefault: "Projects"
-                        },
-                        {
-                            _id      : "56daf5322e7b62c613ff2552",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd69d991cb620c19ff60c2",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd6af71e6cb7131892b2ba",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dfe8e56e2877d85455a6bb",
-                            viewType : "",
-                            byDefault: "Leads"
-                        },
-                        {
-                            _id      : "56f3d039c1785edc507e81ea",
-                            viewType : "",
-                            byDefault: ""
-                        }
-                    ],
-                    relatedEmployee: "55b92ad221e4b7c40f00004f"
-                }
-            },
-            createdBy     : {
-                user: {
-                    _id            : "52203e707d4dba8813000003",
-                    __v            : 0,
-                    attachments    : [],
-                    credentials    : {
-                        access_token : "",
-                        refresh_token: ""
-                    },
-                    email          : "info@thinkmobiles.com",
-                    kanbanSettings : {
-                        applications : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "Empty"
-                            ]
-                        },
-                        opportunities: {
-                            countPerPage: 10
-                        },
-                        tasks        : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "528ce3caf3f67bc40b000013",
-                                "528ce3acf3f67bc40b000012",
-                                "528ce30cf3f67bc40b00000f",
-                                "528ce35af3f67bc40b000010"
-                            ]
-                        }
-                    },
-                    lastAccess     : "2016-04-15T09:02:52.689Z",
-                    login          : "admin",
-                    pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                    profile        : 1387275598000,
-                    imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    savedFilters   : [
-                        {
-                            _id      : "56213057c558b13c1bbf874d",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5621307bc558b13c1bbf874f",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213103c558b13c1bbf8750",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213197c558b13c1bbf8751",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56215e86c558b13c1bbf8755",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56229009184ec5a427913306",
-                            viewType : "",
-                            byDefault: "salesInvoice"
-                        },
-                        {
-                            _id      : "562506bb19a2ecca01ca84b3",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56265005d53978de6e9ea440",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "562b83ccb4677e225aa31df6",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "564dd4ce9fb8bc3f2195662c",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56570d714d96962262fd4b55",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56572368bfd103f108eb4a24",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56604795ccc590f32c577ece",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566047c6ccc590f32c577ed1",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5661a7bf7d284423697e34a8",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5665429e9294f4d728bcafaa",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566eba768453e8b464b70a40",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56c711ab0769bba2647ae710",
-                            viewType : "",
-                            byDefault: "Projects"
-                        },
-                        {
-                            _id      : "56daf5322e7b62c613ff2552",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd69d991cb620c19ff60c2",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd6af71e6cb7131892b2ba",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dfe8e56e2877d85455a6bb",
-                            viewType : "",
-                            byDefault: "Leads"
-                        },
-                        {
-                            _id      : "56f3d039c1785edc507e81ea",
-                            viewType : "",
-                            byDefault: ""
-                        }
-                    ],
-                    relatedEmployee: "55b92ad221e4b7c40f00004f"
-                }
-            },
-            workflow      : {
-                _id         : "55647d932e4aa3804a765ec9",
-                color       : "#2C3E50",
-                name        : "Unpaid",
-                sequence    : 4,
-                status      : "New",
-                wId         : "Sales Invoice",
-                wName       : "invoice",
-                source      : "purchase",
-                targetSource: [
-                    "invoice"
-                ],
-                visible     : true
-            },
-            payments      : [
-                "55b92ae321e4b7c40f0013cd"
-            ],
-            paymentInfo   : {
-                balance: 19600,
-                unTaxed: 19600,
-                taxes  : 0,
-                total  : 19600
-            },
-            salesPerson   : {
-                _id           : "55b92ad221e4b7c40f000063",
-                dateBirth     : "1990-07-30T00:00:00.000Z",
-                ID            : 57,
-                isLead        : 2,
-                fire          : [],
-                hire          : [
-                    "2013-11-17T22:00:00.000Z"
-                ],
-                social        : {
-                    FB: "",
-                    LI: "https://ua.linkedin.com/pub/yana"
-                },
-                sequence      : 0,
-                jobType       : "fullTime",
-                gender        : "male",
-                marital       : "married",
-                contractEnd   : {
-                    date  : "2015-07-29T19:34:42.464Z",
-                    reason: ""
-                },
-                attachments   : [],
-                editedBy      : {
-                    date: "2016-03-31T09:31:59.608Z",
-                    user: "563f673270bbc2b740ce89ae"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:42.464Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2015-07-29T19:34:42.464Z",
-                color         : "#4d5a75",
-                otherInfo     : "",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : null,
-                active        : false,
-                referredBy    : "",
-                source        : "",
-                age           : 25,
-                homeAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                otherId       : "",
-                bankAccountNo : "",
-                nationality   : "Ukrainian",
-                coach         : null,
-                manager       : "55b92ad221e4b7c40f00004f",
-                jobPosition   : "5644388770bbc2b740ce8a18",
-                department    : "55b92ace21e4b7c40f000011",
-                visibility    : "Public",
-                relatedUser   : null,
-                officeLocation: "",
-                skype         : "yanochka_3007",
-                workPhones    : {
-                    phone : "",
-                    mobile: "+380508754761"
-                },
-                personalEmail : "yana.gusti@gmail.com",
-                workEmail     : "yana.gusti@thinkmobiles.com",
-                workAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                tags          : [
-                    ""
-                ],
-                name          : {
-                    last : "Gusti",
-                    first: "Yana"
-                },
-                subject       : "",
-                imageSrc      : "data:image/jpeg;base64,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",
-                isEmployee    : true,
-                __v           : 0,
-                transferred   : [
-                    {
-                        date      : "2015-11-12T07:01:22.647Z",
-                        department: " BusinessDev"
+    var fakeInvoice = {
+        total: 2,
+        data: [
+            {
+                _id: "55b92ae121e4b7c40f001265",
+                total: 2,
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
                     }
-                ],
-                transfer      : [
-                    {
-                        date       : "2013-11-17T22:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 350,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "hired"
-                    },
-                    {
-                        date       : "2014-06-30T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 450,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    },
-                    {
-                        date       : "2015-08-31T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 1000,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
+                },
+                workflow: {
+                    status: "Done",
+                    name: "Paid"
+                },
+                supplier: {
+                    _id: "55b92ad521e4b7c40f00060c",
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
                     }
-                ]
-            },
-            invoiceDate   : "2015-01-14T00:00:00.000Z",
-            project       : {
-                _id             : "55b92ad621e4b7c40f00065f",
-                EndDate         : "2016-04-28T21:00:00.000Z",
-                StartDate       : "2016-04-13T21:00:00.000Z",
-                ID              : 1,
-                bonus           : [
-                    {
-                        bonusId   : "55b92ad521e4b7c40f00060a",
-                        employeeId: "55b92ad221e4b7c40f000031",
-                        _id       : "570e4aa461cae96537ef44ad",
-                        endDate   : null,
-                        startDate : null
-                    },
-                    {
-                        bonusId   : "55b92ad521e4b7c40f000607",
-                        employeeId: "55b92ad221e4b7c40f000063",
-                        _id       : "570e4aa461cae96537ef44ac",
-                        endDate   : null,
-                        startDate : null
-                    },
-                    {
-                        bonusId   : "55b92ad521e4b7c40f000604",
-                        employeeId: "55b92ad221e4b7c40f00004a",
-                        _id       : "570e4aa461cae96537ef44ab",
-                        endDate   : null,
-                        startDate : null
-                    }
+                },
+                forSales: true,
+                currency: {
+                    _id: "565eab29aeb95fa9c0f9df2d",
+                    rate: 1
+                },
+                paymentInfo: {
+                    taxes: 0,
+                    unTaxed: 19600,
+                    balance: 0,
+                    total: 19600
+                },
+                invoiceDate: "2015-01-14T04:00:00.000Z",
+                name: "1-15/01/15",
+                paymentDate: "2015-01-14T04:00:00.000Z",
+                dueDate: "2015-01-29T14:09:21.796Z",
+                payments: [
+                    "55b92ae321e4b7c40f0013cd"
                 ],
-                health          : 3,
-                editedBy        : {
-                    date: "2016-04-13T13:33:24.594Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                attachments     : [],
-                notes           : [],
-                projecttype     : "",
-                createdBy       : {
-                    date: "2015-07-29T19:34:46.291Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                progress        : 0,
-                remaining       : 0,
-                logged          : 0,
-                estimated       : 0,
-                workflow        : "528ce7f2f3f67bc40b000023",
-                parent          : null,
-                sequence        : 0,
-                groups          : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW        : "everyOne",
-                projectmanager  : "55b92ad221e4b7c40f000063",
-                customer        : "55b92ad521e4b7c40f00060c",
-                task            : [],
-                projectName     : "IOS/Android QA",
-                projectShortDesc: "emptyProject",
-                __v             : 0,
-                teams           : {},
-                info            : {},
-                description     : "",
-                TargetEndDate   : "2016-04-23T21:00:00.000Z",
-                budget          : {
-                    bonus      : [
-                        {
-                            percentage: "PM Junior/Usual 1.5%",
-                            resource  : "Alex Gleba",
-                            bonus     : 294
-                        },
-                        {
-                            percentage: "Sales/QA 8%",
-                            resource  : "Yana Gusti",
-                            bonus     : 1568
-                        },
-                        {
-                            percentage: "Sales/Ref 2%",
-                            resource  : "Oleg Ostroverkh",
-                            bonus     : 392
-                        }
-                    ],
-                    projectTeam: [
-                        "570dfc206625f34212d01f3f",
-                        "570dfbd96625f34212d01f39",
-                        "570dfb7d6625f34212d01f37",
-                        "570de3596625f34212d01f32",
-                        "570ddef86625f34212d01f2d",
-                        "564cfd8ba6e6390160c9ee1c"
-                    ]
-                },
-                salesManagers   : [
-                    {
-                        date   : "2014-08-11T12:27:35.056Z",
-                        _id    : "5707533ecbb17f48214c769c",
-                        manager: "55b92ad221e4b7c40f000063"
+                approved: true,
+                _type: "wTrackInvoice",
+                removable: false,
+                paid: 196
+            },
+            {
+                _id: "576ba92a8e9e51e31266662a",
+                total: 2,
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
                     }
-                ]
-            },
-            sourceDocument: {
-                _id           : "564cfd8da6e6390160c9f0fe",
-                editedBy      : {
-                    date: "2015-11-18T22:37:01.579Z",
-                    user: null
                 },
-                createdBy     : {
-                    date: "2015-11-18T22:37:01.579Z",
-                    user: null
+                workflow: {
+                    name: "Draft",
+                    status: "New"
                 },
-                creationDate  : "2015-11-18T22:37:01.579Z",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: null
-                },
-                whoCanRW      : "everyOne",
-                workflow      : "55647b962e4aa3804a765ec6",
-                products      : [
-                    {
-                        scheduledDate: "2015-01-15T14:09:21.796Z",
-                        taxes        : 0,
-                        subTotal     : 196,
-                        unitPrice    : 196,
-                        jobs         : "564cfd8ba6e6390160c9ee1c",
-                        description  : "",
-                        product      : "5540d528dacb551c24000003",
-                        quantity     : 28
+                supplier: {
+                    _id: "55b92ad521e4b7c40f00060c",
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
                     }
-                ],
-                paymentInfo   : {
-                    taxes  : 0,
-                    unTaxed: 196,
-                    total  : 196
                 },
-                paymentTerm   : null,
-                invoiceRecived: true,
-                invoiceControl: null,
-                incoterm      : null,
-                destination   : null,
-                name          : "PO364",
-                orderDate     : "2015-01-15T14:09:21.796Z",
-                deliverTo     : null,
-                project       : "55b92ad621e4b7c40f00065f",
-                supplier      : "55b92ad521e4b7c40f00060c",
-                isOrder       : true,
-                forSales      : true,
-                __v           : 0,
-                type          : "Invoiced",
-                currency      : {
-                    rate: 1,
-                    _id : "565eab29aeb95fa9c0f9df2d"
-                }
-            },
-            supplier      : {
-                _id           : "55b92ad521e4b7c40f00060c",
-                ID            : 1,
-                companyInfo   : {
-                    size    : null,
-                    industry: null
+                forSales: true,
+                currency: {
+                    rate: 0.88169,
+                    _id: "565eab34aeb95fa9c0f9df2e"
                 },
-                editedBy      : {
-                    date: "2015-10-05T06:46:29.793Z",
-                    user: "55bf144765cda0810b000005"
+                paymentInfo: {
+                    taxes: 0,
+                    unTaxed: 44400,
+                    balance: 44400,
+                    total: 44400
                 },
-                createdBy     : {
-                    date: "2015-07-29T19:34:45.989Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                history       : [],
-                attachments   : [],
-                notes         : [],
-                groups        : {
-                    owner: "55ba28c8d79a3a3439000016",
-                    users: [],
-                    group: []
-                },
-                whoCanRW      : "everyOne",
-                social        : {
-                    LI: "",
-                    FB: ""
-                },
-                color         : "#4d5a75",
-                relatedUser   : null,
-                salesPurchases: {
-                    isCustomer: true,
-                    isSupplier: false,
-                    active    : false,
-                    reference : "",
-                    language  : ""
-                },
-                title         : "",
-                internalNotes : "",
-                contacts      : [],
-                phones        : {
-                    phone : "",
-                    mobile: "",
-                    fax   : ""
-                },
-                skype         : "",
-                jobPosition   : null,
-                website       : "",
-                address       : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                timezone      : "UTC",
-                department    : null,
-                company       : null,
-                email         : "",
-                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                name          : {
-                    first: "Alexey",
-                    last : "Blinov"
-                },
-                isOwn         : false,
-                type          : "Person",
-                __v           : 0,
-                dateBirth     : null
-            },
-            forSales      : true,
-            name          : "1-15/01/15"
-        },
-        {
-            _id           : "5710e5873a8d9e4a38be9f11",
-            project       : {
-                _id             : "55b92ad621e4b7c40f00065f",
-                EndDate         : "2016-04-28T21:00:00.000Z",
-                StartDate       : "2016-04-13T21:00:00.000Z",
-                ID              : 1,
-                bonus           : [
-                    {
-                        bonusId   : "55b92ad521e4b7c40f00060a",
-                        employeeId: "55b92ad221e4b7c40f000031",
-                        _id       : "570e4aa461cae96537ef44ad",
-                        endDate   : null,
-                        startDate : null
-                    },
-                    {
-                        bonusId   : "55b92ad521e4b7c40f000607",
-                        employeeId: "55b92ad221e4b7c40f000063",
-                        _id       : "570e4aa461cae96537ef44ac",
-                        endDate   : null,
-                        startDate : null
-                    },
-                    {
-                        bonusId   : "55b92ad521e4b7c40f000604",
-                        employeeId: "55b92ad221e4b7c40f00004a",
-                        _id       : "570e4aa461cae96537ef44ab",
-                        endDate   : null,
-                        startDate : null
-                    }
-                ],
-                health          : 3,
-                editedBy        : {
-                    date: "2016-04-13T13:33:24.594Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                attachments     : [],
-                notes           : [],
-                projecttype     : "",
-                createdBy       : {
-                    date: "2015-07-29T19:34:46.291Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                progress        : 0,
-                remaining       : 0,
-                logged          : 0,
-                estimated       : 0,
-                workflow        : "528ce7f2f3f67bc40b000023",
-                parent          : null,
-                sequence        : 0,
-                groups          : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW        : "everyOne",
-                projectmanager  : "55b92ad221e4b7c40f000063",
-                customer        : "55b92ad521e4b7c40f00060c",
-                task            : [],
-                projectName     : "IOS/Android QA",
-                projectShortDesc: "emptyProject",
-                __v             : 0,
-                teams           : {},
-                info            : {},
-                description     : "",
-                TargetEndDate   : "2016-04-23T21:00:00.000Z",
-                budget          : {
-                    bonus      : [
-                        {
-                            percentage: "PM Junior/Usual 1.5%",
-                            resource  : "Alex Gleba",
-                            bonus     : 294
-                        },
-                        {
-                            percentage: "Sales/QA 8%",
-                            resource  : "Yana Gusti",
-                            bonus     : 1568
-                        },
-                        {
-                            percentage: "Sales/Ref 2%",
-                            resource  : "Oleg Ostroverkh",
-                            bonus     : 392
-                        }
-                    ],
-                    projectTeam: [
-                        "570dfc206625f34212d01f3f",
-                        "570dfbd96625f34212d01f39",
-                        "570dfb7d6625f34212d01f37",
-                        "570de3596625f34212d01f32",
-                        "570ddef86625f34212d01f2d",
-                        "564cfd8ba6e6390160c9ee1c"
-                    ]
-                },
-                salesManagers   : [
-                    {
-                        date   : "2014-08-11T12:27:35.056Z",
-                        _id    : "5707533ecbb17f48214c769c",
-                        manager: "55b92ad221e4b7c40f000063"
-                    }
-                ]
-            },
-            editedBy      : {
-                user: {
-                    _id            : "52203e707d4dba8813000003",
-                    __v            : 0,
-                    attachments    : [],
-                    credentials    : {
-                        access_token : "",
-                        refresh_token: ""
-                    },
-                    email          : "info@thinkmobiles.com",
-                    kanbanSettings : {
-                        applications : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "Empty"
-                            ]
-                        },
-                        opportunities: {
-                            countPerPage: 10
-                        },
-                        tasks        : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "528ce3caf3f67bc40b000013",
-                                "528ce3acf3f67bc40b000012",
-                                "528ce30cf3f67bc40b00000f",
-                                "528ce35af3f67bc40b000010"
-                            ]
-                        }
-                    },
-                    lastAccess     : "2016-04-15T09:02:52.689Z",
-                    login          : "admin",
-                    pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                    profile        : 1387275598000,
-                    imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    savedFilters   : [
-                        {
-                            _id      : "56213057c558b13c1bbf874d",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5621307bc558b13c1bbf874f",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213103c558b13c1bbf8750",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213197c558b13c1bbf8751",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56215e86c558b13c1bbf8755",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56229009184ec5a427913306",
-                            viewType : "",
-                            byDefault: "salesInvoice"
-                        },
-                        {
-                            _id      : "562506bb19a2ecca01ca84b3",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56265005d53978de6e9ea440",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "562b83ccb4677e225aa31df6",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "564dd4ce9fb8bc3f2195662c",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56570d714d96962262fd4b55",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56572368bfd103f108eb4a24",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56604795ccc590f32c577ece",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566047c6ccc590f32c577ed1",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5661a7bf7d284423697e34a8",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5665429e9294f4d728bcafaa",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566eba768453e8b464b70a40",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56c711ab0769bba2647ae710",
-                            viewType : "",
-                            byDefault: "Projects"
-                        },
-                        {
-                            _id      : "56daf5322e7b62c613ff2552",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd69d991cb620c19ff60c2",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd6af71e6cb7131892b2ba",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dfe8e56e2877d85455a6bb",
-                            viewType : "",
-                            byDefault: "Leads"
-                        },
-                        {
-                            _id      : "56f3d039c1785edc507e81ea",
-                            viewType : "",
-                            byDefault: ""
-                        }
-                    ],
-                    relatedEmployee: "55b92ad221e4b7c40f00004f"
-                }
-            },
-            createdBy     : {
-                user: {
-                    _id            : "52203e707d4dba8813000003",
-                    __v            : 0,
-                    attachments    : [],
-                    credentials    : {
-                        access_token : "",
-                        refresh_token: ""
-                    },
-                    email          : "info@thinkmobiles.com",
-                    kanbanSettings : {
-                        applications : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "Empty"
-                            ]
-                        },
-                        opportunities: {
-                            countPerPage: 10
-                        },
-                        tasks        : {
-                            countPerPage : 10,
-                            foldWorkflows: [
-                                "528ce3caf3f67bc40b000013",
-                                "528ce3acf3f67bc40b000012",
-                                "528ce30cf3f67bc40b00000f",
-                                "528ce35af3f67bc40b000010"
-                            ]
-                        }
-                    },
-                    lastAccess     : "2016-04-15T09:02:52.689Z",
-                    login          : "admin",
-                    pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                    profile        : 1387275598000,
-                    imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    savedFilters   : [
-                        {
-                            _id      : "56213057c558b13c1bbf874d",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5621307bc558b13c1bbf874f",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213103c558b13c1bbf8750",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56213197c558b13c1bbf8751",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56215e86c558b13c1bbf8755",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56229009184ec5a427913306",
-                            viewType : "",
-                            byDefault: "salesInvoice"
-                        },
-                        {
-                            _id      : "562506bb19a2ecca01ca84b3",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56265005d53978de6e9ea440",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "562b83ccb4677e225aa31df6",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "564dd4ce9fb8bc3f2195662c",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56570d714d96962262fd4b55",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56572368bfd103f108eb4a24",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56604795ccc590f32c577ece",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566047c6ccc590f32c577ed1",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5661a7bf7d284423697e34a8",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "5665429e9294f4d728bcafaa",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "566eba768453e8b464b70a40",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56c711ab0769bba2647ae710",
-                            viewType : "",
-                            byDefault: "Projects"
-                        },
-                        {
-                            _id      : "56daf5322e7b62c613ff2552",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd69d991cb620c19ff60c2",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dd6af71e6cb7131892b2ba",
-                            viewType : "",
-                            byDefault: ""
-                        },
-                        {
-                            _id      : "56dfe8e56e2877d85455a6bb",
-                            viewType : "",
-                            byDefault: "Leads"
-                        },
-                        {
-                            _id      : "56f3d039c1785edc507e81ea",
-                            viewType : "",
-                            byDefault: ""
-                        }
-                    ],
-                    relatedEmployee: "55b92ad221e4b7c40f00004f"
-                }
-            },
-            workflow      : {
-                _id         : "55647d932e4aa3804a765ec9",
-                color       : "#2C3E50",
-                name        : "Unpaid",
-                sequence    : 4,
-                status      : "New",
-                wId         : "Sales Invoice",
-                wName       : "invoice",
-                source      : "purchase",
-                targetSource: [
-                    "invoice"
-                ],
-                visible     : true
-            },
-            payments      : [],
-            paymentInfo   : {
-                taxes  : 0,
-                unTaxed: 0,
-                balance: 0,
-                total  : 0
-            },
-            salesPerson   : {
-                _id           : "55b92ad221e4b7c40f000063",
-                dateBirth     : "1990-07-30T00:00:00.000Z",
-                ID            : 57,
-                isLead        : 2,
-                fire          : [],
-                hire          : [
-                    "2013-11-17T22:00:00.000Z"
-                ],
-                social        : {
-                    FB: "",
-                    LI: "https://ua.linkedin.com/pub/yana"
-                },
-                sequence      : 0,
-                jobType       : "fullTime",
-                gender        : "male",
-                marital       : "married",
-                contractEnd   : {
-                    date  : "2015-07-29T19:34:42.464Z",
-                    reason: ""
-                },
-                attachments   : [],
-                editedBy      : {
-                    date: "2016-03-31T09:31:59.608Z",
-                    user: "563f673270bbc2b740ce89ae"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:42.464Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2015-07-29T19:34:42.464Z",
-                color         : "#4d5a75",
-                otherInfo     : "",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : null,
-                active        : false,
-                referredBy    : "",
-                source        : "",
-                age           : 25,
-                homeAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                otherId       : "",
-                bankAccountNo : "",
-                nationality   : "Ukrainian",
-                coach         : null,
-                manager       : "55b92ad221e4b7c40f00004f",
-                jobPosition   : "5644388770bbc2b740ce8a18",
-                department    : "55b92ace21e4b7c40f000011",
-                visibility    : "Public",
-                relatedUser   : null,
-                officeLocation: "",
-                skype         : "yanochka_3007",
-                workPhones    : {
-                    phone : "",
-                    mobile: "+380508754761"
-                },
-                personalEmail : "yana.gusti@gmail.com",
-                workEmail     : "yana.gusti@thinkmobiles.com",
-                workAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                tags          : [
-                    ""
-                ],
-                name          : {
-                    last : "Gusti",
-                    first: "Yana"
-                },
-                subject       : "",
-                imageSrc      : "data:image/jpeg;base64,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",
-                isEmployee    : true,
-                __v           : 0,
-                transferred   : [
-                    {
-                        date      : "2015-11-12T07:01:22.647Z",
-                        department: " BusinessDev"
-                    }
-                ],
-                transfer      : [
-                    {
-                        date       : "2013-11-17T22:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 350,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "hired"
-                    },
-                    {
-                        date       : "2014-06-30T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 450,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    },
-                    {
-                        date       : "2015-08-31T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 1000,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    }
-                ]
-            },
-            invoiceDate   : "2016-04-15T12:58:47.926Z",
-            sourceDocument: {
-                _id           : "570f9563ccb41cca20cd9261",
-                expectedDate  : "2016-04-06T21:00:00.000Z",
-                editedBy      : {
-                    date: "2016-04-15T12:58:35.000Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy     : {
-                    date: "2016-04-14T13:04:35.375Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2016-04-14T13:04:35.375Z",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : "55647b962e4aa3804a765ec6",
-                products      : [
-                    {
-                        unitPrice    : 0,
-                        scheduledDate: "2016-04-13T21:00:00.000Z",
-                        taxes        : 0,
-                        subTotal     : 0,
-                        jobs         : "570dfc206625f34212d01f3f",
-                        description  : "",
-                        product      : "5540d528dacb551c24000003",
-                        quantity     : 0
-                    }
-                ],
-                paymentInfo   : {
-                    taxes  : 0,
-                    unTaxed: 0,
-                    total  : 0
-                },
-                paymentTerm   : null,
-                invoiceRecived: false,
-                invoiceControl: null,
-                incoterm      : null,
-                destination   : null,
-                name          : "PO1",
-                orderDate     : "2016-04-13T21:00:00.000Z",
-                deliverTo     : "55543831d51bdef79ea0d58c",
-                project       : "55b92ad621e4b7c40f00065f",
-                supplier      : "55b92ad521e4b7c40f00060c",
-                isOrder       : true,
-                type          : "Not Invoiced",
-                forSales      : true,
-                currency      : {
-                    rate: 1,
-                    _id : "565eab29aeb95fa9c0f9df2d"
-                },
-                __v           : 0
-            },
-            supplier      : {
-                _id           : "55b92ad521e4b7c40f00060c",
-                ID            : 1,
-                companyInfo   : {
-                    size    : null,
-                    industry: null
-                },
-                editedBy      : {
-                    date: "2015-10-05T06:46:29.793Z",
-                    user: "55bf144765cda0810b000005"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:45.989Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                history       : [],
-                attachments   : [],
-                notes         : [],
-                groups        : {
-                    owner: "55ba28c8d79a3a3439000016",
-                    users: [],
-                    group: []
-                },
-                whoCanRW      : "everyOne",
-                social        : {
-                    LI: "",
-                    FB: ""
-                },
-                color         : "#4d5a75",
-                relatedUser   : null,
-                salesPurchases: {
-                    isCustomer: true,
-                    isSupplier: false,
-                    active    : false,
-                    reference : "",
-                    language  : ""
-                },
-                title         : "",
-                internalNotes : "",
-                contacts      : [],
-                phones        : {
-                    phone : "",
-                    mobile: "",
-                    fax   : ""
-                },
-                skype         : "",
-                jobPosition   : null,
-                website       : "",
-                address       : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                timezone      : "UTC",
-                department    : null,
-                company       : null,
-                email         : "",
-                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                name          : {
-                    first: "Alexey",
-                    last : "Blinov"
-                },
-                isOwn         : false,
-                type          : "Person",
-                __v           : 0,
-                dateBirth     : null
-            },
-            forSales      : true,
-            name          : "PO1"
-        }
-    ];
+                invoiceDate: "2016-06-21T21:00:00.000Z",
+                name: "PO1121",
+                approved: false,
+                _type: "wTrackInvoice",
+                removable: true,
+                paid: 0
+            }
+        ]
+    };
     var fakeWTrack =  {
         total : 200,
         data :[
@@ -6913,281 +5346,44 @@ define([], function () {
             }
         }
     ]};
-    var fakePayments = [
-        {
-            _id             : "55b92ae321e4b7c40f0013cd",
-            differenceAmount: 0,
-            workflow        : "Paid",
-            paymentRef      : "",
-            period          : null,
-            date            : "2015-01-14T00:00:00.000Z",
-            paymentMethod   : {
-                _id     : "555cc981532aebbc4a8baf36",
-                name    : "Payoneer ",
-                account : "Payoneer ",
-                currency: "USD",
-                bank    : "",
-                owner   : "Payoneer "
-            },
-            paidAmount      : 19600,
-            supplier        : {
-                _id           : "55b92ad521e4b7c40f00060c",
-                ID            : 1,
-                companyInfo   : {
-                    size    : null,
-                    industry: null
-                },
-                editedBy      : {
-                    date: "2015-10-05T06:46:29.793Z",
-                    user: "55bf144765cda0810b000005"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:45.989Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                history       : [],
-                attachments   : [],
-                notes         : [],
-                groups        : {
-                    owner: "55ba28c8d79a3a3439000016",
-                    users: [],
-                    group: []
-                },
-                whoCanRW      : "everyOne",
-                social        : {
-                    LI: "",
-                    FB: ""
-                },
-                color         : "#4d5a75",
-                relatedUser   : null,
-                salesPurchases: {
-                    isCustomer: true,
-                    isSupplier: false,
-                    active    : false,
-                    reference : "",
-                    language  : ""
-                },
-                title         : "",
-                internalNotes : "",
-                contacts      : [],
-                phones        : {
-                    phone : "",
-                    mobile: "",
-                    fax   : ""
-                },
-                skype         : "",
-                jobPosition   : null,
-                website       : "",
-                address       : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                timezone      : "UTC",
-                department    : null,
-                company       : null,
-                email         : "",
-                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                name          : {
-                    first: "Alexey",
-                    last : "Blinov"
-                },
-                isOwn         : false,
-                type          : "Person",
-                __v           : 0,
-                dateBirth     : null
-            },
-            invoice         : {
-                _id             : "55b92ae121e4b7c40f001265",
-                paymentDate     : "2015-01-14T00:00:00.000Z",
-                dueDate         : "2015-01-29T14:09:21.796Z",
-                ID              : 7,
-                editedBy        : {
-                    date: "2015-07-29T19:34:57.510Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy       : {
-                    date: "2015-07-29T19:34:57.510Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate    : "2015-07-29T19:34:57.510Z",
-                groups          : {
-                    group: [],
-                    users: [],
-                    owner: null
-                },
-                whoCanRW        : "everyOne",
-                workflow        : "55647d982e4aa3804a765ecb",
-                products        : [
-                    {
-                        subTotal   : 19600,
-                        unitPrice  : 19600,
-                        taxes      : 0,
-                        jobs       : "564cfd8ba6e6390160c9ee1c",
-                        description: "",
-                        product    : "5540d528dacb551c24000003",
-                        quantity   : 1
+    var fakePayments = {
+        total: 1,
+        data: [
+            {
+                _id: "55b92ae321e4b7c40f0013cd",
+                total: 1,
+                supplier: {
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
                     }
-                ],
-                payments        : [
-                    "55b92ae321e4b7c40f0013cd"
-                ],
-                paymentInfo     : {
-                    taxes  : 0,
-                    unTaxed: 19600,
-                    balance: 0,
-                    total  : 19600
                 },
-                paymentTerms    : null,
-                salesPerson     : "55b92ad221e4b7c40f000063",
-                invoiceDate     : "2015-01-14T00:00:00.000Z",
-                project         : "55b92ad621e4b7c40f00065f",
-                paymentReference: "free",
-                sourceDocument  : "564cfd8da6e6390160c9f0fe",
-                supplier        : "55b92ad521e4b7c40f00060c",
-                forSales        : true,
-                invoiceType     : "wTrack",
-                name            : "1-15/01/15",
-                __v             : 0,
-                _type           : "wTrackInvoice",
-                currency        : {
+                currency: {
                     rate: 1,
-                    _id : "565eab29aeb95fa9c0f9df2d"
-                }
-            },
-            forSale         : true,
-            assigned        : {
-                _id           : "55b92ad221e4b7c40f000063",
-                dateBirth     : "1990-07-30T00:00:00.000Z",
-                ID            : 57,
-                isLead        : 2,
-                fire          : [],
-                hire          : [
-                    "2013-11-17T22:00:00.000Z"
-                ],
-                social        : {
-                    FB: "",
-                    LI: "https://ua.linkedin.com/pub/yana"
+                    _id: "565eab29aeb95fa9c0f9df2d",
+                    name: "USD"
                 },
-                sequence      : 0,
-                jobType       : "fullTime",
-                gender        : "male",
-                marital       : "married",
-                contractEnd   : {
-                    date  : "2015-07-29T19:34:42.464Z",
-                    reason: ""
+                invoice: {
+                    _id: "55b92ae121e4b7c40f001265",
+                    name: "1-15/01/15"
                 },
-                attachments   : [],
-                editedBy      : {
-                    date: "2016-03-31T09:31:59.608Z",
-                    user: "563f673270bbc2b740ce89ae"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:42.464Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2015-07-29T19:34:42.464Z",
-                color         : "#4d5a75",
-                otherInfo     : "",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : null,
-                active        : false,
-                referredBy    : "",
-                source        : "",
-                age           : 25,
-                homeAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                otherId       : "",
-                bankAccountNo : "",
-                nationality   : "Ukrainian",
-                coach         : null,
-                manager       : "55b92ad221e4b7c40f00004f",
-                jobPosition   : "5644388770bbc2b740ce8a18",
-                department    : "55b92ace21e4b7c40f000011",
-                visibility    : "Public",
-                relatedUser   : null,
-                officeLocation: "",
-                skype         : "yanochka_3007",
-                workPhones    : {
-                    phone : "",
-                    mobile: "+380508754761"
-                },
-                personalEmail : "yana.gusti@gmail.com",
-                workEmail     : "yana.gusti@thinkmobiles.com",
-                workAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                tags          : [
-                    ""
-                ],
-                name          : {
-                    last : "Gusti",
-                    first: "Yana"
-                },
-                subject       : "",
-                imageSrc      : "data:image/jpeg;base64,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",
-                isEmployee    : true,
-                __v           : 0,
-                transferred   : [
-                    {
-                        date      : "2015-11-12T07:01:22.647Z",
-                        department: " BusinessDev"
+                assigned: {
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
                     }
-                ],
-                transfer      : [
-                    {
-                        date       : "2013-11-17T22:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 350,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "hired"
-                    },
-                    {
-                        date       : "2014-06-30T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 450,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    },
-                    {
-                        date       : "2015-08-31T21:00:00.000Z",
-                        isDeveloper: true,
-                        info       : "",
-                        salary     : 1000,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011",
-                        status     : "updated"
-                    }
-                ]
+                },
+                differenceAmount: 0,
+                paidAmount: 19600,
+                workflow: "Paid",
+                date: "2015-01-14T04:00:00.000Z",
+                paymentMethod: {
+                    name: "Payoneer "
+                },
+                removable: true
             }
-        },
-    ];
+        ]
+    };
     var fakeEmployeesForDD = {
         data: [
             {
@@ -10353,6 +8549,114 @@ define([], function () {
             }
         ]
     };
+    var fakeOrders = {
+        total: 3,
+        data: [
+            {
+                _id: "576a6a929c408e7d16c3ddf6",
+                total: 3,
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
+                    }
+                },
+                workflow: {
+                    name: "Not Invoiced",
+                    status: "New"
+                },
+                supplier: {
+                    _id: "55b92ad521e4b7c40f00060c",
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
+                    }
+                },
+                currency: {
+                    rate: 1,
+                    _id: "565eab29aeb95fa9c0f9df2d"
+                },
+                paymentInfo: {
+                    taxes: 0,
+                    unTaxed: 12312300,
+                    total: 12312300
+                },
+                orderDate: "2016-06-21T21:00:00.000Z",
+                name: "PO1120",
+                isOrder: true,
+                proformaCounter: 0
+            },
+            {
+                _id: "564cfd8da6e6390160c9f0fe",
+                total: 3,
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
+                    }
+                },
+                workflow: {
+                    name: "Invoiced",
+                    status: "Done"
+                },
+                supplier: {
+                    _id: "55b92ad521e4b7c40f00060c",
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
+                    }
+                },
+                currency: {
+                    rate: 1,
+                    _id: "565eab29aeb95fa9c0f9df2d"
+                },
+                paymentInfo: {
+                    total: 19600,
+                    unTaxed: 19600,
+                    taxes: 0
+                },
+                orderDate: "2015-01-15T14:09:21.796Z",
+                name: "PO364",
+                isOrder: true
+            },
+            {
+                _id: "576a6ac99c408e7d16c3ddfa",
+                total: 3,
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
+                    }
+                },
+                workflow: {
+                    name: "Invoiced",
+                    status: "Done"
+                },
+                supplier: {
+                    _id: "55b92ad521e4b7c40f00060c",
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
+                    }
+                },
+                currency: {
+                    _id: "565eab34aeb95fa9c0f9df2e"
+                },
+                paymentInfo: {
+                    taxes: 0,
+                    unTaxed: 44400,
+                    total: 44400
+                },
+                orderDate: "2016-06-21T21:00:00.000Z",
+                name: "PO1121",
+                isOrder: true,
+                proformaCounter: 0
+            }
+        ]
+    };
     var fakeQuotationById = {
         _id: "576a6a929c408e7d16c3ddf6",
         __v: 0,
@@ -10814,663 +9118,323 @@ define([], function () {
             }
         ]
     };
-    var fakeCustomers = {
-        data: [
-            {
-                _id           : "55b92ad521e4b7c40f00060c",
-                ID            : 1,
-                __v           : 0,
-                dateBirth     : null,
-                companyInfo   : {
-                    size    : null,
-                    industry: null
-                },
-                editedBy      : {
-                    date: "2015-10-05T06:46:29.793Z",
-                    user: "55bf144765cda0810b000005"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:45.989Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                history       : [],
-                attachments   : [],
-                notes         : [],
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                social        : {
-                    LI: "",
-                    FB: ""
-                },
-                color         : "#4d5a75",
-                relatedUser   : null,
-                salesPurchases: {
-                    receiveMessages: 0,
-                    language       : "",
-                    reference      : "",
-                    active         : false,
-                    implementedBy  : null,
-                    salesTeam      : null,
-                    salesPerson    : null,
-                    isSupplier     : false,
-                    isCustomer     : true
-                },
-                title         : "",
-                internalNotes : "",
-                contacts      : [],
-                phones        : {
-                    fax   : "",
-                    mobile: "",
-                    phone : ""
-                },
-                skype         : "",
-                jobPosition   : null,
-                website       : "",
-                address       : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                timezone      : "UTC",
-                department    : null,
-                company       : null,
-                email         : "",
-                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                name          : {
-                    last : "Blinov",
-                    first: "Alexey"
-                },
-                isOwn         : false,
-                type          : "Person",
-                fullName      : "Alexey Blinov",
-                id            : "55b92ad521e4b7c40f00060c"
-            }
-        ]
-    };
+
     var fakeInvoiceById = {
-        _id             : "55b92ae121e4b7c40f001265",
-        paymentDate     : "2015-01-14T00:00:00.000Z",
-        dueDate         : "2015-01-29T14:09:21.796Z",
-        ID              : 7,
-        editedBy        : {
+        _id: "55b92ae121e4b7c40f001265",
+        paymentDate: "2015-01-14T04:00:00.000Z",
+        dueDate: "2015-01-29T14:09:21.796Z",
+        ID: 7,
+        editedBy: {
             date: "2015-07-29T19:34:57.510Z",
             user: {
-                _id            : "52203e707d4dba8813000003",
-                __v            : 0,
-                attachments    : [],
-                credentials    : {
-                    access_token : "",
-                    refresh_token: ""
-                },
-                email          : "info@thinkmobiles.com",
-                kanbanSettings : {
-                    applications : {
-                        countPerPage : 10,
-                        foldWorkflows: [
-                            "Empty"
-                        ]
-                    },
-                    opportunities: {
-                        countPerPage: 10
-                    },
-                    tasks        : {
-                        countPerPage : 10,
-                        foldWorkflows: [
-                            "528ce3caf3f67bc40b000013",
-                            "528ce3acf3f67bc40b000012",
-                            "528ce30cf3f67bc40b00000f",
-                            "528ce35af3f67bc40b000010"
-                        ]
-                    }
-                },
-                lastAccess     : "2016-04-16T06:42:41.011Z",
-                login          : "admin",
-                pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                profile        : 1387275598000,
-                imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                savedFilters   : [
-                    {
-                        _id      : "56213057c558b13c1bbf874d",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5621307bc558b13c1bbf874f",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56213103c558b13c1bbf8750",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56213197c558b13c1bbf8751",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56215e86c558b13c1bbf8755",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56229009184ec5a427913306",
-                        viewType : "",
-                        byDefault: "salesInvoice"
-                    },
-                    {
-                        _id      : "562506bb19a2ecca01ca84b3",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56265005d53978de6e9ea440",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "562b83ccb4677e225aa31df6",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "564dd4ce9fb8bc3f2195662c",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56570d714d96962262fd4b55",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56572368bfd103f108eb4a24",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56604795ccc590f32c577ece",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "566047c6ccc590f32c577ed1",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5661a7bf7d284423697e34a8",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5665429e9294f4d728bcafaa",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "566eba768453e8b464b70a40",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56c711ab0769bba2647ae710",
-                        viewType : "",
-                        byDefault: "Projects"
-                    },
-                    {
-                        _id      : "56daf5322e7b62c613ff2552",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dd69d991cb620c19ff60c2",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dd6af71e6cb7131892b2ba",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dfe8e56e2877d85455a6bb",
-                        viewType : "",
-                        byDefault: "Leads"
-                    },
-                    {
-                        _id      : "56f3d039c1785edc507e81ea",
-                        viewType : "",
-                        byDefault: ""
-                    }
-                ],
-                relatedEmployee: "55b92ad221e4b7c40f00004f"
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
             }
         },
-        createdBy       : {
+        createdBy: {
             date: "2015-07-29T19:34:57.510Z",
             user: {
-                _id            : "52203e707d4dba8813000003",
-                __v            : 0,
-                attachments    : [],
-                credentials    : {
-                    access_token : "",
-                    refresh_token: ""
-                },
-                email          : "info@thinkmobiles.com",
-                kanbanSettings : {
-                    applications : {
-                        countPerPage : 10,
-                        foldWorkflows: [
-                            "Empty"
-                        ]
-                    },
-                    opportunities: {
-                        countPerPage: 10
-                    },
-                    tasks        : {
-                        countPerPage : 10,
-                        foldWorkflows: [
-                            "528ce3caf3f67bc40b000013",
-                            "528ce3acf3f67bc40b000012",
-                            "528ce30cf3f67bc40b00000f",
-                            "528ce35af3f67bc40b000010"
-                        ]
-                    }
-                },
-                lastAccess     : "2016-04-16T06:42:41.011Z",
-                login          : "admin",
-                pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                profile        : 1387275598000,
-                imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                savedFilters   : [
-                    {
-                        _id      : "56213057c558b13c1bbf874d",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5621307bc558b13c1bbf874f",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56213103c558b13c1bbf8750",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56213197c558b13c1bbf8751",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56215e86c558b13c1bbf8755",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56229009184ec5a427913306",
-                        viewType : "",
-                        byDefault: "salesInvoice"
-                    },
-                    {
-                        _id      : "562506bb19a2ecca01ca84b3",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56265005d53978de6e9ea440",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "562b83ccb4677e225aa31df6",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "564dd4ce9fb8bc3f2195662c",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56570d714d96962262fd4b55",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56572368bfd103f108eb4a24",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56604795ccc590f32c577ece",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "566047c6ccc590f32c577ed1",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5661a7bf7d284423697e34a8",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5665429e9294f4d728bcafaa",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "566eba768453e8b464b70a40",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56c711ab0769bba2647ae710",
-                        viewType : "",
-                        byDefault: "Projects"
-                    },
-                    {
-                        _id      : "56daf5322e7b62c613ff2552",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dd69d991cb620c19ff60c2",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dd6af71e6cb7131892b2ba",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dfe8e56e2877d85455a6bb",
-                        viewType : "",
-                        byDefault: "Leads"
-                    },
-                    {
-                        _id      : "56f3d039c1785edc507e81ea",
-                        viewType : "",
-                        byDefault: ""
-                    }
-                ],
-                relatedEmployee: "55b92ad221e4b7c40f00004f"
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
             }
         },
-        creationDate    : "2015-07-29T19:34:57.510Z",
-        groups          : {
-            group: [],
-            users: [],
+        creationDate: "2015-07-29T19:34:57.510Z",
+        groups: {
+            group: [ ],
+            users: [ ],
             owner: null
         },
-        whoCanRW        : "everyOne",
-        workflow        : {
-            _id   : "55647d932e4aa3804a765ec9",
-            name  : "Unpaid",
-            status: "New"
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "55647d982e4aa3804a765ecb",
+            status: "Done",
+            name: "Paid"
         },
-        products        : [
+        products: [
             {
-                subTotal   : 19600,
-                unitPrice  : 19600,
-                taxes      : 0,
-                jobs       : null,
+                subTotal: 19600,
+                unitPrice: 19600,
+                taxes: 0,
+                jobs: {
+                    _id: "564cfd8ba6e6390160c9ee1c",
+                    budget: {
+                        budgetTotal: {
+                            minDate: 201433,
+                            maxDate: 201433,
+                            hoursSum: 28,
+                            revenueSum: 19600,
+                            costSum: 11166
+                        },
+                        projectTeam: [
+                            {
+                                budget: {
+                                    hoursSum: 14,
+                                    revenueSum: 9800,
+                                    costSum: 6333
+                                },
+                                employee: {
+                                    name: {
+                                        first: "Anton",
+                                        last: "Karabeinikov"
+                                    },
+                                    jobPosition: {
+                                        name: "Junior QA",
+                                        _id: "55b92acf21e4b7c40f000018"
+                                    },
+                                    _id: "55b92ad221e4b7c40f00006f"
+                                },
+                                department: {
+                                    departmentName: "QA",
+                                    _id: "55b92ace21e4b7c40f000011"
+                                }
+                            },
+                            {
+                                budget: {
+                                    hoursSum: 14,
+                                    revenueSum: 9800,
+                                    costSum: 4833
+                                },
+                                employee: {
+                                    name: {
+                                        first: "Vasilisa",
+                                        last: "Klimchenko"
+                                    },
+                                    jobPosition: {
+                                        name: "Junior QA",
+                                        _id: "55b92acf21e4b7c40f000018"
+                                    },
+                                    _id: "55b92ad221e4b7c40f00007f"
+                                },
+                                department: {
+                                    departmentName: "QA",
+                                    _id: "55b92ace21e4b7c40f000011"
+                                }
+                            }
+                        ]
+                    },
+                    project: "55b92ad621e4b7c40f00065f",
+                    wTracks: [
+                        "55b92ad821e4b7c40f00072a",
+                        "55b92ad821e4b7c40f0006e3"
+                    ],
+                    type: "Invoiced",
+                    workflow: "56337c675d49d8d6537832ea",
+                    name: "IOS/Android QA1-15/01/15",
+                    __v: 0,
+                    quotation: "564cfd8da6e6390160c9f0fe",
+                    invoice: "55b92ae121e4b7c40f001265",
+                    payments: [
+                        "55b92ae321e4b7c40f0013cd"
+                    ],
+                    editedBy: {
+                        date: "2016-05-17T15:10:24.485Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        user: "52203e707d4dba8813000003",
+                        date: "2015-07-29T19:34:48.648Z"
+                    },
+                    reconcile: false
+                },
                 description: "",
-                product    : {
-                    _id              : "5540d528dacb551c24000003",
-                    editedBy         : {
+                product: {
+                    _id: "5540d528dacb551c24000003",
+                    editedBy: {
                         date: "2015-10-30T14:18:42.379Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    createdBy        : {
+                    createdBy: {
                         date: "2015-04-29T12:57:12.785Z",
                         user: null
                     },
-                    creationDate     : "2015-04-29T12:57:12.785Z",
-                    groups           : {
-                        group: [],
-                        users: [],
+                    creationDate: "2015-04-29T12:57:12.785Z",
+                    groups: {
+                        group: [ ],
+                        users: [ ],
                         owner: "560c099da5d4a2e20ba5068b"
                     },
-                    whoCanRW         : "everyOne",
-                    workflow         : null,
-                    info             : {
+                    whoCanRW: "everyOne",
+                    workflow: null,
+                    info: {
                         description: "",
-                        barcode    : "",
-                        isActive   : true,
-                        salePrice  : 0,
+                        barcode: "",
+                        isActive: true,
+                        salePrice: 0,
                         productType: "Service"
                     },
-                    name             : "IT services",
-                    imageSrc         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    canBePurchased   : true,
+                    name: "IT services",
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    canBePurchased: true,
                     eventSubscription: true,
-                    canBeExpensed    : true,
-                    canBeSold        : true,
-                    __v              : 0,
-                    accounting       : {
+                    canBeExpensed: true,
+                    canBeSold: true,
+                    __v: 0,
+                    accounting: {
                         category: {
                             name: ""
                         }
                     }
                 },
-                quantity   : 1
+                quantity: 1
             }
         ],
-        payments        : [
+        payments: [
             {
-                _id       : "55b92ae321e4b7c40f0013cd",
+                _id: "55b92ae321e4b7c40f0013cd",
                 paymentRef: "",
-                name      : "4_2578",
-                date      : "2016-04-20T21:00:00.000Z",
+                name: "4_2578",
+                date: "2015-01-14T04:00:00.000Z",
                 paidAmount: 19600
             }
         ],
-        paymentInfo     : {
-            balance: 19600,
+        paymentInfo: {
+            taxes: 0,
             unTaxed: 19600,
-            taxes  : 0,
-            total  : 19600
+            balance: 0,
+            total: 19600
         },
-        paymentTerms    : null,
-        salesPerson     : {
-            _id : "55b92ad221e4b7c40f000063",
-            name: {
-                last : "Gusti",
-                first: "Yana"
-            }
+        paymentTerms: null,
+        salesPerson: "55b92ad221e4b7c40f000063",
+        invoiceDate: "2015-01-14T04:00:00.000Z",
+        project: {
+            _id: "55b92ad621e4b7c40f00065f",
+            paymentTerms: "55536e52475b7be475f335f6",
+            paymentMethod: "565f2e05ab70d49024242e07",
+            name: "IOS/Android QA"
         },
-        invoiceDate     : "2015-01-14T00:00:00.000Z",
-        project         : "55b92ad621e4b7c40f00065f",
         paymentReference: "free",
-        sourceDocument  : {
-            _id           : "564cfd8da6e6390160c9f0fe",
-            editedBy      : {
-                date: "2015-11-18T22:37:01.579Z",
-                user: null
-            },
-            createdBy     : {
-                date: "2015-11-18T22:37:01.579Z",
-                user: null
-            },
-            creationDate  : "2015-11-18T22:37:01.579Z",
-            groups        : {
-                group: [],
-                users: [],
-                owner: null
-            },
-            whoCanRW      : "everyOne",
-            workflow      : "55647b962e4aa3804a765ec6",
-            products      : [
-                {
-                    scheduledDate: "2015-01-15T14:09:21.796Z",
-                    taxes        : 0,
-                    subTotal     : 196,
-                    unitPrice    : 196,
-                    jobs         : "564cfd8ba6e6390160c9ee1c",
-                    description  : "",
-                    product      : "5540d528dacb551c24000003",
-                    quantity     : 28
-                }
-            ],
-            paymentInfo   : {
-                taxes  : 0,
-                unTaxed: 196,
-                total  : 196
-            },
-            paymentTerm   : null,
-            invoiceRecived: true,
-            invoiceControl: null,
-            incoterm      : null,
-            destination   : null,
-            name          : "PO364",
-            orderDate     : "2015-01-15T14:09:21.796Z",
-            deliverTo     : null,
-            project       : "55b92ad621e4b7c40f00065f",
-            supplier      : "55b92ad521e4b7c40f00060c",
-            isOrder       : true,
-            forSales      : true,
-            __v           : 0,
-            type          : "Invoiced",
-            currency      : {
-                rate: 1,
-                _id : "565eab29aeb95fa9c0f9df2d"
-            }
+        sourceDocument: {
+            _id: "564cfd8da6e6390160c9f0fe",
+            name: "PO364"
         },
-        supplier        : {
-            _id : "55b92ad521e4b7c40f00060c",
+        supplier: {
+            _id: "55b92ad521e4b7c40f00060c",
             name: {
                 first: "Alexey",
-                last : "Blinov"
+                last: "Blinov"
             }
         },
-        forSales        : true,
-        invoiceType     : "wTrack",
-        name            : "1-15/01/15",
-        __v             : 0,
-        _type           : "wTrackInvoice",
-        currency        : {
-            rate: 1,
-            _id : {
-                _id     : "565eab29aeb95fa9c0f9df2d",
-                name    : "USD",
+        forSales: true,
+        invoiceType: "wTrack",
+        name: "1-15/01/15",
+        __v: 0,
+        _type: "wTrackInvoice",
+        currency: {
+            _id: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                name: "USD",
                 sequence: 0
-            }
-        }
+            },
+            rate: 1
+        },
+        approved: true,
+        reconcile: true,
+        attachments: [ ],
+        removable: false
     };
-    var fakeBonusType = [
-        {
-            _id      : "55b92ad521e4b7c40f000602",
-            isPercent: true,
-            value    : 8,
-            name     : "Sales/Head 8%",
-            ID       : 2,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f000603",
-            isPercent: true,
-            value    : 6,
-            name     : "Sales/Usual 6%",
-            ID       : 3,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f000604",
-            isPercent: true,
-            value    : 2,
-            name     : "Sales/Ref 2%",
-            ID       : 4,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f000605",
-            isPercent: true,
-            value    : 16,
-            name     : "Sales/QA 16%",
-            ID       : 5,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f000606",
-            isPercent: true,
-            value    : 14,
-            name     : "Sales/QA 14%",
-            ID       : 6,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f000607",
-            isPercent: true,
-            value    : 8,
-            name     : "Sales/QA 8%",
-            ID       : 7,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f000608",
-            isPercent: true,
-            value    : 8,
-            name     : "Sales/Usual 8%",
-            ID       : 8,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f000609",
-            isPercent: true,
-            value    : 10,
-            name     : "Sales/Head 10%",
-            ID       : 9,
-            __v      : 0,
-            bonusType: "Sales"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f00060a",
-            isPercent: true,
-            value    : 1.5,
-            name     : "PM Junior/Usual 1.5%",
-            ID       : 10,
-            __v      : 0,
-            bonusType: "PM"
-        },
-        {
-            _id      : "55b92ad521e4b7c40f00060b",
-            isPercent: false,
-            value    : 30,
-            name     : "PM Base/Junior",
-            ID       : 12,
-            __v      : 0,
-            bonusType: "PM"
-        },
-        {
-            _id      : "560eaaa5c90e2fb026ce061e",
-            name     : "Sales/Usual 4%",
-            value    : 4,
-            isPercent: true,
-            __v      : 0,
-            bonusType: "Sales"
-        }
-    ];
+    var fakeBonusType = {
+        total: 11,
+        data: [
+            {
+                _id: "55b92ad521e4b7c40f000602",
+                isPercent: true,
+                value: 8,
+                name: "Sales/Head 8%",
+                ID: 2,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f000603",
+                isPercent: true,
+                value: 6,
+                name: "Sales/Usual 6%",
+                ID: 3,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f000604",
+                isPercent: true,
+                value: 2,
+                name: "Sales/Ref 2%",
+                ID: 4,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f000605",
+                isPercent: true,
+                value: 16,
+                name: "Sales/QA 16%",
+                ID: 5,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f000606",
+                isPercent: true,
+                value: 14,
+                name: "Sales/QA 14%",
+                ID: 6,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f000607",
+                isPercent: true,
+                value: 8,
+                name: "Sales/QA 8%",
+                ID: 7,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f000608",
+                isPercent: true,
+                value: 8,
+                name: "Sales/Usual 8%",
+                ID: 8,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f000609",
+                isPercent: true,
+                value: 10,
+                name: "Sales/Head 10%",
+                ID: 9,
+                __v: 0,
+                bonusType: "Sales"
+            },
+            {
+                _id: "55b92ad521e4b7c40f00060a",
+                isPercent: true,
+                value: 1.5,
+                name: "PM Junior/Usual 1.5%",
+                ID: 10,
+                __v: 0,
+                bonusType: "PM"
+            },
+            {
+                _id: "55b92ad521e4b7c40f00060b",
+                isPercent: false,
+                value: 30,
+                name: "PM Base/Junior",
+                ID: 12,
+                __v: 0,
+                bonusType: "PM"
+            },
+            {
+                _id: "560eaaa5c90e2fb026ce061e",
+                name: "Sales/Usual 4%",
+                value: 4,
+                isPercent: true,
+                __v: 0,
+                bonusType: "Sales"
+            }
+        ]
+    };
     var fakeEmployeesForDD = {
         data: [
             {
@@ -20595,7 +18559,81 @@ define([], function () {
         }
     ];
     var fakeCustomers = {
-        data: [
+        data: [  {
+            _id           : "55b92ad521e4b7c40f00060c",
+            ID            : 1,
+            __v           : 0,
+            dateBirth     : null,
+            companyInfo   : {
+                size    : null,
+                industry: null
+            },
+            editedBy      : {
+                date: "2015-10-05T06:46:29.793Z",
+                user: "55bf144765cda0810b000005"
+            },
+            createdBy     : {
+                date: "2015-07-29T19:34:45.989Z",
+                user: "52203e707d4dba8813000003"
+            },
+            history       : [],
+            attachments   : [],
+            notes         : [],
+            groups        : {
+                group: [],
+                users: [],
+                owner: "55ba28c8d79a3a3439000016"
+            },
+            whoCanRW      : "everyOne",
+            social        : {
+                LI: "",
+                FB: ""
+            },
+            color         : "#4d5a75",
+            relatedUser   : null,
+            salesPurchases: {
+                receiveMessages: 0,
+                language       : "",
+                reference      : "",
+                active         : false,
+                implementedBy  : null,
+                salesTeam      : null,
+                salesPerson    : null,
+                isSupplier     : false,
+                isCustomer     : true
+            },
+            title         : "",
+            internalNotes : "",
+            contacts      : [],
+            phones        : {
+                fax   : "",
+                mobile: "",
+                phone : ""
+            },
+            skype         : "",
+            jobPosition   : null,
+            website       : "",
+            address       : {
+                country: "",
+                zip    : "",
+                state  : "",
+                city   : "",
+                street : ""
+            },
+            timezone      : "UTC",
+            department    : null,
+            company       : null,
+            email         : "",
+            imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+            name          : {
+                last : "Blinov",
+                first: "Alexey"
+            },
+            isOwn         : false,
+            type          : "Person",
+            fullName      : "Alexey Blinov",
+            id            : "55b92ad521e4b7c40f00060c"
+        },
             {
                 _id: "55ba0301d79a3a343900000d",
                 __v: 0,
@@ -21277,7 +19315,339 @@ define([], function () {
         ]
     };
 
+    var fakeOrderById = {
+        _id: "564cfd8da6e6390160c9f0fe",
+        __v: 0,
+        proformaCounter: 0,
+        editedBy: {
+            date: "2015-11-18T22:37:01.579Z",
+            user: null
+        },
+        createdBy: {
+            date: "2015-11-18T22:37:01.579Z",
+            user: null
+        },
+        creationDate: "2015-11-18T22:37:01.579Z",
+        groups: {
+            group: [ ],
+            users: [ ],
+            owner: null
+        },
+        attachments: [ ],
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "55647b962e4aa3804a765ec6",
+            name: "Invoiced",
+            status: "Done"
+        },
+        products: [
+            {
+                scheduledDate: "2015-01-15T14:09:21.796Z",
+                jobs: {
+                    _id: "564cfd8ba6e6390160c9ee1c",
+                    name: "IOS/Android QA1-15/01/15"
+                },
+                description: "",
+                product: {
+                    _id: "5540d528dacb551c24000003",
+                    name: "IT services"
+                },
+                unitPrice: 19600,
+                subTotal: 19600,
+                taxes: 0,
+                quantity: 28
+            }
+        ],
+        paymentInfo: {
+            taxes: 0,
+            unTaxed: 19600,
+            total: 19600
+        },
+        paymentTerm: null,
+        invoiceRecived: true,
+        invoiceControl: null,
+        incoterm: null,
+        destination: null,
+        name: "PO364",
+        expectedDate: "2016-06-23T11:09:01.930Z",
+        orderDate: "2015-01-15T14:09:21.796Z",
+        deliverTo: null,
+        project: {
+            _id: "55b92ad621e4b7c40f00065f",
+            name: "IOS/Android QA"
+        },
+        supplier: {
+            _id: "55b92ad521e4b7c40f00060c",
+            name: {
+                last: "Blinov",
+                first: "Alexey"
+            },
+            fullName: "Alexey Blinov",
+            id: "55b92ad521e4b7c40f00060c"
+        },
+        isOrder: true,
+        type: "Invoiced",
+        forSales: true,
+        currency: {
+            rate: 1,
+            _id: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                sequence: 0,
+                name: "USD"
+            }
+        }
+    };
+    var fakeProformas = {
+        total: 2,
+        data: [
+            {
+                _id: "576bc72d0e1700973271c7e4",
+                total: 2,
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
+                    }
+                },
+                workflow: {
+                    name: "Unpaid",
+                    status: "New"
+                },
+                supplier: {
+                    _id: "55b92ad521e4b7c40f00060c",
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
+                    }
+                },
+                forSales: true,
+                currency: {
+                    rate: 1,
+                    _id: "565eab29aeb95fa9c0f9df2d"
+                },
+                paymentInfo: {
+                    taxes: 0,
+                    balance: 33300,
+                    unTaxed: 33300,
+                    total: 33300
+                },
+                invoiceDate: "2016-06-22T21:00:00.000Z",
+                name: "PO1123_1",
+                dueDate: "2016-06-23T21:00:00.000Z",
+                payments: [ ],
+                approved: false,
+                _type: "Proforma",
+                removable: true,
+                paid: 0
+            },
+            {
+                _id: "576bcd120e1700973271c7f1",
+                total: 2,
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: {
+                        last: "Gusti",
+                        first: "Yana"
+                    }
+                },
+                workflow: {
+                    name: "Unpaid",
+                    status: "New"
+                },
+                supplier: {
+                    _id: "55b92ad521e4b7c40f00060c",
+                    name: {
+                        first: "Alexey",
+                        last: "Blinov"
+                    }
+                },
+                forSales: true,
+                currency: {
+                    rate: 1,
+                    _id: "565eab29aeb95fa9c0f9df2d"
+                },
+                paymentInfo: {
+                    taxes: 0,
+                    balance: 2200,
+                    unTaxed: 2200,
+                    total: 2200
+                },
+                invoiceDate: "2016-06-22T21:00:00.000Z",
+                name: "PO1123_4",
+                dueDate: "2016-06-22T21:00:00.000Z",
+                payments: [ ],
+                approved: false,
+                _type: "Proforma",
+                removable: true,
+                paid: 0
+            }
+        ]
+    };
 
+    var fakePaymentTerms = {
+        data: [
+            {
+                _id: "55536e52475b7be475f335f6",
+                name: "15 Days"
+            },
+            {
+                _id: "55536e52475b7be475f335f8",
+                name: "30 Days End of Month"
+            },
+            {
+                _id: "55536e52475b7be475f335f9",
+                name: "30 Net Days"
+            },
+            {
+                _id: "55536e52475b7be475f335f7",
+                name: "30% Advance End 30 Days"
+            },
+            {
+                _id: "55536e52475b7be475f335fa",
+                name: "Immediate Payment"
+            }
+        ]
+    };
+    var fakePaymentMethods = {
+         data: [
+             {
+                 _id: "565f2e05ab70d49024242e10",
+                 name: "CASH UAH",
+                 account: "CASH UAH",
+                 currency: "UAH",
+                 bank: "",
+                 owner: "CASH UAH"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e0f",
+                 name: "CASH USD",
+                 account: "CASH USD",
+                 currency: "USD",
+                 bank: "",
+                 owner: "CASH USD"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e08",
+                 name: "Erste EUR",
+                 account: "HU27 1160 0006 0000 0000 4810 3101",
+                 currency: "EUR",
+                 bank: "Erste Bank",
+                 owner: "Alexander Sokhanych"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e07",
+                 name: "Erste USD",
+                 account: "HU24 1160 0006 0000 0000 4916 1522",
+                 currency: "USD",
+                 bank: "Erste Bank",
+                 owner: "Alexander Sokhanych"
+             },
+             {
+                 _id: "575fb4c97330dff16a34038d",
+                 currency: "USD",
+                 name: "OTP",
+                 account: "",
+                 bank: "OTP",
+                 __v: 0,
+                 owner: ""
+             },
+             {
+                 _id: "555cc981532aebbc4a8baf36",
+                 name: "Payoneer ",
+                 account: "Payoneer ",
+                 currency: "USD",
+                 bank: "",
+                 owner: "Payoneer "
+             },
+             {
+                 _id: "555cc981532aebbc4a8baf38",
+                 name: "Primary",
+                 owner: ""
+             },
+             {
+                 _id: "555cc981532aebbc4a8baf37",
+                 name: "UkrSibBank",
+                 owner: ""
+             },
+             {
+                 _id: "565f2e05ab70d49024242e0a",
+                 name: "Ukrsibbank EUR TM",
+                 account: "26000479199400",
+                 currency: "EUR",
+                 bank: "Ukrsibbank",
+                 owner: "ThinkMobiles"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e0d",
+                 name: "Ukrsibbank UAH TM",
+                 account: "26000479199400",
+                 currency: "UAH",
+                 bank: "Ukrsibbank",
+                 owner: "YourTradingSystems"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e0b",
+                 name: "Ukrsibbank UAH YTS",
+                 account: "26005536599700",
+                 currency: "UAH",
+                 bank: "Ukrsibbank",
+                 owner: "ThinkMobiles"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e0c",
+                 name: "Ukrsibbank USD TM",
+                 account: "26000479199400",
+                 currency: "USD",
+                 bank: "Ukrsibbank",
+                 owner: "YourTradingSystems"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e09",
+                 name: "Ukrsibbank USD YTS",
+                 account: "26005536599700",
+                 currency: "USD",
+                 bank: "Ukrsibbank",
+                 owner: "ThinkMobiles"
+             },
+             {
+                 _id: "565f2e05ab70d49024242e0e",
+                 name: "Unicreditbank",
+                 account: "Unicreditbank",
+                 currency: "USD",
+                 bank: "",
+                 owner: "Unicreditbank"
+             }
+         ]
+     };
+    var fakeProjectPositions = {
+        data: [
+            {
+                _id: "570e9a75785753b3f1d9c871",
+                name: "Developer"
+            },
+            {
+                _id: "570e9a75785753b3f1d9c870",
+                name: "Marketer"
+            },
+            {
+                _id: "570e9a75785753b3f1d9c86f",
+                name: "Project manager"
+            },
+            {
+                _id: "570e9a75785753b3f1d9c873",
+                name: "Reference person"
+            },
+            {
+                _id: "570e9a75785753b3f1d9c86e",
+                name: "Sales manager"
+            },
+            {
+                _id: "570e9a75785753b3f1d9c872",
+                name: "Team lead"
+            }
+        ]
+    };
 
     return {
         fakeProjects                                : fakeProjects,
@@ -21285,29 +19655,34 @@ define([], function () {
         fakeProjectsForThumbnails                   : fakeProjectsForThumbnails,
         fakeProjectsForThumbnailsAfterChooseWorkflow: fakeProjectsForThumbnailsAfterChooseWorkflow,
         fakeUsers                                   : fakeUsers,
-        fakeCustomers                               : fakeCustomers,
         fakeEmployees                               : fakeEmployees,
         fakeProjectById                             : fakeProjectById,
         fakeProjectByIdForForm                      : fakeProjectByIdForForm,
         fakeJobs                                    : fakeJobs,
         fakeCustomers                               : fakeCustomers,
-        fakeProjectsType : fakeProjectsType,
-        fakeWorkflowsProject: fakeWorkflowsProject,
-        fakeInvoice: fakeInvoice,
-        fakeWTrack: fakeWTrack,
-        fakePayments: fakePayments,
-        fakeQuotations : fakeQuotations,
-        fakeQuotationById : fakeQuotationById,
-        fakeBonusType : fakeBonusType,
-        fakeEmployeesForDD: fakeEmployeesForDD,
-        fakeJobsForWTrack : fakeJobsForWTrack,
-        fakeDepartmentsForDD : fakeDeparmentsForDD,
-        fakeCustomerImage : fakeCustomerImage,
-        fakeProjectMembers : fakeProjectMembers,
-        fakeProduct : fakeProduct,
-        fakeProjectForDd : fakeProjectForDd,
-        fakeCurrency : fakeCurrency,
-        fakeJobsById : fakeJobsById
-
+        fakeProjectsType                            : fakeProjectsType,
+        fakeWorkflowsProject                        : fakeWorkflowsProject,
+        fakeInvoice                                 : fakeInvoice,
+        fakeWTrack                                  : fakeWTrack,
+        fakeInvoiceById                             : fakeInvoiceById,
+        fakePayments                                : fakePayments,
+        fakeQuotations                              : fakeQuotations,
+        fakeQuotationById                           : fakeQuotationById,
+        fakeBonusType                               : fakeBonusType,
+        fakeEmployeesForDD                          : fakeEmployeesForDD,
+        fakeJobsForWTrack                           : fakeJobsForWTrack,
+        fakeDepartmentsForDD                        : fakeDeparmentsForDD,
+        fakeCustomerImage                           : fakeCustomerImage,
+        fakeProjectMembers                          : fakeProjectMembers,
+        fakeProduct                                 : fakeProduct,
+        fakeProjectForDd                            : fakeProjectForDd,
+        fakeCurrency                                : fakeCurrency,
+        fakeJobsById                                : fakeJobsById,
+        fakeOrders                                  : fakeOrders,
+        fakeOrderById                               : fakeOrderById,
+        fakeProformas                               : fakeProformas,
+        fakePaymentTerms                            : fakePaymentTerms,
+        fakePaymentMethods                          : fakePaymentMethods,
+        fakeProjectPositions                        : fakeProjectPositions
     };
 });
