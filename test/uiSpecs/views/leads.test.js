@@ -13,7 +13,8 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
+    'sinon-chai',
+    'filterTest'
 ], function (Backbone,
              modules,
              fixtures,
@@ -36,241 +37,82 @@ define([
         total: 300,
         data : [
             {
-                _id            : "573adafe0ff1f7a761a03ea1",
-                total          : 86,
-                contactName    : "Test Test",
-                salesPerson    : {
+                _id: "573ed9d5f38fc00657e4f4a7",
+                total: 164,
+                contactName: "Olivia ORiordan",
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f0000a0",
                     name: {
-                        last : "Gusti",
-                        first: "Yana"
+                        last: "Bilak",
+                        first: "Ivan"
                     }
                 },
-                workflow       : {
-                    _id         : "528ce779f3f67bc40b00001f",
-                    __v         : 0,
-                    attachments : [],
-                    color       : "#2C3E50",
-                    name        : "In Progress",
-                    sequence    : 1,
-                    status      : "In Progress",
-                    wId         : "Leads",
-                    wName       : "lead",
-                    source      : "lead",
-                    targetSource: [
-                        "lead"
-                    ],
-                    visible     : true
+                workflow: {
+                    _id: "528ce79bf3f67bc40b000020",
+                    name: "Cancelled",
+                    status: "Cancelled"
                 },
-                createdBy      : {
-                    user: "yana.gusti",
-                    date: "2016-05-17T08:49:02.333Z"
+                createdBy: {
+                    user: "alina.slavska",
+                    date: "2016-05-20T09:33:09.203Z"
                 },
-                editedBy       : {
-                    user: "yana.gusti",
-                    date: "2016-05-17T08:49:56.981Z"
-                },
-                creationDate   : "2016-05-17T08:49:02.332Z",
-                isOpportunitie : false,
-                name           : "test",
-                expectedRevenue: {
-                    currency: "",
-                    progress: 0,
-                    value   : 0
-                },
-                attachments    : [],
-                notes          : [],
-                convertedDate  : "2016-05-17T08:49:02.334Z",
-                isConverted    : false,
-                source         : "email",
-                campaign       : "email",
-                sequence       : 0,
-                reffered       : "",
-                optout         : false,
-                active         : true,
-                color          : "#4d5a75",
-                categories     : {
-                    name: "",
-                    id  : ""
-                },
-                priority       : "High",
-                expectedClosing: null,
-                nextAction     : {
-                    date: "2016-05-17T08:49:02.332Z",
-                    desc: ""
-                },
-                internalNotes  : "",
-                phones         : {
-                    fax   : "",
-                    phone : "",
-                    mobile: ""
-                },
-                email          : "",
-                address        : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                company        : null
+                name: "mobile deveoper",
+                source: null,
+                address: {
+                    country: "Canada"
+                }
             },
             {
-                _id            : "572b29ddd420f6a873ac6104",
-                total          : 86,
-                contactName    : "Michael FitzGerald",
-                salesPerson    : {
+                _id: "57440ec86b3b137a678462a0",
+                total: 164,
+                contactName: "Jukka Salmenkyla",
+                salesPerson: {
+                    _id: "55b92ad221e4b7c40f0000a0",
                     name: {
-                        last : "Popp",
-                        first: "Larysa"
+                        last: "Bilak",
+                        first: "Ivan"
                     }
                 },
-                workflow       : {
-                    _id         : "528ce779f3f67bc40b00001f",
-                    __v         : 0,
-                    attachments : [],
-                    color       : "#2C3E50",
-                    name        : "In Progress",
-                    sequence    : 1,
-                    status      : "In Progress",
-                    wId         : "Leads",
-                    wName       : "lead",
-                    source      : "lead",
-                    targetSource: [
-                        "lead"
-                    ],
-                    visible     : true
+                workflow: {
+                    _id: "528ce74ef3f67bc40b00001e",
+                    name: "Draft",
+                    status: "New"
                 },
-                createdBy      : {
-                    user: "larysa.popp",
-                    date: "2016-05-05T11:09:17.326Z"
+                createdBy: {
+                    user: "bohdana.stets",
+                    date: "2016-05-24T08:20:24.790Z"
                 },
-                editedBy       : {
-                    user: "larysa.popp",
-                    date: "2016-05-05T11:09:17.326Z"
-                },
-                creationDate   : "2016-05-05T11:09:17.326Z",
-                isOpportunitie : false,
-                name           : "Outstaff project Android",
-                expectedRevenue: {
-                    currency: "",
-                    progress: 0,
-                    value   : 0
-                },
-                attachments    : [],
-                notes          : [],
-                convertedDate  : "2016-05-05T11:09:17.326Z",
-                isConverted    : false,
-                source         : "",
-                campaign       : "",
-                sequence       : 14,
-                reffered       : "",
-                optout         : false,
-                active         : true,
-                color          : "#4d5a75",
-                categories     : {
-                    name: "",
-                    id  : ""
-                },
-                priority       : "P3",
-                expectedClosing: null,
-                nextAction     : {
-                    date: "2016-05-05T11:09:17.326Z",
-                    desc: ""
-                },
-                internalNotes  : "Android project ( 6-8 weeks)",
-                phones         : {
-                    fax   : "",
-                    phone : "",
-                    mobile: "+353868331710"
-                },
-                email          : "",
-                address        : {
-                    country: "Ireland",
-                    zip    : "",
-                    state  : "",
-                    city   : "Galway",
-                    street : ""
-                },
-                company        : null
+                name: "Interested in mobile analytics",
+                source: null,
+                address: {
+                    country: "Finland"
+                }
             },
             {
-                _id            : "57151285bf6bf18e63429606",
-                total          : 86,
-                contactName    : "Andras Kovecs",
-                salesPerson    : {
+                _id: "56dd4e7b42b170aa130a6ed4",
+                total: 164,
+                contactName: "Maricruz Vicente",
+                salesPerson: {
+                    _id: "561ba8639ebb48212ea838c4",
                     name: {
-                        last : "Popp",
-                        first: "Larysa"
+                        last: "Yartysh",
+                        first: "Nataliya"
                     }
                 },
-                workflow       : {
-                    _id         : "528ce79bf3f67bc40b000020",
-                    __v         : 0,
-                    attachments : [],
-                    color       : "#2C3E50",
-                    name        : "Cancelled",
-                    sequence    : 0,
-                    status      : "Cancelled",
-                    wId         : "Leads",
-                    wName       : "lead",
-                    source      : "lead",
-                    targetSource: [
-                        "lead"
-                    ],
-                    visible     : true
+                workflow: {
+                    _id: "528ce79bf3f67bc40b000020",
+                    name: "Cancelled",
+                    status: "Cancelled"
                 },
-                createdBy      : {
-                    user: "larysa.popp",
-                    date: "2016-04-18T16:59:49.943Z"
+                createdBy: {
+                    user: "andriy.merentsov",
+                    date: "2016-03-07T09:48:43.690Z"
                 },
-                editedBy       : {
-                    user: "larysa.popp",
-                    date: "2016-05-05T11:07:07.914Z"
-                },
-                creationDate   : "2016-04-18T16:59:49.942Z",
-                isOpportunitie : false,
-                name           : "ios android",
-                expectedRevenue: {
-                    currency: "",
-                    progress: 0,
-                    value   : 0
-                },
-                attachments    : [],
-                notes          : [],
-                convertedDate  : "2016-04-18T16:59:49.943Z",
-                isConverted    : false,
-                source         : "",
-                campaign       : "",
-                sequence       : 70,
-                reffered       : "",
-                optout         : false,
-                active         : true,
-                color          : "#4d5a75",
-                categories     : {
-                    name: "",
-                    id  : ""
-                },
-                priority       : "P3",
-                expectedClosing: null,
-                nextAction     : {
-                    date: "2016-04-18T16:59:49.943Z",
-                    desc: ""
-                },
-                internalNotes  : "ios, android app",
-                phones         : {
-                    fax   : "",
-                    phone : "",
-                    mobile: ""
-                },
-                email          : "andras.kovecs@angl.tv",
-                address        : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                company        : null
+                name: "Mobility testing services",
+                source: null,
+                address: {
+                    country: "USA"
+                }
             }
         ]
     };
@@ -1415,6 +1257,29 @@ define([
             }
         ]
     };
+    var fakeFilters = {
+        _id: null,
+        contactName: [
+            {
+                _id: "Pete Roithmayr",
+                name: "Pete Roithmayr"
+            },
+            {
+                _id: "Adrien Martinelli",
+                name: "Adrien Martinelli"
+            }
+        ],
+        spurce: [
+            {
+                _id: "Offline Meetings",
+                name: "Offline Meetings"
+            },
+            {
+                _id: "Web Organic",
+                name: "Web Organic"
+            }
+        ]
+    };
     var view;
     var topBarView;
     var leadsCollection;
@@ -1513,7 +1378,7 @@ define([
                     viewType: 'list'
                 });
                 server.respond();
-                
+
                 expect(historyNavigateSpy.called).to.be.true;
             });
 
