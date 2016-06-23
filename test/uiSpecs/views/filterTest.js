@@ -9,7 +9,7 @@ define([
     'views/Filter/savedFiltersView',
     'constantsDir/filters'
 ], function ($, _, chai, chaiJquery, sinonChai, FilterView, FilterGroup, SavedFilters, FILTER_CONSTANTS) {
-    return function () {
+    var Filter = function () {
         var firstValue;
         var secondValue;
         var server = sinon.fakeServer.create();
@@ -24,7 +24,7 @@ define([
         chai.use(sinonChai);
         expect = chai.expect;
 
-        function selectFilter(ajaxSpy, filterValuesArray, options, fakeData, responseForSaveFilter) {
+        this.selectFilter = function (ajaxSpy, filterValuesArray, options, fakeData, responseForSaveFilter) {
             url = options.url;
             contentType = options.contentType;
             firstValue = filterValuesArray[0];
@@ -194,10 +194,8 @@ define([
                     expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
                 });
             });
-        }
-
-        return {
-            selectFilter: selectFilter
         };
+
+        return Filter;
     };
 });

@@ -2041,6 +2041,7 @@ define([
             });*/
 
             filterTest.selectFilter(jQueryAjaxSpy, ['contactName', 'source'], filterOptions, fakeLeads, fakeResponseSaveFilter);
+            //filterTest.selectFilter(jQueryAjaxSpy, ['workflow', 'salesPerson'], filterOptions, fakeLeads, fakeResponseSaveFilter);
         });
     });
 });
