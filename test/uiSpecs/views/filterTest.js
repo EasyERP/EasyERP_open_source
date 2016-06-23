@@ -9,7 +9,7 @@ define([
     'views/Filter/savedFiltersView',
     'constantsDir/filters'
 ], function ($, _, chai, chaiJquery, sinonChai, FilterView, FilterGroup, SavedFilters, FILTER_CONSTANTS) {
-    var Filter = function () {
+    var Filter = function (firstVal, secondVal) {
         var firstValue;
         var secondValue;
         var server = sinon.fakeServer.create();
@@ -19,22 +19,29 @@ define([
         var removedFromDBSpy;
         var url;
         var contentType;
+        var debounceStub;
 
         chai.use(chaiJquery);
         chai.use(sinonChai);
         expect = chai.expect;
 
-        this.selectFilter = function (ajaxSpy, filterValuesArray, options, fakeData, responseForSaveFilter) {
+        this.firstValue = firstVal;
+        this.secondValue = secondVal;
+
+        this.selectFilter = function(ajaxSpy, options, fakeData, responseForSaveFilter) {
             url = options.url;
             contentType = options.contentType;
-            firstValue = filterValuesArray[0];
-            secondValue = filterValuesArray[1];
+            firstValue = this.firstValue;
+            secondValue = this.secondValue;
             selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
             saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
             removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                 return debFunction;
+            });
 
-            describe('Test filterView', function () {
+            describe('Test filterView by' + this.firstValue + ' & ' + this.secondValue, function () {
 
                 it('Try to filter view by ' + firstValue + ' & ' + secondValue, function (done) {
                     var $searchContainer = $('#searchContainer');
@@ -58,7 +65,7 @@ define([
                     $searchArrow.click();
                     expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
-                    // select fullName
+                    // select firstGroup filter
                     ajaxSpy.reset();
                     $firstGroup = $searchContainer.find($firstContainer);
                     $firstGroup.click();
@@ -93,7 +100,7 @@ define([
                         .and
                         .to.have.lengthOf(1);
 
-                    // filter by department
+                    // select secondGroup filter
                     ajaxSpy.reset();
 
                     $secondGroup = $thisEl.find($secondContainer);
@@ -108,7 +115,7 @@ define([
                     expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
                     expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
                     elementsCount = $thisEl.find('#listTable > tr').length;
-                    expect(elementsCount).to.be.equals(5);
+                    expect(elementsCount).to.be.not.equals(0);
 
                     ajaxResponse = ajaxSpy.args[0][0];
                     expect(ajaxResponse).to.have.property('url', url);
@@ -125,7 +132,7 @@ define([
                         .and
                         .to.have.lengthOf(1);
 
-                    // unselect department filter
+                    // unselect secondGroup filter
                     $selectedItem = $searchContainer.find($secondSelector);
                     $selectedItem.click();
                     server.respond();
@@ -136,7 +143,7 @@ define([
                     expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
                     expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
                     elementsCount = $thisEl.find('#listTable > tr').length;
-                    expect(elementsCount).to.be.equals(5);
+                    expect(elementsCount).to.be.not.equals(0);
 
                     ajaxResponse = ajaxSpy.args[0][0];
                     expect(ajaxResponse).to.have.property('url', url);
@@ -193,9 +200,41 @@ define([
                     expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
                     expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
                 });
+
+
+                it('Try to select and remove ' + firstValue + ' filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $thisEl = $('#content-holder');
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues');
+                    $removeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                });
             });
         };
-
-        return Filter;
     };
+
+    return Filter;
 });

@@ -1272,7 +1272,7 @@ define([
                 name: "Adrien Martinelli"
             }
         ],
-        spurce     : [
+        source     : [
             {
                 _id : "Offline Meetings",
                 name: "Offline Meetings"
@@ -1287,7 +1287,8 @@ define([
     var topBarView;
     var leadsCollection;
     var listView;
-    var filterTest = new FilterTest();
+    var filterTest1 = new FilterTest('contactName', 'source');
+    var filterTest2 = new FilterTest('workflow', 'salesPerson');
     var jQueryAjaxSpy = sinon.spy($, 'ajax');
     var filterOptions = {
         url        : '/leads/',
@@ -1551,7 +1552,7 @@ define([
                 done();
             });
 
-            /*it('Try to select 25 item per page', function () {
+            it('Try to select 25 item per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $pageList = $pagination.find('.pageList');
                 var $needBtn = $pageList.find('.itemsNumber').first();
@@ -2038,10 +2039,9 @@ define([
                 expect(deleteEditSpy.calledTwice).to.be.true;
                 expect(window.location.hash).to.be.equals('#easyErp/Leads');
                 expect(windowConfirmStub.called).to.be.true;
-            });*/
+            });
 
-            filterTest.selectFilter(jQueryAjaxSpy, ['contactName', 'source'], filterOptions, fakeLeads, fakeResponseSaveFilter);
-            //filterTest.selectFilter(jQueryAjaxSpy, ['workflow', 'salesPerson'], filterOptions, fakeLeads, fakeResponseSaveFilter);
+            filterTest1.selectFilter(jQueryAjaxSpy, filterOptions, fakeLeads, fakeResponseSaveFilter);
         });
     });
 });

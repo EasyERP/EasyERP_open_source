@@ -12,12 +12,12 @@ define([
     'views/Persons/form/FormView',
     'views/Persons/list/ListView',
     'views/Persons/thumbnails/ThumbnailsView',
-    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
+    'sinon-chai',
+    'filterTest'
 ], function (Backbone,
              _,
              modules,
@@ -31,12 +31,12 @@ define([
              FormView,
              ListView,
              ThumbnailsView,
-             FilterView,
              eventsBinder,
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             FilterTest) {
     'use strict';
 
     var fakePersons = {
@@ -11257,6 +11257,40 @@ define([
             }
         ]
     };
+    var fakeFilters = {
+        name: [
+            {
+                _id: "575fcfa6d4aef4766ad9aae3",
+                name: "Thijs Schnitger"
+            },
+            {
+                _id: "575e6a257f3384556ae3d11d",
+                name: "Till Schrader"
+            },
+            {
+                _id: "575e69fe3319da9d6ac1c14b",
+                name: "Till Schrader"
+            }
+        ],
+        country: [
+            {
+                _id: "the Netherlands",
+                name: "the Netherlands"
+            },
+            {
+                _id: "Mexico",
+                name: "Mexico"
+            },
+            {
+                _id: "New Zeland",
+                name: "New Zeland"
+            },
+            {
+                _id: "Norway",
+                name: "Norway"
+            }
+        ]
+    };
     var expect;
     var view;
     var listView;
@@ -11265,7 +11299,13 @@ define([
     var formView;
     var editView;
     var personsCollection;
-    var ajaxSpy;
+    var ajaxSpy = sinon.spy($, 'ajax');
+    var filterTest = new FilterTest('name', 'country');
+    var filterOptions = {
+        url: '/persons/',
+        contentType: 'Persons'
+    };
+    var fakeResponseSaveFilter = {"success":{"_id":"52203e707d4dba8813000003","__v":0,"attachments":[],"lastAccess":"2016-06-23T12:46:39.099Z","profile":1387275598000,"relatedEmployee":"55b92ad221e4b7c40f00004f","savedFilters":[{"_id":"574335bb27725f815747d579","viewType":"","contentType":null,"byDefault":true},{"_id":"576140b0db710fca37a2d950","viewType":"","contentType":null,"byDefault":false},{"_id":"5761467bdb710fca37a2d951","viewType":"","contentType":null,"byDefault":false},{"_id":"57615278db710fca37a2d952","viewType":"","contentType":null,"byDefault":false},{"_id":"576be27e8833d3d250b617a5","contentType":"Leads","byDefault":false},{"_id":"576beedfa96be05a77ce0267","contentType":"Leads","byDefault":false},{"_id":"576bfd2ba96be05a77ce0268","contentType":"Persons","byDefault":false}],"kanbanSettings":{"tasks":{"foldWorkflows":["Empty"],"countPerPage":10},"applications":{"foldWorkflows":["Empty"],"countPerPage":10},"opportunities":{"foldWorkflows":["Empty"],"countPerPage":10}},"credentials":{"access_token":"","refresh_token":""},"pass":"082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9","email":"info@thinkmobiles.com","login":"admin"}}
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -11280,14 +11320,10 @@ define([
         var debounceStub;
         var historyNavigateSpy;
 
-        before(function () {
-            ajaxSpy = sinon.spy($, 'ajax');
-            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
-            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
-            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
+        before(function () {/*
             debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
                 return debounceFunction;
-            });
+            });*/
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
         });
 
@@ -11443,7 +11479,7 @@ define([
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 windowConfirmStub.returns(true);
-                clock = sinon.useFakeTimers();
+                //clock = sinon.useFakeTimers();
                 exportToCSVStub = sinon.stub(ListView.prototype, 'exportToCsv');
                 exportToCSVStub.returns(true);
                 exportToXlcsStub = sinon.stub(ListView.prototype, 'exportToXlsx');
@@ -11451,7 +11487,7 @@ define([
             });
 
             after(function () {
-                clock.restore();
+                //clock.restore();
                 server.restore();
                 windowConfirmStub.restore();
                 exportToCSVStub.restore();
@@ -11460,6 +11496,7 @@ define([
 
             it('Try to create Persons list view', function (done) {
                 var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
+                var filterUrl = '/filter/Persons';
                 var $searchContainerEl;
                 var $alphabetEl;
                 var $firstRow;
@@ -11474,13 +11511,16 @@ define([
                 var $pagination;
                 var $currentPageList;
 
+
                 server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
+                server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
                 listView = new ListView({
                     collection: personsCollection,
                     startTime : new Date()
                 });
                 server.respond();
-                clock.tick(300);
+
+                //clock.tick(300);
 
                 eventsBinder.subscribeCollectionEvents(personsCollection, listView);
                 eventsBinder.subscribeTopBarEvents(topBarView, listView);
@@ -11570,7 +11610,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('contentType');
             });
 
-            it('Try to select 25 items per page', function() {
+            it('Try to select 25 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').first();
                 var ajaxResponse;
@@ -11587,7 +11627,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '25');
             });
 
-            it('Try to select 50 items per page', function() {
+            it('Try to select 50 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').eq(1);
                 var ajaxResponse;
@@ -11604,7 +11644,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '50');
             });
 
-            it('Try to select 100 items per page', function() {
+            it('Try to select 100 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').eq(2);
                 var ajaxResponse;
@@ -11621,7 +11661,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '100');
             });
 
-            it('Try to select 200 items per page', function() {
+            it('Try to select 200 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').eq(3);
                 var ajaxResponse;
@@ -11638,7 +11678,6 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '200');
             });
 
-
             it('Try to export to CSV', function () {
                 var $exportToCsvBtn = topBarView.$el.find('#top-bar-exportToCsvBtn');
 
@@ -11652,6 +11691,8 @@ define([
                 $exportToXlsxBtn.click();
                 expect(exportToXlcsStub.calledOnce).to.be.true;
             });
+
+            filterTest.selectFilter(ajaxSpy, filterOptions, fakePersonsForList, fakeResponseSaveFilter);
         });
 
         describe('Persons thumbnail view', function () {
