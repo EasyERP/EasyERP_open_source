@@ -582,7 +582,7 @@ var Module = function (models) {
         var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            optionsObject = filterMapper.mapFilter(filter);
+            optionsObject = filterMapper.mapFilter(filter, contentType);
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -1028,7 +1028,7 @@ var Module = function (models) {
         data.filter = filter;
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter);
+            filterObj = filterMapper.mapFilter(filter, type);
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -1098,7 +1098,7 @@ var Module = function (models) {
         data.filter = filter;
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter);
+            filterObj = filterMapper.mapFilter(filter, type);
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {

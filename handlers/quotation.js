@@ -697,7 +697,7 @@ var Module = function (models, event) {
                 queryObject.$and.push({isOrder: false});
             }
 
-            queryObject.$and.push(filterMapper.mapFilter(filter)); // caseFilter(filter);
+            queryObject.$and.push(filterMapper.mapFilter(filter, contentType)); // caseFilter(filter);
         }
 
         if (data.sort) {

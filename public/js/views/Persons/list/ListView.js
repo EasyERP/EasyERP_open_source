@@ -24,6 +24,8 @@ define([
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Persons',
         exportToCsvUrl   : '/Customers/exportToCsv/?type=Persons',
         letterKey        : 'name.first',
+        hasPagination    : true,
+        hasAlphabet      : true,
 
         events: {
             'click .letter:not(.empty)': 'alpabeticalRender'
@@ -43,7 +45,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.currentPage;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         exportToXlsx: function () {
@@ -71,7 +73,7 @@ define([
         },
 
         render: function () {
-            var self = this;
+            // var self = this;
             var $currentEl;
 
             $('.ui-dialog ').remove();
@@ -86,12 +88,12 @@ define([
                 itemsNumber: this.collection.pageSize
             }).render());
 
-            this.renderAlphabeticalFilter(this);
-            this.renderPagination($currentEl, this);
+            // this.renderAlphabeticalFilter(this);
+            // this.renderPagination($currentEl, this);
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
-            this.renderFilter();
+            // this.renderFilter();
         }
     });
 

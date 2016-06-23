@@ -2119,6 +2119,7 @@ var Module = function (models, event) {
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var data = req.query;
+        var contentType = data.contentType;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
@@ -2133,7 +2134,7 @@ var Module = function (models, event) {
         var filterMapper = new FilterMapper();
 
         if (filter) {
-            filterObj = filterMapper.mapFilter(filter); // caseFilterOpp(filter);
+            filterObj = filterMapper.mapFilter(filter, contentType); // caseFilterOpp(filter);
         }
 
         switch (data.contentType) {
@@ -2193,7 +2194,7 @@ var Module = function (models, event) {
                 }
             });
 
-            switch (data.contentType) {
+            switch (contentType) {
 
                 case ('Opportunities'):
                     aggregateQuery.push({

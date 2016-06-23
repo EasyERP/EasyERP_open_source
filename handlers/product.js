@@ -232,7 +232,7 @@ var Products = function (models) {
         }
 
         if (query.filter && typeof query.filter === 'object') {
-            optionsObject.$and = filterMapper.mapFilter(query.filter); // caseFilter(query.filter);
+            optionsObject.$and = filterMapper.mapFilter(query.filter, query.contentType); // caseFilter(query.filter);
         }
 
         accessRollSearcher = function (cb) {
@@ -465,7 +465,7 @@ var Products = function (models) {
         result.showMore = false;
 
         if (data.filter && typeof data.filter === 'object') {
-            optionsObject.$and = filterMapper.mapFilter(data.filter); // caseFilter(data.filter);
+            optionsObject.$and = filterMapper.mapFilter(data.filter, data.contentType); // caseFilter(data.filter);
         }
 
         departmentSearcher = function (waterfallCallback) {

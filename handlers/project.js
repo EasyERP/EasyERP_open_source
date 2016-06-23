@@ -447,7 +447,7 @@ module.exports = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            optionsObject = filterMapper.mapFilter(filter); // caseFilter(filter);
+            optionsObject = filterMapper.mapFilter(filter, 'Projects'); // caseFilter(filter);
         }
 
         accessRollSearcher = function (cb) {
@@ -562,7 +562,7 @@ module.exports = function (models, event) {
         response.showMore = false;
 
         if (filter && typeof filter === 'object') {
-            optionsObject = filterMapper.mapFilter(filter); // caseFilter(filter);
+            optionsObject = filterMapper.mapFilter(filter, 'Projects'); // caseFilter(filter);
         }
 
         accessRollSearcher = function (cb) {

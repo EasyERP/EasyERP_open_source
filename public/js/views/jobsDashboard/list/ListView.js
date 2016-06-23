@@ -18,7 +18,7 @@ define([
         changedModels    : {},
         contentCollection: JobsCollection,
         exportToXlsxUrl  : '/jobs/exportToXlsx/',
-        hasPAgination    : true,
+        hasPagination    : true,
 
         events: {
             'click .jobs': 'showReport'
