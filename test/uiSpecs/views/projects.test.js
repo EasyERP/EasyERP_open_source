@@ -28,8 +28,11 @@ define([
     var createView;
     var formView;
     var projectsCollection;
+    var debounceStub;
     var projectsThumbCollection;
     var expect;
+    var windowConfirmStub;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -39,12 +42,19 @@ define([
         var $fixture;
         var $elFixture;
 
+        before(function () {
+            debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
+                return debounceFunction;
+            });
+        });
+
         after(function () {
             topBarView.remove();
             thumbnailsView.remove();
             formView.remove();
             /*  listView.remove();*/
             view.remove();
+            debounceStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -930,9 +940,9 @@ define([
                     $priceInput.val('5000');
                     $priceInput.trigger(keyUpEvent);
 
-                    expect($currentRow.find('td[data-name="price"]').text().trim()).to.be.equals('5000');
-                    expect($currentRow.find('td.subtotal').text().trim()).to.be.equals('5000.00');
-                    expect($dialog.find('#totalAmount').text().trim()).to.be.equals('5000.00');
+                    expect($currentRow.find('td[data-name="price"] input').val().trim()).to.be.equals('5000');
+                    expect($currentRow.find('td.subtotal').text().trim()).to.be.equals('5 000.00');
+                    expect($dialog.find('#totalAmount').text().trim()).to.be.equals('5 000.00');
                     server.respondWith('POST', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
                     $createBtn.click();
                     server.respond();
