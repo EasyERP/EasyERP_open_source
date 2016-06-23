@@ -1,11 +1,13 @@
-var mongoose = require('mongoose');
+/*TODO remove caseFilter methid after testing filters*/
 var Products = function (models) {
     'use strict';
+
+    var mongoose = require('mongoose');
 
     var ProductSchema = mongoose.Schemas.Products;
     var DepartmentSchema = mongoose.Schemas.Department;
     var objectId = mongoose.Types.ObjectId;
-    
+
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var async = require('async');
@@ -13,6 +15,7 @@ var Products = function (models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Products;
     var pageHelper = require('../helpers/pageHelper');
+    var FilterMapper = require('../helpers/filterMapper');
 
     /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
      return models.get(req.session.lastDb, 'Product', ProductSchema)
@@ -84,7 +87,7 @@ var Products = function (models) {
 
         getProductImages(req, res, next, data);
     };
-    
+
     function remove(req, res, next, id) {
         models.get(req.session.lastDb, 'Products', ProductSchema).remove({_id: id}, function (err, product) {
             if (err) {
@@ -130,7 +133,7 @@ var Products = function (models) {
         getAll(req, res, next);
     };
 
-    function convertType(array, type) {
+    /*function convertType(array, type) {
         var i;
         var result = [];
 
@@ -151,9 +154,9 @@ var Products = function (models) {
         }
 
         return result;
-    }
+    }*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -200,7 +203,7 @@ var Products = function (models) {
         }
 
         return resArray;
-    }
+    }*/
 
     function getProductsFilter(req, res, next) {
         var mid = req.query.contentType === 'salesProduct' ? 65 : 58;
@@ -218,6 +221,7 @@ var Products = function (models) {
         var parallelTasks;
         var getTotal;
         var getData;
+        var filterMapper = new FilterMapper();
 
         Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
@@ -228,11 +232,7 @@ var Products = function (models) {
         }
 
         if (query.filter && typeof query.filter === 'object') {
-            if (query.filter.condition === 'or') {
-                optionsObject.$or = caseFilter(query.filter);
-            } else {
-                optionsObject.$and = caseFilter(query.filter);
-            }
+            optionsObject.$and = filterMapper.mapFilter(query.filter); // caseFilter(query.filter);
         }
 
         accessRollSearcher = function (cb) {
@@ -459,15 +459,13 @@ var Products = function (models) {
 
         var contentSearcher;
         var waterfallTasks;
+        
+        var filterMapper = new FilterMapper();
 
         result.showMore = false;
 
         if (data.filter && typeof data.filter === 'object') {
-            if (data.filter.condition === 'or') {
-                optionsObject.$or = caseFilter(data.filter);
-            } else {
-                optionsObject.$and = caseFilter(data.filter);
-            }
+            optionsObject.$and = filterMapper.mapFilter(data.filter); // caseFilter(data.filter);
         }
 
         departmentSearcher = function (waterfallCallback) {
