@@ -305,7 +305,7 @@ var wTrack = function (models) {
                     resultData.sortDepartments = sortDepartments;
 
                     res.status(200).send(resultData);
-                    //redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
+                    redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
                 });
             }
 
