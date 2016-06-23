@@ -548,7 +548,9 @@ var Employee = function (event, models) {
     };
 
     this.updateTransfer = function (req, res, next) {
-        console.log('updateTransfer');
+
+
+
     };
 
     function caseFilter(filter) {
@@ -594,20 +596,48 @@ var Employee = function (event, models) {
     }
 
     function getById(req, res, next) {
-        var project = {};
+        var projectSalary = {};
         var data = req.query;
         var profileId = req.session.profileId;
         var query;
         var getTransfer;
         var getEmployee;
-        var transferArray = [];
         var parallelTasks;
 
         getTransfer = function (pCb) {
             var transfers = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
             if (!accessEmployeeSalary(profileId)) {
-                project = {salary: 0};
+                projectSalary = {
+                    department          : 1,
+                    jobPosition         : 1,
+                    weeklyScheduler     : 1,
+                    manager             : 1,
+                    date                : 1,
+                    status              : 1,
+                    isDeveloper         : 1,
+                    jobType             : 1,
+                    info                : 1,
+                    employee            : 1,
+                    scheduledPay        : 1,
+                    payrollStructureType: 1
+                };
+            } else {
+                projectSalary = {
+                    department          : 1,
+                    jobPosition         : 1,
+                    weeklyScheduler     : 1,
+                    manager             : 1,
+                    date                : 1,
+                    status              : 1,
+                    isDeveloper         : 1,
+                    jobType             : 1,
+                    info                : 1,
+                    employee            : 1,
+                    scheduledPay        : 1,
+                    payrollStructureType: 1,
+                    salary              : 1
+                };
             }
 
             transfers
@@ -677,6 +707,8 @@ var Employee = function (event, models) {
                         scheduledPay          : 1,
                         payrollStructureType  : 1
                     }
+                }, {
+                    $project: projectSalary
                 }], function (err, transfer) {
                     if (err) {
                         return pCb(err);
@@ -701,10 +733,6 @@ var Employee = function (event, models) {
                 .populate('weeklyScheduler', '_id name')
                 .populate('department', '_id name')
                 .populate('groups.group')
-                //.populate('transfer.department', '_id name')
-                //.populate('transfer.jobPosition', '_id name')
-                //.populate('transfer.manager', '_id name')
-                //.populate('transfer.weeklyScheduler', '_id name')
                 .populate('groups.owner', '_id login');
 
             query.exec(function (err, foundEmployee) {

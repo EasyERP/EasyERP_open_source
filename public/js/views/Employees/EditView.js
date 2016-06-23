@@ -5,6 +5,7 @@ define([
     'text!templates/Employees/EditTemplate.html',
     'views/Notes/AttachView',
     'views/dialogViewBase',
+    'collections/transfer/editCollection',
     'common',
     'populate',
     'moment',
@@ -17,6 +18,7 @@ define([
              EditTemplate,
              AttachView,
              ParentView,
+             EditCollection,
              common,
              populate,
              moment,
@@ -25,14 +27,17 @@ define([
              helpers) {
     'use strict';
     var EditView = ParentView.extend({
-        el         : '#content-holder',
-        contentType: 'Employees',
-        imageSrc   : '',
-        template   : _.template(EditTemplate),
-        responseObj: {},
+        el            : '#content-holder',
+        contentType   : 'Employees',
+        imageSrc      : '',
+        template      : _.template(EditTemplate),
+        responseObj   : {},
+        editCollection: null,
+        changedModels : {},
 
         initialize: function (options) {
             var isSalary;
+            var transfers;
 
             _.bindAll(this, 'saveItem');
             _.bindAll(this, 'render', 'deleteItem');
@@ -44,11 +49,14 @@ define([
                 this.currentModel = options.model;
             }
             this.currentModel.urlRoot = '/employees';
+            transfers = this.currentModel.get('transfer');
 
-            isSalary = this.currentModel.get('transfer')[0];
+            isSalary = transfers[0];
             isSalary = isSalary.salary;
             isSalary = !!(isSalary || isSalary === 0);
             this.isSalary = isSalary;
+
+            this.editCollection = new EditCollection(transfers);
 
             this.responseObj['#sourceDd'] = [
                 {
@@ -98,7 +106,8 @@ define([
             'click #update'                                                  : 'addNewRow',
             'keyup .editing'                                                 : 'validateNumbers',
             'click .fa-trash'                                                : 'deleteRow',
-            'click #jobPosition,#department,#manager,#jobType'               : 'showNotification'
+            'click #jobPosition,#department,#manager,#jobType'               : 'showNotification',
+            'change .editable '                                              : 'setEditable'
         },
 
         showNotification: function (e) {
@@ -221,7 +230,55 @@ define([
                 }
             }).addClass('datepicker');
 
+            this.setChangedValueToModel();
+
             return false;
+        },
+
+        setChangedValueToModel: function () {
+            var editedElement = this.$el.find('#hireFireTable').find('.editing');
+            var editedCol;
+            var editedElementRowId;
+            var editedElementContent;
+            var editedElementValue;
+            var editModel;
+            var editValue;
+
+            if (navigator.userAgent.indexOf('Firefox') > -1) {
+                this.setEditable(editedElement);
+            }
+
+            if (editedElement.length) {
+                editedCol = editedElement.closest('td');
+                editedElementRowId = editedElement.closest('tr').attr('data-id');
+                editedElementContent = editedCol.data('content');
+                editedElementValue = editedElement.val();
+
+                // editedElementValue = editedElementValue.replace(/\s+/g, '');
+
+                if (editedElementRowId.length >= 24) {
+                    editModel = this.editCollection.get(editedElementRowId);
+                    editValue = editModel.get(editedElementContent);
+
+                    if (editedElementValue !== editValue) {
+                        if (!this.changedModels[editedElementRowId]) {
+                            this.changedModels[editedElementRowId] = {};
+                        }
+                        this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    }
+                } else {
+                    if (!this.changedModels[editedElementRowId]) {
+                        this.changedModels[editedElementRowId] = {};
+                    }
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                }
+                editedCol.text(editedElementValue);
+                editedElement.remove();
+
+                if (editedElementValue) {
+                    editedCol.removeClass('errorContent');
+                }
+            }
         },
 
         chooseOption: function (e) {
@@ -229,15 +286,33 @@ define([
             var $parentUl = $target.parent();
             var $element = $target.closest('a') || $parentUl.closest('a');
             var id = $element.attr('id') || $parentUl.attr('id');
+            var model = this.editCollection.get(id);
             var valueId = $target.attr('id');
             var managersIds = this.responseObj['#departmentManagers'];
             var managers = this.responseObj['#projectManagerDD'];
             var managerId;
             var manager;
+            var changedAttr;
+            var datacontent;
 
             if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
+
+                this.setEditable($element);
+
+                if (!this.changedModels[id]) {
+                    if (!model.id) {
+                        this.changedModels[id] = model.attributes;
+                    } else {
+                        this.changedModels[id] = {};
+                    }
+                }
+
                 $element.text($target.text());
                 $element.attr('data-id', valueId);
+                datacontent = $element.attr('data-content');
+
+                changedAttr = this.changedModels[id];
+                changedAttr[datacontent] = valueId;
 
                 if (id === 'departmentsDd') {
 
@@ -264,6 +339,22 @@ define([
             } else {
                 $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
+
+            this.setChangedValueToModel();
+        },
+
+        setEditable: function (td) {
+            var tr;
+
+            if (!td.parents) {
+                td = $(td.target).closest('td');
+            }
+
+            tr = td.parents('tr');
+
+            tr.addClass('edited');
+
+            return false;
         },
 
         showEndContractSelect: function (e) {
@@ -566,6 +657,19 @@ define([
                         Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     }
                     self.hideDialog();
+
+                    var modelChanged;
+                    var id;
+
+                    for (id in self.changedModels) {
+                        modelChanged = self.editCollection.get(id);
+                        modelChanged.changed = self.changedModels[id];
+                    }
+
+                    self.editCollection.save();
+
+                    self.deleteEditable();
+
                 },
 
                 error: function (model, xhr) {
@@ -574,6 +678,10 @@ define([
 
             });
 
+        },
+
+        deleteEditable: function () {
+            this.$el.find('.edited').removeClass('edited');
         },
 
         render: function () {
