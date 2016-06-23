@@ -21,6 +21,7 @@ module.exports = function (models, event) {
     router.get('/OpportunitiesAgingChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesAgingChart);
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddleware, handler.getLengthByWorkflows);
     router.get('/priority', authStackMiddleware, accessStackMiddleware, handler.getLeadsPriority);
+    router.get('/getFilteredOpportunities', authStackMiddleware, accessStackMiddleware, handler.getFilteredOpportunities);
    
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
