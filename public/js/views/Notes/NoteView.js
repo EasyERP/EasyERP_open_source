@@ -29,7 +29,9 @@ define([
 
             switch (type) {
                 case 'edit':
-                    this.$el.find('.title-wrapper').show();  // here and in all next global searching $ changed for correct finding elements
+                    this.$el.find('.addTitle').show();
+
+                    // here and in all next global searching $ changed for correct finding elements
                     this.$el.find('#noteArea').attr('placeholder', '').parents('.addNote').addClass('active');
                     this.$el.find('#noteArea').val($('#' + idInt).find('.noteText').text());
                     this.$el.find('#noteTitleArea').val($('#' + idInt).find('.noteTitle').text());
