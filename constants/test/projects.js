@@ -8475,7 +8475,7 @@ define([], function () {
         }
     ];
     var fakeQuotations = {
-        total: 2,
+        total: 200,
         data: [
             {
                 _id: "576a6a929c408e7d16c3ddf6",

@@ -812,6 +812,93 @@ define([
                     expect($thisEl.find('#listTableQuotation tr').length).to.be.equal(2);
                 });
 
+                it('Try to switch page counter', function () {
+                    var $pageListEl = $thisEl.find('#quotations .pagination');
+                    var $firstBtn = $pageListEl.find('a:nth-child(1)');
+                    var $secondBtn = $pageListEl.find('a:nth-child(2)');
+                    var $thirdBtn = $pageListEl.find('a:nth-child(3)');
+                    var $allBtn = $pageListEl.find('a:nth-child(4)');
+                    var quotationUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/quotations', 'i');
+
+                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotations)]);
+
+                    $firstBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTableQuotation')).to.exist;
+                    expect($pageListEl.find('a:nth-child(1)')).to.have.class('selectedItemsNumber');
+
+                    $secondBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTableQuotation')).to.exist;
+                    expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
+
+                    $thirdBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTableQuotation')).to.exist;
+                    expect($pageListEl.find('a:nth-child(3)')).to.have.class('selectedItemsNumber');
+
+                    $allBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTableQuotation')).to.exist;
+                    expect($pageListEl.find('a:nth-child(4)')).to.have.class('selectedItemsNumber');
+                });
+
+                it('Try to changePage', function () {
+                    var $pageListEl = $thisEl.find('#quotations .pagination');
+                    var $nextPageBtn = $pageListEl.find('#nextPage');
+                    var $prevPageBtn = $pageListEl.find('#previousPage');
+                    var $firstPage = $pageListEl.find('#firstShowPage');
+                    var $lastPage = $pageListEl.find('#lastShowPage');
+                    var quotationUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/quotations', 'i');
+
+
+                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotations)]);
+                    $nextPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $nextPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable')).to.exist;
+
+                    $prevPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $prevPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable')).to.exist;
+
+                    $firstPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $firstPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable')).to.exist;
+
+                    $lastPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $lastPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable')).to.exist;
+
+
+
+                });
+
+                it('Try to show some page', function () {
+                    var $pageListEl = $thisEl.find('#quotations .pagination');
+                    var $currentPageListEl = $pageListEl.find('.currentPageList');
+                    var $selectedItem;
+
+                    $currentPageListEl.mouseover();
+                    $selectedItem = $pageListEl.find('#pageList > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable')).to.exist;
+
+                });
+
                 it('Try to go to EditQuotationView', function () {
 
                     var $cancelBtn;
@@ -955,6 +1042,7 @@ define([
 
                 });
             });
+
             describe('OrdersView', function () {
                 var server;
                 var mainSpy;
@@ -989,6 +1077,90 @@ define([
                     $sortBtn.click();
                     server.respond();
                     expect($thisEl.find('#orderTable > tr:nth-child(1)').attr('data-id')).to.be.equals('576a6a929c408e7d16c3ddf6');
+                });
+
+                it('Try to switch page counter', function () {
+                    var $pageListEl = $thisEl.find('#orders .pagination');
+                    var $firstBtn = $pageListEl.find('a:nth-child(1)');
+                    var $secondBtn = $pageListEl.find('a:nth-child(2)');
+                    var $thirdBtn = $pageListEl.find('a:nth-child(3)');
+                    var $allBtn = $pageListEl.find('a:nth-child(4)');
+                    var ordersUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/orders', 'i');
+
+                    server.respondWith('GET', ordersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrders)]);
+
+                    $firstBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(1)')).to.have.class('selectedItemsNumber');
+
+                    $secondBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
+
+                    $thirdBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(3)')).to.have.class('selectedItemsNumber');
+
+                    $allBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(4)')).to.have.class('selectedItemsNumber');
+                });
+
+                it('Try to changePage', function () {
+                    var $pageListEl = $thisEl.find('#orders .pagination');
+                    var $nextPageBtn = $pageListEl.find('#nextPage');
+                    var $prevPageBtn = $pageListEl.find('#previousPage');
+                    var $firstPage = $pageListEl.find('#firstShowPage');
+                    var $lastPage = $pageListEl.find('#lastShowPage');
+                    var ordersUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/orders', 'i');
+
+
+                    server.respondWith('GET', ordersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrders)]);
+                    $nextPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $nextPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+
+                    $prevPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $prevPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+
+                    $firstPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $firstPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+
+                    $lastPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $lastPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+                });
+
+                it('Try to show some page', function () {
+                    var $pageListEl = $thisEl.find('#orders .pagination');
+                    var $currentPageListEl = $pageListEl.find('.currentPageList');
+                    var $selectedItem;
+
+                    $currentPageListEl.mouseover();
+                    $selectedItem = $pageListEl.find('#orders #pageList > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect($thisEl.find('#orderTable')).to.exist;
+
                 });
 
                 it('Try to open EditView', function () {
@@ -1040,17 +1212,103 @@ define([
                     expect($thisEl.find('#invoices #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('576bc72d0e1700973271c7e4');
                 });
 
+                it('Try to switch page counter', function () {
+                    var $pageListEl = $thisEl.find('#proforma .pagination');
+                    var $firstBtn = $pageListEl.find('a:nth-child(1)');
+                    var $secondBtn = $pageListEl.find('a:nth-child(2)');
+                    var $thirdBtn = $pageListEl.find('a:nth-child(3)');
+                    var $allBtn = $pageListEl.find('a:nth-child(4)');
+                    var proformaUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+
+                    server.respondWith('GET', proformaUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProformas)]);
+
+                    $firstBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(1)')).to.have.class('selectedItemsNumber');
+
+                    $secondBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
+
+                    $thirdBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(3)')).to.have.class('selectedItemsNumber');
+
+                    $allBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(4)')).to.have.class('selectedItemsNumber');
+                });
+
+                it('Try to changePage', function () {
+                    var $pageListEl = $thisEl.find('#proforma .pagination');
+                    var $nextPageBtn = $pageListEl.find('#nextPage');
+                    var $prevPageBtn = $pageListEl.find('#previousPage');
+                    var $firstPage = $pageListEl.find('#firstShowPage');
+                    var $lastPage = $pageListEl.find('#lastShowPage');
+                    var proformaUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+
+
+                    server.respondWith('GET', proformaUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProformas)]);
+                    $nextPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $nextPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+
+                    $prevPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $prevPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+
+                    $firstPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $firstPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+
+                    $lastPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $lastPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+                });
+
+                it('Try to show some page', function () {
+                    var $pageListEl = $thisEl.find('#proforma .pagination');
+                    var $currentPageListEl = $pageListEl.find('.currentPageList');
+                    var $selectedItem;
+
+                    $currentPageListEl.mouseover();
+                    $selectedItem = $pageListEl.find('#proforma #pageList > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect($thisEl.find('#proforma #listTable')).to.exist;
+
+                });
+
+
+
                 it('Try to delete item with 403 error', function () {
                     var $deleteBtn;
                     var spyResponse;
-                    var $needRow = $thisEl.find('#invoices #listTable > tr:nth-child(1)');
+                    var $needRow = $thisEl.find('#proforma #listTable > tr:nth-child(1)');
                     var $needCheckBox = $needRow.find('.notForm > input');
                     var invoiceUrl = new RegExp('\/invoices\/', 'i');
 
                     windowConfirmStub.returns(true);
 
                     $needCheckBox.click();
-                    $deleteBtn = $thisEl.find('#removeInvoice');
+                    $deleteBtn = $thisEl.find('#removeProforma');
 
                     server.respondWith('DELETE', invoiceUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $deleteBtn.click();
@@ -1067,7 +1325,7 @@ define([
 
                     windowConfirmStub.returns(true);
 
-                    $deleteBtn = $thisEl.find('#removeInvoice');
+                    $deleteBtn = $thisEl.find('#removeProforma');
 
                     server.respondWith('DELETE', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
                     $deleteBtn.click();
@@ -1126,6 +1384,90 @@ define([
                     $sortBtn.click();
                     server.respond();
                     expect($thisEl.find('#invoices #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae121e4b7c40f001265');
+                });
+
+                it('Try to switch page counter', function () {
+                    var $pageListEl = $thisEl.find('#invoices .pagination');
+                    var $firstBtn = $pageListEl.find('a:nth-child(1)');
+                    var $secondBtn = $pageListEl.find('a:nth-child(2)');
+                    var $thirdBtn = $pageListEl.find('a:nth-child(3)');
+                    var $allBtn = $pageListEl.find('a:nth-child(4)');
+                    var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+
+                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeInvoice)]);
+
+                    $firstBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(1)')).to.have.class('selectedItemsNumber');
+
+                    $secondBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
+
+                    $thirdBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(3)')).to.have.class('selectedItemsNumber');
+
+                    $allBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(4)')).to.have.class('selectedItemsNumber');
+                });
+
+                it('Try to changePage', function () {
+                    var $pageListEl = $thisEl.find('#invoices .pagination');
+                    var $nextPageBtn = $pageListEl.find('#nextPage');
+                    var $prevPageBtn = $pageListEl.find('#previousPage');
+                    var $firstPage = $pageListEl.find('#firstShowPage');
+                    var $lastPage = $pageListEl.find('#lastShowPage');
+                    var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+
+
+                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeInvoice)]);
+                    $nextPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $nextPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+
+                    $prevPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $prevPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+
+                    $firstPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $firstPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+
+                    $lastPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $lastPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+                });
+
+                it('Try to show some page', function () {
+                    var $pageListEl = $thisEl.find('#invoices .pagination');
+                    var $currentPageListEl = $pageListEl.find('.currentPageList');
+                    var $selectedItem;
+
+                    $currentPageListEl.mouseover();
+                    $selectedItem = $pageListEl.find('#proforma #pageList > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect($thisEl.find('#invoices #listTable')).to.exist;
+
                 });
 
                 it('Try to delete item with 403 error', function () {
@@ -1214,6 +1556,91 @@ define([
                     $sortBtn.click();
                     server.respond();
                     expect($thisEl.find('#paymentsTable #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae321e4b7c40f0013cd');
+                });
+
+
+                it('Try to switch page counter', function () {
+                    var $pageListEl = $thisEl.find('#payments .pagination');
+                    var $firstBtn = $pageListEl.find('a:nth-child(1)');
+                    var $secondBtn = $pageListEl.find('a:nth-child(2)');
+                    var $thirdBtn = $pageListEl.find('a:nth-child(3)');
+                    var $allBtn = $pageListEl.find('a:nth-child(4)');
+                    var paymentsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/payments', 'i');
+
+                    server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakePayments)]);
+
+                    $firstBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(1)')).to.have.class('selectedItemsNumber');
+
+                    $secondBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
+
+                    $thirdBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(3)')).to.have.class('selectedItemsNumber');
+
+                    $allBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+                    expect($pageListEl.find('a:nth-child(4)')).to.have.class('selectedItemsNumber');
+                });
+
+                it('Try to changePage', function () {
+                    var $pageListEl = $thisEl.find('#payments .pagination');
+                    var $nextPageBtn = $pageListEl.find('#nextPage');
+                    var $prevPageBtn = $pageListEl.find('#previousPage');
+                    var $firstPage = $pageListEl.find('#firstShowPage');
+                    var $lastPage = $pageListEl.find('#lastShowPage');
+                    var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/payments', 'i');
+
+
+                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakePayments)]);
+                    $nextPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $nextPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+
+                    $prevPageBtn.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $prevPageBtn.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+
+                    $firstPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $firstPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+
+                    $lastPage.prop('disabled', false); // we have not data for few pages, and we hardcode that the next page is not disabled
+                    $lastPage.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+                });
+
+                it('Try to show some page', function () {
+                    var $pageListEl = $thisEl.find('#payments .pagination');
+                    var $currentPageListEl = $pageListEl.find('.currentPageList');
+                    var $selectedItem;
+
+                    $currentPageListEl.mouseover();
+                    $selectedItem = $pageListEl.find('#payments #pageList > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect($thisEl.find('#payments #listTable')).to.exist;
+
                 });
 
                 it('Try to open EditView', function () {
@@ -1436,7 +1863,7 @@ define([
                     $deleteButton.click();
                     server.respond();
 
-                    expect($projectMember.length).to.be.equal(0);
+                    expect($thisEl.find('tr[data-id="5719d799b45f39a40eb1720d"]').length).to.be.equal(0);
                 });
 
 
