@@ -549,8 +549,21 @@ var Employee = function (event, models) {
 
     this.updateTransfer = function (req, res, next) {
 
-        res.send(200, {success: 'A Transfer update success'});
+        var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
 
+        async.each(body, function (data, cb) {
+            var id = data._id;
+
+            delete data._id;
+            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'A Transfer update success'});
+        });
     };
 
     function caseFilter(filter) {
@@ -709,6 +722,8 @@ var Employee = function (event, models) {
                     }
                 }, {
                     $project: projectSalary
+                }, {
+                    $sort: {date: 1}
                 }], function (err, transfer) {
                     if (err) {
                         return pCb(err);
@@ -1289,6 +1304,7 @@ var Employee = function (event, models) {
     this.remove = function (req, res, next) {
         var _id = req.params.id;
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var TransferModel = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
         Model.findByIdAndRemove(_id, function (err, result) {
             if (err) {
@@ -1303,11 +1319,18 @@ var Employee = function (event, models) {
             event.emit('recollectVacationDash', req);
 
             res.status(200).send({success: 'Employees removed'});
+
+            TransferModel.remove({employee: objectId(_id)}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+            });
         });
     };
 
     this.bulkRemove = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var TransferModel = models.get(req.session.lastDb, 'transfers', TransferSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -1323,6 +1346,12 @@ var Employee = function (event, models) {
 
                 event.emit('recalculate', req, null, next);
                 event.emit('recollectVacationDash', req);
+
+                TransferModel.remove({employee: objectId(id)}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                });
                 cb();
             });
         }, function (err) {
