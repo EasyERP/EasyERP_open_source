@@ -41,11 +41,13 @@ define([
     describe('ProjectsView', function () {
         var $fixture;
         var $elFixture;
+        var fakeClock;
 
         before(function () {
             debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
                 return debounceFunction;
             });
+            fakeClock = sinon.useFakeTimers();
         });
 
         after(function () {
@@ -55,6 +57,7 @@ define([
             /*  listView.remove();*/
             view.remove();
             debounceStub.restore();
+            fakeClock.restore();
         });
 
         describe('#initialize()', function () {
@@ -163,20 +166,16 @@ define([
                 var server;
                 var mainSpy;
                 var windowConfirmStub;
-                var fakeClock;
 
                 before(function () {
                     server = sinon.fakeServer.create();
                     mainSpy = sinon.spy(App, 'render');
                     windowConfirmStub = sinon.stub(window, 'confirm');
-                    fakeClock = sinon.useFakeTimers();
                 });
 
                 after(function () {
                     server.restore();
                     mainSpy.restore();
-                    fakeClock.restore();
-
                     windowConfirmStub.restore();
                 });
 
@@ -921,7 +920,7 @@ define([
                 it('Try to delete item with 403 error', function () {
                     var $deleteBtn;
                     var spyResponse;
-                    var $needRow = $thisEl.find('#quotationTable tr[data-id="576a6a929c408e7d16c3ddf6"]');
+                    var $needRow = $thisEl.find('#quotationTable tr[data-id="576a6ac99c408e7d16c3ddfa"]');
                     var $needCheckBox = $needRow.find('.notForm > input');
                     var quotationFormUrl = new RegExp('\/quotations\/', 'i');
 
@@ -948,7 +947,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect($thisEl.find('#quotationTable tr[data-id="576a6a929c408e7d16c3ddf6"]')).to.not.exist;
+                    expect($thisEl.find('#quotationTable tr[data-id="576a6ac99c408e7d16c3ddfa"]')).to.not.exist;
 
                 });
 
@@ -1039,6 +1038,51 @@ define([
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
+
+                });
+
+
+                it('Try to confirm Order', function () {
+                    var $confirmlBtn;
+                    var $needItem = $thisEl.find('#quotationTable tr[data-id="576a6a929c408e7d16c3ddf6"] > td:nth-child(3)');
+                    var quotationSaveUrl = new RegExp('\/quotations\/576a6a929c408e7d16c3ddf6', 'i');
+                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
+                    var workflowUrl = new RegExp('workflows\/getFirstForConvert', 'i');
+
+                    var orderFormUrl = new RegExp('\/orders', 'i');
+                    var orderUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/orders', 'i');
+
+                    server.respondWith('GET', quotationFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotationById)]);
+
+
+                    $needItem.click();
+                    server.respond();
+
+
+                    expect($('.ui-dialog')).to.exist;
+
+
+
+                    $confirmlBtn = $('.confirmOrder');
+                    server.respondWith('PUT', quotationSaveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('PATCH', quotationSaveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrderWorkflow)]);
+
+
+
+                    server.respondWith('GET', orderFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeNewOrderById)]);
+                    server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrders)]);
+
+                    $confirmlBtn.click();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+                    expect($thisEl.find('#ordersTab')).to.have.class('active');
+                    $('.ui-dialog').remove();
 
                 });
             });

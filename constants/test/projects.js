@@ -18356,85 +18356,6 @@ define([], function () {
             }
         ]
     };
-    var fakeOrderById = {
-        _id           : "564cfd8da6e6390160c9f0fe",
-        __v           : 0,
-        editedBy      : {
-            date: "2015-11-18T22:37:01.579Z",
-            user: null
-        },
-        createdBy     : {
-            date: "2015-11-18T22:37:01.579Z",
-            user: null
-        },
-        creationDate  : "2015-11-18T22:37:01.579Z",
-        groups        : {
-            group: [],
-            users: [],
-            owner: null
-        },
-        whoCanRW      : "everyOne",
-        workflow      : {
-            _id   : "55647b962e4aa3804a765ec6",
-            name  : "Invoiced",
-            status: "Done"
-        },
-        products      : [
-            {
-                scheduledDate: "2015-01-15T14:09:21.796Z",
-                taxes        : 0,
-                subTotal     : 196,
-                unitPrice    : 196,
-                jobs         : {
-                    _id : "564cfd8ba6e6390160c9ee1c",
-                    name: "IOS/Android QA1-15/01/15"
-                },
-                description  : "",
-                product      : {
-                    _id : "5540d528dacb551c24000003",
-                    name: "IT services"
-                },
-                quantity     : 28
-            }
-        ],
-        paymentInfo   : {
-            taxes  : 0,
-            unTaxed: 196,
-            total  : 196
-        },
-        paymentTerm   : null,
-        invoiceRecived: true,
-        invoiceControl: null,
-        incoterm      : null,
-        destination   : null,
-        name          : "PO364",
-        orderDate     : "2015-01-15T14:09:21.796Z",
-        deliverTo     : null,
-        project       : {
-            _id        : "55b92ad621e4b7c40f00065f",
-            projectName: "IOS/Android QA"
-        },
-        supplier      : {
-            _id     : "55b92ad521e4b7c40f00060c",
-            name    : {
-                last : "Blinov",
-                first: "Alexey"
-            },
-            fullName: "Alexey Blinov",
-            id      : "55b92ad521e4b7c40f00060c"
-        },
-        isOrder       : true,
-        type          : "Invoiced",
-        forSales      : true,
-        currency      : {
-            rate: 1,
-            _id : {
-                _id     : "565eab29aeb95fa9c0f9df2d",
-                sequence: 0,
-                name    : "USD"
-            }
-        }
-    };
     var fakeDeparmentsForDD = {
         data: [
             {
@@ -19397,6 +19318,93 @@ define([], function () {
             }
         }
     };
+
+    var fakeNewOrderById = {
+        _id            : "576a6a929c408e7d16c3ddf6",
+        __v            : 0,
+        proformaCounter: 0,
+        editedBy       : {
+            date: "2016-06-22T10:38:10.833Z",
+            user: "52203e707d4dba8813000003"
+        },
+        createdBy      : {
+            date: "2016-06-22T10:38:10.833Z",
+            user: "52203e707d4dba8813000003"
+        },
+        creationDate   : "2016-06-22T10:38:10.833Z",
+        groups         : {
+            group: [],
+            users: [],
+            owner: null
+        },
+        attachments    : [],
+        whoCanRW       : "everyOne",
+        workflow       : {
+            _id   : "55647b932e4aa3804a765ec5",
+            name  : "Not Invoiced",
+            status: "New"
+        },
+        products       : [
+            {
+                scheduledDate: "",
+                jobs         : {
+                    _id : "576a6a7b9c408e7d16c3ddf3",
+                    name: "asdasdasd"
+                },
+                description  : "",
+                product      : {
+                    _id : "5540d528dacb551c24000003",
+                    name: "IT services"
+                },
+                unitPrice    : 12312300,
+                subTotal     : 12312300,
+                taxes        : 0,
+                quantity     : 1
+            }
+        ],
+        paymentInfo    : {
+            taxes  : 0,
+            unTaxed: 12312300,
+            total  : 12312300
+        },
+        paymentTerm    : null,
+        invoiceRecived : false,
+        invoiceControl : null,
+        incoterm       : null,
+        destination    : null,
+        name           : "PO1120",
+        expectedDate   : "2016-06-21T21:00:00.000Z",
+        orderDate      : "2016-06-21T21:00:00.000Z",
+        deliverTo      : {
+            _id : "55543831d51bdef79ea0d58c",
+            name: "YourCompany"
+        },
+        project        : {
+            _id : "55b92ad621e4b7c40f00065f",
+            name: "IOS/Android QA"
+        },
+        supplier       : {
+            _id     : "55b92ad521e4b7c40f00060c",
+            name    : {
+                last : "Blinov",
+                first: "Alexey"
+            },
+            fullName: "Alexey Blinov",
+            id      : "55b92ad521e4b7c40f00060c"
+        },
+        isOrder        : true,
+        type           : "Not Invoiced",
+        forSales       : true,
+        currency       : {
+            rate: 1,
+            _id : {
+                _id     : "565eab29aeb95fa9c0f9df2d",
+                sequence: 0,
+                name    : "USD"
+
+            }
+        }
+    };
     var fakeProformas = {
         total: 2,
         data: [
@@ -19649,6 +19657,21 @@ define([], function () {
         ]
     };
 
+    var fakeOrderWorkflow = {
+        _id: "55647b932e4aa3804a765ec5",
+        color: "#2C3E50",
+        name: "Not Invoiced",
+        sequence: 3,
+        status: "New",
+        wId: "Sales Order",
+        wName: "order",
+        source: "purchase",
+        targetSource: [
+            "quotation"
+        ],
+        visible: true
+    }
+
     return {
         fakeProjects                                : fakeProjects,
         fakeWorkflows                               : fakeWorkflows,
@@ -19683,6 +19706,8 @@ define([], function () {
         fakeProformas                               : fakeProformas,
         fakePaymentTerms                            : fakePaymentTerms,
         fakePaymentMethods                          : fakePaymentMethods,
-        fakeProjectPositions                        : fakeProjectPositions
+        fakeProjectPositions                        : fakeProjectPositions,
+        fakeOrderWorkflow                           : fakeOrderWorkflow,
+        fakeNewOrderById                            : fakeNewOrderById
     };
 });
