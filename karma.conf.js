@@ -48,11 +48,11 @@ module.exports = function (config) {
 
         exclude: [],
 
-        /*preprocessors: {
-            'public/js/models/!**!/!*.js'     : ['coverage'],
+        preprocessors: {
+            'public/js/models/**/*.js'     : ['coverage'],
             'public/js/views/!**!/!*.js'      : ['coverage'],
-            'public/js/collections/!**!/!*.js': ['coverage']
-        },*/
+            'public/js/collections/!**/!*.js': ['coverage']
+        },
 
         coverageReporter: {
             type: 'html',
@@ -69,7 +69,7 @@ module.exports = function (config) {
 
         /* autoWatch: true, */
 
-        browsers: ['Firefox', 'Chrome', /* 'Safari',  'IE', */'PhantomJS'],
+        browsers: ['Firefox', 'Chrome',  /*'Safari',*/  'IE', 'PhantomJS'],
 
         singleRun: true,
 
