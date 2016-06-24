@@ -50,11 +50,13 @@ define([
         },
 
         initialize: function (options) {
+            var self = this;
 
             _.bindAll(this, 'render', 'saveItem');
             _.bindAll(this, 'render', 'deleteItem');
 
             this.eventChannel = options.eventChannel;
+
 
             this.isWtrack = !!options.isWtrack;
             this.filter = options.filter;
@@ -78,7 +80,7 @@ define([
                         console.log('can\'t fetch current db');
                     }
 
-                    this.render();
+                    self.render();
                 });
             } else {
                 this.render();
