@@ -653,7 +653,8 @@
         journalEntry: {
             journalName: {
                 displayName: 'Journal',
-                backend    : 'journal.name'
+                backend    : 'journal.name',
+                type       : 'string'
             },
 
             sourceDocument: {
@@ -664,7 +665,52 @@
             creditAccount: {
                 displayName: 'Credit Account',
                 backend    : 'journal.creditAccount._id'
-            }
+            },
+
+            salesManager: {
+                backend: 'salesmanager._id'
+            },
+
+            project: {
+                backend: 'project._id'
+            },
+
+            type: {
+                backend: 'project.projecttype',
+                type   : 'string'
+            },
+
+            date: {
+                backend: 'date',
+                type   : 'date'
+            },
+
+            array: ['journalName', 'sourceDocument', 'creditAccount']
+        },
+
+        inventoryReport: {
+            project: {
+                displayName: 'Project',
+                backend    : 'project._id'
+            },
+
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager._id'
+            },
+
+            type: {
+                displayName: 'Project Type',
+                backend    : 'project.projecttype',
+                type       : 'string'
+            },
+
+            date: {
+                backend: 'date',
+                type   : 'date'
+            },
+
+            array: ['project', 'salesManager', 'type']
         }
     };
 
