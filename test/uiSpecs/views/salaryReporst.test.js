@@ -12,7 +12,7 @@ define([
     'chai-jquery',
     'sinon-chai',
     'custom',
-    'filterTest'
+    '../modules/filterTest'
 ], function (modules, fixtures, SalaryReportCollection, MainView, ListView, TopBarView, eventsBinder, $, chai, chaiJquery, sinonChai, FilterTest) {
     'use strict';
 

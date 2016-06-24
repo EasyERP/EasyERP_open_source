@@ -1287,13 +1287,12 @@ define([
     var topBarView;
     var leadsCollection;
     var listView;
-    var filterTest1 = new FilterTest('contactName', 'source');
-    var filterTest2 = new FilterTest('workflow', 'salesPerson');
-    var jQueryAjaxSpy = sinon.spy($, 'ajax');
     var filterOptions = {
         url        : '/leads/',
         contentType: 'Leads'
     };
+    var filterTest = FilterTest(filterOptions);
+    var jQueryAjaxSpy = sinon.spy($, 'ajax');
     var fakeResponseSaveFilter = {"success":{"_id":"52203e707d4dba8813000003","__v":0,"attachments":[],"lastAccess":"2016-06-23T12:46:39.099Z","profile":1387275598000,"relatedEmployee":"55b92ad221e4b7c40f00004f","savedFilters":[{"_id":"574335bb27725f815747d579","viewType":"","contentType":null,"byDefault":true},{"_id":"576140b0db710fca37a2d950","viewType":"","contentType":null,"byDefault":false},{"_id":"5761467bdb710fca37a2d951","viewType":"","contentType":null,"byDefault":false},{"_id":"57615278db710fca37a2d952","viewType":"","contentType":null,"byDefault":false},{"_id":"576be27e8833d3d250b617a5","contentType":"Leads","byDefault":false}],"kanbanSettings":{"tasks":{"foldWorkflows":["Empty"],"countPerPage":10},"applications":{"foldWorkflows":["Empty"],"countPerPage":10},"opportunities":{"foldWorkflows":["Empty"],"countPerPage":10}},"credentials":{"access_token":"","refresh_token":""},"pass":"082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9","email":"info@thinkmobiles.com","login":"admin"}}
 
     chai.use(chaiJquery);
@@ -2022,12 +2021,11 @@ define([
                 server.respond();
 
                 expect(deleteEditSpy.calledOnce).to.be.true;
-                expect(alertStub.calledOnce).to.be.true;
             });
 
             it('Try to delete item with good result', function () {
-                var $deleteBtn;
                 var leadUrl = new RegExp('\/leads\/', 'i');
+                var $deleteBtn;
 
                 windowConfirmStub.returns(true);
 
@@ -2041,7 +2039,21 @@ define([
                 expect(windowConfirmStub.called).to.be.true;
             });
 
-            filterTest1.selectFilter(jQueryAjaxSpy, filterOptions, fakeLeads, fakeResponseSaveFilter);
+            it('Try to filter list view by contactName and source', function () {
+                filterTest.select2FiltersAndremove1.call(this, 'contactName', 'source', 'listView', jQueryAjaxSpy, fakeLeads);
+            });
+
+            it('Try to save name filter', function () {
+                filterTest.saveFilter.call(this, fakeResponseSaveFilter);
+            });
+
+            it('Try remove saved Filters', function () {
+                filterTest.removeSavedFilter.call(this);
+            });
+
+            it('Try to remove filter', function () {
+                filterTest.removeFilter.call(this, 'source', jQueryAjaxSpy);
+            });
         });
     });
 });

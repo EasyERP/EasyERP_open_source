@@ -1,3 +1,4 @@
+/*
 define([
     'Backbone',
     'modules',
@@ -757,3 +758,4 @@ define([
     });
 
 });
+*/
