@@ -99,18 +99,18 @@ define([
         },
 
         events: {
-            'mouseenter .avatar'                                             : 'showEdit',
-            'mouseleave .avatar'                                             : 'hideEdit',
-            'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
-            'click .withEndContract .newSelectList li'                       : 'endContract',
-            'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
-            'click td.editable'                                              : 'editJob',
-            'click #update'                                                  : 'addNewRow',
-            'keyup .editing'                                                 : 'validateNumbers',
-            'click .fa-trash'                                                : 'deleteRow',
-            'click #jobPosition,#department,#manager,#jobType'               : 'showNotification',
-            'change .editable '                                              : 'setEditable',
-            'keydown input.editing'                                          : 'keyDown'
+            'mouseenter .avatar'                                   : 'showEdit',
+            'mouseleave .avatar'                                   : 'hideEdit',
+            'click .endContractReasonList, .withEndContract .arrow': 'showEndContractSelect',
+            'click .withEndContract .newSelectList li'             : 'endContract',
+            // 'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
+            'click td.editable'                                    : 'editJob',
+            'click #update'                                        : 'addNewRow',
+            'keyup .editing'                                       : 'validateNumbers',
+            'click .fa-trash'                                      : 'deleteRow',
+            'click #jobPosition,#department,#manager,#jobType'     : 'showNotification',
+            'change .editable '                                    : 'setEditable',
+            'keydown input.editing'                                : 'keyDown'
 
         },
 
@@ -185,6 +185,32 @@ define([
             $thisEl.find('.withEndContract').hide();
 
             this.renderRemoveBtn();
+
+            var $tr = newTr;
+            var salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
+            var manager = $tr.find('#projectManagerDD').attr('data-id') || null;
+            var dateText = $.trim($tr.find('td').eq(2).text());
+            var date = dateText ? new Date(dateText) : new Date();
+            var jobPosition = $tr.find('#jobPositionDd').attr('data-id');
+            var weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+            var department = $tr.find('#departmentsDd').attr('data-id');
+            var jobType = $.trim($tr.find('#jobTypeDd').text());
+            var info = $tr.find('#statusInfoDd').val();
+            var event = $tr.attr('data-content');
+
+            var transfer = {
+                status              : event,
+                date                : date,
+                department          : department,
+                jobPosition         : jobPosition,
+                manager             : manager,
+                jobType             : jobType,
+                salary              : salary,
+                info                : info,
+                weeklyScheduler     : weeklyScheduler,
+            };
+            var model = new TransferModel(transfer);
+            this.editCollection.add(model);
         },
 
         renderRemoveBtn: function () {
@@ -351,9 +377,6 @@ define([
             } else {
                 $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
-
-            this.setEditable($element);
-            this.setChangedValueToModel();
         },
 
         setEditable: function (td) {
