@@ -165,6 +165,36 @@ define([
             $('.edit-dialog').remove();
         },
 
+        formulaParser: function (arr) {
+            var formulaStr = '';
+            var length = arr.length || 0;
+            var i;
+            var formulaObject = {};
+            var lastSign;
+            var signs = ['+', '-', '/', '*'];
+
+            this.operations = {
+                multiply : '*',
+                divide   : '/',
+                substract: '-',
+                add      : '+'
+            };
+
+            for (i = 0; i <= length - 1; i++) {
+                formulaObject = arr[i];
+
+                formulaStr += ' ' + formulaObject.operand + ' ' + this.operations[formulaObject.operation] + ' ' + formulaObject.ratio + ' ' + this.operations[formulaObject.prefix];
+            }
+
+            lastSign = formulaStr[formulaStr.length - 1];
+
+            if (signs.indexOf(lastSign) !== -1) {
+                formulaStr = formulaStr.substr(0, formulaStr.length - 1);
+            }
+
+            return formulaStr;
+        },
+
         renderComponents: function () {
             var self = this;
             var model = self.model.toJSON();
@@ -179,11 +209,7 @@ define([
                 arr.push(model.deductions[deduction]);
             });
 
-            arr = _.sortBy(arr, 'seq');
-
-            arr.forEach(function (deduction) {
-                $deductionComponents.append(self.componentTemplate(deduction));
-            });
+            $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
 
             arr = [];
 
@@ -191,11 +217,7 @@ define([
                 arr.push(model.earnings[earning]);
             });
 
-            arr = _.sortBy(arr, 'seq');
-
-            arr.forEach(function (earning) {
-                $earningComponents.append(self.componentTemplate(earning));
-            });
+            $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
 
         },
 

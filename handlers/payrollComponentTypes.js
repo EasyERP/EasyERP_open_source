@@ -17,6 +17,19 @@ var PayrollComponentType = function (models) {
         });
     };
 
+    this.getById = function (req, res, next) {
+        var db = req.session.lastDb;
+        var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
+        var id = req.query.id;
+
+        PayrollComponentType.findById(id, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({component: result});
+        });
+    };
+
     this.getForDd = function (req, res, next) {
         var db = req.session.lastDb;
         var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);

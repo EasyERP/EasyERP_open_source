@@ -7,8 +7,9 @@ define([
     'text!templates/payrollStructureTypes/componentForEdit.html',
     'views/payrollStructureTypes/structureElement/CreateView',
     'models/PayrollStructureTypesModel',
-    'populate'
-], function ($, _, Backbone, Parent, EditTemplate, componentTemplate, StructureElementView, PayrollStructureTypesModel, populate) {
+    'populate',
+    'dataService'
+], function ($, _, Backbone, Parent, EditTemplate, componentTemplate, StructureElementView, PayrollStructureTypesModel, populate, dataService) {
 
     var EditView = Parent.extend({
         el               : '#content-holder',
@@ -44,15 +45,14 @@ define([
             var type = $el.closest('div').attr('data-id') + 's';
             var model = self.model;
             var tempObj = {};
-            var arr;
 
             e.preventDefault();
             e.stopPropagation();
 
-            arr = model.get(type);
-            delete arr[id];
-            tempObj[type] = arr;
+            tempObj[type] = [];
             model.set(tempObj);
+
+            $el.remove();
 
             self.renderComponents();
         },
@@ -61,22 +61,17 @@ define([
             var self = this;
             var $target = $(e.target);
             var id = $target.attr('id');
-            var parentA = $target.closest('a').attr('id');
-            var optionsElement = _.find(this.responseObj['#' + parentA], function (el) {
-                return el._id === id;
-            });
-            var $Components = this.$el.find('#' + parentA).closest('div').parent('div').find('#groupList');
 
-            $Components.append(self.componentTemplate(optionsElement));
+            dataService.getData('payrollComponentTypes/form', {id: id}, function (result) {
+                self.newStructureComponent(result.component);
+            });
         },
 
-        newStructureComponent: function (component, modelComponent) {
+        newStructureComponent: function (component) {
             var self = this;
             var model = self.model;
 
-            component._id = modelComponent.id;
-
-            (model.get([component.type]))[component.id] = component;
+            model.set(component.type, _.union(component.formula, model.get([component.type])));
 
             self.renderComponents();
         },
@@ -104,22 +99,17 @@ define([
             var name = $.trim($currentEl.find('#payrollStructureName').val());
             var $earnings = $currentEl.find('[data-id="earning"]').find('li');
             var $deductions = $currentEl.find('[data-id="deduction"]').find('li');
-            var earnings = [];
-            var deductions = [];
             var data;
+            var earnings;
+            var deductions;
 
-            $earnings.each(function () {
-                earnings.push($(this).attr('id'));
-            });
-
-            $deductions.each(function () {
-                deductions.push($(this).attr('id'));
-            });
+            earnings = this.model.get('earnings');
+            deductions = this.model.get('deductions');
 
             data = {
-                name     : name,
-                earning  : earnings,
-                deduction: deductions
+                name      : name,
+                earnings  : earnings,
+                deductions: deductions
             };
 
             if (!name) {
@@ -173,7 +163,7 @@ define([
             for (i = 0; i <= length - 1; i++) {
                 formulaObject = arr[i];
 
-                formulaStr += formulaObject.operand + ' ' + this.operations[formulaObject.operation] + ' ' + formulaObject.ratio + ' ' + this.operations[formulaObject.prefix];
+                formulaStr += ' ' + formulaObject.operand + ' ' + this.operations[formulaObject.operation] + ' ' + formulaObject.ratio + ' ' + this.operations[formulaObject.prefix];
             }
 
             lastSign = formulaStr[formulaStr.length - 1];

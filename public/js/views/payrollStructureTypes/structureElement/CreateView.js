@@ -48,19 +48,35 @@ define([
             ];
 
             // todo fill with real data;
+            /* self.responseObj['#operandDd'] = [
+             {
+             _id : 'const',
+             name: 'Constant'
+             }, {
+             _id : 'other',
+             name: 'ref:other'
+             }, {
+             _id : 'other2',
+             name: 'var:other2'
+             }, {
+             _id : 'other3',
+             name: 'var:other3'
+             }
+             ];*/
+
             self.responseObj['#operandDd'] = [
                 {
                     _id : 'const',
                     name: 'Constant'
                 }, {
-                    _id : 'other',
-                    name: 'ref:other'
+                    _id : 'base',
+                    name: 'base'
                 }, {
-                    _id : 'other2',
-                    name: 'var:other2'
+                    _id : 'overtime',
+                    name: 'overtime'
                 }, {
-                    _id : 'other3',
-                    name: 'var:other3'
+                    _id : 'vacation',
+                    name: 'vacation'
                 }
             ];
 

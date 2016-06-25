@@ -16,7 +16,7 @@ module.exports = function (models) {
         var viewType = req.params.viewType;
         switch (viewType) {
             case 'form':
-                handler.getInvoiceById(req, res, next);
+                handler.getById(req, res, next);
                 break;
             default:
                 handler.getForView(req, res, next);
