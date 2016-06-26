@@ -3,8 +3,8 @@ define([
     'Underscore',
     'jQuery',
     'views/menu/MenuItem',
-    'collections/menu/MenuItems'
-], function (Backbone, _, $, MenuItemView) {
+	'text!templates/menu/LeftMenuTemplate.html',
+], function (Backbone, _, $, MenuItemView, LeftMenuTemplate) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
         tagName       : 'nav',
@@ -14,6 +14,8 @@ define([
         selectedId    : null,
 
         initialize: function (options) {
+			var keys;
+			console.log(options);
             if (!options.collection) {
                 App.render({
                     type   : 'error',
@@ -22,62 +24,18 @@ define([
             }
 
             this.collection = options.collection;
-
-            if (options.currentRoot) {
-                this.currentSection = options.currentRoot[0] ? options.currentRoot[0].get('mname') : null;
-            }
-
-            this.currentChildren = options.currentChildren;
-
-            if (this.currentChildren && this.currentChildren.length > 0) {
-                this.selectedId = this.currentChildren[0].get('_id');
-                this.render(null, this.currentChildren[0].get('_id'));
-            } else {
-                this.render();
-            }
-
-            this.collection.bind('reset', _.bind(this.render, this));
-            this.mouseLeave = _.debounce(this.mouseLeaveEl, 2000);
-
-            _.bindAll(this, 'render');
+			
+            this.render();
         },
 
         events: {
-            'click a'     : 'selectMenuItem',
-            'mouseover a' : 'hoverItem',
-            'mouseleave a': 'mouseLeave'
+            'click .root' : 'openRoot'
         },
 
-        setCurrentSection: function (section) {
-            this.leftMenu.currentSection = section;
-            this.leftMenu.lastClickedLeftMenuItem = null;
-            this.leftMenu.selectedId = null;
-            this.leftMenu.render();
+        openRoot:function(e){
+            this.$el.find('.root.opened').removeClass('opened');
+            $(e.target).closest('.root').addClass('opened')
         },
-
-        mouseOver: function (section, selectedId) {
-            if (this.leftMenu) {
-                this.leftMenu.currentSection = section;
-                this.leftMenu.render(true, selectedId);
-            } else {
-                this.currentSection = section;
-                this.render(true, selectedId);
-
-            }
-        },
-
-        updateLeftMenu: function (currentChildren, currentRoot) {
-            this.currentChildren = currentChildren;
-            this.currentSection = currentRoot[0] ? currentRoot[0].get('mname') : null;
-            this.selectedId = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get('_id') : null;
-            this.render(null, this.selectedId);
-        },
-
-        hoverItem: function (e) {
-            this.$el.find('li.hover').removeClass('hover');
-            $(e.target).closest('li').addClass('hover');
-        },
-
         selectMenuItem: function (e) {
             var root = this.collection.root();
             var i;
@@ -96,89 +54,13 @@ define([
             }
         },
 
-        mouseLeaveEl: function (option) {
-            var self = this;
 
-            var unSelect = function (section) {
-                var selectSection = $('#mainmenu-holder .selected > a').text();
-
-                if (selectSection === section) {
-                    return;
-                }
-
-                self.mouseOver(selectSection, self.selectedId);
-                $('#mainmenu-holder .hover').not('.selected').removeClass('hover');
-            };
-            unSelect(option);
-        },
-
-        mouseLeave: function (event) {
-            this.mouseLeaveEl = _.bind(this.mouseLeaveEl, this, this.currentSection);
-            this.mouseLeaveEl = _.debounce(this.mouseLeaveEl, 2000);
-            this.mouseLeaveEl();
-        },
-
-        renderMenu: function (list, onMouseOver) {
-            var self = this;
-            var $dom = $('<ul></ul>');
-            var clickEl;
-            var children;
-            var _el;
-
-            if (_.size(list) === 0) {
-                return null;
-            }
-
-            _.each(list, function (model) {
-                var html = this.renderMenuItem(model);
-
-                $dom.append(html);
-            }, this);
-
-            clickEl = $dom.find('a')[0];
-            children = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get('_id') : null;
-
-            if (this.currentChildren) {
-                clickEl = $dom.find('li#' + children + ' a')[0];
-            }
-
-            _el = $('.selected > a').text();
-
-            $(clickEl).on('click', {mouseOver: onMouseOver}, function (option) {
-                if (_el === self.currentSection) {
-                    $(clickEl).closest('li').addClass('selected');
-                }
-                if (!option.data.mouseOver) {
-                    $(clickEl).closest('li').addClass('selected');
-                    window.location.href = $(clickEl).attr('href');
-                }
-            });
-            if (!this.currentChildren) {
-                $(clickEl).click();
-            }
-            this.currentChildren = null;
-
-            return $dom;
-        },
-
-        renderMenuItem: function (model) {
-            var view = new MenuItemView({model: model});
-            var elem = view.render().el;
-            return elem;
-        },
-
-        render: function (onMouseOver, selectedId) {
+        render: function () {
             var $el = this.$el;
-            var currentModule = null;
-            var root = this.collection.root();
-            var i;
-            var elem;
-            var len;
-            var currentSelElem;
 
-            $el.html('');
+            $el.html(_.template(LeftMenuTemplate)( {menuList: this.collection.toJSON()} ));
 
-            if (this.currentSection === null) {
+            /*if (this.currentSection === null) {
                 this.currentSection = root[0].get('mname');
             }
 
@@ -197,7 +79,7 @@ define([
                 currentSelElem = $(this.lastClickedLeftMenuItem);
             }
             $(currentSelElem).closest('ul').find('.selected').removeClass('selected');
-            $(currentSelElem).addClass('selected');
+            $(currentSelElem).addClass('selected');*/
 
             return this;
         }

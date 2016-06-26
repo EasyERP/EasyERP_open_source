@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var redisStore = require('../helpers/redisClient');
+var objectId = mongoose.Types.ObjectId;
 
 var Module = function (models) {
     'use strict';
@@ -58,10 +59,158 @@ var Module = function (models) {
         };
     }
 
+    function getModules(req, userId, callback){
+        models
+            .get(req.session.lastDb, 'User', userSchema)
+            .aggregate([
+                    {
+                        $match:{
+                            _id: objectId(userId)
+                        }
+                    },
+                    {
+                        $lookup:{
+                            from:'Profile',
+                            localField:'profile',
+                            foreignField:'_id',
+                            as:'profile'
+                        }
+                    },
+                    {
+                        $project:{
+                            'profileAccess':{
+                                $arrayElemAt:[
+                                    '$profile.profileAccess',
+                                    0
+                                ]
+                            },
+                            _id:0
+                        }
+                    },
+                    {
+                        $match:{
+                            'profileAccess.access.read':true
+                        }
+                    },
+                    {
+                        $unwind:'$profileAccess'
+                    },
+                    {
+                        $group:{
+                            _id:'$profileAccess.module'
+                        }
+                    },
+                    {
+                        $lookup:{
+                            from:'modules',
+                            localField:'_id',
+                            foreignField:'_id',
+                            as:'module'
+                        }
+                    },
+                    {
+                        $match:{
+                            'module.visible':true
+                        }
+                    },
+                    {
+                        $project:{
+                            module:{
+                                $arrayElemAt:[
+                                    '$module',
+                                    0
+                                ]
+                            },
+                            _id:0
+                        }
+                    },
+                    {
+                        $project:{
+                            _id:'$module._id',
+                            mname:'$module.mname',
+                            href:'$module.href',
+                            sequence:'$module.sequence',
+                            parrent:'$module.parrent',
+                            link:'$module.link'
+
+                        }
+                    },
+                    {
+                        $sort:{
+                            sequence:1
+                        }
+                    },
+                    {
+                        $group:{
+                            _id:'$parrent',
+                            subModules:{
+                                $push:'$$ROOT'
+                            }
+                        }
+                    },
+                    {
+                        $match:{
+                            _id:{
+                                $ne:null
+                            }
+                        }
+                    },
+                    {
+                        $lookup:{
+                            from:'modules',
+                            localField:'_id',
+                            foreignField:'_id',
+                            as:'module'
+                        }
+
+                    },
+                    {
+                        $project:{
+                            module:{
+                                $arrayElemAt:[
+                                    '$module',
+                                    0
+                                ]
+                            },
+                            subModules:{
+                                mname:1,
+                                href:1,
+                                link:1
+                            },
+                            _id:0
+                        }
+                    },
+                    {
+                        $match:{
+                            'module.visible':true
+                        }
+                    },
+                    {
+                        $sort:{
+                            'module.sequence':1
+                        }
+                    },
+                    {
+                        $project:{
+                            _id:'$module._id',
+                            mname:'$module.mname',
+                            href:'$module.href',
+                            link:'$module.link',
+                            subModules:1
+
+                        }
+                    }
+
+                ],
+
+                callback
+            );
+    }
+
     this.getAllModulesByProfile = function (req, res, next) {
         var userId = req.session ? req.session.uId : null;
         var key = req.session.profileId;
-        var userProfileRetriver = _userProfileRetriver(req, userId);
+        /*var userProfileRetriver = _userProfileRetriver(req, userId);
         var profileRetriver = _profileRetriver(req);
 
         function modulesRetriver(modulesId, waterFallCb) {
@@ -77,9 +226,9 @@ var Module = function (models) {
 
                 waterFallCb(null, modules);
             });
-        }
+        }*/
 
-        async.waterfall([userProfileRetriver, profileRetriver, modulesRetriver], function (err, modules) {
+        getModules(req, userId, function (err, modules) {
             if (err) {
                 return next(err);
             }

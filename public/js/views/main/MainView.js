@@ -52,14 +52,14 @@ define([
                 currentRoot    : currentRoot
             });
 
-            this.topMenu = new TopMenuView({
+           /* this.topMenu = new TopMenuView({
                 collection : this.collection.getRootElements(),
                 currentRoot: currentRoot,
                 leftMenu   : this.leftMenu
             });
 
             this.topMenu.bind('changeSelection', this.leftMenu.setCurrentSection, {leftMenu: this.leftMenu});
-            this.topMenu.bind('mouseOver', this.leftMenu.mouseOver, {leftMenu: this.leftMenu});
+            this.topMenu.bind('mouseOver', this.leftMenu.mouseOver, {leftMenu: this.leftMenu});*/
         },
 
         updateMenu: function (contentType) {
@@ -67,8 +67,8 @@ define([
             var currentRootId = currentChildren[0] ? currentChildren[0].get('parrent') : null;
             var currentRoot = this.collection.where({_id: currentRootId});
 
-            this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
-            this.topMenu.updateTopMenu(currentRoot);
+            //this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
+           // this.topMenu.updateTopMenu(currentRoot);
         },
 
         showSelect: function (e) {

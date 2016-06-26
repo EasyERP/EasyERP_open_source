@@ -10062,3 +10062,24 @@ textarea#editInput {
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
 }
+
+
+
+/*i know you think my code is a crap, so please rewrite it*/
+#tabmenu-holder ul{
+  list-style:none;
+}
+#tabmenu-holder li{
+  float:left;
+  padding:5px 10px;
+}
+#tabmenu-holder li.active a{
+  color:red
+}
+
+#content-holder .cached-holder{
+  display:none;
+}
+#content-holder .cached-holder.active{
+  display:block;
+}

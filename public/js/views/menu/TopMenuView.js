@@ -11,6 +11,7 @@ define([
         el            : '#mainmenu-holder nav ul',
         selectedModule: null,
         initialize    : function (options) {
+            console.log(options);
             if (!options.collection) {
                 App.render({
                     type   : 'error',

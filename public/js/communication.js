@@ -7,6 +7,7 @@ define([
         $.ajax({
             url    : url,
             type   : 'GET',
+            cache  : false,
             success: function () {
                 return callback(true);
             },

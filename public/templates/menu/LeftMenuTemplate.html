@@ -1,0 +1,13 @@
+<ul>
+  <% _.forEach(menuList, function(parent){%>
+  <li class="root"><a href="javascript:;"><%=parent.mname%></a>
+	<ul>
+	  <% _.forEach(parent.subModules, function(child){%>
+	  <li><a href="#easyErp/<%=child.href%>"><%=child.mname%></a>
+
+	  </li>
+	  <%}) %>
+	</ul>
+  </li>
+  <%}) %>
+</ul>
