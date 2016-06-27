@@ -501,18 +501,18 @@ var Employee = function (event, models) {
         employee.editedBy.date = new Date();
 
         event.emit('updateSequence', Model, 'sequence', 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
-            var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+            //var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
 
             employee.sequence = sequence;
 
-            Department.findById(employee.department, function (error, dep) {
-                if (employee.transfer && employee.transfer[0]) {
-                    if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
-                        employee.transfer[0].isDeveloper = true;
-                    } else if (employee.transfer && employee.transfer[0]) {
-                        employee.transfer[0].isDeveloper = false;
-                    }
-                }
+            //Department.findById(employee.department, function (error, dep) {
+            //    if (employee.transfer && employee.transfer[0]) {
+            //        if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
+            //            employee.transfer[0].isDeveloper = true;
+            //        } else if (employee.transfer && employee.transfer[0]) {
+            //            employee.transfer[0].isDeveloper = false;
+            //        }
+            //    }
 
                 employee.save(function (error, result) {
                     if (error) {
@@ -527,7 +527,7 @@ var Employee = function (event, models) {
 
                     event.emit('recollectVacationDash');
                 });
-            });
+            //});
 
         });
     };
@@ -563,6 +563,29 @@ var Employee = function (event, models) {
             }
 
             res.status(200).send({success: 'A Transfer update success'});
+        });
+    };
+
+    this.removeTransfer = function (req, res, next) {
+
+        var TransferModel = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
+        var removeIdArray = body.removeTransfer;
+
+        async.each(removeIdArray, function (id, cb) {
+
+            TransferModel.remove({_id: objectId(id)}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+            });
+
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'A Transfers delete success'});
         });
     };
 
@@ -628,7 +651,7 @@ var Employee = function (event, models) {
                     manager             : 1,
                     date                : 1,
                     status              : 1,
-                    isDeveloper         : 1,
+                    //isDeveloper         : 1,
                     jobType             : 1,
                     info                : 1,
                     employee            : 1,
@@ -643,7 +666,7 @@ var Employee = function (event, models) {
                     manager             : 1,
                     date                : 1,
                     status              : 1,
-                    isDeveloper         : 1,
+                    //isDeveloper         : 1,
                     jobType             : 1,
                     info                : 1,
                     employee            : 1,
@@ -692,7 +715,7 @@ var Employee = function (event, models) {
                         manager             : {$arrayElemAt: ['$manager', 0]},
                         date                : 1,
                         status              : 1,
-                        isDeveloper         : 1,
+                        //isDeveloper         : 1,
                         jobType             : 1,
                         salary              : 1,
                         info                : 1,
@@ -712,7 +735,7 @@ var Employee = function (event, models) {
                         'manager.name'        : '$manager.name',
                         date                  : 1,
                         status                : 1,
-                        isDeveloper           : 1,
+                        //isDeveloper           : 1,
                         jobType               : 1,
                         salary                : 1,
                         info                  : 1,
@@ -1210,17 +1233,17 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-                if (data.transfer) {
-                    data.transfer = data.transfer.map(function (tr) {
-
-                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                            tr.isDeveloper = false;
-                        } else {
-                            tr.isDeveloper = true;
-                        }
-                        return tr;
-                    });
-                }
+                //if (data.transfer) {
+                //    data.transfer = data.transfer.map(function (tr) {
+                //
+                //        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                //            tr.isDeveloper = false;
+                //        } else {
+                //            tr.isDeveloper = true;
+                //        }
+                //        return tr;
+                //    });
+                //}
 
                 Model.findById(_id, query, {new: true}, function (err, emp) {
                     if (err) {

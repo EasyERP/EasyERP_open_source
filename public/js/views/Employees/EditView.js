@@ -12,7 +12,8 @@ define([
     'moment',
     'helpers/keyCodeHelper',
     'constants',
-    'helpers'
+    'helpers',
+    'dataService'
 ], function (Backbone,
              $,
              _,
@@ -26,7 +27,8 @@ define([
              moment,
              keyCodes,
              constants,
-             helpers) {
+             helpers,
+             dataService) {
     'use strict';
     var EditView = ParentView.extend({
         el            : '#content-holder',
@@ -36,6 +38,7 @@ define([
         responseObj   : {},
         editCollection: null,
         changedModels : {},
+        removeTransfer: [],
 
         initialize: function (options) {
             var isSalary;
@@ -138,12 +141,17 @@ define([
         deleteRow: function (e) {
             var target = $(e.target);
             var tr = target.closest('tr');
+            var transferId = tr.attr('id');
 
             tr.remove();
 
             this.$el.find('.withEndContract').show();
 
             this.renderRemoveBtn();
+
+            this.editCollection.remove(this.editCollection.get(transferId));
+
+            this.removeTransfer.push(transferId);
         },
 
         validateNumbers: function (e) {
@@ -197,19 +205,23 @@ define([
             var jobType = $.trim($tr.find('#jobTypeDd').text());
             var info = $tr.find('#statusInfoDd').val();
             var event = $tr.attr('data-content');
+            var employeeId = this.currentModel.get('_id');
 
             var transfer = {
-                status              : event,
-                date                : date,
-                department          : department,
-                jobPosition         : jobPosition,
-                manager             : manager,
-                jobType             : jobType,
-                salary              : salary,
-                info                : info,
-                weeklyScheduler     : weeklyScheduler,
+                employee       : employeeId,
+                status         : event,
+                date           : date,
+                department     : department,
+                jobPosition    : jobPosition,
+                manager        : manager,
+                jobType        : jobType,
+                salary         : salary,
+                info           : info,
+                weeklyScheduler: weeklyScheduler
             };
             var model = new TransferModel(transfer);
+
+            this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
         },
 
@@ -725,6 +737,17 @@ define([
                     }
 
                     self.editCollection.save();
+
+                    if (self.removeTransfer.length) {
+                        dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
+                            if (err) {
+                                return App.render({
+                                    type   : 'error',
+                                    message: 'Can\'t remove items'
+                                });
+                            }
+                        });
+                    }
 
                     self.deleteEditable();
 
