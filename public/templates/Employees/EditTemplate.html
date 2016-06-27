@@ -482,11 +482,10 @@
                                 <%if (transfer.salary || transfer.salary === 0) {%>
                                 <td class="editable dollar" data-content="salary" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
                                 <% } %>
-                                <td>
+                                <td class="editable" class="statusInfo" data-content="info"
+                                    data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>
 
-                                    <input id="statusInfoDd" class="statusInfo" data-content="info"
-                                           data-id="<%=transfer.info ? transfer.info : ''%> "
-                                           value='<%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>'/>
+
 
                                 </td>
                             </tr>
