@@ -401,6 +401,8 @@ define([
                         $element.text(manager);
                         $element.attr('data-id', managerId);
                     }
+
+                    changedAttr.transfered = true;
                 }
 
             } else {
@@ -713,10 +715,29 @@ define([
 
                     var modelChanged;
                     var id;
+                    var transferNewModel;
+                    var keys;
+                    var key;
 
                     for (id in self.changedModels) {
+
                         modelChanged = self.editCollection.get(id);
                         modelChanged.changed = self.changedModels[id];
+
+                        if (self.changedModels[id].transfered) {
+                            transferNewModel = new TransferModel(modelChanged.attributes);
+                            keys = Object.keys(modelChanged.attributes);
+                            for (var i = keys.length - 1; i >= 0; i--) {
+                                key = keys[i];
+                                if (key !== '_id') {
+                                    transferNewModel.changed[key] = modelChanged.attributes[key];
+                                }
+                            }
+                            delete transferNewModel.attributes._id;
+                            delete transferNewModel._id;
+                            transferNewModel.changed.status = 'transfer';
+                            self.editCollection.add(transferNewModel);
+                        }
                     }
 
                     self.editCollection.save();
@@ -770,29 +791,29 @@ define([
                     }
                     self.hideDialog();
 
-                  /*  var modelChanged;
-                    var id;
+                    /*  var modelChanged;
+                     var id;
 
-                    for (id in self.changedModels) {
-                        modelChanged = self.editCollection.get(id);
-                        modelChanged.changed = self.changedModels[id];
-                    }
+                     for (id in self.changedModels) {
+                     modelChanged = self.editCollection.get(id);
+                     modelChanged.changed = self.changedModels[id];
+                     }
 
-                    self.editCollection.save();
+                     self.editCollection.save();
 
-                    if (self.removeTransfer.length) {
-                        dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
-                            if (err) {
-                                return App.render({
-                                    type   : 'error',
-                                    message: 'Can\'t remove items'
-                                });
-                            }
-                        });
-                    }
+                     if (self.removeTransfer.length) {
+                     dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
+                     if (err) {
+                     return App.render({
+                     type   : 'error',
+                     message: 'Can\'t remove items'
+                     });
+                     }
+                     });
+                     }
 
-                    self.deleteEditable();
-                    self.changedModels = {};*/
+                     self.deleteEditable();
+                     self.changedModels = {};*/
                 },
 
                 error: function (model, xhr) {
