@@ -4,7 +4,7 @@ define([
     'Backbone',
     'views/dialogViewBase',
     'text!templates/payrollStructureTypes/EditTemplate.html',
-    'text!templates/payrollStructureTypes/componentForEdit.html',
+    'text!templates/payrollStructureTypes/componentTemplate.html',
     'views/payrollStructureTypes/structureElement/CreateView',
     'models/PayrollStructureTypesModel',
     'populate',
@@ -189,7 +189,9 @@ define([
                 arr.push(model.deductions[deduction]);
             });
 
-            $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            if (arr.length) {
+                $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            }
 
             arr = [];
 
@@ -197,7 +199,9 @@ define([
                 arr.push(model.earnings[earning]);
             });
 
-            $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            if (arr.length) {
+                $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            }
 
         },
 

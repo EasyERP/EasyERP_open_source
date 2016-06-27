@@ -7,8 +7,9 @@ define([
     'models/PayrollStructureTypesModel',
     'views/payrollStructureTypes/structureElement/CreateView',
     'text!templates/payrollStructureTypes/componentTemplate.html',
-    'populate'
-], function ($, _, Backbone, Parent, CreateTemplate, PayrollStructureTypesModel, StructureElementView, componentTemplate, populate) {
+    'populate',
+    'dataService'
+], function ($, _, Backbone, Parent, CreateTemplate, PayrollStructureTypesModel, StructureElementView, componentTemplate, populate, dataService) {
 
     var CreateView = Parent.extend({
         el               : '#content-holder',
@@ -39,12 +40,13 @@ define([
         },
 
         events: {
-            'click li'         : 'goToEditDialog',
-            'click .fa-plus'   : 'create',
-            'click .fa-trash-o': 'remove'
+            // 'click li'                                         : 'goToEditDialog',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click .fa-plus'                                   : 'create',
+            'click .fa-trash-o'                                : 'remove'
         },
 
-        newStructureComponent: function (component, modelComponent) {
+       /* newStructureComponent: function (component, modelComponent) {
             var self = this;
             var model = self.model;
 
@@ -59,6 +61,25 @@ define([
             (model.get([component.type]))[component.id] = component;
 
             self.renderComponents();
+        },*/
+
+        newStructureComponent: function (component) {
+            var self = this;
+            var model = self.model;
+
+            model.set(component.type, _.union(component.formula, model.get([component.type])));
+
+            self.renderComponents();
+        },
+
+        chooseOption: function (e) {
+            var self = this;
+            var $target = $(e.target);
+            var id = $target.attr('id');
+
+            dataService.getData('payrollComponentTypes/form', {id: id}, function (result) {
+                self.newStructureComponent(result.component);
+            });
         },
 
         goToEditDialog: function (e) {
@@ -209,7 +230,9 @@ define([
                 arr.push(model.deductions[deduction]);
             });
 
-            $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            if (arr.length) {
+                $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            }
 
             arr = [];
 
@@ -217,7 +240,9 @@ define([
                 arr.push(model.earnings[earning]);
             });
 
-            $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            if (arr.length) {
+                $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+            }
 
         },
 
