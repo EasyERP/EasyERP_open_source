@@ -501,33 +501,22 @@ var Employee = function (event, models) {
         employee.editedBy.date = new Date();
 
         event.emit('updateSequence', Model, 'sequence', 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
-            //var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
 
             employee.sequence = sequence;
 
-            //Department.findById(employee.department, function (error, dep) {
-            //    if (employee.transfer && employee.transfer[0]) {
-            //        if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
-            //            employee.transfer[0].isDeveloper = true;
-            //        } else if (employee.transfer && employee.transfer[0]) {
-            //            employee.transfer[0].isDeveloper = false;
-            //        }
-            //    }
+            employee.save(function (error, result) {
+                if (error) {
+                    return next(error);
+                }
 
-                employee.save(function (error, result) {
-                    if (error) {
-                        return next(error);
-                    }
+                res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
-                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+                if (result.isEmployee) {
+                    event.emit('recalculate', req, {}, next);
+                }
 
-                    if (result.isEmployee) {
-                        event.emit('recalculate', req, {}, next);
-                    }
-
-                    event.emit('recollectVacationDash');
-                });
-            //});
+                event.emit('recollectVacationDash');
+            });
 
         });
     };
