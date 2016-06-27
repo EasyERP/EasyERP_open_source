@@ -9,7 +9,6 @@ define([
 
         defaults: {
             date                : new Date,
-            //isDeveloper         : true,
             salary              : 0
         },
 

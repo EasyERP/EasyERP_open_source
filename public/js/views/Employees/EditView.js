@@ -98,6 +98,9 @@ define([
                 }
             ];
 
+            this.removeTransfer = [];
+            this.changedModels = {};
+
             this.render();
         },
 
@@ -173,10 +176,25 @@ define([
             var trId = newTr.attr('data-id');
             var now = moment();
 
+            var $tr;
+            var salary;
+            var manager;
+            var dateText;
+            var date;
+            var jobPosition;
+            var weeklyScheduler;
+            var department;
+            var jobType;
+            var info;
+            var event;
+            var employeeId;
+            var transfer;
+            var model;
+
             now = common.utcDateToLocaleDate(now);
 
             newTr.attr('data-id', ++trId);
-            newTr.attr('id', '');
+            //newTr.attr('id', '');
             newTr.find('td').eq(2).text(now);
 
             if (contractEndReason) {
@@ -194,20 +212,20 @@ define([
 
             this.renderRemoveBtn();
 
-            var $tr = newTr;
-            var salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
-            var manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            var dateText = $.trim($tr.find('td').eq(2).text());
-            var date = dateText ? new Date(dateText) : new Date();
-            var jobPosition = $tr.find('#jobPositionDd').attr('data-id');
-            var weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-            var department = $tr.find('#departmentsDd').attr('data-id');
-            var jobType = $.trim($tr.find('#jobTypeDd').text());
-            var info = $tr.find('#statusInfoDd').val();
-            var event = $tr.attr('data-content');
-            var employeeId = this.currentModel.get('_id');
+            $tr = newTr;
+            salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
+            manager = $tr.find('#projectManagerDD').attr('data-id') || null;
+            dateText = $.trim($tr.find('td').eq(2).text());
+            date = dateText ? new Date(dateText) : new Date();
+            jobPosition = $tr.find('#jobPositionDd').attr('data-id');
+            weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+            department = $tr.find('#departmentsDd').attr('data-id');
+            jobType = $.trim($tr.find('#jobTypeDd').text());
+            info = $tr.find('#statusInfoDd').val();
+            event = $tr.attr('data-content');
+            employeeId = this.currentModel.get('_id');
 
-            var transfer = {
+            transfer = {
                 employee       : employeeId,
                 status         : event,
                 date           : date,
@@ -219,8 +237,8 @@ define([
                 info           : info,
                 weeklyScheduler: weeklyScheduler
             };
-            var model = new TransferModel(transfer);
-
+            model = new TransferModel(transfer);
+            newTr.attr('id', model.cid);
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
         },
@@ -750,7 +768,7 @@ define([
                     }
 
                     self.deleteEditable();
-
+                    self.changedModels = {};
                 },
 
                 error: function (model, xhr) {
