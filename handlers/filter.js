@@ -1,4 +1,4 @@
-/*TODO agregation validate for empty names*/
+/*  TODO agregation validate for empty names    */
 var Filters = function (models) {
     'use strict';
 
@@ -1913,6 +1913,11 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+
+            result.onlyEmployees = {
+                _id : 'true',
+                name: 'true'
+            };
 
             res.status(200).send(result);
         });
