@@ -749,7 +749,7 @@
 
             salesManager: {
                 displayName: 'Sales Manager',
-                backend    : 'salesManager._id'
+                backend    : 'salesmanager._id'
             },
 
             type: {
