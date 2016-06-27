@@ -35,12 +35,12 @@ var TCard = function (event, models) {
      }, exportMap, "wTrack");*/
 
     this.create = function (req, res, next) {
-
+        var dbName = req.session.lastDb;
         var docs = [];
         var wTracks = [];
         var body = mapObject(req.body);
         var overTimeTcard = overTimeHelper(body);
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
         var wTrack;
         var worked = parseInt(body.worked, 10);
 
@@ -64,7 +64,7 @@ var TCard = function (event, models) {
                     cb();
                     event.emit('setReconcileTimeCard', {req: req, jobs: _wTrack.jobs});
                     event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
-                    event.emit('recollectVacationDash');
+                    event.emit('recollectVacationDash', {dbName: dbName});
                 });
             }, function (err) {
                 if (err) {
@@ -82,8 +82,9 @@ var TCard = function (event, models) {
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body) || {};
+        var dbName = req.session.lastDb;
         // var overTimeTcard = overTimeHelper(data);
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
         var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
         var worked = 0;
@@ -105,7 +106,7 @@ var TCard = function (event, models) {
 
             if (tCard) {
                 event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
-                event.emit('recollectVacationDash');
+                event.emit('recollectVacationDash', {dbName: dbName});
 
                 if (needUpdateKeys) {
                     event.emit('recalculateKeys', {req: req, wTrack: tCard});
@@ -132,7 +133,8 @@ var TCard = function (event, models) {
 
     this.putchBulk = function (req, res, next) {
         var body = req.body;
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
         var uId = req.session.uId;
 
         function resultCb(err, tCard, needUpdateKeys, cb) {
@@ -142,7 +144,7 @@ var TCard = function (event, models) {
 
             if (tCard) {
                 event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
-                event.emit('recollectVacationDash');
+                event.emit('recollectVacationDash', {dbName: dbName});
 
                 if (needUpdateKeys) {
                     event.emit('recalculateKeys', {req: req, wTrack: tCard});
@@ -196,7 +198,7 @@ var TCard = function (event, models) {
             if (err) {
                 return next(err);
             }
-            
+
             res.status(200).send({success: 'updated'});
         });
     };
@@ -898,7 +900,8 @@ var TCard = function (event, models) {
     };
 
     this.bulkRemove = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -923,7 +926,7 @@ var TCard = function (event, models) {
                 return next(err);
             }
 
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
 
             res.status(200).send({success: true});
         });
@@ -931,7 +934,8 @@ var TCard = function (event, models) {
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
 
         WTrack.findByIdAndRemove(id, function (err, tCard) {
             var projectId;
@@ -943,8 +947,8 @@ var TCard = function (event, models) {
             projectId = tCard ? tCard.project : null;
 
             journalEntry.removeBySourceDocument(req, tCard._id);
-            
-            event.emit('recollectVacationDash');
+
+            event.emit('recollectVacationDash', {dbName: dbName});
             event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
 
             res.status(200).send({success: tCard});
@@ -1071,9 +1075,10 @@ var TCard = function (event, models) {
     };
 
     this.generateWTrack = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
+        var Job = models.get(dbName, 'jobs', jobsSchema);
+        var Project = models.get(dbName, 'Project', ProjectSchema);
         var data = req.body;
         var jobId = req.headers.jobid;
 
@@ -1553,8 +1558,8 @@ var TCard = function (event, models) {
             if (err) {
                 return next(err);
             }
-            
-            event.emit('recollectVacationDash');
+
+            event.emit('recollectVacationDash', {dbName: dbName});
 
             res.status(200).send('success');
         });

@@ -129,7 +129,8 @@ var Module = function (models, event) {
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
-        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        var dbName = req.session.lastDb;
+        var Holiday = models.get(dbName, 'Holiday', HolidaySchema);
 
         data.editedBy = {
             user: req.session.uId,
@@ -147,14 +148,15 @@ var Module = function (models, event) {
 
             res.status(200).send({success: 'updated'});
             event.emit('setReconcileTimeCard', {req: req, week: response.week, year: response.year});
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
         });
     };
 
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId = req.session.uId;
-        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        var dbName = req.session.lastDb;
+        var Holiday = models.get(dbName, 'Holiday', HolidaySchema);
 
         async.each(body, function (data, cb) {
             var id = data._id;
@@ -192,13 +194,14 @@ var Module = function (models, event) {
             }
 
             res.status(200).send({success: 'updated'});
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
         });
     };
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
-        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        var dbName = req.session.lastDb;
+        var Holiday = models.get(dbName, 'Holiday', HolidaySchema);
 
         Holiday.remove({_id: id}, function (err, holiday) {
             if (err) {
@@ -206,13 +209,14 @@ var Module = function (models, event) {
             }
 
             event.emit('setReconcileTimeCard', {req: req, week: holiday.week, year: holiday.year});
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
 
             res.status(200).send({success: holiday});
         });
     };
 
     this.bulkRemove = function (req, res, next) {
+        var dbName = req.session.lastDb;
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
@@ -224,7 +228,7 @@ var Module = function (models, event) {
                 }
 
                 event.emit('setReconcileTimeCard', {req: req, week: holiday.week, year: holiday.year});
-                event.emit('recollectVacationDash');
+                event.emit('recollectVacationDash', {dbName: dbName});
 
                 cb();
             });
@@ -238,7 +242,8 @@ var Module = function (models, event) {
     };
 
     this.create = function (req, res, next) {
-        var HolidayModel = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+        var dbName = req.session.lastDb;
+        var HolidayModel = models.get(dbName, 'Holiday', HolidaySchema);
         var body = mapObject(req.body);
         var Holiday;
         var date;
@@ -261,7 +266,7 @@ var Module = function (models, event) {
 
             res.status(200).send({success: holiday});
             event.emit('setReconcileTimeCard', {req: req, week: holiday.week, year: holiday.year});
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
         });
     };
 
