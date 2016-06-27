@@ -215,8 +215,7 @@ define([
             $tr = newTr;
             salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            dateText = $.trim($tr.find('td').eq(2).text());
-            date = dateText ? new Date(dateText) : new Date();
+            date = new Date();
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             department = $tr.find('#departmentsDd').attr('data-id');
@@ -363,7 +362,7 @@ define([
 
             e.stopPropagation();
 
-            if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
+            if (id === 'jobPositionDd' || id === 'departmentsDd' || id === 'projectManagerDD' || id === 'jobTypeDd' || id === 'hireFireDd') {
 
                 this.setEditable($element);
 
@@ -506,7 +505,7 @@ define([
             $jobTrs = $jobTable.find('tr.transfer');
             sourceId = $thisEl.find('#sourceDd').attr('data-id');
             homeAddress = {};
-            transferArray = [];
+            // transferArray = [];
             fireArray = [];
             hireArray = [];
             groupsId = [];
@@ -692,7 +691,7 @@ define([
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
                 fire    : fireArray
-                //transfer: transferArray
+                // transfer: transferArray
             };
 
             if (!haveSalary) {
@@ -711,6 +710,31 @@ define([
                 wait   : true,
                 patch  : true,
                 success: function (model) {
+
+                    var modelChanged;
+                    var id;
+
+                    for (id in self.changedModels) {
+                        modelChanged = self.editCollection.get(id);
+                        modelChanged.changed = self.changedModels[id];
+                    }
+
+                    self.editCollection.save();
+
+                    if (self.removeTransfer.length) {
+                        dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
+                            if (err) {
+                                return App.render({
+                                    type   : 'error',
+                                    message: 'Can\'t remove items'
+                                });
+                            }
+                        });
+                    }
+
+                    self.deleteEditable();
+                    self.changedModels = {};
+
                     if (!isEmployee) {
                         return Backbone.history.navigate('easyErp/Applications/kanban', {trigger: true});
                     }
@@ -746,7 +770,7 @@ define([
                     }
                     self.hideDialog();
 
-                    var modelChanged;
+                  /*  var modelChanged;
                     var id;
 
                     for (id in self.changedModels) {
@@ -768,7 +792,7 @@ define([
                     }
 
                     self.deleteEditable();
-                    self.changedModels = {};
+                    self.changedModels = {};*/
                 },
 
                 error: function (model, xhr) {
