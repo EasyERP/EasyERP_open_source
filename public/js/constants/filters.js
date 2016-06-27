@@ -93,7 +93,18 @@
                 backend    : 'department._id'
             },
 
-            array: ['name', 'department']
+            projecttype: {
+                displayName: 'Project Type',
+                backend    : 'project.projecttype',
+                type       : 'string'
+            },
+
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager.employeeId'
+            },
+
+            array: ['name', 'department', 'projecttype', 'salesManager']
         },
 
         Companies: {

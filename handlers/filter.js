@@ -2206,7 +2206,11 @@ var Filters = function (models) {
     this.getDashVacationFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var EmployeeSchema = mongoose.Schemas.Employee;
+        var ProjectMembersSchema = mongoose.Schemas.ProjectMember;
+        var ProjectSchema = mongoose.Schemas.Project;
         var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
+        var ProjectMember = models.get(lastDB, 'ProjectMember', ProjectMembersSchema);
+        var Project = models.get(lastDB, 'Project', ProjectSchema);
         var pipeLine;
         var aggregation;
         var reqQuery = req.query;
@@ -2217,6 +2221,7 @@ var Filters = function (models) {
         var endDate;
         var _endDate;
         var dateRangeObject;
+        var parallelTasks;
 
         function dateRange() {
             'use strict';
@@ -2280,56 +2285,150 @@ var Filters = function (models) {
             ]
         };
 
-        pipeLine = [{
-            $match: query
-        }, {
-            $lookup: {
-                from        : 'Department',
-                localField  : 'department',
-                foreignField: '_id',
-                as          : 'department'
-            }
-        }, {
-            $project: {
-                name      : 1,
-                department: {$arrayElemAt: ['$department', 0]}
-            }
-        }, {
-            $group: {
-                _id : null,
-                name: {
-                    $addToSet: {
-                        _id : '$_id',
-                        name: {$concat: ['$name.first', ' ', '$name.last']}
+        function getSalesManagers(pCb) {
+            ProjectMember.aggregate([{
+                $match : {
+                    projectPositionId : objectId(CONSTANTS.SALESMANAGER)
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'employeeId',
+                    foreignField: '_id',
+                    as          : 'salesManagers'
+                }
+            }, {
+                $project: {
+                    salesManagers: {$arrayElemAt: ['$salesManagers', 0]}
+                }
+            }, {
+                $project : {
+                    'salesManagers._id'  : 1,
+                    'salesManagers.name' : {
+                        $concat: ['$salesManagers.name.first', ' ', '$salesManagers.name.last']
                     }
-                },
+                }
 
-                department: {
-                    $addToSet: {
-                        _id : '$department._id',
-                        name: {
-                            $ifNull: ['$department.name', 'None']
+            }, {
+                $group: {
+                    _id         : '$salesManagers._id',
+                    name: {
+                        $first: '$salesManagers.name'
+                    }
+
+                }
+
+            }
+            ], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                if (!result.length) {
+                    return pCb(null, result);
+                }
+
+                result.push({
+                    _id : 'empty',
+                    name: 'empty'
+                });
+
+                pCb(null, result);
+            });
+
+        }
+
+        function getProjectTypes (pCb) {
+            Project.aggregate([
+                {
+                    $group: {
+                        _id : '$projecttype',
+                        name : {
+                            $first: '$projecttype'
                         }
                     }
                 }
-            }
-        }];
+            ], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-        aggregation = Employee.aggregate(pipeLine);
+                if (!result.length) {
+                    return pCb(null, result);
+                }
 
-        aggregation.options = {
-            allowDiskUse: true
-        };
+                pCb(null, result);
+            });
+        }
 
-        aggregation.exec(function (err, result) {
-            if (err) {
-                return next(err);
-            }
+        function getEmployees (pCb){
+            pipeLine = [{
+                $match: query
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $project: {
+                    name      : 1,
+                    department: {$arrayElemAt: ['$department', 0]}
+                }
+            }, {
+                $group: {
+                    _id : null,
+                    name: {
+                        $addToSet: {
+                            _id : '$_id',
+                            name: {$concat: ['$name.first', ' ', '$name.last']}
+                        }
+                    },
 
-            result = result.length ? result[0] : {};
+                    department: {
+                        $addToSet: {
+                            _id : '$department._id',
+                            name: {
+                                $ifNull: ['$department.name', 'None']
+                            }
+                        }
+                    }
+                }
+            }];
 
-            res.status(200).send(result);
+            aggregation = Employee.aggregate(pipeLine);
+
+            aggregation.options = {
+                allowDiskUse: true
+            };
+
+            aggregation.exec(function (err, result) {
+                    if (err) {
+                    return next(err);
+                }
+
+                if (!result.length) {
+                    return pCb(null, result);
+                }
+
+                result = result[0];
+
+                pCb(null, result);
+            });
+        }
+
+        parallelTasks = [getEmployees, getSalesManagers, getProjectTypes];
+
+        async.parallel(parallelTasks, function (err, result) {
+            var sendFilterObject = result[0];
+
+            sendFilterObject.salesManager = result[1];
+            sendFilterObject.projecttype = result[2];
+
+            res.status(200).send(sendFilterObject);
         });
+
     };
 
     this.getExpensesPaymentsFilters = function (req, res, next) {
