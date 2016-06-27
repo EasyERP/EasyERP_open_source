@@ -214,9 +214,8 @@ define([
             $tr = newTr;
             salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            // dateText = $.trim($tr.find('td').eq(2).text());
-            // date = dateText ? new Date(dateText) : new Date();
-            date = new Date();
+            dateText = $.trim($tr.find('td').eq(2).text());
+            date = dateText ? new Date(dateText) : new Date();
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             department = $tr.find('#departmentsDd').attr('data-id');
