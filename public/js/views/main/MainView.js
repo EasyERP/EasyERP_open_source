@@ -22,7 +22,15 @@ define([
 
         events: {
             'click #loginPanel': 'showSelect',
-            click              : 'hideProp'
+            click              : 'hideProp',
+            'click #logo span' : 'expandCollapse'
+        },
+
+        expandCollapse: function(e){
+            var $logo = $(e.target).closest('#logo');
+            var isCollapsed = !$logo.hasClass('collapsed');
+            $(e.target).closest('#logo').toggleClass('collapsed');
+            this.leftMenu.updateState(isCollapsed);
         },
 
         hideProp: function (e) {
@@ -36,31 +44,35 @@ define([
         },
 
         createMenuViews: function () {
-            var currentRoot = null;
-            var currentChildren = null;
-            var currentRootId;
+            var modules = this.collection.toJSON();
 
             if (this.contentType) {
-                currentChildren = this.collection.where({href: this.contentType});
-                currentRootId = currentChildren[0] ? currentChildren[0].get('parrent') : null;
-                currentRoot = this.collection.where({_id: currentRootId});
+                this.currentModule = this.contentType;
+
+                for (var i=modules.length;i--;){
+                    for (var j=modules[i].subModules.length;j--;){
+                        if (modules[i].subModules[j].href===this.contentType){
+                            this.currentRoot = modules[i].href;
+                            break;
+                        }
+                    }
+                    if (this.currentRoot){
+                        break;
+                    }
+                }
+            } else {
+                this.currentRoot = modules[0].href;
+                this.currentModule = modules[0].subModules[0].href;
+
+                Backbone.history.navigate('easyErp/'+this.currentModule);
             }
 
             this.leftMenu = new LeftMenuView({
                 collection     : this.collection,
-                currentChildren: currentChildren,
-                currentRoot    : currentRoot
-            });
-
-           /* this.topMenu = new TopMenuView({
-                collection : this.collection.getRootElements(),
-                currentRoot: currentRoot,
-                leftMenu   : this.leftMenu
-            });
-
-            this.topMenu.bind('changeSelection', this.leftMenu.setCurrentSection, {leftMenu: this.leftMenu});
-            this.topMenu.bind('mouseOver', this.leftMenu.mouseOver, {leftMenu: this.leftMenu});*/
-        },
+                currentRoot:this.currentRoot,
+                currentModule: this.currentModule
+        });
+     },
 
         updateMenu: function (contentType) {
             var currentChildren = this.collection.where({href: contentType});

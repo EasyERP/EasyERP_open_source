@@ -59,147 +59,129 @@ var Module = function (models) {
         };
     }
 
-    function getModules(req, userId, callback){
+    function getModules(req, userId, callback) {
         models
             .get(req.session.lastDb, 'User', userSchema)
-            .aggregate([
-                    {
-                        $match:{
-                            _id: objectId(userId)
-                        }
-                    },
-                    {
-                        $lookup:{
-                            from:'Profile',
-                            localField:'profile',
-                            foreignField:'_id',
-                            as:'profile'
-                        }
-                    },
-                    {
-                        $project:{
-                            'profileAccess':{
-                                $arrayElemAt:[
-                                    '$profile.profileAccess',
-                                    0
-                                ]
-                            },
-                            _id:0
-                        }
-                    },
-                    {
-                        $match:{
-                            'profileAccess.access.read':true
-                        }
-                    },
-                    {
-                        $unwind:'$profileAccess'
-                    },
-                    {
-                        $group:{
-                            _id:'$profileAccess.module'
-                        }
-                    },
-                    {
-                        $lookup:{
-                            from:'modules',
-                            localField:'_id',
-                            foreignField:'_id',
-                            as:'module'
-                        }
-                    },
-                    {
-                        $match:{
-                            'module.visible':true
-                        }
-                    },
-                    {
-                        $project:{
-                            module:{
-                                $arrayElemAt:[
-                                    '$module',
-                                    0
-                                ]
-                            },
-                            _id:0
-                        }
-                    },
-                    {
-                        $project:{
-                            _id:'$module._id',
-                            mname:'$module.mname',
-                            href:'$module.href',
-                            sequence:'$module.sequence',
-                            parrent:'$module.parrent',
-                            link:'$module.link'
+            .aggregate([{
+                    $match: {
+                        _id: objectId(userId)
+                    }
+                }, {
+                    $lookup: {
+                        from: 'Profile',
+                        localField: 'profile',
+                        foreignField: '_id',
+                        as: 'profile'
+                    }
+                }, {
+                    $project: {
+                        'profileAccess': {
+                            $arrayElemAt: [
+                                '$profile.profileAccess',
+                                0
+                            ]
+                        },
+                        _id: 0
+                    }
+                }, {
+                    $match: {
+                        'profileAccess.access.read': true
+                    }
+                }, {
+                    $unwind: '$profileAccess'
+                }, {
+                    $group: {
+                        _id: '$profileAccess.module'
+                    }
+                }, {
+                    $lookup: {
+                        from: 'modules',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'module'
+                    }
+                }, {
+                    $match: {
+                        'module.visible': true
+                    }
+                }, {
+                    $project: {
+                        module: {
+                            $arrayElemAt: [
+                                '$module',
+                                0
+                            ]
+                        },
+                        _id: 0
+                    }
+                }, {
+                    $project: {
+                        _id: '$module._id',
+                        mname: '$module.mname',
+                        href: '$module.href',
+                        sequence: '$module.sequence',
+                        parrent: '$module.parrent',
+                        link: '$module.link'
 
-                        }
-                    },
-                    {
-                        $sort:{
-                            sequence:1
-                        }
-                    },
-                    {
-                        $group:{
-                            _id:'$parrent',
-                            subModules:{
-                                $push:'$$ROOT'
-                            }
-                        }
-                    },
-                    {
-                        $match:{
-                            _id:{
-                                $ne:null
-                            }
-                        }
-                    },
-                    {
-                        $lookup:{
-                            from:'modules',
-                            localField:'_id',
-                            foreignField:'_id',
-                            as:'module'
-                        }
-
-                    },
-                    {
-                        $project:{
-                            module:{
-                                $arrayElemAt:[
-                                    '$module',
-                                    0
-                                ]
-                            },
-                            subModules:{
-                                mname:1,
-                                href:1,
-                                link:1
-                            },
-                            _id:0
-                        }
-                    },
-                    {
-                        $match:{
-                            'module.visible':true
-                        }
-                    },
-                    {
-                        $sort:{
-                            'module.sequence':1
-                        }
-                    },
-                    {
-                        $project:{
-                            _id:'$module._id',
-                            mname:'$module.mname',
-                            href:'$module.href',
-                            link:'$module.link',
-                            subModules:1
-
+                    }
+                }, {
+                    $sort: {
+                        sequence: 1
+                    }
+                }, {
+                    $group: {
+                        _id: '$parrent',
+                        subModules: {
+                            $push: '$$ROOT'
                         }
                     }
+                }, {
+                    $match: {
+                        _id: {
+                            $ne: null
+                        }
+                    }
+                }, {
+                    $lookup: {
+                        from: 'modules',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'module'
+                    }
+
+                }, {
+                    $project: {
+                        module: {
+                            $arrayElemAt: [
+                                '$module',
+                                0
+                            ]
+                        },
+                        subModules: {
+                            mname: 1,
+                            href: 1,
+                            link: 1
+                        },
+                        _id: 0
+                    }
+                }, {
+                    $match: {
+                        'module.visible': true
+                    }
+                }, {
+                    $sort: {
+                        'module.sequence': 1
+                    }
+                }, {
+                    $project: {
+                        _id: '$module._id',
+                        mname: '$module.mname',
+                        href: '$module.href',
+                        link: '$module.link',
+                        subModules: 1
+
+                    }
+                }
 
                 ],
 
@@ -210,23 +192,6 @@ var Module = function (models) {
     this.getAllModulesByProfile = function (req, res, next) {
         var userId = req.session ? req.session.uId : null;
         var key = req.session.profileId;
-        /*var userProfileRetriver = _userProfileRetriver(req, userId);
-        var profileRetriver = _profileRetriver(req);
-
-        function modulesRetriver(modulesId, waterFallCb) {
-            models.get(req.session.lastDb, 'modules', moduleSchema).find({
-                _id    : {$in: modulesId},
-                visible: true
-            }).sort({
-                sequence: 1
-            }).exec(function (err, modules) {
-                if (err) {
-                    return waterFallCb(err);
-                }
-
-                waterFallCb(null, modules);
-            });
-        }*/
 
         getModules(req, userId, function (err, modules) {
             if (err) {
@@ -246,7 +211,7 @@ var Module = function (models) {
 
         function moduleRetriver(modulesId, waterFallCb) {
             models.get(req.session.lastDb, 'modules', moduleSchema).find({
-                _id    : {$in: modulesId},
+                _id: {$in: modulesId},
                 visible: true,
                 parrent: id
             }).sort({sequence: 1}).exec(function (err, mod) {

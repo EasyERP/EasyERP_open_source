@@ -3,7 +3,7 @@ define([
     'Underscore',
     'jQuery',
     'views/menu/MenuItem',
-	'text!templates/menu/LeftMenuTemplate.html',
+	'text!templates/menu/LeftMenuTemplate.html'
 ], function (Backbone, _, $, MenuItemView, LeftMenuTemplate) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
@@ -14,8 +14,7 @@ define([
         selectedId    : null,
 
         initialize: function (options) {
-			var keys;
-			console.log(options);
+			console.log(options.collection.toJSON());
             if (!options.collection) {
                 App.render({
                     type   : 'error',
@@ -24,12 +23,16 @@ define([
             }
 
             this.collection = options.collection;
-			
+
+            this.currentRoot = options.currentRoot;
+            this.currentModule = options.currentModule;
+
             this.render();
         },
 
         events: {
-            'click .root' : 'openRoot'
+            'click .root' : 'openRoot',
+            'click .root ul li' : 'selectMenuItem'
         },
 
         openRoot:function(e){
@@ -37,28 +40,34 @@ define([
             $(e.target).closest('.root').addClass('opened')
         },
         selectMenuItem: function (e) {
-            var root = this.collection.root();
-            var i;
-
-            this.selectedId = $(e.target).data('module-id');
-            this.$('li.selected').removeClass('selected');
-            this.lastClickedLeftMenuItem = $(e.target).data('module-id');
+            this.$el.find('li.opened').removeClass('opened');
+            this.$el.find('li.active').removeClass('active');
+            this.$el.find('li.selected').removeClass('selected');
 
             $(e.target).closest('li').addClass('selected');
+            $(e.target).closest('li.root').addClass('active opened');
+        },
 
-            for (i = 0; i < root.length; i++) {
-                if (root[i].get('mname') === this.currentSection) {
-                    $('#mainmenu-holder .selected').removeClass('selected');
-                    $('#' + this.currentSection).closest('li').addClass('selected');
-                }
+        updateState: function(isCollapsed){
+            var $submenu = this.$el.closest('#submenu-holder');
+
+            if (isCollapsed){
+                $submenu.addClass('collapsed');
+            }else{
+                $submenu.removeClass('collapsed');
             }
+
         },
 
 
         render: function () {
             var $el = this.$el;
 
-            $el.html(_.template(LeftMenuTemplate)( {menuList: this.collection.toJSON()} ));
+            $el.html(_.template(LeftMenuTemplate)( {
+                menuList: this.collection.toJSON(),
+                currentRoot:this.currentRoot,
+                currentModule: this.currentModule
+            } ));
 
             /*if (this.currentSection === null) {
                 this.currentSection = root[0].get('mname');

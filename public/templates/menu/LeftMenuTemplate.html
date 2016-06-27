@@ -1,9 +1,9 @@
 <ul>
-  <% _.forEach(menuList, function(parent){%>
-  <li class="root"><a href="javascript:;"><%=parent.mname%></a>
+  <% _.forEach(menuList, function(parent, index){%>
+  <li class="root<%=(parent.href===currentRoot)?' opened active':''%>"><i class="icon-<%=parent.href%>"></i><a href="javascript:;"><%=parent.mname%></a>
 	<ul>
-	  <% _.forEach(parent.subModules, function(child){%>
-	  <li><a href="#easyErp/<%=child.href%>"><%=child.mname%></a>
+	  <% _.forEach(parent.subModules, function(child, index){%>
+	  <li class="<%=(child.href===currentModule)?'selected':''%>"><a href="#easyErp/<%=child.href%>"><%=child.mname%></a>
 
 	  </li>
 	  <%}) %>

@@ -5,10 +5,34 @@
   }
 }
 
-#submenu-holder nav ul li{
-	float:none;
+#mainmenu-holder #logo{
+  width: 120px;
+  font-size: 20px;
+  span{
+    display: block;
+    float:right;
+    cursor: pointer;
+  }
+  &.collapsed{
+    width: 20px;
+    a{
+      display: none;
+    }
+  }
 }
 
+
+#submenu-holder nav ul li{
+	float:none;
+  &.selected{
+    a{
+    text-decoration:underline;
+  }
+  }
+}
+#submenu-holder.collapsed nav ul li{
+  width: 20px;
+}
 
 
 #submenu-holder nav>ul>li{
@@ -21,10 +45,12 @@
     display: none;
   }
   &.opened{
-    background-color: #36a9e1;
     ul{
       display: block;
     }
+  }
+  &.active{
+    background-color: #36a9e1;
   }
 }
 
