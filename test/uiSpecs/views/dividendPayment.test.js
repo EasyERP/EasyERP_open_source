@@ -7,13 +7,12 @@ define([
     'views/DividendPayments/list/ListView',
     'views/DividendPayments/TopBarView',
     'views/DividendPayments/CreateView',
-    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, modules, fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
     var fakeDividend = {

@@ -11,11 +11,14 @@ define([
     'views/DividendInvoice/EditView',
     'views/DividendPayments/CreateView',
     'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
+    'sinon-chai',
+    'constantsDir/filters'
 ], function (Backbone,
              _,
              modules,
@@ -28,11 +31,14 @@ define([
              EditView,
              PaymentsCreateView,
              FilterView,
+             FilterGroup,
+             SavedFilters,
              eventsBinder,
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             FILTER_CONSTANTS) {
     'use strict';
     var expect;
     var fakeDividendDeclaration = {
@@ -2072,13 +2078,25 @@ define([
             }
         ]
     };
+    var fakeFilters = {
+        _id: null,
+        workflow: [
+            {
+                _id: "55647d982e4aa3804a765ecb",
+                name: "Paid"
+            }
+        ]
+    };
     var view;
     var topBarView;
     var listView;
     var dividendCollection;
     var historyNavigateSpy;
     var ajaxSpy;
-    var selectFilterSpy;
+    var debounceStub;
+    var selectSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
     var removeFilterSpy;
 
     chai.use(chaiJquery);
@@ -2093,9 +2111,13 @@ define([
         before(function () {
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
             ajaxSpy = sinon.spy($, 'ajax');
-
-            selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -2103,7 +2125,10 @@ define([
 
             historyNavigateSpy.restore();
             ajaxSpy.restore();
-            selectFilterSpy.restore();
+            debounceStub.restore();
+            selectSpy.restore();
+            saveFilterSpy.restore();
+            removedFromDBSpy.restore();
             removeFilterSpy.restore();
         });
 
@@ -2221,7 +2246,6 @@ define([
             var alertStub;
             var deleteSpy;
             var paymentCreateInitSpy;
-            var debounceStub;
 
             before(function () {
                 App.startPreload = function () {
@@ -2250,9 +2274,6 @@ define([
                 alertStub.returns(true);
                 deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
                 paymentCreateInitSpy = sinon.spy(PaymentsCreateView.prototype, 'initialize');
-                debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
-                    return debFunction;
-                });
             });
 
             after(function () {
@@ -2263,12 +2284,12 @@ define([
                 alertStub.restore();
                 deleteSpy.restore();
                 paymentCreateInitSpy.restore();
-                debounceStub.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create dividendDeclarationListView', function (done) {
+                    var filterUrl = '/filter/DividendInvoice';
                     var $firstRow;
                     var colCount;
                     var paymentDate;
@@ -2282,12 +2303,14 @@ define([
                     var $pagination;
                     var $currentPageList;
 
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
                     listView = new ListView({
                         startTime : new Date(),
                         collection: dividendCollection
                     });
+                    server.respond();
 
-                    clock.tick(200);
+                    clock.tick(700);
 
                     eventsBinder.subscribeTopBarEvents(topBarView, listView);
                     eventsBinder.subscribeCollectionEvents(dividendCollection, listView);
@@ -2450,40 +2473,6 @@ define([
                     expect(ajaxResponse.data).to.have.property('page', 1);
                     expect(ajaxResponse.data).to.have.property('count', '200');
                     expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice/list/p=1/c=200');
-                });
-
-                it('Try to filter listView', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $statusBtn;
-                    var $selectedItem;
-                    var ajaxFilter;
-                    var $removeFilterBtn;
-
-                    selectFilterSpy.reset();
-                    ajaxSpy.reset();
-
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                    // filter by status
-                    $statusBtn = $searchContainer.find('#workflowFullContainer > .groupName');
-                    $statusBtn.click();
-                    $selectedItem = $searchContainer.find('#workflowUl > li').first();
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
-                    //expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($searchContainer.find('#workflowUl > li').first()).to.have.class('checkedValue');
-
-                    expect(ajaxSpy.args[0][0].data).to.have.property('filter');
-
-                    ajaxFilter = ajaxSpy.args[0][0].data.filter.workflow;
-                    expect(ajaxFilter).to.have.property('key', 'workflow._id');
-                    expect(ajaxFilter).to.have.property('value');
-                    expect(ajaxFilter.value).to.be.instanceof(Array).and.to.have.lengthOf(1);
                 });
 
                 it('Try to delete item with error response', function () {
@@ -2810,6 +2799,84 @@ define([
                     server.respond();
 
                     expect(window.location.hash).to.be.equals('#easyErp/DividendPayments/list');
+                });
+
+                it('Try to filter listView by Assigned and company', function () {
+                    var url = '/invoices/';
+                    var contentType = 'DividendInvoice';
+                    var firstValue = 'workflow';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    ajaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDividendDeclaration)]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find($firstSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
+                    expect($searchContainer.find($firstSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+                    expect(filterObject.workflow).to.not.exist;
                 });
             });
         });

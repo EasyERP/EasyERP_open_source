@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/ExpensesInvoice/filterCollection',
@@ -12,7 +13,7 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, _, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -850,6 +851,11 @@ define([
     var invoiceCollection;
     var ajaxSpy;
     var historyNavigateSpy;
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -862,6 +868,13 @@ define([
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
