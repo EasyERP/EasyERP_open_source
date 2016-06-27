@@ -9,6 +9,7 @@ var Filters = function (models) {
     var TaskSchema = mongoose.Schemas.Tasks;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var ProformaSchema = mongoose.Schemas.Proforma;
+    var ProjectMembersSchema = mongoose.Schemas.ProjectMember;
     var customerPaymentsSchema = mongoose.Schemas.Payment;
     var ExpensesInvoicePaymentSchema = mongoose.Schemas.ExpensesInvoicePayment;
     var QuotationSchema = mongoose.Schemas.Quotation;
@@ -40,6 +41,7 @@ var Filters = function (models) {
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var ExpensesPayments = models.get(lastDB, 'expensesInvoicePayment', ExpensesInvoicePaymentSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
+        var ProjectMember = models.get(lastDB, 'ProjectMember', ProjectMembersSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
         var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
         var Jobs = models.get(lastDB, 'jobs', JobsSchema);
@@ -887,53 +889,142 @@ var Filters = function (models) {
                     }
                 ]
             };
+            var parallelTasks;
 
-            Employee.aggregate([{
-                $match: matchObjectForDash
-            }, {
-                $lookup: {
-                    from        : 'Department',
-                    localField  : 'department',
-                    foreignField: '_id',
-                    as          : 'department'
-                }
-            }, {
-                $project: {
-                    name      : 1,
-                    department: {$arrayElemAt: ['$department', 0]}
-                }
-            }, {
-                $group: {
-                    _id : null,
-                    name: {
-                        $addToSet: {
-                            _id : '$_id',
-                            name: {$concat: ['$name.first', ' ', '$name.last']}
+            function getSalesManagers(pCb){
+                ProjectMember.aggregate([{
+                    $match : {
+                        projectPositionId : objectId(CONSTANTS.SALESMANAGER)
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'employeeId',
+                        foreignField: '_id',
+                        as          : 'salesManagers'
+                    }
+                }, {
+                    $project: {
+                        salesManagers: {$arrayElemAt: ['$salesManagers', 0]}
+                    }
+                }, {
+                    $project : {
+                        'salesManagers._id'  : 1,
+                        'salesManagers.name' : {
+                            $concat: ['$salesManagers.name.first', ' ', '$salesManagers.name.last']
                         }
-                    },
+                    }
 
-                    department: {
-                        $addToSet: {
-                            _id : '$department._id',
-                            name: {
-                                $ifNull: ['$department.name', 'None']
+                }, {
+                    $group: {
+                        _id         : '$salesManagers._id',
+                        name: {
+                            $first: '$salesManagers.name'
+                        }
+
+                    }
+
+                }
+                ], function (err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    if (!result.length) {
+                        return pCb(null, result);
+                    }
+
+                    result.push({
+                        _id : 'empty',
+                        name: 'empty'
+                    });
+
+                    pCb(null, result);
+                });
+            }
+
+            function getEmployees (pCb){
+                Employee.aggregate([{
+                    $match: matchObjectForDash
+                }, {
+                    $lookup: {
+                        from        : 'Department',
+                        localField  : 'department',
+                        foreignField: '_id',
+                        as          : 'department'
+                    }
+                }, {
+                    $project: {
+                        name      : 1,
+                        department: {$arrayElemAt: ['$department', 0]}
+                    }
+                }, {
+                    $group: {
+                        _id : null,
+                        name: {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
+                            }
+                        },
+
+                        department: {
+                            $addToSet: {
+                                _id : '$department._id',
+                                name: {
+                                    $ifNull: ['$department.name', 'None']
+                                }
                             }
                         }
                     }
                 }
+                ], function (err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    if (!result.length) {
+                        return pCb(null, result);
+                    }
+
+                    result = result[0];
+
+                    pCb(null, result);
+                });
             }
-            ], function (err, result) {
-                if (err) {
-                    return callback(err);
+
+            function getProjectTypes (pCb) {
+                Project.aggregate([
+                    {
+                    $group: {
+                        _id : '$projecttype',
+                        name : {
+                            $first: '$projecttype'
+                        }
+                    }
                 }
+                ], function (err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
 
-                if (!result.length) {
-                    return callback(null, result);
-                }
+                    if (!result.length) {
+                        return pCb(null, result);
+                    }
 
-                result = result[0];
+                    pCb(null, result);
+                });
+            }
 
-                callback(null, result);
+            parallelTasks = [getEmployees, getSalesManagers, getProjectTypes];
+
+            async.parallel(parallelTasks, function (err, result) {
+                var sendFilterObject = result[0];
+                sendFilterObject.salesManager = result[1];
+                sendFilterObject.projecttype = result[2];
+
+
+                callback(null, sendFilterObject);
             });
         }
 

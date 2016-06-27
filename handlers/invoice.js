@@ -680,9 +680,6 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            journalEntryComposer(resp, req.session.lastDb, function () {
-            }, req.session.uId);
-
             products = resp.products;
 
             if (resp._type !== 'Proforma') {
@@ -695,6 +692,9 @@ var Module = function (models, event) {
 
                         session: req.session
                     };
+
+                    journalEntryComposer(resp, req.session.lastDb, function () {
+                    }, req.session.uId);
 
                     workflowHandler.getFirstForConvert(request, function (err, workflow) {
                         Invoice.update({
