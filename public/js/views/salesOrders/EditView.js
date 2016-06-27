@@ -55,6 +55,8 @@ define([
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
 
+            this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
+
             this.render(options);
         },
 
@@ -282,7 +284,7 @@ define([
                     productId = targetEl.data('id');
                     scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                     quantity = targetEl.find('[data-name="quantity"]').text();
-                    price = parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="price"]').text())) * 100;
+                    price = parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="price"]').text())) * 100 || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) * 100;
                     taxes = parseFloat(helpers.spaceReplacer(targetEl.find('.taxes').text())) * 100;
                     subtotal = parseFloat(helpers.spaceReplacer(targetEl.find('.subtotal').text())) * 100;
                     jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
@@ -497,6 +499,7 @@ define([
             productItemContainer.append(
                 new ProductItemView({
                     editable       : false,
+                    editablePrice  : self.editablePrice,
                     balanceVissible: false,
                     service        : service
                 }).render({model: model}).el

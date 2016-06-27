@@ -32,7 +32,7 @@
     </td>
     <%var currencyClassVal;%>
     <%currencyClassVal = currencyClass(currency._id._id)%>
-    <td data-name="price" class="<%=editable  ? 'editable' : ''%> forNum <%=currencyClassVal%>"><% if(editable) { %><input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" value="<%=currencySplitter(product.unitPrice.toString())%>" /><% } else { %><span><%=currencySplitter(product.unitPrice.toString())%></span><% } %></td>
+    <td data-name="price" class="<%=editable || editablePrice  ? 'editable' : ''%> forNum <%=currencyClassVal%>"><% if(editable || editablePrice) { %><input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" value="<%=currencySplitter(product.unitPrice.toString())%>" /><% } else { %><span><%=currencySplitter(product.unitPrice.toString())%></span><% } %></td>
     <td class="<%=editable  ? 'editable' : ''%> <%=currencyClassVal%>"><span><%= product.taxes ?  currencySplitter(product.taxes.toString()) : ''%></span></td>
     <td class="subtotal <%=currencyClassVal%>"><span><%= product.subTotal ? currencySplitter(product.subTotal.toString()) : ''%></span></td>
 </tr>
