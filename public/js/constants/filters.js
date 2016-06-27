@@ -191,7 +191,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             supplier: {
                 displayName: 'Customer',
                 backend    : 'supplier._id'
@@ -235,6 +235,11 @@
         },
 
         DividendInvoice: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
@@ -527,6 +532,11 @@
         },
 
         Quotations: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+            
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'
@@ -539,6 +549,11 @@
         },
 
         Invoices: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'
@@ -551,6 +566,11 @@
         },
 
         salesQuotations: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+            
             project: {
                 displayName: 'Project',
                 backend    : 'project._id'
@@ -573,7 +593,12 @@
         },
 
         salesOrders: {
-            project: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+            
+            project : {
                 displayName: 'Project',
                 backend    : 'project._id'
             },
@@ -595,6 +620,11 @@
         },
 
         Orders: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+            
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'
