@@ -88,11 +88,13 @@ define([
         asyncRenderInfo: function (asyncKeys) {
             var self = this;
             var body = this.$el.find('#listTable');
+            var stDate = this.filter.startDate.value;
+            var endDate = this.filter.endDate.value;
 
             async.each(asyncKeys, function (asyncId) {
                 dataService.getData('journalEntries/getAsyncDataForGL', {
-                    startDate  : self.startDate,
-                    endDate    : self.endDate,
+                    startDate  : stDate,
+                    endDate    : endDate,
                     contentType: 'trialBalance',
                     _id        : asyncId
                 }, function (result) {

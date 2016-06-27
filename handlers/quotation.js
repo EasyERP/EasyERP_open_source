@@ -21,7 +21,6 @@ var Module = function (models, event) {
     var currencyHalper = require('../helpers/currency');
     var CONSTANTS = require('../constants/mainConstants.js');
     var pageHelper = require('../helpers/pageHelper');
-    var setTimeToDate = require('../helpers/setTimeToDate');
     var moment = require('../public/js/libs/moment/moment');
 
     function convertType(array, type) {
@@ -141,10 +140,6 @@ var Module = function (models, event) {
             }
 
             oldProducts = oldQuotation.toJSON().products;
-
-            if (data.orderDate) {
-                data.orderDate = setTimeToDate(data.orderDate);
-            }
 
             Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
                 if (err) {
@@ -528,7 +523,6 @@ var Module = function (models, event) {
 
             body.currency = body.currency || {};
             body.currency.rate = rates && rates[currency] ? rates[currency] : 1;
-            body.orderDate = setTimeToDate(body.orderDate);
             quotation = new Quotation(body);
 
             if (req.session.uId) {

@@ -7,7 +7,6 @@ var moment = require('../public/js/libs/moment/moment');
 var fs = require('fs');
 var pathMod = require('path');
 var pageHelper = require('../helpers/pageHelper');
-var setTimeToDate = require('../helpers/setTimeToDate');
 
 var Module = function (models, event) {
     'use strict';
@@ -82,7 +81,6 @@ var Module = function (models, event) {
         var invoice;
 
         function invoiceSaver(waterfallCb) {
-            body.invoiceDate = setTimeToDate(body.invoiceDate);
 
             invoice = new Invoice(body);
 
@@ -317,7 +315,6 @@ var Module = function (models, event) {
 
             invoiceCurrency = order.currency._id.name;
             order.currency._id = order.currency._id._id;
-            order.invoiceDate = setTimeToDate(order.orderDate);
 
             delete order._id;
 
@@ -572,7 +569,6 @@ var Module = function (models, event) {
                 fx.base = oxr.base;
 
                 data.currency.rate = oxr.rates[data.currency.name];
-                data.date = setTimeToDate(date);
 
                 Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                     if (err) {
@@ -670,9 +666,7 @@ var Module = function (models, event) {
         var project;
 
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
-
-        invoiceDate = setTimeToDate(invoiceDate);
-
+        
         Invoice.findByIdAndUpdate(id, {
             $set: {
                 approved   : true,

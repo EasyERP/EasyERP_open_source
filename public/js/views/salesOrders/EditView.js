@@ -304,7 +304,7 @@ define([
                 supplier         : supplier,
                 supplierReference: supplierReference,
                 products         : products,
-                orderDate        : orderDate,
+                orderDate        : helpers.setTimeToDate(orderDate),
                 expectedDate     : expectedDate,
                 destination      : destination || null,
                 incoterm         : incoterm || null,

@@ -6,7 +6,6 @@ var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
 var MAIN_CONSTANTS = require('../constants/mainConstants');
-var setTimeToDate = require('../helpers/setTimeToDate');
 
 var wTrackPayOutSchema = mongoose.Schemas.wTrackPayOut;
 var currencySchema = mongoose.Schemas.Currency;
@@ -1126,9 +1125,7 @@ var Module = function (models, event) {
         var Payment = models.get(req.session.lastDb, 'InvoicePayment', PaymentSchema);
         var removable = true;
         var waterfallTasks;
-
-        data.date = setTimeToDate(date);
-
+        
         if (body && !body.invoice) {
             return res.status(400).send();
         }

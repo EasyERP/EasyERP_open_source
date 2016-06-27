@@ -5,7 +5,6 @@ var CONSTANTS = require('../constants/mainConstants');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
-var setTimeToDate = require('../helpers/setTimeToDate');
 
 var Proforma = function (models) {
     'use strict';
@@ -209,7 +208,7 @@ var Proforma = function (models) {
             proforma.workflow = workflow._id;
             proforma.paymentInfo.balance = quotation.paymentInfo.total;
             proforma.journal = CONSTANTS.PROFORMA_JOURNAL;
-            proforma.invoiceDate = setTimeToDate(quotation.orderDate);
+            proforma.invoiceDate = new Date(quotation.orderDate);
 
             proforma.currency.rate = oxr.rates[quotation.currency.obj.name];
             proforma.currency._id = quotation.currency._id;
