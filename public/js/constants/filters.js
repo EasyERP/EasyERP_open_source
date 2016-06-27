@@ -430,7 +430,7 @@
             }
         },
 
-        DividendPayments: {
+        /*DividendPayments: {
             year: {
                 displayName: 'Year',
                 backend    : 'year'
@@ -445,7 +445,7 @@
                 displayName: 'Status',
                 backend    : 'workflow'
             }
-        },
+        },*/
 
         Product: {
             name: {
