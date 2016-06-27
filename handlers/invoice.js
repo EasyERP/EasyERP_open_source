@@ -666,7 +666,7 @@ var Module = function (models, event) {
         var project;
 
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
-        
+
         Invoice.findByIdAndUpdate(id, {
             $set: {
                 approved   : true,
@@ -1006,18 +1006,19 @@ var Module = function (models, event) {
                             }
                         },
 
-                        expense    : 1,
-                        forSales   : 1,
-                        currency   : 1,
-                        paymentInfo: 1,
-                        invoiceDate: 1,
-                        name       : 1,
-                        paymentDate: 1,
-                        dueDate    : 1,
-                        approved   : 1,
-                        _type      : 1,
-                        removable  : 1,
-                        paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                        expense        : 1,
+                        forSales       : 1,
+                        currency       : 1,
+                        paymentInfo    : 1,
+                        invoiceDate    : 1,
+                        name           : 1,
+                        paymentDate    : 1,
+                        dueDate        : 1,
+                        approved       : 1,
+                        _type          : 1,
+                        removable      : 1,
+                        'editedBy.date': 1,
+                        paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
                     }
                 }, {
                     $project: {
@@ -1041,6 +1042,7 @@ var Module = function (models, event) {
                         approved         : 1,
                         _type            : 1,
                         removable        : 1,
+                        editedBy         : 1,
                         paid             : 1
                     }
                 }, {
@@ -1067,7 +1069,8 @@ var Module = function (models, event) {
                         approved   : 1,
                         _type      : 1,
                         removable  : 1,
-                        paid       : 1
+                        paid       : 1,
+                        editedBy   : 1
                     }
                 }, {
                     $match: optionsObject
@@ -1099,6 +1102,7 @@ var Module = function (models, event) {
                         // _type             : '$root._type',
                         removable         : '$root.removable',
                         paid              : '$root.paid',
+                        editedBy          : '$root.editedBy',
                         total             : 1
                     }
                 }, {
