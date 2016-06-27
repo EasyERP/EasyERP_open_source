@@ -6,7 +6,7 @@
  */
 var mongoose = require('mongoose');
 require('../../models/index.js');
-var projectSchema = mongoose.Schemas['Project'];
+var employeeSchema = mongoose.Schemas['Employee'];
 var async = require('async');
 
 var dbObject = mongoose.createConnection('localhost', 'production');
@@ -15,28 +15,28 @@ dbObject.once('open', function callback() {
     console.log("Connection to production is success");
 });
 
-var Project = dbObject.model('Project', projectSchema);
+var Employee = dbObject.model('Employees', employeeSchema);
 
-var query = Project.find().lean();
+var query = Employee.find().lean();
 
 query.exec(function (error, _res) {
     if (error) {
         return console.dir(error);
     }
 
-    async.each(_res, function (project, callback) {
-        var attachments = project.attachments;
+    async.each(_res, function (employee, callback) {
+        var attachments = employee.attachments;
         var newAttachments = [];
 
-        attachments.forEach(function(_attach){
-            var url = 'uploads/projects/' + project._id + '/' + _attach.name;
+        attachments.forEach(function (_attach) {
+            var url = 'uploads/employees/' + employee._id + '/' + _attach.name;
 
             url = encodeURIComponent(url);
 
             _attach.shortPas = url;
             newAttachments.push(_attach);
         });
-        Project.update({_id: project._id}, {$set: {attachments: newAttachments}}, callback);
+        Employee.update({_id: employee._id}, {$set: {attachments: newAttachments}}, callback);
 
     }, function (err) {
         if (err) {
