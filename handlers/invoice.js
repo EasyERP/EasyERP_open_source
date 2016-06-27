@@ -36,6 +36,7 @@ var Module = function (models, event) {
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
+    var FilterMapper = require('../helpers/filterMapper');
 
     oxr.set({app_id: process.env.OXR_APP_ID});
 
@@ -680,9 +681,6 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            journalEntryComposer(resp, req.session.lastDb, function () {
-            }, req.session.uId);
-
             products = resp.products;
 
             if (resp._type !== 'Proforma') {
@@ -695,6 +693,9 @@ var Module = function (models, event) {
 
                         session: req.session
                     };
+
+                    journalEntryComposer(resp, req.session.lastDb, function () {
+                    }, req.session.uId);
 
                     workflowHandler.getFirstForConvert(request, function (err, workflow) {
                         Invoice.update({
@@ -776,7 +777,9 @@ var Module = function (models, event) {
         });
     };
 
-    function ConvertType(element, type) {
+    /*TODO remove after filters check*/
+
+    /*function ConvertType(element, type) {
         if (type === 'boolean') {
             if (element === 'true') {
                 element = true;
@@ -786,9 +789,9 @@ var Module = function (models, event) {
         }
 
         return element;
-    }
+    }*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -839,7 +842,7 @@ var Module = function (models, event) {
         }
 
         return resArray;
-    }
+    }*/
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
@@ -857,6 +860,7 @@ var Module = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var key;
+        var filterMapper = new FilterMapper();
 
         if (contentType === 'salesProforma') {
             moduleId = 99;
@@ -881,6 +885,7 @@ var Module = function (models, event) {
 
             filter.forSales = {
                 key  : 'forSales',
+                type : 'boolean',
                 value: ['false']
             };
         } else {
@@ -888,6 +893,7 @@ var Module = function (models, event) {
 
             filter.forSales = {
                 key  : 'forSales',
+                type : 'boolean',
                 value: ['true']
             };
         }
@@ -940,11 +946,8 @@ var Module = function (models, event) {
             optionsObject.$and = [];
 
             if (filter && typeof filter === 'object') {
-                if (filter.condition === 'or') {
-                    optionsObject.$or = caseFilter(filter);
-                } else {
-                    optionsObject.$and = caseFilter(filter);
-                }
+                // optionsObject.$and = caseFilter(filter);
+                optionsObject.$and.push(filterMapper.mapFilter(filter, contentType));
             }
 
             optionsObject.$and.push({_id: {$in: invoicesIds}});
@@ -1945,13 +1948,16 @@ var Module = function (models, event) {
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
             var condition = '$and';
+            var filterMapper = new FilterMapper();
 
             invoicesIds = _.pluck(invoicesIds, '_id');
 
             if (filter && typeof filter === 'object') {
+                optionsObject[condition] = [];
                 condition = filter.condition || 'and';
                 condition = '$' + condition;
-                optionsObject[condition] = caseFilter(filter);
+                // optionsObject[condition] = caseFilter(filter);
+                optionsObject[condition].push(filterMapper.mapFilter(filter));
             }
 
             optionsObject[condition].push({_id: {$in: invoicesIds}});

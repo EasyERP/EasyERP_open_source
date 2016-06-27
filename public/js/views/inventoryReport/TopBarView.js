@@ -108,10 +108,10 @@ define([
             startTime.text(startDate);
             endTime.text(endDate);
 
-            Custom.cacheToApp('inventoryReportDateRange', {
+            /*Custom.cacheToApp('inventoryReportDateRange', {
                 startDate: startDate,
                 endDate  : endDate
-            });
+            });*/
 
             this.trigger('changeDateRange');
             this.toggleDateRange();
@@ -180,11 +180,17 @@ define([
 
         render: function () {
             var viewType = Custom.getCurrentVT();
-            var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
+            // var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
 
-            this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
-            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);
+            var filter = Custom.retriveFromCash('journalEntry.filter');
+            var dateRange = filter && filter.date ? filter.date.value : [];
 
+            /*this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
+            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);*/
+
+            this.startDate = common.utcDateToLocaleDate(new Date(dateRange[0]));
+            this.endDate = common.utcDateToLocaleDate(new Date(dateRange[1]));
+            
             $('title').text(this.contentType);
 
             this.$el.html(this.template({

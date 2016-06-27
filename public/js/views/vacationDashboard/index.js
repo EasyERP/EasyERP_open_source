@@ -545,7 +545,7 @@ define([
                 if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues.DashVacation) {
                     custom.getFiltersValues({contentType: 'DashVacation'}, this.renderFilter(this.baseFilter));
                 } else {
-                    thiss.renderFilter(this.baseFilter);
+                    this.renderFilter(this.baseFilter);
                 }
             }
 

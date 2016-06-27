@@ -37,8 +37,7 @@ var User = function (event, models) {
         var query = {};
         var newFilter = data.newFilter;
         var deleteFilter = data.deleteFilter;
-        var byDefault;
-        var viewType;
+        var byDefaultUpdate = data.byDefault;
         var _id = req.session.uId;
         var id = req.params.id;
         var SavedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
@@ -66,11 +65,19 @@ var User = function (event, models) {
         };
 
         function getUpdateFilterQuery(filterModel, callback) {
-            var byDefault = newFilter.useByDefault;
-            var contentType = newFilter.key;
+            var byDefault;
+            var contentType;
             var newSavedFilters;
+            
+            if (filterModel && typeof filterModel !== 'function') {
+                byDefault = newFilter.useByDefault;
+                contentType = newFilter.key;
+            } else {
+                callback = filterModel;
+                contentType = byDefaultUpdate.contentType;
+            }
 
-            if (byDefault) {
+            if (byDefault || byDefaultUpdate) {
                 models
                     .get(req.session.lastDb, 'Users', userSchema)
                     .findById(_id, {savedFilters: 1}, function (err, result) {
@@ -82,17 +89,19 @@ var User = function (event, models) {
 
                         savedFilters = _.map(savedFilters, function (element) {
                             if (element.contentType === contentType) {
-                                element.byDefault = false;
+                                element.byDefault = (byDefaultUpdate && byDefaultUpdate._id === element._id.toString()) || false;
                             }
 
                             return element;
                         });
 
-                        savedFilters.push({
-                            _id        : filterModel.get('id'),
-                            byDefault  : byDefault,
-                            contentType: contentType
-                        });
+                        if (!byDefaultUpdate) {
+                            savedFilters.push({
+                                _id        : filterModel.get('id'),
+                                byDefault  : byDefault,
+                                contentType: contentType
+                            });
+                        }
 
                         return callback(null, {$set: {savedFilters: savedFilters}});
                     });
@@ -179,6 +188,20 @@ var User = function (event, models) {
             return;
         }
         if (newFilter) {
+            async.waterfall(waterFallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                updateThisUser(_id, result);
+            });
+
+            return;
+        }
+
+        if (byDefaultUpdate) {
+            waterFallTasks.shift();
+
             async.waterfall(waterFallTasks, function (err, result) {
                 if (err) {
                     return next(err);
@@ -722,7 +745,7 @@ var User = function (event, models) {
 
         pipeLine.push({
             $group: {
-                _id            : "$_id._id",
+                _id            : '$_id._id',
                 imageSrc       : {$first: '$imageSrc'},
                 login          : {$first: '$login'},
                 email          : {$first: '$email'},

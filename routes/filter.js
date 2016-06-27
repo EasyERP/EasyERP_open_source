@@ -36,6 +36,7 @@ module.exports = function (models) {
     router.get('/PayrollExpenses', handler.getPayRollFilters);
     router.get('/jobsDashboard', handler.getDashJobsFilters);
     router.get('/journalEntry', handler.getJournalEntryFilters);
+    router.get('/inventoryReport', handler.getInventoryReportFilters);
 
     return router;
 };

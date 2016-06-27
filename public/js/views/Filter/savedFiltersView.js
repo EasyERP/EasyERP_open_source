@@ -73,13 +73,50 @@ define([
             },
 
             useFilter: function (e) {
-                var $target;
-                var targetId;
-                var curFilter;
+                var self = this;
+                var mid = 39;
+                var $target = $(e.target);
+                var $curTarget = $(e.currentTarget);
+                var targetId = $curTarget.attr('id');
+                var curFilter = _.findWhere(this.savedFilters, {_id: targetId});
 
-                $target = $(e.target);
-                targetId = $target.attr('id');
-                curFilter = _.findWhere(this.savedFilters, {_id: targetId});
+                var currentUser;
+
+                if ($target.hasClass('defFilterCheckBox')) {
+                    currentUser = new UserModel(App.currentUser);
+
+                    return currentUser.save(
+                        {
+                            byDefault: {
+                                _id        : targetId,
+                                contentType: self.contentType
+                            }
+                        }, {
+                            headers : {
+                                mid: mid
+                            },
+                            wait    : true,
+                            patch   : true,
+                            validate: false,
+                            success : function (model) {
+                                var savedFiltersForCT = App.filtersObject.savedFilters[self.contentType];
+                                var savedFiltersValues = savedFiltersForCT[0].filter;
+
+                                savedFiltersValues = _.map(savedFiltersValues, function (element) {
+                                    element.byDefault = element._id === targetId;
+
+                                    return element;
+                                });
+
+                                self.savedFilters = savedFiltersValues;
+                                self.renderSavedFiltersElements();
+                            },
+                            error   : function (model, xhr) {
+                                console.error(xhr);
+                            },
+                            editMode: false
+                        });
+                }
 
                 App.filtersObject.filter = curFilter.filters;
 
@@ -93,12 +130,16 @@ define([
                 });
             },
 
-            selectFilter: function (id) {
+            selectFilter: function (id, state) {
                 var $curEl = this.$el;
                 var $favouritesContent = $curEl.find('#savedFiltersElements');
+                var $currentLi = $favouritesContent.find('#' + id);
 
-                $favouritesContent
-                    .find('#' + id)
+                $currentLi
+                    .find('.defFilterCheckBox')
+                    .prop('checked', state);
+
+                $currentLi
                     .addClass('checkedValue')
                     .siblings('.filters')
                     .removeClass('checkedValue');
@@ -185,7 +226,7 @@ define([
                             $filterNameEl.val('');
                             self.renderSavedFiltersElements();
 
-                            self.selectFilter(id);
+                            self.selectFilter(id, byDefault);
 
                             App.storage.save(self.contentType + '.savedFilter', filterName);
 
@@ -205,7 +246,10 @@ define([
                 var $favouritesContent = $curEl.find('#savedFiltersElements');
                 var savedFilterChecked = App.storage.find(this.contentType + '.savedFilter');
 
-                $favouritesContent.html(this.elementsTemplate({checkedFilterName: savedFilterChecked, collection: this.savedFilters}));
+                $favouritesContent.html(this.elementsTemplate({
+                    checkedFilterName: savedFilterChecked,
+                    collection       : this.savedFilters
+                }));
             },
 
             render: function () {

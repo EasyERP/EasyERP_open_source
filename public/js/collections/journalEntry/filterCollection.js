@@ -30,21 +30,31 @@ define([
             endDate.month(startDate.month());
             endDate.endOf('month');
 
-            dateRange = custom.retriveFromCash('journalEntryDateRange') || {};
-            this.startDate = dateRange.startDate;
-            this.endDate = dateRange.endDate;
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : []; // custom.retriveFromCash('journalEntryDateRange') || {};
 
-            this.startDate = dateRange.startDate || new Date(startDate);
-            this.endDate = dateRange.endDate || new Date(endDate);
+            /*this.startDate = dateRange.startDate;
+             this.endDate = dateRange.endDate;
 
-            options.startDate = this.startDate;
-            options.endDate = this.endDate;
-            options.filter = this.filter;
+             this.startDate = dateRange.startDate || new Date(startDate);
+             this.endDate = dateRange.endDate || new Date(endDate);*/
 
-            custom.cacheToApp('journalEntryDateRange', {
-                startDate: this.startDate,
-                endDate  : this.endDate
-            });
+            this.startDate = dateRange[0] || new Date(startDate);
+            this.endDate = dateRange[1] || new Date(endDate);
+
+            // options.startDate = this.startDate;
+            // options.endDate = this.endDate;
+            options.filter = this.filter || {};
+
+            options.filter.date = {
+                value: [this.startDate, this.endDate]
+            };
+
+            /*custom.cacheToApp('journalEntryDateRange', {
+             startDate: this.startDate,
+             endDate  : this.endDate
+             });*/
+
+            custom.cacheToApp('journalEntry.filter', options.filter);
 
             function _errHandler(models, xhr) {
                 if (xhr.status === 401) {

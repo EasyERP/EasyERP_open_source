@@ -39,9 +39,11 @@ define([
         contentType      : CONSTANTS.JOURNALENTRY,
         exportToXlsxUrl  : 'journalEntries/exportToXlsx',
         exportToCsvUrl   : 'journalEntries/exportToCsv',
+        hasPagination    : true,
 
         initialize: function (options) {
-            var dateRange = custom.retriveFromCash('journalEntryDateRange');
+            // var dateRange = custom.retriveFromCash('journalEntryDateRange');
+            var dateRange;
 
             $(document).off('click');
 
@@ -58,21 +60,28 @@ define([
                 this.filter = {};
             }
 
-            if (!this.filter.startDate) {
-                this.filter.startDate = {
-                    key  : 'startDate',
-                    value: new Date(dateRange.startDate)
-                };
-                this.filter.endDate = {
-                    key  : 'endDate',
-                    value: new Date(dateRange.endDate)
-                };
-            }
+            dateRange = this.filter.date ? this.filter.date.value : [];
 
-            this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);
+            /*if (!this.filter.startDate) {
+             this.filter.startDate = {
+             key  : 'startDate',
+             value: new Date(dateRange.startDate)
+             };
+             this.filter.endDate = {
+             key  : 'endDate',
+             value: new Date(dateRange.endDate)
+             };
+             }*/
 
-            this.render();
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
+
+            /*this.startDate = new Date(this.filter.startDate.value);
+             this.endDate = new Date(this.filter.endDate.value);*/
+
+            // this.render();
+
+            ListViewBase.prototype.initialize.call(this, options);
 
             custom.cacheToApp('journalEntry.filter', this.filter);
         },
@@ -95,14 +104,18 @@ define([
                 this.filter = {};
             }
 
-            this.filter.startDate = {
-                key  : 'startDate',
-                value: stDate
-            };
+            /*this.filter.startDate = {
+             key  : 'startDate',
+             value: stDate
+             };
 
-            this.filter.endDate = {
-                key  : 'endDate',
-                value: enDate
+             this.filter.endDate = {
+             key  : 'endDate',
+             value: enDate
+             };*/
+
+            this.filter.date = {
+                value: [this.startDate, this.endDate]
             };
 
             searchObject = {
@@ -211,19 +224,19 @@ define([
 
             // this.renderFilter();
 
-            if (!this.filterView) {
-                if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
-                    custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
-                } else {
-                    this.renderFilter(this.baseFilter);
-                }
-            }
+            /*if (!this.filterView) {
+             if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+             custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+             } else {
+             this.renderFilter(this.baseFilter);
+             }
+             }*/
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
             App.filtersObject.filter = this.filter;
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }
     });
 

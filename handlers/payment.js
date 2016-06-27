@@ -1,3 +1,4 @@
+/*TODO remove caseFilter methid after testing filters*/
 var mongoose = require('mongoose');
 var async = require('async');
 var WorkflowHandler = require('./workflow');
@@ -31,6 +32,8 @@ var Module = function (models, event) {
     var journalEntry = new JournalEntryHandler(models);
     var pageHelper = require('../helpers/pageHelper');
 
+    var FilterMapper = require('../helpers/filterMapper');
+
     oxr.set({app_id: process.env.OXR_APP_ID});
 
     function returnModuleId(req) {
@@ -57,7 +60,7 @@ var Module = function (models, event) {
         return Payment;
     }
 
-    function ConvertType(array, type) {
+    /*function ConvertType(array, type) {
         var i;
 
         if (type === 'integer') {
@@ -75,9 +78,9 @@ var Module = function (models, event) {
                 }
             }
         }
-    }
+    }*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -136,12 +139,13 @@ var Module = function (models, event) {
         }
 
         return resArray;
-    }
+    }*/
 
     function getPaymentFilter(req, res, next, options) {
         var moduleId = returnModuleId(req);
         var data = req.query;
-        var filter = data.filter;
+        var contentType = data.contentType;
+        var filter = data.filter || {};
         var forSale = options ? !!options.forSale : false;
         var bonus = options ? !!options.bonus : false;
         var salary = options ? !!options.salary : false;
@@ -160,6 +164,7 @@ var Module = function (models, event) {
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
+        var filterMapper = new FilterMapper();
 
         if (req.query.sort) {
             key = Object.keys(req.query.sort)[0];
@@ -172,11 +177,7 @@ var Module = function (models, event) {
         optionsObject.$and = [];
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject.$or = caseFilter(filter);
-            } else {
-                optionsObject.$and = caseFilter(filter);
-            }
+            optionsObject.$and.push(filterMapper.mapFilter(filter, contentType)); // caseFilter(filter);
         }
 
         if (!salary) {
@@ -1207,7 +1208,7 @@ var Module = function (models, event) {
             invoice.payments.forEach(function (paym) {
                 payments.push(paym._id.toString());
 
-                if (paym.date > paymentDate){
+                if (paym.date > paymentDate) {
                     paymentDate = paym.date;
                 }
             });
