@@ -6,13 +6,12 @@ define([
     'views/main/MainView',
     'views/inventoryReport/list/ListView',
     'views/inventoryReport/TopBarView',
-    'views/Filter/FilterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, modules, fixtures, FilterCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, FilterCollection, MainView, ListView, TopBarView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -24,37 +23,40 @@ define([
     var showDatePickerSpy;
     var historyNavigateSpy;
     var ajaxSpy;
-    var fakeResponse = [{
-        _id           : '570505d60bbb61c30355b564',
-        closingBalance: 111,
-        inwards       : 111,
-        name          : '01.01 - 01.04.16',
-        openingBalance: 111,
-        outwards      : 0,
-        project       : '56fd3453a33b73e503e3eb65',
-        projectName   : 'Donation App',
-        salesmanager  : 'Peter Voloshchuk'
-    }, {
-        _id           : '56dfe3adc7b580a03fff2f4d',
-        closingBalance: 222,
-        inwards       : 222,
-        name          : '01.01.2016-31.01.2016',
-        openingBalance: 222,
-        outwards      : 222,
-        project       : '56b09dd8d6ef38a708dfc284',
-        projectName   : 'Vike Analytics Integration',
-        salesmanager  : 'Roland Katona'
-    }, {
-        _id           : '56d58e7b5132d292750a5e7d',
-        closingBalance: 333,
-        inwards       : 333,
-        name          : '01.02 - 29.02',
-        openingBalance: 333,
-        outwards      : 333,
-        project       : '562bc32484deb7cb59d61b70',
-        projectName   : 'MyDrive',
-        salesmanager  : 'Alona Yelahina'
-    }];
+    var fakeResponse = [
+        {
+            _id           : '570505d60bbb61c30355b564',
+            closingBalance: 111,
+            inwards       : 111,
+            name          : '01.01 - 01.04.16',
+            openingBalance: 111,
+            outwards      : 0,
+            project       : '56fd3453a33b73e503e3eb65',
+            projectName   : 'Donation App',
+            salesmanager  : 'Peter Voloshchuk'
+        },
+        {
+            _id           : '56dfe3adc7b580a03fff2f4d',
+            closingBalance: 222,
+            inwards       : 222,
+            name          : '01.01.2016-31.01.2016',
+            openingBalance: 222,
+            outwards      : 222,
+            project       : '56b09dd8d6ef38a708dfc284',
+            projectName   : 'Vike Analytics Integration',
+            salesmanager  : 'Roland Katona'
+        },
+        {
+            _id           : '56d58e7b5132d292750a5e7d',
+            closingBalance: 333,
+            inwards       : 333,
+            name          : '01.02 - 29.02',
+            openingBalance: 333,
+            outwards      : 333,
+            project       : '562bc32484deb7cb59d61b70',
+            projectName   : 'MyDrive',
+            salesmanager  : 'Alona Yelahina'
+        }];
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -72,9 +74,6 @@ define([
             ajaxSpy = sinon.spy($, 'ajax');
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
-            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
-            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
-            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
         });
 
         after(function () {

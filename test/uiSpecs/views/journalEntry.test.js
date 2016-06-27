@@ -7,13 +7,12 @@ define([
     'views/main/MainView',
     'views/journalEntry/list/ListView',
     'views/journalEntry/TopBarView',
-    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, _, modules, fixtures, JournalEntryCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, _, modules, fixtures, JournalEntryCollection, MainView, ListView, TopBarView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -811,7 +810,6 @@ define([
             debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
                 return debFunction;
             });
-            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
         });
 
         after(function () {
@@ -823,7 +821,6 @@ define([
             showDatePickerSpy.restore();
             reconcileSpy.restore();
             debounceStub.restore();
-            removeFilterSpy.restore();
 
             if ($('.ui-dialog').length) {
                 $('.ui-dialog').remove();
@@ -874,9 +871,7 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/journalEntry');
-
             });
-
         });
 
         describe('TopBarView', function () {
@@ -918,14 +913,12 @@ define([
             var clock;
             var renderSpy;
             var $thisEl;
-            var selectSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
                 renderSpy = sinon.spy(ListView.prototype, 'render');
-                selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
             });
 
             after(function () {
@@ -933,7 +926,6 @@ define([
                 mainSpy.restore();
                 clock.restore();
                 renderSpy.restore();
-                selectSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -1005,70 +997,6 @@ define([
                     expect(sum).to.not.match(/object Object|undefined/);
 
                     done();
-                });
-
-                it('Try to filter ListView', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $journal;
-                    var $subject;
-                    var $next;
-                    var $prev;
-                    var $selectedItem;
-
-                    // open search dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                    // select Journal filter
-                    $journal = $searchContainer.find('#journalNameFullContainer > .groupName');
-                    $journal.click();
-                    $selectedItem = $searchContainer.find('#journalNameUl > li').first();
-
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(selectSpy.calledOnce).to.be.true;
-
-                    // select Subject
-                    $subject = $searchContainer.find('#sourceDocumentFullContainer > .groupName');
-                    $subject.click();
-                    $next = $searchContainer.find('.next');
-                    $next.click();
-                    expect($searchContainer.find('#sourceDocumentContainer .counter').text().trim()).to.be.equals('8-14 of 20');
-                    $prev = $searchContainer.find('.prev');
-                    $prev.click();
-                    expect($searchContainer.find('#sourceDocumentContainer .counter').text().trim()).to.be.equals('1-7 of 20');
-                    $selectedItem = $searchContainer.find('#sourceDocumentUl > li').first();
-
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(selectSpy.calledTwice).to.be.true;
-
-                    // unselect Subject filter
-                    $selectedItem = $searchContainer.find('#sourceDocumentUl > li').first();
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(selectSpy.calledThrice).to.be.true;
-
-                });
-
-                it('Try to remove Journal filter', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $closeBtn = $searchContainer.find('.removeValues');
-
-                    $closeBtn.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(removeFilterSpy.calledOnce).to.be.true;
                 });
 
                 it('Try to change date range', function (done) {

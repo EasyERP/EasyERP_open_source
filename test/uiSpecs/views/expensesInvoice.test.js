@@ -8,12 +8,15 @@ define([
     'views/ExpensesInvoice/list/ListView',
     'views/ExpensesInvoice/TopBarView',
     'views/ExpensesInvoice/EditView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, _, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, _, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, FilterView, FilterGroup, SavedFilters, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -1038,7 +1041,6 @@ define([
                     var paid;
                     var total;
                     var status;
-                    var invDate;
                     var $pagination;
                     var $pageList;
 
