@@ -187,6 +187,11 @@
          },*/
 
         salesInvoices: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+            
             supplier: {
                 displayName: 'Customer',
                 backend    : 'supplier._id'
@@ -211,6 +216,11 @@
         },
 
         ExpensesInvoice: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'
@@ -442,21 +452,21 @@
         },
 
         /*DividendPayments: {
-            year: {
-                displayName: 'Year',
-                backend    : 'year'
-            },
+         year: {
+         displayName: 'Year',
+         backend    : 'year'
+         },
 
-            month: {
-                displayName: 'Month',
-                backend    : 'month'
-            },
+         month: {
+         displayName: 'Month',
+         backend    : 'month'
+         },
 
-            workflow: {
-                displayName: 'Status',
-                backend    : 'workflow'
-            }
-        },*/
+         workflow: {
+         displayName: 'Status',
+         backend    : 'workflow'
+         }
+         },*/
 
         Product: {
             name: {
@@ -659,7 +669,7 @@
                 backend    : 'onlyEmployees',
                 type       : 'boolean'
             },
-            
+
             array: ['employee', 'department', 'onlyEmployees']
         },
 

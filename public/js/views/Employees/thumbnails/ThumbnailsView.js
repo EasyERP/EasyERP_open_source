@@ -21,6 +21,7 @@
         hasAlphabet : true,
         contentType : 'Employees',
         viewType    : 'thumbnails',
+        letterKey   : 'name.first',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];

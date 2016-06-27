@@ -164,6 +164,8 @@ define([
             } else {
                 delete App.filtersObject.filter.letter;
 
+                self.setDbOnce();
+
                 $target
                     .closest('.forFilterIcons')
                     .remove();

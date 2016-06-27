@@ -80,6 +80,7 @@
             var createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
 
             if (showMore) {
+                $content.find('h2').remove();
                 $content.append(this.template({collection: this.collection.toJSON()}));
             } else {
                 $content.html(this.template({collection: this.collection.toJSON()}));
