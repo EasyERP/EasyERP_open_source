@@ -86,7 +86,6 @@ define([
         },
 
         asyncRenderInfo: function (asyncKeys) {
-            var self = this;
             var body = this.$el.find('#listTable');
             var stDate = this.filter.startDate.value;
             var endDate = this.filter.endDate.value;

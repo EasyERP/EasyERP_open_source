@@ -92,13 +92,14 @@ define([
         },
 
         asyncRenderInfo: function (asyncKeys) {
-            var self = this;
             var body = this.$el;
+            var stDate = this.filter.startDate.value;
+            var endDate = this.filter.endDate.value;
 
             async.each(asyncKeys, function (asyncId) {
                 dataService.getData('journalEntries/getAsyncDataForGL', {
-                    startDate: self.startDate,
-                    endDate  : self.endDate,
+                    startDate: stDate,
+                    endDate  : endDate,
                     _id      : asyncId
                 }, function (result) {
                     var journalEntries = result.journalEntries;
@@ -126,12 +127,12 @@ define([
 
             this.filter.startDate = {
                 key  : 'startDate',
-                value: this.startDate
+                value: stDate
             };
 
             this.filter.endDate = {
                 key  : 'endDate',
-                value: this.endDate
+                value: enDate
             };
 
             searchObject = {
