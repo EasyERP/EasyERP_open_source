@@ -22,6 +22,7 @@ define([
         formUrl          : '#easyErp/Employees/',
         exportToXlsxUrl  : '/employees/exportToXlsx',
         exportToCsvUrl   : '/employees/exportToCsv',
+        letterKey        : 'name.first',
 
         initialize: function (options) {
             this.startTime = options.startTime;

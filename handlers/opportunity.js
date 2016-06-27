@@ -2136,7 +2136,7 @@ var Module = function (models, event) {
             filterObj = filterMapper.mapFilter(filter, contentType); // caseFilterOpp(filter);
         }
 
-        switch (data.contentType) {
+        switch (contentType) {
 
             case ('Opportunities'):
                 optionsObject.push({isOpportunitie: true});
