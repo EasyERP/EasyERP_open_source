@@ -56,7 +56,7 @@ dbObject.once('open', function callback() {
             });
 
             // for delete 'transfer' field from employee collection
-            // Employees.update({_id: employee._id}, {$unset: {transfer: ''}}, {multi: true}, callback);
+            Employees.update({_id: employee._id}, {$unset: {transfer: ''}}, {multi: true}, callback);
 
             callback();
         }, function (err) {
