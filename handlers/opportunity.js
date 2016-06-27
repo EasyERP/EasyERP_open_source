@@ -1876,7 +1876,7 @@ var Module = function (models, event) {
         }
     };
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -1906,7 +1906,7 @@ var Module = function (models, event) {
             }
         }
         return resArray;
-    }
+    }*/
 
     /**
      * Properties in __Opportunities__ are same as in __Leads__.
@@ -2058,8 +2058,7 @@ var Module = function (models, event) {
      * @instance
      */
 
-    function caseFilterOpp(data) {
-
+    /*function caseFilterOpp(data) {
         var filter = {};
         var tempObj = {};
         var query = {};
@@ -2114,7 +2113,7 @@ var Module = function (models, event) {
         }
 
         return filter;
-    }
+    }*/
 
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
@@ -2425,6 +2424,7 @@ var Module = function (models, event) {
         var data = req.query;
         var filter = data.filter || {};
         var query;
+        var filterMapper = new FilterMapper();
 
         optionsObject.$and = [];
         filterObj.$or = [];
@@ -2432,15 +2432,16 @@ var Module = function (models, event) {
 
         optionsObject.$and.push({isOpportunitie: true});
 
-        if (data && data.filter) {
+        if (data && filter) {
+            or.push(filterMapper.mapFilter(filter));
             optionsObject.$and.push(filterObj);
 
-            caseFilter(filter, or);
+            // caseFilter(filter, or);
         }
 
-        if (!or.length) {
+        /*if (!or.length) {
             delete filterObj.$or;
-        }
+        }*/
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Opportunities, cb);

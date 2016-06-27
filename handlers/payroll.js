@@ -19,6 +19,8 @@ var Module = function (models) {
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
 
+    var FilterMapper = require('../helpers/filterMapper');
+
     this.create = function (req, res, next) {
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var body = req.body;
@@ -358,9 +360,10 @@ var Module = function (models) {
         var waterfallTasks;
         var startDateKey = moment(startDate).year() * 100 + moment(startDate).week(); // todo isoWeek (changed on week)
         var endDateKey = moment(endDate).year() * 100 + moment(endDate).week(); // todo isoWeek (changed on week)
-        var filterValue;
+        // var filterValue;
+        var filterMapper = new FilterMapper();
 
-        function caseFilterEmployee(filter) {
+        /*function caseFilterEmployee(filter) {
             var condition;
             var resArray = [];
             var filtrElement = {};
@@ -391,7 +394,7 @@ var Module = function (models) {
             }
 
             return resArray;
-        }
+        }*/
 
         function checkFilter(callback) {
             callback(null, filter);
@@ -441,10 +444,11 @@ var Module = function (models) {
             };
 
             if (filter && typeof filter === 'object') {
-                filterValue = caseFilterEmployee(filter);
-                if (filterValue.length) {
-                    matchObj.$and.push({$and: caseFilterEmployee(filter)});
-                }
+                /*filterValue = caseFilterEmployee(filter);
+                if (filterValue.length) {*/
+                    // matchObj.$and.push({$and: caseFilterEmployee(filter)});
+                    matchObj.$and.push(filterMapper.mapFilter(filter, 'salaryReport'));
+                // }
             }
 
             Employee

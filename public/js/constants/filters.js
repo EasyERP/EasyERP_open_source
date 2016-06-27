@@ -647,7 +647,9 @@
                 displayName: 'Only Employees',
                 backend    : 'onlyEmployees',
                 type       : 'boolean'
-            }
+            },
+            
+            array: ['employee', 'department', 'onlyEmployees']
         },
 
         journalEntry: {
