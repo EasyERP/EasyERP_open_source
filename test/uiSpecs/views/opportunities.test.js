@@ -3535,10 +3535,6 @@ define([
 
                 expect($('.ui-dialog')).to.not.exist;
             });
-
-
         });
-
     });
-
 });
