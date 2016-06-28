@@ -164,7 +164,7 @@ define([
                 View = DividendEditView;
             }
 
-            model.urlRoot = '/Invoices/form';
+            model.urlRoot = '/Invoices/';
             model.fetch({
                 data: {
                     id         : id,

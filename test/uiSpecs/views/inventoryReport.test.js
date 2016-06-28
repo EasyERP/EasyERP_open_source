@@ -1,17 +1,38 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/inventoryReport/filterCollection',
     'views/main/MainView',
     'views/inventoryReport/list/ListView',
     'views/inventoryReport/TopBarView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
-], function (Backbone, modules, fixtures, FilterCollection, MainView, ListView, TopBarView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+    'sinon-chai',
+    'constantsDir/filters'
+], function (Backbone,
+             _,
+             modules,
+             fixtures,
+             FilterCollection,
+             MainView,
+             ListView,
+             TopBarView,
+             FilterView,
+             FilterGroup,
+             SavedFilters,
+             eventsBinder,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai,
+             FILTER_CONSTANTS) {
     'use strict';
 
     var expect;
@@ -23,40 +44,82 @@ define([
     var showDatePickerSpy;
     var historyNavigateSpy;
     var ajaxSpy;
-    var fakeResponse = [
-        {
-            _id           : '570505d60bbb61c30355b564',
-            closingBalance: 111,
-            inwards       : 111,
-            name          : '01.01 - 01.04.16',
-            openingBalance: 111,
-            outwards      : 0,
-            project       : '56fd3453a33b73e503e3eb65',
-            projectName   : 'Donation App',
-            salesmanager  : 'Peter Voloshchuk'
-        },
-        {
-            _id           : '56dfe3adc7b580a03fff2f4d',
-            closingBalance: 222,
-            inwards       : 222,
-            name          : '01.01.2016-31.01.2016',
-            openingBalance: 222,
-            outwards      : 222,
-            project       : '56b09dd8d6ef38a708dfc284',
-            projectName   : 'Vike Analytics Integration',
-            salesmanager  : 'Roland Katona'
-        },
-        {
-            _id           : '56d58e7b5132d292750a5e7d',
-            closingBalance: 333,
-            inwards       : 333,
-            name          : '01.02 - 29.02',
-            openingBalance: 333,
-            outwards      : 333,
-            project       : '562bc32484deb7cb59d61b70',
-            projectName   : 'MyDrive',
-            salesmanager  : 'Alona Yelahina'
-        }];
+    var fakeResponse = {
+        total: 300,
+        data : [
+            {
+                _id: "568a26203cce9254776f2ae6",
+                name: ".net bus project",
+                salesmanager: "Peterr Voloshchuk",
+                project: "5629e238129820ab5994e8c0",
+                projectName: "Bus Project",
+                openingBalance: 3267.694118105907,
+                inwards: 32.01782985360849,
+                outwards: 3299.7119479595153,
+                closingBalance: 0
+            },
+            {
+                _id: "575536d852e8f40a76bef288",
+                name: "01-31.04.2016",
+                salesmanager: "Yana Gusti",
+                project: "55b92ad621e4b7c40f000694",
+                projectName: "QA iOS Purple Ocean",
+                openingBalance: 0,
+                inwards: 48.026744780412734,
+                outwards: 0,
+                closingBalance: 48.026744780412734
+            },
+            {
+                _id: "570505d60bbb61c30355b564",
+                name: "01.01 - 01.04.16",
+                salesmanager: "Peterr Voloshchuk",
+                project: "56fd3453a33b73e503e3eb65",
+                projectName: "Donation App",
+                openingBalance: 2705.4260231618177,
+                inwards: 345.0311463924777,
+                outwards: 0,
+                closingBalance: 3050.4571695542954
+            }
+        ]
+    };
+    var fakeFilters = {
+        _id    : null,
+        project: [
+            {
+                _id: "55b92ad621e4b7c40f0006ae",
+                name: "Kikast"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00068e",
+                name: "Phidget ANE"
+            },
+            {
+                _id: "56e003948594da632689f1cd",
+                name: "Phone app"
+            }
+        ],
+
+        salesManager: [
+            {
+                _id: "56e2e83a74ac46664a83e94b",
+                name: "Yevgenia Melnyk"
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000cb",
+                name: "Alona Yelahina"
+            },
+            {
+                _id: "5602a01550de7f4138000008",
+                name: "Yana Dufynets"
+            }
+        ]
+    };
+    var fakeResponseSavedFilter = {};
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -65,15 +128,19 @@ define([
     describe('inventoryReportView', function () {
         var $fixture;
         var $elFixture;
-        var selectSpy;
-        var saveFilterSpy;
-        var removeFilterSpy;
 
         before(function () {
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
             ajaxSpy = sinon.spy($, 'ajax');
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -81,10 +148,12 @@ define([
             setDateRangeSpy.restore();
             showDatePickerSpy.restore();
             historyNavigateSpy.restore();
+            ajaxSpy.restore();
             selectSpy.restore();
             removeFilterSpy.restore();
             saveFilterSpy.restore();
-            ajaxSpy.restore();
+            removedFromDBSpy.restore();
+            debounceStub.restore();
 
             if ($('.ui-dialog').length) {
                 $('.ui-dialog').remove();
@@ -134,7 +203,6 @@ define([
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/inventoryReport');
             });
-
         });
 
         describe('TopBarView', function () {
@@ -151,14 +219,21 @@ define([
             it('Try to fetch collection with error', function () {
                 var invoiceUrl = new RegExp('journalEntries\/getInventoryReport', 'i');
 
+                historyNavigateSpy.reset();
+
                 server.respondWith('GET', invoiceUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 collection = new FilterCollection({
-                    page       : 1,
-                    count      : 2,
+                    filter     : null,
                     viewType   : 'list',
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'inventoryReport'
                 });
                 server.respond();
+
+                expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
             });
 
             it('Try to create TopBarView', function () {
@@ -166,11 +241,16 @@ define([
 
                 server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
                 collection = new FilterCollection({
-                    page       : 1,
+                    filter     : null,
                     viewType   : 'list',
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'inventoryReport'
                 });
                 server.respond();
+
+                expect(collection).to.have.lengthOf(3);
 
                 topBarView = new TopBarView({
                     actionType: 'Content',
@@ -217,9 +297,10 @@ define([
                 describe('INITIALIZE', function () {
 
                     it('Try to create inventoryReportView', function (done) {
-                        var asyncDataUrl = new RegExp('journalEntries\/getInventoryReport', 'i');
+                        var filterUrl = '/filter/inventoryReport';
 
-                        server.respondWith('GET', asyncDataUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
+
+                        server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
                         listView = new ListView({
                             startTime : new Date(),
                             collection: collection
@@ -235,7 +316,7 @@ define([
                             pageSize    : collection.pageSize
                         });
 
-                        clock.tick(300);
+                        clock.tick(700);
                         $thisEl = listView.$el;
 
                         expect($thisEl.find('.list')).to.exist;
@@ -244,81 +325,209 @@ define([
                         done();
                     });
 
-                    it('Try to filter ListView by Project', function () {
+                    it('Try to filter listView by Assigned and company', function () {
+                        var url = 'journalEntries/getInventoryReport';
+                        var contentType = 'inventoryReport';
+                        var firstValue = 'project';
+                        var secondValue = 'salesManager';
                         var $searchContainer = $thisEl.find('#searchContainer');
                         var $searchArrow = $searchContainer.find('.search-content');
-                        var inventoryReportUrl = new RegExp('journalEntries\/getInventoryReport', 'i');
-                        var $projectName;
+                        var contentUrl = new RegExp(url, 'i');
+                        var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                        var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                        var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                        var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                        var elementQuery = '#listTable > tr';
+                        var $firstGroup;
+                        var $secondGroup;
                         var elementsCount;
-                        var $country;
                         var $selectedItem;
-                        var $next;
-                        var $prev;
-
+                        var ajaxResponse;
+                        var filterObject;
                         selectSpy.reset();
 
                         // open filter dropdown
                         $searchArrow.click();
                         expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
-                        // select fullName
-                        $projectName = $searchContainer.find('#projectFullContainer .groupName');
-                        $projectName.click();
-                        $selectedItem = $searchContainer.find('li[data-value="56e689c75ec71b00429745a9"]');
+                        // select firstGroup filter
+                        ajaxSpy.reset();
+                        $firstGroup = $searchContainer.find($firstContainer);
+                        $firstGroup.click();
 
-                        server.respondWith('GET', inventoryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
+                        $selectedItem = $searchContainer.find($firstSelector);
+
+                        server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
                         $selectedItem.click();
                         server.respond();
+
                         expect(selectSpy.calledOnce).to.be.true;
                         expect($thisEl.find('#searchContainer')).to.exist;
-                        elementsCount = $thisEl.find('#listTable > tr').length;
-                        expect(elementsCount).to.be.equals(3);
+                        //expect($thisEl.find('#startLetter')).to.exist;
+                        expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                        expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                        elementsCount = $thisEl.find(elementQuery).length;
+                        expect(elementsCount).to.be.not.equals(0);
 
+                        expect(ajaxSpy.calledOnce).to.be.true;
+
+                        ajaxResponse = ajaxSpy.args[0][0];
+                        expect(ajaxResponse).to.have.property('url', url);
+                        expect(ajaxResponse).to.have.property('type', 'GET');
+                        expect(ajaxResponse.data).to.have.property('filter');
+                        filterObject = ajaxResponse.data.filter;
+
+                        expect(filterObject[firstValue]).to.exist;
+                        expect(filterObject.date.value).to.exist;
+                        expect(filterObject.date.value)
+                            .is.an.instanceOf(Array)
+                            .and
+                            .to.have.lengthOf(2);
+                        expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                        expect(filterObject[firstValue]).to.have.property('value');
+                        expect(filterObject[firstValue].value)
+                            .to.be.instanceof(Array)
+                            .and
+                            .to.have.lengthOf(1);
+
+                        // select secondGroup filter
+                        ajaxSpy.reset();
+
+                        $searchArrow.click();
+
+                        $secondGroup = $thisEl.find($secondContainer);
+                        $secondGroup.click();
+                        $selectedItem = $searchContainer.find($secondSelector);
+                        $selectedItem.click();
+                        server.respond();
+
+                        expect(selectSpy.calledTwice).to.be.true;
+                        expect($thisEl.find('#searchContainer')).to.exist;
+                        //expect($thisEl.find('#startLetter')).to.exist;
+                        expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                        expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                        elementsCount = $thisEl.find(elementQuery).length;
+                        expect(elementsCount).to.be.not.equals(0);
+
+                        ajaxResponse = ajaxSpy.args[0][0];
+                        expect(ajaxResponse).to.have.property('url', url);
+                        expect(ajaxResponse).to.have.property('type', 'GET');
+                        expect(ajaxResponse.data).to.have.property('filter');
+                        filterObject = ajaxResponse.data.filter;
+
+                        expect(filterObject[firstValue]).to.exist;
+                        expect(filterObject[secondValue]).to.exist;
+                        expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                        expect(filterObject[secondValue]).to.have.property('value');
+                        expect(filterObject[secondValue].value)
+                            .to.be.instanceof(Array)
+                            .and
+                            .to.have.lengthOf(1);
+
+                        // unselect secondGroup filter
+                        $selectedItem = $searchContainer.find($secondSelector);
+                        $selectedItem.click();
+                        server.respond();
+
+                        expect(selectSpy.calledThrice).to.be.true;
+                        expect($thisEl.find('#searchContainer')).to.exist;
+                        //expect($thisEl.find('#startLetter')).to.exist;
+                        expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                        expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                        elementsCount = $thisEl.find(elementQuery).length;
+                        expect(elementsCount).to.be.not.equals(0);
+
+                        ajaxResponse = ajaxSpy.args[0][0];
+                        expect(ajaxResponse).to.have.property('url', url);
+                        expect(ajaxResponse).to.have.property('type', 'GET');
+                        expect(ajaxResponse.data).to.have.property('filter');
+                        filterObject = ajaxResponse.data.filter;
+
+                        expect(filterObject[firstValue]).to.exist;
+                        expect(filterObject[secondValue]).to.not.exist;
                     });
 
-                    it('Try to save favorites filters', function () {
+                    /*it('Try to save filter', function () {
+                        var $searchContainer = $('#searchContainer');
                         var userUrl = new RegExp('\/users\/', 'i');
-                        var $searchContainer = $thisEl.find('#searchContainer');
                         var $searchArrow = $searchContainer.find('.search-content');
-                        var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
+                        var $favoritesBtn;
                         var $filterNameInput;
                         var $saveFilterBtn;
 
                         saveFilterSpy.reset();
 
+                        $searchArrow.click();
+                        expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                        $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
                         $favoritesBtn.click();
                         expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
 
                         $filterNameInput = $searchContainer.find('#forFilterName');
-                        $filterNameInput.val('Test');
+                        $filterNameInput.val('TestFilter');
                         $saveFilterBtn = $searchContainer.find('#saveFilterButton');
-
-                        server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                        server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
                         $saveFilterBtn.click();
                         server.respond();
                         expect(saveFilterSpy.called).to.be.true;
-
-                        //close filter dropdown
-                        $searchArrow.click();
-                        expect($searchContainer.find('.search-options')).to.have.class('hidden');
+                        expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                        expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
                     });
 
-                    it('Try to delete Project filter', function () {
-                        var $searchContainer = $thisEl.find('#searchContainer');
-                        var $closeBtn = $searchContainer.find('span[data-value="project"]').next();
-                        var inventoryReportUrl = new RegExp('journalEntries\/getInventoryReport', 'i');
-                        var elementsCount;
+                    it('Try to remove saved filters', function() {
+                        var $searchContainer = $('#searchContainer');
+                        var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                        var userUrl = new RegExp('\/users\/', 'i');
 
-                        removeFilterSpy.reset();
+                        removedFromDBSpy.reset();
 
-                        server.respondWith('GET', inventoryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponse)]);
-                        $closeBtn.click();
+                        server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                        $deleteSavedFilterBtn.click();
                         server.respond();
 
-                        expect(removeFilterSpy.called).to.be.true;
-                        expect($thisEl).to.exist;
-                        elementsCount = $thisEl.find('#listTable > tr').length;
-                        expect(elementsCount).to.be.equals(3);
+                        expect(removedFromDBSpy.calledOnce).to.be.true;
+                        expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                        expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
+                    });*/
+
+                    it('Try to remove filter', function (done) {
+                        var secondValue = 'supplier';
+                        var $searchContainer = $('#searchContainer');
+                        var $searchArrow = $searchContainer.find('.search-content');
+                        var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                        var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                        var $thisEl = $('#content-holder');
+                        var $secondGroup;
+                        var $selectedItem;
+                        var $removeBtn;
+
+                        $searchArrow.click();
+
+                        /*$secondGroup = $thisEl.find($secondContainer);
+                        $secondGroup.click();
+                        $selectedItem = $searchContainer.find($secondSelector);
+                        $selectedItem.click();
+                        server.respond();*/
+
+                        // remove firstGroupFilter
+                        ajaxSpy.reset();
+                        removeFilterSpy.reset();
+
+                        $removeBtn = $searchContainer.find('.removeValues');
+                        $removeBtn.click();
+                        clock.tick(3000);
+
+                        server.respond();
+
+                        clock.tick(3000);
+
+
+                        expect(removeFilterSpy.calledOnce).to.be.true;
+                        expect(ajaxSpy.calledOnce).to.be.true;
+                        expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(0);
+
+                        done();
                     });
 
                     it('Try to change dateRange', function () {
@@ -397,11 +606,9 @@ define([
                         server.respond();
 
                         expect(changeDateRangeSpy.callCount).to.be.equals(6);
-
                     });
                 });
             });
-
         });
     });
 });

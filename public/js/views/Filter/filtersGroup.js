@@ -44,6 +44,7 @@ define([
                     this.renderContent();
                 }, 700);
 
+
             _.bindAll(this, 'filteredCollectionChange');
 
             this.filteredCollection.on('change', this.filteredCollectionChange);

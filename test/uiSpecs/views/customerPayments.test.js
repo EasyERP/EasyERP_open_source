@@ -349,9 +349,11 @@ define([
 
                 server.respondWith('GET', customerPaymentsUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomerPayments)]);
                 customerPaymentsCollection = new CustomerPaymentsCollection({
+                    filter     : null,
                     viewType   : 'list',
-                    page       : 1,
                     count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'customerPayments'
                 });
                 server.respond();
