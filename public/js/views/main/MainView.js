@@ -5,10 +5,9 @@ define([
     'text!templates/main/MainTemplate.html',
     'views/menu/LeftMenuView',
     'collections/menu/MenuItems',
-    'views/menu/TopMenuView',
     'dataService',
     'constants'
-], function (Backbone, _, $, MainTemplate, LeftMenuView, MenuItemsCollection, TopMenuView, dataService, CONSTANTS) {
+], function (Backbone, _, $, MainTemplate, LeftMenuView, MenuItemsCollection, dataService, CONSTANTS) {
     'use strict';
     var MainView = Backbone.View.extend({
         el: '#wrapper',
@@ -64,7 +63,7 @@ define([
                 this.currentRoot = modules[0].href;
                 this.currentModule = modules[0].subModules[0].href;
 
-                Backbone.history.navigate('easyErp/'+this.currentModule);
+                Backbone.history.navigate('easyErp/'+this.currentModule, {trigger:true});
             }
 
             this.leftMenu = new LeftMenuView({
@@ -75,12 +74,23 @@ define([
      },
 
         updateMenu: function (contentType) {
-            var currentChildren = this.collection.where({href: contentType});
-            var currentRootId = currentChildren[0] ? currentChildren[0].get('parrent') : null;
-            var currentRoot = this.collection.where({_id: currentRootId});
+            var modules = this.collection.toJSON();
+            var rootIndex;
+            var childIndex;
 
-            //this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
-           // this.topMenu.updateTopMenu(currentRoot);
+                for (var i=modules.length;i--;){
+                    for (var j=modules[i].subModules.length;j--;){
+                        if (modules[i].subModules[j].href===contentType){
+                            rootIndex = i;
+                            childIndex = j;
+                            break;
+                        }
+                    }
+                    if (this.rootIndex){
+                        break;
+                    }
+                }
+            this.leftMenu.selectMenuItem(rootIndex, childIndex);
         },
 
         showSelect: function (e) {
