@@ -592,6 +592,159 @@ var Module = function (models) {
         var i;
         var date = moment().year(year).month(month - 1).startOf('month');
         var endDate = moment(date).endOf('month');
+        var employeesIds = [];
+        var employeeQueryForEmployeeByDep;
+
+        date = new Date(date);
+        endDate = new Date(endDate);
+
+        if (!data.month || !data.year) {
+            return res.status(400).send();
+        }
+
+        employeeQueryForEmployeeByDep = {
+            $and: [{
+                $or: [{
+                    $and: [{
+                        isEmployee: true
+                    }, {
+                        $or: [{
+                            lastFire: null,
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }, {
+                            lastFire: {
+                                $ne : null,
+                                $gte: date
+                            }
+                        }, {
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }]
+                    }]
+                }, {
+                    $and: [{
+                        isEmployee: false
+                    }, {
+                        lastFire: {
+                            $ne : null,
+                            $gte: date
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }]
+            }]
+        };
+
+        function getEmployees(mainCb) {
+            Employee.aggregate([{
+                $match: {
+                    hire: {$ne: []}
+                }
+            }, {
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : '_id',
+                    foreignField: 'employee',
+                    as          : 'transfer'
+                }
+            }, {
+                $project: {
+                    department  : 1,
+                    fire        : 1,
+                    hire        : 1,
+                    lastFire    : 1,
+                    transfer    : 1,
+                    lastTransfer: {$max: '$transfer.date'},
+                    hireCount   : {$size: '$hire'},
+                    lastHire    : {
+                        $let: {
+                            vars: {
+                                lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                            },
+
+                            in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: employeeQueryForEmployeeByDep
+            }, {
+                $project: {
+                    department: 1,
+                    salary    : {
+                        $filter: {
+                            input: '$transfer',
+                            as   : 'item',
+
+                            cond: {$and: [{$gte: ['$$item.date', date]}, {$lte: ['$$item.date', endDate]}]}
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    department: 1,
+                    salary    : {$max: '$salary.salary'}
+                }
+            }
+            ], function (err, result) {
+                if (err) {
+                    return mainCb(err);
+                }
+            });
+        }
+
+        function generatePayroll(employeesResult, mainCb) {
+
+        }
+
+        async.waterfall([getEmployees, generatePayroll], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            composeExpensesAndCache(req, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                if (cbFromRecalc) {
+                    cbFromRecalc(null, 'ok');
+                } else {
+                    res.status(200).send('ok');
+                }
+            });
+        });
+
+    }
+
+   /* function generate(req, res, next, cbFromRecalc) {
+        var db = req.session.lastDb;
+        var Employee = models.get(db, 'Employees', EmployeeSchema);
+        var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+        var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var data = req.body;
+        var month = parseInt(data.month, 10);
+        var year = parseInt(data.year, 10);
+        var dataKey = year * 100 + month;
+        var waterfallTasks;
+        var employees;
+        var ids = {};
+        var i;
+        var date = moment().year(year).month(month - 1).startOf('month');
+        var endDate = moment(date).endOf('month');
+        var employeesIds = [];
+
+        date = new Date(date);
+        endDate = new Date(endDate);
 
         if (!data.month || !data.year) {
             return res.status(400).send();
@@ -605,7 +758,7 @@ var Module = function (models) {
                 }
             };
 
-            var query = Employee.find(queryObject, {transfer: 1, fire: 1}).lean();
+            var query = Employee.find({} /!* queryObject*!/, {transfer: 1, fire: 1}).lean();
 
             query.exec(function (err, result) {
                 if (err) {
@@ -674,120 +827,281 @@ var Module = function (models) {
                     }
                 });
 
+                employeesIds = Object.keys(ids);
+
                 callback(null, ids);
             });
         }
 
         function getJournalEntries(ids, callback) {
-            function matchEmployee(pcb) {
-                JournalEntry.aggregate([{
-                    $match: {
-                        'sourceDocument.model': 'Employees',
-                        journal               : {$in: [ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)]},
-                        date                  : {
-                            $gte: new Date(date),
-                            $lte: new Date(endDate)
-                        }
-                    }
-                }, {
-                    $project: {
-                        employee: '$sourceDocument._id',
-                        debit   : {$divide: ['$debit', 100]},
-                        credit  : {$divide: ['$credit', 100]},
-                        journal : 1,
-                        date    : 1
-                    }
-                }, {
-                    $group: {
-                        _id: {
-                            employee: '$employee',
-                            journal : '$journal'
-                        },
+            /!* function matchEmployee(pcb) {
+             JournalEntry.aggregate([{
+             $match: {
+             'sourceDocument.model': 'Employees',
+             journal               : {$in: [ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)]},
+             date                  : {
+             $gte: new Date(date),
+             $lte: new Date(endDate)
+             }
+             }
+             }, {
+             $project: {
+             employee: '$sourceDocument._id',
+             debit   : {$divide: ['$debit', 100]},
+             credit  : {$divide: ['$credit', 100]},
+             journal : 1,
+             date    : 1
+             }
+             }, {
+             $group: {
+             _id: {
+             employee: '$employee',
+             journal : '$journal'
+             },
 
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }, {
-                    $group: {
-                        _id : '$_id.employee',
-                        root: {$push: '$$ROOT'}
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pcb(err);
-                    }
+             debit : {$sum: '$debit'},
+             credit: {$sum: '$credit'}
+             }
+             }, {
+             $group: {
+             _id : '$_id.employee',
+             root: {$push: '$$ROOT'}
+             }
+             }], function (err, result) {
+             if (err) {
+             return pcb(err);
+             }
 
-                    pcb(null, result);
-                });
-            }
+             pcb(null, result);
+             });
+             }*!/
 
             function matchByWTrack(pcb) {
-                JournalEntry.aggregate([{
-                    $match: {
-                        // 'sourceDocument.model': 'wTrack',
-                        journal: {$in: journalArray},
-                        date   : {
-                            $gte: new Date(date),
-                            $lte: new Date(endDate)
-                        }
-                    }
-                }, {
-                    $project: {
-                        debit  : {$divide: ['$debit', 100]},
-                        credit : {$divide: ['$credit', 100]},
-                        journal: {
-                            $cond: {
-                                if: {
-                                    $eq: ['$journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
-                                },
+                /!* JournalEntry.aggregate([{
+                 $match: {
+                 // 'sourceDocument.model': 'wTrack',
+                 journal: {$in: journalArray},
+                 debit  : {$gt: 0},
+                 date   : {
+                 $gte: new Date(date),
+                 $lte: new Date(endDate)
+                 }
+                 }
+                 }, {
+                 $project: {
+                 debit  : {$divide: ['$debit', 100]},
+                 journal: {
+                 $cond: {
+                 if: {
+                 $eq: ['$journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
+                 },
 
-                                then: 'vacation',
-                                else: {
-                                    $cond: {
-                                        if: {
-                                            $eq: ['$journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
-                                        },
+                 then: 'vacation',
+                 else: {
+                 $cond: {
+                 if: {
+                 $eq: ['$journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
+                 },
 
-                                        then: 'overtime',
-                                        else: 'base'
-                                    }
-                                }
-                            }
-                        },
+                 then: 'overtime',
+                 else: 'base'
+                 }
+                 }
+                 }
+                 },
 
-                        date    : 1,
-                        employee: {
-                            $cond: {
-                                if: {
-                                    $ifNull: ['$sourceDocument.employee', null]
-                                },
+                 date    : 1,
+                 employee: {
+                 $cond: {
+                 if: {
+                 $ifNull: ['$sourceDocument.employee', null]
+                 },
 
-                                then: '$sourceDocument._id',
-                                else: '$sourceDocument.employee'
-                            }
-                        }
-                    }
-                }, {
-                    $project: {
-                        journal : 1,
-                        amount  : '$debit',
-                        employee: '$employee'
-                    }
-                }, {
-                    $group: {
-                        _id : '$employee',
-                        root: {$push: '$$ROOT'}
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pcb(err);
-                    }
+                 then: '$sourceDocument._id',
+                 else: '$sourceDocument.employee'
+                 }
+                 }
+                 }
+                 }, {
+                 $project: {
+                 journal : 1,
+                 amount  : '$debit',
+                 employee: '$employee'
+                 }
+                 }, {
+                 $match: {
+                 amount: {$gt: 0}
+                 }
+                 }, {
+                 $group: {
+                 _id: {
+                 employee: '$employee',
+                 journal : '$journal'
+                 },
 
-                    pcb(null, result);
-                });
+                 amount : {$sum: '$amount'},
+                 journal: {$first: '$journal'}
+                 }
+                 }, {
+                 $group: {
+                 _id : '$_id.employee',
+                 root: {$push: '$$ROOT'}
+                 }
+                 }], function (err, result) {
+                 if (err) {
+                 return pcb(err);
+                 }
+
+                 pcb(null, result);
+                 });*!/
+
+                /!* Employee.aggregate([{
+                 $match: {
+                 _id: {$in: employeesIds.objectID()}
+                 }
+                 }, {
+                 $lookup: {
+                 from        : 'journalentries',
+                 localField  : '_id',
+                 foreignField: 'sourceDocument.employee',
+                 as          : 'vacationsAndIdle'
+                 }
+                 }, {
+                 $lookup: {
+                 from        : 'journalentries',
+                 localField  : '_id',
+                 foreignField: 'sourceDocument._id',
+                 as          : 'workedAndOvertime'
+                 }
+                 }, {
+                 $project: {
+                 vacationsAndIdle: {
+                 $filter: {
+                 input: '$vacationsAndIdle',
+                 as   : 'item',
+
+                 cond: {
+                 $and: [{
+                 $gte: ['$$item.date', date]
+                 }, {
+                 $lte: ['$$item.date', endDate]
+                 }, {
+                 $gt: ['$$item.debit', 0]
+
+                 }]
+                 }
+                 }
+                 },
+
+                 workedAndOvertime: {
+                 $filter: {
+                 input: '$vacationsAndIdle',
+                 as   : 'item',
+
+                 cond: {
+                 $and: [{
+                 $gte: ['$$item.date', date]
+                 }, {
+                 $lte: ['$$item.date', endDate]
+                 }, {
+                 $gt: ['$$item.debit', 0]
+                 }]
+                 }
+                 }
+                 }
+                 }
+                 }, {
+                 $project: {
+                 vacation: {
+                 $filter: {
+                 input: '$vacationsAndIdle',
+                 as   : 'item',
+
+                 cond: {
+                 $eq: ['$$item.journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
+                 }
+                 }
+                 },
+
+                 overtime: {
+                 $filter: {
+                 input: '$workedAndOvertime',
+                 as   : 'item',
+
+                 cond: {
+                 $eq: ['$$item.journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
+                 }
+                 }
+                 },
+
+                 worked: {
+                 $filter: {
+                 input: '$workedAndOvertime',
+                 as   : 'item',
+
+                 cond: {
+                 $eq: ['$$item.journal', ObjectId(CONSTANTS.SALARY_PAYABLE)]
+                 }
+                 }
+                 },
+
+                 idle: {
+                 $filter: {
+                 input: '$vacationsAndIdle',
+                 as   : 'item',
+
+                 cond: {
+                 $eq: ['$$item.journal', ObjectId(CONSTANTS.IDLE_PAYABLE)]
+                 }
+                 }
+                 }
+                 }
+                 }, {
+                 $unwind: {
+                 path                      : '$vacation',
+                 preserveNullAndEmptyArrays: true
+                 }
+                 }, {
+                 $unwind: {
+                 path                      : '$idle',
+                 preserveNullAndEmptyArrays: true
+                 }
+                 }, {
+                 $unwind: {
+                 path                      : '$overtime',
+                 preserveNullAndEmptyArrays: true
+                 }
+                 }, {
+                 $unwind: {
+                 path                      : '$worked',
+                 preserveNullAndEmptyArrays: true
+                 }
+                 }, {
+                 $group: {
+                 _id     : '$_id',
+                 vacation: {$sum: '$vacation.debit'},
+                 idle    : {$sum: '$idle.debit'},
+                 overtime: {$sum: '$overtime.debit'},
+                 worked  : {$sum: '$worked.debit'}
+                 }
+                 }, {
+                 $project: {
+                 vacation: {$divide: ['$vacation', 100]},
+                 idle    : {$divide: ['$idle', 100]},
+                 overtime: {$divide: ['$overtime', 100]},
+                 worked  : {$divide: ['$worked', 100]},
+                 total   : {$divide: [{$add: ['$vacation', '$idle', '$overtime', '$worked']}, 100]}
+                 }
+                 }], function (err, result) {
+                 if (err) {
+                 return pcb(err);
+                 }
+
+                 pcb(null, result);
+                 });*!/
             }
 
-            async.parallel([matchByWTrack, matchEmployee], function (err, result) {
+            async.parallel([matchByWTrack/!* , matchEmployee*!/], function (err, result) {
                 var empIds;
                 var empIdsSecond;
                 var resultArray;
@@ -940,7 +1254,7 @@ var Module = function (models) {
             });
         });
 
-    }
+    }*/
 
     function recount(req, res, next) {
         var db = req.session.lastDb;
