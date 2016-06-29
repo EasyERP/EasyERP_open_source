@@ -13,8 +13,9 @@
     'custom',
     'moment',
     'constants',
-    'dataService'
-], function (Backbone, $, _, EditTemplate, SelectView, AttachView, ParentView, TransferModel, EditCollection, common, populate, custom, moment, CONSTANTS, dataService) {
+    'dataService',
+    'helpers'
+], function (Backbone, $, _, EditTemplate, SelectView, AttachView, ParentView, TransferModel, EditCollection, common, populate, custom, moment, CONSTANTS, dataService, helpers) {
     'use strict';
     var EditView = ParentView.extend({
         el         : '#content-holder',
@@ -193,7 +194,7 @@
             $tr = newTr;
             salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            date = new Date();
+            date = helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             department = $tr.find('#departmentsDd').attr('data-id');
@@ -514,6 +515,35 @@
                 homeAddress[$el.attr('name')] = $.trim($el.val());
             });
 
+            manager = $jobTrs.find('#projectManagerDD').last().attr('data-id') || null;
+            jobPosition = $jobTrs.find('#jobPositionDd').last().attr('data-id');
+            department = $jobTrs.find('#departmentsDd').last().attr('data-id');
+            weeklyScheduler = $jobTrs.find('#weeklySchedulerDd').last().attr('data-id');
+            event = $jobTrs.last().attr('data-content');
+            jobType = $.trim($jobTrs.last().find('#jobTypeDd').text());
+            salary = self.isSalary ? parseInt($jobTrs.find('[data-id="salary"] input').last().val() || $jobTrs.find('[data-id="salary"]').text(), 10) : null;
+            date = $.trim($jobTrs.last().find('td').eq(2).text());
+            date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
+
+            if ((salary === null) && self.isSalary) {
+                App.render({
+                    type   : 'error',
+                    message: 'Salary can`t be empty'
+                });
+                quit = true;
+                return false;
+            }
+
+            if (event === 'fired') {
+                date = moment(date);
+                fireArray.push(date);
+                lastFire = date.year() * 100 + date.isoWeek();
+            }
+
+            if (event === 'hired') {
+                hireArray.push(date);
+            }
+
            /* $.each($jobTrs, function (i, $tr) {
                 var $previousTr;
 
@@ -692,8 +722,8 @@
                 fire          : fireArray,
                 nextAction    : nextAction,
                // transfer      : transferArray,
-                expectedSalary: expectedSalary,
-                proposedSalary: proposedSalary
+               // expectedSalary: expectedSalary,
+               // proposedSalary: proposedSalary
             };
 
             $el = this.$el;
@@ -905,7 +935,7 @@
             var datacontent;
             var changedAttr;
 
-            if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
+            if (id === 'jobPositionDd' || id === 'departmentsDd' || id === 'projectManagerDD' || id === 'jobTypeDd' || id === 'hireFireDd') {
                 $element.text($target.text());
                 $element.attr('data-id', valueId);
 

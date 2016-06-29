@@ -205,7 +205,8 @@ define([
             if (contractEndReason) {
                 newTr.attr('data-content', 'fired');
                 newTr.find('td').eq(1).text('fired');
-                newTr.find('td').last().find('input').val(contractEndReason);
+                // newTr.find('td').last().find('input').val(contractEndReason);
+                newTr.find('td').last().html('<input class="editing salary statusInfo" type="text" value="' + contractEndReason + '">');
             } else {
                 newTr.attr('data-content', 'updated');
                 newTr.find('td').eq(1).text('updated');
