@@ -33,10 +33,10 @@
                         <span class="arrow">7</span>
                         <span class="endContractReasonList">End Contract</span>
                         <ul class="newSelectList">
-                            <li>End Contract</li>
-                            <li>Fired</li>
-                            <li>Personal Issues</li>
-                            <li>Other</li>
+                            <li class="endContract">End Contract</li>
+                            <li class="endContract">Fired</li>
+                            <li class="endContract">Personal Issues</li>
+                            <li class="endContract">Other</li>
                         </ul>
                     </li>
 
@@ -434,23 +434,23 @@
                                 }
 
                             %>
-                            <tr class="transfer" data-id="<%=key%>" data-content=<%= transfer.status %>>
+                            <tr class="transfer" id="<%=transfer._id%>" data-id="<%=key%>" data-content=<%= transfer.status %>>
                                 <td class="remove">
                                     <% if (key === transfers.length - 1 && key) {%>
                                     <a class="fa fa-trash"></a>
                                     <% } %>
                                 </td>
-                                <td><%= transfer.status %></td>
-                                <td class="editable date"><%= transfer.date %></td>
+                                <td data-content="status"><%= transfer.status %></td>
+                                <td class="editable date" data-content="date"><%= transfer.date %></td>
                                 <td>
-                                    <a id="jobPositionDd" class="current-selected"
+                                    <a id="jobPositionDd" class="current-selected" data-content="jobPosition"
                                        data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>"
                                        href="javascript:;">
                                         <%=transfer.jobPosition ? transfer.jobPosition.name : 'Select'%>
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="departmentsDd" class="current-selected"
+                                    <a id="departmentsDd" class="current-selected" data-content="department"
                                        data-id="<%=transfer.department ? transfer.department._id : null%>"
                                        href="javascript:;">
                                         <%=transfer.department ? transfer.department.name :
@@ -458,7 +458,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="projectManagerDD" class="current-selected"
+                                    <a id="projectManagerDD" class="current-selected" data-content="manager"
                                        data-id="<%= transfer.manager ?  transfer.manager._id : null%>"
                                        href="javascript:;">
                                         <%=transfer.manager ? transfer.manager.name.first + ' ' +
@@ -466,27 +466,26 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="jobTypeDd" class="current-selected"
+                                    <a id="jobTypeDd" class="current-selected" data-content="jobType"
                                        data-id="<%= transfer.jobType ? transfer.jobType :''%>"
                                        href="javascript:;">
                                         <%=transfer.jobType ? transfer.jobType : "Select"%>
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="weeklySchedulerDd" class="current-selected"
+                                    <a id="weeklySchedulerDd" class="current-selected" data-content="weeklyScheduler"
                                        data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>"
                                        href="javascript:;">
                                         <%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : "Select"%>
                                     </a>
                                 </td>
                                 <%if (transfer.salary || transfer.salary === 0) {%>
-                                <td class="editable dollar" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
+                                <td class="editable dollar" data-content="salary" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
                                 <% } %>
-                                <td>
+                                <td class="editable" class="statusInfo" data-content="info"
+                                    data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>
 
-                                    <input id="statusInfoDd" class="statusInfo"
-                                           data-id="<%=transfer.info ? transfer.info : ''%> "
-                                           value='<%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>'/>
+
 
                                 </td>
                             </tr>

@@ -12,6 +12,7 @@ var Employee = function (event, models) {
     var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
     var birthdaysSchema = mongoose.Schemas.birthday;
+    var TransferSchema = mongoose.Schemas.Transfer;
 
     var _ = require('underscore');
     var fs = require('fs');
@@ -500,34 +501,80 @@ var Employee = function (event, models) {
         employee.editedBy.date = new Date();
 
         event.emit('updateSequence', Model, 'sequence', 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
-            var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
 
             employee.sequence = sequence;
 
-            Department.findById(employee.department, function (error, dep) {
-                if (employee.transfer && employee.transfer[0]) {
-                    if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
-                        employee.transfer[0].isDeveloper = true;
-                    } else if (employee.transfer && employee.transfer[0]) {
-                        employee.transfer[0].isDeveloper = false;
-                    }
+            employee.save(function (error, result) {
+                if (error) {
+                    return next(error);
                 }
 
-                employee.save(function (error, result) {
-                    if (error) {
-                        return next(error);
-                    }
+                res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
-                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+                if (result.isEmployee) {
+                    event.emit('recalculate', req, {}, next);
+                }
 
-                    if (result.isEmployee) {
-                        event.emit('recalculate', req, {}, next);
-                    }
-
-                    event.emit('recollectVacationDash');
-                });
+                event.emit('recollectVacationDash');
             });
 
+        });
+    };
+
+    this.createTransfer = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
+
+        var transfer = new Model(body);
+
+        transfer.save(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.send(201, {success: 'A new Transfer create success'/* , data: result*/});
+        });
+    };
+
+    this.updateTransfer = function (req, res, next) {
+
+        var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
+
+        async.each(body, function (data, cb) {
+            var id = data._id;
+
+            delete data._id;
+            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'A Transfer update success'});
+        });
+    };
+
+    this.removeTransfer = function (req, res, next) {
+
+        var TransferModel = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
+        var removeIdArray = body.removeTransfer;
+
+        async.each(removeIdArray, function (id, cb) {
+
+            TransferModel.remove({_id: objectId(id)}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+            });
+
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'A Transfers delete success'});
         });
     };
 
@@ -574,41 +621,168 @@ var Employee = function (event, models) {
     }
 
     function getById(req, res, next) {
-        var project = {};
+        var projectSalary = {};
         var data = req.query;
         var profileId = req.session.profileId;
         var query;
+        var getTransfer;
+        var getEmployee;
+        var parallelTasks;
 
-        if (!accessEmployeeSalary(profileId)) {
-            project = {'transfer.salary': 0};
-        }
+        getTransfer = function (pCb) {
+            var transfers = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
-        query = models.get(req.session.lastDb, 'Employees', EmployeeSchema)
-            .findById(data.id, project);
+            if (!accessEmployeeSalary(profileId)) {
+                projectSalary = {
+                    department          : 1,
+                    jobPosition         : 1,
+                    weeklyScheduler     : 1,
+                    manager             : 1,
+                    date                : 1,
+                    status              : 1,
+                    //isDeveloper         : 1,
+                    jobType             : 1,
+                    info                : 1,
+                    employee            : 1,
+                    scheduledPay        : 1,
+                    payrollStructureType: 1
+                };
+            } else {
+                projectSalary = {
+                    department          : 1,
+                    jobPosition         : 1,
+                    weeklyScheduler     : 1,
+                    manager             : 1,
+                    date                : 1,
+                    status              : 1,
+                    //isDeveloper         : 1,
+                    jobType             : 1,
+                    info                : 1,
+                    employee            : 1,
+                    scheduledPay        : 1,
+                    payrollStructureType: 1,
+                    salary              : 1
+                };
+            }
 
-        query.populate('coach', 'name _id')
-            .populate('relatedUser', 'login _id')
-            .populate('workflow')
-            .populate('createdBy.user')
-            .populate('editedBy.user')
-            .populate('groups.users')
-            .populate('manager', '_id name')
-            .populate('jobPosition', '_id name fullName')
-            .populate('weeklyScheduler', '_id name')
-            .populate('department', '_id name')
-            .populate('groups.group')
-            .populate('transfer.department', '_id name')
-            .populate('transfer.jobPosition', '_id name')
-            .populate('transfer.manager', '_id name')
-            .populate('transfer.weeklyScheduler', '_id name')
-            .populate('groups.owner', '_id login');
+            transfers
+                .aggregate([{
+                    $match: {employee: objectId(data.id)}
+                }, {
+                    $lookup: {
+                        from        : 'Department',
+                        localField  : 'department',
+                        foreignField: '_id',
+                        as          : 'department'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'JobPosition',
+                        localField  : 'jobPosition',
+                        foreignField: '_id',
+                        as          : 'jobPosition'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'weeklySchedulers',
+                        localField  : 'weeklyScheduler',
+                        foreignField: '_id',
+                        as          : 'weeklyScheduler'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'manager',
+                        foreignField: '_id',
+                        as          : 'manager'
+                    }
+                }, {
+                    $project: {
+                        department          : {$arrayElemAt: ['$department', 0]},
+                        jobPosition         : {$arrayElemAt: ['$jobPosition', 0]},
+                        weeklyScheduler     : {$arrayElemAt: ['$weeklyScheduler', 0]},
+                        manager             : {$arrayElemAt: ['$manager', 0]},
+                        date                : 1,
+                        status              : 1,
+                        //isDeveloper         : 1,
+                        jobType             : 1,
+                        salary              : 1,
+                        info                : 1,
+                        employee            : 1,
+                        scheduledPay        : 1,
+                        payrollStructureType: 1
+                    }
+                }, {
+                    $project: {
+                        'department._id'      : '$department._id',
+                        'department.name'     : '$department.name',
+                        'jobPosition._id'     : '$jobPosition._id',
+                        'jobPosition.name'    : '$jobPosition.name',
+                        'weeklyScheduler._id' : '$weeklyScheduler._id',
+                        'weeklyScheduler.name': '$weeklyScheduler.name',
+                        'manager._id'         : '$manager._id',
+                        'manager.name'        : '$manager.name',
+                        date                  : 1,
+                        status                : 1,
+                        //isDeveloper           : 1,
+                        jobType               : 1,
+                        salary                : 1,
+                        info                  : 1,
+                        employee              : 1,
+                        scheduledPay          : 1,
+                        payrollStructureType  : 1
+                    }
+                }, {
+                    $project: projectSalary
+                }, {
+                    $sort: {date: 1}
+                }], function (err, transfer) {
+                    if (err) {
+                        return pCb(err);
+                    }
 
-        query.exec(function (err, foundEmployee) {
+                    pCb(null, transfer);
+                });
+        };
+
+        getEmployee = function (pCb) {
+            query = models.get(req.session.lastDb, 'Employees', EmployeeSchema)
+                .findById(data.id);
+
+            query.populate('coach', 'name _id')
+                .populate('relatedUser', 'login _id')
+                .populate('workflow')
+                .populate('createdBy.user')
+                .populate('editedBy.user')
+                .populate('groups.users')
+                .populate('manager', '_id name')
+                .populate('jobPosition', '_id name fullName')
+                .populate('weeklyScheduler', '_id name')
+                .populate('department', '_id name')
+                .populate('groups.group')
+                .populate('groups.owner', '_id login');
+
+            query.exec(function (err, foundEmployee) {
+                if (err) {
+                    return pCb(err);
+                }
+
+                pCb(null, foundEmployee);
+            });
+        };
+
+        parallelTasks = [getEmployee, getTransfer];
+
+        async.parallel(parallelTasks, function (err, result) {
+            var response = {};
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(foundEmployee);
+            response = result[0].set('transfer', result[1]);
+
+            res.status(200).send(response);
         });
 
     }
@@ -1048,17 +1222,17 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-                if (data.transfer) {
-                    data.transfer = data.transfer.map(function (tr) {
-
-                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                            tr.isDeveloper = false;
-                        } else {
-                            tr.isDeveloper = true;
-                        }
-                        return tr;
-                    });
-                }
+                //if (data.transfer) {
+                //    data.transfer = data.transfer.map(function (tr) {
+                //
+                //        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                //            tr.isDeveloper = false;
+                //        } else {
+                //            tr.isDeveloper = true;
+                //        }
+                //        return tr;
+                //    });
+                //}
 
                 Model.findById(_id, query, {new: true}, function (err, emp) {
                     if (err) {
@@ -1066,20 +1240,20 @@ var Employee = function (event, models) {
                     }
 
                     /*if (!accessEmployeeSalary(profileId)) {
-                        data.transfer = data.transfer.map(function (tr, i) {
-                            if (i !== 0) {
-                                if (emp.transfer[i] && emp.transfer[i].salary) {
-                                    tr.salary = emp.transfer[i].salary;
-                                } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
-                                    tr.salary = emp.transfer[i - 1].salary;
-                                }
-                            } else {
-                                tr.salary = 0;
-                            }
+                     data.transfer = data.transfer.map(function (tr, i) {
+                     if (i !== 0) {
+                     if (emp.transfer[i] && emp.transfer[i].salary) {
+                     tr.salary = emp.transfer[i].salary;
+                     } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
+                     tr.salary = emp.transfer[i - 1].salary;
+                     }
+                     } else {
+                     tr.salary = 0;
+                     }
 
-                            return tr;
-                        });
-                    }*/
+                     return tr;
+                     });
+                     }*/
 
                     Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                         var os = require('os');
@@ -1142,6 +1316,7 @@ var Employee = function (event, models) {
     this.remove = function (req, res, next) {
         var _id = req.params.id;
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var TransferModel = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
         Model.findByIdAndRemove(_id, function (err, result) {
             if (err) {
@@ -1156,11 +1331,18 @@ var Employee = function (event, models) {
             event.emit('recollectVacationDash', req);
 
             res.status(200).send({success: 'Employees removed'});
+
+            TransferModel.remove({employee: objectId(_id)}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+            });
         });
     };
 
     this.bulkRemove = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var TransferModel = models.get(req.session.lastDb, 'transfers', TransferSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -1176,6 +1358,12 @@ var Employee = function (event, models) {
 
                 event.emit('recalculate', req, null, next);
                 event.emit('recollectVacationDash', req);
+
+                TransferModel.remove({employee: objectId(id)}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                });
                 cb();
             });
         }, function (err) {
