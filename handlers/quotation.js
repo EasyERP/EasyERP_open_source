@@ -21,6 +21,7 @@ var Module = function (models, event) {
     var currencyHalper = require('../helpers/currency');
     var CONSTANTS = require('../constants/mainConstants.js');
     var pageHelper = require('../helpers/pageHelper');
+    var moment = require('../public/js/libs/moment/moment');
 
     function convertType(array, type) {
         var i;
@@ -515,6 +516,7 @@ var Module = function (models, event) {
             date: new Date()
         };
 
+       
         currencyHalper(body.orderDate, function (err, oxr) {
             oxr = oxr || {};
             rates = oxr.rates;

@@ -1125,7 +1125,7 @@ var Module = function (models, event) {
         var Payment = models.get(req.session.lastDb, 'InvoicePayment', PaymentSchema);
         var removable = true;
         var waterfallTasks;
-
+        
         if (body && !body.invoice) {
             return res.status(400).send();
         }

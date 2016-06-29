@@ -135,7 +135,7 @@ define([
                     url = '/invoices/approve';
                     data = {
                         invoiceId  : invoiceId,
-                        invoiceDate: invoiceDate
+                        invoiceDate: helpers.setTimeToDate(invoiceDate)
                     };
 
                     dataService.patchData(url, data, function (err) {
@@ -341,7 +341,7 @@ define([
                 supplier      : supplier,
                 fiscalPosition: null,
                 name          : $.trim(this.$el.find('#supplier_invoice_num').val()),
-                invoiceDate   : invoiceDate,
+                invoiceDate   : helpers.setTimeToDate(invoiceDate),
                 dueDate       : dueDate,
                 account       : null,
                 journal       : journalId,

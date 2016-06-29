@@ -10,8 +10,9 @@ define([
     'custom',
     'dataService',
     'populate',
-    'constants'
-], function (Backbone, $, _, ParentView, EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, ParentView, EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
     var EditView = ParentView.extend({
         contentType: 'Orders',
@@ -30,6 +31,8 @@ define([
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
             this.forSales = false;
+
+            this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
 
             this.render(options);
         },
@@ -204,7 +207,7 @@ define([
                     productId = targetEl.data('id');
                     if (productId) {  // added more info for save
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
+                        price = targetEl.find('[data-name="price"]').text() || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = targetEl.find('.taxes').text();
                         description = targetEl.find('[data-name="productDescr"]').text();
@@ -230,7 +233,7 @@ define([
                 supplier         : supplier,
                 supplierReference: supplierReference,
                 products         : products,
-                orderDate        : orderDate,
+                orderDate        : helpers.setTimeToDate(orderDate),
                 expectedDate     : expectedDate,
                 destination      : destination || null,
                 incoterm         : incoterm || null,
@@ -376,7 +379,11 @@ define([
             productItemContainer = this.$el.find('#productItemsHolder');
 
             productItemContainer.append(
-                new ProductItemView({editable: false, balanceVissible: false}).render({model: model}).el
+                new ProductItemView({
+                    editable: false,
+                    editablePrice: self.editablePrice,
+                    balanceVissible: false
+                }).render({model: model}).el
             );
 
             if (model.groups) {

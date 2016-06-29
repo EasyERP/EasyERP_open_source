@@ -188,7 +188,7 @@ define([
                 invoice         : invoiceModel._id,
                 supplier        : supplierId,
                 paymentMethod   : paymentMethodID,
-                date            : date,
+                date            : helpers.setTimeToDate(date),
                 period          : period,
                 paymentRef      : paymentRef,
                 paidAmount      : paidAmount,

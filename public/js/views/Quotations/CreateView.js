@@ -217,7 +217,7 @@ define([
                 project       : project,
                 deliverTo     : deliverTo,
                 products      : products,
-                orderDate     : orderDate,
+                orderDate     : helpers.setTimeToDate(orderDate),
                 expectedDate  : expectedDate,
                 destination   : destination,
                 incoterm      : incoterm,
