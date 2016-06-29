@@ -53,10 +53,10 @@ define([
 
     }
 
-    function fetchData() {
+    function fetchData(dbName) {
         var fragment = Backbone.history.fragment;
 
-        if (fragment && fragment.indexOf('DashBoardVacation') !== -1) {
+        if (fragment && fragment.indexOf('DashBoardVacation') !== -1 && App.currentDb === dbName) {
             App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
         }
 

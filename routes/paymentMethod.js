@@ -10,15 +10,14 @@ module.exports = function (models) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddleware);
 
     router.get('/', handler.getForDd);
     router.get('/getForList', handler.getForList);
 
-    router.put('/:id', handler.update);
-    router.post('/', handler.create);
+    router.put('/:id', accessStackMiddleware, handler.update);
+    router.post('/', accessStackMiddleware, handler.create);
 
-    router.delete('/:id', handler.remove);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

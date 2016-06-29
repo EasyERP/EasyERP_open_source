@@ -52,7 +52,8 @@ var Module = function (models, event) {
     };
 
     this.create = function (req, res, next) {
-        var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+        var dbName = req.session.lastDb;
+        var Department = models.get(dbName, 'Department', DepartmentSchema);
         var body = req.body;
         var department;
 
@@ -72,7 +73,7 @@ var Module = function (models, event) {
                     }
 
                     res.status(201).send({success: 'A new Department create success', id: result._id});
-                    event.emit('recollectVacationDash');
+                    event.emit('recollectVacationDash', {dbName: dbName});
                 });
             }
         });
@@ -296,7 +297,8 @@ var Module = function (models, event) {
     }
 
     this.update = function (req, res, next) {
-        var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+        var dbName = req.session.lastDb;
+        var Department = models.get(dbName, 'Department', DepartmentSchema);
         var data = req.body;
         var _id = req.params.id;
 
@@ -331,7 +333,7 @@ var Module = function (models, event) {
                         } else {
                             res.status(200).send({success: 'Department updated success'});
                         }
-                        event.emit('recollectVacationDash');
+                        event.emit('recollectVacationDash', {dbName: dbName});
                     });
                 });
             } else {
@@ -347,7 +349,7 @@ var Module = function (models, event) {
                     } else {
                         res.status(200).send({success: 'Department updated success'});
                     }
-                    event.emit('recollectVacationDash');
+                    event.emit('recollectVacationDash', {dbName: dbName});
                 });
             }
 

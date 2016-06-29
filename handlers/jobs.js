@@ -421,7 +421,7 @@ var Module = function (models, event) {
                 $match: queryObject
             }, {
                 $match: queryObjectStage2
-            },{
+            }, {
                 $group: {
                     _id  : null,
                     total: {$sum: 1},
@@ -508,8 +508,8 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            cost : '$elements',
-                            costQA: {
+                            cost      : '$elements',
+                            costQA    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -524,7 +524,7 @@ var Module = function (models, event) {
                                 }
                             },
 
-                            costIOS: {
+                            costIOS    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -538,21 +538,21 @@ var Module = function (models, event) {
                                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000010')]}
                                 }
                             },
-                            costUnity: {
+                            costUnity  : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId('56e175c4d62294582e10ca68')]}
                                 }
                             },
-                            costDotNet: {
+                            costDotNet : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000012')]}
                                 }
                             },
-                            costWeb: {
+                            costWeb    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -564,7 +564,7 @@ var Module = function (models, event) {
                                     }
                                 }
                             },
-                            costDev: {
+                            costDev    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -574,7 +574,7 @@ var Module = function (models, event) {
                                     }
                                 }
                             },
-                            costROR: {
+                            costROR    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -585,16 +585,16 @@ var Module = function (models, event) {
                     }, {
                         $project: {}
                     }];
-                   /* ArrayTasks.forEach(function (el) {
-                        aggregateArr[2].$project[el] = {
-                            $filter: {
-                                input: '$elements',
-                                as   : 'element',
-                                cond : {$setIsSubset: [['$$element.sourceDocument'], job[el]]}
-                            }
+                    /* ArrayTasks.forEach(function (el) {
+                     aggregateArr[2].$project[el] = {
+                     $filter: {
+                     input: '$elements',
+                     as   : 'element',
+                     cond : {$setIsSubset: [['$$element.sourceDocument'], job[el]]}
+                     }
 
-                        };
-                    });*/
+                     };
+                     });*/
                     ArrayTasks.forEach(function (el) {
                         var name = '$' + el + '.debit';
                         aggregateArr[aggregateArr.length - 1].$project[el] = {$sum: name};
@@ -870,7 +870,7 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    order: {
+                    order        : {
                         $cond: {
                             if: {
                                 $eq: ['$type', 'Not Quoted']
@@ -912,7 +912,7 @@ var Module = function (models, event) {
                             cond : salesManagerMatch
                         }
                     },
-                    payment: {
+                    payment      : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
@@ -1041,8 +1041,8 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            cost : '$elements',
-                            costQA: {
+                            cost      : '$elements',
+                            costQA    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -1057,7 +1057,7 @@ var Module = function (models, event) {
                                 }
                             },
 
-                            costIOS: {
+                            costIOS    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -1071,21 +1071,21 @@ var Module = function (models, event) {
                                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000010')]}
                                 }
                             },
-                            costUnity: {
+                            costUnity  : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId('56e175c4d62294582e10ca68')]}
                                 }
                             },
-                            costDotNet: {
+                            costDotNet : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000012')]}
                                 }
                             },
-                            costWeb: {
+                            costWeb    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -1097,7 +1097,7 @@ var Module = function (models, event) {
                                     }
                                 }
                             },
-                            costDev: {
+                            costDev    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -1107,7 +1107,7 @@ var Module = function (models, event) {
                                     }
                                 }
                             },
-                            costROR: {
+                            costROR    : {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -1118,16 +1118,16 @@ var Module = function (models, event) {
                     }, {
                         $project: {}
                     }];
-                   /* ArrayTasks.forEach(function (el) {
-                        aggregateArr[2].$project[el] = {
-                            $filter: {
-                                input: '$elements',
-                                as   : 'element',
-                                cond : {$setIsSubset: [['$$element.sourceDocument'], job[el]]}
-                            }
+                    /* ArrayTasks.forEach(function (el) {
+                     aggregateArr[2].$project[el] = {
+                     $filter: {
+                     input: '$elements',
+                     as   : 'element',
+                     cond : {$setIsSubset: [['$$element.sourceDocument'], job[el]]}
+                     }
 
-                        };
-                    });*/
+                     };
+                     });*/
                     ArrayTasks.forEach(function (el) {
                         var name = '$' + el + '.debit';
                         aggregateArr[aggregateArr.length - 1].$project[el] = {$sum: name};
@@ -1599,8 +1599,9 @@ var Module = function (models, event) {
     };
 
     this.remove = function (req, res, next) {
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var dbName = req.session.lastDb;
+        var JobsModel = models.get(dbName, 'jobs', JobsSchema);
+        var wTrack = models.get(dbName, 'wTrack', wTrackSchema);
         var id = req.params._id;
 
         JobsModel.findByIdAndRemove(id, function (err, result) {
@@ -1627,7 +1628,7 @@ var Module = function (models, event) {
                             cb();
                         });
                     }, function () {
-                        event.emit('recollectVacationDash');
+                        event.emit('recollectVacationDash', {dbName: dbName});
                     });
 
                 });
@@ -1638,18 +1639,20 @@ var Module = function (models, event) {
     };
 
     this.update = function (req, res, next) {
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var project;
-
+        var dbName = req.session.lastDb;
+        var JobsModel = models.get(dbName, 'jobs', JobsSchema);
         var data = req.body;
         var id = data._id;
-        var query;
-        var products;
-        var type;
         var editedBy = {
             user: req.session.uId,
             date: new Date()
         };
+
+        var project;
+        var query;
+        var products;
+        var type;
+
 
         if (id) {
             if (data.workflowId) {
@@ -1669,7 +1672,7 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                event.emit('recollectVacationDash');
+                event.emit('recollectVacationDash', {dbName: dbName});
 
                 res.status(200).send(result);
             });
@@ -1697,7 +1700,7 @@ var Module = function (models, event) {
                     event.emit('fetchJobsCollection', {project: project});
                 }
 
-                event.emit('recollectVacationDash');
+                event.emit('recollectVacationDash', {dbName: dbName});
             });
         }
     };

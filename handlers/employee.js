@@ -471,8 +471,9 @@ var Employee = function (event, models) {
     }
 
     this.create = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Employees', EmployeeSchema);
         var employee;
-        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var body = req.body;
         var err;
 
@@ -500,7 +501,7 @@ var Employee = function (event, models) {
         employee.editedBy.date = new Date();
 
         event.emit('updateSequence', Model, 'sequence', 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
-            var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+            var Department = models.get(dbName, 'Department', DepartmentSchema);
 
             employee.sequence = sequence;
 
@@ -524,7 +525,7 @@ var Employee = function (event, models) {
                         event.emit('recalculate', req, {}, next);
                     }
 
-                    event.emit('recollectVacationDash');
+                    event.emit('recollectVacationDash', {dbName: dbName});
                 });
             });
 
@@ -963,9 +964,9 @@ var Employee = function (event, models) {
     }
 
     this.updateOnlySelectedFields = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var _id = req.params.id;
         var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Employees', EmployeeSchema);
+        var _id = req.params.id;
         var profileId = req.session.profileId;
         var UsersSchema = mongoose.Schemas.User;
         var UsersModel = models.get(dbName, 'Users', UsersSchema);
@@ -1051,11 +1052,7 @@ var Employee = function (event, models) {
                 if (data.transfer) {
                     data.transfer = data.transfer.map(function (tr) {
 
-                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                            tr.isDeveloper = false;
-                        } else {
-                            tr.isDeveloper = true;
-                        }
+                        tr.isDeveloper = adminDeps.indexOf(tr.department.toString()) === -1;
                         return tr;
                     });
                 }
@@ -1066,20 +1063,20 @@ var Employee = function (event, models) {
                     }
 
                     /*if (!accessEmployeeSalary(profileId)) {
-                        data.transfer = data.transfer.map(function (tr, i) {
-                            if (i !== 0) {
-                                if (emp.transfer[i] && emp.transfer[i].salary) {
-                                    tr.salary = emp.transfer[i].salary;
-                                } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
-                                    tr.salary = emp.transfer[i - 1].salary;
-                                }
-                            } else {
-                                tr.salary = 0;
-                            }
+                     data.transfer = data.transfer.map(function (tr, i) {
+                     if (i !== 0) {
+                     if (emp.transfer[i] && emp.transfer[i].salary) {
+                     tr.salary = emp.transfer[i].salary;
+                     } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
+                     tr.salary = emp.transfer[i - 1].salary;
+                     }
+                     } else {
+                     tr.salary = 0;
+                     }
 
-                            return tr;
-                        });
-                    }*/
+                     return tr;
+                     });
+                     }*/
 
                     Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                         var os = require('os');
@@ -1128,7 +1125,7 @@ var Employee = function (event, models) {
 
                         }
 
-                        event.emit('recollectVacationDash');
+                        event.emit('recollectVacationDash', {dbName: dbName});
 
                         res.status(200).send(result);
 
@@ -1141,7 +1138,8 @@ var Employee = function (event, models) {
 
     this.remove = function (req, res, next) {
         var _id = req.params.id;
-        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Employees', EmployeeSchema);
 
         Model.findByIdAndRemove(_id, function (err, result) {
             if (err) {
@@ -1153,14 +1151,15 @@ var Employee = function (event, models) {
             }
 
             event.emit('recalculate', req, null, next);
-            event.emit('recollectVacationDash', req);
+            event.emit('recollectVacationDash', {dbName: dbName});
 
             res.status(200).send({success: 'Employees removed'});
         });
     };
 
     this.bulkRemove = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Employees', EmployeeSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -1175,7 +1174,7 @@ var Employee = function (event, models) {
                 }
 
                 event.emit('recalculate', req, null, next);
-                event.emit('recollectVacationDash', req);
+                event.emit('recollectVacationDash', {dbName: dbName});
                 cb();
             });
         }, function (err) {

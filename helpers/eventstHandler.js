@@ -258,8 +258,12 @@ eventsHandler = function (app, mainDb) {
         }
     });
 // Emit UI event for information user about some changes
-    event.on('recollectVacationDash', function () {
-        io.emit('recollectVacationDash');
+    event.on('recollectVacationDash', function (options) {
+        var dbName;
+
+        options = options || {};
+        dbName = options.dbName;
+        io.emit('recollectVacationDash', dbName);
         redisStore.removeAllFromStorage('dashboardVacation');
     });
 
