@@ -484,9 +484,10 @@ var Module = function (event, models) {
         var id = req.params.id;
         var data = req.body;
         var vacArr = data.vacArray || [];
-        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+        var dbName = req.session.lastDb;
+        var Vacation = models.get(dbName, 'Vacation', VacationSchema);
         var capData = {
-            db: req.session.lastDb
+            db: dbName
         };
 
         data.editedBy = {
@@ -513,15 +514,16 @@ var Module = function (event, models) {
                 year    : response.year,
                 employee: response.employee
             });
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
         });
     };
 
     this.putchBulk = function (req, res, next) {
         var body = req.body;
+        var dbName = req.session.lastDb;
+        var Vacation = models.get(dbName, 'Vacation', VacationSchema);
+        var capData = {db: dbName};
         var uId;
-        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-        var capData = {db: req.session.lastDb};
 
         async.each(body, function (data, cb) {
             var id = data._id;
@@ -560,13 +562,14 @@ var Module = function (event, models) {
             }
 
             res.status(200).send({success: 'updated'});
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
         });
     };
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
-        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+        var dbName = req.session.lastDb;
+        var Vacation = models.get(dbName, 'Vacation', VacationSchema);
 
         Vacation.findByIdAndRemove({_id: id}, function (err, vacation) {
             if (err) {
@@ -580,14 +583,15 @@ var Module = function (event, models) {
                 year    : vacation.year,
                 employee: vacation.employee
             });
-            event.emit('recollectVacationDash');
+            event.emit('recollectVacationDash', {dbName: dbName});
         });
     };
 
     this.create = function (req, res, next) {
-        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-        var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var dbName = req.session.lastDb;
+        var Vacation = models.get(dbName, 'Vacation', VacationSchema);
+        var Department = models.get(dbName, 'Department', DepartmentSchema);
+        var Employee = models.get(dbName, 'Employees', EmployeeSchema);
         var body = req.body;
         var vacArr = body.vacArray || [];
         var vacation;
@@ -648,7 +652,7 @@ var Module = function (event, models) {
                 }
 
                 res.status(200).send({success: vacationResult});
-                event.emit('recollectVacationDash');
+                event.emit('recollectVacationDash', {dbName: dbName});
             });
         });
     };
