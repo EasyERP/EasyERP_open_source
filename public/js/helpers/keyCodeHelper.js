@@ -9,7 +9,7 @@ define([], function () {
     };
 
     var isBspaceAndDelete = function (keyCode) {
-        return (keyCode === 8 ||  keyCode === 46);
+        return (keyCode === 8 || keyCode === 46);
     };
 
     var isEnter = function (keyCode) {
@@ -36,7 +36,7 @@ define([], function () {
         isEnter            : isEnter,
         isDecimalDot       : isDecimalDot,
         isDigitOrDecimalDot: isDigitOrDecimalDot,
-        isBspaceAndDelete : isBspaceAndDelete,
+        isBspaceAndDelete  : isBspaceAndDelete,
         isArrowsOrHomeEnd  : isArrowsOrHomeEnd,
         isBspDelTabEscEnt  : isBspDelTabEscEnt
     };
