@@ -11,8 +11,9 @@ define([
     'views/Assignees/AssigneesView',
     'views/dialogViewBase',
     'constants',
-    'moment'
-], function (Backbone, $, _, CreateTemplate, EmployeeModel, TransferModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment) {
+    'moment',
+    'helpers'
+], function (Backbone, $, _, CreateTemplate, EmployeeModel, TransferModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment, helpers) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -245,7 +246,7 @@ define([
             salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
             dateText = $.trim($tr.find('td').eq(2).text());
-            date = dateText ? new Date(dateText) : new Date();
+            date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             department = $tr.find('#departmentsDd').attr('data-id');

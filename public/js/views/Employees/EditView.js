@@ -221,7 +221,7 @@ define([
             salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
             dateText = $.trim($tr.find('td').eq(2).text());
-            date = dateText ? new Date(dateText) : new Date();
+            date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             department = $tr.find('#departmentsDd').attr('data-id');
@@ -319,7 +319,11 @@ define([
                         datacontent = target.closest('td').attr('data-content');
 
                         changedAttr = self.changedModels[modelId];
-                        changedAttr[datacontent] = target.val();
+                        if (datacontent === 'date') {
+                            changedAttr[datacontent] = helpers.setTimeToDate(new Date(target.val()));
+                        } else {
+                            changedAttr[datacontent] = target.val();
+                        }
 
                         target.parent().text(target.val()).removeClass('changeContent');
                         target.remove();
@@ -559,7 +563,7 @@ define([
             event = $jobTrs.last().attr('data-content');
             jobType = $.trim($jobTrs.last().find('#jobTypeDd').text());
             date = $.trim($jobTrs.last().find('td').eq(2).text());
-            date = date ? new Date(date) : new Date();
+            date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
 
             if (event === 'fired') {
                 date = moment(date);
