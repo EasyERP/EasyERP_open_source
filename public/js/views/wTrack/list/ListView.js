@@ -555,7 +555,7 @@ define([
 
             if (!$input.length && isDay && !isEdited) {
                 validateRowFunc = function (cb) {
-                    this.validateRow($tr, editCb);
+                    self.validateRow($tr, editCb);
 
                     if (typeof cb === 'function') {
                         cb();
