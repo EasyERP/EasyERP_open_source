@@ -689,6 +689,7 @@ define([
                             }
                             delete transferNewModel.attributes._id;
                             delete transferNewModel._id;
+                            transferNewModel.changed.date = moment(modelChanged.changed.date).subtract(1, 'day');
                             transferNewModel.changed.status = 'transfer';
                             self.editCollection.add(transferNewModel);
                         }
