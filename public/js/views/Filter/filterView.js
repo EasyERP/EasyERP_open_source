@@ -97,7 +97,7 @@ define([
                         $filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
 
-                    if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
+                    if ((key !== 'forSales') && (key !== 'viewType') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
                         groupName = self.constantsObject[key] ? self.constantsObject[key].displayName : 'letter';
                     } else {
                         groupName = null;
@@ -197,13 +197,13 @@ define([
             filterGroupContainer.toggleClass('activeGroup');
         },
 
-        renderFilterContent: function (options) {
+        renderFilterContent: function (options, cb) {
             var self = this;
             var keys = this.constantsObject.array || Object.keys(this.constantsObject);
             var groupOptions;
 
             if (keys.length) {
-                keys.forEach(function (key) {
+                async.each(keys, function (key, eachCB) {
                     var constants = self.constantsObject[key];
                     var displayName = constants.displayName;
                     var filterBackend = constants.backend;
@@ -217,12 +217,12 @@ define([
                         filterBackend: filterBackend,
                         groupOptions : groupOptions,
                         filterType   : filterType
-                    });
-                });
+                    }, eachCB);
+                }, cb);
             }
         },
 
-        renderGroup: function (options) {
+        renderGroup: function (options, cb) {
             var displayName = options.displayName || '';
             var filterType = options.filterType || null;
             var filterView = options.filterView;
@@ -244,7 +244,7 @@ define([
                         filterType   : filterType,
                         filterBackend: filterBackend,
                         groupStatus  : groupStatus
-                    });
+                    }, cb);
                 }, 10);
             }
 
@@ -288,6 +288,7 @@ define([
 
             this.searchResult = this.searchResult.concat(this.searchResultObject[filterView]);
 
+            cb();
         },
 
         getAutoCompleteResult: function (options) {
@@ -327,8 +328,12 @@ define([
             var groupType = $currentElement.attr('data-back');
             var elements = container.find('.' + filterObjectName);
 
-            var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
-            var filterType = this.constantsObject[groupName].type; // filterType searches in types of constantsObject filters
+            // var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
+            var filterType = this.constantsObject[filterObjectName].type; // filterType searches in types of constantsObject filters
+
+            if (!App.filtersObject.filter) {
+                App.filtersObject.filter = {};
+            }
 
             if (!App.filtersObject.filter[filterObjectName]) {
                 App.filtersObject.filter[filterObjectName] = {
@@ -353,8 +358,10 @@ define([
                 App.filtersObject.filter[filterObjectName].value.push(value);
             }
 
-            this.setDbOnce();
-            this.showFilterIcons(App.filtersObject.filter);
+            this.setStatus(filterObjectName);
+
+            // this.setDbOnce();
+            // this.showFilterIcons(App.filtersObject.filter);
 
         },
 
@@ -438,7 +445,7 @@ define([
         render: function (options) {
             var self = this;
             var $curEl = this.$el;
-            var searchInput;
+            var $searchInput;
             var filterName = this.contentType + '.filter';
             var filters = custom.retriveFromCash(filterName) || App.filtersObject.filter;
             var allResults;
@@ -446,7 +453,17 @@ define([
             App.filtersObject.filter = filters;
             $curEl.html(this.template());
 
-            this.renderFilterContent(options);
+            this.renderFilterContent(options, function () {
+                $searchInput.catcomplete({
+                    source  : self.searchResult,
+                    appendTo: $searchInput.closest('#searchGlobalContainer'),
+                    response: function (event, ui) {
+                        if (ui.content.length === 0) {
+                            $searchInput.next().empty();
+                        }
+                    }
+                });
+            });
             this.showFilterIcons(filters);
             this.renderSavedFilters();
 
@@ -499,34 +516,34 @@ define([
                 }
             });
 
-            searchInput = $curEl.find('#searchInput');
+            $searchInput = $curEl.find('#searchInput');
 
-            searchInput.keydown(function (e) {
+            $searchInput.keydown(function (e) {
                 if (e.which === 13) {
-                    allResults = searchInput.next().find('.ui-autocomplete-category');
+                    allResults = $searchInput.next().find('.ui-autocomplete-category');
 
-                    allResults.each(function () {
-                        var element = $(this);
+                    /*allResults.each(function () {
+                     var element = $(this);
 
-                        self.clickSearchResult(element);
-                    });
+                     self.clickSearchResult(element);
+                     });*/
 
-                    if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
+                    if (allResults.length) {
+                        self.clickSearchResult(allResults.first());
+                    }
+
+                    if (!allResults.length && $searchInput.html()) {  // added message in case of search unsuccessful
                         App.render({
                             type   : 'error',
                             message: 'No such result'
                         });
                     }
 
-                    allResults.remove(); // to prevent appearing last filters after selecting new
-                    searchInput.html('');// to prevent appearing value in Search after selecting
+                    // allResults.remove(); // to prevent appearing last filters after selecting new
+                    $searchInput.catcomplete('close');
+                    $searchInput.html('');// to prevent appearing value in Search after selecting
                     e.preventDefault();  // to prevent appearing previous values by pressing Backspace
                 }
-            });
-
-            searchInput.catcomplete({
-                source  : this.searchResult,
-                appendTo: searchInput.closest('#searchGlobalContainer')
             });
 
             return this;

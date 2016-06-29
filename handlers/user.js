@@ -89,7 +89,7 @@ var User = function (event, models) {
 
                         savedFilters = _.map(savedFilters, function (element) {
                             if (element.contentType === contentType) {
-                                element.byDefault = (byDefaultUpdate && byDefaultUpdate._id === element._id.toString()) || false;
+                                element.byDefault = (byDefaultUpdate && byDefaultUpdate._id === element._id.toString()) ? byDefaultUpdate.byDefault : false;
                             }
 
                             return element;

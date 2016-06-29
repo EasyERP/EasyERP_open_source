@@ -80,6 +80,8 @@ define([
                 var $curTarget = $(e.currentTarget);
                 var targetId = $curTarget.attr('id');
                 var curFilter = _.findWhere(this.savedFilters, {_id: targetId});
+                var filterName = curFilter.name;
+                var checkBoxState = $target.prop('checked');
 
                 var currentUser;
 
@@ -90,7 +92,8 @@ define([
                         {
                             byDefault: {
                                 _id        : targetId,
-                                contentType: self.contentType
+                                contentType: self.contentType,
+                                byDefault  : checkBoxState
                             }
                         }, {
                             headers : {
@@ -104,13 +107,18 @@ define([
                                 var savedFiltersValues = savedFiltersForCT[0].filter;
 
                                 savedFiltersValues = _.map(savedFiltersValues, function (element) {
-                                    element.byDefault = element._id === targetId;
+                                    element.byDefault = element._id === targetId ? checkBoxState : false;
 
                                     return element;
                                 });
 
                                 self.savedFilters = savedFiltersValues;
                                 self.renderSavedFiltersElements();
+
+                                App.render({
+                                    type   : 'notify',
+                                    message: 'Saved filter <b>' + filterName + '</b> will' + (checkBoxState ? '' : ' not') + ' be used as default.'
+                                });
                             },
                             error   : function (model, xhr) {
                                 console.error(xhr);

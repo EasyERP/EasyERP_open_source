@@ -616,7 +616,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['project', 'supplier', 'salesManager', 'workflow']
         },
 
         Orders: {
