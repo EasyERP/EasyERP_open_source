@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/salesInvoices/filterCollection',
@@ -7,12 +8,33 @@ define([
     'views/salesInvoices/list/ListView',
     'views/salesInvoices/TopBarView',
     'views/salesInvoices/EditView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
-], function (Backbone, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+    'sinon-chai',
+    'constantsDir/filters'
+], function (Backbone,
+             _,
+             modules,
+             fixtures,
+             InvoiceCollection,
+             MainView,
+             ListView,
+             TopBarView,
+             EditView,
+             FilterView,
+             FilterGroup,
+             SavedFilters,
+             eventsBinder,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai,
+             FILTER_CONSTANTS) {
     'use strict';
 
     var expect;
@@ -21,7 +43,7 @@ define([
         data : [
             {
                 _id        : "55b92ae121e4b7c40f001275",
-                total      : 673,
+                total: 673,
                 salesPerson: {
                     name: {
                         last : "Katona",
@@ -66,7 +88,7 @@ define([
             },
             {
                 _id        : "55b92ae121e4b7c40f001287",
-                total      : 673,
+                total: 673,
                 salesPerson: {
                     name: {
                         last : "Ostroverkh",
@@ -111,7 +133,7 @@ define([
             },
             {
                 _id        : "55b92ae121e4b7c40f001255",
-                total      : 673,
+                total: 673,
                 salesPerson: {
                     name: {
                         last : "Gusti",
@@ -151,171 +173,10 @@ define([
     };
     var fakeInvoiceById = {
         _id             : "55b92ae121e4b7c40f001275",
-        paymentDate     : "2015-01-29T04:00:00.000Z",
-        dueDate         : "2015-02-13T12:09:15.273Z",
-        ID              : 141,
-        editedBy        : {
-            date: "2015-07-29T19:34:57.678Z",
-            user: {
-                _id            : "52203e707d4dba8813000003",
-                __v           : 0,
-                attachments   : [],
-                credentials   : {
-                    access_token : "",
-                    refresh_token: ""
-                },
-                email         : "info@thinkmobiles.com",
-                kanbanSettings: {
-                    applications : {
-                        countPerPage : 10,
-                        foldWorkflows: [
-                            "Empty"
-                        ]
-                    },
-                    opportunities: {
-                        countPerPage: 10
-                    },
-                    tasks        : {
-                        countPerPage : 10,
-                        foldWorkflows: [
-                            "528ce3caf3f67bc40b000013",
-                            "528ce3acf3f67bc40b000012",
-                            "528ce30cf3f67bc40b00000f",
-                            "528ce35af3f67bc40b000010"
-                        ]
-                    }
-                },
-                lastAccess    : "2016-05-18T07:28:11.790Z",
-                login         : "admin",
-                pass          : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                profile       : 1387275598000,
-                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                savedFilters  : [
-                    {
-                        _id      : "56213057c558b13c1bbf874d",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5621307bc558b13c1bbf874f",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56213103c558b13c1bbf8750",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56213197c558b13c1bbf8751",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56215e86c558b13c1bbf8755",
-                        viewType : "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56229009184ec5a427913306",
-                        viewType: "",
-                        byDefault: "salesInvoice"
-                    },
-                    {
-                        _id      : "562506bb19a2ecca01ca84b3",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56265005d53978de6e9ea440",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "562b83ccb4677e225aa31df6",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "564dd4ce9fb8bc3f2195662c",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56570d714d96962262fd4b55",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56572368bfd103f108eb4a24",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56604795ccc590f32c577ece",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "566047c6ccc590f32c577ed1",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5661a7bf7d284423697e34a8",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5665429e9294f4d728bcafaa",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "566eba768453e8b464b70a40",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56c711ab0769bba2647ae710",
-                        viewType: "",
-                        byDefault: "Projects"
-                    },
-                    {
-                        _id      : "56daf5322e7b62c613ff2552",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dd69d991cb620c19ff60c2",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dd6af71e6cb7131892b2ba",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "56dfe8e56e2877d85455a6bb",
-                        viewType: "",
-                        byDefault: "Leads"
-                    },
-                    {
-                        _id      : "56f3d039c1785edc507e81ea",
-                        viewType: "",
-                        byDefault: ""
-                    },
-                    {
-                        _id      : "5708ca211d118cb6401008cc",
-                        viewType: "",
-                        byDefault: "Employees"
-                    }
-                ],
-                relatedEmployee: "55b92ad221e4b7c40f00004f"
-            }
-        },
-        createdBy       : {
+        paymentDate: "2015-01-29T04:00:00.000Z",
+        dueDate    : "2015-02-13T12:09:15.273Z",
+        ID         : 141,
+        editedBy   : {
             date: "2015-07-29T19:34:57.678Z",
             user: {
                 _id            : "52203e707d4dba8813000003",
@@ -476,19 +337,180 @@ define([
                 relatedEmployee: "55b92ad221e4b7c40f00004f"
             }
         },
-        creationDate    : "2015-07-29T19:34:57.678Z",
-        groups          : {
+        createdBy  : {
+            date: "2015-07-29T19:34:57.678Z",
+            user: {
+                _id            : "52203e707d4dba8813000003",
+                __v: 0,
+                attachments: [],
+                credentials: {
+                    access_token : "",
+                    refresh_token: ""
+                },
+                email      : "info@thinkmobiles.com",
+                kanbanSettings: {
+                    applications : {
+                        countPerPage : 10,
+                        foldWorkflows: [
+                            "Empty"
+                        ]
+                    },
+                    opportunities: {
+                        countPerPage: 10
+                    },
+                    tasks        : {
+                        countPerPage : 10,
+                        foldWorkflows: [
+                            "528ce3caf3f67bc40b000013",
+                            "528ce3acf3f67bc40b000012",
+                            "528ce30cf3f67bc40b00000f",
+                            "528ce35af3f67bc40b000010"
+                        ]
+                    }
+                },
+                lastAccess    : "2016-05-18T07:28:11.790Z",
+                login         : "admin",
+                pass          : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                profile       : 1387275598000,
+                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                savedFilters  : [
+                    {
+                        _id      : "56213057c558b13c1bbf874d",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "5621307bc558b13c1bbf874f",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56213103c558b13c1bbf8750",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56213197c558b13c1bbf8751",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56215e86c558b13c1bbf8755",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56229009184ec5a427913306",
+                        viewType: "",
+                        byDefault: "salesInvoice"
+                    },
+                    {
+                        _id      : "562506bb19a2ecca01ca84b3",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56265005d53978de6e9ea440",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "562b83ccb4677e225aa31df6",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "564dd4ce9fb8bc3f2195662c",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56570d714d96962262fd4b55",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56572368bfd103f108eb4a24",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56604795ccc590f32c577ece",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "566047c6ccc590f32c577ed1",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "5661a7bf7d284423697e34a8",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "5665429e9294f4d728bcafaa",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "566eba768453e8b464b70a40",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56c711ab0769bba2647ae710",
+                        viewType: "",
+                        byDefault: "Projects"
+                    },
+                    {
+                        _id      : "56daf5322e7b62c613ff2552",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56dd69d991cb620c19ff60c2",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56dd6af71e6cb7131892b2ba",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "56dfe8e56e2877d85455a6bb",
+                        viewType: "",
+                        byDefault: "Leads"
+                    },
+                    {
+                        _id      : "56f3d039c1785edc507e81ea",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id      : "5708ca211d118cb6401008cc",
+                        viewType: "",
+                        byDefault: "Employees"
+                    }
+                ],
+                relatedEmployee: "55b92ad221e4b7c40f00004f"
+            }
+        },
+        creationDate: "2015-07-29T19:34:57.678Z",
+        groups      : {
             group: [],
             users: [],
             owner: null
         },
-        whoCanRW        : "everyOne",
-        workflow        : {
+        whoCanRW    : "everyOne",
+        workflow    : {
             _id   : "55647d982e4aa3804a765ecb",
             status: "Done",
             name  : "Paid"
         },
-        products        : [
+        products    : [
             {
                 subTotal   : 100000,
                 unitPrice: 100000,
@@ -616,7 +638,7 @@ define([
                 quantity   : 1
             }
         ],
-        payments        : [
+        payments    : [
             {
                 _id       : "55b92ae221e4b7c40f00138f",
                 paymentRef: "",
@@ -625,16 +647,16 @@ define([
                 paidAmount: 100000
             }
         ],
-        paymentInfo     : {
+        paymentInfo : {
             taxes  : 0,
             unTaxed: 100000,
             balance: 0,
             total  : 100000
         },
-        paymentTerms    : null,
-        salesPerson     : "55b92ad221e4b7c40f00004b",
-        invoiceDate     : "2015-01-27T04:00:00.273Z",
-        project         : {
+        paymentTerms: null,
+        salesPerson : "55b92ad221e4b7c40f00004b",
+        invoiceDate : "2015-01-27T04:00:00.273Z",
+        project     : {
             _id: "55b92ad621e4b7c40f0006ad"
         },
         paymentReference: "free",
@@ -841,12 +863,116 @@ define([
             }
         ]
     };
+    var fakeFilter = {
+        _id        : null,
+        supplier: [
+            {
+                _id : "57554158a4b85346765d3e1c",
+                name: "Casper Hallas"
+            },
+            {
+                _id : "5735a1a609f1f719488087ed",
+                name: "Social Media Wave, GmbH "
+            },
+            {
+                _id : "5735cc12e9e6c01a47f07b09",
+                name: "Hipteam "
+            }
+        ],
+        salesPerson: [
+            {
+                _id : "56e2e83a74ac46664a83e94b",
+                name: "Yevgenia Melnyk"
+            },
+            {
+                _id : "55e96ab13f3ae4fd0b000009",
+                name: "Oles Pavliuk"
+            },
+            {
+                _id : "5602a01550de7f4138000008",
+                name: "Yana Dufynets"
+            }
+        ]
+    };
+    var fakeResponseSavedFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v": 0,
+            "attachments": [],
+            "lastAccess" : "2016-06-29T08:36:54.760Z",
+            "profile"    : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{
+                "_id"        : "574335bb27725f815747d579",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : true
+            }, {
+                "_id"        : "576140b0db710fca37a2d950",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "5761467bdb710fca37a2d951",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "57615278db710fca37a2d952",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "576be27e8833d3d250b617a5",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576beedfa96be05a77ce0267",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576bfd2ba96be05a77ce0268",
+                "contentType": "Persons",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576d4c74b4d90a5a6023e0bf",
+                "contentType": "customerPayments",
+                "byDefault"  : false
+            }, {
+                "_id"        : "577221ca58982a9011f8a580",
+                "contentType": "journalEntry",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57722e0458982a9011f8a581",
+                "contentType": "Opportunities",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57738eb0f2ec5e1517865733",
+                "contentType": "salesQuotations",
+                "byDefault"  : false
+            }, {"_id": "5773914af2ec5e1517865734", "contentType": "salesInvoices", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications": {"foldWorkflows": ["Empty"], "countPerPage": 87},
+                "opportunities": {"foldWorkflows": ["Empty"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
+        }
+    };
     var view;
     var topBarView;
     var listView;
     var invoiceCollection;
     var ajaxSpy;
     var historyNavigateSpy;
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -859,6 +985,13 @@ define([
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -871,6 +1004,11 @@ define([
                 $dialogs.remove();
             }
 
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
+            removedFromDBSpy.restore();
+            debounceStub.restore();
             ajaxSpy.restore();
             historyNavigateSpy.restore();
         });
@@ -1012,6 +1150,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to invoice ListView', function (done) {
+                    var filterUrl = '/filter/salesInvoices';
                     var $firstRow;
                     var colCount;
                     var customer;
@@ -1027,12 +1166,14 @@ define([
                     var $pagination;
                     var $pageList;
 
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilter)]);
                     listView = new ListView({
                         startTime : new Date(),
                         collection: invoiceCollection
                     });
+                    server.respond();
 
-                    clock.tick(200);
+                    clock.tick(700);
 
                     eventsBinder.subscribeTopBarEvents(topBarView, listView);
                     eventsBinder.subscribeCollectionEvents(invoiceCollection, listView);
@@ -1204,7 +1345,6 @@ define([
                     server.respond();
 
                     expect(deleteSpy.calledOnce).to.be.true;
-                    //need expectation
                 });
 
                 it('Try to delete item', function () {
@@ -1240,13 +1380,9 @@ define([
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(6)');
                     var invoiceUrl = new RegExp('\/Invoices\/', 'i');
                     var productUrl = new RegExp('\/product\/', 'i');
+                    var $dialog;
 
                     App.currentDb = 'micheldb';
-                    App.currentUser = {
-                        profile: {
-                            _id: '1387275598000'
-                        }
-                    };
 
                     server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoiceById)]);
                     server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProduct)]);
@@ -1256,7 +1392,203 @@ define([
 
                     expect(goToEditSpy.called).to.be.true;
                     expect(editViewSpy.called).to.be.true;
-                    expect($('.ui-dialog')).to.exist;
+                    $dialog = $('.ui-dialog');
+                    expect($dialog).to.exist;
+
+                    $dialog.remove();
+                });
+
+                it('Try to filter listView by supplier and salesPerson', function () {
+                    var url = '/invoices/';
+                    var contentType = 'salesInvoices';
+                    var firstValue = 'supplier';
+                    var secondValue = 'salesPerson';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var $secondGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    ajaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeInvoice)]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // select secondGroup filter
+                    ajaxSpy.reset();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.exist;
+                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                    expect(filterObject[secondValue]).to.have.property('value');
+                    expect(filterObject[secondValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.not.exist;
+                });
+
+                it('Try to save filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn;
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('TestFilter');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                    $saveFilterBtn.click();
+                    server.respond();
+
+                    expect(saveFilterSpy.called).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove saved filters', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                    var userUrl = new RegExp('\/users\/', 'i');
+
+                    removedFromDBSpy.reset();
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $deleteSavedFilterBtn.click();
+                    server.respond();
+
+                    expect(removedFromDBSpy.calledOnce).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                });
+
+                it('Try to remove filter', function () {
+                    var secondValue = 'salesManager';
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues');
+                    $removeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledOnce).to.be.true;
                 });
             });
         });

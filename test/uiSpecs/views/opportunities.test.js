@@ -936,7 +936,7 @@ define([
                 type          : "Person",
                 fullName      : "Sharmila ",
                 id            : "55b92ad521e4b7c40f00060f"
-            },
+            }
         ]
     };
     var fakeCustomerWithId = {
@@ -2519,6 +2519,7 @@ define([
     var removedFromDBSpy;
     var debounceStub;
     var globalClock;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -2540,16 +2541,19 @@ define([
                 globalClock.tick(700);
                 return debFunction;
             });
+            ajaxSpy = sinon.spy($, 'ajax');
         });
 
         after(function () {
+            var $dialogs = $('.ui-dialog');
+
             view.remove();
             topBarView.remove();
             listView.remove();
             kanbanView.remove();
 
-            if ($('.ui-dialog').length) {
-                $('.ui-dialog').remove();
+            if ($dialogs.length) {
+                $dialogs.remove();
             }
 
             globalClock.restore();
@@ -2559,6 +2563,7 @@ define([
             saveFilterSpy.restore();
             removedFromDBSpy.restore();
             debounceStub.restore();
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -2662,7 +2667,6 @@ define([
             var windowConfirmStub;
             var alertStub;
             var $thisEl;
-            var ajaxSpy;
             var listDeleteSpy;
             var sortSpy;
             var chooseOptionSpy;
@@ -2677,7 +2681,6 @@ define([
                 windowConfirmStub.returns(true);
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
-                ajaxSpy = sinon.spy($, 'ajax');
                 listDeleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
                 sortSpy = sinon.spy(ListView.prototype, 'goSort');
                 chooseOptionSpy = sinon.spy(ListView.prototype, 'chooseOption');
@@ -2689,7 +2692,6 @@ define([
                 mainSpy.restore();
                 windowConfirmStub.restore();
                 alertStub.restore();
-                ajaxSpy.restore();
                 listDeleteSpy.restore();
                 sortSpy.restore();
                 chooseOptionSpy.restore();
@@ -3293,6 +3295,8 @@ define([
                 foldUnfoldSpy = sinon.spy(KanbanView.prototype, 'foldUnfoldKanban');
                 gotoEditFormSpy = sinon.spy(KanbanView.prototype, 'gotoEditForm');
                 saveOpportunitySpy = sinon.spy(EditView.prototype, 'saveItem');
+
+                delete App.filtersObject.filter;
             });
 
             after(function () {
@@ -3534,6 +3538,208 @@ define([
                 server.respond();
 
                 expect($('.ui-dialog')).to.not.exist;
+            });
+
+            it('Try to filter listView by workflow and salesPerson', function () {
+                var url = '/Opportunities/';
+                var contentType = 'Opportunities';
+                var firstValue = 'workflow';
+                var secondValue = 'salesPerson';
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var contentUrl = new RegExp(url, 'i');
+                var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                var $firstGroup;
+                var $secondGroup;
+                var $selectedItem;
+                var ajaxResponse;
+                var filterObject;
+                var $kanbanTable;
+
+                selectSpy.reset();
+
+                // open filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                // select firstGroup filter
+                ajaxSpy.reset();
+                $firstGroup = $searchContainer.find($firstContainer);
+                $firstGroup.click();
+
+                $selectedItem = $searchContainer.find($firstSelector);
+
+                server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeOpportunitiesKanBan)]);
+                $selectedItem.click();
+                server.respond();
+
+                expect(selectSpy.calledOnce).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                //expect($thisEl.find('#startLetter')).to.exist;
+                expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(2);
+                expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                $kanbanTable = $thisEl.find('.kanban');
+                expect($kanbanTable.find('tr > td').length).to.be.equals(6);
+                expect($kanbanTable.find('tr > td .item').length).to.be.not.equals(0);
+
+                expect(ajaxSpy.calledOnce).to.be.true;
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxResponse).to.have.property('url', url);
+                expect(ajaxResponse.data).to.have.property('filter');
+                filterObject = ajaxResponse.data.filter;
+
+                expect(filterObject[firstValue]).to.exist;
+                expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                expect(filterObject[firstValue]).to.have.property('value');
+                expect(filterObject[firstValue].value)
+                    .to.be.instanceof(Array)
+                    .and
+                    .to.have.lengthOf(1);
+
+                // select secondGroup filter
+                ajaxSpy.reset();
+
+                $secondGroup = $thisEl.find($secondContainer);
+                $secondGroup.click();
+                $selectedItem = $searchContainer.find($secondSelector);
+                $selectedItem.click();
+                server.respond();
+
+                expect(selectSpy.calledTwice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                //expect($thisEl.find('#startLetter')).to.exist;
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                $kanbanTable = $thisEl.find('.kanban');
+                expect($kanbanTable.find('tr > td').length).to.be.equals(6);
+                expect($kanbanTable.find('tr > td .item').length).to.be.not.equals(0);
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxResponse).to.have.property('url', url);
+                expect(ajaxResponse.data).to.have.property('filter');
+                filterObject = ajaxResponse.data.filter;
+
+                expect(filterObject[firstValue]).to.exist;
+                expect(filterObject[secondValue]).to.exist;
+                expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                expect(filterObject[secondValue]).to.have.property('value');
+                expect(filterObject[secondValue].value)
+                    .to.be.instanceof(Array)
+                    .and
+                    .to.have.lengthOf(1);
+
+                // unselect secondGroup filter
+
+                ajaxSpy.reset();
+                $selectedItem = $searchContainer.find($secondSelector);
+                $selectedItem.click();
+                server.respond();
+
+                expect(selectSpy.calledThrice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                //expect($thisEl.find('#startLetter')).to.exist;
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                expect($kanbanTable.find('tr > td').length).to.be.equals(6);
+                expect($kanbanTable.find('tr > td .item').length).to.be.not.equals(0);
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxResponse).to.have.property('url', url);
+                expect(ajaxResponse.data).to.have.property('filter');
+                filterObject = ajaxResponse.data.filter;
+
+                expect(filterObject[firstValue]).to.exist;
+                expect(filterObject[secondValue]).to.not.exist;
+            });
+
+            it('Try to save filter', function () {
+                var $searchContainer = $('#searchContainer');
+                var userUrl = new RegExp('\/users\/', 'i');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var $favoritesBtn;
+                var $filterNameInput;
+                var $saveFilterBtn;
+
+                saveFilterSpy.reset();
+
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                $favoritesBtn.click();
+                expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                $filterNameInput = $searchContainer.find('#forFilterName');
+                $filterNameInput.val('TestFilter');
+                $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                $saveFilterBtn.click();
+                server.respond();
+
+                expect(saveFilterSpy.called).to.be.true;
+                expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+            });
+
+            it('Try to remove saved filters', function () {
+                var $searchContainer = $('#searchContainer');
+                var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                var userUrl = new RegExp('\/users\/', 'i');
+
+                removedFromDBSpy.reset();
+
+                clock.tick(700);
+                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                $deleteSavedFilterBtn.click();
+                server.respond();
+
+                expect(removedFromDBSpy.calledOnce).to.be.true;
+                expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+            });
+
+            it('Try to remove filter', function () {
+                var secondValue = 'supplier';
+                var $searchContainer = $('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                var $thisEl = $('#content-holder');
+                var $secondGroup;
+                var $selectedItem;
+                var $removeBtn;
+                var ajaxResponse;
+                var ajaxFilter;
+
+                $searchArrow.click();
+
+                $secondGroup = $thisEl.find($secondContainer);
+                $secondGroup.click();
+                $selectedItem = $searchContainer.find($secondSelector);
+                $selectedItem.click();
+                server.respond();
+
+                // remove firstGroupFilter
+                ajaxSpy.reset();
+                removeFilterSpy.reset();
+
+                $removeBtn = $searchContainer.find('.removeValues');
+                $removeBtn.click();
+                server.respond();
+                clock.tick(700);
+
+                expect(removeFilterSpy.calledOnce).to.be.true;
+                expect(ajaxSpy.calledOnce).to.be.true;
+                ajaxResponse = ajaxSpy.args[0][0];
+                ajaxFilter = ajaxResponse.data && ajaxResponse.data.filter;
+                expect(ajaxFilter).to.not.have.property(secondValue);
+
+                //expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(0);
             });
         });
     });

@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/salesProforma/filterCollection',
@@ -7,12 +8,29 @@ define([
     'views/salesProforma/list/ListView',
     'views/salesProforma/TopBarView',
     'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, modules, fixtures, ProformaCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone,
+             _,
+             modules,
+             fixtures,
+             ProformaCollection,
+             MainView,
+             ListView,
+             TopBarView,
+             FilterView,
+             FilterGroup,
+             SavedFilters,
+             eventsBinder,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai) {
     'use strict';
     var expect;
     var fakeProformas = {
@@ -164,9 +182,9 @@ define([
         products    : [
             {
                 unitPrice  : 700000,
-                subTotal : 700000,
-                taxes    : 0,
-                jobs     : {
+                subTotal   : 700000,
+                taxes      : 0,
+                jobs       : {
                     _id      : "566424cd08ed794128637c23",
                     invoice  : "572b4a9c35b6dafc05d3bce9",
                     quotation: "570f8cf76f3bd57c48cdb091",
@@ -229,7 +247,7 @@ define([
                                     revenueSum: 211278.60026917903,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Michael",
                                         last : "Vashkeba"
@@ -251,7 +269,7 @@ define([
                                     revenueSum: 140852.40017945267,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Sergiy",
                                         last : "Degtyar"
@@ -273,7 +291,7 @@ define([
                                     revenueSum: 92902.64692687303,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Ishtvan",
                                         last : "Nazarovich"
@@ -295,7 +313,7 @@ define([
                                     revenueSum: 88032.75011215793,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Liliya",
                                         last : "Orlenko"
@@ -317,7 +335,7 @@ define([
                                     revenueSum: 88407.3575594437,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Valerii",
                                         last : "Ladomiryak"
@@ -339,7 +357,7 @@ define([
                                     revenueSum: 209780.1704800359,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Ivan",
                                         last : "Lyashenko"
@@ -361,7 +379,7 @@ define([
                                     revenueSum: 293692.23867205024,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Michael",
                                         last : "Glagola"
@@ -383,7 +401,7 @@ define([
                                     revenueSum: 200414.9842978914,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Oleg",
                                         last : "Stasiv"
@@ -405,7 +423,7 @@ define([
                                     revenueSum: 38959.174517720945,
                                     costSum   : 0
                                 },
-                                employee  : {
+                                employee: {
                                     name       : {
                                         first: "Yuriy",
                                         last : "Derevenko"
@@ -948,12 +966,49 @@ define([
         attachments     : [],
         paymentDate     : "2015-11-04T04:00:00.000Z"
     };
+    var fakeFilters = {
+        _id     : null,
+        supplier: [
+            {
+                _id : "57554158a4b85346765d3e1c",
+                name: "Casper Hallas"
+            },
+            {
+                _id : "5735a1a609f1f719488087ed",
+                name: "Social Media Wave, GmbH "
+            },
+            {
+                _id : "5735cc12e9e6c01a47f07b09",
+                name: "Hipteam "
+            }
+        ],
+
+        salesPerson: [
+            {
+                _id : "566d4bc3abccac87642cb523",
+                name: "Scatch"
+            },
+            {
+                _id : "563767135d23a8eb04e80aec",
+                name: "Coach App"
+            },
+            {
+                _id : "55cf4fc74a91e37b0b000103",
+                name: "Legal Application"
+            }
+        ]
+    };
     var view;
     var topBarView;
     var listView;
     var proformaCollection;
     var ajaxSpy;
     var historyNavigateSpy;
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -967,6 +1022,13 @@ define([
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -974,12 +1036,17 @@ define([
             listView.remove();
             view.remove();
 
-            if($('.ui-dialog').length) {
+            if ($('.ui-dialog').length) {
                 $('.ui-dialog').remove();
             }
 
             ajaxSpy.restore();
             historyNavigateSpy.restore();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
+            removedFromDBSpy.restore();
+            debounceStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -1050,11 +1117,11 @@ define([
                 server.respondWith('GET', proformaUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 proformaCollection = new ProformaCollection({
                     filter     : null,
-                    viewType: 'list',
-                    page    : 1,
-                    count   : 100,
-                    reset   : true,
-                    showMore: false,
+                    viewType   : 'list',
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'salesProforma'
                 });
                 server.respond();
@@ -1069,11 +1136,11 @@ define([
                 server.respondWith('GET', proformaUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProformas)]);
                 proformaCollection = new ProformaCollection({
                     filter     : null,
-                    viewType: 'list',
-                    page    : 1,
-                    count   : 100,
-                    reset   : true,
-                    showMore: false,
+                    viewType   : 'list',
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'salesProforma'
                 });
                 server.respond();
@@ -1095,13 +1162,12 @@ define([
             });
         });
 
-        describe('InvoiceListView', function () {
+        describe('ProformaListView', function () {
             var server;
             var clock;
             var $thisEl;
             var mainSpy;
             var windowConfirmStub;
-            var selectValueSpy;
             var deleteItemSpy;
 
             before(function () {
@@ -1122,7 +1188,6 @@ define([
                 mainSpy = sinon.spy(App, 'render');
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 windowConfirmStub.returns(true);
-                selectValueSpy = sinon.spy(FilterView.prototype, 'selectValue');
                 deleteItemSpy = sinon.spy(ListView.prototype, 'deleteItems');
             });
 
@@ -1131,7 +1196,6 @@ define([
                 clock.restore();
                 mainSpy.restore();
                 windowConfirmStub.restore();
-                selectValueSpy.restore();
                 deleteItemSpy.restore();
             });
 
