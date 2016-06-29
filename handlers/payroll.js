@@ -594,6 +594,8 @@ var Module = function (models) {
         var endDate = moment(date).endOf('month');
         var employeesIds = [];
         var employeeQueryForEmployeeByDep;
+        var startDateKey = date.year() * 100 + date.isoWeek();
+        var endDateKey = endDate.year() * 100 + endDate.isoWeek();
 
         date = new Date(date);
         endDate = new Date(endDate);
@@ -612,17 +614,17 @@ var Module = function (models) {
                             lastFire: null,
                             lastHire: {
                                 $ne : null,
-                                $lte: endDate
+                                $lte: endDateKey
                             }
                         }, {
                             lastFire: {
                                 $ne : null,
-                                $gte: date
+                                $gte: startDateKey
                             }
                         }, {
                             lastHire: {
                                 $ne : null,
-                                $lte: endDate
+                                $lte: endDateKey
                             }
                         }]
                     }]
@@ -632,12 +634,12 @@ var Module = function (models) {
                     }, {
                         lastFire: {
                             $ne : null,
-                            $gte: date
+                            $gte: startDateKey
                         }
                     }, {
                         lastHire: {
                             $ne : null,
-                            $lte: endDate
+                            $lte: endDateKey
                         }
                     }]
                 }]
@@ -649,15 +651,16 @@ var Module = function (models) {
                 $match: {
                     hire: {$ne: []}
                 }
-            }, {
-                $lookup: {
-                    from        : 'transfers',
-                    localField  : '_id',
-                    foreignField: 'employee',
-                    as          : 'transfer'
-                }
-            }, {
+            }/*, {
+             $lookup: {
+             from        : 'transfers',
+             localField  : '_id',
+             foreignField: 'employee',
+             as          : 'transfer'
+             }
+             }*/, {
                 $project: {
+                    isEmployee  : 1,
                     department  : 1,
                     fire        : 1,
                     hire        : 1,
@@ -680,29 +683,85 @@ var Module = function (models) {
             }, {
                 $project: {
                     department: 1,
-                    salary    : {
+                    transfer  : {
                         $filter: {
                             input: '$transfer',
                             as   : 'item',
 
-                            cond: {$and: [{$gte: ['$$item.date', date]}, {$lte: ['$$item.date', endDate]}]}
+                            cond: {
+                                $lte: ['$$item.date', endDate]
+                            }
                         }
                     }
                 }
             }, {
                 $project: {
-                    department: 1,
-                    salary    : {$max: '$salary.salary'}
+                    department  : 1,
+                    transferDate: {$max: '$transfer.date'},
+                    transfer    : 1
                 }
-            }
-            ], function (err, result) {
+            }, {
+                $project: {
+                    department: 1,
+                    salary    : {
+                        $filter: {
+                            input: '$transfer',
+                            as   : 'item',
+
+                            cond: {
+                                $eq: ['$$item.date', '$transferDate']
+                            }
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    department          : 1,
+                    salary              : {$max: '$salary.salary'},
+                    payrollStructureType: {$arrayElemAt: ['$salary', 0]}
+                }
+            }, {
+                $project: {
+                    department          : 1,
+                    salary              : 1,
+                    payrollStructureType: '$payrollStructureType.payrollStructureType'
+                }
+            }, {
+                $lookup: {
+                    from        : 'payrollStructureTypes',
+                    localField  : 'payrollStructureType',
+                    foreignField: '_id',
+                    as          : 'payrollStructureType'
+                }
+            }, {
+                $project: {
+                    department          : 1,
+                    salary              : 1,
+                    payrollStructureType: {$first: '$payrollStructureType'}
+                }
+            }, {
+                $project: {
+                    department          : 1,
+                    salary              : 1,
+                    payrollStructureType: '$payrollStructureType.formula'
+                }
+            }], function (err, result) {
                 if (err) {
                     return mainCb(err);
                 }
+
+                mainCb(null, result);
             });
         }
 
         function generatePayroll(employeesResult, mainCb) {
+
+            async.each(function (empObject, asyncCb) {
+                var employee = empObject._id;
+                var department = empObject.department;
+                var salary = empObject.salary;
+
+            });
 
         }
 
@@ -726,535 +785,535 @@ var Module = function (models) {
 
     }
 
-   /* function generate(req, res, next, cbFromRecalc) {
-        var db = req.session.lastDb;
-        var Employee = models.get(db, 'Employees', EmployeeSchema);
-        var Payroll = models.get(db, 'PayRoll', PayRollSchema);
-        var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var data = req.body;
-        var month = parseInt(data.month, 10);
-        var year = parseInt(data.year, 10);
-        var dataKey = year * 100 + month;
-        var waterfallTasks;
-        var employees;
-        var ids = {};
-        var i;
-        var date = moment().year(year).month(month - 1).startOf('month');
-        var endDate = moment(date).endOf('month');
-        var employeesIds = [];
-
-        date = new Date(date);
-        endDate = new Date(endDate);
-
-        if (!data.month || !data.year) {
-            return res.status(400).send();
-        }
-
-        function getEmployees(callback) {
-            var queryObject = {
-                //  isEmployee: true,
-                department: {
-                    $in: departmentArray
-                }
-            };
-
-            var query = Employee.find({} /!* queryObject*!/, {transfer: 1, fire: 1}).lean();
-
-            query.exec(function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-
-                employees = result;
-
-                result.forEach(function (elem) {
-                    var salary = 0;
-                    var hire = elem.transfer;
-                    var fire = elem.fire;
-                    var length = hire.length;
-                    var dateToCreate = endDate;
-                    var localDate = new Date(moment().year(year).month(month - 1).endOf('month').set({
-                        hour  : 15,
-                        minute: 1,
-                        second: 0
-                    }));
-                    var daysInMonth;
-                    var payForDay;
-                    var department;
-                    var hireKey = moment(new Date(hire[0].date)).year() * 100 + moment(new Date(hire[0].date)).month() + 1;
-                    var fireKey = fire[0] ? moment(new Date(fire[0])).year() * 100 + moment(new Date(fire[0])).month() + 1 : Infinity;
-                    var localKey = moment(dateToCreate).year() * 100 + moment(dateToCreate).month() + 1;
-
-                    journalEntry.removeByDocId({
-                        'sourceDocument._id': elem._id,
-                        journal             : CONSTANTS.ADMIN_SALARY_JOURNAL,
-                        date                : localDate
-                    }, req.session.lastDb, function () {
-
-                    });
-
-                    for (i = length - 1; i >= 0; i--) {
-                        if (dateToCreate >= hire[i].date && (hire[i].status !== 'fired')) {
-                            salary = hire[i].salary;
-                            department = hire[i].department;
-                            break;
-                        } else {
-                            department = hire[i].department;
-                        }
-                    }
-
-                    if (hireKey === localKey) {
-                        daysInMonth = moment(dateToCreate).endOf('month').date();
-                        payForDay = salary / daysInMonth;
-
-                        salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date() + 1);
-                    }
-
-                    if (fireKey === localKey) {
-                        daysInMonth = moment(dateToCreate).endOf('month').date();
-                        payForDay = salary / daysInMonth;
-
-                        salary = payForDay * moment(new Date(fire[0])).date();
-                    } else if (fireKey < localKey) {
-                        salary = 0;
-                    }
-
-                    if (salary || (salary === 0)) {
-                        ids[elem._id] = {
-                            salary    : salary,
-                            department: department
-                        };
-                    }
-                });
-
-                employeesIds = Object.keys(ids);
-
-                callback(null, ids);
-            });
-        }
-
-        function getJournalEntries(ids, callback) {
-            /!* function matchEmployee(pcb) {
-             JournalEntry.aggregate([{
-             $match: {
-             'sourceDocument.model': 'Employees',
-             journal               : {$in: [ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)]},
-             date                  : {
-             $gte: new Date(date),
-             $lte: new Date(endDate)
-             }
-             }
-             }, {
-             $project: {
-             employee: '$sourceDocument._id',
-             debit   : {$divide: ['$debit', 100]},
-             credit  : {$divide: ['$credit', 100]},
-             journal : 1,
-             date    : 1
-             }
-             }, {
-             $group: {
-             _id: {
-             employee: '$employee',
-             journal : '$journal'
-             },
-
-             debit : {$sum: '$debit'},
-             credit: {$sum: '$credit'}
-             }
-             }, {
-             $group: {
-             _id : '$_id.employee',
-             root: {$push: '$$ROOT'}
-             }
-             }], function (err, result) {
-             if (err) {
-             return pcb(err);
-             }
-
-             pcb(null, result);
-             });
-             }*!/
-
-            function matchByWTrack(pcb) {
-                /!* JournalEntry.aggregate([{
-                 $match: {
-                 // 'sourceDocument.model': 'wTrack',
-                 journal: {$in: journalArray},
-                 debit  : {$gt: 0},
-                 date   : {
-                 $gte: new Date(date),
-                 $lte: new Date(endDate)
-                 }
-                 }
-                 }, {
-                 $project: {
-                 debit  : {$divide: ['$debit', 100]},
-                 journal: {
-                 $cond: {
-                 if: {
-                 $eq: ['$journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
-                 },
-
-                 then: 'vacation',
-                 else: {
-                 $cond: {
-                 if: {
-                 $eq: ['$journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
-                 },
-
-                 then: 'overtime',
-                 else: 'base'
-                 }
-                 }
-                 }
-                 },
-
-                 date    : 1,
-                 employee: {
-                 $cond: {
-                 if: {
-                 $ifNull: ['$sourceDocument.employee', null]
-                 },
-
-                 then: '$sourceDocument._id',
-                 else: '$sourceDocument.employee'
-                 }
-                 }
-                 }
-                 }, {
-                 $project: {
-                 journal : 1,
-                 amount  : '$debit',
-                 employee: '$employee'
-                 }
-                 }, {
-                 $match: {
-                 amount: {$gt: 0}
-                 }
-                 }, {
-                 $group: {
-                 _id: {
-                 employee: '$employee',
-                 journal : '$journal'
-                 },
-
-                 amount : {$sum: '$amount'},
-                 journal: {$first: '$journal'}
-                 }
-                 }, {
-                 $group: {
-                 _id : '$_id.employee',
-                 root: {$push: '$$ROOT'}
-                 }
-                 }], function (err, result) {
-                 if (err) {
-                 return pcb(err);
-                 }
-
-                 pcb(null, result);
-                 });*!/
-
-                /!* Employee.aggregate([{
-                 $match: {
-                 _id: {$in: employeesIds.objectID()}
-                 }
-                 }, {
-                 $lookup: {
-                 from        : 'journalentries',
-                 localField  : '_id',
-                 foreignField: 'sourceDocument.employee',
-                 as          : 'vacationsAndIdle'
-                 }
-                 }, {
-                 $lookup: {
-                 from        : 'journalentries',
-                 localField  : '_id',
-                 foreignField: 'sourceDocument._id',
-                 as          : 'workedAndOvertime'
-                 }
-                 }, {
-                 $project: {
-                 vacationsAndIdle: {
-                 $filter: {
-                 input: '$vacationsAndIdle',
-                 as   : 'item',
-
-                 cond: {
-                 $and: [{
-                 $gte: ['$$item.date', date]
-                 }, {
-                 $lte: ['$$item.date', endDate]
-                 }, {
-                 $gt: ['$$item.debit', 0]
-
-                 }]
-                 }
-                 }
-                 },
-
-                 workedAndOvertime: {
-                 $filter: {
-                 input: '$vacationsAndIdle',
-                 as   : 'item',
-
-                 cond: {
-                 $and: [{
-                 $gte: ['$$item.date', date]
-                 }, {
-                 $lte: ['$$item.date', endDate]
-                 }, {
-                 $gt: ['$$item.debit', 0]
-                 }]
-                 }
-                 }
-                 }
-                 }
-                 }, {
-                 $project: {
-                 vacation: {
-                 $filter: {
-                 input: '$vacationsAndIdle',
-                 as   : 'item',
-
-                 cond: {
-                 $eq: ['$$item.journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
-                 }
-                 }
-                 },
-
-                 overtime: {
-                 $filter: {
-                 input: '$workedAndOvertime',
-                 as   : 'item',
-
-                 cond: {
-                 $eq: ['$$item.journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
-                 }
-                 }
-                 },
-
-                 worked: {
-                 $filter: {
-                 input: '$workedAndOvertime',
-                 as   : 'item',
-
-                 cond: {
-                 $eq: ['$$item.journal', ObjectId(CONSTANTS.SALARY_PAYABLE)]
-                 }
-                 }
-                 },
-
-                 idle: {
-                 $filter: {
-                 input: '$vacationsAndIdle',
-                 as   : 'item',
-
-                 cond: {
-                 $eq: ['$$item.journal', ObjectId(CONSTANTS.IDLE_PAYABLE)]
-                 }
-                 }
-                 }
-                 }
-                 }, {
-                 $unwind: {
-                 path                      : '$vacation',
-                 preserveNullAndEmptyArrays: true
-                 }
-                 }, {
-                 $unwind: {
-                 path                      : '$idle',
-                 preserveNullAndEmptyArrays: true
-                 }
-                 }, {
-                 $unwind: {
-                 path                      : '$overtime',
-                 preserveNullAndEmptyArrays: true
-                 }
-                 }, {
-                 $unwind: {
-                 path                      : '$worked',
-                 preserveNullAndEmptyArrays: true
-                 }
-                 }, {
-                 $group: {
-                 _id     : '$_id',
-                 vacation: {$sum: '$vacation.debit'},
-                 idle    : {$sum: '$idle.debit'},
-                 overtime: {$sum: '$overtime.debit'},
-                 worked  : {$sum: '$worked.debit'}
-                 }
-                 }, {
-                 $project: {
-                 vacation: {$divide: ['$vacation', 100]},
-                 idle    : {$divide: ['$idle', 100]},
-                 overtime: {$divide: ['$overtime', 100]},
-                 worked  : {$divide: ['$worked', 100]},
-                 total   : {$divide: [{$add: ['$vacation', '$idle', '$overtime', '$worked']}, 100]}
-                 }
-                 }], function (err, result) {
-                 if (err) {
-                 return pcb(err);
-                 }
-
-                 pcb(null, result);
-                 });*!/
-            }
-
-            async.parallel([matchByWTrack/!* , matchEmployee*!/], function (err, result) {
-                var empIds;
-                var empIdsSecond;
-                var resultArray;
-
-                if (err) {
-                    return callback(err);
-                }
-
-                empIds = _.pluck(result[0], '_id');
-                empIdsSecond = _.pluck(result[1], '_id');
-
-                resultArray = _.union(result[0], result[1]);
-
-                callback(null, {
-                    resultByEmployee: result[1],
-                    resultByWTrack  : result[0],
-                    ids             : _.union(empIds, empIdsSecond),
-                    empIds          : ids
-                });
-            });
-        }
-
-        function savePayroll(resultItems, callback) {
-            var resultByEmployee = resultItems.resultByEmployee;
-            var resultByWTrack = resultItems.resultByWTrack;
-            var ids = resultItems.ids;
-            var empIds = resultItems.empIds;
-            var empKeys = Object.keys(empIds);
-            var newPayroll;
-            var parallelTasks;
-            var startBody = {
-                year   : year,
-                month  : month,
-                dataKey: dataKey,
-                paid   : 0
-            };
-            var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
-                hour  : 15,
-                minute: 1,
-                second: 0
-            }));
-
-            function createForNotDev(pCb) {
-                async.each(empKeys, function (employee, asyncCb) {
-                    var cb;
-                    var bodyAdminSalary;
-
-                    startBody.employee = employee;
-                    startBody.calc = empIds[employee].salary;
-                    startBody.diff = empIds[employee].salary;
-
-                    cb = _.after(2, asyncCb);
-
-                    bodyAdminSalary = {
-                        currency      : CONSTANTS.CURRENCY_USD,
-                        journal       : CONSTANTS.ADMIN_SALARY_JOURNAL,
-                        date          : localDate,
-                        sourceDocument: {
-                            model: 'Employees'
-                        }
-                    };
-
-                    if (departmentArray.indexOf(empIds[employee].department.toString()) === -1) {
-                        return asyncCb();
-                    }
-
-                    if (startBody.calc) {
-                        newPayroll = new Payroll(startBody);
-
-                        bodyAdminSalary.sourceDocument._id = employee;
-                        bodyAdminSalary.amount = empIds[employee].salary * 100;
-
-                        journalEntry.createReconciled(bodyAdminSalary, req.session.lastDb, cb, req.session.uId);
-
-                        newPayroll.save(cb);
-                    } else {
-                        asyncCb();
-                    }
-
-                }, function () {
-                    pCb();
-                });
-            }
-
-            function createForDev(pCb) {
-                var newArray = [];
-
-                ids.forEach(function (el) {
-                    newArray.push(el.toString());
-                });
-
-                newArray = _.uniq(newArray);
-
-                async.each(newArray, function (id, asyncCb) {
-                    var journalEntryEmp = _.find(resultByEmployee, function (el) {
-                        return el._id.toString() === id.toString();
-                    });
-
-                    var journalEntrywTrack = _.find(resultByWTrack, function (el) {
-                        return el._id.toString() === id.toString();
-                    });
-
-                    var sumFirst = parseFloat(journalEntryEmp ? (journalEntryEmp.debit || journalEntryEmp.credit).toFixed(2) : '0');
-                    var sumSecond = parseFloat(journalEntrywTrack ? (journalEntrywTrack.debit || journalEntrywTrack.credit).toFixed(2) : '0');
-
-                    startBody.employee = id;
-                    startBody.calc = sumFirst + sumSecond;
-                    startBody.diff = startBody.calc;
-                    startBody.month = month;
-                    startBody.year = year;
-                    startBody.dataKey = startBody.year * 100 + startBody.month;
-                    startBody.date = localDate;
-
-                    newPayroll = new Payroll(startBody);
-
-                    newPayroll.save(asyncCb);
-                }, function () {
-                    pCb();
-                });
-            }
-
-            parallelTasks = [createForDev, createForNotDev];
-
-            async.parallel(parallelTasks, function (err) {
-                if (err) {
-                    return callback(err);
-                }
-
-                callback();
-            });
-        }
-
-        waterfallTasks = [getEmployees, getJournalEntries, savePayroll];
-
-        async.waterfall(waterfallTasks, function (err) {
-            if (err) {
-                return next(err);
-            }
-
-            composeExpensesAndCache(req, function (err) {
-                if (err) {
-                    return next(err);
-                }
-
-                if (cbFromRecalc) {
-                    cbFromRecalc(null, 'ok');
-                } else {
-                    res.status(200).send('ok');
-                }
-            });
-        });
-
-    }*/
+    /* function generate(req, res, next, cbFromRecalc) {
+     var db = req.session.lastDb;
+     var Employee = models.get(db, 'Employees', EmployeeSchema);
+     var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+     var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+     var data = req.body;
+     var month = parseInt(data.month, 10);
+     var year = parseInt(data.year, 10);
+     var dataKey = year * 100 + month;
+     var waterfallTasks;
+     var employees;
+     var ids = {};
+     var i;
+     var date = moment().year(year).month(month - 1).startOf('month');
+     var endDate = moment(date).endOf('month');
+     var employeesIds = [];
+
+     date = new Date(date);
+     endDate = new Date(endDate);
+
+     if (!data.month || !data.year) {
+     return res.status(400).send();
+     }
+
+     function getEmployees(callback) {
+     var queryObject = {
+     //  isEmployee: true,
+     department: {
+     $in: departmentArray
+     }
+     };
+
+     var query = Employee.find({} /!* queryObject*!/, {transfer: 1, fire: 1}).lean();
+
+     query.exec(function (err, result) {
+     if (err) {
+     return callback(err);
+     }
+
+     employees = result;
+
+     result.forEach(function (elem) {
+     var salary = 0;
+     var hire = elem.transfer;
+     var fire = elem.fire;
+     var length = hire.length;
+     var dateToCreate = endDate;
+     var localDate = new Date(moment().year(year).month(month - 1).endOf('month').set({
+     hour  : 15,
+     minute: 1,
+     second: 0
+     }));
+     var daysInMonth;
+     var payForDay;
+     var department;
+     var hireKey = moment(new Date(hire[0].date)).year() * 100 + moment(new Date(hire[0].date)).month() + 1;
+     var fireKey = fire[0] ? moment(new Date(fire[0])).year() * 100 + moment(new Date(fire[0])).month() + 1 : Infinity;
+     var localKey = moment(dateToCreate).year() * 100 + moment(dateToCreate).month() + 1;
+
+     journalEntry.removeByDocId({
+     'sourceDocument._id': elem._id,
+     journal             : CONSTANTS.ADMIN_SALARY_JOURNAL,
+     date                : localDate
+     }, req.session.lastDb, function () {
+
+     });
+
+     for (i = length - 1; i >= 0; i--) {
+     if (dateToCreate >= hire[i].date && (hire[i].status !== 'fired')) {
+     salary = hire[i].salary;
+     department = hire[i].department;
+     break;
+     } else {
+     department = hire[i].department;
+     }
+     }
+
+     if (hireKey === localKey) {
+     daysInMonth = moment(dateToCreate).endOf('month').date();
+     payForDay = salary / daysInMonth;
+
+     salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date() + 1);
+     }
+
+     if (fireKey === localKey) {
+     daysInMonth = moment(dateToCreate).endOf('month').date();
+     payForDay = salary / daysInMonth;
+
+     salary = payForDay * moment(new Date(fire[0])).date();
+     } else if (fireKey < localKey) {
+     salary = 0;
+     }
+
+     if (salary || (salary === 0)) {
+     ids[elem._id] = {
+     salary    : salary,
+     department: department
+     };
+     }
+     });
+
+     employeesIds = Object.keys(ids);
+
+     callback(null, ids);
+     });
+     }
+
+     function getJournalEntries(ids, callback) {
+     /!* function matchEmployee(pcb) {
+     JournalEntry.aggregate([{
+     $match: {
+     'sourceDocument.model': 'Employees',
+     journal               : {$in: [ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)]},
+     date                  : {
+     $gte: new Date(date),
+     $lte: new Date(endDate)
+     }
+     }
+     }, {
+     $project: {
+     employee: '$sourceDocument._id',
+     debit   : {$divide: ['$debit', 100]},
+     credit  : {$divide: ['$credit', 100]},
+     journal : 1,
+     date    : 1
+     }
+     }, {
+     $group: {
+     _id: {
+     employee: '$employee',
+     journal : '$journal'
+     },
+
+     debit : {$sum: '$debit'},
+     credit: {$sum: '$credit'}
+     }
+     }, {
+     $group: {
+     _id : '$_id.employee',
+     root: {$push: '$$ROOT'}
+     }
+     }], function (err, result) {
+     if (err) {
+     return pcb(err);
+     }
+
+     pcb(null, result);
+     });
+     }*!/
+
+     function matchByWTrack(pcb) {
+     /!* JournalEntry.aggregate([{
+     $match: {
+     // 'sourceDocument.model': 'wTrack',
+     journal: {$in: journalArray},
+     debit  : {$gt: 0},
+     date   : {
+     $gte: new Date(date),
+     $lte: new Date(endDate)
+     }
+     }
+     }, {
+     $project: {
+     debit  : {$divide: ['$debit', 100]},
+     journal: {
+     $cond: {
+     if: {
+     $eq: ['$journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
+     },
+
+     then: 'vacation',
+     else: {
+     $cond: {
+     if: {
+     $eq: ['$journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
+     },
+
+     then: 'overtime',
+     else: 'base'
+     }
+     }
+     }
+     },
+
+     date    : 1,
+     employee: {
+     $cond: {
+     if: {
+     $ifNull: ['$sourceDocument.employee', null]
+     },
+
+     then: '$sourceDocument._id',
+     else: '$sourceDocument.employee'
+     }
+     }
+     }
+     }, {
+     $project: {
+     journal : 1,
+     amount  : '$debit',
+     employee: '$employee'
+     }
+     }, {
+     $match: {
+     amount: {$gt: 0}
+     }
+     }, {
+     $group: {
+     _id: {
+     employee: '$employee',
+     journal : '$journal'
+     },
+
+     amount : {$sum: '$amount'},
+     journal: {$first: '$journal'}
+     }
+     }, {
+     $group: {
+     _id : '$_id.employee',
+     root: {$push: '$$ROOT'}
+     }
+     }], function (err, result) {
+     if (err) {
+     return pcb(err);
+     }
+
+     pcb(null, result);
+     });*!/
+
+     /!* Employee.aggregate([{
+     $match: {
+     _id: {$in: employeesIds.objectID()}
+     }
+     }, {
+     $lookup: {
+     from        : 'journalentries',
+     localField  : '_id',
+     foreignField: 'sourceDocument.employee',
+     as          : 'vacationsAndIdle'
+     }
+     }, {
+     $lookup: {
+     from        : 'journalentries',
+     localField  : '_id',
+     foreignField: 'sourceDocument._id',
+     as          : 'workedAndOvertime'
+     }
+     }, {
+     $project: {
+     vacationsAndIdle: {
+     $filter: {
+     input: '$vacationsAndIdle',
+     as   : 'item',
+
+     cond: {
+     $and: [{
+     $gte: ['$$item.date', date]
+     }, {
+     $lte: ['$$item.date', endDate]
+     }, {
+     $gt: ['$$item.debit', 0]
+
+     }]
+     }
+     }
+     },
+
+     workedAndOvertime: {
+     $filter: {
+     input: '$vacationsAndIdle',
+     as   : 'item',
+
+     cond: {
+     $and: [{
+     $gte: ['$$item.date', date]
+     }, {
+     $lte: ['$$item.date', endDate]
+     }, {
+     $gt: ['$$item.debit', 0]
+     }]
+     }
+     }
+     }
+     }
+     }, {
+     $project: {
+     vacation: {
+     $filter: {
+     input: '$vacationsAndIdle',
+     as   : 'item',
+
+     cond: {
+     $eq: ['$$item.journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
+     }
+     }
+     },
+
+     overtime: {
+     $filter: {
+     input: '$workedAndOvertime',
+     as   : 'item',
+
+     cond: {
+     $eq: ['$$item.journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
+     }
+     }
+     },
+
+     worked: {
+     $filter: {
+     input: '$workedAndOvertime',
+     as   : 'item',
+
+     cond: {
+     $eq: ['$$item.journal', ObjectId(CONSTANTS.SALARY_PAYABLE)]
+     }
+     }
+     },
+
+     idle: {
+     $filter: {
+     input: '$vacationsAndIdle',
+     as   : 'item',
+
+     cond: {
+     $eq: ['$$item.journal', ObjectId(CONSTANTS.IDLE_PAYABLE)]
+     }
+     }
+     }
+     }
+     }, {
+     $unwind: {
+     path                      : '$vacation',
+     preserveNullAndEmptyArrays: true
+     }
+     }, {
+     $unwind: {
+     path                      : '$idle',
+     preserveNullAndEmptyArrays: true
+     }
+     }, {
+     $unwind: {
+     path                      : '$overtime',
+     preserveNullAndEmptyArrays: true
+     }
+     }, {
+     $unwind: {
+     path                      : '$worked',
+     preserveNullAndEmptyArrays: true
+     }
+     }, {
+     $group: {
+     _id     : '$_id',
+     vacation: {$sum: '$vacation.debit'},
+     idle    : {$sum: '$idle.debit'},
+     overtime: {$sum: '$overtime.debit'},
+     worked  : {$sum: '$worked.debit'}
+     }
+     }, {
+     $project: {
+     vacation: {$divide: ['$vacation', 100]},
+     idle    : {$divide: ['$idle', 100]},
+     overtime: {$divide: ['$overtime', 100]},
+     worked  : {$divide: ['$worked', 100]},
+     total   : {$divide: [{$add: ['$vacation', '$idle', '$overtime', '$worked']}, 100]}
+     }
+     }], function (err, result) {
+     if (err) {
+     return pcb(err);
+     }
+
+     pcb(null, result);
+     });*!/
+     }
+
+     async.parallel([matchByWTrack/!* , matchEmployee*!/], function (err, result) {
+     var empIds;
+     var empIdsSecond;
+     var resultArray;
+
+     if (err) {
+     return callback(err);
+     }
+
+     empIds = _.pluck(result[0], '_id');
+     empIdsSecond = _.pluck(result[1], '_id');
+
+     resultArray = _.union(result[0], result[1]);
+
+     callback(null, {
+     resultByEmployee: result[1],
+     resultByWTrack  : result[0],
+     ids             : _.union(empIds, empIdsSecond),
+     empIds          : ids
+     });
+     });
+     }
+
+     function savePayroll(resultItems, callback) {
+     var resultByEmployee = resultItems.resultByEmployee;
+     var resultByWTrack = resultItems.resultByWTrack;
+     var ids = resultItems.ids;
+     var empIds = resultItems.empIds;
+     var empKeys = Object.keys(empIds);
+     var newPayroll;
+     var parallelTasks;
+     var startBody = {
+     year   : year,
+     month  : month,
+     dataKey: dataKey,
+     paid   : 0
+     };
+     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
+     hour  : 15,
+     minute: 1,
+     second: 0
+     }));
+
+     function createForNotDev(pCb) {
+     async.each(empKeys, function (employee, asyncCb) {
+     var cb;
+     var bodyAdminSalary;
+
+     startBody.employee = employee;
+     startBody.calc = empIds[employee].salary;
+     startBody.diff = empIds[employee].salary;
+
+     cb = _.after(2, asyncCb);
+
+     bodyAdminSalary = {
+     currency      : CONSTANTS.CURRENCY_USD,
+     journal       : CONSTANTS.ADMIN_SALARY_JOURNAL,
+     date          : localDate,
+     sourceDocument: {
+     model: 'Employees'
+     }
+     };
+
+     if (departmentArray.indexOf(empIds[employee].department.toString()) === -1) {
+     return asyncCb();
+     }
+
+     if (startBody.calc) {
+     newPayroll = new Payroll(startBody);
+
+     bodyAdminSalary.sourceDocument._id = employee;
+     bodyAdminSalary.amount = empIds[employee].salary * 100;
+
+     journalEntry.createReconciled(bodyAdminSalary, req.session.lastDb, cb, req.session.uId);
+
+     newPayroll.save(cb);
+     } else {
+     asyncCb();
+     }
+
+     }, function () {
+     pCb();
+     });
+     }
+
+     function createForDev(pCb) {
+     var newArray = [];
+
+     ids.forEach(function (el) {
+     newArray.push(el.toString());
+     });
+
+     newArray = _.uniq(newArray);
+
+     async.each(newArray, function (id, asyncCb) {
+     var journalEntryEmp = _.find(resultByEmployee, function (el) {
+     return el._id.toString() === id.toString();
+     });
+
+     var journalEntrywTrack = _.find(resultByWTrack, function (el) {
+     return el._id.toString() === id.toString();
+     });
+
+     var sumFirst = parseFloat(journalEntryEmp ? (journalEntryEmp.debit || journalEntryEmp.credit).toFixed(2) : '0');
+     var sumSecond = parseFloat(journalEntrywTrack ? (journalEntrywTrack.debit || journalEntrywTrack.credit).toFixed(2) : '0');
+
+     startBody.employee = id;
+     startBody.calc = sumFirst + sumSecond;
+     startBody.diff = startBody.calc;
+     startBody.month = month;
+     startBody.year = year;
+     startBody.dataKey = startBody.year * 100 + startBody.month;
+     startBody.date = localDate;
+
+     newPayroll = new Payroll(startBody);
+
+     newPayroll.save(asyncCb);
+     }, function () {
+     pCb();
+     });
+     }
+
+     parallelTasks = [createForDev, createForNotDev];
+
+     async.parallel(parallelTasks, function (err) {
+     if (err) {
+     return callback(err);
+     }
+
+     callback();
+     });
+     }
+
+     waterfallTasks = [getEmployees, getJournalEntries, savePayroll];
+
+     async.waterfall(waterfallTasks, function (err) {
+     if (err) {
+     return next(err);
+     }
+
+     composeExpensesAndCache(req, function (err) {
+     if (err) {
+     return next(err);
+     }
+
+     if (cbFromRecalc) {
+     cbFromRecalc(null, 'ok');
+     } else {
+     res.status(200).send('ok');
+     }
+     });
+     });
+
+     }*/
 
     function recount(req, res, next) {
         var db = req.session.lastDb;
