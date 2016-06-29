@@ -608,7 +608,7 @@
 
                             %>
 
-                            <tr class="transfer" data-id="<%=key%>" data-content=<%= transfer.status %>>
+                            <tr class="transfer" id="<%=transfer._id%>" data-id="<%=key%>" data-content=<%= transfer.status %>>
                                 <td class="remove">
                                     <% if (key === transfers.length - 1 && key) {%>
                                     <a class="fa fa-trash"></a>
@@ -654,13 +654,12 @@
                                     </a>
                                 </td>
                                 <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
-                                <td class="editable dollar" data-id="salary"><%= transfer.salary %></td>
+                                <td class="editable dollar"  data-content="salary" data-id="salary"><%= transfer.salary %></td>
                                 <% } %>
-                                <td>
+                                <td class="editable" class="statusInfo" data-content="info"
+                                    data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>
 
-                                    <input id="statusInfoDd" class="statusInfo"
-                                           data-id="<%=transfer.info ? transfer.info : ''%> "
-                                           value='<%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>'/>
+
 
                                 </td>
                             </tr>

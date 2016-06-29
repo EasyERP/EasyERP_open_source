@@ -112,7 +112,7 @@ define([
             // 'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
             'click td.editable'                                    : 'editJob',
             'click #update'                                        : 'addNewRow',
-            'keyup .editing'                                       : 'validateNumbers',
+            'keyup .salary'                                        : 'validateNumbers',
             'click .fa-trash'                                      : 'deleteRow',
             'click #jobPosition,#department,#manager,#jobType'     : 'showNotification',
             'change .editable '                                    : 'setEditable',
@@ -154,7 +154,13 @@ define([
 
             this.editCollection.remove(this.editCollection.get(transferId));
 
-            this.removeTransfer.push(transferId);
+            delete this.changedModels[transferId];
+
+            if (transferId && transferId.length >= 24) {
+                this.removeTransfer.push(transferId);
+            }
+
+
         },
 
         validateNumbers: function (e) {
@@ -254,16 +260,25 @@ define([
         editJob: function (e) {
             var self = this;
             var $target = $(e.target);
-            var dataId = $target.attr('data-id');
+            var dataContent = $target.attr('data-content');
             var tempContainer;
             var $tr = $target.parent('tr');
+            var modelId = $tr.attr('id');
+
             var trNum = $tr.attr('data-id');
             var minDate = new Date('1995-01-01');
             var maxDate = null;
+            var model = this.editCollection.get(modelId);
 
             tempContainer = ($target.text()).trim();
 
-            if (dataId === 'salary') {
+            if (dataContent === 'salary') {
+                $target.html('<input class="editing salary statusInfo" type="text" value="' + tempContainer + '">');
+
+                return false;
+            }
+
+            if (dataContent === 'info') {
                 $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
 
                 return false;
@@ -290,6 +305,22 @@ define([
 
                     editingDates.each(function () {
                         var target = $(this);
+                        var datacontent;
+                        var changedAttr;
+
+                        if (!self.changedModels[modelId]) {
+                            if (!model.id) {
+                                self.changedModels[modelId] = model.attributes;
+                            } else {
+                                self.changedModels[modelId] = {};
+                            }
+                        }
+
+                        datacontent = target.closest('td').attr('data-content');
+
+                        changedAttr = self.changedModels[modelId];
+                        changedAttr[datacontent] = target.val();
+
                         target.parent().text(target.val()).removeClass('changeContent');
                         target.remove();
                     });
@@ -367,7 +398,7 @@ define([
                 this.setEditable($element);
 
                 if (!this.changedModels[modelId]) {
-                    if (!model.id) {
+                    if (model && !model.id) {
                         this.changedModels[modelId] = model.attributes;
                     } else {
                         this.changedModels[modelId] = {};
