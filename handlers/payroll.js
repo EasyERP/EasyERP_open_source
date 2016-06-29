@@ -14,7 +14,12 @@ var Module = function (models) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var departmentArray = CONSTANTS.NOT_DEV_ARRAY;
-    var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE)];
+    var journalArray = [
+        ObjectId(CONSTANTS.SALARY_PAYABLE),
+        ObjectId(CONSTANTS.OVERTIME_PAYABLE),
+        ObjectId(CONSTANTS.IDLE_PAYABLE),
+        ObjectId(CONSTANTS.VACATION_PAYABLE)
+    ];
     var composeExpensesAndCache = require('../helpers/expenses')(models);
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
@@ -231,7 +236,7 @@ var Module = function (models) {
     };
 
     function getByDataKey(req, res, next) {
-        var id = req.query.id  || req.params.id || req.query.dataKey;
+        var id = req.query.id || req.params.id || req.query.dataKey;
         var data = req.query;
         var error;
         var sort = data.sort || {'employee.name.first': 1, 'employee.name.last': 1};
@@ -334,7 +339,7 @@ var Module = function (models) {
         var id = req.params.id;
         var sort = query.sort || {};
 
-        if (Object.keys(sort).length){
+        if (Object.keys(sort).length) {
             return getByDataKey(req, res, next);
         }
 
@@ -694,9 +699,18 @@ var Module = function (models) {
                     }
                 }, {
                     $group: {
-                        _id   : '$employee',
+                        _id: {
+                            employee: '$employee',
+                            journal : '$journal'
+                        },
+
                         debit : {$sum: '$debit'},
                         credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $group: {
+                        _id : '$_id.employee',
+                        root: {$push: '$$ROOT'}
                     }
                 }], function (err, result) {
                     if (err) {
@@ -710,26 +724,59 @@ var Module = function (models) {
             function matchByWTrack(pcb) {
                 JournalEntry.aggregate([{
                     $match: {
-                        'sourceDocument.model': 'wTrack',
-                        journal               : {$in: journalArray},
-                        date                  : {
+                        // 'sourceDocument.model': 'wTrack',
+                        journal: {$in: journalArray},
+                        date   : {
                             $gte: new Date(date),
                             $lte: new Date(endDate)
                         }
                     }
                 }, {
                     $project: {
-                        debit   : {$divide: ['$debit', 100]},
-                        credit  : {$divide: ['$credit', 100]},
-                        journal : 1,
+                        debit  : {$divide: ['$debit', 100]},
+                        credit : {$divide: ['$credit', 100]},
+                        journal: {
+                            $cond: {
+                                if: {
+                                    $eq: ['$journal', ObjectId(CONSTANTS.VACATION_PAYABLE)]
+                                },
+
+                                then: 'vacation',
+                                else: {
+                                    $cond: {
+                                        if: {
+                                            $eq: ['$journal', ObjectId(CONSTANTS.OVERTIME_PAYABLE)]
+                                        },
+
+                                        then: 'overtime',
+                                        else: 'base'
+                                    }
+                                }
+                            }
+                        },
+
                         date    : 1,
-                        employee: '$sourceDocument.employee'
+                        employee: {
+                            $cond: {
+                                if: {
+                                    $ifNull: ['$sourceDocument.employee', null]
+                                },
+
+                                then: '$sourceDocument._id',
+                                else: '$sourceDocument.employee'
+                            }
+                        }
+                    }
+                }, {
+                    $project: {
+                        journal : 1,
+                        amount  : '$debit',
+                        employee: '$employee'
                     }
                 }, {
                     $group: {
-                        _id   : '$employee',
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
+                        _id : '$employee',
+                        root: {$push: '$$ROOT'}
                     }
                 }], function (err, result) {
                     if (err) {
@@ -743,6 +790,7 @@ var Module = function (models) {
             async.parallel([matchByWTrack, matchEmployee], function (err, result) {
                 var empIds;
                 var empIdsSecond;
+                var resultArray;
 
                 if (err) {
                     return callback(err);
@@ -750,6 +798,8 @@ var Module = function (models) {
 
                 empIds = _.pluck(result[0], '_id');
                 empIdsSecond = _.pluck(result[1], '_id');
+
+                resultArray = _.union(result[0], result[1]);
 
                 callback(null, {
                     resultByEmployee: result[1],

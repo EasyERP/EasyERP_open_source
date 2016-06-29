@@ -46,22 +46,22 @@ define([
             'click .fa-trash-o'                                : 'remove'
         },
 
-       /* newStructureComponent: function (component, modelComponent) {
-            var self = this;
-            var model = self.model;
+        /* newStructureComponent: function (component, modelComponent) {
+         var self = this;
+         var model = self.model;
 
-            if (!this.componentObject[component.type]) {
-                this.componentObject[component.type] = [];
-            }
+         if (!this.componentObject[component.type]) {
+         this.componentObject[component.type] = [];
+         }
 
-            this.componentObject[component.type].push(component);
+         this.componentObject[component.type].push(component);
 
-            component._id = modelComponent.id;
+         component._id = modelComponent.id;
 
-            (model.get([component.type]))[component.id] = component;
+         (model.get([component.type]))[component.id] = component;
 
-            self.renderComponents();
-        },*/
+         self.renderComponents();
+         },*/
 
         newStructureComponent: function (component) {
             var self = this;
@@ -139,16 +139,11 @@ define([
             var $currentEl = this.$el;
             var data;
             var name = $.trim($currentEl.find('#payrollStructureName').val());
-            var earnings = [];
-            var deductions = [];
+            var earnings;
+            var deductions;
 
-            this.componentObject.earnings.forEach(function (el) {
-                earnings = _.union(earnings, el.formula);
-            });
-
-            this.componentObject.deductions.forEach(function (el) {
-                deductions = _.union(deductions, el.formula);
-            });
+            earnings = this.model.get('earnings');
+            deductions = this.model.get('deductions');
 
             data = {
                 name      : name,
