@@ -339,18 +339,20 @@
         Opportunities: {
             customer: {
                 displayName: 'Customer',
-                backend    : 'customer._id'
+                backend    : 'customer'
             },
 
             workflow: {
                 displayName: 'Stage',
-                backend    : 'workflow._id'
+                backend    : 'workflow'
             },
 
             salesPerson: {
                 displayName: 'Sales Person',
-                backend    : 'salesPerson._id'
-            }
+                backend    : 'salesPerson'
+            },
+
+            array: ['customer', 'salesPerson', 'workflow']
         },
 
         Tasks: {

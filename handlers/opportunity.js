@@ -2433,8 +2433,10 @@ var Module = function (models, event) {
         optionsObject.$and.push({isOpportunitie: true});
 
         if (data && filter) {
-            or.push(filterMapper.mapFilter(filter));
-            optionsObject.$and.push(filterObj);
+            /*or.push(filterMapper.mapFilter(filter, 'Opportunities'));
+            optionsObject.$and.push(filterObj);*/
+
+            optionsObject.$and.push(filterMapper.mapFilter(filter, 'Opportunities'));
 
             // caseFilter(filter, or);
         }
