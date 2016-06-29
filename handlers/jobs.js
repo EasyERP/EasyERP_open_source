@@ -1697,7 +1697,7 @@ var Module = function (models, event) {
 
             }, function () {
                 if (project) {
-                    event.emit('fetchJobsCollection', {project: project});
+                    event.emit('fetchJobsCollection', {project: project, dbName: dbName});
                 }
 
                 event.emit('recollectVacationDash', {dbName: dbName});

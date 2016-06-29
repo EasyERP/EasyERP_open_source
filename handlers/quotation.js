@@ -100,9 +100,10 @@ var Module = function (models, event) {
     }
 
     function updateOnlySelectedFields(req, res, next, id, data) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var dbName = req.session.lastDb;
+        var Quotation = models.get(dbName, 'Quotation', QuotationSchema);
+        var JobsModel = models.get(dbName, 'jobs', JobsSchema);
+        var wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
         var products;
         var project;
         var oldProducts = [];
@@ -176,7 +177,7 @@ var Module = function (models, event) {
                     var type;
 
                     if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
+                        event.emit('fetchJobsCollection', {project: project, dbName: dbName});
                     }
 
                     res.status(200).send({success: 'Quotation updated', result: quotation});
@@ -516,7 +517,7 @@ var Module = function (models, event) {
             date: new Date()
         };
 
-       
+
         currencyHalper(body.orderDate, function (err, oxr) {
             oxr = oxr || {};
             rates = oxr.rates;
@@ -618,7 +619,7 @@ var Module = function (models, event) {
 
                         }, function () {
                             if (project) {
-                                event.emit('fetchJobsCollection', {project: project});
+                                event.emit('fetchJobsCollection', {project: project, dbName: db});
                             }
                             res.status(201).send(_quotation);
                         });
