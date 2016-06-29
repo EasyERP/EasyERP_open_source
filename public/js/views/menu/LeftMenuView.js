@@ -13,7 +13,6 @@ define([
         selectedId: null,
 
         initialize: function (options) {
-            console.log(options.collection.toJSON());
             if (!options.collection) {
                 App.render({
                     type: 'error',
