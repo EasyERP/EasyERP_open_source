@@ -140,7 +140,7 @@
             };
             var expectedClosing = $.trim(this.$el.find('#expectedClosing').val());
             var priority = this.$el.find('#priorityDd').text();
-            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
+        /*    var internalNotes = $.trim(this.$el.find('#internalNotes').val());*/
             var address = {};
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
@@ -190,7 +190,7 @@
                 nextAction     : nextAction,
                 expectedClosing: expectedClosing,
                 priority       : priority,
-                internalNotes  : internalNotes,
+              /*  internalNotes  : internalNotes,*/
                 address        : address,
                 contactName    : contactName,
                 func           : func,
@@ -448,8 +448,15 @@
             });
 
             notDiv = this.$el.find('.attach-container');
-            notDiv.append(
+            /*notDiv.append(
                 new AttachView({
+                    model      : this.currentModel,
+                    contentType: 'Opportunities'
+                }).render().el
+            );*/
+
+            notDiv.append(
+                new noteView({
                     model      : this.currentModel,
                     contentType: 'Opportunities'
                 }).render().el

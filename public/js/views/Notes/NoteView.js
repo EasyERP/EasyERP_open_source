@@ -2,12 +2,14 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Notes/NoteTemplate.html'
+    'text!templates/Notes/NoteTemplate.html',
+    'views/Notes/AttachView'
 
-], function (Backbone, $, _, NoteTemplate) {
+], function (Backbone, $, _, NoteTemplate, AttachView) {
     var NoteView = Backbone.View.extend({
 
-        initialize: function () {
+        initialize: function (options) {
+            this.contentType = options.contentType
         },
 
         events: {
@@ -15,8 +17,14 @@ define([
             'click #cancelNote' : 'cancelNote',
             'click #addNote'    : 'saveNote',
             'click .addTitle'   : 'showTitle',
-            'click .editDelNote': 'editDelNote'
+            'click .editDelNote': 'editDelNote',
+            'click .fa-paperclip': 'clickInput'
         },
+
+        clickInput: function () {
+            $('.input-file .inputAttach').click();
+        },
+
 
         editDelNote: function (e) {
             var id = e.target.id;
@@ -177,7 +185,15 @@ define([
 
         render: function () {
             this.$el.html(this.template(this.model.toJSON()));
+
+            this.$el.prepend(
+                new AttachView({
+                    model      : this.model,
+                    contentType: this.contentType
+                }).render().el
+            );
             return this;
+
         }
     });
 
