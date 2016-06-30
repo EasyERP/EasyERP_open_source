@@ -1,6 +1,6 @@
 <div class="noteWrapper">
+    <%if (needNotes) {%>
     <label>Note</label>
-
     <div class="addNote">
         <div>
             <label>Note Content</label>
@@ -37,6 +37,7 @@
         <div class="clearfix"></div>
 
     </div>
+    <%}%>
     <div class="clearfix"></div>
 
     <div id="noteBody">
@@ -49,7 +50,7 @@
             <div>
                 <!--<a class="name" href="javascript:;"><%=val['author'] %></a>--><a class="name" href="javascript:;"><%=val['author']%> </a><span
                     class="date"><%=val['date'] %></span>
-
+                <%if (needNotes) {%>
                 <div class="right">
           <span>
             <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
@@ -61,6 +62,7 @@
           </span>
 
                 </div>
+                <%}%>
             </div>
         </div>
         <div class="clearfix"></div>

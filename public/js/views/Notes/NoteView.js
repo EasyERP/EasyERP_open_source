@@ -9,7 +9,8 @@ define([
     var NoteView = Backbone.View.extend({
 
         initialize: function (options) {
-            this.contentType = options.contentType
+            this.contentType = options.contentType;
+            this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
         },
 
         events: {
@@ -184,7 +185,10 @@ define([
         template: _.template(NoteTemplate),
 
         render: function () {
-            this.$el.html(this.template(this.model.toJSON()));
+            var modelObj = this.model.toJSON();
+
+            modelObj.needNotes = this.needNotes;
+            this.$el.html(this.template(modelObj));
 
             this.$el.prepend(
                 new AttachView({

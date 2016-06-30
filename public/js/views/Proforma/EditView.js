@@ -5,7 +5,7 @@ define([
     'views/dialogViewBase',
     'text!templates/Proforma/EditTemplate.html',
     'views/Assignees/AssigneesView',
-    'views/Notes/AttachView',
+    'views/Notes/NoteView',
     'views/Proforma/InvoiceProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/ProformaCreateView',
@@ -22,7 +22,7 @@ define([
              ParentView,
              EditTemplate,
              AssigneesView,
-             AttachView,
+             NoteView,
              InvoiceItemView,
              wTrackRows,
              PaymentCreateView,
@@ -494,9 +494,18 @@ define([
             var buttons;
             var invoiceDate;
             var isFinancial;
+            var needNotes = false;
+            var status;
 
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
+
+            status = model.workflow.status;
+
+            // need to check with which statuses can add attachment and notes
+            if (status === 'Cancelled') {
+                needNotes = true;
+            }
 
             this.isPaid = !!(model && model.workflow && model.workflow.status !== 'New');
 
@@ -619,9 +628,10 @@ define([
 
             notDiv = this.$el.find('#attach-container');
             notDiv.append(
-                new AttachView({
+                new NoteView({
                     model      : this.currentModel,
-                    contentType: 'Proforma'
+                    contentType: 'Proforma',
+                    needNotes  : needNotes
                 }).render().el
             );
 
