@@ -8,12 +8,12 @@ require('../../models/index.js');
 var jobsSchema = mongoose.Schemas.jobs;
 async = require('async');
 var connectOptions = {
-    user: 'easyerp',
+    user: 'easyErp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
 };
-dbObject = mongoose.createConnection('45.32.47.248', 'CRM', 27017/*, connectOptions*/);
+dbObject = mongoose.createConnection('46.4.78.3', 'CRM', 27017/*, connectOptions*/);
 dbObject.on('error', function (err) {
     console.error(err);
 });
