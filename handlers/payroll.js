@@ -6,6 +6,7 @@ var Module = function (models) {
 
     var PayRollSchema = mongoose.Schemas.PayRoll;
     var EmployeeSchema = mongoose.Schemas.Employees;
+    var PayrollComponentTypeSchema = mongoose.Schemas.payrollComponentTypes;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
     var ObjectId = mongoose.Types.ObjectId;
 
@@ -581,6 +582,7 @@ var Module = function (models) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+        var PayrollComponentType = models.get(db, 'payrollComponentType', PayrollComponentTypeSchema);
         var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var data = req.body;
         var month = parseInt(data.month, 10);
@@ -651,14 +653,14 @@ var Module = function (models) {
                 $match: {
                     hire: {$ne: []}
                 }
-            }/*, {
-             $lookup: {
-             from        : 'transfers',
-             localField  : '_id',
-             foreignField: 'employee',
-             as          : 'transfer'
-             }
-             }*/, {
+            }, {
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : '_id',
+                    foreignField: 'employee',
+                    as          : 'transfer'
+                }
+            }, {
                 $project: {
                     isEmployee  : 1,
                     department  : 1,
@@ -726,7 +728,7 @@ var Module = function (models) {
                     salary              : 1,
                     payrollStructureType: '$payrollStructureType.payrollStructureType'
                 }
-            }/* , {
+            }, {
                 $lookup: {
                     from        : 'payrollStructureTypes',
                     localField  : 'payrollStructureType',
@@ -737,15 +739,9 @@ var Module = function (models) {
                 $project: {
                     department          : 1,
                     salary              : 1,
-                    payrollStructureType: {$first: '$payrollStructureType'}
+                    payrollStructureType: {$arrayElemAt: ['$payrollStructureType', 0]}
                 }
-            }, {
-                $project: {
-                    department          : 1,
-                    salary              : 1,
-                    payrollStructureType: '$payrollStructureType.formula'
-                }
-            }*/], function (err, result) {
+            }], function (err, result) {
                 if (err) {
                     return mainCb(err);
                 }
@@ -756,11 +752,311 @@ var Module = function (models) {
 
         function generatePayroll(employeesResult, mainCb) {
 
-            async.each(function (empObject, asyncCb) {
+            async.each(employeesResult, function (empObject, asyncCb) {
                 var employee = empObject._id;
                 var department = empObject.department;
                 var salary = empObject.salary;
+                var payrollStructureType = empObject.payrollStructureType || {};
+                var earnings = payrollStructureType.earnings || [];
+                var deductions = payrollStructureType.deductions || [];
+                var parallelTasks;
+                var parallelFunctionsObject = {};
+                var newPayrollModel;
+                var parallelObject = {};
+                var payrollBody = {};
 
+                payrollBody.employee = employee;
+                payrollBody.month = month;
+                payrollBody.year = year;
+                payrollBody.dataKey = dataKey;
+
+                function vacation(pcb) {
+                    JournalEntry.aggregate([{
+                        $match: {
+                            'sourceDocument._id'  : employee,
+                            'sourceDocument.model': 'Employees',
+                            journal               : ObjectId(CONSTANTS.VACATION_PAYABLE),
+                            date                  : {
+                                $gte: date,
+                                $lte: endDate
+                            }
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$sourceDocument._id',
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        var resultItem;
+
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        resultItem = result && result.length ? result[0] : {};
+
+                        pcb(null, resultItem.debit || resultItem.credit || 0);
+                    });
+                }
+
+                function overtime(pcb) {
+                    JournalEntry.aggregate([{
+                        $match: {
+                            'sourceDocument.employee': employee,
+                            'sourceDocument.model'   : 'wTrack',
+                            journal                  : ObjectId(CONSTANTS.OVERTIME_PAYABLE),
+                            date                     : {
+                                $gte: date,
+                                $lte: endDate
+                            }
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$sourceDocument.employee',
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        var resultItem;
+
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        resultItem = result && result.length ? result[0] : {};
+
+                        pcb(null, resultItem.debit || resultItem.credit || 0);
+                    });
+                }
+
+                function base(pcb) {
+
+                    function getBase(cb) {
+                        JournalEntry.aggregate([{
+                            $match: {
+                                'sourceDocument.employee': employee,
+                                'sourceDocument.model'   : 'wTrack',
+                                journal                  : ObjectId(CONSTANTS.SALARY_PAYABLE),
+                                date                     : {
+                                    $gte: date,
+                                    $lte: endDate
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id   : '$sourceDocument.employee',
+                                debit : {$sum: '$debit'},
+                                credit: {$sum: '$credit'}
+                            }
+                        }], function (err, result) {
+                            var resultItem;
+
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            resultItem = result && result.length ? result[0] : {};
+
+                            cb(null, resultItem.debit || resultItem.credit || 0);
+                        });
+                    }
+
+                    function getIdle(cb) {
+                        JournalEntry.aggregate([{
+                            $match: {
+                                'sourceDocument._id'  : employee,
+                                'sourceDocument.model': 'Employees',
+                                journal               : ObjectId(CONSTANTS.IDLE_PAYABLE),
+                                date                  : {
+                                    $gte: date,
+                                    $lte: endDate
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id   : '$sourceDocument._id',
+                                debit : {$sum: '$debit'},
+                                credit: {$sum: '$credit'}
+                            }
+                        }], function (err, result) {
+                            var resultItem;
+
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            resultItem = result && result.length ? result[0] : {};
+
+                            cb(null, resultItem.debit || resultItem.credit || 0);
+                        });
+                    }
+
+                    if (departmentArray.indexOf(department.toString()) !== -1) {
+                        pcb(null, salary * 100);
+                    } else {
+                        async.parallel([getIdle, getBase], function (err, result) {
+                            var total;
+
+                            if (err) {
+                                return pcb(err);
+                            }
+
+                            total = result[0] + result[1];
+
+                            pcb(null, total);
+                        });
+                    }
+                }
+
+                function populateEarnings(pCb) {
+                    PayrollComponentType.populate(payrollStructureType, {
+                        path: 'earnings',
+                        lean: true
+                    }, function (err) {
+                        if (err) {
+                            return pCb(err);
+                        }
+
+                        pCb();
+                    });
+                }
+
+                function populateDeductions(pCb) {
+                    PayrollComponentType.populate(payrollStructureType, {
+                        path: 'deductions',
+                        lean: true
+                    }, function (err) {
+                        if (err) {
+                            return pCb(err);
+                        }
+
+                        pCb();
+                    });
+                }
+
+                function getNamesFromFormula(earnings, deductions) {
+                    var resultObject = {};
+                    var formulasArray = _.union(earnings, deductions);
+                    var array = [];
+                    var groupedResult;
+
+                    formulasArray.forEach(function (el) {
+                        array = _.union(array, el.formula);
+                    });
+
+                    groupedResult = _.groupBy(array, 'operand');
+
+                    groupedResult = Object.keys(groupedResult);
+
+                    groupedResult.forEach(function (key) {
+                        resultObject[key] = parallelObject[key];
+                    });
+
+                    return resultObject;
+                }
+
+                function getResultFormula(array, result) {
+                    var resultArray = [];
+                    var newArray = [];
+
+                    array.forEach(function (el) {
+                        newArray = _.union(newArray, el.formula);
+                    });
+
+                    newArray.forEach(function (formulaElem) {
+                        var resultSum = 0;
+                        var resultObject = {};
+                        var operand = formulaElem.operand;
+                        var operation = formulaElem.operation;
+                        var ratio = formulaElem.ratio;
+
+                        switch (operation) {
+                            case 'multiply':
+                                resultSum += result[operand] * parseFloat(ratio);
+                                break;
+                            case 'add':
+                                resultSum += result[operand] + parseFloat(ratio);
+                                break;
+                            case 'divide':
+                                resultSum += result[operand] / parseFloat(ratio);
+                                break;
+                            case 'subtract':
+                                resultSum += result[operand] - parseFloat(ratio);
+                                break;
+                            // skip default;
+                        }
+
+                        resultObject.amount = resultSum / 100;
+                        resultObject.formula = operand;
+
+                        resultArray.push(resultObject);
+
+                    });
+
+                    return resultArray;
+                }
+
+                parallelObject = {
+                    vacation: vacation,
+                    base    : base,
+                    overtime: overtime
+                };
+
+                parallelTasks = [populateEarnings, populateDeductions];
+
+                async.parallel(parallelTasks, function (err) {
+
+                    if (err) {
+                        return asyncCb(err);
+                    }
+
+                    parallelFunctionsObject = getNamesFromFormula(earnings, deductions);
+
+                    async.parallel(parallelFunctionsObject, function (err, result) {
+                        if (err) {
+                            return asyncCb(err);
+                        }
+
+                        payrollBody.earnings = getResultFormula(earnings, result);
+                        payrollBody.deductions = getResultFormula(deductions, result);
+
+                        payrollBody.calc = 0;
+                        payrollBody.paid = 0;
+
+                        payrollBody.earnings.forEach(function (elem) {
+                            payrollBody.calc += elem.amount;
+                        });
+
+                        payrollBody.deductions.forEach(function (elem) {
+                            payrollBody.calc -= elem.amount;
+                        });
+
+                        payrollBody.diff = payrollBody.calc - payrollBody.paid;
+
+                        if (!payrollBody.earnings.length && !payrollBody.deductions.length || (payrollBody.calc <= 0)) {
+                            return asyncCb();
+                        }
+
+                        newPayrollModel = new Payroll(payrollBody);
+
+                        newPayrollModel.save(function (err, result) {
+                            if (err) {
+                                return asyncCb(err);
+                            }
+
+                            asyncCb();
+                        });
+
+                    });
+
+                });
+            }, function (err, result) {
+                if (err) {
+                    return mainCb(err);
+                }
+
+                mainCb(null, result);
             });
 
         }

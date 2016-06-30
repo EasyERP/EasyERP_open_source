@@ -10,6 +10,7 @@ module.exports = (function () {
         dataKey   : Number,
         earnings  : {type: Array, default: []},
         deductions: {type: Array, default: []},
+        calc      : Number,
         paid      : Number,
         diff      : Number,
         date      : {type: Date, default: null},

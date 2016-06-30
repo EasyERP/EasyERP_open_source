@@ -69,23 +69,14 @@ define([
                     _id : 'const',
                     name: 'Constant'
                 }, {
-                    _id : 'directWorked',
-                    name: 'directWorked'
-                }, {
-                    _id : 'idle',
-                    name: 'idle'
+                    _id : 'base',
+                    name: 'base'
                 }, {
                     _id : 'overtime',
                     name: 'overtime'
                 }, {
                     _id : 'vacation',
                     name: 'vacation'
-                }, {
-                    _id : 'baseWithOvertime',
-                    name: 'baseWithOvertime'
-                }, {
-                    _id : 'base',
-                    name: 'base'
                 }
             ];
 

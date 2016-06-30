@@ -196,7 +196,7 @@ define([
             $deductionComponents.html('');
 
             model.deductions.forEach(function (deduction) {
-                arr = _.union(arr, deduction.formula);
+                arr = _.union(arr, deduction.formula || [deduction]);
             });
 
             if (arr.length) {
@@ -206,7 +206,7 @@ define([
             arr = [];
 
             model.earnings.forEach(function (earning) {
-                arr = _.union(arr, earning.formula);
+                arr = _.union(arr, earning.formula || [earning]);
             });
 
             if (arr.length) {
