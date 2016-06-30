@@ -22,6 +22,8 @@ define([
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Companies',
         exportToCsvUrl   : '/Customers/exportToCsv/?type=Companies',
         letterKey        : 'name.first',
+        hasPagination    : true,
+        hasAlphabet      : true,
 
         events: {
             'click .letter:not(.empty)': 'alpabeticalRender'
@@ -40,7 +42,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.currentPage;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
         },
@@ -86,12 +88,12 @@ define([
                 itemsNumber: this.collection.pageSize
             }).render());
 
-            this.renderAlphabeticalFilter(this);
-            this.renderPagination($currentEl, this);
-
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
-            this.renderFilter();
+            //this.renderAlphabeticalFilter(this);
+            //this.renderPagination($currentEl, this);
+            //
+            //$currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            //
+            //this.renderFilter();
         }
     });
 

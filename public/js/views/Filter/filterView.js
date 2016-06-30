@@ -446,7 +446,7 @@ define([
         render: function (options) {
             var self = this;
             var $curEl = this.$el;
-            var $searchInput;
+            var $searchInput = $curEl.find('#searchInput');
             var filterName = this.contentType + '.filter';
             var filters = custom.retriveFromCash(filterName) || App.filtersObject.filter;
             var allResults;
@@ -517,7 +517,7 @@ define([
                 }
             });
 
-            $searchInput = $curEl.find('#searchInput');
+            //$searchInput = $curEl.find('#searchInput');
 
             $searchInput.keydown(function (e) {
                 if (e.which === 13) {
