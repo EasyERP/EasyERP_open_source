@@ -2340,10 +2340,11 @@ var Module = function (models, event) {
     };
 
     function reconcile(req, res, next, cb) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
-        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'journalEntry', journalEntrySchema);
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
+        var Invoice = models.get(dbName, 'Invoice', invoiceSchema);
+        var Job = models.get(dbName, 'jobs', jobsSchema);
         var body = req.body;
         var month = parseInt(body.month, 10);
         var year = parseInt(body.year, 10);
@@ -2554,7 +2555,8 @@ var Module = function (models, event) {
                             // res.status(200).send({success: true});
                             event.emit('sendMessage', {
                                 view   : 'journalEntry',
-                                message: 'Invoices and Proformas were reconciled'
+                                message: 'Invoices and Proformas were reconciled',
+                                dbName : dbName
                             });
                             mainCallback();
                         });
@@ -3001,12 +3003,17 @@ var Module = function (models, event) {
             setObj = {date: date};
 
             console.log('Success');
-            event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
+            event.emit('sendMessage', {
+                view   : 'journalEntry',
+                message: 'Please, refresh browser, data was changed.',
+                dbName : dbName
+            });
 
             if (cb) {
                 event.emit('sendMessage', {
                     view   : 'Projects',
-                    message: 'Please, refresh browser, costs were calculated.'
+                    message: 'Please, refresh browser, costs were calculated.',
+                    dbName : dbName
                 });
             }
 

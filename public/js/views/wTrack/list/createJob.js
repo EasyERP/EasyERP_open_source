@@ -14,7 +14,7 @@ define([
         initialize: function (options) {
             this.model = options.model;
 
-            this.createJob = options.createJob; // ? options.createJob : true;
+            this.createJob = options.createJob;
             this.wTrackView = options.wTrackView;
 
             this.modelJSON = this.model.id ? this.model.toJSON() : this.model;

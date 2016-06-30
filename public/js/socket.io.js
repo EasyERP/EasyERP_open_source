@@ -11,10 +11,11 @@ define([
 
     function sendMessage(options) {
         var view = options.view;
+        var dbName = options.dbName;
         var message = options.message;
         var fragment = Backbone.history.fragment;
 
-        if (fragment && fragment.indexOf(view) !== -1) {
+        if (fragment && fragment.indexOf(view) !== -1 && App.currentDb === dbName) {
             App.render({type: 'notify', message: message});
         }
 
@@ -32,8 +33,9 @@ define([
     }
 
     function fetchJobs(options) {
+        var dbName = options.dbName;
 
-        if (App.projectInfo && (options.project === App.projectInfo.projectId)) {
+        if (App.projectInfo && (options.project === App.projectInfo.projectId) && App.currentDb === dbName) {
             App.render({
                 type   : 'notify',
                 message: 'Project data updated.'
@@ -43,8 +45,9 @@ define([
     }
 
     function fetchInvoice(options) {
+        var dbName = options.dbName;
 
-        if (App.projectInfo && (options.project === App.projectInfo.projectId)) {
+        if (App.projectInfo && (options.project === App.projectInfo.projectId) && App.currentDb === dbName) {
             App.render({
                 type   : 'notify',
                 message: 'Invoices data updated.'
