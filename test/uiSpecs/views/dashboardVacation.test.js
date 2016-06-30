@@ -205,164 +205,6 @@ define([
                     done();
                 });
 
-                it('Try to filter ListView by Employee and department', function () {
-                    var url = '/dashboard/vacation';
-                    var contentType = 'DashBoardVacation';
-                    var firstValue = 'name';
-                    var secondValue = 'department';
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var contentUrl = new RegExp(url, 'i');
-                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
-                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
-                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
-                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
-                    var elementQuery = '#listTable > tr';
-                    var $firstGroup;
-                    var $secondGroup;
-                    var elementsCount;
-                    var $selectedItem;
-                    var ajaxResponse;
-                    var filterObject;
-                    selectSpy.reset();
-
-                    // open filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                    // select firstGroup filter
-                    ajaxSpy.reset();
-                    $firstGroup = $searchContainer.find($firstContainer);
-                    $firstGroup.click();
-
-                    $selectedItem = $searchContainer.find($firstSelector);
-
-                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(DashboardVacation.fakeDashboardVacation)]);
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    //expect($thisEl.find('#startLetter')).to.exist;
-                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
-                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
-                    elementsCount = $thisEl.find(elementQuery).length;
-                    expect(elementsCount).to.be.not.equals(0);
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', url);
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data).to.have.property('filter');
-                    filterObject = ajaxResponse.data.filter;
-
-                    expect(filterObject[firstValue]).to.exist;
-                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
-                    expect(filterObject[firstValue]).to.have.property('value');
-                    expect(filterObject[firstValue].value)
-                        .to.be.instanceof(Array)
-                        .and
-                        .to.have.lengthOf(1);
-
-                    // select secondGroup filter
-                    ajaxSpy.reset();
-
-                    $secondGroup = $thisEl.find($secondContainer);
-                    $secondGroup.click();
-                    $selectedItem = $searchContainer.find($secondSelector);
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectSpy.calledTwice).to.be.true;
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    //expect($thisEl.find('#startLetter')).to.exist;
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
-                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
-                    elementsCount = $thisEl.find(elementQuery).length;
-                    expect(elementsCount).to.be.not.equals(0);
-
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', url);
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data).to.have.property('filter');
-                    filterObject = ajaxResponse.data.filter;
-
-                    expect(filterObject[firstValue]).to.exist;
-                    expect(filterObject[secondValue]).to.exist;
-                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
-                    expect(filterObject[secondValue]).to.have.property('value');
-                    expect(filterObject[secondValue].value)
-                        .to.be.instanceof(Array)
-                        .and
-                        .to.have.lengthOf(1);
-
-                    // unselect secondGroup filter
-                    $selectedItem = $searchContainer.find($secondSelector);
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectSpy.calledThrice).to.be.true;
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    //expect($thisEl.find('#startLetter')).to.exist;
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
-                    elementsCount = $thisEl.find(elementQuery).length;
-                    expect(elementsCount).to.be.not.equals(0);
-
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', url);
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data).to.have.property('filter');
-                    filterObject = ajaxResponse.data.filter;
-
-                    expect(filterObject[firstValue]).to.exist;
-                    expect(filterObject[secondValue]).to.not.exist;
-                });
-
-                it('Try to save favorites filters', function () {
-                    var userUrl = new RegExp('\/users\/', 'i');
-                    var $searchContainer = topBarView.$el.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
-                    var $filterNameInput;
-                    var $saveFilterBtn;
-
-                    saveFilterSpy.reset();
-
-                    $favoritesBtn.click();
-                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
-
-                    $filterNameInput = $searchContainer.find('#forFilterName');
-                    $filterNameInput.val('Test');
-                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
-
-                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    $saveFilterBtn.click();
-                    server.respond();
-                    expect(saveFilterSpy.called).to.be.true;
-
-                    //close filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
-                });
-
-                it('Try to delete Employee filter', function () {
-                    var $searchContainer = topBarView.$el.find('#searchContainer');
-                    var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
-                    var dashBoardUrl = new RegExp('dashboard\/vacation', 'i');
-                    this.timeout(10000);
-
-                    removeFilterSpy.reset();
-
-                    server.respondWith('GET', dashBoardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDashBoardVacations)]);
-                    $closeBtn.click();
-                    server.respond();
-
-                    expect(removeFilterSpy.called).to.be.true;
-                    expect($thisEl).to.exist;
-                });
-
                 it('Try to expand all', function (done) {
                     var $expandAllBtn = indexView.$el.find('.openAll');
 
@@ -424,7 +266,7 @@ define([
 
                     $updateBtn = topBarView.$el.find('#updateDate');
 
-                    server.respondWith('GET', dashBoardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDashBoardVacations)]);
+                    server.respondWith('GET', dashBoardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(DashboardVacation.fakeDashboardVacation)]);
                     $updateBtn.click();
                     indexView.changeDateRange();
                     server.respond();
@@ -454,7 +296,7 @@ define([
 
                     $createWTrack = $projectsRow.find('td.createTd').first();
 
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectWTrack)]);
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(DashboardVacation.fakeProjectWTrack)]);
                     server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     server.respondWith('GET', holidayUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $createWTrack.click();
@@ -473,8 +315,6 @@ define([
                     var $select;
                     var $jobsTd;
                     var generateJob;
-
-
                     var $dialogEl = $('.ui-dialog');
                     var $row = $dialogEl.find('#wTrackCreateTable tr:nth-child(1)');
                     var $typeTcard = $dialogEl.find('#wTrackCreateTable td:nth-child(1)');
@@ -825,7 +665,7 @@ define([
                     $jobsTd = $dialogEl.find('td[data-id="564cfd8ba6e6390160c9ef57"]');
 
                     // generate Job
-                    server.respondWith('GET', jobsDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsForProject)]);
+                    server.respondWith('GET', jobsDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(DashboardVacation.fakeJobsForProject)]);
                     $jobsTd.click();
                     server.respond();
                     $generateJob = $dialogEl.find('#createJob');

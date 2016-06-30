@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/Tasks/filterCollection',
@@ -11,12 +12,16 @@ define([
     'views/Tasks/CreateView',
     'views/Tasks/EditView',
     'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
+    'sinon-chai',
+    'constantsDir/filters'
 ], function (Backbone,
+             _,
              modules,
              fixtures,
              TasksCollection,
@@ -28,11 +33,14 @@ define([
              CreateView,
              EditView,
              FilterView,
+             FilterGroup,
+             SavedFilters,
              eventsBinder,
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             FILTER_CONSTANTS) {
     'use strict';
 
     var expect;
@@ -3980,80 +3988,80 @@ define([
     };
     var fakeTasksForKanban = {
         workflowId: "528ce0cdf3f67bc40b00000c",
-        remaining: 0,
-        data: [
+        remaining : 0,
+        data      : [
             {
-                _id: "575ef1ee0fc96daf2a4787a3",
-                summary: "Test1",
-                editedBy: {
+                _id       : "575ef1ee0fc96daf2a4787a3",
+                summary   : "Test1",
+                editedBy  : {
                     date: "2016-06-13T17:48:30.698Z"
                 },
-                remaining: 0,
-                type: "Task",
-                workflow: "528ce0cdf3f67bc40b00000c",
-                sequence: 0,
-                priority: "P3",
+                remaining : 0,
+                type      : "Task",
+                workflow  : "528ce0cdf3f67bc40b00000c",
+                sequence  : 0,
+                priority  : "P3",
                 assignedTo: {
-                    _id: "55b92ad221e4b7c40f000030",
-                    name: {
-                        last: "Svatuk",
+                    _id     : "55b92ad221e4b7c40f000030",
+                    name    : {
+                        last : "Svatuk",
                         first: "Alex"
                     },
                     fullName: "Alex Svatuk",
-                    id: "55b92ad221e4b7c40f000030"
+                    id      : "55b92ad221e4b7c40f000030"
                 },
-                project: {
-                    _id: "56e689c75ec71b00429745a9",
+                project   : {
+                    _id             : "56e689c75ec71b00429745a9",
                     projectShortDesc: "SDK"
                 },
-                taskCount: 2
+                taskCount : 2
             },
             {
-                _id: "575ef20a0fc96daf2a4787a4",
-                summary: "Test_task1",
-                editedBy: {
+                _id       : "575ef20a0fc96daf2a4787a4",
+                summary   : "Test_task1",
+                editedBy  : {
                     date: "2016-06-13T17:48:58.543Z"
                 },
-                remaining: 0,
-                type: "Task",
-                workflow: "528ce0cdf3f67bc40b00000c",
-                sequence: 0,
-                priority: "P3",
+                remaining : 0,
+                type      : "Task",
+                workflow  : "528ce0cdf3f67bc40b00000c",
+                sequence  : 0,
+                priority  : "P3",
                 assignedTo: {
-                    _id: "55b92ad221e4b7c40f000030",
-                    name: {
-                        last: "Svatuk",
+                    _id     : "55b92ad221e4b7c40f000030",
+                    name    : {
+                        last : "Svatuk",
                         first: "Alex"
                     },
                     fullName: "Alex Svatuk",
-                    id: "55b92ad221e4b7c40f000030"
+                    id      : "55b92ad221e4b7c40f000030"
                 },
-                project: {
-                    _id: "571a079eb629a41976c9ac96",
+                project   : {
+                    _id             : "571a079eb629a41976c9ac96",
                     projectShortDesc: "Peter Hickey"
                 },
-                taskCount: 1
+                taskCount : 1
             }
         ],
-        total: 2,
-        time: 167,
-        fold: false
+        total     : 2,
+        time      : 167,
+        fold      : false
     };
     var fakeProjectById = {
         _id             : "55cdc96d9b42266a4f000006",
-        TargetEndDate   : "2015-08-17T22:00:00.000Z",
-        StartDate       : "2015-08-10T09:10:39.394Z",
-        __v             : 0,
-        description     : "",
-        EndDate         : "2015-08-28T09:10:38.966Z",
-        salesManagers   : [
+        TargetEndDate: "2015-08-17T22:00:00.000Z",
+        StartDate    : "2015-08-10T09:10:39.394Z",
+        __v          : 0,
+        description  : "",
+        EndDate      : "2015-08-28T09:10:38.966Z",
+        salesManagers: [
             {
                 manager: "55b92ad221e4b7c40f00004b",
                 _id    : "5707533ecbb17f48214c7707",
                 date   : "2015-08-10T12:27:34.823Z"
             }
         ],
-        budget          : {
+        budget       : {
             projectTeam: [
                 {
                     _id      : "564cfdd06584412e618421da",
@@ -4187,36 +4195,36 @@ define([
             ],
             bonus      : []
         },
-        bonus           : [],
-        health          : 1,
-        editedBy        : {
+        bonus        : [],
+        health       : 1,
+        editedBy     : {
             date: "2015-12-04T16:59:53.625Z",
             user: {
                 _id  : "55bf144765cda0810b000005",
                 login: "yana.gusti"
             }
         },
-        attachments     : [],
-        notes           : [],
-        projecttype     : "",
-        createdBy       : {
+        attachments  : [],
+        notes        : [],
+        projecttype  : "",
+        createdBy    : {
             date: "2015-08-14T10:56:45.871Z",
             user: {
                 _id  : "55b9dd237a3632120b000005",
                 login: "roland.katona"
             }
         },
-        progress        : 0,
-        remaining       : 0,
-        logged          : 0,
-        estimated       : 0,
-        workflow        : {
+        progress     : 0,
+        remaining    : 0,
+        logged       : 0,
+        estimated    : 0,
+        workflow     : {
             _id : "528ce82df3f67bc40b000025",
             name: "Closed"
         },
-        parent          : null,
-        sequence        : 0,
-        groups          : {
+        parent       : null,
+        sequence     : 0,
+        groups       : {
             group: [],
             users: [],
             owner: {
@@ -4224,43 +4232,43 @@ define([
                 login: "AndrianaLemko"
             }
         },
-        whoCanRW        : "everyOne",
-        projectmanager  : {
+        whoCanRW     : "everyOne",
+        projectmanager: {
             _id     : "55b92ad221e4b7c40f00004b",
-            name    : {
+            name: {
                 last : "Katona",
                 first: "Roland"
             },
             fullName: "Roland Katona",
             id      : "55b92ad221e4b7c40f00004b"
         },
-        customer        : {
+        customer      : {
             _id     : "55cdc93c9b42266a4f000005",
-            name    : {
+            name: {
                 last : "",
                 first: "AgileFind"
             },
             fullName: "AgileFind ",
             id      : "55cdc93c9b42266a4f000005"
         },
-        task            : [
+        task          : [
             "56dfd3e78c59375e055e0cc2"
         ],
-        projectName     : "Absolute Vodka",
+        projectName   : "Absolute Vodka",
         projectShortDesc: "Absolute Vodka"
     };
     var fakeTaskStages = {
         data: [
             {
                 _id         : "528ce0cdf3f67bc40b00000c",
-                __v         : 0,
-                attachments : [],
-                name        : "New",
-                sequence    : 5,
-                status      : "New",
-                wId         : "Tasks",
-                wName       : "task",
-                source      : "task",
+                __v: 0,
+                attachments: [],
+                name       : "New",
+                sequence   : 5,
+                status     : "New",
+                wId        : "Tasks",
+                wName      : "task",
+                source     : "task",
                 targetSource: [
                     "task"
                 ],
@@ -4269,14 +4277,14 @@ define([
             },
             {
                 _id         : "528ce131f3f67bc40b00000d",
-                __v         : 0,
-                attachments : [],
-                name        : "In Progress",
-                sequence    : 4,
-                status      : "In Progress",
-                wId         : "Tasks",
-                wName       : "task",
-                source      : "task",
+                __v: 0,
+                attachments: [],
+                name       : "In Progress",
+                sequence   : 4,
+                status     : "In Progress",
+                wId        : "Tasks",
+                wName      : "task",
+                source     : "task",
                 targetSource: [
                     "task"
                 ],
@@ -4285,14 +4293,14 @@ define([
             },
             {
                 _id         : "528ce30cf3f67bc40b00000f",
-                __v         : 0,
-                attachments : [],
-                name        : "Fixed",
-                sequence    : 3,
-                status      : "In Progress",
-                wId         : "Tasks",
-                wName       : "task",
-                source      : "task",
+                __v: 0,
+                attachments: [],
+                name       : "Fixed",
+                sequence   : 3,
+                status     : "In Progress",
+                wId        : "Tasks",
+                wName      : "task",
+                source     : "task",
                 targetSource: [
                     "task"
                 ],
@@ -4301,14 +4309,14 @@ define([
             },
             {
                 _id         : "528ce35af3f67bc40b000010",
-                __v         : 0,
-                attachments : [],
-                name        : "Testing",
-                sequence    : 2,
-                status      : "In Progress",
-                wId         : "Tasks",
-                wName       : "task",
-                source      : "task",
+                __v: 0,
+                attachments: [],
+                name       : "Testing",
+                sequence   : 2,
+                status     : "In Progress",
+                wId        : "Tasks",
+                wName      : "task",
+                source     : "task",
                 targetSource: [
                     "task"
                 ],
@@ -4317,14 +4325,14 @@ define([
             },
             {
                 _id         : "528ce3acf3f67bc40b000012",
-                __v         : 0,
-                attachments : [],
-                name        : "Done",
-                sequence    : 1,
-                status      : "Done",
-                wId         : "Tasks",
-                wName       : "task",
-                source      : "task",
+                __v: 0,
+                attachments: [],
+                name       : "Done",
+                sequence   : 1,
+                status     : "Done",
+                wId        : "Tasks",
+                wName      : "task",
+                source     : "task",
                 targetSource: [
                     "task"
                 ],
@@ -4333,14 +4341,14 @@ define([
             },
             {
                 _id         : "528ce3caf3f67bc40b000013",
-                __v         : 0,
-                attachments : [],
-                name        : "Cancelled",
-                sequence    : 0,
-                status      : "Cancelled",
-                wId         : "Tasks",
-                wName       : "task",
-                source      : "task",
+                __v: 0,
+                attachments: [],
+                name       : "Cancelled",
+                sequence   : 0,
+                status     : "Cancelled",
+                wId        : "Tasks",
+                wName      : "task",
+                source     : "task",
                 targetSource: [
                     "task"
                 ],
@@ -4352,15 +4360,15 @@ define([
     var fakeCurrentUser = {
         user        : {
             _id            : "52203e707d4dba8813000003",
-            attachments    : [],
-            lastAccess     : "2016-04-26T05:58:49.347Z",
-            profile        : {
+            attachments: [],
+            lastAccess : "2016-04-26T05:58:49.347Z",
+            profile    : {
                 _id        : 1387275598000,
                 profileName: "admin"
             },
             relatedEmployee: {
                 _id     : "55b92ad221e4b7c40f00004f",
-                name    : {
+                name: {
                     last : "Sokhanych",
                     first: "Alex"
                 },
@@ -4371,48 +4379,48 @@ define([
             savedFilters   : [
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: "salesInvoice"
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : {
                         _id        : "562b83ccb4677e225aa31df6",
-                        filter     : {
+                        filter: {
                             PM: {
                                 department: {
                                     key  : "department._id",
@@ -4425,13 +4433,13 @@ define([
                         contentView: "Employees",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : {
                         _id        : "564dd4ce9fb8bc3f2195662c",
-                        filter     : {
+                        filter: {
                             dfghj: {
                                 name    : {
                                     key  : "_id",
@@ -4478,7 +4486,7 @@ define([
                                         "55b92ad621e4b7c40f00062c"
                                     ]
                                 },
-                                country : {
+                                country: {
                                     key  : "address.country",
                                     value: [
                                         "Australia",
@@ -4503,68 +4511,68 @@ define([
                         contentView: "Persons",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: "Projects"
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : {
                         _id        : "56dfe8e56e2877d85455a6bb",
-                        filter     : {
+                        filter: {
                             initial: {
                                 workflow: {
                                     key  : "workflow._id",
@@ -4578,13 +4586,13 @@ define([
                         contentView: "Leads",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: "Leads"
                 },
                 {
                     _id      : {
                         _id        : "56f3d039c1785edc507e81ea",
-                        filter     : {
+                        filter: {
                             ggggg: {
                                 source: {
                                     key  : "source",
@@ -4598,23 +4606,23 @@ define([
                         contentView: "Leads",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : {
                         _id        : "57172598526673490fa188ac",
-                        filter     : {
+                        filter: {
                             'Can be Purchased': {
                                 canBePurchased: {
                                     key  : "canBePurchased",
@@ -4627,7 +4635,7 @@ define([
                         contentView: "Product",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 }
             ],
@@ -4641,7 +4649,7 @@ define([
                     ],
                     countPerPage : 10
                 },
-                applications : {
+                applications: {
                     foldWorkflows: [
                         "Empty"
                     ],
@@ -4664,107 +4672,107 @@ define([
             undefined: [
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: "salesInvoice"
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: "Projects"
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 },
                 {
                     _id      : null,
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 }
             ],
@@ -4772,7 +4780,7 @@ define([
                 {
                     _id      : {
                         _id        : "562b83ccb4677e225aa31df6",
-                        filter     : {
+                        filter: {
                             PM: {
                                 department: {
                                     key  : "department._id",
@@ -4785,7 +4793,7 @@ define([
                         contentView: "Employees",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 }
             ],
@@ -4793,7 +4801,7 @@ define([
                 {
                     _id      : {
                         _id        : "564dd4ce9fb8bc3f2195662c",
-                        filter     : {
+                        filter: {
                             dfghj: {
                                 name    : {
                                     key  : "_id",
@@ -4840,7 +4848,7 @@ define([
                                         "55b92ad621e4b7c40f00062c"
                                     ]
                                 },
-                                country : {
+                                country: {
                                     key  : "address.country",
                                     value: [
                                         "Australia",
@@ -4865,7 +4873,7 @@ define([
                         contentView: "Persons",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 }
             ],
@@ -4873,7 +4881,7 @@ define([
                 {
                     _id      : {
                         _id        : "56dfe8e56e2877d85455a6bb",
-                        filter     : {
+                        filter: {
                             initial: {
                                 workflow: {
                                     key  : "workflow._id",
@@ -4887,13 +4895,13 @@ define([
                         contentView: "Leads",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: "Leads"
                 },
                 {
                     _id      : {
                         _id        : "56f3d039c1785edc507e81ea",
-                        filter     : {
+                        filter: {
                             ggggg: {
                                 source: {
                                     key  : "source",
@@ -4907,7 +4915,7 @@ define([
                         contentView: "Leads",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 }
             ],
@@ -4915,7 +4923,7 @@ define([
                 {
                     _id      : {
                         _id        : "57172598526673490fa188ac",
-                        filter     : {
+                        filter: {
                             'Can be Purchased': {
                                 canBePurchased: {
                                     key  : "canBePurchased",
@@ -4928,7 +4936,7 @@ define([
                         contentView: "Product",
                         __v        : 0
                     },
-                    viewType : "",
+                    viewType: "",
                     byDefault: ""
                 }
             ]
@@ -4962,985 +4970,1150 @@ define([
         data: [
             {
                 _id             : "56e689c75ec71b00429745a9",
-                projectName     : "360CamSDK",
+                projectName: "360CamSDK",
                 projectShortDesc: "SDK"
             },
             {
                 _id             : "55cdc96d9b42266a4f000006",
-                projectName     : "Absolute Vodka",
+                projectName: "Absolute Vodka",
                 projectShortDesc: "Absolute Vodka"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006af",
-                projectName     : "Academic Website testing",
+                projectName: "Academic Website testing",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000681",
-                projectName     : "AirPort",
+                projectName: "AirPort",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000669",
-                projectName     : "Airsoft site",
+                projectName: "Airsoft site",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "5702160eed3f15af0782f13a",
-                projectName     : "Andreas Project 2",
+                projectName: "Andreas Project 2",
                 projectShortDesc: "Description"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a2",
-                projectName     : "Android",
+                projectName: "Android",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a5",
-                projectName     : "Android",
+                projectName: "Android",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b1",
-                projectName     : "Android Automation",
+                projectName: "Android Automation",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00067b",
-                projectName     : "Android Help",
+                projectName: "Android Help",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000677",
-                projectName     : "Android Tribesta",
+                projectName: "Android Tribesta",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "569f60d162d172544baf0d58",
-                projectName     : "Android advertisement",
+                projectName: "Android advertisement",
                 projectShortDesc: "Supportment of app"
             },
             {
                 _id             : "55b92ad621e4b7c40f00069e",
-                projectName     : "Android1",
+                projectName: "Android1",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000661",
-                projectName     : "Android2",
+                projectName: "Android2",
                 projectShortDesc: "emptyProjectxcvxcv"
             },
             {
                 _id             : "56aa2cb4b4dc0d09232bd7aa",
-                projectName     : "AngularJS - Stentle",
+                projectName: "AngularJS - Stentle",
                 projectShortDesc: "AngularJS"
             },
             {
                 _id             : "55b92ad621e4b7c40f000678",
-                projectName     : "Appium testing",
+                projectName: "Appium testing",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "562ff292b03714731dd8433b",
-                projectName     : "Appsmakerstore",
+                projectName: "Appsmakerstore",
                 projectShortDesc: "Appsmakerstore"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d6",
-                projectName     : "ArTV",
+                projectName: "ArTV",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56abd16ac6be8658550dc6c3",
-                projectName     : "Baccarat",
+                projectName: "Baccarat",
                 projectShortDesc: "Unity 3d video streaming project"
             },
             {
                 _id             : "56e2cc9b74ac46664a83e949",
-                projectName     : "Backoffice 2.0 Stentle",
+                projectName: "Backoffice 2.0 Stentle",
                 projectShortDesc: "AngularJS web page"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006cb",
-                projectName     : "Bayzat",
+                projectName: "Bayzat",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000664",
-                projectName     : "BelgiumHTML",
+                projectName: "BelgiumHTML",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55f5728cb81672730c00006a",
-                projectName     : "BetterIt ios",
+                projectName: "BetterIt ios",
                 projectShortDesc: "betterit ios"
             },
             {
                 _id             : "55f55a89b81672730c000017",
-                projectName     : "Bimii",
+                projectName: "Bimii",
                 projectShortDesc: "Tablet"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c7",
-                projectName     : "BizRate",
+                projectName: "BizRate",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "5638e863593807ff047d99e5",
-                projectName     : "Bizrate",
+                projectName: "Bizrate",
                 projectShortDesc: "iOS"
             },
             {
                 _id             : "55de1e8ef09cc2ec0b000031",
-                projectName     : "BlueLight",
+                projectName: "BlueLight",
                 projectShortDesc: "Java Project"
             },
             {
                 _id             : "55b92ad621e4b7c40f000683",
-                projectName     : "Bob",
+                projectName: "Bob",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "561ebb8cd6c741e8235f42ea",
-                projectName     : "Bodega application",
+                projectName: "Bodega application",
                 projectShortDesc: "app for iOS and Andr tablets"
             },
             {
                 _id             : "56a0d60062d172544baf0e3d",
-                projectName     : "BuddyBet",
+                projectName: "BuddyBet",
                 projectShortDesc: "Betting app"
             },
             {
                 _id             : "5629e238129820ab5994e8c0",
-                projectName     : "Bus Project",
+                projectName: "Bus Project",
                 projectShortDesc: "Bus lines"
             },
             {
                 _id             : "56bdcc69dfd8a81466e2f58a",
-                projectName     : "Buzinga extra costs",
+                projectName: "Buzinga extra costs",
                 projectShortDesc: "extra costs"
             },
             {
                 _id             : "56ab5ceb74d57e0d56d6bda5",
-                projectName     : "CAPT",
+                projectName: "CAPT",
                 projectShortDesc: "capt the video"
             },
             {
                 _id             : "56e292585def9136621b7800",
-                projectName     : "Casino",
+                projectName: "Casino",
                 projectShortDesc: "Flash to HTML5"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d8",
-                projectName     : "Casino Game",
+                projectName: "Casino Game",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006cd",
-                projectName     : "CloudFuze",
+                projectName: "CloudFuze",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "563767135d23a8eb04e80aec",
-                projectName     : "Coach App",
+                projectName: "Coach App",
                 projectShortDesc: "iOS, Android, Backend"
             },
             {
                 _id             : "55b92ad621e4b7c40f000680",
-                projectName     : "CodeThreads",
+                projectName: "CodeThreads",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56fe645769c37d5903700b20",
-                projectName     : "Colgate",
+                projectName: "Colgate",
                 projectShortDesc: "Quizz"
             },
             {
                 _id             : "5703a427c3a5da3e0347a481",
-                projectName     : "Command Center",
+                projectName: "Command Center",
                 projectShortDesc: "social marketing analysis tool"
             },
             {
                 _id             : "55b92ad621e4b7c40f000682",
-                projectName     : "Connexus",
+                projectName: "Connexus",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000695",
-                projectName     : "Consent APP",
+                projectName: "Consent APP",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b9",
-                projectName     : "Curb testing",
+                projectName: "Curb testing",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000672",
-                projectName     : "DRH QA Automation",
+                projectName: "DRH QA Automation",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00068c",
-                projectName     : "DRH manual",
+                projectName: "DRH manual",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c6",
-                projectName     : "Demo Rocket",
+                projectName: "Demo Rocket",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56a23c5caa157ca50f21fae1",
-                projectName     : "Demolition Derby",
+                projectName: "Demolition Derby",
                 projectShortDesc: "DD"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b7",
-                projectName     : "Design",
+                projectName: "Design",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56afdabef5c2bcd4555cb2f8",
-                projectName     : "Design Slots",
+                projectName: "Design Slots",
                 projectShortDesc: "Game slots"
             },
             {
                 _id             : "55b92ad621e4b7c40f00066c",
-                projectName     : "DesignShargo",
+                projectName: "DesignShargo",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "57039f0353db5c9d03fc9ebe",
-                projectName     : "DiGep",
+                projectName: "DiGep",
                 projectShortDesc: "Training app"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006aa",
-                projectName     : "DiveplanIT",
+                projectName: "DiveplanIT",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56fd3453a33b73e503e3eb65",
-                projectName     : "Donation App",
+                projectName: "Donation App",
                 projectShortDesc: "Xamarin project"
             },
             {
                 _id             : "55de2cd2f09cc2ec0b000053",
-                projectName     : "Dragon Daze",
+                projectName: "Dragon Daze",
                 projectShortDesc: "Design game"
             },
             {
                 _id             : "56dffa45f20b938426716709",
-                projectName     : "ESTablet web",
+                projectName: "ESTablet web",
                 projectShortDesc: "Management system for hospitals"
             },
             {
                 _id             : "56dff1b4a12a4f3c26919c91",
-                projectName     : "EasyERP",
+                projectName: "EasyERP",
                 projectShortDesc: "EasyERP all jobs"
             },
             {
                 _id             : "55b92ad621e4b7c40f000691",
-                projectName     : "Faceworks",
+                projectName: "Faceworks",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55ded24cae2b22730b000040",
-                projectName     : "FarmStatistic",
+                projectName: "FarmStatistic",
                 projectShortDesc: "Farm sales"
             },
             {
                 _id             : "55f55d31b81672730c000020",
-                projectName     : "Farmers App",
+                projectName: "Farmers App",
                 projectShortDesc: "App for Farmers"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b8",
-                projectName     : "FindLost",
+                projectName: "FindLost",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56030dbffa3f91444e00000d",
-                projectName     : "Firderberg",
+                projectName: "Firderberg",
                 projectShortDesc: "web"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006ce",
-                projectName     : "FlipStar Game",
+                projectName: "FlipStar Game",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "568b85b33cce9254776f2b4c",
-                projectName     : "FluxIOT",
+                projectName: "FluxIOT",
                 projectShortDesc: "Hydroponic app"
             },
             {
                 _id             : "55de24bbf09cc2ec0b000036",
-                projectName     : "FosterFarms",
+                projectName: "FosterFarms",
                 projectShortDesc: "Facebook app"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c1",
-                projectName     : "Ganchak Help",
+                projectName: "Ganchak Help",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a0",
-                projectName     : "GetFit",
+                projectName: "GetFit",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "569f5bc662d172544baf0c40",
-                projectName     : "Gilad Nevo Bug fixing",
+                projectName: "Gilad Nevo Bug fixing",
                 projectShortDesc: "Fixing bugs for Indian code"
             },
             {
                 _id             : "55cf5ea04a91e37b0b00012c",
-                projectName     : "Global Workshop",
+                projectName: "Global Workshop",
                 projectShortDesc: "Global Workshop"
             },
             {
                 _id             : "55de2a30f09cc2ec0b00004e",
-                projectName     : "GovMap",
+                projectName: "GovMap",
                 projectShortDesc: "Government map"
             },
             {
                 _id             : "56e93c3b07ea2d845ef75dff",
-                projectName     : "Guru",
+                projectName: "Guru",
                 projectShortDesc: "Guru website"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006be",
-                projectName     : "HBO",
+                projectName: "HBO",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "565740e0bfd103f108eb4ad4",
-                projectName     : "HKConnect",
+                projectName: "HKConnect",
                 projectShortDesc: "aga"
             },
             {
                 _id             : "56d9a14f7891423e3d5b8f18",
-                projectName     : "Habi",
+                projectName: "Habi",
                 projectShortDesc: "iOS Swift"
             },
             {
                 _id             : "569f58df62d172544baf0c3d",
-                projectName     : "Haie",
+                projectName: "Haie",
                 projectShortDesc: "Bugfix/Inplementation"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d3",
-                projectName     : "HashPlay",
+                projectName: "HashPlay",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00065f",
-                projectName     : "IOS/Android QA",
+                projectName: "IOS/Android QA",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c4",
-                projectName     : "Ibizawire",
+                projectName: "Ibizawire",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000665",
-                projectName     : "JellyGames",
+                projectName: "JellyGames",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c3",
-                projectName     : "Jude",
+                projectName: "Jude",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006ad",
-                projectName     : "KX keyboard",
+                projectName: "KX keyboard",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000671",
-                projectName     : "Kari",
+                projectName: "Kari",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b5",
-                projectName     : "KemblaJoggers",
+                projectName: "KemblaJoggers",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006ae",
-                projectName     : "Kikast",
+                projectName: "Kikast",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006cf",
-                projectName     : "Kogan Apps",
+                projectName: "Kogan Apps",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00066e",
-                projectName     : "LCUpdate iOS",
+                projectName: "LCUpdate iOS",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55cf4fc74a91e37b0b000103",
-                projectName     : "Legal Application",
+                projectName: "Legal Application",
                 projectShortDesc: "Web App for Lawyers"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c5",
-                projectName     : "Liquivid",
+                projectName: "Liquivid",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00066d",
-                projectName     : "LiveCasinoAndroid",
+                projectName: "LiveCasinoAndroid",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "568cea4977b14bf41bf2c32c",
-                projectName     : "LocalCollector",
+                projectName: "LocalCollector",
                 projectShortDesc: "it is a local collector"
             },
             {
                 _id             : "56a89384eb2b76c70ec74d1e",
-                projectName     : "Locappy",
+                projectName: "Locappy",
                 projectShortDesc: "Neighborhood App"
             },
             {
                 _id             : "563b95acab9698be7c9df727",
-                projectName     : "LoginChineseTrue",
+                projectName: "LoginChineseTrue",
                 projectShortDesc: "Chinese language learning tool"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b3",
-                projectName     : "Loyalty",
+                projectName: "Loyalty",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d4",
-                projectName     : "M-Government",
+                projectName: "M-Government",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006ac",
-                projectName     : "Manual front end testing for e commerce site",
+                projectName: "Manual front end testing for e commerce site",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000690",
-                projectName     : "Max",
+                projectName: "Max",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d7",
-                projectName     : "Mesa Ave",
+                projectName: "Mesa Ave",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006bf",
-                projectName     : "Minder",
+                projectName: "Minder",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55cf36d54a91e37b0b0000c2",
-                projectName     : "Mobstar",
+                projectName: "Mobstar",
                 projectShortDesc: "Project for Android and iOS, Bac"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006bb",
-                projectName     : "MorfitRun",
+                projectName: "MorfitRun",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a6",
-                projectName     : "Moriser",
+                projectName: "Moriser",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56304d56547f50b51d6de2bb",
-                projectName     : "Move for Less",
+                projectName: "Move for Less",
                 projectShortDesc: "logistic company app"
             },
             {
                 _id             : "562bc32484deb7cb59d61b70",
-                projectName     : "MyDrive",
+                projectName: "MyDrive",
                 projectShortDesc: "App For Santander Bank Employees"
             },
             {
                 _id             : "569ced3fea21e2ac7d729e18",
-                projectName     : "MySmallCommunity",
+                projectName: "MySmallCommunity",
                 projectShortDesc: "haha"
             },
             {
                 _id             : "56e001b7622d25002676ffd3",
-                projectName     : "Nexture site",
+                projectName: "Nexture site",
                 projectShortDesc: "Corporate site for Nexture"
             },
             {
                 _id             : "56685d88a3fc012a68f0d854",
-                projectName     : "Nicolas Burer Design",
+                projectName: "Nicolas Burer Design",
                 projectShortDesc: "design project"
             },
             {
                 _id             : "55b92ad621e4b7c40f00066b",
-                projectName     : "Nikky",
+                projectName: "Nikky",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00066f",
-                projectName     : "Oculus Player",
+                projectName: "Oculus Player",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000684",
-                projectName     : "OnSite Unibet",
+                projectName: "OnSite Unibet",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56618227bb8be7814fb526e5",
-                projectName     : "Otrema WP4",
+                projectName: "Otrema WP4",
                 projectShortDesc: "PROBABLY THE BEST SMART RADIATOR"
             },
             {
                 _id             : "56422bfc70bbc2b740ce89f3",
-                projectName     : "PREEME",
+                projectName: "PREEME",
                 projectShortDesc: "Video app"
             },
             {
                 _id             : "55b92ad621e4b7c40f000667",
-                projectName     : "PT2",
+                projectName: "PT2",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "561d1c3db51032d674856acc",
-                projectName     : "PayFever",
+                projectName: "PayFever",
                 projectShortDesc: "Pay less"
             },
             {
                 _id             : "55b92ad621e4b7c40f00068e",
-                projectName     : "Phidget ANE",
+                projectName: "Phidget ANE",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56e003948594da632689f1cd",
-                projectName     : "Phone app",
+                projectName: "Phone app",
                 projectShortDesc: "Phone app for Android"
             },
             {
                 _id             : "56dea0a5c235df7c05aa635c",
-                projectName     : "PhotoShop app",
+                projectName: "PhotoShop app",
                 projectShortDesc: "Photo marketplace"
             },
             {
                 _id             : "55b92ad621e4b7c40f000697",
-                projectName     : "Pilot",
+                projectName: "Pilot",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d9",
-                projectName     : "Pilot",
+                projectName: "Pilot",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56ab958e74d57e0d56d6be3b",
-                projectName     : "Planogram",
+                projectName: "Planogram",
                 projectShortDesc: "Project for PandG"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b2",
-                projectName     : "Player",
+                projectName: "Player",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00067f",
-                projectName     : "Player iOS/And",
+                projectName: "Player iOS/And",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56e2924a1f2850d361927dd1",
-                projectName     : "Poems app",
+                projectName: "Poems app",
                 projectShortDesc: "Reading app"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c8",
-                projectName     : "PriTriever",
+                projectName: "PriTriever",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "57063f34c3a5da3e0347a4b9",
-                projectName     : "PriceBox WEB",
+                projectName: "PriceBox WEB",
                 projectShortDesc: "E-Commerce skinning project"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006bc",
-                projectName     : "Pseudo",
+                projectName: "Pseudo",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006bd",
-                projectName     : "Purple Ocean",
+                projectName: "Purple Ocean",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000673",
-                projectName     : "Q/A digital QA",
+                projectName: "Q/A digital QA",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000676",
-                projectName     : "QA",
+                projectName: "QA",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000694",
-                projectName     : "QA iOS Purple Ocean",
+                projectName: "QA iOS Purple Ocean",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00068f",
-                projectName     : "QMR Android",
+                projectName: "QMR Android",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006ab",
-                projectName     : "QMR iOS",
+                projectName: "QMR iOS",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00067a",
-                projectName     : "QMr and It websites testing",
+                projectName: "QMr and It websites testing",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000662",
-                projectName     : "QMr and It websites testing1",
+                projectName: "QMr and It websites testing1",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55cb770bfea413b50b000008",
-                projectName     : "QualPro",
+                projectName: "QualPro",
                 projectShortDesc: "ERP system"
             },
             {
                 _id             : "56c431dda2cb3024468a04ee",
-                projectName     : "Raffle Draw",
+                projectName: "Raffle Draw",
                 projectShortDesc: "Random lottery"
             },
             {
                 _id             : "566857caa3fc012a68f0d83a",
-                projectName     : "SPS Mobile",
+                projectName: "SPS Mobile",
                 projectShortDesc: "Mobile bug fix"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d1",
-                projectName     : "Sales Tool",
+                projectName: "Sales Tool",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "566d4bc3abccac87642cb523",
-                projectName     : "Scatch",
+                projectName: "Scatch",
                 projectShortDesc: "Coupon app"
             },
             {
                 _id             : "55b92ad621e4b7c40f000668",
-                projectName     : "Selenium IDE",
+                projectName: "Selenium IDE",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000686",
-                projectName     : "Sensei",
+                projectName: "Sensei",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56ab891074d57e0d56d6be1f",
-                projectName     : "Serial Box",
+                projectName: "Serial Box",
                 projectShortDesc: "ror project"
             },
             {
                 _id             : "55b92ad621e4b7c40f00067d",
-                projectName     : "Sharalike",
+                projectName: "Sharalike",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b6",
-                projectName     : "Shiwaforce Karma",
+                projectName: "Shiwaforce Karma",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "561253dfc90e2fb026ce064d",
-                projectName     : "Shiwaforce Karma QA",
+                projectName: "Shiwaforce Karma QA",
                 projectShortDesc: "Automation testing"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006ca",
-                projectName     : "SketchTechPoints",
+                projectName: "SketchTechPoints",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56dff43eb07e2ad226b6893b",
-                projectName     : "Smart360",
+                projectName: "Smart360",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d2",
-                projectName     : "Snapped",
+                projectName: "Snapped",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000696",
-                projectName     : "Software Testing of Web Application",
+                projectName: "Software Testing of Web Application",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00067e",
-                projectName     : "SoulIntentions",
+                projectName: "SoulIntentions",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "562bba6e4a431b5a5a3111fe",
-                projectName     : "Spark",
+                projectName: "Spark",
                 projectShortDesc: "App inspired by Snapchat"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a9",
-                projectName     : "Spokal",
+                projectName: "Spokal",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56e005f0f20b93842671670d",
-                projectName     : "Spoon Comics",
+                projectName: "Spoon Comics",
                 projectShortDesc: "Comics site"
             },
             {
                 _id             : "55b92ad621e4b7c40f000698",
-                projectName     : "Staffd",
+                projectName: "Staffd",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "5605736c002c16436b000007",
-                projectName     : "Stentle CSS",
+                projectName: "Stentle CSS",
                 projectShortDesc: "short css project"
             },
             {
                 _id             : "570b8fce9655379f334001c9",
-                projectName     : "TEST1",
+                projectName: "TEST1",
                 projectShortDesc: "TEST1"
             },
             {
                 _id             : "55b92ad621e4b7c40f000699",
-                projectName     : "Tablet apps",
+                projectName: "Tablet apps",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b0",
-                projectName     : "Telecom",
+                projectName: "Telecom",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "570b6a5df684d1240d484b6e",
-                projectName     : "Test",
+                projectName: "Test",
                 projectShortDesc: "Test"
             },
             {
                 _id             : "55b92ad621e4b7c40f00066a",
-                projectName     : "The Watch Enthusiast",
+                projectName: "The Watch Enthusiast",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56dff3458594da632689f1c7",
-                projectName     : "ThinkMobiles Web",
+                projectName: "ThinkMobiles Web",
                 projectShortDesc: "ThinkMobiles Web"
             },
             {
                 _id             : "55f56442b81672730c000032",
-                projectName     : "Tinder clone",
+                projectName: "Tinder clone",
                 projectShortDesc: "Project similar to Tinder"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006ba",
-                projectName     : "TocToc",
+                projectName: "TocToc",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000685",
-                projectName     : "Travlr",
+                projectName: "Travlr",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "562beda846bca6e4591f4930",
-                projectName     : "TreatMe",
+                projectName: "TreatMe",
                 projectShortDesc: "Uber-like app"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c0",
-                projectName     : "TrumpT QA",
+                projectName: "TrumpT QA",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006d5",
-                projectName     : "Unlimited Conferencing",
+                projectName: "Unlimited Conferencing",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56a9ef06d59a04d6225b0df6",
-                projectName     : "UpCity",
+                projectName: "UpCity",
                 projectShortDesc: "City management"
             },
             {
                 _id             : "56b09dd8d6ef38a708dfc284",
-                projectName     : "Vike Analytics Integration",
+                projectName: "Vike Analytics Integration",
                 projectShortDesc: "Internal Project"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006b4",
-                projectName     : "Vroup",
+                projectName: "Vroup",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000693",
-                projectName     : "WP Player",
+                projectName: "WP Player",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c2",
-                projectName     : "WP Wrapper Unibet",
+                projectName: "WP Wrapper Unibet",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "56bc8fd2dfd8a81466e2f46b",
-                projectName     : "WSpider",
+                projectName: "WSpider",
                 projectShortDesc: "design and research"
             },
             {
                 _id             : "56a24d5faa157ca50f21fb13",
-                projectName     : "Water Safety App",
+                projectName: "Water Safety App",
                 projectShortDesc: "Water source testing"
             },
             {
                 _id             : "55f55901b81672730c000011",
-                projectName     : "WhachApp",
+                projectName: "WhachApp",
                 projectShortDesc: "Android"
             },
             {
                 _id             : "55b92ad621e4b7c40f000674",
-                projectName     : "Win7 app tester needed",
+                projectName: "Win7 app tester needed",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000692",
-                projectName     : "WishExpress",
+                projectName: "WishExpress",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "563295f6c928c61d052d5003",
-                projectName     : "WordPress Sites",
+                projectName: "WordPress Sites",
                 projectShortDesc: "Site Templates Business"
             },
             {
                 _id             : "55deb95bae2b22730b000017",
-                projectName     : "YelloDrive",
+                projectName: "YelloDrive",
                 projectShortDesc: "Delivery app"
             },
             {
                 _id             : "55b92ad621e4b7c40f000663",
-                projectName     : "ajaxbrowser.com",
+                projectName: "ajaxbrowser.com",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00068a",
-                projectName     : "application regression testing",
+                projectName: "application regression testing",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000666",
-                projectName     : "blow.com",
+                projectName: "blow.com",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a7",
-                projectName     : "couch",
+                projectName: "couch",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a4",
-                projectName     : "iOS Periop",
+                projectName: "iOS Periop",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a3",
-                projectName     : "iOS dev",
+                projectName: "iOS dev",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000687",
-                projectName     : "iOS/Tribesta",
+                projectName: "iOS/Tribesta",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000660",
-                projectName     : "iOS1",
+                projectName: "iOS1",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000688",
-                projectName     : "iOS2",
+                projectName: "iOS2",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00069d",
-                projectName     : "iOS3",
+                projectName: "iOS3",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000689",
-                projectName     : "iOS4",
+                projectName: "iOS4",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00069f",
-                projectName     : "iOS5",
+                projectName: "iOS5",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000675",
-                projectName     : "iOS6",
+                projectName: "iOS6",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f00067c",
-                projectName     : "iQshop",
+                projectName: "iQshop",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f000670",
-                projectName     : "iRemember",
+                projectName: "iRemember",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "5613b6f0c90e2fb026ce068c",
-                projectName     : "iTacit",
+                projectName: "iTacit",
                 projectShortDesc: "iOS and Android"
             },
             {
                 _id             : "55b92ad621e4b7c40f00069c",
-                projectName     : "sTrader",
+                projectName: "sTrader",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006a8",
-                projectName     : "sitefix",
+                projectName: "sitefix",
                 projectShortDesc: "emptyProject"
             },
             {
                 _id             : "55b92ad621e4b7c40f0006c9",
-                projectName     : "spscontrol",
+                projectName: "spscontrol",
                 projectShortDesc: "emptyProject"
             }
         ]
+    };
+    var fakeFilter = {
+        _id       : null,
+        project: [
+            {
+                _id : "56e689c75ec71b00429745a9",
+                name: "360CamSDK"
+            },
+            {}
+        ],
+        summary: [
+            {
+                _id : "5350eaabc3406b2c0900003b",
+                name: "new skins"
+            },
+            {
+                _id : "5350ea3ec3406b2c09000039",
+                name: "bug fixng"
+            },
+            {
+                _id : "5350ea0dc3406b2c09000038",
+                name: "finish the design"
+            },
+            {
+                _id : "5717661c2c8b789c7a0bb82d",
+                name: "Testing"
+            },
+            {
+                _id : "5350e82bc3406b2c09000035",
+                name: "wallpapers"
+            },
+            {
+                _id : "5350eb3fc3406b2c0900003c",
+                name: "finishing the project"
+            },
+            {
+                _id : "5350ea5ac3406b2c0900003a",
+                name: "new features"
+            },
+            {
+                _id : "5350e871c3406b2c09000037",
+                name: "testing"
+            },
+            {
+                _id : "5350e84ec3406b2c09000036",
+                name: "design"
+            },
+            {
+                _id : "5350e815c3406b2c09000034",
+                name: "Weekly sprint 03-07.02.14"
+            }
+        ],
+        assignedTo: [
+            {
+                _id : "55b92ad221e4b7c40f000090",
+                name: "Gabriella Shterr"
+            },
+            {
+                name: "None"
+            }
+        ],
+        workflow  : [
+            {
+                _id : "528ce35af3f67bc40b000010",
+                name: "Testing"
+            },
+            {
+                _id : "528ce0cdf3f67bc40b00000c",
+                name: "New"
+            },
+            {
+                _id : "528ce131f3f67bc40b00000d",
+                name: "In Progress"
+            }
+        ],
+        type      : [
+            {
+                _id : "Feature",
+                name: "Feature"
+            },
+            {
+                _id : "Bug",
+                name: "Bug"
+            },
+            {
+                _id : "Task",
+                name: "Task"
+            }
+        ]
+    };
+    var fakeResponseSavedFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v": 0,
+            "attachments": [],
+            "lastAccess" : "2016-06-29T12:59:07.236Z",
+            "profile"    : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{
+                "_id"        : "574335bb27725f815747d579",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : true
+            }, {
+                "_id"        : "576140b0db710fca37a2d950",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "5761467bdb710fca37a2d951",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "57615278db710fca37a2d952",
+                "viewType": "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "576be27e8833d3d250b617a5",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576beedfa96be05a77ce0267",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576bfd2ba96be05a77ce0268",
+                "contentType": "Persons",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576d4c74b4d90a5a6023e0bf",
+                "contentType": "customerPayments",
+                "byDefault"  : false
+            }, {
+                "_id"        : "577221ca58982a9011f8a580",
+                "contentType": "journalEntry",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57722e0458982a9011f8a581",
+                "contentType": "Opportunities",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57738eb0f2ec5e1517865733",
+                "contentType": "salesQuotations",
+                "byDefault"  : false
+            }, {
+                "_id"        : "5773914af2ec5e1517865734",
+                "contentType": "salesInvoices",
+                "byDefault"  : false
+            }, {
+                "_id"        : "5773be29d523f12a494382a9",
+                "contentType": "supplierPayments",
+                "byDefault"  : false
+            }, {"_id": "5773ccdad523f12a494382aa", "contentType": "Tasks", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications": {"foldWorkflows": ["Empty"], "countPerPage": 87},
+                "opportunities": {"foldWorkflows": ["528cdf1cf3f67bc40b00000b"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
+        }
     };
     var view;
     var topBarView;
@@ -5949,7 +6122,11 @@ define([
     var tasksCollection;
     var historyNavigateSpy;
     var ajaxSpy;
+    var selectSpy;
     var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -5962,7 +6139,13 @@ define([
         before(function () {
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
             ajaxSpy = sinon.spy($, 'ajax');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -5973,7 +6156,11 @@ define([
 
             historyNavigateSpy.restore();
             ajaxSpy.restore();
+            selectSpy.restore();
             removeFilterSpy.restore();
+            saveFilterSpy.restore();
+            removedFromDBSpy.restore();
+            debounceStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -6039,10 +6226,13 @@ define([
 
                 server.respondWith('GET', tasksUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 tasksCollection = new TasksCollection({
-                    page       : 1,
-                    count      : 100,
-                    contentType: 'Tasks',
-                    viewType   : 'list'
+                    filter     : null,
+                    viewType: 'list',
+                    page    : 1,
+                    count   : 100,
+                    reset   : true,
+                    showMore: false,
+                    contentType: 'Tasks'
 
                 });
                 server.respond();
@@ -6057,11 +6247,13 @@ define([
 
                 server.respondWith('GET', tasksUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTasks)]);
                 tasksCollection = new TasksCollection({
-                    page       : 1,
-                    count      : 100,
-                    contentType: 'Tasks',
-                    viewType   : 'list'
-
+                    filter     : null,
+                    viewType: 'list',
+                    page    : 1,
+                    count   : 100,
+                    reset   : true,
+                    showMore: false,
+                    contentType: 'Tasks'
                 });
                 server.respond();
 
@@ -6098,7 +6290,7 @@ define([
             var windowAlertStub;
             var clock;
             var $thisEl;
-            var selectFilterSpy;
+            var showFilteredPageSpy;
 
             before(function () {
                 App.currentViewType = 'list';
@@ -6109,7 +6301,7 @@ define([
                 windowAlertStub = sinon.stub(window, 'alert');
                 windowAlertStub.returns(true);
                 clock = sinon.useFakeTimers();
-                selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue')
+                showFilteredPageSpy = sinon.spy(ListView.prototype, 'showFilteredPage');
             });
 
             after(function () {
@@ -6118,13 +6310,14 @@ define([
                 windowConfirmStub.restore();
                 windowAlertStub.restore();
                 clock.restore();
-                selectFilterSpy.restore();
+                showFilteredPageSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create tasks list view', function () {
                     var taskStagesUrl = new RegExp('\/Workflows', 'i');
+                    var filterUrl = '/filter/Tasks';
                     var $firstRow;
                     var colCount;
                     var taskId;
@@ -6141,11 +6334,11 @@ define([
                     var $pagination;
                     var $currentPageList;
 
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilter)]);
                     server.respondWith('GET', taskStagesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTaskStages)]);
                     listView = new ListView({
                         collection: tasksCollection,
-                        startTime : new Date(),
-                        page      : 1
+                        startTime : new Date()
                     });
                     server.respond();
 
@@ -6226,84 +6419,24 @@ define([
                     expect($thisEl.find('#pageList')).to.have.css('display', 'none');
                 });
 
-                it('Try to filter listView', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $taskStatus;
-                    var $taskType;
-                    var $selectedItem;
-
-                    // open filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.not.have.class('hidden');
-
-                    // select task status
-                    $taskStatus = $searchContainer.find('#workflowFullContainer > .groupName');
-                    $taskStatus.click();
-                    $selectedItem = $searchContainer.find('#workflowUl > li').first();
-
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-
-                    // select task type
-                    $taskType = $searchContainer.find('#typeFullContainer > .groupName');
-                    $taskType.click();
-                    $selectedItem = $searchContainer.find('#typeUl > li').first();
-
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledTwice).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-
-                    // unselect task type filter
-
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledThrice).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-
-                    // close filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
-                });
-
-                it('Try to cancel status filter', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $deleteFilterBtn = $searchContainer.find('.removeValues');
-
-                    removeFilterSpy.reset();
-
-                    $deleteFilterBtn.click();
-                    server.respond();
-
-                    expect(removeFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                });
-
                 it('Try to go to ProjectEditView with error', function () {
-                    var spyResponse;
                     var $listEl = listView.$el;
-                    var $projectBtn = $listEl.find('tr[data-id="56dfd3e78c59375e055e0cc2"] .project');
-                    var projectUrl = new RegExp('\/Projects\/form\/');
+                    var $projectBtn = $listEl.find('tr:nth-child(1) .project');
+                    var projectUrl = new RegExp('\/Projects\/');
+                    var spyResponse;
 
                     server.respondWith('GET', projectUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectById)]);
                     $projectBtn.click();
                     server.respond();
 
                     spyResponse = mainSpy.args[0][0];
-
                     expect(spyResponse).to.have.property('type', 'error');
                 });
 
                 it('Try to go to ProjectEditView', function () {
-                    this.timeout(3000);
                     var $projectBtn = $thisEl.find('#listTable > tr').first().find('.project');
                     var projectUrl = new RegExp('\/Projects\/');
+                    this.timeout(3000);
 
                     server.respondWith('GET', projectUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectById)]);
                     $projectBtn.click();
@@ -6317,17 +6450,23 @@ define([
                 it('Try to change Status', function () {
                     var $selectedItem;
                     var $listEl = listView.$el;
-                    var $statusBtn = $listEl.find('tr[data-id="56dfd3e78c59375e055e0cc2"] .stageSelect');
+                    var $statusBtn = $listEl.find('tr:nth-child(1) .stageSelect');
                     var taskUrl = new RegExp('\/Tasks\/', 'i');
                     var tasksListUrl = new RegExp('\/Tasks\/list', 'i');
 
+                    showFilteredPageSpy.reset();
+                    ajaxSpy.reset();
+
                     $statusBtn.click();
-                    $selectedItem = $listEl.find('.newSelectList li#528ce35af3f67bc40b000010');
+                    $selectedItem = $listEl.find('tr:nth-child(1) > td:nth-child(6) li:nth-child(2)');
                     server.respondWith('GET', tasksListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTasks)]);
                     server.respondWith('PATCH', taskUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
                     $selectedItem.click();
                     server.respond();
                     server.respond();
+
+                    expect(showFilteredPageSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledTwice).to.be.true;
                 });
 
                 it('Try to open EditForm with error', function () {
@@ -6484,6 +6623,204 @@ define([
 
                     expect(window.location.hash).to.be.equals('#easyErp/Tasks/list/p=1/c=100');
                 });
+
+                it('Try to filter listView by Project and Task Summary', function () {
+                    var url = '/Tasks/';
+                    var contentType = 'Tasks';
+                    var firstValue = 'project';
+                    var secondValue = 'summary';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var $secondGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    ajaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTasks)]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // select secondGroup filter
+                    ajaxSpy.reset();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.exist;
+                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                    expect(filterObject[secondValue]).to.have.property('value');
+                    expect(filterObject[secondValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.not.exist;
+                });
+
+                it('Try to save filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn;
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('TestFilter');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                    $saveFilterBtn.click();
+                    server.respond();
+
+                    expect(saveFilterSpy.called).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove saved filters', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                    var userUrl = new RegExp('\/users\/', 'i');
+
+                    removedFromDBSpy.reset();
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $deleteSavedFilterBtn.click();
+                    server.respond();
+
+                    expect(removedFromDBSpy.calledOnce).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                });
+
+                it('Try to remove filter', function () {
+                    var secondValue = 'summary';
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+                    var ajaxResponse;
+                    var ajaxFilter;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues').eq(1);
+                    $removeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    ajaxFilter = ajaxResponse.data.filter;
+                    expect(ajaxFilter).to.have.not.property(secondValue)
+                });
             });
         });
 
@@ -6505,6 +6842,8 @@ define([
                 windowConfirmStub.returns(true);
                 windowAlertStub.returns(true);
                 clock = sinon.useFakeTimers();
+
+                delete App.filtersObject.filter;
             });
 
             after(function () {
@@ -6695,6 +7034,5 @@ define([
                 });
             });
         });
-
     });
 });

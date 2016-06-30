@@ -902,55 +902,7 @@ define([
             "lastAccess" : "2016-06-29T08:36:54.760Z",
             "profile"    : 1387275598000,
             "relatedEmployee": "55b92ad221e4b7c40f00004f",
-            "savedFilters"   : [{
-                "_id"        : "574335bb27725f815747d579",
-                "viewType": "",
-                "contentType": null,
-                "byDefault"  : true
-            }, {
-                "_id"        : "576140b0db710fca37a2d950",
-                "viewType": "",
-                "contentType": null,
-                "byDefault"  : false
-            }, {
-                "_id"        : "5761467bdb710fca37a2d951",
-                "viewType": "",
-                "contentType": null,
-                "byDefault"  : false
-            }, {
-                "_id"        : "57615278db710fca37a2d952",
-                "viewType": "",
-                "contentType": null,
-                "byDefault"  : false
-            }, {
-                "_id"        : "576be27e8833d3d250b617a5",
-                "contentType": "Leads",
-                "byDefault"  : false
-            }, {
-                "_id"        : "576beedfa96be05a77ce0267",
-                "contentType": "Leads",
-                "byDefault"  : false
-            }, {
-                "_id"        : "576bfd2ba96be05a77ce0268",
-                "contentType": "Persons",
-                "byDefault"  : false
-            }, {
-                "_id"        : "576d4c74b4d90a5a6023e0bf",
-                "contentType": "customerPayments",
-                "byDefault"  : false
-            }, {
-                "_id"        : "577221ca58982a9011f8a580",
-                "contentType": "journalEntry",
-                "byDefault"  : false
-            }, {
-                "_id"        : "57722e0458982a9011f8a581",
-                "contentType": "Opportunities",
-                "byDefault"  : false
-            }, {
-                "_id"        : "57738eb0f2ec5e1517865733",
-                "contentType": "salesQuotations",
-                "byDefault"  : false
-            }, {"_id": "5773914af2ec5e1517865734", "contentType": "salesInvoices", "byDefault": false}],
+            "savedFilters"   : [{"_id": "5773914af2ec5e1517865734", "contentType": "salesInvoices", "byDefault": false}],
             "kanbanSettings" : {
                 "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
                 "applications": {"foldWorkflows": ["Empty"], "countPerPage": 87},

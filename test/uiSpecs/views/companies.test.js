@@ -1611,6 +1611,7 @@ define([
     var removeFilterSpy;
     var saveFilterSpy;
     var removedFromDBSpy;
+    var clock;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -1621,6 +1622,7 @@ define([
         var $elFixture;
 
         before(function () {
+            clock = sinon.useFakeTimers();
             windowConfirmStub = sinon.stub(window, 'confirm');
             windowConfirmStub.returns(true);
             debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
@@ -1652,6 +1654,7 @@ define([
             removeFilterSpy.restore();
             saveFilterSpy.restore();
             removedFromDBSpy.restore();
+            clock.restore();
         });
 
         describe('#initialize()', function () {
@@ -1786,7 +1789,7 @@ define([
                 server.restore();
             });
 
-            it('Try to create companies list view', function () {
+            it('Try to create companies list view', function (done) {
                 var companiesAlphabetUrl = new RegExp('\/customers\/getCompaniesAlphabet', 'i');
                 var filterUrl = '/filter/Companies';
                 var $searchContainerEl;
@@ -1808,8 +1811,9 @@ define([
                     collection: companiesCollection,
                     startTime : new Date()
                 });
-
                 server.respond();
+
+                clock.tick(700);
 
                 eventsBinder.subscribeTopBarEvents(topBarView, listView);
                 eventsBinder.subscribeCollectionEvents(companiesCollection, listView);
@@ -1871,6 +1875,8 @@ define([
 
                 $currentPageList.mouseover();
                 expect($thisEl.find('#pageList')).to.have.css('display', 'none');
+
+                done();
             });
 
             it('Try to change page1 to page2', function () {
@@ -2403,7 +2409,7 @@ define([
                 expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
             });
 
-            it('Try to open Create opportunity form', function () {
+            it('Try to open Create opportunity form', function (done) {
                 var $createOppBtn = formView.$el.find('.formRightColumn .btnHolder .add.opportunities');
                 var userForDdUrl = new RegExp('\/users\/forDd', 'i');
                 var depsForDdUrl = new RegExp('\/departments\/getForDD', 'i');
@@ -2426,6 +2432,8 @@ define([
                 expect($dialog).to.exist;
                 expect($dialog.find('.dialog-tabs')).to.exist;
                 expect($dialog.find('.dialog-tabs > li')).to.have.lengthOf(3);
+
+                done();
             });
 
             it('Try to change tab', function () {

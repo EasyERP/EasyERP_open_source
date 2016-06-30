@@ -1,4 +1,6 @@
 define([
+    'Backbone',
+    'Underscore',
     'jQuery',
     'modules',
     'text!fixtures/index.html',
@@ -9,12 +11,16 @@ define([
     'views/wTrack/TopBarView',
     'views/wTrack/CreateView',
     'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'chai',
     'chai-jquery',
     'sinon-chai',
-    'testConstants/currentUser'
-], function ($,
+    'constantsDir/filters'
+], function (Backbone,
+             _,
+             $,
              modules,
              fixtures,
              TCardCollection,
@@ -24,11 +30,13 @@ define([
              TopBarView,
              CreateView,
              FilterView,
+             FilterGroup,
+             SavedFilters,
              eventsBinder,
              chai,
              chaiJquery,
              sinonChai,
-             currentUser) {
+             FILTER_CONSTANTS) {
     'use strict';
 
     var expect;
@@ -981,15 +989,124 @@ define([
             name  : "01.05.16 - 31.05.16"
         }
     ];
+    var fakeFilter = {
+        _id    : null,
+        project: [
+            {
+                _id : "57581cdf389dfb67764a4ab5",
+                name: "Project Axelior"
+            },
+            {
+                _id : "5757e9eee99e78c875401f03",
+                name: "HBO Go Latam Website"
+            },
+            {
+                _id : "5757e30152e8f40a76befd56",
+                name: "Hipteam Projects"
+            }
+        ],
+
+        customer: [
+            {
+                _id : "57557122213bb78c75dfd3db",
+                name: "Giufi S.r.l.s "
+            },
+            {
+                _id : "55b92ad621e4b7c40f00062d",
+                name: "Andreas Rabenseifner"
+            },
+            {
+                _id : "57503b4ea0c31e421da217ec",
+                name: "Notify Nearby Inc. "
+            }
+        ]
+    };
+    var fakeResponseSavedFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v"            : 0,
+            "attachments"    : [],
+            "lastAccess"     : "2016-06-29T12:59:07.236Z",
+            "profile"        : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{
+                "_id"        : "574335bb27725f815747d579",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : true
+            }, {
+                "_id"        : "576140b0db710fca37a2d950",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "5761467bdb710fca37a2d951",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "57615278db710fca37a2d952",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "576be27e8833d3d250b617a5",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576beedfa96be05a77ce0267",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576bfd2ba96be05a77ce0268",
+                "contentType": "Persons",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576d4c74b4d90a5a6023e0bf",
+                "contentType": "customerPayments",
+                "byDefault"  : false
+            }, {
+                "_id"        : "577221ca58982a9011f8a580",
+                "contentType": "journalEntry",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57722e0458982a9011f8a581",
+                "contentType": "Opportunities",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57738eb0f2ec5e1517865733",
+                "contentType": "salesQuotations",
+                "byDefault"  : false
+            }, {
+                "_id"        : "5773914af2ec5e1517865734",
+                "contentType": "salesInvoices",
+                "byDefault"  : false
+            }, {
+                "_id"        : "5773be29d523f12a494382a9",
+                "contentType": "supplierPayments",
+                "byDefault"  : false
+            }, {"_id": "5773e113d523f12a494382ac", "contentType": "wTrack", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications" : {"foldWorkflows": ["Empty"], "countPerPage": 87},
+                "opportunities": {"foldWorkflows": ["528cdf1cf3f67bc40b00000b"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
+        }
+    };
     var tCardCollection;
     var view;
     var topBarView;
     var listView;
     var ajaxSpy;
-    var selectFilterSpy;
+    var selectSpy;
     var removeFilterSpy;
     var saveFilterSpy;
-    var removeSavedFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -1001,10 +1118,13 @@ define([
 
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
-            selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
-            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
-            removeSavedFilterSpy = sinon.spy(FilterView.prototype, 'removeFilterFromDB');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -1017,9 +1137,6 @@ define([
             }
 
             ajaxSpy.restore();
-            selectFilterSpy.restore();
-            removeFilterSpy.restore();
-            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -1042,7 +1159,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'wTrack'});
 
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
@@ -1121,7 +1238,7 @@ define([
             });
         });
 
-        describe('tCardView', function () {
+        describe('tCardView ListView', function () {
             var server;
             var windowConfirmStub;
             var mainSpy;
@@ -1171,9 +1288,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create ListView', function (done) {
-                    var projectsUrl = new RegExp('\/projects\/getForWtrack', 'i');
-                    var employeeUrl = new RegExp('\/employees\/getForDD', 'i');
-                    var depsUrl = new RegExp('\/departments\/getForDD', 'i');
+                    var filterUrl = '/filter/wTrack';
                     var $firstRow;
                     var colCount;
                     var type;
@@ -1195,19 +1310,15 @@ define([
                     var sunday;
                     var $pagination;
 
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectForWTrack)]);
-                    server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployee)]);
-                    server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployee)]);
-
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilter)]);
                     listView = new ListView({
                         startTime : new Date(),
                         collection: tCardCollection
 
                     });
                     server.respond();
-                    server.respond();
 
-                    clock.tick(200);
+                    clock.tick(700);
 
                     eventsBinder.subscribeCollectionEvents(tCardCollection, listView);
                     eventsBinder.subscribeTopBarEvents(topBarView, listView);
@@ -1388,178 +1499,6 @@ define([
                     expect(ajaxResponse.data).to.have.property('page', 1);
                 });
 
-                it('Try to filter listView', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $searchOptionsDropDown;
-                    var $employeeBtn;
-                    var $employeeContainer;
-                    var $customerContainer;
-                    var $customerBtn;
-                    var $selectedItem;
-                    var ajaxResponse;
-                    var ajaxFilter;
-
-                    selectFilterSpy.reset();
-
-                    $searchArrow.click();
-                    $searchOptionsDropDown = $searchContainer.find('.search-options');
-                    expect($searchOptionsDropDown).to.have.not.class('hidden');
-                    expect($searchOptionsDropDown.find('.drop-down-filter > ul > li')).to.have.not.lengthOf(0);
-
-
-                    // filter by employee
-
-                    ajaxSpy.reset();
-
-                    $employeeBtn = $searchContainer.find('#employeeFullContainer > .groupName');
-                    $employeeBtn.click();
-                    $employeeContainer = $searchContainer.find('#employeeContainer');
-                    expect($employeeContainer).to.have.not.class('hidden');
-
-                    $selectedItem = $employeeContainer.find('#employeeUl > li').first();
-                    $selectedItem.click();
-
-                    expect(selectFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($employeeContainer.find('#employeeUl > li').first()).to.have.class('checkedValue');
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', '/wTrack/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-
-                    expect(ajaxResponse.data.filter).to.have.property('employee');
-                    ajaxFilter = ajaxResponse.data.filter.employee;
-                    expect(ajaxFilter).to.have.property('key', 'employee._id');
-                    expect(ajaxFilter.value)
-                        .to.be.instanceof(Array)
-                        .and
-                        .to.have.lengthOf(1);
-
-
-                    // filter by customer
-                    ajaxSpy.reset();
-
-                    $customerBtn = $searchContainer.find('#customerFullContainer > .groupName');
-                    $customerBtn.click();
-                    $customerContainer = $searchContainer.find('#customerContainer');
-                    expect($customerContainer).to.have.not.class('hidden');
-
-                    $selectedItem = $customerContainer.find('#customerUl > li').first();
-                    $selectedItem.click();
-
-                    expect(selectFilterSpy.calledTwice).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
-                    expect($customerContainer.find('#customerUl > li').first()).to.have.class('checkedValue');
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', '/wTrack/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-
-                    expect(ajaxResponse.data.filter).to.have.property('customer');
-                    ajaxFilter = ajaxResponse.data.filter.customer;
-                    expect(ajaxFilter).to.have.property('key', 'customer._id');
-                    expect(ajaxFilter.value)
-                        .to.be.instanceof(Array)
-                        .and
-                        .to.have.lengthOf(1);
-
-
-                    // remove customer filter (uncheck)
-                    ajaxSpy.reset();
-
-                    $selectedItem = $customerContainer.find('#customerUl > li').first();
-                    $selectedItem.click();
-
-                    expect(selectFilterSpy.calledThrice).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($customerContainer.find('#customerUl > li').first()).to.have.not.class('checkedValue');
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', '/wTrack/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-
-                    expect(ajaxResponse.data.filter).to.have.not.property('customer');
-                });
-
-                it('Try to save employees filter', function () {
-                    var usersUrl = new RegExp('\/users\/', 'i');
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $favoritesTab = $searchContainer.find('li[data-value="#favoritesContent"]');
-                    var $nameInput;
-                    var $saveBtn;
-                    var spyResponse;
-
-                    saveFilterSpy.reset();
-                    mainSpy.reset();
-
-                    $favoritesTab.click();
-                    $nameInput = $searchContainer.find('#forFilterName');
-                    $nameInput.val('TestFilter');
-                    $saveBtn = $searchContainer.find('#saveFilterButton');
-
-                    // try to save filter with existing name
-                    $saveBtn.click();
-                    spyResponse = mainSpy.args[0][0];
-
-                    expect(saveFilterSpy.calledOnce).to.be.true;
-                    expect(spyResponse).to.have.property('type', 'error');
-
-                    $nameInput.val('TestFilter1');
-                    server.respondWith('PATCH', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({"success":{"_id":"52203e707d4dba8813000003","__v":0,"attachments":[],"lastAccess":"2016-06-15T12:50:20.856Z","profile":1387275598000,"relatedEmployee":"55b92ad221e4b7c40f00004f","savedFilters":[{"_id":"574335bb27725f815747d579","viewType":"","byDefault":"Leads"},{"_id":"576140b0db710fca37a2d950","viewType":"","byDefault":""},{"_id":"5761467bdb710fca37a2d951","viewType":"","byDefault":""},{"_id":"57615278db710fca37a2d952","viewType":"","byDefault":""}],"kanbanSettings":{"tasks":{"foldWorkflows":["528ce3caf3f67bc40b000013","528ce3acf3f67bc40b000012","528ce30cf3f67bc40b00000f","528ce35af3f67bc40b000010"],"countPerPage":10},"applications":{"foldWorkflows":["Empty"],"countPerPage":10},"opportunities":{"foldWorkflows":[],"countPerPage":10}},"credentials":{"access_token":"","refresh_token":""},"pass":"082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9","email":"info@thinkmobiles.com","login":"admin","imageSrc":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"}})]);
-                    $saveBtn.click();
-                    server.respond();
-
-                    expect(saveFilterSpy.calledTwice).to.be.true;
-                    expect($searchContainer.find('#favoritesContent > li')).to.have.lengthOf(3);
-                });
-
-                it('Try to remove saved filter', function () {
-                    var usersUrl = new RegExp('\/users\/', 'i');
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $deleteFilterBtn = $searchContainer.find('.removeSavedFilter').last();
-
-                    server.respondWith('PATCH', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({"success":{"_id":"52203e707d4dba8813000003","__v":0,"attachments":[],"lastAccess":"2016-06-15T12:50:20.856Z","profile":1387275598000,"relatedEmployee":"55b92ad221e4b7c40f00004f","savedFilters":[{"_id":"574335bb27725f815747d579","viewType":"","byDefault":"Leads"},{"_id":"576140b0db710fca37a2d950","viewType":"","byDefault":""},{"_id":"5761467bdb710fca37a2d951","viewType":"","byDefault":""},{"_id":"57615278db710fca37a2d952","viewType":"","byDefault":""}],"kanbanSettings":{"tasks":{"foldWorkflows":["528ce3caf3f67bc40b000013","528ce3acf3f67bc40b000012","528ce30cf3f67bc40b00000f","528ce35af3f67bc40b000010"],"countPerPage":10},"applications":{"foldWorkflows":["Empty"],"countPerPage":10},"opportunities":{"foldWorkflows":[],"countPerPage":10}},"credentials":{"access_token":"","refresh_token":""},"pass":"082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9","email":"info@thinkmobiles.com","login":"admin","imageSrc":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"}})]);
-                    $deleteFilterBtn.click();
-                    server.respond();
-
-                    expect(removeSavedFilterSpy.calledOnce).to.be.true;
-                    expect($searchContainer.find('#favoritesContent > li')).to.have.lengthOf(2);
-                });
-
-                it('Try to remove employee filter', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $deleteFilterBtn = $searchContainer.find('.removeValues');
-                    var ajaxResponse;
-
-                    removeFilterSpy.reset();
-                    ajaxSpy.reset();
-
-                    $deleteFilterBtn.click();
-                    server.respond();
-
-                    expect(removeFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(3);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-                    ajaxResponse = ajaxSpy.args[0][0];
-
-                    expect(ajaxResponse).to.have.property('url', '/wTrack/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data.filter).to.be.empty;
-                });
-
                 it('Try to delete item with 403 error', function () {
                     var spyResponse;
                     var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(1) > td.notForm > input');
@@ -1624,8 +1563,6 @@ define([
                     expect(ajaxResponse.data.sort).to.be.exist;
                     expect(ajaxResponse.data.sort).to.have.property('project.name', -1);
                 });
-
-                // it('Try to filter tCard listView', )
 
                 it('Try to check|uncheck all checkboxes', function () {
                     var $checkAllBtn = listView.$el.find('#checkAll');
@@ -1698,15 +1635,24 @@ define([
                 });
 
                 it('Try to create Job', function () {
-                    var $dialogEl;
                     var jobsUrl = new RegExp('\/jobs\/getForDD', 'i');
                     var $jobsBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="jobs"]');
+                    var projectsUrl = new RegExp('\/projects\/getForWtrack', 'i');
+                    var employeeUrl = new RegExp('\/employees\/getForDD', 'i');
+                    var depsUrl = new RegExp('\/departments\/getForDD', 'i');
                     var $selectedItem;
                     var generateBtn;
+                    var $dialogEl;
+                    var ajaxResponse;
 
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectForWTrack)]);
+                    server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployee)]);
+                    server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployee)]);
                     server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
                     $jobsBtn.click();
                     server.respond();
+                    server.respond();
+
                     $selectedItem = $jobsBtn.find('.newSelectList li#createJob');
                     $selectedItem.click();
                     $dialogEl = $('.ui-dialog');
@@ -1718,9 +1664,10 @@ define([
                     $dialogEl.find('input.createJobInput').val('NewTestJob');
                     server.respondWith('POST', '/jobs/', [200, {'Content-Type': 'application/json'}, JSON.stringify({id: "c218"})]);
 
+                    ajaxSpy.reset();
+
                     generateBtn = $dialogEl.find('#generateBtn');
                     generateBtn.click();
-
 
                     fakeJobsWithId.push({
                         _id   : "574e9082946d489532fc6e5e",
@@ -1732,6 +1679,11 @@ define([
                         name  : "NewTestJob"
                     });
                     server.respond();
+
+                    expect(ajaxSpy.calledTwice).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse.type.toLowerCase()).to.be.equals('post');
+                    expect(ajaxResponse.url).to.be.equals('/jobs/');
                 });
 
                 it('Try to fail create Job and cancel', function () {
@@ -1896,6 +1848,204 @@ define([
                  $saveBtn.click();
                  server.respond();
                  });*/
+
+                it('Try to filter listView by project and customer', function () {
+                    var url = '/wTrack/';
+                    var contentType = 'wTrack';
+                    var firstValue = 'project';
+                    var secondValue = 'customer';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var $secondGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    ajaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTCard)]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // select secondGroup filter
+                    ajaxSpy.reset();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.exist;
+                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                    expect(filterObject[secondValue]).to.have.property('value');
+                    expect(filterObject[secondValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.not.exist;
+                });
+
+                it('Try to save filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn;
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('TestFilter');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                    $saveFilterBtn.click();
+                    server.respond();
+
+                    expect(saveFilterSpy.called).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove saved filters', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                    var userUrl = new RegExp('\/users\/', 'i');
+
+                    removedFromDBSpy.reset();
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $deleteSavedFilterBtn.click();
+                    server.respond();
+
+                    expect(removedFromDBSpy.calledOnce).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                });
+
+                it('Try to remove filter', function () {
+                    var secondValue = 'customer';
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+                    var ajaxResponse;
+                    var ajaxFilter;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues').eq(1);
+                    $removeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    ajaxFilter = ajaxResponse.data.filter;
+                    expect(ajaxFilter).to.have.not.property(secondValue);
+                });
             });
         });
     });
