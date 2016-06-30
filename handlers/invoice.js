@@ -744,7 +744,7 @@ var Module = function (models, event) {
 
                         }, function () {
                             if (project) {
-                                event.emit('fetchJobsCollection', {project: project});
+                                event.emit('fetchJobsCollection', {project: project, dbName: db});
                             }
                             callback();
                         });
@@ -1521,7 +1521,7 @@ var Module = function (models, event) {
                     });
                 }, function () {
                     if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
+                        event.emit('fetchJobsCollection', {project: project, dbName: db});
                     }
                     parallelCb();
                 });

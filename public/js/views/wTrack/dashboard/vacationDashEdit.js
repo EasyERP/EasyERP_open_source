@@ -70,20 +70,34 @@ define([
         },
 
         keyDown: function (e) {  // validation from generateWTrack, need keydown instead of keypress in case of enter key
-            var element = e.target;
+            var $el = $(e.target);
+            var $td = $el.closest('td');
+            var $tr = $el.closest('tr');
+            var isOvertime = $tr.hasClass('overtime');
+            var input = $tr.find('input.editing');
+            var holiday = $td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
+            var code = e.which;
 
-            if ($(element).val() > 24) { // added in case of fast input
-                $(element).val(24);
+            if (!isOvertime && holiday && keyCodes.isDigit(code) && code !== 48 && code !== 96) {
+                App.render({
+                    type   : 'error',
+                    message: 'You can input only "0". Please create Overtime tCard for other values.'
+                });
+                return false;
             }
 
-            if (keyCodes.isBspDelTabEscEnt(e.keyCode) || keyCodes.isArrowsOrHomeEnd(e.keyCode)) {
-                if (e.which === 13) {
+            if ($el.val() > 24) { // added in case of fast input
+                $el.val(24);
+            }
+
+            if (keyCodes.isBspDelTabEscEnt(code) || keyCodes.isArrowsOrHomeEnd(code)) {
+                if (code === 13) {
                     this.autoCalc(e);
                 }
                 return;
             }
 
-            if (e.shiftKey || !keyCodes.isDigit(e.keyCode)) {
+            if (e.shiftKey || !keyCodes.isDigit(code)) {
                 e.preventDefault();
             }
         },
@@ -108,16 +122,16 @@ define([
         asyncLoadImgs: function (model) {
             var currentModel = model.id ? model.toJSON() : model;
             var id = currentModel._id;
-           // var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
+            // var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
             var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
-          /*  if (pm) {
-                common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
-                    var res = result.data[0];
+            /*  if (pm) {
+                  common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
+                      var res = result.data[0];
 
-                    $('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
-                });
-            }*/
+                      $('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
+                  });
+              }*/
 
             if (customer) {
                 common.getImagesPM([customer], '/customers/getCustomersImages', '#' + id, function (result) {
@@ -370,13 +384,13 @@ define([
 
             $('.newSelectList').hide();
 
-            if (!isOvertime && holiday) {
+            /* if (!isOvertime && holiday) {
                 App.render({
                     type   : 'error',
                     message: 'Please create Overtime tCard'
                 });
                 return false;
-            }
+            } */
 
             this.autoCalc(null, trs);
 

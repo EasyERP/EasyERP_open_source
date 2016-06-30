@@ -1111,9 +1111,10 @@ var Module = function (models, event) {
     };
 
     this.create = function (req, res, next) {
+        var dbName = req.session.lastDb;
         var body = req.body;
         var PaymentSchema = mongoose.Schemas.InvoicePayment;
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(dbName, 'wTrackInvoice', wTrackInvoiceSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice;
         var now = new Date();
@@ -1125,7 +1126,7 @@ var Module = function (models, event) {
         var Payment = models.get(req.session.lastDb, 'InvoicePayment', PaymentSchema);
         var removable = true;
         var waterfallTasks;
-        
+
         if (body && !body.invoice) {
             return res.status(400).send();
         }
@@ -1207,7 +1208,7 @@ var Module = function (models, event) {
             invoice.payments.forEach(function (paym) {
                 payments.push(paym._id.toString());
 
-                if (paym.date > paymentDate){
+                if (paym.date > paymentDate) {
                     paymentDate = paym.date;
                 }
             });
@@ -1276,7 +1277,7 @@ var Module = function (models, event) {
                     payments = invoice ? invoice.get('payments') : [];
 
                     if (project) {
-                        event.emit('fetchInvoiceCollection', {project: project});
+                        event.emit('fetchInvoiceCollection', {project: project, dbName: dbName});
                     }
                     if (isForSale) { // todo added in case of no last task
                         waterfallCallback(null, invoice, payment);
@@ -1424,7 +1425,8 @@ var Module = function (models, event) {
         var contentType = req.params.contentType;
         var uId;
         var invoiceId;
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var dbName = req.session.lastDb;
+        var Invoice = models.get(dbName, 'wTrackInvoice', wTrackInvoiceSchema);
         var forSale = contentType === 'customers';
         var bonus = contentType === 'supplier';
         var salary = contentType === 'salary';
@@ -1500,8 +1502,8 @@ var Module = function (models, event) {
 
                                 }, function () {
                                     if (project) {
-                                        event.emit('fetchJobsCollection', {project: project});
-                                        event.emit('fetchInvoiceCollection', {project: project});
+                                        event.emit('fetchJobsCollection', {project: project, dbName: dbName});
+                                        event.emit('fetchInvoiceCollection', {project: project, dbName: dbName});
                                     }
                                 });
                             });
@@ -1552,7 +1554,7 @@ var Module = function (models, event) {
                         fx.rates = oxr.rates;
                         fx.base = oxr.base;
 
-                        journalEntry.removeByDocId(id, req.session.lastDb, function () {
+                        journalEntry.removeByDocId(id, db, function () {
 
                         });
 
@@ -1561,7 +1563,7 @@ var Module = function (models, event) {
 
                         if (invoiceId && (removed && removed._type !== 'salaryPayment')) {
 
-                            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+                            Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
                             Invoice.find({payments: removed._id}, function (err, invoices) {
                                 if (err) {
@@ -1687,7 +1689,10 @@ var Module = function (models, event) {
                                                     }
 
                                                     if (project) {
-                                                        event.emit('fetchInvoiceCollection', {project: project});
+                                                        event.emit('fetchInvoiceCollection', {
+                                                            project: project,
+                                                            dbName : db
+                                                        });
                                                     }
 
                                                 });
@@ -1767,7 +1772,7 @@ var Module = function (models, event) {
                     fx.rates = oxr.rates;
                     fx.base = oxr.base;
 
-                    journalEntry.removeByDocId(id, req.session.lastDb, function () {
+                    journalEntry.removeByDocId(id, db, function () {
 
                     });
 
@@ -1776,7 +1781,7 @@ var Module = function (models, event) {
 
                     if (invoiceId && (removed && removed._type !== 'salaryPayment')) {
 
-                        Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+                        Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
                         Invoice.find({payments: removed._id}, function (err, invoices) {
                             if (err) {
@@ -1902,7 +1907,7 @@ var Module = function (models, event) {
                                                 }
 
                                                 if (project) {
-                                                    event.emit('fetchInvoiceCollection', {project: project});
+                                                    event.emit('fetchInvoiceCollection', {project: project, dbName: db});
                                                 }
 
                                             });

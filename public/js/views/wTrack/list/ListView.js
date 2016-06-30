@@ -152,10 +152,20 @@ define([
         },
 
         keyDown: function (e) {
-            var code = e.keyCode;
+            var code = e.which;
             var $target = $(e.target);
             var $tr = $target.closest('tr');
             var $td = $target.closest('td');
+            var isOvertime = $tr.hasClass('overtime');
+            var holiday = $td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
+
+            if (!isOvertime && holiday && keyCodes.isDigit(code) && code !== 48 && code !== 96) {
+                App.render({
+                    type   : 'error',
+                    message: 'You can input only "0". Please create Overtime tCard for other values.'
+                });
+                return false;
+            }
 
             $tr.attr('data-edited', true);
 
@@ -469,13 +479,13 @@ define([
 
                 year = year.slice(0, 4);
 
-                if (!isOvertime && holiday) {
+                /* if (!isOvertime && holiday) {
                     App.render({
                         type   : 'error',
                         message: 'Please create Overtime tCard'
                     });
                     return false;
-                }
+                } */
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     this.wTrackId = wTrackId;
@@ -746,6 +756,7 @@ define([
                 function (nonWorkingDays, self) {
                     var days = Object.keys(nonWorkingDays);
                     var length = days.length - 1;
+                    var prevValue;
                     var isOverTime;
                     var _class;
                     var isDefaultHours;
@@ -775,6 +786,12 @@ define([
 
                                 if (_class !== 'disabled') {
                                     if (!isOverTime) { // in case of rewriting existing values for OT
+                                        prevValue = $el.text();
+                                        prevValue = parseFloat(prevValue);
+                                        if (isFinite(prevValue) && prevValue !== value) {
+                                            self.setChangedValueToModel();
+                                            self.showSaveCancelBtns();
+                                        }
                                         $el.text(value);
                                     }
                                 } else {
