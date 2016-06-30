@@ -873,6 +873,42 @@ th {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
 }
+.collapsed .side_menu {
+  width: 40px !important;
+  margin-right: -100%;
+}
+.collapsed .side_menu nav {
+  width: auto !important;
+}
+.collapsed .side_menu nav > ul {
+  height: auto;
+}
+.collapsed .side_menu .root {
+  position: relative;
+}
+.collapsed .side_menu .root ul {
+  display: none;
+}
+.collapsed .side_menu .root > a {
+  display: none !important;
+}
+.collapsed .side_menu .root.active {
+  height: 30px !important;
+}
+.collapsed .side_menu .root.active ul {
+  display: none;
+}
+.collapsed .side_menu .root.active:hover > ul {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 150px;
+}
+.collapsed .content_wrapper .content-holder,
+.collapsed .content_wrapper .top-bar {
+  margin-left: 45px;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -1220,6 +1256,39 @@ th {
 }
 .hireFireTable {
   margin-bottom: 10px;
+}
+.side_menu {
+  display: block;
+  width: auto;
+  max-width: 200px;
+  height: 100%;
+  float: left;
+  margin-right: -100%;
+}
+.content_wrapper {
+  width: 100%;
+  display: block;
+  float: left;
+}
+.content_wrapper .content-holder,
+.content_wrapper .top-bar {
+  margin-left: 200px;
+}
+.mainmenu_holder .logo {
+  width: 120px;
+}
+.mainmenu_holder .logo a {
+  padding: 0 10px;
+}
+.mainmenu_holder .logo .fa,
+.mainmenu_holder .logo a {
+  color: #000000;
+  text-decoration: none;
+  font-size: 20px;
+  line-height: 30px;
+}
+.mainmenu_holder .logo .fa {
+  cursor: pointer;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -4039,13 +4108,25 @@ dl dd span.ui-spinner {
   height: 100%;
 }
 #wrapper {
-  width: 100%;
-  height: 100%;
+  zoom: 1;
   min-width: 100%;
   height: 100vh;
   position: absolute;
   clear: both;
   box-sizing: border-box;
+}
+#wrapper:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+#wrapper:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
 }
 #wrapper #content-holder {
   height: auto;
@@ -5345,63 +5426,114 @@ table#workflows tr td.edit-status {
   display: block;
   letter-spacing: 1.5px;
 }
-#submenu-holder {
+.side_menu {
   display: block;
-  height: 30px;
+  position: relative;
+  z-index: 1000;
   width: auto;
+  height: 100%;
+  background-color: #4d5a75;
+  border-right: 1px solid #4d5a75;
+  box-sizing: border-box;
+  padding-top: 53px;
 }
-#submenu-holder nav ul {
+.side_menu nav {
+  width: 200px;
+}
+.side_menu nav ul {
   zoom: 1;
   clear: both;
 }
-#submenu-holder nav ul:before {
+.side_menu nav ul:before {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
-#submenu-holder nav ul:after {
+.side_menu nav ul:after {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
   clear: both;
 }
-#submenu-holder nav ul li {
+.side_menu nav ul li {
   list-style: none;
-  color: #000000;
   line-height: 30px;
-  float: left;
-  display: block;
-  width: 120px;
-  text-align: center;
-  background: #ffffff;
-}
-#submenu-holder nav ul li a {
-  color: #000000;
-  font-size: 13px;
-  line-height: 30px;
+  height: 30px;
   display: block;
   width: 100%;
-  height: 100%;
+  background: #4d5a75;
 }
-#submenu-holder nav ul li a:hover {
-  text-decoration: underline;
+.side_menu nav .root {
+  text-align: left;
 }
-#submenu-holder nav ul li.selected {
-  position: relative;
-  height: 30px;
+.side_menu nav .root > ul {
+  display: none;
+  height: auto;
+}
+.side_menu nav .root > ul li {
+  text-align: center;
+}
+.side_menu nav .root > ul li .sub_item {
+  text-decoration: none;
+  font-size: 14px;
   line-height: 30px;
 }
-#submenu-holder nav ul li.selected a {
-  text-decoration: underline;
+.side_menu nav .root > ul li:hover,
+.side_menu nav .root > ul li.selected {
+  background-color: #576684;
+}
+.side_menu nav .root > a,
+.side_menu nav .root .fa {
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 30px;
+  display: block;
+  float: left;
+  text-decoration: none;
+}
+.side_menu nav .root .fa {
+  padding: 0 11px;
+}
+.side_menu nav .root .icon-Sales:before {
+  content: "\f0b1";
+}
+.side_menu nav .root .icon-HR:before {
+  content: "\f0c0";
+}
+.side_menu nav .root .icon-Project:before {
+  content: "\f02c";
+}
+.side_menu nav .root .icon-Settings:before {
+  content: "\f085";
+}
+.side_menu nav .root .icon-Accounting:before {
+  content: "\f201";
+}
+.side_menu nav .root .icon-Expenses:before {
+  content: "\f200";
+}
+.side_menu nav .root .icon-Payroll:before {
+  content: "\f1fe";
+}
+.side_menu nav .root:hover,
+.side_menu nav .root.active {
+  background-color: #3e88b9;
+  cursor: pointer;
+  height: 30px;
+}
+.side_menu nav .root.active {
+  height: auto;
+}
+.side_menu nav .root.active ul {
+  display: block;
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
   display: block;
   height: 30px;
   clear: both;
-  margin: 5px 1% 0;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
@@ -5468,7 +5600,6 @@ table#workflows tr td.edit-status {
   display: block;
   height: 30px;
   clear: both;
-  margin: 5px 1% 0;
   margin-left: 0;
 }
 .projectInfoTopBar h3 {

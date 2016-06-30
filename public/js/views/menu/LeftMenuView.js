@@ -32,8 +32,8 @@ define([
         },
 
         openRoot: function (e) {
-            this.$el.find('.root.opened').removeClass('opened');
-            $(e.target).closest('.root').addClass('opened')
+            this.$el.find('.root.opened').removeClass('active');
+            $(e.target).closest('.root').addClass('active');
         },
         selectMenuItem: function (rootIndex, childIndex) {
             var $rootElement = this.$el.find('li.root').eq(rootIndex);

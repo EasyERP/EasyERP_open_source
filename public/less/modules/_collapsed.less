@@ -1,0 +1,43 @@
+.collapsed {
+  .side_menu {
+    width: 40px !important;
+    margin-right: -100%;
+    nav {
+      width: auto !important;
+      >ul {
+        height: auto;
+      }
+    }
+
+    .root {
+      position: relative;
+      ul {
+        display: none;
+      }
+      >a {
+        display: none !important;
+      }
+      &.active {
+        height: 30px !important;
+        ul {
+          display: none;
+        }
+        &:hover {
+          >ul {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            width: 150px;
+          }
+        }
+      }
+    }
+  }
+
+  .content_wrapper {
+    .content-holder, .top-bar {
+      margin-left: 45px;
+    }
+  }
+}

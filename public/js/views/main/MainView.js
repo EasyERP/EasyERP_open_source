@@ -22,14 +22,11 @@ define([
         events: {
             'click #loginPanel': 'showSelect',
             click              : 'hideProp',
-            'click #logo span' : 'expandCollapse'
+            'click #logo .fa' : 'expandCollapse'
         },
 
-        expandCollapse: function(e){
-            var $logo = $(e.target).closest('#logo');
-            var isCollapsed = !$logo.hasClass('collapsed');
-            $(e.target).closest('#logo').toggleClass('collapsed');
-            this.leftMenu.updateState(isCollapsed);
+        expandCollapse: function(){
+             $('body').toggleClass('collapsed');
         },
 
         hideProp: function (e) {

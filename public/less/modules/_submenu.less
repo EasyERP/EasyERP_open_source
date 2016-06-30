@@ -1,38 +1,100 @@
 .submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
   display: block;
-  height: @height;
+  position: relative;
+  z-index: 1000;
   width: auto;
-
+  height: 100%;
+  background-color: @defaultColor;
+  border-right: 1px solid @defaultColor;
+  box-sizing: border-box;
+  padding-top: 53px;
   nav {
-     ul {
-       .clearfix;
-        li {
+    width: 200px;
+    ul {
+      .clearfix;
+      li {
         list-style: none;
-        color: @bg;
         line-height: @height;
-        float: left;
+        height: @height;
         display: block;
-        width: 120px;
-        text-align: center;
+        width: 100%;
         background: @defaultColor;
-        a {
-          color: @bg;
-          font-size: 13px;
-          line-height: @height;
-          display: block;
-          .fullsize;
-          &:hover {
-            text-decoration: underline;
+      }
+    }
+    .root {
+      text-align: left;
+      > ul {
+        display: none;
+        height: auto;
+        li {
+          text-align: center;
+          .sub_item {
+            text-decoration: none;
+            font-size: 14px;
+            line-height: @height;
+          }
+          &:hover, &.selected {
+            background-color: @submenu-selected;
           }
         }
-
-        &.selected {
-          position: relative;
-          height: @height;
-          line-height: @height;
-          a {
-            text-decoration: underline;
+      }
+      > a, .fa {
+        color: @sub-menu-root-color;
+        font-size: 16px;
+        line-height: @height;
+        display: block;
+        float: left;
+        text-decoration: none;
+      }
+      .fa {
+        padding: 0 11px;
+      }
+      .icon {
+        &-Sales {
+          &:before {
+            content: "\f0b1";
           }
+        }
+        &-HR {
+          &:before {
+            content: "\f0c0";
+          }
+        }
+        &-Project {
+          &:before {
+            content: "\f02c";
+          }
+        }
+        &-Settings {
+          &:before {
+            content: "\f085";
+          }
+        }
+        &-Accounting {
+          &:before {
+            content: "\f201";
+          }
+        }
+        &-Expenses {
+          &:before {
+            content: "\f200";
+          }
+        }
+        &-Payroll {
+          &:before {
+            content: "\f1fe";
+          }
+        }
+      }
+      &:hover, &.active {
+        background-color: @submenu-active;
+        cursor: pointer;
+        height: @height;
+      }
+      &.active {
+        height: auto;
+        ul {
+          display: block;
         }
       }
     }

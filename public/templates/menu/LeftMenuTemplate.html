@@ -1,10 +1,13 @@
 <ul>
   <% _.forEach(menuList, function(parent, index){%>
-  <li class="root<%=(parent.href===currentRoot)?' opened active':''%>"><i class="icon-<%=parent.href%>"></i><a href="javascript:;"><%=parent.mname%></a>
+  <li class="root<%=(parent.href===currentRoot)?' active':''%>">
+	  <!--<i class="fa fa-credit-card" aria-hidden="true"></i>-->
+	  <i class="fa icon-<%=parent.href%>"></i>
+	  <a href="javascript:;"><%=parent.mname%></a>
 	<ul>
 	  <% _.forEach(parent.subModules, function(child, index){%>
-	  <li class="<%=(child.href===currentModule)?'selected':''%>"><a href="#easyErp/<%=child.href%>"><%=child.mname%></a>
-
+	  <li class="<%=(child.href===currentModule)?'selected':''%>">
+		  <a href="#easyErp/<%=child.href%>" class="sub_item"><%=child.mname%></a>
 	  </li>
 	  <%}) %>
 	</ul>
