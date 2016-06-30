@@ -22,10 +22,10 @@ var wTrack = function (models) {
         var query = req.query;
         var employeesArray = [];
         var filter = query.filter || {};
-        var departmentsArray = [objectId(CONSTANTS.DEVELOPMENT)
-        ];
+        var departmentsArray = [objectId(CONSTANTS.DEVELOPMENT)];
         var departmentQuery = {
-            $or: [{_id: {$in: departmentsArray}}, {parentDepartment: {$in: departmentsArray}}]
+            /* $or: [{_id: {$in: departmentsArray}}, {parentDepartment: {$in: departmentsArray}}] */
+            isDevelopment: true
         };
         var objectFilter = {};
 
@@ -63,7 +63,7 @@ var wTrack = function (models) {
                 if (item === 'empty') {
                     objectFilter.$and.push({
                         salesManager: {
-                            $size : 0
+                            $size: 0
                         }
                     });
                     object.splice(index, 1);
