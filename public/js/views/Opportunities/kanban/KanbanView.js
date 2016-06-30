@@ -11,11 +11,12 @@
     'collections/Opportunities/OpportunitiesCollection',
     'models/OpportunitiesModel',
     'dataService',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'collections/Opportunities/filterCollection',
     'constants',
     'helpers',
-    'views/pagination'
+    'views/pagination',
+    'custom'
 ], function (Backbone,
              _,
              $,
@@ -32,7 +33,8 @@
              ContentCollection,
              CONSTANTS,
              helpers,
-             Pagination) {
+             Pagination,
+             custom) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Pagination.extend({
         el               : '#content-holder',
@@ -61,7 +63,7 @@
 
             this.render();
 
-            this.filterView.trigger('filter', App.filter);
+            this.filterView.trigger('filter', App.filtersObject.filter);
 
             // this.asyncFetc(options.workflowCollection.toJSON());
             // this.getCollectionLengthByWorkflows(this);
@@ -261,7 +263,7 @@
             $parent.find('.active').removeClass('active');
             $targetEl.addClass('active');
 
-           var url = '/opportunities/getFilteredOpportunities/';
+            var url = '/opportunities/getFilteredOpportunities/';
 
             _.each(workflows, function (wfModel) {
                 filter.workflowId = wfModel.attributes._id;
@@ -277,12 +279,12 @@
 
             filter = filter || {};
 
-
             _.each(workflows, function (wfModel) {
-                filter.workflowId = wfModel._id;
-                filter.viewType = 'kanban';
-
-                dataService.getData(url, filter, this.asyncRender, this);
+                dataService.getData(url, {
+                    filter    : filter,
+                    workflowId: wfModel._id,
+                    viewType  : 'kanban'
+                }, this.asyncRender, this);
             }, this);
         },
 
@@ -444,119 +446,119 @@
 
         },
 
-        showFiltredPage: function (workflows) {
-            var listId;
-            var foldList;
-            var showList;
-            var el;
-            var self = this;
-            var itemsNumber = $('#itemsNumber').text();
-            var $checkedElements = $('.drop-down-filter input:checkbox:checked');
-            var condition = this.$el.find('.conditionAND > input')[0];
-            var chosen = this.$el.find('.chosen');
+        /*showFiltredPage: function (workflows) {
+         var listId;
+         var foldList;
+         var showList;
+         var el;
+         var self = this;
+         var itemsNumber = $('#itemsNumber').text();
+         var $checkedElements = $('.drop-down-filter input:checkbox:checked');
+         var condition = this.$el.find('.conditionAND > input')[0];
+         var chosen = this.$el.find('.chosen');
 
-            this.filter = {};
-            this.filter.condition = 'and';
+         this.filter = {};
+         this.filter.condition = 'and';
 
-            if (condition && !condition.checked) {
-                self.filter.condition = 'or';
-            }
+         if (condition && !condition.checked) {
+         self.filter.condition = 'or';
+         }
 
-            if (chosen.length) {
-                chosen.each(function (index, elem) {
-                    if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                        if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push({
-                                start: $('#start').val(),
-                                end  : $('#end').val()
-                            });
+         if (chosen.length) {
+         chosen.each(function (index, elem) {
+         if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+         if (self.filter[elem.children[1].value]) {
+         self.filter[elem.children[1].value].push({
+         start: $('#start').val(),
+         end  : $('#end').val()
+         });
 
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push({
-                                start: $('#start').val(),
-                                end  : $('#end').val()
-                            });
-                        }
-                    } else {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            });
-                        } else {
-                            self.filter[elem.children[1].value] = [];
+         } else {
+         self.filter[elem.children[1].value] = [];
+         self.filter[elem.children[1].value].push({
+         start: $('#start').val(),
+         end  : $('#end').val()
+         });
+         }
+         } else {
+         if (self.filter[elem.children[1].value]) {
+         $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+         self.filter[elem.children[1].value].push($(element).next().text());
+         });
+         } else {
+         self.filter[elem.children[1].value] = [];
 
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            });
-                        }
-                    }
+         $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+         self.filter[elem.children[1].value].push($(element).next().text());
+         });
+         }
+         }
 
-                });
+         });
 
-                $('.column').children('.item').remove();
+         $('.column').children('.item').remove();
 
-                _.each(workflows, function (wfModel) {
-                    dataService.getData('/Opportunities/', {
-                        workflowId: wfModel._id,
-                        viewType  : 'kanban',
-                        filter    : this.filter
-                    }, this.asyncRender, this);
-                }, this);
+         _.each(workflows, function (wfModel) {
+         dataService.getData('/Opportunities/', {
+         workflowId: wfModel._id,
+         viewType  : 'kanban',
+         filter    : this.filter
+         }, this.asyncRender, this);
+         }, this);
 
-                return false;
-            }
+         return false;
+         }
 
-            listId = _.pluck(workflows, '_id');
+         listId = _.pluck(workflows, '_id');
 
-            showList = $checkedElements.map(function () {
-                return this.value;
-            }).get();
+         showList = $checkedElements.map(function () {
+         return this.value;
+         }).get();
 
-            foldList = _.difference(listId, showList);
+         foldList = _.difference(listId, showList);
 
-            if (($checkedElements.length && $checkedElements.attr('id') === 'defaultFilter') || (!chosen.length)) {
-                self.filter = {};
+         if (($checkedElements.length && $checkedElements.attr('id') === 'defaultFilter') || (!chosen.length)) {
+         self.filter = {};
 
-                $('.column').children('.item').remove();
+         $('.column').children('.item').remove();
 
-                _.each(workflows, function (wfModel) {
-                    dataService.getData(CONSTANTS.URLS.OPPORTUNITIES, {
-                        workflowId: wfModel._id,
-                        viewType  : 'kanban',
-                        filter    : this.filter
-                    }, this.asyncRender, this);
-                }, this);
+         _.each(workflows, function (wfModel) {
+         dataService.getData(CONSTANTS.URLS.OPPORTUNITIES, {
+         workflowId: wfModel._id,
+         viewType  : 'kanban',
+         filter    : this.filter
+         }, this.asyncRender, this);
+         }, this);
 
-                return false;
-            }
+         return false;
+         }
 
-            foldList.forEach(function (id) {
-                var w;
-                var k;
+         foldList.forEach(function (id) {
+         var w;
+         var k;
 
-                el = $("td.column[data-id='" + id + "']");
-                el.addClass('fold');
-                w = el.find('.columnName .text').width();
-                k = w / 2 - 20;
-                if (k <= 0) {
-                    k = 20 - w / 2;
-                }
-                k = -k;
-                el.find('.columnName .text').css({left: k + 'px', top: Math.abs(w / 2 + 47) + 'px'});
-            });
+         el = $("td.column[data-id='" + id + "']");
+         el.addClass('fold');
+         w = el.find('.columnName .text').width();
+         k = w / 2 - 20;
+         if (k <= 0) {
+         k = 20 - w / 2;
+         }
+         k = -k;
+         el.find('.columnName .text').css({left: k + 'px', top: Math.abs(w / 2 + 47) + 'px'});
+         });
 
-            showList.forEach(function (id) {
-                el = $("td.column[data-id='" + id + "']");
-                el.removeClass('fold');
-            });
-        },
+         showList.forEach(function (id) {
+         el = $("td.column[data-id='" + id + "']");
+         el.removeClass('fold');
+         });
+         },*/
 
         showFilteredPage: function (filter) {
             var self = this;
             var workflows = this.workflowsCollection.toJSON();
 
-            if (filter.workflow) {
+            if (filter && filter.workflow) {
                 workflows = [];
                 filter.workflow.value.forEach(function (wId) {
                     workflows.push({
@@ -565,7 +567,7 @@
                 });
             }
 
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
+            this.filter = !filter || Object.keys(filter).length === 0 ? {} : filter;
 
             self.changeLocationHash(false, false, filter);
 
@@ -661,7 +663,11 @@
                 self.hideItemsNumber(e);
             });
 
-            this.renderFilter();
+            if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+                custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+            } else {
+                this.renderFilter(this.baseFilter);
+            }
 
             return this;
         }

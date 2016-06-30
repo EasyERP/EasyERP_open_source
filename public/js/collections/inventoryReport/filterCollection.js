@@ -16,7 +16,7 @@ define([
             var page;
             var startDate = moment(new Date());
             var endDate = moment(new Date());
-            var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
+            var dateRange; // = custom.retriveFromCash('inventoryReportDateRange') || {};
 
             this.filter = options.filter || custom.retriveFromCash('inventoryReport.filter');
 
@@ -25,17 +25,28 @@ define([
             endDate.month(startDate.month());
             endDate.endOf('month');
 
-            this.startDate = dateRange.startDate || new Date(startDate);
-            this.endDate = dateRange.endDate || new Date(endDate);
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : [];
 
-            options.startDate = this.startDate;
-            options.endDate = this.endDate;
-            options.filter = this.filter;
+            /*this.startDate = dateRange.startDate || new Date(startDate);
+            this.endDate = dateRange.endDate || new Date(endDate);*/
 
-            custom.cacheToApp('inventoryReportDateRange', {
+            this.startDate = dateRange[0] || new Date(startDate);
+            this.endDate = dateRange[1] || new Date(endDate);
+
+            // options.startDate = this.startDate;
+            // options.endDate = this.endDate;
+            options.filter = this.filter || {};
+
+            options.filter.date = {
+                value: [this.startDate, this.endDate]
+            };
+
+            /*custom.cacheToApp('inventoryReportDateRange', {
                 startDate: this.startDate,
                 endDate  : this.endDate
-            });
+            });*/
+
+            custom.cacheToApp('journalEntry.filter', options.filter);
 
             function _errHandler(models, xhr) {
                 if (xhr.status === 401) {
@@ -59,7 +70,9 @@ define([
         showMore: function (options) {
             var that = this;
             var filterObject = options || {};
-            var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
+            // var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
+            var filter = options.filter || custom.retriveFromCash('inventoryReport.filter');
+            var dateRange = filter && filter.date ? filter.date.value : [];
             var startDate = moment(new Date());
             var endDate = moment(new Date());
 
@@ -68,8 +81,11 @@ define([
             endDate.month(startDate.month());
             endDate.endOf('month');
 
-            filterObject.startDate = dateRange.startDate || new Date(startDate);
-            filterObject.endDate = dateRange.endDate || new Date(endDate);
+            /*filterObject.startDate = dateRange.startDate || new Date(startDate);
+            filterObject.endDate = dateRange.endDate || new Date(endDate);*/
+
+            filterObject.startDate = dateRange[0] || new Date(startDate);
+            filterObject.endDate = dateRange[1] || new Date(endDate);
 
             filterObject.page = (options && options.page) ? options.page : this.page;
             filterObject.count = (options && options.count) ? options.count : this.namberToShow;

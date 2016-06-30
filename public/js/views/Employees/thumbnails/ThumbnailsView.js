@@ -5,7 +5,7 @@
     'views/thumbnailsViewBase',
     'views/Employees/EditView',
     'views/Employees/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'dataService',
     'models/EmployeesModel',
     'common',
@@ -15,15 +15,13 @@
     'use strict';
 
     var EmployeesThumbnalView = BaseView.extend({
-        el                : '#content-holder',
-        countPerPage      : 0,
-        template          : _.template(thumbnailsItemTemplate),
-        defaultItemsNumber: null,
-        listLength        : null,
-        filter            : null,
-        newCollection     : null,
-        contentType       : 'Employees',
-        viewType          : 'thumbnails',
+        el          : '#content-holder',
+        countPerPage: 0,
+        template    : _.template(thumbnailsItemTemplate),
+        hasAlphabet : true,
+        contentType : 'Employees',
+        viewType    : 'thumbnails',
+        letterKey   : 'name.first',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
@@ -40,7 +38,7 @@
 
             BaseView.prototype.initialize.call(this, options);
 
-            this.filter = options.filter || {};
+            this.filter = options.filter;
         },
 
         asyncLoadImgs: function (collection) {
@@ -51,31 +49,11 @@
         },
 
         render: function () {
-            var self = this;
             var $currentEl = this.$el;
-            var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + 'ms </div>';
 
-            $currentEl.html('');
-            $currentEl.append('<div id="searchContainer"></div>');
-
-            if (this.collection.length > 0) {
-                $currentEl.append(this.template({collection: this.collection.toJSON()}));
-            } else {
-                $currentEl.html('<h2>No Employees found</h2>');
-            }
-            self.filterView = new FilterView({contentType: self.contentType});
-
-            self.filterView.bind('filter', function (filter) {
-                self.showFilteredPage(filter, self);
-            });
-            self.filterView.bind('defaultFilter', function () {
-                self.showFilteredPage({}, self);
-            });
-
-            self.filterView.render();
-
-            this.renderAlphabeticalFilter();
-            $currentEl.append(createdInTag);
+            $currentEl
+                .find('#thumbnailContent')
+                .append(this.template({collection: this.collection.toJSON()}));
 
             return this;
         },

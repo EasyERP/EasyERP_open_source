@@ -1134,6 +1134,7 @@ Object.keys(window.__karma__.files).forEach(function (file) {
 require.config({
     // Karma serves files under /base, which is the basePath from your config file
     baseUrl: '/base',
+    urlArgs: 'bust=' + (new Date()).getTime(),
     paths  : {
         models           : './public/js/models',
         collections      : './public/js/collections',
@@ -1167,7 +1168,9 @@ require.config({
         modules          : './constants/test/modules',
         testConstants    : './constants/test',
         dashboardVacation: './constants/test/dashboardVacation',
-        filter           : './constants/test/filter'
+        filter           : './constants/test/filter',
+        constantsDir     : './public/js/constants',
+        filterTest       : './test/uiSpecs/modules/filterTest'
     },
     shim   : {
         jQuery       : {

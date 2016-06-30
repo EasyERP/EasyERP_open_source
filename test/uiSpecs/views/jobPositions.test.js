@@ -13009,7 +13009,7 @@ define([
             }
         ]
     };
-        var fakeJobPositionId = {
+    var fakeJobPositionId = {
         _id                     : "55b92acf21e4b7c40f000017",
         department: {
             _id           : "55b92ace21e4b7c40f000016",

@@ -12,12 +12,12 @@ define([
     'views/Persons/form/FormView',
     'views/Persons/list/ListView',
     'views/Persons/thumbnails/ThumbnailsView',
-    'views/Filter/FilterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
+    'sinon-chai',
+    'filterTest'
 ], function (Backbone,
              _,
              modules,
@@ -31,12 +31,12 @@ define([
              FormView,
              ListView,
              ThumbnailsView,
-             FilterView,
              eventsBinder,
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             FilterTest) {
     'use strict';
 
     var fakePersons = {
@@ -11257,6 +11257,50 @@ define([
             }
         ]
     };
+    var fakeFilters = {
+        name   : [
+            {
+                _id : "575fcfa6d4aef4766ad9aae3",
+                name: "Thijs Schnitger"
+            },
+            {
+                _id : "575e6a257f3384556ae3d11d",
+                name: "Till Schrader"
+            },
+            {
+                _id : "575e69fe3319da9d6ac1c14b",
+                name: "Till Schrader"
+            }
+        ],
+        country: [
+            {
+                _id : "the Netherlands",
+                name: "the Netherlands"
+            },
+            {
+                _id : "Mexico",
+                name: "Mexico"
+            },
+            {
+                _id : "New Zeland",
+                name: "New Zeland"
+            },
+            {
+                _id : "Norway",
+                name: "Norway"
+            }
+        ],
+        services: [
+            {
+                name: "Supplier",
+                _id: "isSupplier"
+            },
+            {
+                name: "Customer",
+                _id: "isCustomer"
+            }
+        ]
+    };
     var expect;
     var view;
     var listView;
@@ -11265,7 +11309,60 @@ define([
     var formView;
     var editView;
     var personsCollection;
-    var ajaxSpy;
+    var ajaxSpy = sinon.spy($, 'ajax');
+    var filterOptions = {
+        url        : '/persons/',
+        contentType: 'Persons'
+    };
+    var filterTest = FilterTest(filterOptions);
+    var fakeResponseSaveFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v"            : 0,
+            "attachments"    : [],
+            "lastAccess"     : "2016-06-23T12:46:39.099Z",
+            "profile"        : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{
+                "_id"        : "574335bb27725f815747d579",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : true
+            }, {
+                "_id"        : "576140b0db710fca37a2d950",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "5761467bdb710fca37a2d951",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "57615278db710fca37a2d952",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "576be27e8833d3d250b617a5",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576beedfa96be05a77ce0267",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {"_id": "576bfd2ba96be05a77ce0268", "contentType": "Persons", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications" : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "opportunities": {"foldWorkflows": ["Empty"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
+        }
+    };
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -11274,20 +11371,9 @@ define([
     describe('PersonsView', function () {
         var $fixture;
         var $elFixture;
-        var selectSpy;
-        var removeFilterSpy;
-        var saveFilterSpy;
-        var debounceStub;
         var historyNavigateSpy;
 
         before(function () {
-            ajaxSpy = sinon.spy($, 'ajax');
-            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
-            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
-            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
-            debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
-                return debounceFunction;
-            });
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
         });
 
@@ -11301,10 +11387,7 @@ define([
 
             ajaxSpy.restore();
             historyNavigateSpy.restore();
-            selectSpy.restore();
-            debounceStub.restore();
-            removeFilterSpy.restore();
-            saveFilterSpy.restore();
+            filterTest.restoreAll();
         });
 
         describe('#initialize()', function () {
@@ -11351,9 +11434,7 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/Persons');
-
             });
-
         });
 
         describe('TopBar View', function () {
@@ -11460,6 +11541,7 @@ define([
 
             it('Try to create Persons list view', function (done) {
                 var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
+                var filterUrl = '/filter/Persons';
                 var $searchContainerEl;
                 var $alphabetEl;
                 var $firstRow;
@@ -11474,12 +11556,15 @@ define([
                 var $pagination;
                 var $currentPageList;
 
+
                 server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
+                server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
                 listView = new ListView({
                     collection: personsCollection,
                     startTime : new Date()
                 });
                 server.respond();
+
                 clock.tick(300);
 
                 eventsBinder.subscribeCollectionEvents(personsCollection, listView);
@@ -11570,7 +11655,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('contentType');
             });
 
-            it('Try to select 25 items per page', function() {
+            it('Try to select 25 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').first();
                 var ajaxResponse;
@@ -11587,7 +11672,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '25');
             });
 
-            it('Try to select 50 items per page', function() {
+            it('Try to select 50 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').eq(1);
                 var ajaxResponse;
@@ -11604,7 +11689,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '50');
             });
 
-            it('Try to select 100 items per page', function() {
+            it('Try to select 100 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').eq(2);
                 var ajaxResponse;
@@ -11621,7 +11706,7 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '100');
             });
 
-            it('Try to select 200 items per page', function() {
+            it('Try to select 200 items per page', function () {
                 var $pagination = $thisEl.find('.pagination');
                 var $needBtn = $pagination.find('.pageList > a').eq(3);
                 var ajaxResponse;
@@ -11638,7 +11723,6 @@ define([
                 expect(ajaxResponse.data).to.have.property('count', '200');
             });
 
-
             it('Try to export to CSV', function () {
                 var $exportToCsvBtn = topBarView.$el.find('#top-bar-exportToCsvBtn');
 
@@ -11652,6 +11736,23 @@ define([
                 $exportToXlsxBtn.click();
                 expect(exportToXlcsStub.calledOnce).to.be.true;
             });
+
+            it('Try to filter list view by name and country', function () {
+                filterTest.select2FiltersAndremove1.call(this, 'name', 'country', 'listView', ajaxSpy, fakePersonsForList);
+            });
+
+            it('Try to save name filter', function () {
+                filterTest.saveFilter.call(this, fakeResponseSaveFilter);
+            });
+
+            it('Try remove saved Filters', function () {
+                filterTest.removeSavedFilter.call(this);
+            });
+
+            it('Try to remove filter', function () {
+                filterTest.removeFilter.call(this, 'country', ajaxSpy);
+            });
+
         });
 
         describe('Persons thumbnail view', function () {
@@ -11685,6 +11786,7 @@ define([
             it('Try to create persons thumbnails view', function (done) {
                 var personsUrl = new RegExp('\/persons\/', 'i');
                 var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
+                var filterUrl = '/filter/Persons';
                 var $searchContainerEl;
                 var $alphabetEl;
                 var $firstEl;
@@ -11695,6 +11797,7 @@ define([
                 var $showMoreBtn;
                 var personName;
 
+                server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
                 server.respondWith('GET', personsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
                 personsCollection = new PersonsCollection({
                     contentType: 'Persons',
@@ -11772,109 +11875,6 @@ define([
                 done();
             });
 
-            it('Try to filter Persons ThumbnailsView by FullName and Country', function () {
-                var $searchContainer = $thisEl.find('#searchContainer');
-                var $searchArrow = $searchContainer.find('.search-content');
-                var personsThumbUrl = new RegExp('\/persons\/', 'i');
-                var $fullName;
-                var $country;
-                var $selectedItem;
-                var $next;
-                var $prev;
-
-                selectSpy.reset();
-
-                // open filter dropdown
-                $searchArrow.click();
-                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                // select full Person Name
-                $fullName = $searchContainer.find('#nameFullContainer .groupName');
-                $fullName.click();
-                expect($fullName.next('div')).to.have.not.class('hidden');
-                $next = $searchContainer.find('.next');
-                $next.click();
-                $prev = $searchContainer.find('.prev');
-                $prev.click();
-                $selectedItem = $searchContainer.find('#nameUl > li');
-
-                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
-                $selectedItem.click();
-                server.respond();
-                expect(selectSpy.calledOnce).to.be.true;
-                expect($thisEl.find('#searchContainer')).to.exist;
-                expect($thisEl.find('#startLetter')).to.exist;
-                expect($thisEl.find('.thumbnailwithavatar'))
-                    .to.have.lengthOf(3);
-
-                // select Country
-                $country = $searchContainer.find('#countryFullContainer .groupName');
-                $country.click();
-                expect($country.next('div')).to.have.not.class('hidden');
-                $next = $searchContainer.find('.next');
-                $next.click();
-                $prev = $searchContainer.find('.prev');
-                $prev.click();
-                $selectedItem = $searchContainer.find('li[data-value="Australia"]');
-
-                $selectedItem.click();
-                server.respond();
-                expect(selectSpy.calledTwice).to.be.true;
-                expect($thisEl.find('#searchContainer')).to.exist;
-                expect($thisEl.find('#startLetter')).to.exist;
-                expect($thisEl.find('.thumbnailwithavatar'))
-                    .to.have.lengthOf(3);
-
-                // uncheck Country filter
-                $selectedItem = $searchContainer.find('li[data-value="Australia"]');
-                $selectedItem.click();
-                server.respond();
-                expect(selectSpy.calledThrice).to.be.true;
-                expect($thisEl.find('#searchContainer')).to.exist;
-                expect($thisEl.find('#startLetter')).to.exist;
-                expect($thisEl.find('.thumbnailwithavatar'))
-                    .to.have.lengthOf(3);
-            });
-
-            it('Try to save favorites filters', function () {
-                var userUrl = new RegExp('\/users\/', 'i');
-                var $searchContainer = $thisEl.find('#searchContainer');
-                var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
-                var $filterNameInput;
-                var $saveFilterBtn;
-
-                saveFilterSpy.reset();
-
-                $favoritesBtn.click();
-                expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
-
-                $filterNameInput = $searchContainer.find('#forFilterName');
-                $filterNameInput.val('Test');
-                $saveFilterBtn = $searchContainer.find('#saveFilterButton');
-
-                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                $saveFilterBtn.click();
-                server.respond();
-
-                expect(saveFilterSpy.called).to.be.true;
-            });
-
-            it('Try to delete FullName filter', function () {
-                var $searchContainer = $thisEl.find('#searchContainer');
-                var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
-                var personThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
-
-                removeFilterSpy.reset();
-
-                server.respondWith('GET', personThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
-                $closeBtn.click();
-                server.respond();
-
-                expect(removeFilterSpy.called).to.be.true;
-                expect($thisEl).to.exist;
-                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(3);
-            });
-
             it('Try to showMore content', function () {
                 var $showMoreBtn = $thisEl.find('#showMore');
 
@@ -11883,22 +11883,31 @@ define([
 
                 expect($thisEl.find('.thumbnailwithavatar')).to.exist;
                 expect($thisEl.find('.thumbnailwithavatar').length).to.equals(6);
-                expect($thisEl.find('#showMoreDiv')).to.have.css('display', 'none');
+                expect($thisEl.find('#showMoreDiv')).to.not.exist;
             });
 
             it('Try to click alphabetic letter', function () {
                 var $searchContainerEl;
                 var $alphabetEl;
                 var $letterEl = thumbnailsView.$el.find('#startLetter a:nth-child(4)');
+                var $allLetter = thumbnailsView.$el.find('#startLetter a:nth-child(1)');
 
                 $letterEl.click();
                 server.respond();
 
-                $searchContainerEl = $thisEl.find('.search-view');
+                $searchContainerEl = $thisEl.find('#searchContainer');
                 $alphabetEl = $thisEl.find('#startLetter');
 
                 expect(alphabeticalRenderSpy.calledOnce).to.be.true;
-                //expect(showMoreAlphabetSpy.calledOnce).to.be.true;
+                //expect($searchContainerEl.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                expect($searchContainerEl).to.exist;
+                expect($alphabetEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(3);
+
+                $allLetter.click();
+                server.respond();
+                expect(alphabeticalRenderSpy.calledTwice).to.be.true;
+                expect($searchContainerEl.find('#searchFilterContainer > div')).to.have.lengthOf(0);
                 expect($searchContainerEl).to.exist;
                 expect($alphabetEl).to.exist;
                 expect($thisEl.find('.thumbnailwithavatar').length).to.equals(3);
@@ -11925,6 +11934,22 @@ define([
                 $companyBtn.click();
                 expect(gotoFormSpy.calledOnce).to.be.true;
                 expect(window.location.hash).to.be.equals(expectedUrl);
+            });
+
+            it('Try to filter list view by services and country', function () {
+                filterTest.select2FiltersAndremove1('services', 'country', 'thumbnailsView', ajaxSpy, fakePersons);
+            });
+
+            it('Try to save name filter', function () {
+                filterTest.saveFilter(fakeResponseSaveFilter);
+            });
+
+            it('Try remove saved Filters', function () {
+                filterTest.removeSavedFilter();
+            });
+
+            it('Try to remove filter', function () {
+                filterTest.removeFilter('country', ajaxSpy);
             });
         });
 

@@ -1,3 +1,5 @@
+/*TODO remove caseFilter methid after testing filters*/
+
 var mongoose = require('mongoose');
 var RESPONSES = require('../constants/responses');
 var tasksSchema = mongoose.Schemas.Task;
@@ -17,6 +19,7 @@ var Module = function (models, event) {
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
+    var FilterMapper = require('../helpers/filterMapper');
 
     this.createTask = function (req, res, next) {
         var body = req.body;
@@ -287,7 +290,7 @@ var Module = function (models, event) {
         }
     };
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition = [];
         var key;
 
@@ -312,7 +315,7 @@ var Module = function (models, event) {
         }
 
         return condition;
-    }
+    }*/
 
     function getTasksForKanban(req, res, next) {
         var startTime = new Date();
@@ -453,6 +456,7 @@ var Module = function (models, event) {
         var obj = {};
         var addObj = {};
         var Task = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+        var filterMapper = new FilterMapper();
 
         var keys;
         var arrOfObjectId;
@@ -527,7 +531,8 @@ var Module = function (models, event) {
                         obj = {$and: [{'project._id': {$in: _.pluck(result, '_id')}}]};
 
                         if (data && data.filter) {
-                            obj.$and.push({$and: caseFilter(data.filter)});
+                            // obj.$and.push({$and: caseFilter(data.filter)});
+                            obj.$and.push(filterMapper.mapFilter(data.filter, 'Tasks'));
                         }
 
                         if (data.sort) {

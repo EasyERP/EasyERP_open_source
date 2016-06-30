@@ -10,7 +10,7 @@ define([
     'common',
     'dataService',
     'constants'
-], function (Backbone, $, _, paginationTemplate, /* aphabeticTemplate,*/ importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
+], function (Backbone, $, _, paginationTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
@@ -25,6 +25,17 @@ define([
             'click .checkbox'                                              : 'checked',
             'click .list td:not(.notForm, .checkbox)'                      : 'gotoForm',
             'mouseover .currentPageList'                                   : 'showPagesPopup'
+        },
+
+        initialize: function (options) {
+            this.startTime = options.startTime;
+            this.collection = options.collection || Backbone.Collection.extend();
+            this.responseObj = {};
+            this.filter = options.filter;
+
+            options.contentType = this.contentType;
+            this.makeRender(options);
+            this.render();
         },
 
         // to remove zombies was needed for event after recieveInvoice on projectInfo

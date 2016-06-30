@@ -42,6 +42,7 @@ var wTrack = function (models) {
         var _endDateByMonth;
         var _dateStr;
         var sortedDepartments;
+        var filterElement;
         var duration;
         var weeks = 0;
         var key;
@@ -59,6 +60,7 @@ var wTrack = function (models) {
 
         if (filter.salesManager && filter.salesManager.value) {
             objectFilter.$and = [];
+
             filter.salesManager.value.forEach(function (item, index, object) {
                 if (item === 'empty') {
                     objectFilter.$and.push({
@@ -70,18 +72,21 @@ var wTrack = function (models) {
                 }
             });
 
+            filterElement = {};
+
             if (filter.salesManager.value.length) {
-                objectFilter.$and.push({
-                    'salesManager.employeeId': {$in: filter.salesManager.value.objectID()}
-                });
+                filterElement[filter.salesManager.key] = {$in: filter.salesManager.value.objectID()};
+                objectFilter.$and.push(filterElement);
             }
 
         }
+
         if (filter.projecttype && filter.projecttype.value) {
-            objectFilter.$and = [];
-            objectFilter.$and.push({
-                'project.projecttype': {$in: filter.projecttype.value}
-            });
+            objectFilter.$and = objectFilter.$and || [];
+
+            filterElement = {};
+            filterElement[filter.projecttype.key] = {$in: filter.projecttype.value};
+            objectFilter.$and.push(filterElement);
         }
 
         if (filter && filter.startDate && filter.endDate) {

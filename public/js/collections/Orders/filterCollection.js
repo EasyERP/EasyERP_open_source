@@ -23,11 +23,13 @@
                 if (regex.test(contentType)) {
                     _filter.forSales = {
                         key  : 'forSales',
+                        type : 'boolean',
                         value: ['true']
                     };
                 } else {
                     _filter.forSales = {
                         key  : 'forSales',
+                        type : 'boolean',
                         value: ['false']
                     };
                 }

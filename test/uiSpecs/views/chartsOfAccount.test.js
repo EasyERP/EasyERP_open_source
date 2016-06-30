@@ -7,7 +7,6 @@ define([
     'views/ChartOfAccount/list/ListView',
     'views/ChartOfAccount/TopBarView',
     'views/ChartOfAccount/CreateView',
-    'views/Filter/FilterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
@@ -15,7 +14,7 @@ define([
     'sinon-chai',
     'custom',
     'async'
-], function (Backbone, modules, fixtures, ChartOfAccountCollection, MainView, ListView, TopBarView, CreateView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (Backbone, modules, fixtures, ChartOfAccountCollection, MainView, ListView, TopBarView, CreateView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
     var fakeChartOfAccount = {
@@ -86,15 +85,16 @@ define([
         var $fixture;
         var $elFixture;
         var deleteTopBarSpy;
-        var selectValuesSpy;
+        var selectSpy;
         var removeFilterSpy;
+        var saveFilterSpy;
+        var removedFromDBSpy;
 
         before(function () {
             deleteTopBarSpy = sinon.spy(TopBarView.prototype, 'onDeleteEvent');
             ajaxSpy = sinon.spy($, 'ajax');
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
-            selectValuesSpy = sinon.spy(FilterView.prototype, 'selectValue');
-            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+
         });
 
         after(function () {
@@ -105,8 +105,6 @@ define([
             deleteTopBarSpy.restore();
             historyNavigateSpy.restore();
             ajaxSpy.restore();
-            selectValuesSpy.restore();
-            removeFilterSpy.restore();
         });
 
         describe('#initialize()', function () {

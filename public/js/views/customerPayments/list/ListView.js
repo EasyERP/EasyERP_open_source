@@ -29,6 +29,7 @@ define([
         changedModels    : {},
         responseObj      : {},
         template         : _.template(listTemplate),
+        hasPagination    : true,
 
         events: {
             'click td.editable'                                : 'editRow',
@@ -51,7 +52,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = paymentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         editItem: function (e) {
@@ -91,15 +92,15 @@ define([
 
             this.recalcTotal();
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
-            this.renderFilter();
+            // this.renderFilter();
 
             this.editCollection = new EditCollection(this.collection.toJSON());
 
             this.$listTable = $('#listTable');
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms</div>');
 
             return this;
         }

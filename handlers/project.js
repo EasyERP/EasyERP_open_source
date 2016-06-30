@@ -1,6 +1,10 @@
-var mongoose = require('mongoose');
-
+/*TODO remove caseFilter methid after testing filters*/
 module.exports = function (models, event) {
+    'use strict';
+
+    var FilterMapper = require('../helpers/filterMapper');
+    var mongoose = require('mongoose');
+
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var _ = require('../node_modules/underscore');
     var moment = require('../public/js/libs/moment/moment');
@@ -41,7 +45,7 @@ module.exports = function (models, event) {
         };
     }
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition = [];
         var keys = Object.keys(filter);
         var key;
@@ -85,7 +89,7 @@ module.exports = function (models, event) {
         }
 
         return condition;
-    }
+    }*/
 
     this.create = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -195,7 +199,7 @@ module.exports = function (models, event) {
         var skip = paginationObject.skip;
         var sort = data.sort || {'createdBy.date': -1};
         var viewType = data.viewType;
-        var optionsObject = {};
+        var optionsObject;
         var filter = data.filter || {};
         var response = {};
         var lookupPipeline = [{
@@ -220,6 +224,7 @@ module.exports = function (models, event) {
                 as          : 'workflow'
             }
         }];
+        var filterMapper = new FilterMapper();
 
         var projectThumbPipeline = [{
             $project: {
@@ -442,11 +447,7 @@ module.exports = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject.$or = caseFilter(filter);
-            } else {
-                optionsObject.$and = caseFilter(filter);
-            }
+            optionsObject = filterMapper.mapFilter(filter, 'Projects'); // caseFilter(filter);
         }
 
         accessRollSearcher = function (cb) {
@@ -458,7 +459,7 @@ module.exports = function (models, event) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject) {
                 queryObject.$and.push(optionsObject);
             }
 
@@ -521,9 +522,11 @@ module.exports = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var contentType = data.contentType;
-        var optionsObject = {};
+        var optionsObject;
         var filter = data.filter || {};
         var response = {};
+
+        var filterMapper = new FilterMapper();
 
         var waterfallTasks;
         var accessRollSearcher;
@@ -559,11 +562,7 @@ module.exports = function (models, event) {
         response.showMore = false;
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject.$or = caseFilter(filter);
-            } else {
-                optionsObject.$and = caseFilter(filter);
-            }
+            optionsObject = filterMapper.mapFilter(filter, 'Projects'); // caseFilter(filter);
         }
 
         accessRollSearcher = function (cb) {
@@ -575,7 +574,7 @@ module.exports = function (models, event) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject) {
                 queryObject.$and.push(optionsObject);
             }
 

@@ -1,3 +1,4 @@
+/*
 define([
     'Backbone',
     'modules',
@@ -8,7 +9,7 @@ define([
     'views/Quotations/TopBarView',
     'views/Quotations/CreateView',
     'views/Quotations/EditView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
@@ -757,3 +758,4 @@ define([
     });
 
 });
+*/

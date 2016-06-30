@@ -19,6 +19,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
+        hasPagination    : true,
         contentType      : 'JobPositions', // needs in view.prototype.changeLocationHash
 
         events: {
@@ -36,8 +37,9 @@ define([
             this.page = options.collection.page;
             this.filter = options.filter;
 
-            this.render();
             this.contentCollection = contentCollection;
+
+            listViewBase.prototype.initialize.call(this, options);
         },
 
         showNewSelect: function (e) {
@@ -113,8 +115,8 @@ define([
                 itemView.trigger('incomingStages', stages);
             });
 
-            this.renderPagination($currentEl, this);
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // this.renderPagination($currentEl, this);
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         gotoForm: function (e) {
@@ -128,7 +130,7 @@ define([
                     id      : id,
                     viewType: 'form'
                 },
-                
+
                 success: function (response) {
                     return new EditView({model: response});
                 },

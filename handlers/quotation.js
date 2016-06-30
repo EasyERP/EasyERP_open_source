@@ -23,7 +23,11 @@ var Module = function (models, event) {
     var pageHelper = require('../helpers/pageHelper');
     var moment = require('../public/js/libs/moment/moment');
 
-    function convertType(array, type) {
+    var FilterMapper = require('../helpers/filterMapper');
+
+    /*TODO remove after filters check*/
+
+    /*function convertType(array, type) {
         var i;
 
         if (type === 'integer') {
@@ -41,9 +45,9 @@ var Module = function (models, event) {
                 }
             }
         }
-    }
+    }*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -97,7 +101,7 @@ var Module = function (models, event) {
         }
 
         return resArray;
-    }
+    }*/
 
     function updateOnlySelectedFields(req, res, next, id, data) {
         var dbName = req.session.lastDb;
@@ -679,37 +683,24 @@ var Module = function (models, event) {
         var filter = data.filter || {};
         var key;
         var queryObject = {};
+        var filterMapper = new FilterMapper();
 
-        if ((contentType === 'Orders') || (contentType === 'Quotations')) {
-            filter.forSales = {
-                key  : 'forSales',
-                value: ['false']
-            };
-        } else {
-            filter.forSales = {
-                key  : 'forSales',
-                value: ['true']
-            };
-        }
-
-        if (isOrder) {
-            filter.isOrder = {
-                key  : 'isOrder',
-                value: ['true']
-            };
-        } else {
-            filter.isOrder = {
-                key  : 'isOrder',
-                value: ['false']
-            };
-        }
+        queryObject.$and = [];
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject.$or = caseFilter(filter);
+            if ((contentType === 'Orders') || (contentType === 'Quotations')) {
+                queryObject.$and.push({forSales: false});
             } else {
-                queryObject.$and = caseFilter(filter);
+                queryObject.$and.push({forSales: true});
             }
+
+            if (isOrder) {
+                queryObject.$and.push({isOrder: true});
+            } else {
+                queryObject.$and.push({isOrder: false});
+            }
+
+            queryObject.$and.push(filterMapper.mapFilter(filter, contentType)); // caseFilter(filter);
         }
 
         if (data.sort) {

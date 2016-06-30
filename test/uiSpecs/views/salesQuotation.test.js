@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/Quotations/filterCollection',
@@ -8,13 +9,17 @@ define([
     'views/salesQuotations/TopBarView',
     'views/salesQuotations/CreateView',
     'views/salesQuotations/EditView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
+    'sinon-chai',
+    'constantsDir/filters'
 ], function (Backbone,
+             _,
              modules,
              fixtures,
              QuotationCollection,
@@ -24,11 +29,14 @@ define([
              CreateView,
              EditView,
              FilterView,
+             FilterGroup,
+             SavedFilters,
              eventsBinder,
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             FILTER_CONSTANTS) {
     'use strict';
 
     var expect;
@@ -145,22 +153,6 @@ define([
             }
         ]
     };
-    var fakeWorkflow = [
-        {
-            _id         : "55647b932e4aa3804a765ec5",
-            name        : "Not Invoiced",
-            sequence    : 3,
-            status      : "New",
-            wId         : "Sales Order",
-            wName       : "order",
-            source      : "purchase",
-            targetSource: [
-                "quotation"
-            ],
-            visible     : true,
-            color       : "#2C3E50"
-        }
-    ];
     var fakeQuotationForm = {
         _id           : "56e7c1d6c64e96844ef3d6a6",
         expectedDate  : "2016-03-14T22:00:00.000Z",
@@ -266,12 +258,69 @@ define([
             }
         ]
     };
+    var fakeFilter = {
+        _id: null,
+        project: [
+            {
+                _id: "5757e30152e8f40a76befd56",
+                name: "Hipteam Projects"
+            },
+            {
+                _id: "57557089a6d2f5e9754631d7",
+                name: "Bike Registration Website"
+            },
+            {
+                _id: "5721d21871d367e52185bd3c",
+                name: "FlightText"
+            }
+        ],
+
+        supplier: [
+            {
+                _id: "5721d1bb2d11557621505d02",
+                name: "Pere Sanz"
+            },
+            {
+                _id: "573dd7271a18dbb345b58f6e",
+                name: "Digital Media Experience LLC "
+            },
+            {
+                _id: "56e290f1896e98a661aa831a",
+                name: "Game scale "
+            }
+        ]
+    };
+    var fakeResponseSavedFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v": 0,
+            "attachments": [],
+            "lastAccess" : "2016-06-29T08:36:54.760Z",
+            "profile"    : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{"_id": "5773914af2ec5e1517865734", "contentType": "salesQuotation", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications": {"foldWorkflows": ["Empty"], "countPerPage": 87},
+                "opportunities": {"foldWorkflows": ["Empty"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
+        }
+    };
     var quotationCollection;
     var view;
     var topBarView;
     var listView;
     var historyNavigateSpy;
     var ajaxSpy;
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -284,6 +333,13 @@ define([
         before(function () {
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
             ajaxSpy = sinon.spy($, 'ajax');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -297,6 +353,11 @@ define([
 
             historyNavigateSpy.restore();
             ajaxSpy.restore();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
+            removedFromDBSpy.restore();
+            debounceStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -409,8 +470,6 @@ define([
             var $thisEl;
             var windowConfirmStub;
             var sortSpy;
-            var selectFilterSpy;
-            var removeFilterSpy;
             var deleteSpy;
 
             before(function () {
@@ -420,8 +479,6 @@ define([
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 windowConfirmStub.returns(true);
                 sortSpy = sinon.spy(ListView.prototype, 'goSort');
-                selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue');
-                removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
                 deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
             });
 
@@ -431,15 +488,13 @@ define([
                 clock.restore();
                 windowConfirmStub.restore();
                 sortSpy.restore();
-                selectFilterSpy.restore();
-                removeFilterSpy.restore();
                 deleteSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create listView', function (done) {
-                    var workflowUrl = new RegExp('\/workflows\/fetch', 'i');
+                    var filterUrl = '/filter/salesQuotations';
                     var $firstRow;
                     var colCount;
                     var reference;
@@ -451,7 +506,7 @@ define([
                     var $pagination;
                     var $currentPageList;
 
-                    server.respondWith('GET', workflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflow)]);
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilter)]);
                     listView = new ListView({
                         collection: quotationCollection,
                         startTime : new Date()
@@ -518,78 +573,6 @@ define([
                     expect($thisEl.find('#pageList')).to.have.css('display', 'none');
 
                     done();
-                });
-
-                it('Try to filter listView by Status and SM', function () {
-                    var $next;
-                    var $prev;
-                    var $selectedItem;
-                    var $salesManager;
-                    var $status;
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-
-                    selectFilterSpy.reset();
-
-                    $searchArrow.click();
-                    expect($thisEl.find('.search-options')).to.not.have.class('hidden');
-
-                    //select SM
-                    $salesManager = $searchContainer.find('#salesManagerFullContainer > .groupName');
-                    $salesManager.click();
-                    $next = $searchContainer.find('.next');
-                    $next.click();
-                    $prev = $searchContainer.find('.prev');
-                    $prev.click();
-                    $selectedItem = $searchContainer.find('#salesManagerUl > li').first();
-
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(selectFilterSpy.calledOnce).to.be.true;
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($searchContainer.find('#salesManagerUl > li').first()).to.have.class('checkedValue');
-
-
-                    // select status
-                    $status = $searchContainer.find('#workflowFullContainer > .groupName');
-                    $status.click();
-                    $selectedItem = $searchContainer.find('#workflowUl > li').first();
-
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(selectFilterSpy.calledTwice).to.be.true;
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
-                    expect($searchContainer.find('#workflowUl > li').first()).to.have.class('checkedValue');
-
-                    // uncheck status filter
-                    $selectedItem = $searchContainer.find('#workflowUl > li').first();
-                    $selectedItem.click();
-                    server.respond();
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(selectFilterSpy.calledThrice).to.be.true;
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($searchContainer.find('#workflowUl > li').first()).to.have.not.class('checkedValue');
-
-                    $searchArrow.click();
-                    expect($thisEl.find('.search-options')).to.have.class('hidden');
-                });
-
-                it('Try to close SM filter', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $closeFilterBtn = $searchContainer.find('span[data-value="salesManager"]').next();
-
-                    removeFilterSpy.reset();
-
-                    $closeFilterBtn.click();
-                    server.respond();
-
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect(removeFilterSpy.calledOnce).to.be.true;
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
                 });
 
                 it('Try to sort list', function () {
@@ -763,8 +746,199 @@ define([
                     expect($dialogEl.find('ul.dialog-tabs > li:nth-child(1) > a')).to.have.class('active');
                 });
 
+                it('Try to filter listView by Project and supplier', function () {
+                    var url = '/quotations/';
+                    var contentType = 'salesQuotations';
+                    var firstValue = 'project';
+                    var secondValue = 'supplier';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var $secondGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    ajaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotation)]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // select secondGroup filter
+                    ajaxSpy.reset();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.exist;
+                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                    expect(filterObject[secondValue]).to.have.property('value');
+                    expect(filterObject[secondValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.not.exist;
+                });
+
+                it('Try to save filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn;
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('TestFilter');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                    $saveFilterBtn.click();
+                    server.respond();
+
+                    expect(saveFilterSpy.called).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove saved filters', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                    var userUrl = new RegExp('\/users\/', 'i');
+
+                    removedFromDBSpy.reset();
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $deleteSavedFilterBtn.click();
+                    server.respond();
+
+                    expect(removedFromDBSpy.calledOnce).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                });
+
+                it('Try to remove filter', function () {
+                    var secondValue = 'salesManager';
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues');
+                    $removeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                });
             });
         });
     });
-
 });

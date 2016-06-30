@@ -12,15 +12,20 @@ define([
     'views/Projects/EditView',
     'models/ProjectsModel',
     'collections/Tasks/filterCollection',
+    'views/Filter/filterView',
     'common'
-], function ($, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, common) {
+], function ($, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, FilterView, common) {
     var TasksListView = ListViewBase.extend({
 
-        CreateView       : CreateView,
-        listTemplate     : listTemplate,
-        ListItemView     : ListItemView,
-        contentCollection: ContentCollection,
-        contentType      : 'Tasks',
+        CreateView              : CreateView,
+        listTemplate            : listTemplate,
+        ListItemView            : ListItemView,
+        contentCollection       : ContentCollection,
+        filterView              : FilterView,
+        hasPagination           : true,
+        contentType             : 'Tasks',
+        totalCollectionLengthUrl: '/totalCollectionLength/Tasks',
+        // formUrl                 : "#easyErp/Tasks/form/",
 
         events: {
             'click td:not(:has("input[type="checkbox"]"))': 'goToEditDialog',
@@ -44,7 +49,7 @@ define([
             this.page = options.collection.page;
             this.contentCollection = ContentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         goToProject: function (e) {
@@ -81,7 +86,7 @@ define([
             model.fetch({
                 data   : {id: id, viewType: 'form'},
                 success: function (newModel) {
-                    return new EditView({model: newModel});
+                    new EditView({model: newModel});
                 },
 
                 error: function () {
@@ -236,10 +241,10 @@ define([
                 itemView.trigger('incomingStages', stages);
             });
 
-            this.renderFilter();
-            this.renderPagination($currentEl, this);
+            // this.renderFilter();
+            // this.renderPagination($currentEl, this);
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }
 
     });

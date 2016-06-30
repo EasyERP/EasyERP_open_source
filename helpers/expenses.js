@@ -21,13 +21,13 @@ module.exports = function(models){
         }
 
         function getResult(filter, callback) {
-            if (filter && typeof filter === 'object') {
+            /*if (filter && typeof filter === 'object') {
                 if (filter.condition && filter.condition === 'or') {
                     queryObject['$or'] = caseFilter(filter);
                 } else {
                     queryObject['$and'] = caseFilter(filter);
                 }
-            }
+            }*/
 
             query = PayRoll.find(queryObject);
 
