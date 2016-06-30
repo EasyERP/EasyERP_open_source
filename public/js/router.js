@@ -873,6 +873,10 @@ define([
                     count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 }
 
+                if (!filter || _.isEmpty(filter)) {
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+                    filter = JSON.stringify(filter);
+                }
 
                 if (!filter) {
 
@@ -911,8 +915,7 @@ define([
                 }
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection;
-
-                    filter = !_.isEmpty(filter) ? filter : custom.getDefSavedFilterForCT(contentType);
+                    
                     App.filtersObject.filter = filter;
                     
                     collection = new contentCollection({
@@ -1182,6 +1185,11 @@ define([
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
 
+                if (!filter || _.isEmpty(filter)) {
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+                    filter = JSON.stringify(filter);
+                }
+
                 if (!filter) {
                     if (contentType === 'salesProduct') {
                         filter = {
@@ -1221,8 +1229,6 @@ define([
 
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection;
-                    
-                    filter = !_.isEmpty(filter) ? filter : custom.getDefSavedFilterForCT(contentType);
 
                     App.filtersObject.filter = filter;
 

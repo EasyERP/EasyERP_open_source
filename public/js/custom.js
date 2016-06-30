@@ -250,19 +250,19 @@ define([
 
         // for default filter && defaultViewType
         /*if (option && option.contentType && App.filtersObject.savedFilters[option.contentType]) {
-            savedFilter = App.filtersObject.savedFilters[option.contentType];
+         savedFilter = App.filtersObject.savedFilters[option.contentType];
 
-            for (j = savedFilter.length - 1; j >= 0; j--) {
-                if (savedFilter[j]) {
-                    if (savedFilter[j].byDefault === option.contentType) {
+         for (j = savedFilter.length - 1; j >= 0; j--) {
+         if (savedFilter[j]) {
+         if (savedFilter[j].byDefault === option.contentType) {
 
-                        if (savedFilter[j].viewType) {
-                            viewType = savedFilter[j].viewType;
-                        }
-                    }
-                }
-            }
-        }*/
+         if (savedFilter[j].viewType) {
+         viewType = savedFilter[j].viewType;
+         }
+         }
+         }
+         }
+         }*/
 
         return viewType;
     };
@@ -499,6 +499,17 @@ define([
         return defSavedFilterValues;
     };
 
+    var getSavedFilterForCT = function (contentType) {
+        var savedFilterName = App.storage.find(contentType + '.savedFilter');
+        var object = App.filtersObject;
+        var savedFiltersObject = object && object.savedFilters ? object.savedFilters[contentType] : [];
+        var savedFilters = savedFiltersObject && savedFiltersObject.length ? savedFiltersObject[0].filter : [];
+        var savedFilter = _.findWhere(savedFilters, {name: savedFilterName});
+        var savedFilterValues = savedFilter ? savedFilter.filters : null;
+
+        return savedFilterValues;
+    };
+
     App.storage = new Store();
 
     return {
@@ -516,6 +527,7 @@ define([
         getFilterById           : getFilterById,
         getWeeks                : getWeeks,
         getFiltersValues        : getFiltersValues,
-        getDefSavedFilterForCT  : getDefSavedFilterForCT
+        getDefSavedFilterForCT  : getDefSavedFilterForCT,
+        getSavedFilterForCT     : getSavedFilterForCT
     };
 });
