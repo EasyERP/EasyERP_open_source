@@ -873,12 +873,14 @@ define([
                     count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 }
 
-                if (!filter || _.isEmpty(filter)) {
-                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
-                    filter = JSON.stringify(filter);
-                }
-
                 if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
 
                     if (contentType === 'salesProduct') {
                         filter = {
@@ -915,7 +917,7 @@ define([
                 }
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection;
-                    
+
                     App.filtersObject.filter = filter;
                     
                     collection = new contentCollection({
@@ -1185,12 +1187,16 @@ define([
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
 
-                if (!filter || _.isEmpty(filter)) {
-                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
-                    filter = JSON.stringify(filter);
-                }
 
                 if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
+
                     if (contentType === 'salesProduct') {
                         filter = {
                             canBeSold: {
