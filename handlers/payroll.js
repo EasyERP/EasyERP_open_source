@@ -334,6 +334,58 @@ var Module = function (models) {
         });
     }
 
+    function getById(req, res, next) {
+        var data = req.query;
+        var Payroll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
+        var id = data.id;
+        var queryObject = {_id: ObjectId(id)};
+
+        Payroll.aggregate([{
+            $match: queryObject
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'employee',
+                foreignField: '_id',
+                as          : 'employee'
+            }
+        }, {
+            $project: {
+                employee  : {$arrayElemAt: ['$employee', 0]},
+                ID        : 1,
+                year      : 1,
+                month     : 1,
+                dataKey   : 1,
+                earnings  : 1,
+                deductions: 1,
+                paid      : 1,
+                diff      : 1,
+                date      : 1,
+                status    : 1
+            }
+        }, {
+            $project: {
+                'employee._id' : 1,
+                'employee.name': 1,
+                ID             : 1,
+                year           : 1,
+                month          : 1,
+                dataKey        : 1,
+                earnings       : 1,
+                deductions     : 1,
+                paid           : 1,
+                diff           : 1,
+                date           : 1,
+                status         : 1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
+    }
+
     this.getForView = function (req, res, next) {
         var query = req.query;
         var id = req.params.id;
@@ -344,7 +396,11 @@ var Module = function (models) {
         }
 
         if (query.id || id) {
-            getByDataKey(req, res, next);
+            if (query.id && (query.id.length >= 24)) {
+                getById(req, res, next);
+            } else {
+                getByDataKey(req, res, next);
+            }
         } else {
             getForView(req, res, next);
         }

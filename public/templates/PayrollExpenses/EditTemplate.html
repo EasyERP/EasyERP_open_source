@@ -1,0 +1,75 @@
+<div class="form-holder">
+    <form method="post" action="" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="topInputHolder">
+                    <h2>Salary Slip</h2>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label>Employee</label></dt>
+                        <dd>
+                            <span data-id="<%=model.employee._id%>"><%=model.employee.name.first + ' ' + model.employee.name.last%></span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label>Month</label></dt>
+                        <dd>
+                            <span><%=model.month%></span>
+                        </dd>
+                        <dt><label>Fiscal Year</label></dt>
+                        <dd>
+                            <span><%=model.year%></span>
+                        </dd>
+                        <dt><label>Leave without Pay</label></dt>
+                        <dd>
+                            <span>26</span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+                <div class="half-block left">
+                    <span><label>Earnings</label></span>
+                    <table class="list">
+                        <thead>
+                        <tr>
+                            <td>Formula</td>
+                            <td>Amount</td>
+                        </tr>
+                        </thead>
+                        <tbody class="enableTableOdd">
+                        <%for(var i = model.earnings.length - 1; i >= 0; i--){%>
+                        <tr>
+                            <td><%=model.earnings[i].formula%></td>
+                            <td class="money"><%=model.earnings[i].amount%></td>
+                        </tr>
+                        <%}%>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="half-block left">
+                    <span><label>Deductions</label></span>
+                    <table class="list">
+                        <thead>
+                        <tr>
+                            <td>Formula</td>
+                            <td>Amount</td>
+                        </tr>
+                        </thead>
+                        <tbody class="enableTableOdd">
+                        <%for(var i = model.deductions.length - 1; i >= 0; i--){%>
+                        <tr>
+                            <td><%=model.deductions[i].formula%></td>
+                            <td class="money"><%=model.deductions[i].amount%></td>
+                        </tr>
+                        <%}%>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>
