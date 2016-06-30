@@ -5,12 +5,13 @@ define([
     'text!templates/Leads/EditTemplate.html',
     'text!templates/history.html',
     'views/dialogViewBase',
+    'views/Notes/NoteView',
     'custom',
     'common',
     'dataService',
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, historyTemplate, ParentView, Custom, common, dataService, populate, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, historyTemplate, ParentView, noteView, Custom, common, dataService, populate, CONSTANTS) {
 
     var EditView = ParentView.extend({
         el             : '#content-holder',
@@ -272,6 +273,7 @@ define([
             });
             var self = this;
             var model = this.currentModel.toJSON();
+            var notDiv;
 
             var that = this; // DO NOT confuse with "self" below! it's other context!
 
@@ -302,6 +304,15 @@ define([
             self.renderHistory();
 
             this.renderAssignees(this.currentModel);
+
+            notDiv = this.$el.find('.attach-container');
+
+            notDiv.append(
+                new noteView({
+                    model      : this.currentModel,
+                    contentType: 'Opportunities'
+                }).render().el
+            );
 
             dataService.getData('/leads/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {
@@ -380,7 +391,7 @@ define([
                     $(this).dialog('close');
                 }
             }, this);
-
+/*
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     $('.groupsAndUser').show();
@@ -394,7 +405,7 @@ define([
                     });
 
                 }
-            }
+            }*/
             return this;
         }
 

@@ -7,7 +7,6 @@
     'text!templates/Opportunities/editSelectTemplate.html',
     'text!templates/history.html',
     'views/Notes/NoteView',
-    'views/Notes/AttachView',
     'common',
     'custom',
     'populate',
@@ -22,7 +21,6 @@
              editSelectTemplate,
              historyTemplate,
              noteView,
-             AttachView,
              common,
              custom,
              populate,
@@ -448,12 +446,6 @@
             });
 
             notDiv = this.$el.find('.attach-container');
-            /*notDiv.append(
-                new AttachView({
-                    model      : this.currentModel,
-                    contentType: 'Opportunities'
-                }).render().el
-            );*/
 
             notDiv.append(
                 new noteView({
