@@ -13,7 +13,8 @@
     </div>
     <div class="opportunity-content">
         <div class="half-block left">
-            <p class="left"><%=(model.customer) && (model.customer.name)  ? model.customer.name.first + ' ' + model.customer.name.last : ''%></p>
+            <p class="left"><%=(model.customer) && (model.customer.name) ? model.customer.name.first + ' ' +
+                model.customer.name.last : ''%></p>
 
             <p class="left"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
                 ''%></p>
@@ -22,12 +23,23 @@
 
             <p class="left" style="text-align:left;"><%=model.nextAction?model.nextAction.desc:''%> </p>
             <%}%>
+
+            <p class="left">Project Type</p>
+
+            <p class="left"><i class="fa fa-comment-o" aria-hidden="true"></i><span> </span></p>
         </div>
         <div class="half-block right">
             <%if (model.nextAction&&model.nextAction.desc){%>
             <%}%>
             <p class="right" style="text-align:right;"> <%=model.nextAction?model.nextAction.date:''%></p>
+
+            <p class="right"><a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>"
+                                class="current-selected" href="javascript:;"><%=model.projecttype?
+                model.projecttype:'Select'%></a></p>
+            <p class="right">
+                <i class="fa fa-paperclip" aria-hidden="true"></i><span> </span></p>
         </div>
+
         <div class="clearfix"></div>
     </div>
 </div>
