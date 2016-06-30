@@ -106,12 +106,13 @@ define([
                             App.filtersObject = {};
                         }
                         App.filtersObject.savedFilters = response.savedFilters;
-                    } /*else {
-                        App.render({
-                            type   : 'error',
-                            message: 'can\'t fetch currentUser'
-                        });
-                    }*/
+                    }
+                    /*else {
+                                           App.render({
+                                               type   : 'error',
+                                               message: 'can\'t fetch currentUser'
+                                           });
+                                       }*/
                 });
             }
         },
@@ -914,7 +915,7 @@ define([
 
                     filter = !_.isEmpty(filter) ? filter : custom.getDefSavedFilterForCT(contentType);
                     App.filtersObject.filter = filter;
-                    
+
                     collection = new contentCollection({
                         viewType        : 'list',
                         page            : page,
@@ -1190,9 +1191,6 @@ define([
                                 value: ['true']
                             }
                         };
-
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
                             canBePurchased: {
@@ -1200,11 +1198,8 @@ define([
                                 value: ['true']
                             }
                         };
-
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
-                } else if (filter) {
+                } else {
                     filter = JSON.parse(filter);
                 }
 
@@ -1221,7 +1216,7 @@ define([
 
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection;
-                    
+
                     filter = !_.isEmpty(filter) ? filter : custom.getDefSavedFilterForCT(contentType);
 
                     App.filtersObject.filter = filter;

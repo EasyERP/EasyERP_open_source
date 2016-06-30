@@ -16,11 +16,9 @@
     'use strict';
     var ProjectThumbnalView = BaseView.extend({
         el           : '#content-holder',
-        countPerPage : 0,
         template     : _.template(thumbnailsItemTemplate),
         newCollection: true,
-        contentType  : 'Projects', // needs in view.prototype.changeLocationHash
-        viewType     : 'thumbnails', // needs in view.prototype.changeLocationHash
+        contentType  : 'Projects',
 
         initialize: function (options) {
             $(document).off('click');

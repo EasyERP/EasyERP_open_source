@@ -28,8 +28,9 @@ define([
         },
 
         makeRender: function (options) {
-            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
             var self = this;
+
+            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
 
             this.render = _.wrap(this.render, function (render) {
                 self.beforeRender(options);

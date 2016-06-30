@@ -7,8 +7,7 @@ define([
 ], function (Backbone, $, _, NoteTemplate) {
     var NoteView = Backbone.View.extend({
 
-        initialize: function () {
-        },
+        template: _.template(NoteTemplate),
 
         events: {
             'click #noteArea'   : 'expandNote',
@@ -161,8 +160,8 @@ define([
                             }
                         });
                     }
-                    this.$el.find('#noteArea').val('');
-                    this.$el.find('#noteTitleArea').val('');
+                    /*this.$el.find('#noteArea').val('');
+                    this.$el.find('#noteTitleArea').val('');*/
                 } else {
                     return false;
                 }
@@ -172,8 +171,6 @@ define([
         showTitle: function (e) {
             $(e.target).hide().parents('.addNote').find('.title-wrapper').show().find('input').focus();
         },
-
-        template: _.template(NoteTemplate),
 
         render: function () {
             this.$el.html(this.template(this.model.toJSON()));

@@ -9,9 +9,8 @@
     'dataService',
     'models/EmployeesModel',
     'common',
-    'text!templates/Alpabet/AphabeticTemplate.html',
     'constants'
-], function ($, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, FilterView, dataService, CurrentModel, common, AphabeticTemplate, CONSTANTS) {
+], function ($, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, FilterView, dataService, CurrentModel, common, CONSTANTS) {
     'use strict';
 
     var EmployeesThumbnalView = BaseView.extend({
