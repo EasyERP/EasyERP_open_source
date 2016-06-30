@@ -69,14 +69,23 @@ define([
                     _id : 'const',
                     name: 'Constant'
                 }, {
-                    _id : 'base',
-                    name: 'base'
+                    _id : 'directWorked',
+                    name: 'directWorked'
+                }, {
+                    _id : 'idle',
+                    name: 'idle'
                 }, {
                     _id : 'overtime',
                     name: 'overtime'
                 }, {
                     _id : 'vacation',
                     name: 'vacation'
+                }, {
+                    _id : 'baseWithOvertime',
+                    name: 'baseWithOvertime'
+                }, {
+                    _id : 'base',
+                    name: 'base'
                 }
             ];
 
@@ -144,6 +153,8 @@ define([
             data.name = name;
             data.type = self.type + 's';
             data.formula = [];
+            data.minRange = $.trim($currentEl.find('#minRange').val());
+            data.maxRange = $.trim($currentEl.find('#maxRange').val());
 
             if (!name) {
                 err = 'name can\'t be empty';

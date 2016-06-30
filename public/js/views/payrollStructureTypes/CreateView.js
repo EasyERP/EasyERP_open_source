@@ -46,31 +46,31 @@ define([
             'click .fa-trash-o'                                : 'remove'
         },
 
-        /* newStructureComponent: function (component, modelComponent) {
-         var self = this;
-         var model = self.model;
-
-         if (!this.componentObject[component.type]) {
-         this.componentObject[component.type] = [];
-         }
-
-         this.componentObject[component.type].push(component);
-
-         component._id = modelComponent.id;
-
-         (model.get([component.type]))[component.id] = component;
-
-         self.renderComponents();
-         },*/
-
-        newStructureComponent: function (component) {
+        newStructureComponent: function (component, modelComponent) {
             var self = this;
             var model = self.model;
 
-            model.set(component.type, _.union(component.formula, model.get([component.type])));
+            if (!this.componentObject[component.type]) {
+                this.componentObject[component.type] = [];
+            }
+
+            this.componentObject[component.type].push(component._id || modelComponent.id);
+
+            component._id = component._id || modelComponent.id;
+
+            model.set(component.type, component.formula);
 
             self.renderComponents();
         },
+
+        /* newStructureComponent: function (component) {
+         var self = this;
+         var model = self.model;
+
+         model.set(component.type, _.union(component.formula, model.get([component.type])));
+
+         self.renderComponents();
+         },*/
 
         chooseOption: function (e) {
             var self = this;
@@ -142,8 +142,8 @@ define([
             var earnings;
             var deductions;
 
-            earnings = this.model.get('earnings');
-            deductions = this.model.get('deductions');
+            earnings = this.componentObject.earnings;
+            deductions = this.componentObject.deductions;
 
             data = {
                 name      : name,
@@ -169,6 +169,7 @@ define([
                 success: function () {
                     self.hideDialog();
                     self.eventChannel.trigger('updatePayrollStructureTypes');
+                    self.componentObject = {};
                 },
 
                 error: function (model, xhr) {
@@ -179,6 +180,7 @@ define([
 
         hideDialog: function () {
             $('.edit-dialog').remove();
+            this.componentObject = {};
         },
 
         formulaParser: function (arr) {

@@ -726,7 +726,7 @@ var Module = function (models) {
                     salary              : 1,
                     payrollStructureType: '$payrollStructureType.payrollStructureType'
                 }
-            }, {
+            }/* , {
                 $lookup: {
                     from        : 'payrollStructureTypes',
                     localField  : 'payrollStructureType',
@@ -745,7 +745,7 @@ var Module = function (models) {
                     salary              : 1,
                     payrollStructureType: '$payrollStructureType.formula'
                 }
-            }], function (err, result) {
+            }*/], function (err, result) {
                 if (err) {
                     return mainCb(err);
                 }

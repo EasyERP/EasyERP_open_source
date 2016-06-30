@@ -23,7 +23,7 @@ var Module = function (models) {
         var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
         var id = req.params.id;
 
-        payrollStructureTypes.findById(id).exec(function (err, result) {
+        payrollStructureTypes.findById(id).populate('earnings').populate('deductions').exec(function (err, result) {
             if (err) {
                 return next(err);
             }

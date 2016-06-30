@@ -8,9 +8,11 @@ module.exports = (function () {
             default: 'earnings',
             enum   : ['earnings', 'deductions']
         },
-        
+
         description: {type: String, default: ''},
-        formula    : {type: Array, default: []}
+        formula    : {type: Array, default: []},
+        minRange   : Number,
+        maxRange   : Number
     }, {collection: 'payrollComponentTypes'});
 
     mongoose.model('payrollComponentType', payrollComponentTypeSchema);

@@ -17,6 +17,7 @@ define([
         template         : _.template(EditTemplate),
         componentTemplate: _.template(componentTemplate),
         responseObj      : {},
+        componentObject  : {},
 
         events: {
             'click .fa-plus'                                   : 'create',
@@ -67,11 +68,19 @@ define([
             });
         },
 
-        newStructureComponent: function (component) {
+        newStructureComponent: function (component, modelComponent) {
             var self = this;
             var model = self.model;
 
-            model.set(component.type, _.union(component.formula, model.get([component.type])));
+            if (!this.componentObject[component.type]) {
+                this.componentObject[component.type] = [];
+            }
+
+            this.componentObject[component.type].push(component._id || modelComponent.id);
+
+            component._id = component._id || modelComponent.id;
+
+            model.set(component.type, component.formula);
 
             self.renderComponents();
         },
@@ -97,14 +106,12 @@ define([
             var model;
             var $currentEl = this.$el;
             var name = $.trim($currentEl.find('#payrollStructureName').val());
-            var $earnings = $currentEl.find('[data-id="earning"]').find('li');
-            var $deductions = $currentEl.find('[data-id="deduction"]').find('li');
             var data;
             var earnings;
             var deductions;
 
-            earnings = this.model.get('earnings');
-            deductions = this.model.get('deductions');
+            earnings = this.componentObject.earnings;
+            deductions = this.componentObject.deductions;
 
             data = {
                 name      : name,
@@ -130,6 +137,7 @@ define([
                 success: function () {
                     self.hideDialog();
                     self.eventChannel.trigger('updatePayrollStructureTypes');
+                    self.componentObject = {};
                 },
 
                 error: function (model, xhr) {
@@ -143,6 +151,8 @@ define([
             $('.add-group-dialog').remove();
             $('.add-user-dialog').remove();
             $('.crop-images-dialog').remove();
+
+            this.componentObject = {};
         },
 
         formulaParser: function (arr) {
@@ -185,8 +195,8 @@ define([
             $earningComponents.html('');
             $deductionComponents.html('');
 
-            Object.keys(model.deductions).forEach(function (deduction) {
-                arr.push(model.deductions[deduction]);
+            model.deductions.forEach(function (deduction) {
+                arr = _.union(arr, deduction.formula);
             });
 
             if (arr.length) {
@@ -195,8 +205,8 @@ define([
 
             arr = [];
 
-            Object.keys(model.earnings).forEach(function (earning) {
-                arr.push(model.earnings[earning]);
+            model.earnings.forEach(function (earning) {
+                arr = _.union(arr, earning.formula);
             });
 
             if (arr.length) {
