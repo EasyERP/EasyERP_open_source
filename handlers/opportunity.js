@@ -8,8 +8,9 @@ var Module = function (models, event) {
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
     var objectId = mongoose.Types.ObjectId;
-    
+
     var _ = require('../node_modules/underscore');
+    var moment = require('../public/js/libs/moment/moment');
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var async = require('async');
@@ -607,7 +608,7 @@ var Module = function (models, event) {
 
             var savetoDb = function (data) {
                 var err;
-                
+
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
 
@@ -825,7 +826,7 @@ var Module = function (models, event) {
             if (!data) {
                 err = new Error('Opprtunities.create Incorrect Incoming Data');
                 err.status = 400;
-                
+
                 return next(err);
             }
             savetoDb(data);
@@ -2584,6 +2585,73 @@ var Module = function (models, event) {
 
             response.data = _priority;
             res.send(response);
+        });
+    };
+
+    this.getFilteredOpportunities = function (req, res, next) {
+        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+        var contentSearcher;
+        var waterfallTasks;
+        var accessRollSearcher;
+
+
+        var optionsObject = {};
+        var data = req.query;
+        var query;
+        var days = data.days;
+        var date = moment().subtract(days, 'days').calendar();
+
+        optionsObject.$and = [];
+
+        optionsObject.$and.push({isOpportunitie: true});
+
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Opportunities, cb);
+        };
+
+        contentSearcher = function (opportunitiesIds, waterfallCallback) {
+            var queryObject = {};
+            queryObject.$and = [];
+            queryObject.$and.push({_id: {$in: opportunitiesIds}});
+
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
+            }
+            
+            queryObject.$and.push({workflow: data.workflowId});
+            queryObject.$and.push({creationDate: {$gte: date}});
+
+            query = Opportunities
+                .find(queryObject, {
+                    name           : 1,
+                    sequence       : 1,
+                    expectedRevenue: 1,
+                    customer       : 1,
+                    salesPerson    : 1,
+                    nextAction     : 1,
+                    workflow       : 1
+                })
+                .populate('customer', 'name')
+                .populate('salesPerson', 'name')
+                .populate('workflow', '_id')
+                .sort({sequence: -1})
+                .limit(req.session.kanbanSettings.opportunities.countPerPage);
+
+            query.exec(waterfallCallback);
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({
+                data      : result,
+                workflowId: data.workflowId,
+                fold      : (req.session.kanbanSettings.opportunities.foldWorkflows && req.session.kanbanSettings.opportunities.foldWorkflows.indexOf(data.workflowId.toString()) !== -1)
+            });
         });
     };
 

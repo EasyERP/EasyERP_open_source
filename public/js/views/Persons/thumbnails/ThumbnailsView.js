@@ -78,6 +78,7 @@
             var $currentEl = this.$el;
 
             $currentEl.html('');
+            $currentEl.append('<div id="searchContainer"></div>');
 
             if (this.collection.length > 0) {
                 $currentEl.append(this.template({collection: this.collection.toJSON()}));

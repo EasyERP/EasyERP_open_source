@@ -42,10 +42,11 @@
         viewType         : 'kanban',
 
         events: {
-            'dblclick .item'    : 'gotoEditForm',
-            'click .item'       : 'selectItem',
-            'click .column.fold': 'foldUnfoldKanban',
-            'click .fold-unfold': 'foldUnfoldKanban'
+            'dblclick .item'             : 'gotoEditForm',
+            'click .item'                : 'selectItem',
+            'click .column.fold'         : 'foldUnfoldKanban',
+            'click .fold-unfold'         : 'foldUnfoldKanban',
+            'click .choseDateRange .item': 'fetchFilteredOpportunities'
         },
 
         columnTotalLength: null,
@@ -250,14 +251,37 @@
             });
         },
 
+        fetchFilteredOpportunities: function (e) {
+            var $targetEl = $(e.target);
+            var $parent = $targetEl.closest('.choseDateRange');
+            var days = $targetEl.data('day');
+            var workflows = this.workflowsCollection.models;
+            var filter = {};
+
+            $parent.find('.active').removeClass('active');
+            $targetEl.addClass('active');
+
+           var url = '/opportunities/getFilteredOpportunities/';
+
+            _.each(workflows, function (wfModel) {
+                filter.workflowId = wfModel.attributes._id;
+                filter.viewType = 'kanban';
+                filter.days = days;
+                dataService.getData(url, filter, this.asyncRender, this);
+            }, this);
+
+        },
+
         asyncFetc: function (workflows, filter) {
             var url = '/Opportunities/';
 
             filter = filter || {};
 
+
             _.each(workflows, function (wfModel) {
                 filter.workflowId = wfModel._id;
                 filter.viewType = 'kanban';
+
                 dataService.getData(url, filter, this.asyncRender, this);
             }, this);
         },
@@ -268,7 +292,6 @@
             var forContent;
             var column;
             var workflowAmount;
-
             contentCollection.set(contentCollection.parse(response));
 
             if (collection) {

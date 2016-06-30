@@ -81,6 +81,7 @@ var Module = function (models, event) {
         var invoice;
 
         function invoiceSaver(waterfallCb) {
+
             invoice = new Invoice(body);
 
             if (req.session.uId) {
@@ -669,7 +670,7 @@ var Module = function (models, event) {
         Invoice.findByIdAndUpdate(id, {
             $set: {
                 approved   : true,
-                invoiceDate: new Date(invoiceDate)
+                invoiceDate: invoiceDate
             }
         }, {new: true}, function (err, resp) {
             var parallelTask;
@@ -679,9 +680,6 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
-
-            journalEntryComposer(resp, req.session.lastDb, function () {
-            }, req.session.uId);
 
             products = resp.products;
 
@@ -695,6 +693,9 @@ var Module = function (models, event) {
 
                         session: req.session
                     };
+
+                    journalEntryComposer(resp, req.session.lastDb, function () {
+                    }, req.session.uId);
 
                     workflowHandler.getFirstForConvert(request, function (err, workflow) {
                         Invoice.update({
@@ -1005,18 +1006,19 @@ var Module = function (models, event) {
                             }
                         },
 
-                        expense    : 1,
-                        forSales   : 1,
-                        currency   : 1,
-                        paymentInfo: 1,
-                        invoiceDate: 1,
-                        name       : 1,
-                        paymentDate: 1,
-                        dueDate    : 1,
-                        approved   : 1,
-                        _type      : 1,
-                        removable  : 1,
-                        paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                        expense        : 1,
+                        forSales       : 1,
+                        currency       : 1,
+                        paymentInfo    : 1,
+                        invoiceDate    : 1,
+                        name           : 1,
+                        paymentDate    : 1,
+                        dueDate        : 1,
+                        approved       : 1,
+                        _type          : 1,
+                        removable      : 1,
+                        'editedBy.date': 1,
+                        paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
                     }
                 }, {
                     $project: {
@@ -1040,6 +1042,7 @@ var Module = function (models, event) {
                         approved         : 1,
                         _type            : 1,
                         removable        : 1,
+                        editedBy         : 1,
                         paid             : 1
                     }
                 }, {
@@ -1066,7 +1069,8 @@ var Module = function (models, event) {
                         approved   : 1,
                         _type      : 1,
                         removable  : 1,
-                        paid       : 1
+                        paid       : 1,
+                        editedBy   : 1
                     }
                 }, {
                     $match: optionsObject
@@ -1098,6 +1102,7 @@ var Module = function (models, event) {
                         // _type             : '$root._type',
                         removable         : '$root.removable',
                         paid              : '$root.paid',
+                        editedBy          : '$root.editedBy',
                         total             : 1
                     }
                 }, {

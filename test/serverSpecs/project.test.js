@@ -3,6 +3,7 @@ var expect = require('chai').expect;
 var CONSTANTS = require('../../constants/constantsTest');
 var url = 'http://localhost:8089/';
 var aggent;
+var db = 'pavlodb';
 
 describe('Project Specs', function () {
     'use strict';
@@ -17,7 +18,7 @@ describe('Project Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : db
                 })
                 .expect(200, done);
         });
@@ -214,7 +215,7 @@ describe('Project Specs', function () {
 
                     firstProject = body.data[0];
 
-                    console.log(firstProject);
+                   // console.log(firstProject);
 
                     expect(firstProject)
                         .and.to.have.property('_id')
@@ -377,7 +378,7 @@ describe('Project Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : db
                 })
                 .expect(200, done);
         });

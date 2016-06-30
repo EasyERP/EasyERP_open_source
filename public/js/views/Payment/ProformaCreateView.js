@@ -13,7 +13,8 @@ define([
     'populate',
     'dataService',
     'constants',
-    'helpers/keyValidator'
+    'helpers/keyValidator',
+    'helpers'
 ], function (Backbone,
              $,
              _,
@@ -28,7 +29,8 @@ define([
              populate,
              dataService,
              CONSTANTS,
-             keyValidator) {
+             keyValidator,
+             helpers) {
     var CreateView = Backbone.View.extend({
         el         : '#paymentHolder',
         contentType: 'Payment',
@@ -172,7 +174,7 @@ define([
                 invoice         : invoiceModel._id,
                 supplier        : supplierId,
                 paymentMethod   : paymentMethodID,
-                date            : date,
+                date            : helpers.setTimeToDate(date),
                 period          : period,
                 paymentRef      : paymentRef,
                 paidAmount      : paidAmount,

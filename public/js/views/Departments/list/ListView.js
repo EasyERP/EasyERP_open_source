@@ -34,8 +34,8 @@ define([
         },
 
         editItem: function (e) {
-
             var model = new currentModel({validate: false});
+
             model.urlRoot = '/Departments/';
             model.fetch({
                 data   : {id: $(e.target).closest('li').data('id')},

@@ -82,6 +82,14 @@ define([], function () {
             Department: {
                 view   : 'department',
                 backend: 'department._id'
+            },
+            'Sales Manager': {
+                view   : 'salesManager',
+                backend: 'salesManager._id'
+            },
+            'Project Type': {
+                view   : 'projecttype',
+                backend: 'projecttype'
             }
         },
 
@@ -612,6 +620,22 @@ define([], function () {
                 view   : 'creditAccount',
                 backend: 'journal.creditAccount._id'
             }
+        },
+        inventoryReport: {
+            Project: {
+                view   : 'project',
+                backend: 'project.name'
+            },
+
+            'Sales Manager': {
+                view   : 'salesManager',
+                backend: 'salesManager._id'
+            },
+
+            'Project Type': {
+                view   : 'type',
+                backend: 'project.projecttype'
+            }
         }
     };
 
@@ -796,7 +820,8 @@ define([], function () {
             CURRENCY_FORDD            : '/currency/getForDd',
             SUPPLIER                  : '/supplier',
             WORKFLOWS_FETCH           : '/workflows/fetch',
-            PAYMENT_AMOUNT_LEFT       : '/payment/amountLeftCalc'
+            PAYMENT_AMOUNT_LEFT       : '/payment/amountLeftCalc',
+            SALARY_REPORT             : '/salaryReport/'
         },
 
         MID: {

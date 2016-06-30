@@ -105,6 +105,7 @@
             var createdInTag;
 
             $currentEl.html('');
+            $currentEl.append('<div id="searchContainer"></div>');
             $currentEl.append(this.template({collection: this.collection.toJSON()}));
 
             self.renderFilter();

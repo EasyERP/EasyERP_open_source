@@ -595,6 +595,22 @@ var Module = function (models, event) {
                     filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                case 'creditAccount':
+                    filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'salesManager':
+                    filtrElement['salesmanager._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'project':
+                    filtrElement['project._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'type':
+                    filtrElement['project.projecttype'] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
                 // skip default;
             }
         }
@@ -3917,9 +3933,12 @@ var Module = function (models, event) {
         var paginationObject = pageHelper(query);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
-        var sortKey;
+        var filter = query.filter;
+        var filterObject = {};
         var key;
+        var sortKey;
         var i;
+        var filterArray;
 
         if (query.sort) {
             sort = {};
@@ -3949,6 +3968,14 @@ var Module = function (models, event) {
                 wfCb(null, jobs);
             });
         };
+
+        if (filter) {
+            filterArray = caseFilter(filter);
+
+            if (filterArray.length) {
+                filterObject.$and = filterArray;
+            }
+        }
 
         composeReport = function (jobs, wfCb) {
             var parallelTasks;
@@ -4041,6 +4068,8 @@ var Module = function (models, event) {
                         debit       : 1,
                         salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
+                }, {
+                    $match: filterObject
                 }, {
                     $project: {
                         _id         : 1,
@@ -4154,15 +4183,20 @@ var Module = function (models, event) {
                         debit       : 1,
                         salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
-                }, {
-                    $project: {
-                        _id         : 1,
-                        name        : 1,
-                        project     : 1,
-                        debit       : 1,
-                        salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                },
+                    {
+                        $match: filterObject
+                    },
+                    {
+                        $project: {
+                            _id         : 1,
+                            name        : 1,
+                            project     : 1,
+                            debit       : 1,
+                            salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                        }
+
                     }
-                }
                 ], function (err, result) {
                     if (err) {
                         return pCb(err);

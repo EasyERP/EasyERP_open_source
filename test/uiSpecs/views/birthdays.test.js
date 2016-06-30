@@ -233,19 +233,7 @@ define([
 
 
                 });
-
-               /* it('Try to go to the form', function () {
-                    var $readMoreBtn = listView.$el.find('.thumbnail_birthday_list > li').first().find('a');
-
-                    $readMoreBtn.click();
-
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/form/55b92ad221e4b7c40f00004d');
-                });*/
-
             });
-
         });
-
     });
-
 });

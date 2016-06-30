@@ -9,8 +9,9 @@ define([
     'views/Invoices/InvoiceProductItems',
     'views/Assignees/AssigneesView',
     'views/Payment/list/ListHeaderInvoice',
-    'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS, helpers) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -125,7 +126,7 @@ define([
                 sourceDocument       : null, // $.trim($('#source_document').val()),
                 supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
                 paymentReference     : $.trim($('#payment_reference').val()),
-                invoiceDate          : invoiceDate,
+                invoiceDate          : helpers.setTimeToDate(invoiceDate),
                 dueDate              : dueDate,
                 account              : null,
                 journal              : null,

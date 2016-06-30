@@ -9,7 +9,7 @@ describe('Filter Specs', function () {
     'use strict';
 
     describe('Filter with admin', function () {
-        this.timeout(5000);
+        this.timeout(10000);
 
         before(function (done) {
 
@@ -18,7 +18,7 @@ describe('Filter Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -72,7 +72,7 @@ describe('Filter Specs', function () {
                     expect(typeFilter)
                         .to.have.property('salesPerson')
                         .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
+                        .and.to.have.deep.property('[1].name')
                         .and.to.exist;
 
                     expect(typeFilter)
@@ -161,7 +161,7 @@ describe('Filter Specs', function () {
 
 // ------------------------ Sales Quotation  ----------------
 
-                    typeFilter = body.salesQuotation;
+                    typeFilter = body.salesQuotations;
 
                     expect(typeFilter).to.exist;
 
@@ -174,7 +174,7 @@ describe('Filter Specs', function () {
                     expect(typeFilter)
                         .to.have.property('salesManager')
                         .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
+                        .and.to.have.deep.property('[1].name')
                         .and.to.exist;
 
                     expect(typeFilter)
@@ -191,7 +191,7 @@ describe('Filter Specs', function () {
 
 // ------------------------ Sales Order  ----------------
 
-                    typeFilter = body.salesOrder;
+                    typeFilter = body.salesOrders;
 
                     expect(typeFilter).to.exist;
 
@@ -204,7 +204,7 @@ describe('Filter Specs', function () {
                     expect(typeFilter)
                         .to.have.property('salesManager')
                         .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
+                        .and.to.have.deep.property('[1].name')
                         .and.to.exist;
 
                     expect(typeFilter)
@@ -221,7 +221,7 @@ describe('Filter Specs', function () {
 
 // ------------------------ Sales Invoice  ----------------
 
-                    typeFilter = body.salesInvoice;
+                    typeFilter = body.salesInvoices;
 
                     expect(typeFilter).to.exist;
 
@@ -234,7 +234,7 @@ describe('Filter Specs', function () {
                     expect(typeFilter)
                         .to.have.property('salesPerson')
                         .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
+                        .and.to.have.deep.property('[1].name')
                         .and.to.exist;
 
                     expect(typeFilter)
@@ -264,7 +264,7 @@ describe('Filter Specs', function () {
                     expect(typeFilter)
                         .to.have.property('salesPerson')
                         .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
+                        .and.to.have.deep.property('[1].name')
                         .and.to.exist;
 
                     expect(typeFilter)
@@ -511,6 +511,30 @@ describe('Filter Specs', function () {
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
+
+//------------------------ Inventory Report -------------------
+
+                        typeFilter = body.inventoryReport;
+
+                        expect(typeFilter).to.exist;
+
+                        expect(typeFilter).to.be.instanceOf(Object)
+                            .and.to.have.property('project')
+                            .and.to.be.instanceOf(Array)
+                            .and.to.have.deep.property('[0].name')
+                            .and.to.exist;
+
+                        expect(typeFilter)
+                            .to.have.property('type')
+                            .and.to.be.instanceOf(Array)
+                            .and.to.have.deep.property('[0].name')
+                            .and.to.exist;
+
+                        expect(typeFilter)
+                            .to.have.property('salesManager')
+                            .and.to.be.instanceOf(Array)
+                            .and.to.have.deep.property('[0].name')
+                            .and.to.exist;
 
 //------------------------ Journal Entries -------------------
 

@@ -19863,7 +19863,906 @@ define([], function () {
                     name: '111101 Salary Payable'
                 }
             ]
-        }
+        },
+        inventoryReport: {
+            project     : [
+            {
+                _id: "55b92ad621e4b7c40f0006ae",
+                name: "Kikast"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00068e",
+                name: "Phidget ANE"
+            },
+            {
+                _id: "56e003948594da632689f1cd",
+                name: "Phone app"
+            },
+            {
+                _id: "56aa2cb4b4dc0d09232bd7aa",
+                name: "AngularJS - Stentle"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000691",
+                name: "Faceworks"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00067b",
+                name: "Android Help"
+            },
+            {
+                _id: "571a079eb629a41976c9ac96",
+                name: "3D Bolus (Windows)"
+            },
+            {
+                _id: "5702160eed3f15af0782f13a",
+                name: "Andreas Project 2"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000698",
+                name: "Staffd"
+            },
+            {
+                _id: "5742cb41a2d114e5561c3bcb",
+                name: "Ams Test Task"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c1",
+                name: "Ganchak Help"
+            },
+            {
+                _id: "56a23c5caa157ca50f21fae1",
+                name: "Demolition Derby"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000674",
+                name: "Win7 app tester needed"
+            },
+            {
+                _id: "56e689c75ec71b00429745a9",
+                name: "360CamSDK"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000689",
+                name: "iOS4"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006bd",
+                name: "Purple Ocean"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006d7",
+                name: "Mesa Ave"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a0",
+                name: "GetFit"
+            },
+            {
+                _id: "562ff292b03714731dd8433b",
+                name: "Appsmakerstore"
+            },
+            {
+                _id: "56b09dd8d6ef38a708dfc284",
+                name: "Vike Analytics Integration"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000671",
+                name: "Kari"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006ad",
+                name: "KX keyboard"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00069e",
+                name: "Android1"
+            },
+            {
+                _id: "57581cdf389dfb67764a4ab5",
+                name: "Project Axelior"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00065f",
+                name: "IOS/Android QA"
+            },
+            {
+                _id: "562beda846bca6e4591f4930",
+                name: "TreatMe"
+            },
+            {
+                _id: "56030dbffa3f91444e00000d",
+                name: "Firderberg"
+            },
+            {
+                _id: "55de2cd2f09cc2ec0b000053",
+                name: "Dragon Daze"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00068c",
+                name: "DRH manual"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006d5",
+                name: "Unlimited Conferencing"
+            },
+            {
+                _id: "55f55901b81672730c000011",
+                name: "WhachApp"
+            },
+            {
+                _id: "570b78a4ded5830c54206045",
+                name: "Inovation Lab"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000694",
+                name: "QA iOS Purple Ocean"
+            },
+            {
+                _id: "56dea0a5c235df7c05aa635c",
+                name: "PhotoShop app"
+            },
+            {
+                _id: "571de200d4761c212289b7dc",
+                name: "Gifted"
+            },
+            {
+                _id: "56fe645769c37d5903700b20",
+                name: "Colgate"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00067c",
+                name: "iQshop"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006cb",
+                name: "Bayzat"
+            },
+            {
+                _id: "5742abc33eb6d4c45656eead",
+                name: "My Vote today (new)"
+            },
+            {
+                _id: "56ab5ceb74d57e0d56d6bda5",
+                name: "CAPT"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c3",
+                name: "Jude"
+            },
+            {
+                _id: "566857caa3fc012a68f0d83a",
+                name: "SPS Mobile"
+            },
+            {
+                _id: "568cea4977b14bf41bf2c32c",
+                name: "LocalCollector"
+            },
+            {
+                _id: "568b85b33cce9254776f2b4c",
+                name: "FluxIOT"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006d9",
+                name: "Pilot"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a2",
+                name: "Android"
+            },
+            {
+                _id: "570b66e8c4f2c7eb532851f9",
+                name: "MyEyeDoctor"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000676",
+                name: "QA"
+            },
+            {
+                _id: "55deb95bae2b22730b000017",
+                name: "YelloDrive"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b3",
+                name: "Loyalty"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006ba",
+                name: "TocToc"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00067f",
+                name: "Player iOS/And"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000660",
+                name: "iOS1"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b7",
+                name: "Design"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000692",
+                name: "WishExpress"
+            },
+            {
+                _id: "56c431dda2cb3024468a04ee",
+                name: "Raffle Draw"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000684",
+                name: "OnSite Unibet"
+            },
+            {
+                _id: "569f5bc662d172544baf0c40",
+                name: "Gilad Nevo Bug fixing"
+            },
+            {
+                _id: "562bba6e4a431b5a5a3111fe",
+                name: "Spark"
+            },
+            {
+                _id: "56dffa45f20b938426716709",
+                name: "ESTablet web"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000667",
+                name: "PT2"
+            },
+            {
+                _id: "55cb770bfea413b50b000008",
+                name: "QualPro"
+            },
+            {
+                _id: "56304d56547f50b51d6de2bb",
+                name: "Move for Less"
+            },
+            {
+                _id: "56685d88a3fc012a68f0d854",
+                name: "Nicolas Burer Design"
+            },
+            {
+                _id: "56e292585def9136621b7800",
+                name: "Casino"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00066b",
+                name: "Nikky"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00069f",
+                name: "iOS5"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006be",
+                name: "HBO"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000668",
+                name: "Selenium IDE"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000688",
+                name: "iOS2"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000677",
+                name: "Android Tribesta"
+            },
+            {
+                _id: "56e2924a1f2850d361927dd1",
+                name: "Poems app"
+            },
+            {
+                _id: "5613b6f0c90e2fb026ce068c",
+                name: "iTacit"
+            },
+            {
+                _id: "56a89384eb2b76c70ec74d1e",
+                name: "Locappy"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00068f",
+                name: "QMR Android"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006ce",
+                name: "FlipStar Game"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c5",
+                name: "Liquivid"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000695",
+                name: "Consent APP"
+            },
+            {
+                _id: "57063f34c3a5da3e0347a4b9",
+                name: "PriceBox WEB"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000690",
+                name: "Max"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000696",
+                name: "Software Testing of Web Application"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00066d",
+                name: "LiveCasinoAndroid"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00068a",
+                name: "application regression testing"
+            },
+            {
+                _id: "55f56442b81672730c000032",
+                name: "Tinder clone"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c6",
+                name: "Demo Rocket"
+            },
+            {
+                _id: "56dff43eb07e2ad226b6893b",
+                name: "Smart360"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000687",
+                name: "iOS/Tribesta"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000693",
+                name: "WP Player"
+            },
+            {
+                _id: "575e6ac29c10be346a1619c1",
+                name: "Radioinnovation day"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b4",
+                name: "Vroup"
+            },
+            {
+                _id: "55f5728cb81672730c00006a",
+                name: "BetterIt ios"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c2",
+                name: "WP Wrapper Unibet"
+            },
+            {
+                _id: "55de2a30f09cc2ec0b00004e",
+                name: "GovMap"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00069d",
+                name: "iOS3"
+            },
+            {
+                _id: "5721d21871d367e52185bd3c",
+                name: "FlightText"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00067e",
+                name: "SoulIntentions"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006d1",
+                name: "Sales Tool"
+            },
+            {
+                _id: "566d4bc3abccac87642cb523",
+                name: "Scatch"
+            },
+            {
+                _id: "570b783725a185a8548d7d68",
+                name: "Emirate Wallet"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006bc",
+                name: "Pseudo"
+            },
+            {
+                _id: "563b95acab9698be7c9df727",
+                name: "LoginChineseTrue"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00069c",
+                name: "sTrader"
+            },
+            {
+                _id: "57150d382915f22b63c6e947",
+                name: "wp curve"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006ab",
+                name: "QMR iOS"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006d8",
+                name: "Casino Game"
+            },
+            {
+                _id: "55de1e8ef09cc2ec0b000031",
+                name: "BlueLight"
+            },
+            {
+                _id: "55f55a89b81672730c000017",
+                name: "Bimii"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000661",
+                name: "Android2"
+            },
+            {
+                _id: "55cf36d54a91e37b0b0000c2",
+                name: "Mobstar"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c9",
+                name: "spscontrol"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00066e",
+                name: "LCUpdate iOS"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a3",
+                name: "iOS dev"
+            },
+            {
+                _id: "570f3f9de3b40faf4f238ac4",
+                name: "MyVote.Today Support"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00066f",
+                name: "Oculus Player"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000685",
+                name: "Travlr"
+            },
+            {
+                _id: "563295f6c928c61d052d5003",
+                name: "WordPress Sites"
+            },
+            {
+                _id: "56abd16ac6be8658550dc6c3",
+                name: "Baccarat"
+            },
+            {
+                _id: "55cf4fc74a91e37b0b000103",
+                name: "Legal Application"
+            },
+            {
+                _id: "56afdabef5c2bcd4555cb2f8",
+                name: "Design Slots"
+            },
+            {
+                _id: "569ced3fea21e2ac7d729e18",
+                name: "MySmallCommunity"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000678",
+                name: "Appium testing"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000699",
+                name: "Tablet apps"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000686",
+                name: "Sensei"
+            },
+            {
+                _id: "573d852a07676c6435eeff3f",
+                name: "TRA Internal application"
+            },
+            {
+                _id: "56dff1b4a12a4f3c26919c91",
+                name: "EasyERP"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000680",
+                name: "CodeThreads"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000663",
+                name: "ajaxbrowser.com"
+            },
+            {
+                _id: "5715dcfa4b1f720a63ae7e9a",
+                name: "3DBolus"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00066c",
+                name: "DesignShargo"
+            },
+            {
+                _id: "57039f0353db5c9d03fc9ebe",
+                name: "DiGep"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000673",
+                name: "Q/A digital QA"
+            },
+            {
+                _id: "56e2cc9b74ac46664a83e949",
+                name: "Backoffice 2.0 Stentle"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000666",
+                name: "blow.com"
+            },
+            {
+                _id: "56618227bb8be7814fb526e5",
+                name: "Otrema WP4"
+            },
+            {
+                _id: "56ab891074d57e0d56d6be1f",
+                name: "Serial Box"
+            },
+            {
+                _id: "570b7885c05bfcd0536617c8",
+                name: "Dubai Reading"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b6",
+                name: "Shiwaforce Karma"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00067a",
+                name: "QMr and It websites testing"
+            },
+            {
+                _id: "57395a61ed85c0a23b1e10ac",
+                name: "Behance"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a7",
+                name: "couch"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006af",
+                name: "Academic Website testing"
+            },
+            {
+                _id: "56a9ef06d59a04d6225b0df6",
+                name: "UpCity"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006d3",
+                name: "HashPlay"
+            },
+            {
+                _id: "5719d4ef552b041320c6fc27",
+                name: "MyBevolution"
+            },
+            {
+                _id: "5605736c002c16436b000007",
+                name: "Stentle CSS"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a6",
+                name: "Moriser"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000669",
+                name: "Airsoft site"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c7",
+                name: "BizRate"
+            },
+            {
+                _id: "561d1c3db51032d674856acc",
+                name: "PayFever"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c0",
+                name: "TrumpT QA"
+            },
+            {
+                _id: "56d9a14f7891423e3d5b8f18",
+                name: "Habi"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b9",
+                name: "Curb testing"
+            },
+            {
+                _id: "57396de5b77243ed6040ec2d",
+                name: "OnePageCRM"
+            },
+            {
+                _id: "561ebb8cd6c741e8235f42ea",
+                name: "Bodega application"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006bb",
+                name: "MorfitRun"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b2",
+                name: "Player"
+            },
+            {
+                _id: "5747f6df5c66305667bff462",
+                name: "3D ArtistModelling"
+            },
+            {
+                _id: "56a24d5faa157ca50f21fb13",
+                name: "Water Safety App"
+            },
+            {
+                _id: "574823a1d4e3d608249c8105",
+                name: "Recovan"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000682",
+                name: "Connexus"
+            },
+            {
+                _id: "571789282c8b789c7a0bb82f",
+                name: "Richline Jewelry"
+            },
+            {
+                _id: "562bc32484deb7cb59d61b70",
+                name: "MyDrive"
+            },
+            {
+                _id: "55cf5ea04a91e37b0b00012c",
+                name: "Global Workshop"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a4",
+                name: "iOS Periop"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000665",
+                name: "YoVivo"
+            },
+            {
+                _id: "56422bfc70bbc2b740ce89f3",
+                name: "PREEME"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a8",
+                name: "sitefix"
+            },
+            {
+                _id: "5629e238129820ab5994e8c0",
+                name: "Bus Project"
+            },
+            {
+                _id: "5743ff31ecb53d4f5a261c2d",
+                name: "Hr"
+            },
+            {
+                _id: "57455e519da6ef635b97196e",
+                name: "Black Jack"
+            },
+            {
+                _id: "561253dfc90e2fb026ce064d",
+                name: "Shiwaforce Karma QA"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000683",
+                name: "Bob"
+            },
+            {
+                _id: "56e001b7622d25002676ffd3",
+                name: "Nexture site"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006a5",
+                name: "Android_evista"
+            },
+            {
+                _id: "56bc8fd2dfd8a81466e2f46b",
+                name: "WSpider"
+            },
+            {
+                _id: "55b92ad621e4b7c40f00066a",
+                name: "The Watch Enthusiast"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000672",
+                name: "DRH QA Automation"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000670",
+                name: "iRemember"
+            },
+            {
+                _id: "5732cda74b20992a37961efc",
+                name: "Sandos E-Learning"
+            },
+            {
+                _id: "569f60d162d172544baf0d58",
+                name: "Android advertisement"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b0",
+                name: "Telecom"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c8",
+                name: "PriTriever"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006ca",
+                name: "SketchTechPoints"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006d4",
+                name: "M-Government"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000662",
+                name: "QMr and It websites testing1"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006c4",
+                name: "Ibizawire"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000664",
+                name: "BelgiumHTML"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006b8",
+                name: "FindLost"
+            },
+            {
+                _id: "570b76f68f1cf7c354040535",
+                name: "online exams"
+            },
+            {
+                _id: "57568c93a4b85346765d3e30",
+                name: "Wasp Application"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000681",
+                name: "AirPort"
+            },
+            {
+                _id: "5745bd678c44e2e706f79f09",
+                name: "Juuce"
+            },
+            {
+                _id: "573311ba9a3a5ba65f140e51",
+                name: "UAEPedia"
+            },
+            {
+                _id: "57503c8fc163699f1d74fe0c",
+                name: "NotifymeBack"
+            },
+            {
+                _id: "55b92ad621e4b7c40f0006cd",
+                name: "CloudFuze"
+            },
+            {
+                _id: "55b92ad621e4b7c40f000697",
+                name: "Pilot"
+            }
+        ],
+            type        : [
+            {
+                _id: ".net",
+                name: ".net"
+            },
+            {
+                _id: "iOs",
+                name: "iOs"
+            },
+            {
+                _id: "web",
+                name: "web"
+            },
+            {
+                _id: "qa",
+                name: "qa"
+            },
+            {
+                _id: "time & material",
+                name: "time & material"
+            },
+            {
+                _id: "mixed",
+                name: "mixed"
+            },
+            {
+                _id: "android",
+                name: "android"
+            },
+            {
+                _id: "fixed",
+                name: "fixed"
+            }
+        ],
+            salesManager: [
+            {
+                _id: "56e2e83a74ac46664a83e94b",
+                name: "Yevgenia Melnyk"
+            },
+            {
+                _id: "5602a01550de7f4138000008",
+                name: "Yana Dufynets"
+            },
+            {
+                _id: "561ba8639ebb48212ea838c4",
+                name: "Nataliya Yartysh"
+            },
+            {
+                _id: "56029cc950de7f4138000005",
+                name: "Eugen Lendyel"
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000a2",
+                name: "Igor Stan"
+            },
+            {
+                _id: "56123232c90e2fb026ce064b",
+                name: "Olga Sikora"
+            },
+            {
+                _id: "561b756f9ebb48212ea838c0",
+                name: "Stanislav Romanyuk"
+            },
+            {
+                _id: "55b92ad221e4b7c40f00004a",
+                name: "Oleg Ostroverkh"
+            },
+            {
+                _id: "55b92ad221e4b7c40f000040",
+                name: "Vasiliy Almashiy"
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000cb",
+                name: "Alona Yelahina"
+            },
+            {
+                _id: "55b92ad221e4b7c40f00005f",
+                name: "Peter Voloshchuk"
+            },
+            {
+                _id: "55b92ad221e4b7c40f000063",
+                name: "Yana Gusti"
+            },
+            {
+                _id: "55b92ad221e4b7c40f00004f",
+                name: "Alex Sokhanych"
+            },
+            {
+                _id: "55b92ad221e4b7c40f00004b",
+                name: "Roland Katona"
+            },
+            {
+                _id: "55b92ad221e4b7c40f00009b",
+                name: "Larysa Popp"
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000bb",
+                name: "Igor Shepinka"
+            },
+            {
+                _id: "55b92ad221e4b7c40f0000a0",
+                name: "Ivan Bilak"
+            },
+            {
+                name: null
+            },
+            {
+                _id: "55e96ab13f3ae4fd0b000009",
+                name: "Oles Pavliuk"
+            }
+        ]
+    }
     };
 });
 

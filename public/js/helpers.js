@@ -38,11 +38,28 @@ define([
         return value.replace(/\s/g, '');
     }
 
+    function setTimeToDate(date) {
+        'use strict';
+        var newDate = new Date();
+        var hours = newDate.getHours();
+        var minutes = newDate.getMinutes();
+        var seconds = newDate.getSeconds();
+
+        date = new Date(date);
+
+        date.setHours(hours);
+        date.setMinutes(minutes);
+        date.setSeconds(seconds);
+
+        return date;
+    }
+
     return {
         minFromDates    : minFromDates,
         currencySplitter: currencySplitter,
         currencyClass   : currencyClass,
         weekSplitter    : weekSplitter,
-        spaceReplacer   : spaceReplacer
+        spaceReplacer   : spaceReplacer,
+        setTimeToDate   : setTimeToDate
     };
 });

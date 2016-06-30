@@ -120,7 +120,7 @@ define([
                         } else {
                             sum += parseFloat(model[col]);
                         }
-                    } else {
+                    } else if (model.workflow.name !== 'Cancelled') {
                         if (model.currency && model.currency.rate) {
                             sum += parseFloat(model.paymentInfo[col] / model.currency.rate);
                         } else {

@@ -216,7 +216,7 @@ define([
                     url = '/invoices/approve';
                     data = {
                         invoiceId  : proformaId,
-                        invoiceDate: invoiceDate
+                        invoiceDate: helpers.setTimeToDate(invoiceDate)
                     };
 
                     dataService.patchData(url, data, function (err, response) {
@@ -367,7 +367,7 @@ define([
                 supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                 // name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
                 // paymentReference: $.trim(this.$el.find('#payment_reference').val()),
-                invoiceDate          : invoiceDate,
+                invoiceDate          : helpers.setTimeToDate(invoiceDate),
                 dueDate              : dueDate,
                 account              : null,
                 journal              : journalId,

@@ -183,7 +183,7 @@ define([
                 project       : project,
                 deliverTo     : deliverTo,
                 products      : products,
-                orderDate     : orderDate,
+                orderDate     : helpers.setTimeToDate(orderDate),
                 expectedDate  : expectedDate,
                 destination   : destination,
                 incoterm      : incoterm,
@@ -263,25 +263,25 @@ define([
         }
 
         /* redirectAfterSave: function (content, model) {
-            var $currentEl = $('#listTableQuotation');
-            var number = $currentEl.find('.countNumber');
-            var numberLength = number.length ? number.length : 0;
-            var lastNumber = number.length ? $(number[numberLength - 1]).html() : 0;
+         var $currentEl = $('#listTableQuotation');
+         var number = $currentEl.find('.countNumber');
+         var numberLength = number.length ? number.length : 0;
+         var lastNumber = number.length ? $(number[numberLength - 1]).html() : 0;
 
-            var currentNumber = parseInt(lastNumber, 10) + 1;
+         var currentNumber = parseInt(lastNumber, 10) + 1;
 
-            content.hideDialog();
+         content.hideDialog();
 
-            this.collection.add(model);
+         this.collection.add(model);
 
-            $currentEl.append(this.templateNewRow({
-                quotation       : model.toJSON(),
-                startNumber     : currentNumber,
-                dateToLocal     : common.utcDateToLocaleDate,
-                currencySplitter: helpers.currencySplitter,
-                currencyClass   : helpers.currencyClass
-            }));
-        }*/
+         $currentEl.append(this.templateNewRow({
+         quotation       : model.toJSON(),
+         startNumber     : currentNumber,
+         dateToLocal     : common.utcDateToLocaleDate,
+         currencySplitter: helpers.currencySplitter,
+         currencyClass   : helpers.currencyClass
+         }));
+         }*/
     });
 
     return CreateView;

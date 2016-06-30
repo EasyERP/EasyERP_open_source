@@ -160,6 +160,7 @@ define([
                 this.removeTransfer.push(transferId);
             }
 
+
         },
 
         validateNumbers: function (e) {
@@ -199,13 +200,13 @@ define([
             now = common.utcDateToLocaleDate(now);
 
             newTr.attr('data-id', ++trId);
-            // newTr.attr('id', '');
             newTr.find('td').eq(2).text(now);
 
             if (contractEndReason) {
                 newTr.attr('data-content', 'fired');
                 newTr.find('td').eq(1).text('fired');
-                newTr.find('td').last().find('input').val(contractEndReason);
+                // newTr.find('td').last().find('input').val(contractEndReason);
+                newTr.find('td').last().html('<input class="editing salary statusInfo" type="text" value="' + contractEndReason + '">');
             } else {
                 newTr.attr('data-content', 'updated');
                 newTr.find('td').eq(1).text('updated');
@@ -220,7 +221,8 @@ define([
             $tr = newTr;
             salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            date = new Date();
+            dateText = $.trim($tr.find('td').eq(2).text());
+            date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             department = $tr.find('#departmentsDd').attr('data-id');
@@ -318,7 +320,11 @@ define([
                         datacontent = target.closest('td').attr('data-content');
 
                         changedAttr = self.changedModels[modelId];
-                        changedAttr[datacontent] = target.val();
+                        if (datacontent === 'date') {
+                            changedAttr[datacontent] = helpers.setTimeToDate(new Date(target.val()));
+                        } else {
+                            changedAttr[datacontent] = target.val();
+                        }
 
                         target.parent().text(target.val()).removeClass('changeContent');
                         target.remove();
@@ -431,6 +437,8 @@ define([
                         $element.text(manager);
                         $element.attr('data-id', managerId);
                     }
+
+                    changedAttr.transfered = true;
                 }
 
             } else {
@@ -548,6 +556,7 @@ define([
 
             haveSalary = !!$jobTrs.find('td[data-id="salary"]').length;
 
+
             manager = $jobTrs.find('#projectManagerDD').last().attr('data-id') || null;
             jobPosition = $jobTrs.find('#jobPositionDd').last().attr('data-id');
             department = $jobTrs.find('#departmentsDd').last().attr('data-id');
@@ -555,83 +564,7 @@ define([
             event = $jobTrs.last().attr('data-content');
             jobType = $.trim($jobTrs.last().find('#jobTypeDd').text());
             date = $.trim($jobTrs.last().find('td').eq(2).text());
-            date = date ? new Date(date) : new Date();
-
-            /* $.each($jobTrs, function (index, $tr) {
-             var $previousTr;
-
-             $tr = $thisEl.find($tr);
-             salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) : null;
-             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-             date = $.trim($tr.find('td').eq(2).text());
-             date = date ? new Date(date) : new Date();
-             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
-             department = $tr.find('#departmentsDd').attr('data-id');
-             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-             jobType = $.trim($tr.find('#jobTypeDd').text());
-             info = $tr.find('#statusInfoDd').val();
-             event = $tr.attr('data-content');
-
-             if (haveSalary) {
-
-             if (!previousDep) {
-             previousDep = department;
-             }
-
-             if (previousDep !== department) {
-             $previousTr = self.$el.find($jobTrs[index - 1]);
-
-             transferArray.push({
-             status         : 'transfer',
-             date           : moment(date).subtract(1, 'day'),
-             department     : previousDep,
-             jobPosition    : $previousTr.find('#jobPositionDd').attr('data-id') || null,
-             manager        : $previousTr.find('#projectManagerDD').attr('data-id') || null,
-             jobType        : $.trim($previousTr.find('#jobTypeDd').text()),
-             salary         : salary,
-             info           : $previousTr.find('#statusInfoDd').val(),
-             weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
-             });
-
-             previousDep = department;
-             }
-
-             transferArray.push({
-             status         : event,
-             date           : date,
-             department     : department,
-             jobPosition    : jobPosition,
-             manager        : manager,
-             jobType        : jobType,
-             salary         : salary,
-             info           : info,
-             weeklyScheduler: weeklyScheduler
-             });
-
-             if (!salary && self.isSalary) {
-             App.render({
-             type   : 'error',
-             message: 'Salary can`t be empty'
-             });
-             quit = true;
-             return false;
-             }
-             }
-
-             if (event === 'fired') {
-             date = moment(date);
-             fireArray.push(date);
-             lastFire = date.year() * 100 + date.isoWeek();
-             }
-
-             if (event === 'hired') {
-             hireArray.push(date);
-             }
-             });
-
-             transferArray = transferArray.sort(function (a, b) {
-             return a.date - b.date;
-             });*/
+            date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
 
             if (event === 'fired') {
                 date = moment(date);
@@ -720,7 +653,6 @@ define([
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
                 fire    : fireArray
-                // transfer: transferArray
             };
 
             if (!haveSalary) {
@@ -742,10 +674,30 @@ define([
 
                     var modelChanged;
                     var id;
+                    var transferNewModel;
+                    var keys;
+                    var key;
 
                     for (id in self.changedModels) {
+
                         modelChanged = self.editCollection.get(id);
                         modelChanged.changed = self.changedModels[id];
+
+                        if (self.changedModels[id].transfered) {
+                            transferNewModel = new TransferModel(modelChanged.attributes);
+                            keys = Object.keys(modelChanged.attributes);
+                            for (var i = keys.length - 1; i >= 0; i--) {
+                                key = keys[i];
+                                if (key !== '_id') {
+                                    transferNewModel.changed[key] = modelChanged.attributes[key];
+                                }
+                            }
+                            delete transferNewModel.attributes._id;
+                            delete transferNewModel._id;
+                            transferNewModel.changed.date = moment(modelChanged.changed.date).subtract(1, 'day');
+                            transferNewModel.changed.status = 'transfer';
+                            self.editCollection.add(transferNewModel);
+                        }
                     }
 
                     self.editCollection.save();
@@ -799,29 +751,6 @@ define([
                     }
                     self.hideDialog();
 
-                    /*  var modelChanged;
-                     var id;
-
-                     for (id in self.changedModels) {
-                     modelChanged = self.editCollection.get(id);
-                     modelChanged.changed = self.changedModels[id];
-                     }
-
-                     self.editCollection.save();
-
-                     if (self.removeTransfer.length) {
-                     dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
-                     if (err) {
-                     return App.render({
-                     type   : 'error',
-                     message: 'Can\'t remove items'
-                     });
-                     }
-                     });
-                     }
-
-                     self.deleteEditable();
-                     self.changedModels = {};*/
                 },
 
                 error: function (model, xhr) {
