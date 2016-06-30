@@ -14,7 +14,7 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'dendb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
 // var dbObject = mongoose.createConnection('localhost', 'production');
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
@@ -56,7 +56,7 @@ dbObject.once('open', function callback() {
             });
 
             // for delete 'transfer' field from employee collection
-            // Employees.update({_id: employee._id}, {$unset: {transfer: ''}}, {multi: true}, callback);
+             //Employees.update({_id: employee._id}, {$unset: {transfer: ''}}, {multi: true}, callback);
 
             callback();
         }, function (err) {

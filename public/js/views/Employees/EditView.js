@@ -160,7 +160,6 @@ define([
                 this.removeTransfer.push(transferId);
             }
 
-
         },
 
         validateNumbers: function (e) {
@@ -200,7 +199,7 @@ define([
             now = common.utcDateToLocaleDate(now);
 
             newTr.attr('data-id', ++trId);
-            //newTr.attr('id', '');
+            // newTr.attr('id', '');
             newTr.find('td').eq(2).text(now);
 
             if (contractEndReason) {
@@ -549,7 +548,6 @@ define([
 
             haveSalary = !!$jobTrs.find('td[data-id="salary"]').length;
 
-
             manager = $jobTrs.find('#projectManagerDD').last().attr('data-id') || null;
             jobPosition = $jobTrs.find('#jobPositionDd').last().attr('data-id');
             department = $jobTrs.find('#departmentsDd').last().attr('data-id');
@@ -801,29 +799,29 @@ define([
                     }
                     self.hideDialog();
 
-                  /*  var modelChanged;
-                    var id;
+                    /*  var modelChanged;
+                     var id;
 
-                    for (id in self.changedModels) {
-                        modelChanged = self.editCollection.get(id);
-                        modelChanged.changed = self.changedModels[id];
-                    }
+                     for (id in self.changedModels) {
+                     modelChanged = self.editCollection.get(id);
+                     modelChanged.changed = self.changedModels[id];
+                     }
 
-                    self.editCollection.save();
+                     self.editCollection.save();
 
-                    if (self.removeTransfer.length) {
-                        dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
-                            if (err) {
-                                return App.render({
-                                    type   : 'error',
-                                    message: 'Can\'t remove items'
-                                });
-                            }
-                        });
-                    }
+                     if (self.removeTransfer.length) {
+                     dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
+                     if (err) {
+                     return App.render({
+                     type   : 'error',
+                     message: 'Can\'t remove items'
+                     });
+                     }
+                     });
+                     }
 
-                    self.deleteEditable();
-                    self.changedModels = {};*/
+                     self.deleteEditable();
+                     self.changedModels = {};*/
                 },
 
                 error: function (model, xhr) {

@@ -17,14 +17,14 @@
 ], function (Backbone, $, _, EditTemplate, SelectView, AttachView, ParentView, TransferModel, EditCollection, common, populate, custom, moment, CONSTANTS, dataService) {
     'use strict';
     var EditView = ParentView.extend({
-        el         : '#content-holder',
-        contentType: 'Applications',
+        el            : '#content-holder',
+        contentType   : 'Applications',
         editCollection: null,
-        imageSrc   : '',
-        template   : _.template(EditTemplate),
+        imageSrc      : '',
+        template      : _.template(EditTemplate),
         removeTransfer: [],
 
-        initialize : function (options) {
+        initialize: function (options) {
             var isSalary;
             var transfers;
 
@@ -89,21 +89,21 @@
         },
 
         events: {
-            'click .breadcrumb a, #refuse'                     : 'changeWorkflow',
-            'change #workflowNames'                            : 'changeWorkflows',
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-            'click .current-selected'                          : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .hireEmployee'                              : 'isEmployee',
-            'click .refuseEmployee'                            : 'refuseEmployee',
-            'click td.editable'                                : 'editJob',
-            'click #update'                                    : 'addNewRow',
-            'click #jobPosition,#department,#manager,#jobType' : 'showNotification',
-            'click .fa-trash'                                  : 'deleteRow',
-            'keydown input.editing'                            : 'keyDown',
-            'change .editable '                                : 'setEditable',
-            'keyup .salary'                                    : 'validateNumbers'
+            'click .breadcrumb a, #refuse'                    : 'changeWorkflow',
+            'change #workflowNames'                           : 'changeWorkflows',
+            'mouseenter .avatar'                              : 'showEdit',
+            'mouseleave .avatar'                              : 'hideEdit',
+            'click .current-selected'                         : 'showNewSelect',
+            // 'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click .hireEmployee'                             : 'isEmployee',
+            'click .refuseEmployee'                           : 'refuseEmployee',
+            'click td.editable'                               : 'editJob',
+            'click #update'                                   : 'addNewRow',
+            'click #jobPosition,#department,#manager,#jobType': 'showNotification',
+            'click .fa-trash'                                 : 'deleteRow',
+            'keydown input.editing'                           : 'keyDown',
+            'change .editable '                               : 'setEditable',
+            'keyup .salary'                                   : 'validateNumbers'
         },
 
         keyDown: function (e) {
@@ -248,12 +248,10 @@
 
             tempContainer = ($target.text()).trim();
 
-
             if (dataContent === 'salary') {
                 $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
                 return false;
             }
-
 
             if (dataContent === 'info') {
                 $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
@@ -427,14 +425,13 @@
             return workflows;
         },
 
-        saveItem: function (e, toEmployyes) {
+        saveItem: function (e, toEmployees) {
             var weeklyScheduler;
             var currentWorkflow;
             var proposedSalary;
             var expectedSalary;
             var transferArray;
             var self = this;
-            var previousDep;
             var relatedUser;
             var dateBirthSt;
             var nationality;
@@ -460,16 +457,14 @@
             var manager;
             var $jobTrs;
             var gender;
-            var salary;
             var coach;
             var event;
             var quit;
             var data;
-            var date;
-            var info;
             var flag;
             var $el;
             var $thisEl = this.$el;
+            var salary;
 
             this.setChangedValueToModel();
 
@@ -502,7 +497,6 @@
             $jobTrs = $jobTable.find('tr.transfer');
             sourceId = $thisEl.find('#sourceDd').attr('data-id');
             viewType = custom.getCurrentVT();
-            transferArray = [];
             homeAddress = {};
             fireArray = [];
             hireArray = [];
@@ -514,113 +508,122 @@
                 homeAddress[$el.attr('name')] = $.trim($el.val());
             });
 
-           /* $.each($jobTrs, function (i, $tr) {
-                var $previousTr;
+            /* $.each($jobTrs, function (i, $tr) {
+             var $previousTr;
 
-                $tr = $($tr);
-                event = $tr.attr('data-content');
-                date = new Date($.trim($tr.find('td').eq(2).text()));
-                jobPosition = $tr.find('#jobPositionDd').attr('data-id');
-                department = $tr.find('#departmentsDd').attr('data-id');
-                weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-                manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-                info = $tr.find('#statusInfoDd').val();
-                jobType = $.trim($tr.find('#jobTypeDd').text());
-                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) : null;
+             $tr = $($tr);
+             event = $tr.attr('data-content');
+             date = new Date($.trim($tr.find('td').eq(2).text()));
+             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
+             department = $tr.find('#departmentsDd').attr('data-id');
+             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
+             info = $tr.find('#statusInfoDd').val();
+             jobType = $.trim($tr.find('#jobTypeDd').text());
+             salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) : null;
 
-                if (!previousDep) {
-                    previousDep = department;
-                }
+             if (!previousDep) {
+             previousDep = department;
+             }
 
-                if (previousDep !== department) {
-                    $previousTr = $($jobTrs[i - 1]);
+             if (previousDep !== department) {
+             $previousTr = $($jobTrs[i - 1]);
 
-                    transferArray.push({
-                        status         : 'transfer',
-                        date           : moment(date).subtract(1, 'day'),
-                        department     : previousDep,
-                        jobPosition    : $previousTr.find('#jobPositionDd').attr('data-id') || null,
-                        manager        : $previousTr.find('#projectManagerDD').attr('data-id') || null,
-                        jobType        : $.trim($previousTr.find('#jobTypeDd').text()),
-                        salary         : salary,
-                        info           : $previousTr.find('#statusInfoDd').val(),
-                        weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
-                    });
+             transferArray.push({
+             status         : 'transfer',
+             date           : moment(date).subtract(1, 'day'),
+             department     : previousDep,
+             jobPosition    : $previousTr.find('#jobPositionDd').attr('data-id') || null,
+             manager        : $previousTr.find('#projectManagerDD').attr('data-id') || null,
+             jobType        : $.trim($previousTr.find('#jobTypeDd').text()),
+             salary         : salary,
+             info           : $previousTr.find('#statusInfoDd').val(),
+             weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
+             });
 
-                    previousDep = department;
-                }
+             previousDep = department;
+             }
 
-                transferArray.push({
-                    status         : event,
-                    date           : date,
-                    department     : department,
-                    jobPosition    : jobPosition,
-                    manager        : manager,
-                    jobType        : jobType,
-                    salary         : salary,
-                    info           : info,
-                    weeklyScheduler: weeklyScheduler
-                });
+             transferArray.push({
+             status         : event,
+             date           : date,
+             department     : department,
+             jobPosition    : jobPosition,
+             manager        : manager,
+             jobType        : jobType,
+             salary         : salary,
+             info           : info,
+             weeklyScheduler: weeklyScheduler
+             });
 
-                if ((salary === null) && self.isSalary) {
-                    App.render({
-                        type   : 'error',
-                        message: 'Salary can`t be empty'
-                    });
-                    quit = true;
-                    return false;
-                }
+             if ((salary === null) && self.isSalary) {
+             App.render({
+             type   : 'error',
+             message: 'Salary can`t be empty'
+             });
+             quit = true;
+             return false;
+             }
 
-                if (event === 'fired') {
-                    date = moment(date);
-                    fireArray.push(date);
-                    lastFire = date.year() * 100 + date.isoWeek();
-                }
+             if (event === 'fired') {
+             date = moment(date);
+             fireArray.push(date);
+             lastFire = date.year() * 100 + date.isoWeek();
+             }
 
-                if (event === 'hired') {
-                    hireArray.push(date);
-                }
-            });*/
+             if (event === 'hired') {
+             hireArray.push(date);
+             }
+             });*/
 
             if (quit) {
                 return;
             }
 
-           /* transferArray = transferArray.sort(function (a, b) {
-                return a.date - b.date;
-            });
+            /* transferArray = transferArray.sort(function (a, b) {
+             return a.date - b.date;
+             });
 
-            if (!transferArray.length) {
-                $el = $thisEl.find('.edit-employee-info');
-                position = $.trim($el.find('#jobPositionDd').text());
-                jobType = $.trim($el.find('#jobTypeDd').text());
-                jobPosition = $el.find('#jobPositionDd').attr('data-id');
-                weeklyScheduler = $el.find('#weeklySchedulerDd').attr('data-id');
-                department = $el.find('#departmentsDd').attr('data-id');
-                manager = $el.find('#projectManagerDD').attr('data-id');
-                expectedSalary = parseInt($.trim($el.find('#expectedSalary').val()), 10) || 0;
-                salary = parseInt($.trim($el.find('#proposedSalary').val()), 10) || 0;
-                proposedSalary = salary;
+             if (!transferArray.length) {
+             $el = $thisEl.find('.edit-employee-info');
+             position = $.trim($el.find('#jobPositionDd').text());
+             jobType = $.trim($el.find('#jobTypeDd').text());
+             jobPosition = $el.find('#jobPositionDd').attr('data-id');
+             weeklyScheduler = $el.find('#weeklySchedulerDd').attr('data-id');
+             department = $el.find('#departmentsDd').attr('data-id');
+             manager = $el.find('#projectManagerDD').attr('data-id');
+             expectedSalary = parseInt($.trim($el.find('#expectedSalary').val()), 10) || 0;
+             salary = parseInt($.trim($el.find('#proposedSalary').val()), 10) || 0;
+             proposedSalary = salary;
 
-                if (toEmployyes) {
-                    event = 'hired';
-                    transferArray.push({
-                        status         : 'hired',
-                        date           : moment(),
-                        department     : department,
-                        jobPosition    : jobPosition,
-                        weeklyScheduler: weeklyScheduler,
-                        manager        : manager,
-                        jobType        : jobType,
-                        salary         : salary,
-                        info           : ''
-                    });
-                }
-            } else {
-                position = $.trim($jobTrs.last().find('#jobPositionDd').text());
-            }*/
+             if (toEmployyes) {
+             event = 'hired';
+             transferArray.push({
+             status         : 'hired',
+             date           : moment(),
+             department     : department,
+             jobPosition    : jobPosition,
+             weeklyScheduler: weeklyScheduler,
+             manager        : manager,
+             jobType        : jobType,
+             salary         : salary,
+             info           : ''
+             });
+             }
+             } else {
+             position = $.trim($jobTrs.last().find('#jobPositionDd').text());
+             }*/
 
-            isEmployee = (event === 'hired') || (event === 'updated');
+            isEmployee = toEmployees || false;
+
+            $el = $thisEl.find('#hireFireTable').find('tr').last();
+
+            position = $.trim($el.find('#jobPositionDd').text());
+            jobType = $.trim($el.find('#jobTypeDd').text());
+            jobPosition = $el.find('#jobPositionDd').attr('data-id');
+            weeklyScheduler = $el.find('#weeklySchedulerDd').attr('data-id');
+            department = $el.find('#departmentsDd').attr('data-id');
+            manager = $el.find('#projectManagerDD').attr('data-id');
 
             $('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -691,7 +694,7 @@
                 hire          : hireArray,
                 fire          : fireArray,
                 nextAction    : nextAction,
-               // transfer      : transferArray,
+                // transfer      : transferArray,
                 expectedSalary: expectedSalary,
                 proposedSalary: proposedSalary
             };
