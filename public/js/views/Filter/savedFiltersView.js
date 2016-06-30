@@ -127,7 +127,7 @@ define([
                         });
                 }
 
-                App.filtersObject.filter = curFilter.filters;
+                App.filtersObject.filter = $.extend({}, curFilter.filters);
 
                 App.storage.save(this.contentType + '.savedFilter', curFilter.name);
 

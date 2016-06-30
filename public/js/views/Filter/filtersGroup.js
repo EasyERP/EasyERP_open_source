@@ -33,14 +33,14 @@ define([
             this.filterType = options.filterType;
             this.filteredCollection = new FilterCollection(this.collection.toJSON(), sortOptions);
 
-            this.collection.on('change', function () {
+            this.collection.on('change reset', function () {
                 this.filteredCollection.set(this.collection.toJSON());
             }, this);
 
             this.filteredCollectionChange = _.debounce(
                 function () {
                     this.filteredCollection.sort();
-                    this.trigger('valueSelected');
+                    this.trigger('valueSelected', this.removeSavedState);
                     this.renderContent();
                 }, 700);
 
@@ -131,6 +131,8 @@ define([
                 }
             }
 
+            this.removeSavedState = true;
+
             collectionElement.set({status: elementState});
         },
 
@@ -163,6 +165,8 @@ define([
 
             var $prevPage;
             var $nextPage;
+
+            this.removeSavedState = false;
 
             this.collectionLength = this.filteredCollection.length;
             this.paginationBool = this.collectionLength > this.elementToShow;

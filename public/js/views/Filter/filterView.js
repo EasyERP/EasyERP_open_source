@@ -123,7 +123,7 @@ define([
             var self = this;
             var $target = $(e.target);
             var $forFilterContainer = $target.closest('.forFilterIcons');
-            var favouriteIconState = $forFilterContainer.find('fa.fa-star').length;
+            var favouriteIconState = $forFilterContainer.find('.fa.fa-star').length;
             var $groupEl = $target.prev();
             var filterView = $groupEl.attr('data-value');
             var $alphabetHolder = $('#startLetter');
@@ -159,7 +159,7 @@ define([
                     self.$el.find('#searchInput').empty();
 
                     if (favouriteIconState) {
-                        App.storage.remove(this.contentType + '.savedFilter');
+                        App.storage.remove(self.contentType + '.savedFilter');
                     }
                 });
             } else {
@@ -273,8 +273,10 @@ define([
                 sortOptions      : groupOptions.sort
             });
 
-            this.groupsViews[filterView].on('valueSelected', function () {
-                App.storage.remove(self.contentType + '.savedFilter');
+            this.groupsViews[filterView].on('valueSelected', function (state) {
+                if (state) {
+                    App.storage.remove(self.contentType + '.savedFilter');
+                }
                 self.setDbOnce();
                 self.showFilterIcons(App.filtersObject.filter);
             });
@@ -367,12 +369,17 @@ define([
         },
 
         showAndSelectFilter: function (options) {
+            var self = this;
             var name = options.name;
-            var triggerState = options.triggerState || false;
+            var keys = Object.keys(App.filtersObject.filter);
 
-            if (triggerState) {
-                this.trigger('filter', App.filtersObject.filter);
+            for (var key in this.currentCollection) {
+                this.currentCollection[key].reset(this.filterObject[key]);
             }
+
+            keys.forEach(function (key) {
+                self.setStatus(key);
+            });
 
             this.showFilterIcons(name);
         },
