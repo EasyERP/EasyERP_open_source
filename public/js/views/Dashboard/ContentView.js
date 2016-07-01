@@ -10,8 +10,9 @@ define([
     'common',
     'dataService',
     'helpers',
-    'moment'
-], function (Backbone, $, _, DashboardTemplate, filterValuesCollection, workflowsCollection, OpportunitiesCollection, d3, common, dataService, helpers, moment) {
+    'moment',
+    'topojson'
+], function (Backbone, $, _, DashboardTemplate, filterValuesCollection, workflowsCollection, OpportunitiesCollection, d3, common, dataService, helpers, moment, topojson) {
     var ContentView = Backbone.View.extend({
         contentType: 'Dashboard',
         actionType : 'Content',
@@ -86,6 +87,9 @@ define([
                     break;
                 case 'winLost':
                     this.renderOpportunitiesWinAndLost();
+                    break;
+                case 'salesByCountry':
+                    this.renderSalesByCountry();
                     break;
                 // skip default;
             }
@@ -187,6 +191,7 @@ define([
             self.renderOpportunitiesWinAndLost();
             self.renderOpportunitiesConversion();
             self.renderOpportunitiesAging();
+            self.renderSalesByCountry();
 
             if ($(window).width() < 1370) {
                 $('.legend-box').css('margin-top', '10px');
@@ -1863,6 +1868,97 @@ define([
                     .style('stroke', '#fff')
                     .style('stroke-width', '2');
             });
+        },
+
+        renderSalesByCountry: function (){
+            var self = this;
+            var dataUrl = '../../maps/';
+            var width = 700;
+            var height = 450;
+            var svg;
+            var g;
+            var projection = d3.geo.mercator()
+                .translate([width/2, height/1.5])
+                .scale([width/6]);
+
+            var path = d3.geo.path().projection(projection);
+
+            var zoom = d3.behavior.zoom()
+                .scaleExtent([1, 50])
+                .on("zoom", function () {
+
+                    d3.select('#wrapper div').style("opacity", 0);
+
+                    var e = d3.event,
+                        tx = Math.min(0, Math.max(e.translate[0], width - width * e.scale)),
+                        ty = Math.min(0, Math.max(e.translate[1], height - height * e.scale));
+                    zoom.translate([tx, ty]);
+                    g.attr("transform", [
+                        "translate(" + [tx, ty] + ")",
+                        "scale(" + e.scale + ")"
+                    ].join(" "));
+                });
+
+            d3.selectAll('svg.salesByCountryChart > *').remove();
+
+            svg = d3.select('svg.salesByCountryChart')
+                .attr({
+                    'width' : width,
+                    'height': height,
+                    'style' : 'background: #ACC7F2'
+                });
+
+            g = svg.append('g');
+
+            d3.json(dataUrl + 'world-110m2.json', function (error, topology) {
+
+                g.selectAll('path')
+                    .data(topojson.object(topology, topology.objects.countries)
+                        .geometries)
+                    .enter()
+                    .append("path")
+                    .attr({
+                        'd'   : path,
+                        'fill': '#F4F3EF',
+                        'id'  : function (d) {
+                            return d.id;
+                        }
+                    });
+
+                d3.csv(dataUrl + 'country-capitals.csv', function(error, data) {
+                    g.selectAll('circle')
+                        .data(data)
+                        .enter()
+                        .append('circle')
+                        .attr({
+                            'cx': function(d) {
+                                return projection([
+                                    parseFloat(d.CapitalLongitude), 
+                                    parseFloat(d.CapitalLatitude)]
+                                )[0];
+                            },
+                            'cy': function(d) {
+                                return projection([
+                                    parseFloat(d.CapitalLongitude), 
+                                    parseFloat(d.CapitalLatitude)]
+                                )[1];
+                            },
+                            'r': function(d) {
+                                if (d.CountryName === 'Faroe Islands') {
+                                    return 2;
+                                } else {
+                                    return 10;
+                                }
+                            },
+                            'fill': '#5CD1C8',
+                            'opacity': 0.75,
+                            'stroke': '#43A395',
+                            'stroke-width': 1
+                        });
+                });
+
+                g.call(zoom);
+            })
         }
     });
     return ContentView;

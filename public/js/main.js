@@ -27,6 +27,7 @@ require.config({
         constants    : 'constants',
         dateFormat   : './libs/date.format',
         d3           : './libs/d3.v3.min',
+        topojson     : './libs/topojson.v0.min/index',
         jqueryBarcode: './libs/jquery-barcode.min',
         moment       : './libs/moment/moment',
         socketio     : '/socket.io/socket.io.js'
@@ -46,11 +47,14 @@ require.config({
         imageCrop: ['jQuery'],
         spinJs   : ['jQuery'],
         Backbone : ['Underscore', 'jQuery'],
-        app      : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3'],
+        app      : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'topojson'],
         d3       : {
             exports: 'd3'
         },
-
+        topojson: {
+            deps: ['d3'],
+            exports: 'topojson'
+        },
         dateFormat: {
             exports: 'dateFormat'
         }

@@ -60,6 +60,7 @@ define([
 
         renderDepartmentsTree: function () {
             common.byDepartmentForChart(function (data) {
+                console.log(data);
                 var margin = {top: 10, right: 120, bottom: 20, left: 120};
                 var width = 800 - margin.right - margin.left;
                 var height = 1000 - margin.top - margin.bottom;
