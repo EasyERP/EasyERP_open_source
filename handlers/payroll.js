@@ -7,6 +7,7 @@ var Module = function (models) {
     var PayRollSchema = mongoose.Schemas.PayRoll;
     var EmployeeSchema = mongoose.Schemas.Employees;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
+    var VacationSchema = mongoose.Schemas.Vacation;
     var ObjectId = mongoose.Types.ObjectId;
 
     var CONSTANTS = require('../constants/mainConstants.js');
@@ -379,10 +380,47 @@ var Module = function (models) {
                 status         : 1
             }
         }], function (err, result) {
+            var employeeId;
+            var Vacation;
+            var queryObject;
+            var month;
+            var year;
+
             if (err) {
                 return next(err);
             }
-            res.status(200).send(result);
+
+            Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+            result = result && result.length ? result[0] : {};
+
+            employeeId = result.employee._id;
+            month = result.month;
+            year = result.year;
+
+            queryObject = {employee: ObjectId(employeeId),  month: month, year: year};
+
+            Vacation.aggregate([{
+                $match: queryObject
+            }, {
+                $unwind: "$vacArray"
+            }, {
+                $group: { _id: "$vacArray", sum: { $sum:1} }
+            }], function (err, resultVacArray) {
+                var obj = {};
+                if (err) {
+                    return next(err);
+                }
+
+                resultVacArray.forEach(function (el) {
+                    if (el._id !== null) {
+                        obj[el._id] = el.sum;
+                    }
+                });
+
+                result.vacArray = obj;
+
+                res.status(200).send(result);
+            });
         });
     }
 

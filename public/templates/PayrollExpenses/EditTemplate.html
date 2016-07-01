@@ -23,16 +23,36 @@
                         <dd>
                             <span><%=model.year%></span>
                         </dd>
+                        <%if (model.vacArray.V || model.vacArray.S) {%>
+                        <dt><label>Leave with Pay</label></dt>
+                        <dd>
+                            <%if (model.vacArray.V) {%>
+                            <span class="V">V</span> <span><%=model.vacArray.V || 0%></span>
+                            <br/>
+                            <%}%>
+                            <%if (model.vacArray.S) {%>
+                            <span class="S">S</span> <span><%=model.vacArray.S || 0%></span>
+                            <%}%>
+                        </dd>
+                        <%}%>
+                        <%if (model.vacArray.E || model.vacArray.P) {%>
                         <dt><label>Leave without Pay</label></dt>
                         <dd>
-                            <span>26</span>
+                            <%if (model.vacArray.E) {%>
+                            <span class="E">E</span> <span><%=model.vacArray.E || 0%></span>
+                            <br/>
+                            <%}%>
+                            <%if (model.vacArray.P) {%>
+                            <span class="P">P</span> <span><%=model.vacArray.P || 0%></span>
+                            <%}%>
                         </dd>
+                        <%}%>
                     </dl>
                 </div>
                 <div class="clearfix"></div>
                 <div class="half-block left">
-                    <span><label>Earnings</label></span>
                     <table class="list">
+                        <caption>Earnings</caption>
                         <thead>
                         <tr>
                             <td>Formula</td>
@@ -50,8 +70,8 @@
                     </table>
                 </div>
                 <div class="half-block left">
-                    <span><label>Deductions</label></span>
                     <table class="list">
+                        <caption>Deductions</caption>
                         <thead>
                         <tr>
                             <td>Formula</td>

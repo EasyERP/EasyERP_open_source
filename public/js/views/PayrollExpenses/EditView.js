@@ -22,7 +22,8 @@ define([
 
         render: function (options) {
             var self = this;
-            var model = options.model.toJSON()[0];
+            var model = options.model.toJSON();
+
             var dialog = this.template({
                 model: model
             });
