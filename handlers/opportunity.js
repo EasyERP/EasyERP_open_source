@@ -1881,7 +1881,7 @@ var Module = function (models, event) {
                             }
                         }
 
-                        res.status(200).send({success: 'Opportunities updated success', result: result});
+                        res.status(200).send({success: 'Opportunities updated success', result: result, notes: data.notes});
                     });
                 });
             });
