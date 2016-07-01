@@ -41,6 +41,12 @@
                         return attachment;
                     });
                 }
+                if (response.notes) {
+                    _.map(response.notes, function (note) {
+                        note.date = common.utcDateToLocaleDate(note.date);
+                        return note;
+                    });
+                }
                 if (response.hire) {
                     response.hire = _.map(response.hire, function (hire) {
                         return common.utcDateToLocaleDate(hire);

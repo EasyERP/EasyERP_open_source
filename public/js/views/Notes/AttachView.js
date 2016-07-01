@@ -23,27 +23,16 @@ define([
             template: _.template(AttachTemplate),
 
             addAttach: function (event) {
-                var $thisEl = this.$el;
-                var $attachContainer = $thisEl.find('.attachContainer');
-                var $inputAttach = $thisEl.find('.input-file .inputAttach');
-                var files;
                 var s;
-                var i;
-                var length;
 
                 if (this.isCreate) {
-                    $attachContainer.empty();
-                    $thisEl.find('.input-file').html('<span>Attach</span><input type="file" value="Choose File" class="inputAttach"' +
-                        ' name="attachfile" multiple="multiple">');
-
-                    files = $inputAttach[0].files;
-                    for (i = 0, length = files.length; i < length; i++) {
-                        if (!isNaN(parseInt(i, 10))) {
-                            s = files[i].name + ' (' + (files[i].size / (1024 * 1024)).toFixed(3) + ' Mb)';
-                            $attachContainer.prepend('<li class="attachFile">' +
-                                '<span class="blue">' + s + '</span>' + '<a href="javascript:;" class="deleteAttach">Delete</a></li>');
-                        }
-                    }
+                    s = this.$el.find('.inputAttach:last').val().split('\\')[this.$el.find('.inputAttach:last').val().split('\\').length - 1];
+                    this.$el.find('.attachContainer').append('<li class="attachFile">' +
+                        '<span class="blue">' + s + '</span>' +
+                        '<a href="javascript:;" class="deleteAttach">Delete</a></li>'
+                    );
+                    this.$el.find('.attachContainer .attachFile:last').append(this.$el.find('.input-file .inputAttach').attr('hidden', 'hidden'));
+                    this.$el.find('.input-file').append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
                 } else {
                     this.sendToServer(event, null, this);
                 }

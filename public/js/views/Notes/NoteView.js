@@ -9,7 +9,7 @@ define([
     var NoteView = Backbone.View.extend({
 
         initialize: function (options) {
-            this.contentType = options.contentType
+            this.contentType = options.contentType;
         },
 
         events: {
@@ -22,7 +22,7 @@ define([
         },
 
         clickInput: function () {
-            $('.input-file .inputAttach').click();
+           this.$el.find('.input-file .inputAttach').click();
         },
 
 
@@ -184,12 +184,15 @@ define([
         template: _.template(NoteTemplate),
 
         render: function () {
+            var notDiv;
             this.$el.html(this.template(this.model.toJSON()));
+            notDiv = this.$el.find('.attachments');
 
-            this.$el.prepend(
+            notDiv.html(
                 new AttachView({
                     model      : this.model,
-                    contentType: this.contentType
+                    contentType: this.contentType,
+                    hidden     : true
                 }).render().el
             );
             return this;

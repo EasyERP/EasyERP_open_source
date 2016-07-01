@@ -8,8 +8,9 @@ define([
     'common',
     'populate',
     'dataService',
+    'views/Notes/AttachView',
     'constants'
-], function (Backbone, $, _, CreateTemplate, ParentView, LeadModel, common, populate, dataService, CONSTANTS) {
+], function (Backbone, $, _, CreateTemplate, ParentView, LeadModel, common, populate, dataService, AttachView, CONSTANTS) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -25,7 +26,12 @@ define([
         },
 
         events: {
-            'change #workflowNames': 'changeWorkflows'
+            'change #workflowNames': 'changeWorkflows',
+            'click .fa-paperclip': 'clickInput'
+        },
+
+        clickInput: function () {
+            this.$el.find('.input-file .inputAttach').click();
         },
 
         selectCustomer: function (id) {
@@ -142,12 +148,23 @@ define([
             var LI = $.trim(this.$el.find('#LI').val());
             var FB = $.trim(this.$el.find('#FB').val());
 
+
             var source = $('#sourceDd').data('id');
 
             var usersId = [];
             var groupsId = [];
+            var notes =[];
+            var note;
 
             var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+            if (internalNotes){
+                note = {
+                    title: '',
+                    note : internalNotes
+                };
+                notes.push(note);
+            }
+
             if (pageSplited) {
                 afterPage = pageSplited.split('/')[1];
                 location = location.split('/p=')[0] + '/p=1' + '/' + afterPage;
@@ -186,7 +203,7 @@ define([
                 phones       : phones,
                 fax          : fax,
                 priority     : priority,
-                internalNotes: internalNotes,
+                notes        : notes,
                 active       : active,
                 optout       : optout,
                 reffered     : reffered,
@@ -202,10 +219,14 @@ define([
                 headers: {
                     mid: mid
                 },
-                success: function () {
-                    self.hideDialog();
+
+                success: function (model) {
+                    var currentModel = model.changed;
+
+                    self.attachView.sendToServer(null, currentModel);
+                    /*self.hideDialog();
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate(location, {trigger: true});
+                    Backbone.history.navigate(location, {trigger: true});*/
                     // Backbone.history.navigate('easyErp/users', { trigger: true });
                 },
 
@@ -219,6 +240,7 @@ define([
         render: function () {
             var self = this;
             var formString = this.template();
+            var notDiv;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -246,6 +268,16 @@ define([
             });
 
             this.renderAssignees(this.model);
+
+
+            notDiv = this.$el.find('.attach-container');
+
+            this.attachView = new AttachView({
+                model      : this.model,
+                contentType: self.contentType,
+                isCreate   : true
+            });
+            notDiv.append(this.attachView.render().el);
 
             dataService.getData('/leads/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {

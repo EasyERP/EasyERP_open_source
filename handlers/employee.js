@@ -476,10 +476,22 @@ var Employee = function (event, models) {
         var employee;
         var body = req.body;
         var err;
+        var noteObj;
 
         if (body.dateBirth) {
             body.dateBirth = getDate(body.dateBirth);
             body.age = getAge(body.dateBirth);
+        }
+        if (body.notes && body.notes.length) {
+            body.notes[0]._id = mongoose.Types.ObjectId();
+            body.notes[0].date = new Date();
+        }
+        if (data.notes && data.notes.length) {
+            noteObj = data.notes[0];
+
+            noteObj._id = mongoose.Types.ObjectId();
+            noteObj.date = new Date();
+            noteObj.author = req.session.uName;
         }
 
         if (body.transfer && body.transfer.length) {
@@ -966,6 +978,7 @@ var Employee = function (event, models) {
     this.updateOnlySelectedFields = function (req, res, next) {
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
+        var remove = req.headers.remove;
         var _id = req.params.id;
         var profileId = req.session.profileId;
         var UsersSchema = mongoose.Schemas.User;
@@ -974,11 +987,25 @@ var Employee = function (event, models) {
         var data = req.body;
         var fileName = data.fileName;
         var query = {};
+        var obj;
 
         data.editedBy = {
             user: req.session.uId,
             date: new Date().toISOString()
         };
+
+        if (data.notes && data.notes.length !== 0 && !remove) {
+            obj = data.notes[data.notes.length - 1];
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+            obj.date = new Date();
+
+            if (!obj.author) {
+                obj.author = req.session.uName;
+            }
+            data.notes[data.notes.length - 1] = obj;
+        }
 
         delete data.depForTransfer;
         delete data.fileName;
