@@ -367,18 +367,58 @@ var Module = function (models) {
             }
         }, {
             $project: {
-                'employee._id' : 1,
-                'employee.name': 1,
-                ID             : 1,
-                year           : 1,
-                month          : 1,
-                dataKey        : 1,
-                earnings       : 1,
-                deductions     : 1,
-                paid           : 1,
-                diff           : 1,
-                date           : 1,
-                status         : 1
+                'employee._id'       : 1,
+                'employee.name'      : 1,
+                'employee.department': 1,
+                ID                   : 1,
+                year                 : 1,
+                month                : 1,
+                dataKey              : 1,
+                earnings             : 1,
+                deductions           : 1,
+                paid                 : 1,
+                diff                 : 1,
+                date                 : 1,
+                status               : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'employee.department',
+                foreignField: '_id',
+                as          : 'employee.department'
+            }
+        }, {
+            $project: {
+                'employee._id'       : 1,
+                'employee.name'      : 1,
+                'employee.department': {$arrayElemAt: ['$employee.department', 0]},
+                ID                   : 1,
+                year                 : 1,
+                month                : 1,
+                dataKey              : 1,
+                earnings             : 1,
+                deductions           : 1,
+                paid                 : 1,
+                diff                 : 1,
+                date                 : 1,
+                status               : 1
+            }
+        }, {
+            $project: {
+                'employee._id'       : 1,
+                'employee.name'      : 1,
+                'employee.department': '$employee.department.name',
+                ID                   : 1,
+                year                 : 1,
+                month                : 1,
+                dataKey              : 1,
+                earnings             : 1,
+                deductions           : 1,
+                paid                 : 1,
+                diff                 : 1,
+                date                 : 1,
+                status               : 1
             }
         }], function (err, result) {
             var employeeId;
@@ -401,12 +441,15 @@ var Module = function (models) {
 
             earnings = result.earnings;
             deductions = result.deductions;
+
             for (i = earnings.length - 1; i >= 0; i--) {
                 grossPay += earnings[i].amount;
             }
+
             for (i = deductions.length - 1; i >= 0; i--) {
                 totalDeduction += deductions[i].amount;
             }
+
             result.grossPay = grossPay;
             result.totalDeduction = totalDeduction;
 
@@ -419,9 +462,9 @@ var Module = function (models) {
             Vacation.aggregate([{
                 $match: queryObject
             }, {
-                $unwind: "$vacArray"
+                $unwind: '$vacArray'
             }, {
-                $group: {_id: "$vacArray", sum: {$sum: 1}}
+                $group: {_id: '$vacArray', sum: {$sum: 1}}
             }], function (err, resultVacArray) {
                 var obj = {};
                 if (err) {

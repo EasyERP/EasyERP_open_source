@@ -2,12 +2,14 @@ define([
     'Backbone',
     'Underscore',
     'jQuery',
+    'views/dialogViewBase',
     'text!templates/PayrollExpenses/EditTemplate.html',
+    'views/PayrollExpenses/form/dialogView',
     'helpers'
-], function (Backbone, _, $, template, helpers) {
+], function (Backbone, _, $, Parent, template, ReportView, helpers) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = Parent.extend({
         el         : '#content-holder',
         template   : _.template(template),
         responseObj: {},
@@ -23,6 +25,7 @@ define([
         render: function (options) {
             var self = this;
             var model = options.model.toJSON();
+            var $journalDiv;
 
             var dialog = this.template({
                 model           : model,
@@ -33,7 +36,7 @@ define([
 
             this.$el = $(dialog).dialog({
                 dialogClass: 'reportDialog',
-                width      : 900,
+                width      : 1200,
                 title      : 'Report',
                 buttons    : {
                     cancel: {
@@ -48,6 +51,16 @@ define([
 
             this.delegateEvents(this.events);
             App.stopPreload();
+
+            $journalDiv = this.$el.find('#journalEntries');
+
+            $journalDiv.append(
+                new ReportView({
+                    _id    : model.employee._id,
+                    dataKey: model.dataKey,
+                    el     : $journalDiv
+                })
+            );
 
             return this;
         }

@@ -45,7 +45,7 @@ define([
             click                                     : 'removeNewSelect',
             'click .diff'                             : 'newPayment',
             'click .oe_sortable'                      : 'goSort',
-            'click .expand'                           : 'renderDialogView',
+           // 'click .expand'                           : 'renderDialogView',
             'click .mainTr td:not(.expand, .checkbox)': 'goToForm'
         },
 
@@ -74,7 +74,7 @@ define([
             });
         },
 
-        renderDialogView: function (e) {
+        /* renderDialogView: function (e) {
             var self = this;
             var tr = $(e.target).closest('tr').find('[data-content="employee"]');
             var id = tr.attr('data-id');
@@ -82,7 +82,7 @@ define([
             App.startPreload();
 
             new ReportView({_id: id, dataKey: self.dataKey});
-        },
+        },*/
 
         recount: function () {
             var self = this;
