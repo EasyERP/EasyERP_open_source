@@ -64,9 +64,14 @@ define([
         },
 
         events: {
-            'mouseenter .avatar': 'showEdit',
-            'mouseleave .avatar': 'hideEdit',
-            'click td.editable' : 'editJob'
+            'mouseenter .avatar' : 'showEdit',
+            'mouseleave .avatar' : 'hideEdit',
+            'click td.editable'  : 'editJob',
+            'click .fa-paperclip': 'clickInput'
+        },
+
+        clickInput: function () {
+            this.$el.find('.input-file .inputAttach').click();
         },
 
         editJob: function (e) {
@@ -209,6 +214,9 @@ define([
             var $tr;
             var el;
             var $thisEl = this.$el;
+            var notes = [];
+            var note;
+            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
 
             if ($thisEl.find('.errorContent').length) {
                 return App.render({
@@ -234,6 +242,14 @@ define([
             hireArray = [];
             groupsId = [];
             usersId = [];
+
+            if (internalNotes) {
+                note = {
+                    title: '',
+                    note : internalNotes
+                };
+                notes.push(note);
+            }
 
             $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
                 el = $thisEl.find(addressLine);
@@ -314,6 +330,7 @@ define([
                     mobile: $.trim($thisEl.find('#mobile').val())
                 },
 
+                notes          : notes,
                 officeLocation : $.trim($thisEl.find('#officeLocation').val()),
                 bankAccountNo  : $.trim($thisEl.find('#bankAccountNo').val()),
                 relatedUser    : relatedUser,

@@ -2,21 +2,31 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Notes/NoteTemplate.html'
+    'text!templates/Notes/NoteTemplate.html',
+    'views/Notes/AttachView',
+    'moment'
 
-], function (Backbone, $, _, NoteTemplate) {
+], function (Backbone, $, _, NoteTemplate, AttachView, moment) {
     var NoteView = Backbone.View.extend({
 
-        initialize: function () {
+        initialize: function (options) {
+            this.contentType = options.contentType;
+            this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
         },
 
         events: {
-            'click #noteArea'   : 'expandNote',
-            'click #cancelNote' : 'cancelNote',
-            'click #addNote'    : 'saveNote',
-            'click .addTitle'   : 'showTitle',
-            'click .editDelNote': 'editDelNote'
+            'click #noteArea'    : 'expandNote',
+            'click #cancelNote'  : 'cancelNote',
+            'click #addNote'     : 'saveNote',
+            'click .addTitle'    : 'showTitle',
+            'click .editDelNote' : 'editDelNote',
+            'click .fa-paperclip': 'clickInput'
         },
+
+        clickInput: function () {
+            this.$el.find('.input-file .inputAttach').click();
+        },
+
 
         editDelNote: function (e) {
             var id = e.target.id;
@@ -176,8 +186,23 @@ define([
         template: _.template(NoteTemplate),
 
         render: function () {
-            this.$el.html(this.template(this.model.toJSON()));
+            var notDiv;
+            var modelObj = this.model.toJSON();
+
+            modelObj.needNotes = this.needNotes;
+
+            this.$el.html(this.template(modelObj));
+            notDiv = this.$el.find('.attachments');
+
+
+            notDiv.html(
+                new AttachView({
+                    model      : this.model,
+                    contentType: this.contentType
+                }).render().el
+            );
             return this;
+
         }
     });
 

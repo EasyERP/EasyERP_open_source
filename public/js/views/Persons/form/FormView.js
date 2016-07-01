@@ -309,15 +309,11 @@ define([
             this.renderMiniOpp();
             $thisEl.find('.formLeftColumn').append(
                 new NoteView({
-                    model: this.formModel
-                }).render().el
-            );
-            $thisEl.find('.formLeftColumn').append(
-                new AttachView({
-                    model      : this.formModel,
+                    model: this.formModel,
                     contentType: 'Persons'
                 }).render().el
             );
+
             $(window).on('resize', function () {
                 $('#editInput').width($('#editInput').parent().width() - 55);
 

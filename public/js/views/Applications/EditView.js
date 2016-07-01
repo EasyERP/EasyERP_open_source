@@ -4,14 +4,14 @@
     'Underscore',
     'text!templates/Applications/EditTemplate.html',
     'views/selectView/selectView',
-    'views/Notes/AttachView',
+    'views/Notes/NoteView',
     'views/dialogViewBase',
     'common',
     'populate',
     'custom',
     'moment',
     'constants'
-], function (Backbone, $, _, EditTemplate, SelectView, AttachView, ParentView, common, populate, custom, moment, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, SelectView, NoteView, ParentView, common, populate, custom, moment, CONSTANTS) {
     'use strict';
     var EditView = ParentView.extend({
         el         : '#content-holder',
@@ -767,7 +767,7 @@
 
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(
-                new AttachView({
+                new NoteView({
                     model      : this.currentModel,
                     contentType: self.contentType
                 }).render().el

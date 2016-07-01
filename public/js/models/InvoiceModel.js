@@ -1,9 +1,9 @@
 define([
     'Backbone',
     'Underscore',
-    'common',
+    'moment',
     'constants'
-], function (Backbone, _, common, CONSTANTS) {
+], function (Backbone, _, moment, CONSTANTS) {
     'use strict';
 
     var InvoiceModel = Backbone.Model.extend({
@@ -79,20 +79,34 @@ define([
                 }
 
                 if (response.invoiceDate) {
-                    response.invoiceDate = common.utcDateToLocaleDate(response.invoiceDate);
+                    response.invoiceDate = moment(response.invoiceDate).format('DD MMM, YYYY');
                 }
                 if (response.dueDate) {
-                    response.dueDate = common.utcDateToLocaleDate(response.dueDate);
+                    response.dueDate = moment(response.dueDate).format('DD MMM, YYYY');
                 }
                 if (response.paymentDate) {
-                    response.paymentDate = common.utcDateToLocaleDate(response.paymentDate);
+                    response.paymentDate = moment(response.paymentDate).format('DD MMM, YYYY');
                 }
                 if (payments && payments.length) {
                     payments = _.map(payments, function (payment) {
                         if (payment.date) {
-                            payment.date = common.utcDateToLocaleDate(payment.date);
+                            payment.date = moment(payment.date).format('DD MMM, YYYY');
                         }
                         return payment;
+                    });
+                }
+
+                if (response.notes) {
+                    _.map(response.notes, function (note) {
+                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        return note;
+                    });
+                }
+
+                if (response.attachments) {
+                    _.map(response.attachments, function (attachment) {
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
+                        return attachment;
                     });
                 }
 
