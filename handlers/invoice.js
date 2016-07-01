@@ -492,6 +492,7 @@ var Module = function (models, event) {
         var invoiceProducts;
         var invoiceJobs;
         var newDirname;
+        var obj;
 
         if (id.length < 24) {
             return res.status(400).send();
@@ -505,6 +506,22 @@ var Module = function (models, event) {
         Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
         delete data.journal;
+
+        if (data.notes && data.notes.length !== 0) {
+            obj = data.notes[data.notes.length - 1];
+
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+
+            obj.date = new Date();
+
+            if (!obj.author) {
+                obj.author = req.session.uName;
+            }
+
+            data.notes[data.notes.length - 1] = obj;
+        }
 
         if (data.fileName) {
 
