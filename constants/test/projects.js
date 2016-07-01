@@ -9332,6 +9332,300 @@ define([], function () {
         attachments: [ ],
         removable: false
     };
+    var fakeNewInvoiceById = {
+        _id: "576ba92a8e9e51e31266662a",
+        _type: "wTrackInvoice",
+        __v: 0,
+        project: {
+            _id: "55b92ad621e4b7c40f00065f",
+            paymentTerms: "55536e52475b7be475f335f6",
+            paymentMethod: "565f2e05ab70d49024242e07",
+            name: "IOS/Android QA"
+        },
+        products: [
+            {
+                unitPrice: 44400,
+                subTotal: 44400,
+                taxes: null,
+                jobs: {
+                    _id: "576a6abf9c408e7d16c3ddf7",
+                    reconcile: true,
+                    createdBy: {
+                        date: "2016-06-22T10:38:55.786Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    editedBy: {
+                        date: "2016-06-23T09:17:29.908Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    invoice: null,
+                    quotation: "576a6ac99c408e7d16c3ddfa",
+                    budget: {
+                        budget: [ ],
+                        projectValues: [ ],
+                        projectTeam: [ ]
+                    },
+                    project: "55b92ad621e4b7c40f00065f",
+                    wTracks: [ ],
+                    type: "Ordered",
+                    workflow: "56337c705d49d8d6537832eb",
+                    name: "fdgfdggf",
+                    __v: 0
+                },
+                description: "",
+                product: {
+                    _id: "5540d528dacb551c24000003",
+                    editedBy: {
+                        date: "2015-10-30T14:18:42.379Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-04-29T12:57:12.785Z",
+                        user: null
+                    },
+                    creationDate: "2015-04-29T12:57:12.785Z",
+                    groups: {
+                        group: [ ],
+                        users: [ ],
+                        owner: "560c099da5d4a2e20ba5068b"
+                    },
+                    whoCanRW: "everyOne",
+                    workflow: null,
+                    info: {
+                        description: "",
+                        barcode: "",
+                        isActive: true,
+                        salePrice: 0,
+                        productType: "Service"
+                    },
+                    name: "IT services",
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    canBePurchased: true,
+                    eventSubscription: true,
+                    canBeExpensed: true,
+                    canBeSold: true,
+                    __v: 0,
+                    accounting: {
+                        category: {
+                            name: ""
+                        }
+                    }
+                },
+                quantity: 1
+            }
+        ],
+        emailed: false,
+        approved: false,
+        removable: true,
+        invoiced: false,
+        attachments: [ ],
+        editedBy: {
+            date: "2016-06-23T09:17:29.908Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        createdBy: {
+            date: "2016-06-22T10:39:05.802Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        creationDate: "2016-06-22T10:39:05.802Z",
+        groups: {
+            group: [ ],
+            users: [ ],
+            owner: null
+        },
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "5555e54c6a3f01acae0b5564",
+            name: "Draft",
+            status: "New"
+        },
+        paymentInfo: {
+            taxes: 0,
+            unTaxed: 44400,
+            balance: 44400,
+            total: 44400
+        },
+        paymentTerms: null,
+        salesPerson: null,
+        currency: {
+            rate: 0.88169,
+            _id: {
+                _id: "565eab34aeb95fa9c0f9df2e",
+                name: "EUR",
+                sequence: 1
+            }
+        },
+        journal: "565ef6ba270f53d02ee71d65",
+        invoiceDate: "2016-06-21T21:00:00.000Z",
+        paymentReference: "PO1121",
+        sourceDocument: {
+            _id: "576a6ac99c408e7d16c3ddfa",
+            name: "PO1121"
+        },
+        supplier: {
+            _id: "55b92ad521e4b7c40f00060c",
+            name: {
+                first: "Alexey",
+                last: "Blinov"
+            }
+        },
+        forSales: true,
+        name: "PO1121"
+    };
+    var fakeApprovedInvoiceById ={
+        _id: "576ba92a8e9e51e31266662a",
+        _type: "wTrackInvoice",
+        __v: 0,
+        project: {
+            _id: "55b92ad621e4b7c40f00065f",
+            paymentTerms: "55536e52475b7be475f335f6",
+            paymentMethod: "565f2e05ab70d49024242e07",
+            name: "IOS/Android QA"
+        },
+        products: [
+            {
+                unitPrice: 44400,
+                subTotal: 44400,
+                taxes: null,
+                jobs: {
+                    _id: "576a6abf9c408e7d16c3ddf7",
+                    reconcile: true,
+                    createdBy: {
+                        date: "2016-06-22T10:38:55.786Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    editedBy: {
+                        date: "2016-06-27T07:20:27.833Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    invoice: "576ba92a8e9e51e31266662a",
+                    quotation: "576a6ac99c408e7d16c3ddfa",
+                    budget: {
+                        budget: [ ],
+                        projectValues: [ ],
+                        projectTeam: [ ]
+                    },
+                    project: "55b92ad621e4b7c40f00065f",
+                    wTracks: [ ],
+                    type: "Invoiced",
+                    workflow: "56337c675d49d8d6537832ea",
+                    name: "fdgfdggf",
+                    __v: 0
+                },
+                description: "",
+                product: {
+                    _id: "5540d528dacb551c24000003",
+                    editedBy: {
+                        date: "2015-10-30T14:18:42.379Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-04-29T12:57:12.785Z",
+                        user: null
+                    },
+                    creationDate: "2015-04-29T12:57:12.785Z",
+                    groups: {
+                        group: [ ],
+                        users: [ ],
+                        owner: "560c099da5d4a2e20ba5068b"
+                    },
+                    whoCanRW: "everyOne",
+                    workflow: null,
+                    info: {
+                        description: "",
+                        barcode: "",
+                        isActive: true,
+                        salePrice: 0,
+                        productType: "Service"
+                    },
+                    name: "IT services",
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    canBePurchased: true,
+                    eventSubscription: true,
+                    canBeExpensed: true,
+                    canBeSold: true,
+                    __v: 0,
+                    accounting: {
+                        category: {
+                            name: ""
+                        }
+                    }
+                },
+                quantity: 1
+            }
+        ],
+        emailed: false,
+        approved: true,
+        removable: true,
+        invoiced: false,
+        attachments: [ ],
+        editedBy: {
+            date: "2016-06-27T07:20:26.565Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        createdBy: {
+            date: "2016-06-22T10:39:05.802Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        creationDate: "2016-06-22T10:39:05.802Z",
+        groups: {
+            group: [ ],
+            users: [ ],
+            owner: null
+        },
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "5555e54c6a3f01acae0b5564",
+            name: "Draft",
+            status: "New"
+        },
+        paymentInfo: {
+            taxes: 0,
+            unTaxed: 44400,
+            balance: 44400,
+            total: 44400
+        },
+        paymentTerms: null,
+        salesPerson: null,
+        currency: {
+            rate: 0.882509,
+            _id: {
+                _id: "565eab34aeb95fa9c0f9df2e",
+                name: "EUR",
+                sequence: 1
+            }
+        },
+        journal: "565ef6ba270f53d02ee71d65",
+        invoiceDate: "2016-06-21T21:00:00.000Z",
+        paymentReference: "PO1121",
+        sourceDocument: {
+            _id: "576a6ac99c408e7d16c3ddfa",
+            name: "PO1121"
+        },
+        supplier: {
+            _id: "55b92ad521e4b7c40f00060c",
+            name: {
+                first: "Alexey",
+                last: "Blinov"
+            }
+        },
+        forSales: true,
+        name: "PO1121",
+        dueDate: "2016-06-23T21:00:00.000Z"
+    };
+
     var fakeBonusType = {
         total: 11,
         data: [
@@ -19237,18 +19531,18 @@ define([], function () {
     };
 
     var fakeOrderById = {
-        _id: "564cfd8da6e6390160c9f0fe",
+        _id: "576a6a929c408e7d16c3ddf6",
         __v: 0,
         proformaCounter: 0,
         editedBy: {
-            date: "2015-11-18T22:37:01.579Z",
-            user: null
+            date: "2016-06-23T10:59:43.506Z",
+            user: "52203e707d4dba8813000003"
         },
         createdBy: {
-            date: "2015-11-18T22:37:01.579Z",
-            user: null
+            date: "2016-06-22T10:38:10.833Z",
+            user: "52203e707d4dba8813000003"
         },
-        creationDate: "2015-11-18T22:37:01.579Z",
+        creationDate: "2016-06-22T10:38:10.833Z",
         groups: {
             group: [ ],
             users: [ ],
@@ -19257,42 +19551,45 @@ define([], function () {
         attachments: [ ],
         whoCanRW: "everyOne",
         workflow: {
-            _id: "55647b962e4aa3804a765ec6",
-            name: "Invoiced",
-            status: "Done"
+            _id: "55647b932e4aa3804a765ec5",
+            name: "Not Invoiced",
+            status: "New"
         },
         products: [
             {
-                scheduledDate: "2015-01-15T14:09:21.796Z",
+                scheduledDate: "",
                 jobs: {
-                    _id: "564cfd8ba6e6390160c9ee1c",
-                    name: "IOS/Android QA1-15/01/15"
+                    _id: "576a6a7b9c408e7d16c3ddf3",
+                    name: "asdasdasd"
                 },
                 description: "",
                 product: {
                     _id: "5540d528dacb551c24000003",
                     name: "IT services"
                 },
-                unitPrice: 19600,
-                subTotal: 19600,
-                taxes: 0,
-                quantity: 28
+                unitPrice: 12312300,
+                subTotal: 12312300,
+                taxes: null,
+                quantity: 1
             }
         ],
         paymentInfo: {
             taxes: 0,
-            unTaxed: 19600,
-            total: 19600
+            unTaxed: 12312300,
+            total: 12312300
         },
         paymentTerm: null,
-        invoiceRecived: true,
+        invoiceRecived: false,
         invoiceControl: null,
         incoterm: null,
         destination: null,
-        name: "PO364",
-        expectedDate: "2016-06-23T11:09:01.930Z",
-        orderDate: "2015-01-15T14:09:21.796Z",
-        deliverTo: null,
+        name: "PO1120",
+        expectedDate: "2016-06-21T21:00:00.000Z",
+        orderDate: "2016-06-21T21:00:00.000Z",
+        deliverTo: {
+            _id: "55543831d51bdef79ea0d58c",
+            name: "YourCompany"
+        },
         project: {
             _id: "55b92ad621e4b7c40f00065f",
             name: "IOS/Android QA"
@@ -19307,7 +19604,7 @@ define([], function () {
             id: "55b92ad521e4b7c40f00060c"
         },
         isOrder: true,
-        type: "Invoiced",
+        type: "Not Invoiced",
         forSales: true,
         currency: {
             rate: 1,
@@ -19670,7 +19967,302 @@ define([], function () {
             "quotation"
         ],
         visible: true
-    }
+    };
+
+    var fakeNewProforma = {
+        _id: "576bc72d0e1700973271c7e4",
+        _type: "Proforma",
+        project: {
+            _id: "55b92ad621e4b7c40f00065f",
+            paymentTerms: "55536e52475b7be475f335f6",
+            paymentMethod: "565f2e05ab70d49024242e07",
+            name: "IOS/Android QA"
+        },
+        products: [
+            {
+                unitPrice: 33300,
+                subTotal: 33300,
+                taxes: null,
+                jobs: {
+                    _id: "576a70f39c408e7d16c3ddfb",
+                    reconcile: true,
+                    createdBy: {
+                        date: "2016-06-22T11:05:23.116Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    editedBy: {
+                        date: "2016-06-24T13:19:30.372Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    invoice: null,
+                    quotation: "576bc6c90e1700973271c7e3",
+                    budget: {
+                        budget: [ ],
+                        projectValues: [ ],
+                        projectTeam: [ ]
+                    },
+                    project: "55b92ad621e4b7c40f00065f",
+                    wTracks: [ ],
+                    type: "Quoted",
+                    workflow: "56337c705d49d8d6537832eb",
+                    name: "dsfdsfdsf",
+                    __v: 0
+                },
+                description: "",
+                product: {
+                    _id: "5540d528dacb551c24000003",
+                    editedBy: {
+                        date: "2015-10-30T14:18:42.379Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-04-29T12:57:12.785Z",
+                        user: null
+                    },
+                    creationDate: "2015-04-29T12:57:12.785Z",
+                    groups: {
+                        group: [ ],
+                        users: [ ],
+                        owner: "560c099da5d4a2e20ba5068b"
+                    },
+                    whoCanRW: "everyOne",
+                    workflow: null,
+                    info: {
+                        description: "",
+                        barcode: "",
+                        isActive: true,
+                        salePrice: 0,
+                        productType: "Service"
+                    },
+                    name: "IT services",
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    canBePurchased: true,
+                    eventSubscription: true,
+                    canBeExpensed: true,
+                    canBeSold: true,
+                    __v: 0,
+                    accounting: {
+                        category: {
+                            name: ""
+                        }
+                    }
+                },
+                quantity: 1
+            }
+        ],
+        emailed: false,
+        approved: false,
+        removable: true,
+        invoiced: false,
+        attachments: [ ],
+        editedBy: {
+            date: "2016-06-24T13:19:30.184Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        createdBy: {
+            date: "2016-06-23T11:23:53.021Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        creationDate: "2016-06-23T11:23:53.021Z",
+        groups: {
+            group: [ ],
+            users: [ ],
+            owner: null
+        },
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "56fabc6b5ad5d96f4fb08eab",
+            name: "Unpaid",
+            status: "New"
+        },
+        payments: [ ],
+        paymentInfo: {
+            taxes: 0,
+            unTaxed: 33300,
+            balance: 33300,
+            total: 33300
+        },
+        paymentTerms: null,
+        salesPerson: null,
+        currency: {
+            rate: 1,
+            _id: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                name: "USD",
+                sequence: 0
+            }
+        },
+        journal: "57035e4321f9b0c4313d4146",
+        invoiceDate: "2016-06-22T21:00:00.000Z",
+        paymentReference: "PO1123",
+        sourceDocument: {
+            _id: "576bc6c90e1700973271c7e3",
+            name: "PO1123"
+        },
+        supplier: {
+            _id: "55b92ad521e4b7c40f00060c",
+            name: {
+                first: "Alexey",
+                last: "Blinov"
+            }
+        },
+        forSales: true,
+        name: "PO1123_5",
+        __v: 0
+    };
+
+    var fakeNewInvoice = {
+        _id: "576d4d7f89fb764a0ff79789",
+        _type: "wTrackInvoice",
+        __v: 0,
+        project: {
+            _id: "55b92ad621e4b7c40f00065f",
+            paymentTerms: "55536e52475b7be475f335f6",
+            paymentMethod: "565f2e05ab70d49024242e07",
+            name: "IOS/Android QA"
+        },
+        products: [
+            {
+                unitPrice: 12312300,
+                subTotal: 12312300,
+                taxes: null,
+                jobs: {
+                    _id: "576a6a7b9c408e7d16c3ddf3",
+                    reconcile: true,
+                    createdBy: {
+                        date: "2016-06-22T10:37:47.927Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    editedBy: {
+                        date: "2016-06-24T15:10:55.172Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    invoice: null,
+                    quotation: "576a6a929c408e7d16c3ddf6",
+                    budget: {
+                        budget: [ ],
+                        projectValues: [ ],
+                        projectTeam: [ ]
+                    },
+                    project: "55b92ad621e4b7c40f00065f",
+                    wTracks: [ ],
+                    type: "Ordered",
+                    workflow: "56337c705d49d8d6537832eb",
+                    name: "asdasdasd",
+                    __v: 0
+                },
+                description: "",
+                product: {
+                    _id: "5540d528dacb551c24000003",
+                    editedBy: {
+                        date: "2015-10-30T14:18:42.379Z",
+                        user: "52203e707d4dba8813000003"
+                    },
+                    createdBy: {
+                        date: "2015-04-29T12:57:12.785Z",
+                        user: null
+                    },
+                    creationDate: "2015-04-29T12:57:12.785Z",
+                    groups: {
+                        group: [ ],
+                        users: [ ],
+                        owner: "560c099da5d4a2e20ba5068b"
+                    },
+                    whoCanRW: "everyOne",
+                    workflow: null,
+                    info: {
+                        description: "",
+                        barcode: "",
+                        isActive: true,
+                        salePrice: 0,
+                        productType: "Service"
+                    },
+                    name: "IT services",
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    canBePurchased: true,
+                    eventSubscription: true,
+                    canBeExpensed: true,
+                    canBeSold: true,
+                    __v: 0,
+                    accounting: {
+                        category: {
+                            name: ""
+                        }
+                    }
+                },
+                quantity: 1
+            }
+        ],
+        emailed: false,
+        approved: false,
+        removable: true,
+        invoiced: false,
+        attachments: [ ],
+        editedBy: {
+            date: "2016-06-24T15:10:55.172Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        createdBy: {
+            date: "2016-06-22T10:38:10.833Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
+            }
+        },
+        creationDate: "2016-06-22T10:38:10.833Z",
+        groups: {
+            group: [ ],
+            users: [ ],
+            owner: null
+        },
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "5555e54c6a3f01acae0b5564",
+            name: "Draft",
+            status: "New"
+        },
+        paymentInfo: {
+            taxes: 0,
+            unTaxed: 12312300,
+            balance: 12312300,
+            total: 12312300
+        },
+        paymentTerms: null,
+        salesPerson: null,
+        currency: {
+            rate: 1,
+            _id: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                name: "USD",
+                sequence: 0
+            }
+        },
+        journal: "565ef6ba270f53d02ee71d65",
+        invoiceDate: "2016-06-21T21:00:00.000Z",
+        paymentReference: "PO1120",
+        sourceDocument: {
+            _id: "576a6a929c408e7d16c3ddf6",
+            name: "PO1120"
+        },
+        supplier: {
+            _id: "55b92ad521e4b7c40f00060c",
+            name: {
+                first: "Alexey",
+                last: "Blinov"
+            }
+        },
+        forSales: true,
+        name: "PO1120"
+    };
 
     return {
         fakeProjects                                : fakeProjects,
@@ -19708,6 +20300,10 @@ define([], function () {
         fakePaymentMethods                          : fakePaymentMethods,
         fakeProjectPositions                        : fakeProjectPositions,
         fakeOrderWorkflow                           : fakeOrderWorkflow,
-        fakeNewOrderById                            : fakeNewOrderById
+        fakeNewOrderById                            : fakeNewOrderById,
+        fakeNewProforma                             : fakeNewProforma,
+        fakeNewInvoice                              : fakeNewInvoice,
+        fakeNewInvoiceById                          : fakeNewInvoiceById,
+        fakeApprovedInvoiceById                     : fakeApprovedInvoiceById
     };
 });
