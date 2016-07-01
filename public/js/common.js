@@ -511,6 +511,13 @@
             callback(response.data);
         });
     };
+    var getSalesByCountry = function(dateRange, callback){
+        dataService.getData('/invoices/getSalesByCountry', {
+            dataRange: dataRange
+        }, function (response) {
+            callback(response.data);
+        });
+    }
     var totalInvoiceBySales = function (callback) {
         dataService.getData('revenue/totalInvoiceBySales', {}, function (response) {
             callback(response.data);
@@ -1202,6 +1209,7 @@
         getVacationForChart               : getVacationForChart,
         getEmployeesCount                 : getEmployeesCount,
         byDepartmentForChart              : byDepartmentForChart,
-        totalInvoiceBySales               : totalInvoiceBySales
+        totalInvoiceBySales               : totalInvoiceBySales,
+        getSalesByCountry                 : getSalesByCountry
     }
 });
