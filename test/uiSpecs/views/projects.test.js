@@ -247,7 +247,7 @@ define([
                             server.respond();
                             server.respond();
 
-                            fakeClock.tick(2000);
+                            fakeClock.tick(500);
 
                             $thisEl = formView.$el;
                             expect($thisEl.find('.form-holder')).to.exist;
@@ -1001,10 +1001,6 @@ define([
                     var $selectedItem;
                     var $jobSelectBtn;
                     var $currentRow;
-                    var $unitPriceTd;
-                    var $editPriceBtn;
-                    var $savePriceBtn;
-                    var $cancelPriceBtn;
                     var $priceInput;
                     var $dialog = $('.ui-dialog');
                     var $addNewItemBtn = $dialog.find('.addProductItem > a');
@@ -1040,6 +1036,43 @@ define([
 
                 });
 
+                it('try to create Proforma', function (){
+                    var $createProformaBtn;
+                    var $needItem = $thisEl.find('#quotationTable tr[data-id="576a6a929c408e7d16c3ddf6"] > td:nth-child(3)');
+                    var quotationSaveUrl = new RegExp('\/quotations\/576a6a929c408e7d16c3ddf6', 'i');
+                    var quotationFormUrl = new RegExp('\/quotations\/', 'i');
+
+                    var proformaCreateUrl = '/proforma';
+                    var proformasUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+                    var proformaFormUrl = new RegExp('\/invoices\/', 'i');
+
+                    server.respondWith('GET', quotationFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeQuotationById)]);
+                    $needItem.click();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+
+                    $createProformaBtn = $('.createProforma');
+
+                    server.respondWith('PUT', quotationSaveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('POST', proformaCreateUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({_id : '576bc72d0e1700973271c7e4'})]);
+                  //  server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrderWorkflow)]);
+
+                    server.respondWith('GET', proformasUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeProformas)]);
+                    server.respondWith('GET', proformaFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeNewProforma)]);
+                    server.respondWith('GET', '/currentDb', [200, {"Content-Type": "application/text"}, 'micheldb']);
+                    $createProformaBtn.click();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+                    $('.ui-dialog').remove();
+                });
+
 
                 it('Try to confirm Order', function () {
                     var $confirmlBtn;
@@ -1066,8 +1099,6 @@ define([
                     server.respondWith('PUT', quotationSaveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     server.respondWith('PATCH', quotationSaveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrderWorkflow)]);
-
-
 
                     server.respondWith('GET', orderFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeNewOrderById)]);
                     server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrders)]);
@@ -1218,7 +1249,45 @@ define([
                     $('.ui-dialog').remove();
 
                 });
+
+                it('try to receive Invoice', function (){
+                    var $receiveInvoice;
+                    var $needItem = $thisEl.find('#orderTable tr[data-id="576a6a929c408e7d16c3ddf6"] > td:nth-child(3)');
+                    var orderSaveUrl = new RegExp('\/orders\/576a6a929c408e7d16c3ddf6', 'i');
+                    var orderFormUrl = new RegExp('\/quotations\/', 'i');
+
+                    var invoiceCreateUrl = '/invoices/receive';
+                    var invoicesUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+                    var invoiceFormUrl = new RegExp('\/invoices\/', 'i');
+
+                    server.respondWith('GET', orderFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrderById)]);
+                    $needItem.click();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+
+                    $receiveInvoice = $('.receiveInvoice');
+
+                    server.respondWith('PUT', orderSaveUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('POST', invoiceCreateUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({_id : '576bc72d0e1700973271c7e4'})]);
+                    //  server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeOrderWorkflow)]);
+
+                    server.respondWith('GET', invoicesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeInvoice)]);
+                    server.respondWith('GET', invoiceFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeNewInvoice)]);
+                    server.respondWith('GET', '/currentDb', [200, {"Content-Type": "application/text"}, 'micheldb']);
+                    $receiveInvoice.click();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+                    $('.ui-dialog').remove();
+                });
             });
+
             describe('ProformaView', function () {
                 var server;
                 var mainSpy;
@@ -1561,6 +1630,81 @@ define([
 
                     expect($('.ui-dialog')).to.be.exist;
                     $('.ui-dialog').remove();
+
+                });
+
+                it('Try to approve Invoice', function () {
+                    var $needTd = $thisEl.find('#invoices #listTable tr[data-id="576ba92a8e9e51e31266662a"] > td:nth-child(3)');
+                    var invoiceUrl = new RegExp('\/invoices\/', 'i');
+                    var dueDate;
+                    var approveButton;
+                    var keyUpEvent = $.Event('keyup');
+
+                    server.respondWith('GET', '/currentDb', [200, {"Content-Type": "application/json"}, 'micheldb']);
+                    server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeNewInvoiceById)]);
+                    $needTd.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.be.exist;
+
+
+                    dueDate = $('.ui-dialog').find('#due_date');
+                    dueDate.val('24 Jun, 2016');
+                    dueDate.removeClass('errorContent');
+
+                    approveButton = $('.ui-dialog').find('.approve');
+
+                    server.respondWith('PATCH', invoiceUrl, [200, {"Content-Type": "application/json"},  JSON.stringify({})]);
+                //    server.respondWith('PATCH', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    approveButton.click();
+                    server.respond();
+                    server.respond();
+                    expect($('.ui-dialog')).not.to.exist;
+                });
+
+                it('Try to create Payment', function () {
+                    var $needTd = $thisEl.find('#invoices #listTable tr[data-id="576ba92a8e9e51e31266662a"] > td:nth-child(3)');
+                    var invoiceFormUrl = new RegExp('\/invoices\/', 'i');
+                    var paymentsUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/payments', 'i');
+                    var invoiceUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/invoices', 'i');
+                    var ordersUrl = new RegExp('\/projects\/55b92ad621e4b7c40f00065f\/orders', 'i');
+                    var currencyUrl = '/currency/getForDd';
+                    var createPayment;
+                    var createButton;
+
+                    server.respondWith('GET', '/currentDb', [200, {"Content-Type": "application/json"}, 'micheldb']);
+                    server.respondWith('GET', invoiceFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeApprovedInvoiceById)]);
+                    $needTd.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.be.exist;
+
+                    createPayment = $('.ui-dialog').find('.newPayment');
+
+                    server.respondWith('PATCH', invoiceFormUrl, [200, {"Content-Type": "application/json"},  JSON.stringify({})]);
+                    server.respondWith('GET', currencyUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(PROJECTS.fakeCurrency)]);
+                    //    server.respondWith('PATCH', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    createPayment.click();
+                    server.respond();
+                    server.respond();
+                    expect($('.ui-dialog').find('#createPaymentForm')).to.exist;
+
+                    server.respondWith('POST', '/payment/', [200, {"Content-Type": "application/json"},  JSON.stringify({})]);
+                    server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"},  JSON.stringify(PROJECTS.fakePayments)]);
+                    server.respondWith('GET', ordersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeOrders)]);
+                    server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProformas)]);
+                    server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeInvoice)]);
+                    createButton = $('.ui-dialog').find('#create-payment-dialog');
+                    createButton.click();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    expect($('.ui-dialog').find('#createPaymentForm')).not.to.exist;
+                    expect($thisEl.find('#paymentsTab')).to.have.class('active');
 
                 });
 
