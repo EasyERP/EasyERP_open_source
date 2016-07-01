@@ -48,7 +48,12 @@ define([
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
             'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click .fa-paperclip'                              : 'clickInput'
+        },
+
+        clickInput: function () {
+            this.$el.find('.input-file .inputAttach').click();
         },
 
         getWorkflowValue: function (value) {
@@ -156,6 +161,19 @@ define([
 
             var nextAction = $.trim($thisEl.find('#nextAction').val());
 
+            var notes = [];
+            var note;
+            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
+
+
+            if (internalNotes) {
+                note = {
+                    title: '',
+                    note : internalNotes
+                };
+                notes.push(note);
+            }
+
             $thisEl.find('dd').find('.homeAddress').each(function () {
                 var elem = $(this);
                 homeAddress[elem.attr('name')] = $.trim(elem.val());
@@ -192,6 +210,7 @@ define([
                 bankAccountNo  : bankAccountNo,
                 relatedUser    : relatedUser,
                 department     : department,
+                notes          : notes,
                 jobPosition    : jobPosition,
                 weeklyScheduler: weeklyScheduler,
                 manager        : manager,

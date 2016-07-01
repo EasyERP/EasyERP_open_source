@@ -60,6 +60,7 @@ module.exports = (function () {
         },
 
         attachments: {type: Array, default: []},
+        notes      : {type: Array, default: []},
         invoiced   : {type: Boolean, default: false},
         removable  : {type: Boolean, default: true},
         approved   : {type: Boolean, default: false},

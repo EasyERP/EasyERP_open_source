@@ -336,15 +336,10 @@
             notDiv = this.$el.find('#divForNote');
             notDiv.append(
                 new NoteView({
-                    model: this.currentModel
+                    model: this.currentModel,
+                    contentType: 'Tasks'
                 }).render().el);
 
-            this.$el.find('.attach-container').append(
-                new AttachView({
-                    model      : this.currentModel,
-                    contentType: 'Tasks'
-                }).render().el
-            );
             this.renderAssignees(this.currentModel);
 
             populate.get('#projectDd', '/projects/getForDd', {}, 'name', this);

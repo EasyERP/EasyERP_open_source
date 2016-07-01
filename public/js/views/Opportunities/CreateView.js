@@ -25,6 +25,13 @@ define([
 
             this.render();
         },
+        events    : {
+            'click .fa-paperclip': 'clickInput'
+        },
+
+        clickInput: function () {
+            this.$el.find('.input-file .inputAttach').click();
+        },
 
         chooseOption: function (e) {
             var $target = $(e.target);
