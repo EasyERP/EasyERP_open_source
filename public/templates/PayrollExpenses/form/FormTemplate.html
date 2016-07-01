@@ -1,11 +1,10 @@
 <div>
     <table class="list payRoll-list tableFixed">
-        <colgroup class="borders" span="8">
+        <colgroup class="borders" span="7">
             <col span="1" width="5%">
             <col span="1" width="5%">
             <col span="1" width="5%">
             <col span="1" width="25%">
-            <col span="1" width="15%">
             <col span="1" width="15%">
             <col span="1" width="15%">
             <col span="1" width="15%">
@@ -15,13 +14,10 @@
             <th><a id="expandAll">#</a></th>
             <th class="notForm centerCell"><input type="checkbox" class="checkAll"/></th>
             <th class="notForm centerCell">Report</th>
-            <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span
-                    class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th>Month</th>
 
-            <th class="oe_sortable" data-sort="calc">Calc<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paid">Paid<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="diff">Diff<span class="arrow down">7</span><span
@@ -33,12 +29,11 @@
             <td id="payRoll-Table" colspan="9">
                 <div class="scrollit">
                     <table class="list enable_hover tableFixed" id="payRoll-listTable">
-                        <colgroup class="borders" span="8">
+                        <colgroup class="borders" span="7">
                             <col span="1" width="5%">
                             <col span="1" width="5%">
                             <col span="1" width="5%">
                             <col span="1" width="25%">
-                            <col span="1" width="15%">
                             <col span="1" width="15%">
                             <col span="1" width="15%">
                             <col span="1" width="15%">
@@ -53,14 +48,7 @@
                             <td class="centerCell expand"><span class="centerCell fa fa-university"></span></td>
                             <td class="" data-id="<%=model.employee._id%>" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
                             <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
-
-                            <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
-                                data-cash="<%=model.calc%>">
-                                <%=currencySplitter(model.calc.toFixed(2))%>
-                            </td>
-
                             <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="autoCalc cash paid money"><%=currencySplitter(model.paid.toFixed(2))%></td>
-
                             <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
                                 <% if (model.diff < 0) { %>
                                 negativeMoney"><%=currencySplitter((model.diff * (-1)).toFixed(2))%>
@@ -68,7 +56,6 @@
                             <%} else {%>
                             money"><%=currencySplitter(model.diff.toFixed(2))%></td>
                             <%}%>
-
                         </tr>
 
                         <% }) %>

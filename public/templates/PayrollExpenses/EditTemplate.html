@@ -1,0 +1,112 @@
+<div class="form-holder">
+    <form method="post" action="" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="topInputHolder">
+                    <h2>Salary Slip</h2>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label>Employee</label></dt>
+                        <dd>
+                            <span data-id="<%=model.employee._id%>"><%=model.employee.name.first + ' ' + model.employee.name.last%></span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label>Month</label></dt>
+                        <dd>
+                            <span><%=model.month%></span>
+                        </dd>
+                        <dt><label>Fiscal Year</label></dt>
+                        <dd>
+                            <span><%=model.year%></span>
+                        </dd>
+                        <%if (model.vacArray.V || model.vacArray.S) {%>
+                        <dt><label>Leave with Pay</label></dt>
+                        <dd>
+                            <%if (model.vacArray.V) {%>
+                            <span class="V">V</span> <span><%=model.vacArray.V || 0%></span>
+                            <br/>
+                            <%}%>
+                            <%if (model.vacArray.S) {%>
+                            <span class="S">S</span> <span><%=model.vacArray.S || 0%></span>
+                            <%}%>
+                        </dd>
+                        <%}%>
+                        <%if (model.vacArray.E || model.vacArray.P) {%>
+                        <dt><label>Leave without Pay</label></dt>
+                        <dd>
+                            <%if (model.vacArray.E) {%>
+                            <span class="E">E</span> <span><%=model.vacArray.E || 0%></span>
+                            <br/>
+                            <%}%>
+                            <%if (model.vacArray.P) {%>
+                            <span class="P">P</span> <span><%=model.vacArray.P || 0%></span>
+                            <%}%>
+                        </dd>
+                        <%}%>
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+                <div class="half-block left">
+                    <table class="list">
+                        <caption>Earnings</caption>
+                        <thead>
+                        <tr>
+                            <td>Formula</td>
+                            <td>Amount</td>
+                        </tr>
+                        </thead>
+                        <tbody class="enableTableOdd">
+                        <%for(var i = model.earnings.length - 1; i >= 0; i--){%>
+                        <tr>
+                            <td><%=model.earnings[i].formula%></td>
+                            <td class="money"><%=model.earnings[i].amount%></td>
+                        </tr>
+                        <%}%>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="half-block left">
+                    <table class="list">
+                        <caption>Deductions</caption>
+                        <thead>
+                        <tr>
+                            <td>Formula</td>
+                            <td>Amount</td>
+                        </tr>
+                        </thead>
+                        <tbody class="enableTableOdd">
+                        <%for(var i = model.deductions.length - 1; i >= 0; i--){%>
+                        <tr>
+                            <td><%=model.deductions[i].formula%></td>
+                            <td class="money"><%=model.deductions[i].amount%></td>
+                        </tr>
+                        <%}%>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label>Gross Pay</label></dt>
+                        <dd>
+                            <span><%=model.grossPay%></span>
+                        </dd>
+                        <dt><label>Total Deduction</label></dt>
+                        <dd>
+                            <span><%=model.totalDeduction%></span>
+                        </dd>
+                        <dt><label>Net Pay</label></dt>
+                        <dd>
+                            <span><%=model.grossPay - model.totalDeduction%></span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

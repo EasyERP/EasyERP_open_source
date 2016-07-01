@@ -6,6 +6,7 @@ define([
     'text!templates/PayrollExpenses/form/sortTemplate.html',
     'text!templates/PayrollExpenses/form/cancelEdit.html',
     'views/PayrollExpenses/form/dialogView',
+    'views/PayrollExpenses/EditView',
     'collections/PayrollExpenses/editCollection',
     'collections/PayrollExpenses/sortCollection',
     'collections/PayrollPayments/editCollection',
@@ -19,7 +20,7 @@ define([
     'dataService',
     'async',
     'constants'
-], function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, ReportView, editCollection, sortCollection, PaymentCollection, CurrentModel, selectView, PaymentCreateView, CreateView, helpers, moment, populate, dataService, async, CONSTANTS) {
+], function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, ReportView, EditView, editCollection, sortCollection, PaymentCollection, CurrentModel, selectView, PaymentCreateView, CreateView, helpers, moment, populate, dataService, async, CONSTANTS) {
     var PayrollExpanses = Backbone.View.extend({
 
         el           : '#content-holder',
@@ -35,17 +36,42 @@ define([
         },
 
         events: {
-            'click .checkbox'        : 'checked',
-            'click td.editable'      : 'editRow',
-            'click .newSelectList li': 'chooseOption',
-            'change .autoCalc'       : 'autoCalc',
-            'change .editable'       : 'setEditable',
-            'keydown input.editing'  : 'keyDown',
-            click                    : 'removeNewSelect',
-            'click .diff'            : 'newPayment',
-            'click .oe_sortable'     : 'goSort',
-            'click .expand'          : 'renderDialogView'
+            'click .checkbox'                         : 'checked',
+            'click td.editable'                       : 'editRow',
+            'click .newSelectList li'                 : 'chooseOption',
+            'change .autoCalc'                        : 'autoCalc',
+            'change .editable'                        : 'setEditable',
+            'keydown input.editing'                   : 'keyDown',
+            click                                     : 'removeNewSelect',
+            'click .diff'                             : 'newPayment',
+            'click .oe_sortable'                      : 'goSort',
+            'click .expand'                           : 'renderDialogView',
+            'click .mainTr td:not(.expand, .checkbox)': 'goToForm'
+        },
 
+        goToForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var model = new CurrentModel();
+            var self = this;
+
+            e.preventDefault();
+
+            model.fetch({
+                data: {
+                    id: id
+                },
+
+                success: function (model) {
+                    return new EditView({model: model});
+                },
+
+                error: function () {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please refresh browser'
+                    });
+                }
+            });
         },
 
         renderDialogView: function (e) {
@@ -169,9 +195,9 @@ define([
             var $currentEl = this.$el;
             var tBody = $currentEl.find('#payRoll-TableBody');
 
-                tBody.empty();
-                $('#top-bar-deleteBtn').hide();
-                $('#checkAll').prop('checked', false);
+            tBody.empty();
+            $('#top-bar-deleteBtn').hide();
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 tBody.append(_.template(sortTemplate, {

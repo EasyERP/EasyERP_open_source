@@ -8,6 +8,7 @@ var Module = function (models) {
     var EmployeeSchema = mongoose.Schemas.Employees;
     var PayrollComponentTypeSchema = mongoose.Schemas.payrollComponentTypes;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
+    var VacationSchema = mongoose.Schemas.Vacation;
     var ObjectId = mongoose.Types.ObjectId;
 
     var CONSTANTS = require('../constants/mainConstants.js');
@@ -335,6 +336,111 @@ var Module = function (models) {
         });
     }
 
+    function getById(req, res, next) {
+        var data = req.query;
+        var Payroll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
+        var id = data.id;
+        var queryObject = {_id: ObjectId(id)};
+
+        Payroll.aggregate([{
+            $match: queryObject
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'employee',
+                foreignField: '_id',
+                as          : 'employee'
+            }
+        }, {
+            $project: {
+                employee  : {$arrayElemAt: ['$employee', 0]},
+                ID        : 1,
+                year      : 1,
+                month     : 1,
+                dataKey   : 1,
+                earnings  : 1,
+                deductions: 1,
+                paid      : 1,
+                diff      : 1,
+                date      : 1,
+                status    : 1
+            }
+        }, {
+            $project: {
+                'employee._id' : 1,
+                'employee.name': 1,
+                ID             : 1,
+                year           : 1,
+                month          : 1,
+                dataKey        : 1,
+                earnings       : 1,
+                deductions     : 1,
+                paid           : 1,
+                diff           : 1,
+                date           : 1,
+                status         : 1
+            }
+        }], function (err, result) {
+            var employeeId;
+            var Vacation;
+            var queryObject;
+            var month;
+            var year;
+            var grossPay = 0;
+            var totalDeduction = 0;
+            var i;
+            var earnings;
+            var deductions;
+
+            if (err) {
+                return next(err);
+            }
+
+            Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+            result = result && result.length ? result[0] : {};
+
+            earnings = result.earnings;
+            deductions = result.deductions;
+            for (i = earnings.length -1; i >= 0; i--) {
+                grossPay += earnings[i].amount;
+            }
+            for (i = deductions.length -1; i >= 0; i--) {
+                totalDeduction += deductions[i].amount;
+            }
+            result.grossPay = grossPay;
+            result.totalDeduction = totalDeduction;
+
+            employeeId = result.employee._id;
+            month = result.month;
+            year = result.year;
+
+            queryObject = {employee: ObjectId(employeeId),  month: month, year: year};
+
+            Vacation.aggregate([{
+                $match: queryObject
+            }, {
+                $unwind: "$vacArray"
+            }, {
+                $group: { _id: "$vacArray", sum: { $sum:1} }
+            }], function (err, resultVacArray) {
+                var obj = {};
+                if (err) {
+                    return next(err);
+                }
+
+                resultVacArray.forEach(function (el) {
+                    if (el._id !== null) {
+                        obj[el._id] = el.sum;
+                    }
+                });
+
+                result.vacArray = obj;
+
+                res.status(200).send(result);
+            });
+        });
+    }
+
     this.getForView = function (req, res, next) {
         var query = req.query;
         var id = req.params.id;
@@ -345,7 +451,11 @@ var Module = function (models) {
         }
 
         if (query.id || id) {
-            getByDataKey(req, res, next);
+            if (query.id && (query.id.length >= 24)) {
+                getById(req, res, next);
+            } else {
+                getByDataKey(req, res, next);
+            }
         } else {
             getForView(req, res, next);
         }
