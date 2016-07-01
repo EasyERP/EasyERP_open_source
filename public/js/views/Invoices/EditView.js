@@ -471,16 +471,13 @@ define([
             var dueDate;
             var paidAndNotApproved = false;
             var needNotes = false;
-            var status;
 
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
             dueDate = model.dueDate;
 
-            status = model.workflow.status;
 
-            // need to check with which statuses can add attachment and notes
-            if (status === 'New') {
+            if (!model.approved) {
                 needNotes = true;
             }
 
