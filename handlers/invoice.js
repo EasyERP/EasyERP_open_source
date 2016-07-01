@@ -155,10 +155,6 @@ var Module = function (models, event) {
                 as          : 'journalEntries'
             }
         }, {
-            $match: {
-                journalEntries: {$exists: true, $not: {$size: 0}}
-            }
-        }, {
             $project: {
                 supplier: {$arrayElemAt: ['$supplier', 0]},
                 pays    : {$sum: '$journalEntries.debit'}
