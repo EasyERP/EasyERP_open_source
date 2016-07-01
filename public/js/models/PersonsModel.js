@@ -1,10 +1,10 @@
 define([
     'Backbone',
     'Underscore',
-    'common',
+    'moment',
     'Validation',
     'constants'
-], function (Backbone, _, common, Validation, CONSTANTS) {
+], function (Backbone, _, moment, Validation, CONSTANTS) {
     'use strict';
     var PersonModel = Backbone.Model.extend({
         idAttribute: '_id',
@@ -26,24 +26,24 @@ define([
         parse: function (response) {
             if (!response.data) {
                 if (response.createdBy) {
-                    response.createdBy.date = common.utcDateToLocaleDateTime(response.createdBy.date);
+                    response.createdBy.date = moment(response.createdBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
                 if (response.editedBy) {
-                    response.editedBy.date = common.utcDateToLocaleDateTime(response.editedBy.date);
+                    response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
                 if (response.dateBirth) {
-                    response.dateBirth = common.utcDateToLocaleDate(response.dateBirth);
+                    response.dateBirth = moment(response.dateBirth).format('DD MMM, YYYY');
                 }
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = common.utcDateToLocaleDate(note.date);
+                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
                         return note;
                     });
                 }
 
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
-                        attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
                         return attachment;
                     });
                 }

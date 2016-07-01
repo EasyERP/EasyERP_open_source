@@ -3,9 +3,10 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Notes/NoteTemplate.html',
-    'views/Notes/AttachView'
+    'views/Notes/AttachView',
+    'moment'
 
-], function (Backbone, $, _, NoteTemplate, AttachView) {
+], function (Backbone, $, _, NoteTemplate, AttachView, moment) {
     var NoteView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -14,16 +15,16 @@ define([
         },
 
         events: {
-            'click #noteArea'   : 'expandNote',
-            'click #cancelNote' : 'cancelNote',
-            'click #addNote'    : 'saveNote',
-            'click .addTitle'   : 'showTitle',
-            'click .editDelNote': 'editDelNote',
+            'click #noteArea'    : 'expandNote',
+            'click #cancelNote'  : 'cancelNote',
+            'click #addNote'     : 'saveNote',
+            'click .addTitle'    : 'showTitle',
+            'click .editDelNote' : 'editDelNote',
             'click .fa-paperclip': 'clickInput'
         },
 
         clickInput: function () {
-           this.$el.find('.input-file .inputAttach').click();
+            this.$el.find('.input-file .inputAttach').click();
         },
 
 

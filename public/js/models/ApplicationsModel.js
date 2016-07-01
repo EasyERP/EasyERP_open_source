@@ -45,14 +45,14 @@
 
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = common.utcDateToLocaleDate(note.date);
+                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
                         return note;
                     });
                 }
 
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
-                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY');
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
                         return attachment;
                     });
                 }

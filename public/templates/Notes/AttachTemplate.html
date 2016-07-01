@@ -8,7 +8,7 @@
                 <% if (attachments){ attachments.reverse();
                 _.each(attachments, function(data,key){ %>
                 <li class="attachFile_<%=data['_id'] %>"><a href="download/<%=data.shortPas%>"><%=data.name %></a>
-                    (<%=data.size %>) <%=data.uploaderName %> <%=data.uploadDate %>
+                    (<%=data.size %>) <%=data.uploaderName %> <%=moment(data.uploadDate).format('DD MMM, YYYY, H:mm:ss') %>
                     <a id="<%=data['_id'] %>" href="javascript:;" class="deleteAttach">Delete</a>
                 </li>
                 <% }); attachments.reverse();} %>
