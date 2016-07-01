@@ -15,6 +15,7 @@ var _ = require('underscore');
 var async = require('async');
 var moment = require('../public/js/libs/moment/moment');
 var pageHelper = require('../helpers/pageHelper');
+var FilterMapper = require('../helpers/filterMapper');
 
 var Module = function (models, event) {
     'use strict';
@@ -570,7 +571,7 @@ var Module = function (models, event) {
         createReconciled(body, dbIndex, cb, uId);
     };
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -595,10 +596,6 @@ var Module = function (models, event) {
                     filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
-                case 'creditAccount':
-                    filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
                 case 'salesManager':
                     filtrElement['salesmanager._id'] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
@@ -616,9 +613,9 @@ var Module = function (models, event) {
         }
 
         return resArray;
-    }
+    }*/
 
-    function caseFilterForTotalCount(filter) {
+    /*function caseFilterForTotalCount(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -649,7 +646,7 @@ var Module = function (models, event) {
         }
 
         return resArray;
-    }
+    }*/
 
     function totalCollectionLength(req, mainCallback) {
         var dbIndex = req.session.lastDb;
@@ -659,33 +656,42 @@ var Module = function (models, event) {
         var findInvoice;
         var findSalary;
         var findByEmployee;
-        var filter = data.filter;
+        var filter = data.filter || {};
         var filterObj = {};
-        var startDate = data.startDate || filter.startDate.value;
-        var endDate = data.endDate || filter.endDate.value;
+        // var startDate = data.startDate || filter.startDate.value;
+        // var endDate = data.endDate || filter.endDate.value;
         var findJobsFinished;
         var findPayments;
         var findSalaryPayments;
-        var matchObject;
-        var filterArray;
+        var matchObject = {};
+        // var filterArray;
         var parallelTasks;
+        var filterMapper = new FilterMapper();
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        // startDate = moment(new Date(startDate)).startOf('day');
+        // endDate = moment(new Date(endDate)).endOf('day');
 
-        matchObject = {
-            date: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            }
-        };
+        /*matchObject = {
+         date: {
+         $gte: new Date(startDate),
+         $lte: new Date(endDate)
+         }
+         };*/
 
-        if (filter) {
-            filterArray = caseFilterForTotalCount(filter);
+        /*if (filter) {
+         filterArray = caseFilter(filter);
 
-            if (filterArray.length) {
-                filterObj.$and = filterArray;
-            }
+         if (filterArray.length) {
+         filterObj.$and = filterArray;
+         }
+         }*/
+
+        filterObj = filterMapper.mapFilter(filter, 'journalEntry');
+
+        if (filterObj.date) {
+            matchObject.date = filterObj.date;
+
+            delete filterObj.date;
         }
 
         findInvoice = function (cb) {
@@ -1082,23 +1088,33 @@ var Module = function (models, event) {
         var filterObj = {};
         var type = req.query.type;
         var options;
-        var startDate = filter.startDate.value;
-        var endDate = filter.endDate.value;
-        var matchObject;
+        /*var startDate = filter.startDate.value;
+        var endDate = filter.endDate.value;*/
+        var matchObject = {};
+        var filterMapper = new FilterMapper();
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        /*startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');*/
 
-        matchObject = {
+        /*matchObject = {
             date: {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate)
             }
-        };
+        };*/
 
-        if (filter) {
-            filterObj.$and = caseFilter(filter);
+
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, 'journalEntry'); // caseFilter(filter);
+
+            if (filterObj.date) {
+                matchObject.date = filterObj.date;
+
+                delete filterObj.date;
+            }
         }
+
+
 
         options = {
             res         : res,
@@ -1119,9 +1135,7 @@ var Module = function (models, event) {
                 query.push(lookupWTrackArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1139,9 +1153,7 @@ var Module = function (models, event) {
                 query.push(lookupEmployeesArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1159,9 +1171,7 @@ var Module = function (models, event) {
                 query.push(lookupInvoiceArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1179,9 +1189,7 @@ var Module = function (models, event) {
                 query.push(lookupJobsArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1199,9 +1207,7 @@ var Module = function (models, event) {
                 query.push(lookupPaymentsArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1236,11 +1242,12 @@ var Module = function (models, event) {
         var type = req.query.type;
         var options;
         var query = [];
-        var startDate = filter.startDate.value;
-        var endDate = filter.endDate.value;
-        var matchObject;
+        /*var startDate = filter.startDate.value;
+        var endDate = filter.endDate.value;*/
+        var matchObject = {};
+        var filterMapper = new FilterMapper();
 
-        startDate = moment(new Date(startDate)).startOf('day');
+        /*startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
 
         matchObject = {
@@ -1248,10 +1255,16 @@ var Module = function (models, event) {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate)
             }
-        };
+        };*/
 
-        if (filter) {
-            filterObj.$and = caseFilter(filter);
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, 'journalEntry'); // caseFilter(filter);
+
+            if (filterObj.date) {
+                matchObject.date = filterObj.date;
+
+                delete filterObj.date;
+            }
         }
 
         options = {
@@ -1273,9 +1286,7 @@ var Module = function (models, event) {
                 query.push(lookupWTrackArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1293,9 +1304,7 @@ var Module = function (models, event) {
                 query.push(lookupEmployeesArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1313,9 +1322,7 @@ var Module = function (models, event) {
                 query.push(lookupInvoiceArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1333,9 +1340,7 @@ var Module = function (models, event) {
                 query.push(lookupJobsArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -1353,9 +1358,7 @@ var Module = function (models, event) {
                 query.push(lookupPaymentsArray[i]);
             }
 
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
+            query.push({$match: filterObj});
 
             options.query = query;
             options.cb = cb;
@@ -3931,8 +3934,8 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var query = req.query;
-        var startDate = query.startDate || query.filter.startDate.value;
-        var endDate = query.endDate || query.filter.endDate.value;
+        /*var startDate = query.startDate || query.filter.startDate.value;
+        var endDate = query.endDate || query.filter.endDate.value;*/
         var findJobs;
         var composeReport;
         var waterfallTasks;
@@ -3940,12 +3943,14 @@ var Module = function (models, event) {
         var paginationObject = pageHelper(query);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
-        var filter = query.filter;
+        var filter = query.filter || {};
         var filterObject = {};
         var key;
         var sortKey;
         var i;
-        var filterArray;
+        var filterMapper = new FilterMapper();
+        var matchObject = {};
+        var startDate;
 
         if (query.sort) {
             sort = {};
@@ -3957,8 +3962,8 @@ var Module = function (models, event) {
             }
         }
 
-        startDate = new Date(moment(new Date(startDate)).startOf('day'));
-        endDate = new Date(moment(new Date(endDate)).endOf('day'));
+        /*startDate = new Date(moment(new Date(startDate)).startOf('day'));
+        endDate = new Date(moment(new Date(endDate)).endOf('day'));*/
 
         findJobs = function (wfCb) {
             JobsModel.find({}, function (err, result) {
@@ -3976,12 +3981,19 @@ var Module = function (models, event) {
             });
         };
 
-        if (filter) {
-            filterArray = caseFilter(filter);
+        /*if (filter) {
+         filterArray = caseFilter(filter);
 
-            if (filterArray.length) {
-                filterObject.$and = filterArray;
-            }
+         if (filterArray.length) {*/
+
+        filterObject = filterMapper.mapFilter(filter, 'inventoryReport'); // filterArray;
+        /*}
+         }*/
+
+        if (filterObject.date) {
+            matchObject = filterObject.date;
+
+            delete filterObject.date;
         }
 
         composeReport = function (jobs, wfCb) {
@@ -3990,7 +4002,7 @@ var Module = function (models, event) {
             var getOpening = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                  : {$lt: startDate},
+                        date                  : {$lt: matchObject.$gte},
                         debit                 : {$gt: 0},
                         'sourceDocument._id'  : {$in: jobs},
                         'sourceDocument.model': 'wTrack'
@@ -4097,7 +4109,7 @@ var Module = function (models, event) {
             var getInwards = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                  : {$lte: endDate, $gte: startDate},
+                        date                  : matchObject,
                         debit                 : {$gt: 0},
                         'sourceDocument._id'  : {$in: jobs},
                         'sourceDocument.model': 'wTrack'
@@ -4216,7 +4228,7 @@ var Module = function (models, event) {
             var getOutwards = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                : {$lte: endDate/* , $gte: startDate*/},
+                        date                : {$lte: matchObject.$lte/* , $gte: startDate*/},
                         debit               : {$gt: 0},
                         'sourceDocument._id': {$in: jobs},
                         journal             : objectId(CONSTANTS.CLOSED_JOB)/* objectId(CONSTANTS.FINISHED_JOB_JOURNAL)*/
@@ -5434,27 +5446,28 @@ var Module = function (models, event) {
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
-        var filter = data.filter;
+        var filter = data.filter || {};
         var filterObj = {};
         var key;
-        var startDate = data.startDate || filter.startDate.value;
-        var endDate = data.endDate || filter.endDate.value;
+        // var startDate = data.startDate || filter.startDate.value;
+        // var endDate = data.endDate || filter.endDate.value;
         var findJobsFinished;
         var findPayments;
         var findSalaryPayments;
-        var matchObject;
-        var filterArray;
+        var matchObject = {};
+        // var filterArray;
         var parallelTasks;
+        var filterMapper = new FilterMapper();
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        // startDate = moment(new Date(startDate)).startOf('day');
+        // endDate = moment(new Date(endDate)).endOf('day');
 
-        matchObject = {
+        /*matchObject = {
             date: {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate)
             }
-        };
+        };*/
 
         if (sort) {
             key = Object.keys(data.sort)[0].toString();
@@ -5464,12 +5477,20 @@ var Module = function (models, event) {
             sort = {date: 1, 'journal.name': 1};
         }
 
-        if (filter) {
+        /*if (filter) {
             filterArray = caseFilter(filter);
 
             if (filterArray.length) {
                 filterObj.$and = filterArray;
             }
+        }*/
+
+        filterObj = filterMapper.mapFilter(filter, 'journalEntry');
+
+        if (filterObj.date) {
+            matchObject.date = filterObj.date;
+
+            delete filterObj.date;
         }
 
         findInvoice = function (cb) {
@@ -5817,8 +5838,7 @@ var Module = function (models, event) {
 
                 cb(null, result);
             });
-        }
-        ;
+        };
 
         findJobsFinished = function (cb) {
             var query = Model

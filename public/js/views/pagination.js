@@ -2,14 +2,18 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
+    'constantsDir/filters',
     'common',
     'async',
     'dataService',
-    'helpers'
-], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, async, dataService, helpers) {
+    'helpers',
+    'custom'
+], function (Backbone, $, _, FilterView,
+             aphabeticTemplate, CONSTANTS, FILTERS,
+             common, async, dataService, helpers, custom) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
@@ -21,6 +25,54 @@ define([
             'click td.notRemovable'    : 'onDisabledClick',
             'click .letter:not(.empty)': 'alpabeticalRender',
             click                      : 'hide'
+        },
+
+        makeRender: function (options) {
+            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
+            var self = this;
+
+            this.render = _.wrap(this.render, function (render) {
+                self.beforeRender(options);
+                render();
+                self.afterRender(options);
+
+                return self;
+            });
+        },
+        
+        beforeRender: function(options) {
+            if (this.viewType === 'thumbnails') {
+                this.$el.html('');
+                this.$el
+                    .append('<div id="searchContainer"></div>')
+                    .append('<div id="thumbnailContent"></div>');
+            }
+        },
+
+        afterRender: function (options) {
+            var createdInTag;
+            var $curEl = this.$el;
+            var contentType = options.contentType || null;
+            var ifFilter = FILTERS.hasOwnProperty(contentType);
+
+            if (ifFilter) {
+                if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
+                    custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
+                } else {
+                    this.renderFilter(this.baseFilter);
+                }
+            }
+
+            if (this.hasAlphabet) {
+                this.renderAlphabeticalFilter();
+            }
+
+            if (this.hasPagination) {
+                this.renderPagination($curEl, this);
+            }
+
+            createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
+            $curEl.append(createdInTag);
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
@@ -195,6 +247,10 @@ define([
             var $el = $(e.target);
             var $thisEl = this.$el;
 
+            if ($el.attr('id') === 'loading') {
+                return;
+            }
+
             if (this.selectView) {
                 this.selectView.remove();
             }
@@ -340,9 +396,9 @@ define([
                     this.filter = {};
                 }
                 this.filter.letter = {
-                    key  : 'letter',
+                    key  : this.letterKey || 'name',
                     value: selectedLetter,
-                    type : null
+                    type : 'letter'
                 };
 
                 target.parent().find('.current').removeClass('current');
@@ -350,21 +406,29 @@ define([
 
                 if ($(e.target).text() === 'All') {
                     delete this.filter;
-                    delete App.filter.letter;
+                    delete App.filtersObject.filter.letter;
                 } else {
-                    App.filter.letter = this.filter.letter;
+                    if (!App.filtersObject) {
+                        App.filtersObject = {};
+                    }
+
+                    if (!App.filtersObject.filter) {
+                        App.filtersObject.filter = {};
+                    }
+
+                    App.filtersObject.filter.letter = this.filter.letter;
                 }
             }
 
-            this.filter = App.filter;
+            this.filter = App.filtersObject.filter;
             this.newCollection = false;
             this.$el.find('.thumbnailElement').remove();
 
-            this.filterView.renderFilterContent(this.filter);
-            _.debounce(
+            this.filterView.showFilterIcons(this.filter);
+            /*_.debounce(
                 function () {
-                    this.trigger('filter', App.filter);
-                }, 10);
+                    this.trigger('filter', App.filtersObject.filter);
+                }, 10);*/
 
             $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
@@ -381,8 +445,6 @@ define([
         renderAlphabeticalFilter: function () { // added from listViewBase
             var self = this;
             var currentLetter;
-
-            this.hasAlphabet = true;
 
             common.buildAphabeticArray(this.collection, function (arr) {
                 self.$el.find('#startLetter').remove();

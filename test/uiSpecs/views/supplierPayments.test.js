@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/supplierPayments/filterCollection',
@@ -7,13 +8,33 @@ define([
     'views/supplierPayments/list/ListView',
     'views/supplierPayments/TopBarView',
     'views/supplierPayments/CreateView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
-], function (Backbone, modules, fixtures, SupplierPaymentsCollection, MainView, ListView, TopBarView, CreateView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+    'sinon-chai',
+    'constantsDir/filters'
+], function (Backbone,
+             _,
+             modules,
+             fixtures,
+             SupplierPaymentsCollection,
+             MainView,
+             ListView,
+             TopBarView,
+             CreateView,
+             FilterView,
+             FilterGroup,
+             SavedFilters,
+             eventsBinder,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai,
+             FILTER_CONSTANTS) {
     'use strict';
     var expect;
 
@@ -3098,334 +3119,194 @@ define([
             }
         ]
     };
-    var fakeSortedUpSupplierPaayments = [
-        {
-            _id             : "56017c16139400f22c000005",
-            year            : 2015,
-            month           : 12,
-            bonus           : true,
-            differenceAmount: 0,
-            workflow        : "Paid",
-            paymentRef      : "Sales/Usual 8%",
-            date            : "2015-09-20T22:00:00.000Z",
-            paidAmount      : 100000,
-            supplier        : {
-                _id           : "55b92ad221e4b7c40f00004b",
-                dateBirth     : "1992-07-11T00:00:00.000Z",
-                ID            : 39,
-                isLead        : 2,
-                fire          : [],
-                hire          : [
-                    {
-                        date       : "2013-05-19T21:00:00.000Z",
-                        info       : "плюс %",
-                        salary     : 450,
-                        jobType    : "Full-time",
-                        manager    : "55b92ad221e4b7c40f00004a",
-                        jobPosition: "55b92acf21e4b7c40f00001f",
-                        department : "55b92ace21e4b7c40f000014"
-                    }
-                ],
-                social        : {
-                    FB: "",
-                    LI: ""
-                },
-                sequence      : 0,
-                jobType       : "Full-time",
-                gender        : "male",
-                marital       : "unmarried",
-                contractEnd   : {
-                    date  : "2015-07-29T19:34:42.434Z",
-                    reason: ""
-                },
-                attachments   : [],
-                editedBy      : {
-                    date: "2016-03-16T08:21:17.245Z",
-                    user: "55b8cb7d0ce4affc2a0015cb"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:42.433Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2015-07-29T19:34:42.433Z",
-                color         : "#4d5a75",
-                otherInfo     : "",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : null,
-                active        : false,
-                referredBy    : "",
-                source        : "",
-                age           : 23,
-                homeAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                otherId       : "",
-                bankAccountNo : "",
-                nationality   : "",
-                coach         : null,
-                manager       : "55b92ad221e4b7c40f00004a",
-                jobPosition   : "55b92acf21e4b7c40f00001f",
-                department    : "55b92ace21e4b7c40f000014",
-                visibility    : "Public",
-                relatedUser   : null,
-                officeLocation: "",
-                skype         : "roland.katona7000",
-                workPhones    : {
-                    phone : "",
-                    mobile: "+380956937000"
-                },
-                personalEmail : "roland.katona@thinkmobiles.com",
-                workEmail     : "roland.katona@thinkmobiles.com",
-                workAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                tags          : [
-                    ""
-                ],
-                name          : {
-                    last : "Katona",
-                    first: "Roland"
-                },
-                subject       : "",
-                imageSrc      : "data:image/jpeg;base64,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",
-                isEmployee    : true,
-                __v           : 0
+    var fakeFilter = {
+        _id       : null,
+        supplier  : [
+            {
+                _id       : "55b92ad221e4b7c40f00004b",
+                name      : "Roland Katona",
+                isEmployee: false
             },
-            forSale         : false,
-            period          : null,
-            invoice         : {
-                _id             : "56698afcc9393366139f06f6",
-                name            : "forPayOutBonus",
-                forSales        : false,
-                invoiceDate     : "2015-12-10T14:21:26.233Z",
-                supplier        : null,
-                sourceDocument  : null,
-                paymentReference: "free",
-                journal         : null,
-                paymentInfo     : {
-                    total  : 0,
-                    balance: 0,
-                    unTaxed: 0,
-                    taxes  : 0
-                },
-                salesPerson     : null,
-                workflow        : null
+            {
+                _id       : "55b92ad221e4b7c40f000063",
+                name      : "Yana Gusti",
+                isEmployee: true
+            },
+            {
+                _id       : "55b92ad221e4b7c40f00005f",
+                name      : "Peterr Voloshchuk",
+                isEmployee: true
+            },
+            {
+                _id       : "55b92ad221e4b7c40f00004a",
+                name      : "Oleg Ostroverkh",
+                isEmployee: false
             }
-        }, {
-            _id             : "55bf426165cda0810b000009",
-            differenceAmount: 0,
-            workflow        : "Draft",
-            paymentRef      : "",
-            period          : null,
-            date            : "2015-08-03T00:00:00.000Z",
-            paymentMethod   : {
-                _id     : "555cc981532aebbc4a8baf36",
-                name    : "Payoneer ",
-                account : "Payoneer ",
-                currency: "USD",
-                bank    : "",
-                owner   : "Payoneer "
+        ],
+        paymentRef: [
+            {
+                _id : "Sales/Head 8%",
+                name: "Sales/Head 8%"
             },
-            paidAmount      : 9800,
-            invoice         : {
-                _id             : "55b92ae221e4b7c40f00136a",
-                paymentDate     : "2015-08-03T00:00:00.000Z",
-                dueDate         : "2015-08-01T07:28:44.856Z",
-                ID              : 3367,
-                editedBy        : {
-                    date: "2015-07-29T19:34:58.533Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                createdBy       : {
-                    date: "2015-07-29T19:34:58.533Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate    : "2015-07-29T19:34:58.533Z",
-                groups          : {
-                    group: [],
-                    users: [],
-                    owner: null
-                },
-                whoCanRW        : "everyOne",
-                workflow        : "55647d982e4aa3804a765ecb",
-                products        : [
-                    {
-                        subTotal   : 9800,
-                        unitPrice  : 9800,
-                        taxes      : 0,
-                        jobs       : "564cfd8ba6e6390160c9ef20",
-                        description: "",
-                        product    : "5540d528dacb551c24000003",
-                        quantity   : 1
-                    }
-                ],
-                payments        : [
-                    "55bf426165cda0810b000009"
-                ],
-                paymentInfo     : {
-                    taxes  : 0,
-                    unTaxed: 9800,
-                    balance: 0,
-                    total  : 9800
-                },
-                paymentTerms    : null,
-                salesPerson     : "55b92ad221e4b7c40f000063",
-                invoiceDate     : "2015-07-27T07:28:44.856Z",
-                project         : "55b92ad621e4b7c40f00067d",
-                paymentReference: "free",
-                sourceDocument  : "564cfd8da6e6390160c9f132",
-                supplier        : "55b92ad621e4b7c40f000646",
-                forSales        : true,
-                invoiceType     : "wTrack",
-                name            : "25032754",
-                __v             : 1,
-                _type           : "wTrackInvoice",
-                currency        : {
-                    rate: 1,
-                    _id : "565eab29aeb95fa9c0f9df2d"
-                }
+            {
+                _id : "Sales/Usual 8%",
+                name: "Sales/Usual 8%"
             },
-            forSale         : false,
-            assigned        : {
-                _id           : "55b92ad221e4b7c40f000063",
-                dateBirth     : "1990-07-30T00:00:00.000Z",
-                ID            : 57,
-                isLead        : 2,
-                fire          : [
-                    {
-                        date       : "2013-11-17T22:00:00.000Z",
-                        info       : "Update",
-                        salary     : 450,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011"
-                    }
-                ],
-                hire          : [
-                    {
-                        date       : "2013-11-17T22:00:00.000Z",
-                        info       : "",
-                        salary     : 450,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011"
-                    },
-                    {
-                        date       : "2015-04-30T21:00:00.000Z",
-                        info       : "",
-                        salary     : 900,
-                        jobType    : "fullTime",
-                        manager    : "55b92ad221e4b7c40f00004f",
-                        jobPosition: "5644388770bbc2b740ce8a18",
-                        department : "55b92ace21e4b7c40f000011"
-                    }
-                ],
-                social        : {
-                    FB: "",
-                    LI: "https://ua.linkedin.com/pub/yana"
-                },
-                sequence      : 0,
-                jobType       : "fullTime",
-                gender        : "male",
-                marital       : "married",
-                contractEnd   : {
-                    date  : "2015-07-29T19:34:42.464Z",
-                    reason: ""
-                },
-                attachments   : [],
-                editedBy      : {
-                    date: "2016-03-11T13:43:49.975Z",
-                    user: "55ba2f3ed79a3a343900001d"
-                },
-                createdBy     : {
-                    date: "2015-07-29T19:34:42.464Z",
-                    user: "52203e707d4dba8813000003"
-                },
-                creationDate  : "2015-07-29T19:34:42.464Z",
-                color         : "#4d5a75",
-                otherInfo     : "",
-                groups        : {
-                    group: [],
-                    users: [],
-                    owner: "55ba28c8d79a3a3439000016"
-                },
-                whoCanRW      : "everyOne",
-                workflow      : null,
-                active        : false,
-                referredBy    : "",
-                source        : "",
-                age           : 25,
-                homeAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                otherId       : "",
-                bankAccountNo : "",
-                nationality   : "Ukrainian",
-                coach         : null,
-                manager       : "55b92ad221e4b7c40f00004f",
-                jobPosition   : "5644388770bbc2b740ce8a18",
-                department    : "55b92ace21e4b7c40f000011",
-                visibility    : "Public",
-                relatedUser   : null,
-                officeLocation: "",
-                skype         : "yanochka_3007",
-                workPhones    : {
-                    phone : "",
-                    mobile: "+380508754761"
-                },
-                personalEmail : "yana.gusti@gmail.com",
-                workEmail     : "yana.gusti@thinkmobiles.com",
-                workAddress   : {
-                    country: "",
-                    zip    : "",
-                    state  : "",
-                    city   : "",
-                    street : ""
-                },
-                tags          : [
-                    ""
-                ],
-                name          : {
-                    last : "Gusti",
-                    first: "Yana"
-                },
-                subject       : "",
-                imageSrc      : "data:image/jpeg;base64,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",
-                isEmployee    : true,
-                __v           : 0,
-                transferred   : [
-                    {
-                        date      : "2015-11-12T07:01:22.647Z",
-                        department: " BusinessDev"
-                    }
-                ]
+            {
+                _id : "Sales/QA 14%",
+                name: "Sales/QA 14%"
+            },
+            {
+                _id : "Sales/QA 16%",
+                name: "Sales/QA 16%"
+            },
+            {
+                _id : "Sales/Head 10%",
+                name: "Sales/Head 10%"
             }
-        }];
+        ],
+        year      : [
+            {
+                _id : 2014,
+                name: 2014
+            },
+            {
+                _id : 2015,
+                name: 2015
+            }
+        ],
+        month     : [
+            {
+                _id : 3,
+                name: 3
+            },
+            {
+                _id : 4,
+                name: 4
+            },
+            {
+                _id : 9,
+                name: 9
+            },
+            {
+                _id : 5,
+                name: 5
+            },
+            {
+                _id : 10,
+                name: 10
+            },
+            {
+                _id : 2,
+                name: 2
+            },
+            {
+                _id : 12,
+                name: 12
+            },
+            {
+                _id : 11,
+                name: 11
+            },
+            {
+                _id : 8,
+                name: 8
+            },
+            {
+                _id : 1,
+                name: 1
+            }
+        ],
+        workflow  : [
+            {
+                _id : "Paid",
+                name: "Paid"
+            }
+        ]
+    };
+    var fakeResponseSavedFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v"            : 0,
+            "attachments"    : [],
+            "lastAccess"     : "2016-06-29T10:24:11.395Z",
+            "profile"        : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{
+                "_id"        : "574335bb27725f815747d579",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : true
+            }, {
+                "_id"        : "576140b0db710fca37a2d950",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "5761467bdb710fca37a2d951",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "57615278db710fca37a2d952",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "576be27e8833d3d250b617a5",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576beedfa96be05a77ce0267",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576bfd2ba96be05a77ce0268",
+                "contentType": "Persons",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576d4c74b4d90a5a6023e0bf",
+                "contentType": "customerPayments",
+                "byDefault"  : false
+            }, {
+                "_id"        : "577221ca58982a9011f8a580",
+                "contentType": "journalEntry",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57722e0458982a9011f8a581",
+                "contentType": "Opportunities",
+                "byDefault"  : false
+            }, {
+                "_id"        : "57738eb0f2ec5e1517865733",
+                "contentType": "salesQuotations",
+                "byDefault"  : false
+            }, {
+                "_id"        : "5773914af2ec5e1517865734",
+                "contentType": "salesInvoices",
+                "byDefault"  : false
+            }, {"_id": "5773be29d523f12a494382a9", "contentType": "supplierPayments", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications" : {"foldWorkflows": ["Empty"], "countPerPage": 87},
+                "opportunities": {"foldWorkflows": ["528cdf1cf3f67bc40b00000b"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
+        }
+    };
     var supplierPaymentsCollecion;
     var view;
     var topBarView;
     var listView;
     var historyNavigateSpy;
     var ajaxSpy;
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -3438,6 +3319,13 @@ define([
         before(function () {
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
             ajaxSpy = sinon.spy($, 'ajax');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -3451,6 +3339,11 @@ define([
 
             historyNavigateSpy.restore();
             ajaxSpy.restore();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
+            removedFromDBSpy.restore();
+            debounceStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -3518,9 +3411,12 @@ define([
 
                 server.respondWith('GET', supplierPaymentsUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 supplierPaymentsCollecion = new SupplierPaymentsCollection({
+                    filter     : null,
                     viewType   : 'list',
                     page       : 1,
                     count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'supplierPayments'
                 });
                 server.respond();
@@ -3536,6 +3432,7 @@ define([
                 supplierPaymentsCollecion = new SupplierPaymentsCollection({
                     filter     : null,
                     viewType   : 'list',
+                    page       : 1,
                     count      : 100,
                     reset      : true,
                     showMore   : false,
@@ -3562,8 +3459,7 @@ define([
             var windowConfirmStub;
             var sortSpy;
             var cancelChangesSpy;
-            var selectFilterSpy;
-            var removeFilterSpy;
+            var deleteSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -3573,8 +3469,7 @@ define([
                 windowConfirmStub.returns(true);
                 sortSpy = sinon.spy(ListView.prototype, 'goSort');
                 cancelChangesSpy = sinon.spy(ListView.prototype, 'cancelChanges');
-                selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue');
-                removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+                deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
             });
 
             after(function () {
@@ -3584,13 +3479,13 @@ define([
                 windowConfirmStub.restore();
                 sortSpy.restore();
                 cancelChangesSpy.restore();
-                selectFilterSpy.restore();
-                removeFilterSpy.restore();
+                deleteSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create supplierPayments list view', function (done) {
+                    var filterUrl = '/filter/supplierPayments';
                     var $firstRow;
                     var colCount;
                     var employee;
@@ -3603,6 +3498,7 @@ define([
                     var $pagination;
                     var $currentPageList;
 
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilter)]);
                     server.respondWith('GET', '/bonusType/getForDD', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeBonusTypeForDD)]);
                     server.respondWith('GET', '/employees/getForDD', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplForDD)]);
                     listView = new ListView({
@@ -3658,7 +3554,6 @@ define([
                     expect(dateOfPaid).to.not.match(/object Object|undefined/);
 
                     // test pagination container
-
                     $pagination = $thisEl.find('.pagination');
 
                     expect($pagination).to.exist;
@@ -3792,43 +3687,11 @@ define([
                     expect($firstTableRow.attr('data-id')).to.be.equals('55b92ae421e4b7c40f0014cf');
                 });
 
-                /*it('Try to cancel change when created new row', function () {
-                 var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-                 var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-
-                 $createBtn.click();
-
-                 $deleteBtn.click();
-                 server.respond();
-
-                 expect(cancelChangesSpy.called).to.be.true;
-                 });
-
-                 it('Try to cancel change', function () {
-                 var $yearInput;
-                 var $firstRow = $thisEl.find('#listTable > tr:nth-child(1)');
-                 var $yearEl = $firstRow.find('td[data-content="year"]');
-                 var $bonusEl = $yearEl.prev();
-                 var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-                 var cancelChangesSpy = sinon.spy(listView, 'cancelChanges');
-
-                 $yearEl.click();
-                 $yearInput = $yearEl.find('input');
-                 $yearInput.val('2015');
-                 $yearInput.trigger('change');
-                 $bonusEl.click();
-
-                 $deleteBtn.click();
-                 expect(cancelChangesSpy.called).to.be.true;
-
-                 cancelChangesSpy.restore();
-                 });*/
-
                 it('Try to delete item with 403 server error', function () {
-                    var spyResponse;
                     var supplierPaymentsUrl = new RegExp('\/payment\/', 'i');
                     var $firstEl = $(listView.$el.find('#listTable input')[1]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var spyResponse;
 
                     mainSpy.reset();
 
@@ -3846,73 +3709,15 @@ define([
                     var $firstEl = $(listView.$el.find('#listTable input')[1]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
+                    deleteSpy.reset();
+
                     $firstEl.prop('checked', true);
 
                     server.respondWith('DELETE', supplierPaymentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Delete success'})]);
                     $deleteBtn.click();
                     server.respond();
-                });
 
-                it('Try to filter listView by Employee and BonusType', function () {
-                    var $employee;
-                    var $bonusType;
-                    var $selectedItem;
-                    var $closeBtn;
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-
-                    selectFilterSpy.reset();
-                    removeFilterSpy.reset();
-
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                    // select employee
-                    $employee = $searchContainer.find('#supplierFullContainer > .groupName');
-                    $employee.click();
-                    $selectedItem = $searchContainer.find('#supplierUl > li').first();
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect($searchContainer.find('#supplierUl > li').first()).to.have.class('checkedValue');
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-
-                    // select BonusType
-                    $bonusType = $searchContainer.find('#paymentRefFullContainer > .groupName');
-                    $bonusType.click();
-                    $selectedItem = $searchContainer.find('#paymentRefUl > li').first();
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledTwice).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect($searchContainer.find('#paymentRefUl > li:nth-child(1)')).to.have.class('checkedValue');
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
-
-                    // uncheck Bonus Filter
-                    $selectedItem = $searchContainer.find('#paymentRefUl > li').first();
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledThrice).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect($searchContainer.find('#paymentRefUl > li:nth-child(1)')).to.have.class('checkedValue');
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-
-                    //close filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
-
-                    //close Employee filter
-                    $closeBtn = $thisEl.find('span[data-value="supplier"]').next();
-                    $closeBtn.click();
-                    server.respond();
-
-                    expect(removeFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
+                    expect(deleteSpy.calledOnce).to.be.true;
                 });
 
                 it('Try to create item', function () {
@@ -3998,10 +3803,200 @@ define([
                     expect($(listView.$el.find('td[data-content="month"]')[0]).text()).to.be.equals('2');
 
                 });
+
+                it('Try to filter listView by Employee and Bonus Type', function () {
+                    var url = '/payment/';
+                    var contentType = 'supplierPayments';
+                    var firstValue = 'supplier';
+                    var secondValue = 'paymentRef';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var $secondGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    ajaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeSupplierPayments)]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // select secondGroup filter
+                    ajaxSpy.reset();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.exist;
+                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                    expect(filterObject[secondValue]).to.have.property('value');
+                    expect(filterObject[secondValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.not.exist;
+                });
+
+                it('Try to save filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn;
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('TestFilter');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                    $saveFilterBtn.click();
+                    server.respond();
+
+                    expect(saveFilterSpy.called).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove saved filters', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                    var userUrl = new RegExp('\/users\/', 'i');
+
+                    removedFromDBSpy.reset();
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $deleteSavedFilterBtn.click();
+                    server.respond();
+
+                    expect(removedFromDBSpy.calledOnce).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                });
+
+                it('Try to remove filter', function () {
+                    var secondValue = 'paymentRef';
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues');
+                    $removeBtn.click();
+                    server.respond();
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                });
             });
-
         });
-
     });
-
 });

@@ -24,6 +24,8 @@ var Module = function (models, event) {
     var HistoryWriter = require('../helpers/historyWriter.js');
     var historyWriter = new HistoryWriter(models);
 
+    var FilterMapper = require('../helpers/filterMapper');
+
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
@@ -1874,7 +1876,7 @@ var Module = function (models, event) {
         }
     };
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -1904,7 +1906,7 @@ var Module = function (models, event) {
             }
         }
         return resArray;
-    }
+    }*/
 
     /**
      * Properties in __Opportunities__ are same as in __Leads__.
@@ -2056,8 +2058,7 @@ var Module = function (models, event) {
      * @instance
      */
 
-    function caseFilterOpp(data) {
-
+    /*function caseFilterOpp(data) {
         var filter = {};
         var tempObj = {};
         var query = {};
@@ -2112,11 +2113,12 @@ var Module = function (models, event) {
         }
 
         return filter;
-    }
+    }*/
 
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var data = req.query;
+        var contentType = data.contentType;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
@@ -2128,27 +2130,24 @@ var Module = function (models, event) {
         var filter = data.filter || {};
         var key;
 
+        var filterMapper = new FilterMapper();
+
         if (filter) {
-            filterObj = caseFilterOpp(filter);
+            filterObj = filterMapper.mapFilter(filter, contentType); // caseFilterOpp(filter);
         }
 
-        switch (data.contentType) {
+        switch (contentType) {
 
             case ('Opportunities'):
                 optionsObject.push({isOpportunitie: true});
-                if (data && data.filter) {
-                    optionsObject.push(filterObj);
-                }
                 break;
 
             case ('Leads'):
                 optionsObject.push({isOpportunitie: false});
-                if (data && data.filter) {
-                    optionsObject.push(filterObj);
-                }
                 break;
-            //skip default;
         }
+
+        optionsObject.push(filterObj);
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Opportunities, cb);
@@ -2194,7 +2193,7 @@ var Module = function (models, event) {
                 }
             });
 
-            switch (data.contentType) {
+            switch (contentType) {
 
                 case ('Opportunities'):
                     aggregateQuery.push({
@@ -2313,7 +2312,6 @@ var Module = function (models, event) {
                         }
                     });
                     break;
-                // skip default;
             }
 
             if (data.sort) {
@@ -2426,6 +2424,7 @@ var Module = function (models, event) {
         var data = req.query;
         var filter = data.filter || {};
         var query;
+        var filterMapper = new FilterMapper();
 
         optionsObject.$and = [];
         filterObj.$or = [];
@@ -2433,15 +2432,18 @@ var Module = function (models, event) {
 
         optionsObject.$and.push({isOpportunitie: true});
 
-        if (data && data.filter) {
-            optionsObject.$and.push(filterObj);
+        if (data && filter) {
+            /*or.push(filterMapper.mapFilter(filter, 'Opportunities'));
+            optionsObject.$and.push(filterObj);*/
 
-            caseFilter(filter, or);
+            optionsObject.$and.push(filterMapper.mapFilter(filter, 'Opportunities'));
+
+            // caseFilter(filter, or);
         }
 
-        if (!or.length) {
+        /*if (!or.length) {
             delete filterObj.$or;
-        }
+        }*/
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Opportunities, cb);

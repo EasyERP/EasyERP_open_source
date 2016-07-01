@@ -1,3 +1,4 @@
+/*
 define([
     'modules',
     'text!fixtures/index.html',
@@ -1494,3 +1495,4 @@ define([
 
 
 });
+*/

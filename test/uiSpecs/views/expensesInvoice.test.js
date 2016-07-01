@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/ExpensesInvoice/filterCollection',
@@ -7,12 +8,15 @@ define([
     'views/ExpensesInvoice/list/ListView',
     'views/ExpensesInvoice/TopBarView',
     'views/ExpensesInvoice/EditView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (Backbone, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, eventsBinder, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, _, modules, fixtures, InvoiceCollection, MainView, ListView, TopBarView, EditView, FilterView, FilterGroup, SavedFilters, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -850,6 +854,11 @@ define([
     var invoiceCollection;
     var ajaxSpy;
     var historyNavigateSpy;
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -862,6 +871,13 @@ define([
         before(function () {
             ajaxSpy = sinon.spy($, 'ajax');
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
         });
 
         after(function () {
@@ -896,7 +912,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'ExpensesInvoice'});
                 server.respond();
 
@@ -976,7 +992,7 @@ define([
                 });
 
                 expect(topBarView.$el.find('h3')).to.exist;
-                expect(topBarView.$el.find('h3').text()).to.be.equals('Invoice');
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Expenses');
             });
         });
 
@@ -1025,7 +1041,6 @@ define([
                     var paid;
                     var total;
                     var status;
-                    var invDate;
                     var $pagination;
                     var $pageList;
 

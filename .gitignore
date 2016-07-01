@@ -58,3 +58,4 @@ karma.conf.js
 /helpers/uploads/
 /routes/uploads/
 /uploads/
+/karma.conf.js

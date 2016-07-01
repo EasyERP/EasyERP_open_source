@@ -1,32 +1,34 @@
-
+<% if (!collection.length) { %>
+<h2>No projects found</h2>
+<% } %>
 <% collection.forEach(function(project){ %>
 <div class="thumbnail thumbnailElement" id="<%=project._id%>">
     <div class="dropDown">
         <a href="#easyErp/Tasks/kanban/<%= project._id %>" class="icon icon-btn">r</a>
-        <a href="javascript:;" id="<%=project._id %>"  class="icon icon-btn project">i</a>
+        <a href="javascript:;" id="<%=project._id %>" class="icon icon-btn project">i</a>
     </div>
     <div class="inner">
         <div class="project-text left">
-          <span class="bold blockLeft" data-content="project"><%=project.name%></span>
-          <div class="health-wrapper left">
-            <span class="health-container">
-              <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
-              <ul>
-                <li>
-                  <div class="health1"></div>
-                </li>
-                <li>
-                  <div class="health2"></div>
-                </li>
-                <li>
-                  <div class="health3"></div>
-                </li>
-              </ul>
+            <span class="bold blockLeft" data-content="project"><%=project.name%></span>
+            <div class="health-wrapper left">
+				<span class="health-container">
+				  <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
+				  <ul>
+                    <li>
+                      <div class="health1"></div>
+                    </li>
+                    <li>
+                      <div class="health2"></div>
+                    </li>
+                    <li>
+                      <div class="health3"></div>
+                    </li>
+                  </ul>
 
-            </span>
-          </div>
-        <div class="clearfix">
-        </div>
+				</span>
+            </div>
+            <div class="clearfix">
+            </div>
 
             <span data-content="customer"><%=(project.customer)? project.customer.name.first + ' ' + project.customer.name.last: ' '%></span>
         </div>
@@ -36,17 +38,23 @@
     <div class="bottom">
         <div class="half-block left">
             <p class="inner">
-
-                <a id="<%=project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%> Tasks</a>
+                <a id="<%=project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%>Tasks</a>
             </p>
 
             <div class="inner">
-              <div class="left"><label>Status: </label>&nbsp;</div>
-              <div class="left"><a href="javascript:;" class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(" ","") === "closed" ? 'projectClosed' : project.workflow.name.toLowerCase().replace(" ","") ) : ''%>"><%=(project.workflow) ? project.workflow.name : ''%></a></div>
-<!--<span class="status <%=(project.workflow && project.workflow.status) ? project.workflow.status.toLowerCase().split(' ').join('') : ''%>"><%=(project.workflow) ? project.workflow.status : ''%></span>--></div>
+                <div class="left"><label>Status: </label>&nbsp;</div>
+                <div class="left">
+                    <a href="javascript:;"
+                       class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(' ','') === 'closed' ? 'projectClosed' : project.workflow.name.toLowerCase().replace(' ','') ) : '' %>">
+                        <%=(project.workflow) ? project.workflow.name : ''%>
+                    </a>
+                </div>
+                <!--<span class="status <%=(project.workflow && project.workflow.status) ? project.workflow.status.toLowerCase().split(' ').join('') : ''%>"><%=(project.workflow) ? project.workflow.status : ''%></span>-->
+            </div>
         </div>
         <div class="half-block right">
-            <div class="avatar right" data-id="<%=(project.salesManager && project.salesManager._id) ? project.salesManager._id: ''%>">
+            <div class="avatar right"
+                 data-id="<%=(project.salesManager && project.salesManager._id) ? project.salesManager._id: ''%>">
                 <img alt="" src=""/>
             </div>
         </div>

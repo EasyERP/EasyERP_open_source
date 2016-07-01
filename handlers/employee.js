@@ -37,6 +37,8 @@ var Employee = function (event, models) {
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
 
+    var FilterMapper = require('../helpers/filterMapper');
+
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var filter = req.params.filter;
@@ -62,7 +64,11 @@ var Employee = function (event, models) {
 
     function accessEmployeeSalary(profileId) {
         var profiles = CONSTANTS.ACCESS_EMPLOYEE_SALARY;
-        return !(profiles.indexOf(profileId.toString()) < 0);
+        if (profileId) {
+            return !(profiles.indexOf(profileId.toString()) < 0);
+        }
+
+        return false;
     }
 
     function getNameAndDepartment(db, query, callback) {
@@ -531,8 +537,10 @@ var Employee = function (event, models) {
 
         });
     };
+    
+    /*TODO remove after filters check*/
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -572,7 +580,7 @@ var Employee = function (event, models) {
         }
 
         return resArray;
-    }
+    }*/
 
     function getById(req, res, next) {
         var project = {};
@@ -632,13 +640,11 @@ var Employee = function (event, models) {
         var project;
         var projectSecond;
         var projectAfterRoot;
+        
+        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject.$or = caseFilter(filter);
-            } else {
-                optionsObject.$and = caseFilter(filter);
-            }
+            optionsObject = filterMapper.mapFilter(filter, contentType); // caseFilter(filter);
         }
 
         if (data.sort) {
@@ -658,7 +664,7 @@ var Employee = function (event, models) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject) {
                 queryObject.$and.push(optionsObject);
             }
 

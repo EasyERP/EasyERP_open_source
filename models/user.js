@@ -71,12 +71,12 @@ module.exports = (function () {
 
         savedFilters: [
             {
-                _id      : {type: ObjectId, ref: 'savedFilters', default: null},
-                byDefault: {type: String, default: ''},
-                viewType : {type: String, default: ''}
+                _id        : {type: ObjectId, ref: 'savedFilters', default: null},
+                byDefault  : {type: Boolean, default: false},
+                contentType: {type: String, default: null}
             }
         ],
-        
+
         ID             : Number,
         relatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
     }, {collection: 'Users'});

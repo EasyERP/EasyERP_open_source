@@ -6,14 +6,14 @@ define([
     'views/main/MainView',
     'views/salaryReport/list/ListView',
     'views/salaryReport/TopBarView',
-    'views/Filter/FilterView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
-    'custom'
-], function (Backbone, modules, fixtures, SalaryReportCollection, MainView, ListView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, custom) {
+    'custom',
+    '../modules/filterTest'
+], function (modules, fixtures, SalaryReportCollection, MainView, ListView, TopBarView, eventsBinder, $, chai, chaiJquery, sinonChai, FilterTest) {
     'use strict';
 
     var fakeSalaryReport = [
@@ -435,12 +435,38 @@ define([
     var listView;
     var expect;
     var salaryReportCollection;
-    var ajaxSpy;
-    var historyNavigateSpy;
-    var selectFilterSpy;
-    var removeFilterSpy;
-    var saveFilterSpy;
+    var ajaxSpy = sinon.spy($, 'ajax');
+    var fakeFilters = {
+        _id     : null,
+        employee: [
+            {
+                _id       : "575fbc66c5d7fcf869b24c80",
+                name      : "Ostap Opalinskiy",
+                isEmployee: true
+            },
+            {
+                _id       : "575829d7389dfb67764a4ab6",
+                name      : "Ivan Margita",
+                isEmployee: true
+            }
+        ],
 
+        department: [
+            {
+                _id : "560c0b83a5d4a2e20ba5068c",
+                name: "Finance"
+            },
+            {
+                _id : "56e175c4d62294582e10ca68",
+                name: "Unity"
+            }
+        ]
+    };
+
+    var filterOptions = {
+        url        : '/salaryReport/',
+        contentType: 'salaryReport'
+    };
     chai.use(chaiJquery);
     chai.use(sinonChai);
     expect = chai.expect;
@@ -463,12 +489,6 @@ define([
             view.remove();
             topBarView.remove();
             listView.remove();
-
-            ajaxSpy.restore();
-            historyNavigateSpy.restore();
-            selectFilterSpy.restore();
-            removeFilterSpy.restore();
-            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -597,10 +617,13 @@ define([
                     var $firstRow;
                     var department;
                     var employee;
+                    var filterUrl = '/filter/salaryReport';
 
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
                     listView = new ListView({
                         collection: salaryReportCollection
                     });
+                    server.respond();
 
                     clock.tick(200);
 
@@ -632,142 +655,6 @@ define([
 
                     done();
                 });
-
-                it('Try to filter listView', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var salaryReportUrl = new RegExp('\/salaryReport\/', 'i');
-                    var $employeeBtn;
-                    var $departmentBtn;
-                    var $selectedItem;
-                    var ajaxResponse;
-                    var filterObject;
-                    var $removeEmployeeFilterBtn;
-
-                    server.respondWith('GET', salaryReportUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeSalaryReport)]);
-
-
-                    selectFilterSpy.reset();
-
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                    // filter by employee
-                    ajaxSpy.reset();
-
-                    $employeeBtn = $searchContainer.find('#employeeFullContainer > .groupName');
-                    $employeeBtn.click();
-                    expect($searchContainer.find('#employeeContainer')).to.have.not.class('hidden');
-                    $selectedItem = $searchContainer.find('#employeeUl > li:nth-child(1)');
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($searchContainer.find('#employeeUl > li:nth-child(1)')).to.have.class('checkedValue');
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data).to.have.property('filter');
-                    filterObject = ajaxResponse.data.filter;
-
-                    expect(filterObject.employee).to.exist;
-                    expect(filterObject.employee).to.have.property('key', '_id');
-                    expect(filterObject.employee).to.have.property('value');
-                    expect(filterObject.employee.value)
-                        .to.be.instanceof(Array)
-                        .and
-                        .to.have.lengthOf(1);
-                    expect(filterObject.endDate).to.exist;
-                    expect(filterObject.endDate).to.have.property('key');
-                    expect(filterObject.endDate).to.have.property('value');
-                    expect(filterObject.startDate).to.exist;
-                    expect(filterObject.startDate).to.have.property('key');
-                    expect(filterObject.startDate).to.have.property('value');
-
-                    // filter by department
-
-                    ajaxSpy.reset();
-
-                    $departmentBtn = $searchContainer.find('#departmentFullContainer > .groupName');
-                    $departmentBtn.click();
-                    expect($searchContainer.find('#departmentContainer')).to.have.not.class('hidden');
-                    $selectedItem = $searchContainer.find('#departmentUl > li:nth-child(1)');
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledTwice).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
-                    expect($searchContainer.find('#departmentUl > li:nth-child(1)')).to.have.class('checkedValue');
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data).to.have.property('filter');
-                    filterObject = ajaxResponse.data.filter;
-
-                    expect(filterObject.department).to.exist;
-                    expect(filterObject.employee).to.exist;
-                    expect(filterObject.department).to.have.property('key', 'department._id');
-                    expect(filterObject.department).to.have.property('value');
-                    expect(filterObject.department.value)
-                        .to.be.instanceof(Array)
-                        .and
-                        .to.have.lengthOf(1);
-                    expect(filterObject.endDate).to.exist;
-                    expect(filterObject.endDate).to.have.property('key');
-                    expect(filterObject.endDate).to.have.property('value');
-                    expect(filterObject.startDate).to.exist;
-                    expect(filterObject.startDate).to.have.property('key');
-                    expect(filterObject.startDate).to.have.property('value');
-
-                    // unselect deparment filter
-
-                    ajaxSpy.reset();
-                    $selectedItem = $searchContainer.find('#departmentUl > li:nth-child(1)');
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect(selectFilterSpy.calledThrice).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
-                    expect($searchContainer.find('#departmentUl > li:nth-child(1)')).to.have.not.class('checkedValue');
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data).to.have.property('filter');
-                    filterObject = ajaxResponse.data.filter;
-
-                    expect(filterObject.employee).to.exist;
-                    expect(filterObject).to.not.have.property('department');
-
-                    // try to close employee filter
-                    ajaxSpy.reset();
-                    removeFilterSpy.reset();
-
-                    $removeEmployeeFilterBtn = $searchContainer.find('span.removeValues');
-                    $removeEmployeeFilterBtn.click();
-                    server.respond();
-
-                    expect(removeFilterSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#listTable > tr')).to.have.lengthOf(2);
-                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(0);
-
-                    expect(ajaxSpy.calledOnce).to.be.true;
-                    ajaxResponse = ajaxSpy.args[0][0];
-                    expect(ajaxResponse).to.have.property('url', '/salaryReport/');
-                    expect(ajaxResponse).to.have.property('type', 'GET');
-                    expect(ajaxResponse.data).to.have.property('filter');
-                    expect(ajaxResponse.data.filter).to.be.empty;
-                });
-
                 it('Try to sort list', function () {
                     var $employeeSortBtn = listView.$el.find('th[data-sort="name"]');
                     var salaryReportUrl = new RegExp('\/salaryReport\/', 'i');
@@ -816,7 +703,11 @@ define([
                     expect(changeDateRangeSpy.calledOnce).to.be.true;
                     expect(window.location.hash).to.be.equals('#easyErp/salaryReport/list/p=1/c=100/');
                 });
+
+                // test filter view
+                FilterTest(ajaxSpy, ['employee', 'department'], filterOptions, fakeSalaryReport, {});
             });
         });
     });
 });
+

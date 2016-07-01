@@ -102,7 +102,10 @@ define([
                 dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
                     if (response && !response.error) {
                         App.currentUser = response.user;
-                        App.savedFilters = response.savedFilters;
+                        if (!App.filtersObject) {
+                            App.filtersObject = {};
+                        }
+                        App.filtersObject.savedFilters = response.savedFilters;
                     } /*else {
                         App.render({
                             type   : 'error',
@@ -570,7 +573,7 @@ define([
 
                         var url;
                         var contentview = new contentView({collection: collection, startTime: startTime});
-                        var topbarView = new topBarView({actionType: "Content"});
+                        var topbarView = new topBarView({actionType: 'Content'});
 
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editItem, contentview);
@@ -870,8 +873,14 @@ define([
                     count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 }
 
-
                 if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
 
                     if (contentType === 'salesProduct') {
                         filter = {
@@ -899,7 +908,7 @@ define([
                 }
 
                 //savedFilter = custom.savedFilters(contentType, filter);
-                savedFilter = filter;
+                //savedFilter = filter;
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -907,12 +916,16 @@ define([
                     context.mainView.updateMenu(contentType);
                 }
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
-                    var collection = new contentCollection({
+                    var collection;
+
+                    App.filtersObject.filter = filter;
+                    
+                    collection = new contentCollection({
                         viewType        : 'list',
                         page            : page,
                         reset           : true,
                         count           : count,
-                        filter          : savedFilter,
+                        filter          : filter,
                         parrentContentId: parrentContentId,
                         contentType     : contentType,
                         showMore        : false
@@ -934,7 +947,7 @@ define([
                         contentview = new contentView({
                             collection: collection,
                             startTime : startTime,
-                            filter    : savedFilter
+                            filter    : filter
                         });
 
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);
@@ -1174,7 +1187,15 @@ define([
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
 
+
                 if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
 
                     if (contentType === 'salesProduct') {
                         filter = {
@@ -1214,6 +1235,8 @@ define([
 
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection;
+
+                    App.filtersObject.filter = filter;
 
                     if (contentType !== 'Workflows') {
                         collection = new contentCollection({

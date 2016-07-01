@@ -9,7 +9,7 @@ define([
     'views/salesQuotations/EditView',
     'models/QuotationModel',
     'collections/salesQuotations/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'dataService',
     'constants',
     'helpers'
@@ -36,6 +36,7 @@ define([
         contentCollection: contentCollection,
         viewType         : 'list',
         contentType      : CONSTANTS.SALESQUOTATIONS,
+        hasPagination    : true,
 
         events: {
             'click .stageSelect'                 : 'showNewSelect',
@@ -61,7 +62,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
 
             this.stages = [];
 
@@ -128,13 +129,13 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
 
-            this.renderFilter();
+            // this.renderFilter();
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
             return this;
         },

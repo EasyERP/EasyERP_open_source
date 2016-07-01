@@ -8,7 +8,7 @@ define([
     'models/InvoiceModel',
     'views/salesInvoices/list/ListItemView',
     'collections/salesInvoices/filterCollection',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
     'common',
     'dataService',
     'helpers',
@@ -35,6 +35,14 @@ define([
         contentCollection: contentCollection,
         contentType      : CONSTANTS.SALESINVOICES,
         changedModels    : {},
+        hasPagination    : true,
+        baseFilter       : {
+            name : 'forSales',
+            value: {
+                key  : 'forSales',
+                value: [true]
+            }
+        },
 
         initialize: function (options) {
             $(document).off('click');
@@ -51,7 +59,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
         },
 
         events: {
@@ -115,12 +123,12 @@ define([
 
             this.currentEllistRenderer(self);
 
-            self.renderPagination($currentEl, self);
-            self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
+            // self.renderPagination($currentEl, self);
+            // self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
             this.recalcTotal();
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         },
 
         recalcTotal: function () {

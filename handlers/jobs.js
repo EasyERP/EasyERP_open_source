@@ -1,3 +1,5 @@
+/*TODO remove caseFilter methid after testing filters*/
+
 var mongoose = require('mongoose');
 var async = require('async');
 
@@ -15,8 +17,9 @@ var Module = function (models, event) {
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').jobs;
     var objectId = mongoose.Types.ObjectId;
+    var FilterMapper = require('../helpers/filterMapper');
 
-    function caseFilter(filter) {
+    /*function caseFilter(filter) {
         var condition;
         var resArray = [];
         var filtrElement = {};
@@ -56,7 +59,7 @@ var Module = function (models, event) {
         }
 
         return resArray;
-    }
+    }*/
 
     this.create = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
@@ -91,9 +94,10 @@ var Module = function (models, event) {
     };
 
     this.getData = function (req, res, next) {
+        var filterMapper = new FilterMapper();
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var JournalEntryModel = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var queryObject = {};
+        var queryObject;
         var queryObjectStage2 = {};
         var ArrayTasks = [];
         var data = req.query;
@@ -137,7 +141,7 @@ var Module = function (models, event) {
                 }]
         };
 
-        var filter = data ? data.filter : {};
+        var filter = data.filter || {};
 
         count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
         skip = (page - 1) > 0 ? (page - 1) * count : 0;
@@ -158,11 +162,7 @@ var Module = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject.$or = caseFilter(filter);
-            } else {
-                queryObject.$and = caseFilter(filter);
-            }
+            queryObject = filterMapper.mapFilter(filter, 'jobsDashboard'); // caseFilter(filter);
         }
 
         if (forDashboard) { // add for jobsDash need refactor
@@ -662,10 +662,12 @@ var Module = function (models, event) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var JournalEntryModel = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var queryObject = {};
+        var queryObject;
         var queryObjectStage2 = {};
         var ArrayTasks = [];
         var sort = {'budget.budgetTotal.costSum': -1};
+
+        var filterMapper = new FilterMapper();
 
         var data = req.query;
         var forDashboard = data.forDashboard;
@@ -701,7 +703,7 @@ var Module = function (models, event) {
                 }]
         };
 
-        var filter = data ? JSON.parse(data.filter) : {};
+        var filter = data.filter || {};
 
         if (data && data.project) {
             filter.project = {};
@@ -710,11 +712,7 @@ var Module = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject.$or = caseFilter(filter);
-            } else {
-                queryObject.$and = caseFilter(filter);
-            }
+            queryObject = filterMapper.mapFilter(filter, 'jobsDashboard'); // caseFilter(filter);
         }
 
         if (forDashboard) { // add for jobsDash need refactor

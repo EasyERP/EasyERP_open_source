@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/PayrollExpenses/filterCollection',
@@ -4499,7 +4500,7 @@ define([
             });
         });
 
-        /*describe('Form View', function () {
+        /!*describe('Form View', function () {
             var server;
             var payRollModel;
             var clock;
@@ -4548,7 +4549,8 @@ define([
                 expect($('#payRoll-listTable')).to.exist;
             });
 
-        });*/
+        });*!/
     });
 
 });
+*/

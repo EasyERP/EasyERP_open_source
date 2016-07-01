@@ -30,7 +30,8 @@ define([
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             FilterTest) {
     'use strict';
 
     var fakeDepartments = {

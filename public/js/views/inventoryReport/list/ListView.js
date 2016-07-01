@@ -19,6 +19,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         contentType      : CONSTANTS.INVENTORYREPORT,
+        hasPagination    : true,
 
         initialize: function (options) {
             var dateRange;
@@ -29,11 +30,8 @@ define([
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.sort = options.sort;
-            this.filter = options.filter;
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
-
-            dateRange = custom.retriveFromCash('inventoryReportDateRange');
 
             this.filter = options.filter || custom.retriveFromCash('inventoryReport.filter');
 
@@ -41,7 +39,11 @@ define([
                 this.filter = {};
             }
 
-            if (!this.filter.startDate) {
+            // dateRange = custom.retriveFromCash('inventoryReportDateRange');
+
+            dateRange = this.filter.date ? this.filter.date.value : [];
+
+            /*if (!this.filter.startDate) {
                 this.filter.startDate = {
                     key  : 'startDate',
                     value: new Date(dateRange.startDate)
@@ -50,12 +52,15 @@ define([
                     key  : 'endDate',
                     value: new Date(dateRange.endDate)
                 };
-            }
+            }*/
 
-            this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
-            this.render();
+            /*this.startDate = new Date(this.filter.startDate.value);
+            this.endDate = new Date(this.filter.endDate.value);*/
+
+            listViewBase.prototype.initialize.call(this, options);
 
             custom.cacheToApp('inventoryReport.filter', this.filter);
         },
@@ -73,7 +78,7 @@ define([
                 this.filter = {};
             }
 
-            this.filter.startDate = {
+            /*this.filter.startDate = {
                 key  : 'startDate',
                 value: stDate
             };
@@ -81,6 +86,10 @@ define([
             this.filter.endDate = {
                 key  : 'endDate',
                 value: enDate
+            };*/
+
+            this.filter.date = {
+                value: [this.startDate, this.endDate]
             };
 
             searchObject = {
@@ -93,7 +102,7 @@ define([
             this.collection.showMore(searchObject);
             this.changeLocationHash(1, itemsNumber, this.filter);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             custom.cacheToApp('inventoryReport.filter', this.filter);
         },
@@ -160,15 +169,15 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            this.renderFilter();
+            // this.renderFilter();
 
             this.recalcTotal();
 
-            this.renderPagination($currentEl, this);
+            // this.renderPagination($currentEl, this);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }
 
     });

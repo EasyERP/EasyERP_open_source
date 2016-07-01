@@ -4,13 +4,14 @@ define([
     'views/listViewBase',
     'text!templates/salaryReport/list/ListHeader.html',
     'views/salaryReport/list/ListItemView',
+    'views/Filter/filterView',
     'collections/salaryReport/filterCollection',
     'constants',
     'moment',
     'dataService',
     'helpers',
     'custom'
-], function ($, _, listViewBase, listTemplate, ListItemView, reportCollection, CONSTANTS, moment, dataService, helpers, custom) {
+], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers, custom) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -24,6 +25,7 @@ define([
         contentType       : CONSTANTS.SALARYREPORT, // needs in view.prototype.changeLocationHash
         viewType          : 'list', // needs in view.prototype.changeLocationHash
         yearElement       : null,
+        FilterView        : FilterView,
 
         initialize: function (options) {
             var dateRange;
@@ -56,7 +58,7 @@ define([
             this.startDate = new Date(this.filter.startDate.value);
             this.endDate = new Date(this.filter.endDate.value);
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = reportCollection;
             custom.cacheToApp('salaryReport.filter', this.filter);
@@ -138,7 +140,7 @@ define([
 
             this.collection.showMore(searchObject);
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
             custom.cacheToApp('salaryReport.filter', this.filter);
         },
@@ -224,9 +226,9 @@ define([
 
             $currentEl.append(itemView.render());
 
-            App.filter = this.filter;
+            App.filtersObject.filter = this.filter;
 
-            this.renderFilter();
+            // this.renderFilter();
 
             this.getMinDate(this);
 

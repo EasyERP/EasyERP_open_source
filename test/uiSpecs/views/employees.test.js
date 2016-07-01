@@ -1,31 +1,50 @@
 define([
+    'Backbone',
+    'Underscore',
     'text!fixtures/index.html',
     'models/EmployeesModel',
     'modules',
     'collections/Employees/filterCollection',
     'views/main/MainView',
     'views/Employees/list/ListView',
-    /*'views/Employees/form/FormView',*/
     'views/Employees/thumbnails/ThumbnailsView',
     'views/Employees/CreateView',
     'views/Employees/EditView',
     'views/Employees/TopBarView',
-    'views/Filter/FilterView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
-    'custom',
-    'async'
-], function (fixtures, EmployeeModel, modules, EmployeeCollection, MainView, ListView, /* FormView,*/ ThumbnailsView, CreateView, EditView, TopBarView, FilterView, eventsBinder, $, chai, chaiJquery, sinonChai, Custom, async) {
+    'testConstants/filtersEmployees',
+    'constantsDir/filters'
+], function (Backbone,
+             _,
+             fixtures,
+             EmployeeModel,
+             modules,
+             EmployeeCollection,
+             MainView,
+             ListView,
+             ThumbnailsView,
+             CreateView,
+             EditView,
+             TopBarView,
+             FilterView,
+             FilterGroup,
+             SavedFilters,
+             eventsBinder,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai,
+             fakeFilters,
+             FILTER_CONSTANTS) {
     'use strict';
     var expect;
-
-    chai.use(chaiJquery);
-    chai.use(sinonChai);
-    expect = chai.expect;
-
     var fakeEmployeeForList = {
         total: 300,
         data : [
@@ -540,191 +559,6 @@ define([
                 _id: "C"
             }
         ]
-    };
-    var fakeEmployeeWithId = {
-        enableView    : true,
-        _id           : "56e696da81046d9741fb66fc",
-        dateBirth     : "1991-10-03T00:00:00.000Z",
-        __v           : 0,
-        lastFire      : null,
-        fire          : [],
-        hire          : [
-            {
-                date       : "2016-03-14T00:00:00.000Z",
-                info       : "Hired",
-                salary     : 0,
-                jobType    : "partTime",
-                manager    : {
-                    _id     : "55b92ad221e4b7c40f000038",
-                    name    : {
-                        last : "Babunich",
-                        first: "Roman"
-                    },
-                    fullName: "Roman Babunich",
-                    id      : "55b92ad221e4b7c40f000038"
-                },
-                jobPosition: {
-                    _id : "56a9cb6eb4dc0d09232bd72c",
-                    name: "Middle Ruby on Rails"
-                },
-                department : {
-                    _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
-                }
-            }
-        ],
-        social        : {
-            GP: "",
-            LI: "",
-            FB: ""
-        },
-        sequence      : 221,
-        jobType       : "partTime",
-        gender        : "male",
-        marital       : "married",
-        contractEnd   : {
-            date  : "2016-03-14T10:47:54.273Z",
-            reason: ""
-        },
-        attachments   : [],
-        editedBy      : {
-            date: "2016-03-14T10:47:54.272Z",
-            user: {
-                _id            : "55ba28c8d79a3a3439000016",
-                profile        : 1438158808000,
-                __v            : 0,
-                lastAccess     : "2016-03-14T09:17:43.298Z",
-                relatedEmployee: null,
-                savedFilters   : [],
-                kanbanSettings : {
-                    tasks        : {
-                        foldWorkflows: [],
-                        countPerPage : 10
-                    },
-                    applications : {
-                        foldWorkflows: [],
-                        countPerPage : 10
-                    },
-                    opportunities: {
-                        foldWorkflows: [],
-                        countPerPage : 10
-                    }
-                },
-                credentials    : {
-                    access_token : "",
-                    refresh_token: ""
-                },
-                pass           : "e28ac09936a6b64abafe5870482de8ddd0b63cff921323ec91924d443afc907f",
-                email          : "andriana.lemko@thinkmobiles.com",
-                login          : "AndrianaLemko",
-                imageSrc       : "data:image/jpeg;base64,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"
-            }
-        },
-        createdBy     : {
-            date: "2016-03-14T10:47:54.272Z",
-            user: {
-                _id            : "55ba28c8d79a3a3439000016",
-                profile        : 1438158808000,
-                __v            : 0,
-                lastAccess     : "2016-03-14T09:17:43.298Z",
-                relatedEmployee: null,
-                savedFilters   : [],
-                kanbanSettings : {
-                    tasks        : {
-                        foldWorkflows: [],
-                        countPerPage : 10
-                    },
-                    applications : {
-                        foldWorkflows: [],
-                        countPerPage : 10
-                    },
-                    opportunities: {
-                        foldWorkflows: [],
-                        countPerPage : 10
-                    }
-                },
-                credentials    : {
-                    access_token : "",
-                    refresh_token: ""
-                },
-                pass           : "e28ac09936a6b64abafe5870482de8ddd0b63cff921323ec91924d443afc907f",
-                email          : "andriana.lemko@thinkmobiles.com",
-                login          : "AndrianaLemko",
-                imageSrc       : "data:image/jpeg;base64,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"
-            }
-        },
-        creationDate  : "2016-03-14T10:47:54.272Z",
-        color         : "#4d5a75",
-        otherInfo     : "",
-        groups        : {
-            group: [],
-            users: [],
-            owner: {
-                _id  : "560c099da5d4a2e20ba5068b",
-                login: "AlexSvatuk"
-            }
-        },
-        whoCanRW      : "everyOne",
-        workflow      : null,
-        active        : true,
-        referredBy    : "",
-        source        : "www.rabota.ua",
-        age           : 24,
-        homeAddress   : {
-            country: "",
-            zip    : "",
-            state  : "",
-            city   : "",
-            street : ""
-        },
-        otherId       : "",
-        bankAccountNo : "",
-        nationality   : "Ukrainian",
-        coach         : null,
-        manager       : {
-            _id     : "55b92ad221e4b7c40f000038",
-            name    : {
-                last : "Babunich",
-                first: "Roman"
-            },
-            fullName: "Roman Babunich",
-            id      : "55b92ad221e4b7c40f000038"
-        },
-        jobPosition   : {
-            _id : "56a9cb6eb4dc0d09232bd72c",
-            name: "Middle Ruby on Rails"
-        },
-        department    : {
-            _id           : "566ee11b8453e8b464b70b73",
-            departmentName: "Ruby on Rails"
-        },
-        visibility    : "Public",
-        relatedUser   : null,
-        officeLocation: "",
-        skype         : "mr.time1",
-        workPhones    : {
-            phone : "",
-            mobile: "+380661612306"
-        },
-        personalEmail : "fedia@mrtime.no-ip.info",
-        workEmail     : "fedir.kovbel@thinkmobiles.com",
-        workAddress   : {
-            country: "",
-            zip    : "",
-            state  : "",
-            city   : "",
-            street : ""
-        },
-        tags          : [],
-        name          : {
-            last : "Kovbel",
-            first: "Fedir"
-        },
-        subject       : "",
-        imageSrc      : "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCACMAIwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD422w2cW5ZEzKxLSZ5bvg+3ArJvpILqYee26Md1Gcn6GptRkaKSFN0jNcpmORsMTnjPTGR+vFSQacbGY3F1cI7Ac/LnJ7nJ+n6188rL3nue3e+hTn0vSgHaKzRAwUIWQBhj/PXrVO2trmK0kt4bptkrk+Xz8zd85zwe4qW4lkvr5Y1ZF8xwqs3I/P8atmB7NoYCC0rkZbacEeo/MVd3FWZOjM7SNNVZzFHFBbuxZnWQF9y8gkHcO4H+et6Nb2O7aaP7FEwIXcerYzjJAO0c984pwmRZhbsN9wpxlOepwAMd+3Pr+dJ5Zpj5pYxoRyCOSabbk7sasloWptX1H7MlxGYVncAGLnAJ45PP8hWa2u6yJnuoobdfKcrKyl3VAhwTyvTcMZ6dOtXJrRY4BHPfxQm6t5FE0gUpGDgA8kZNcv/AG/YW1qLTypbq4TAkcyZXIxyOvcZyMVpTpqWyuZzny7s6WS/1pLVr5762VRKqtutzjbnIK/NyevH49qu6Ncqs8rSyyvI/wApnxzliSePU89Bj1I4riZ/F1wsbW8OlWgK4YsYvMZeMcnOO/15rK1DxBeXV35iXjiIf6vaQpAODhsAZIwAeOo79a1WElJNbGTxMYu61Pa3u47UMmn2yXdwI1uBEZSANu5WyQCRw+cY/hOaZbeMbq5lx9mgijUBd8bGTc3fj5egHXP4CvGI9dv1uY5hezb84LMdxweO/bFdrot5q1sxn1lRZWl5C17Bd58tWSSZovlypGN+8ZyABG/JIxWM8BZX3ZrHGJ+R1+t+JtcimjgijsijkYd9xYfLkgqDgDtnPboM1HoovLpH1PVJkPmNuRYwdoAwOhJ/z+mVLo2pWl8sL3H9prI25GW4Qo0QOCVcHY3IYZB5x+W7562Vv5clkYtjEKpOWxnkkA+oP4dM1zzioLlS1OiLcveZLdzjDqkYbPUkdPyrm7zDSEnIIODWvaXLX0ckoiKLv2HpzgD/AOvx7Vjaq3lKdxAO0gKT1HI/WlSVnYJu6uZ1puXTUcAqMsE47ZOPpxivVPBeiW2paBDe3thKzyEkOkzoGXjBwpA9unYV5rNbx/2JE9uWRo/vnGcqehH5H869R8HX9svhqwDG2TEQX95IwJxwT909wfxz2xVV5XjddyaSXNZ9jyzT7ox6rHAyoY4idpbpjqSPx5/KtDURc3iTPboDErFQQe3fj86dp2l2t9bnfuJKsysePmxx+H51XfUGhb7OkYJwEHPGPSm7SlpuTstTKSC7jnDS4jTaMHdj8eK6++LBILlwA0iDZhtxChenHpg/rWRqOnxLF58Bwu1XRT0YA8gY4BHT6ipp9TRYY0iZY5d4EEbH7zd8dupPHt9aJe/ZoI+6U7exuI1a5eU73ZsYXOD0bPbOMjPTmq91bPpljNOwDJErSAM3JPuenWugXUduGleGEsPL3Ow2jvye/XFcL4419PsK6faxgC5kaRn53FM56dsnt/s1dJSqTUSakowjc5HUdTu9RbfNKSijCoOn1wPpVLzmVSqgHPf0/GnIpkyrEjHf+lKISTt6V7KtFWPMd5MhAkkIAzn6VIbW7AyYWx9K3tF0yN5AzAnHtXXW1pbyAI0Stj/Zrmq4pU3ojtw+BdZXbsec28EqurOMAHoR/WvcPiV8RfDPj+bRPB2n+HToXh/w/ZPaadEI1ErecIySXyQMlA249d7liSxznW3g3SdYX7O6tGzdHTqK6Dw/+zxq2qypNpd+10+fn38YHTP5Vj/aNLaWjOiWT1170dUej678M9P1X4J6b8ZPhtCz3GlW0UXivTVj8x5jBiOW9XyycMjK8rMcboW3Pja2/wAwu5blLACW7F2wXerrGVLA9D9MYr0LUvB3xY/ZxlF1bTxXmiavbul5azAzWV2rDEkU0RIzlfk3DD4cgHDEHxPS9XvW0GNp8RxQLsyUy6hBgDI5HHHT+tZ13DExVSBlCFTDTdOodvZxRW9gIoFyQMM3dmxyfxP61zmrxr5hkARmK4yTgn2/OtLSb+W+sTcyI6c4Ix3A7cf5/SsPXJfLZjtLnoV7YPrXHTi/aNHTJ+5cSwYXOlTWhBLKGCZIIA5IGfqB+Ne0fCiHSf8AhCrX7ZfXIfzJcIqn5BuJxwv1P4ivBIJZrW1Dlsvs5zk85P8A9fmvYvh7o9rqXhyO8lvfI8yRtqGV1G3A6AOOOo5yeKMTC0d9Lioyu0eRSWtxawGKImMRqpyjdFz69T05/XrUkAmvFIJUc8ndgDNXL6wkt5Zi6b4pl8pHAHy/5I/Wsa382C7AkYgxEHaehwc81unzK6M3o9TTlg1K3tmjR5DHj5sLnp6frWFHp+oX8326EXEkqqY1diTj8umckfn611rTXV3ErvGBGCcY4BOfXp/KtvQUsjZIkBV2+dJm3cc+3pg0va8ivYXJzM4Ga6vdRvYNMv4TBaWZSVsqf3kgODzjGOVOMHnHuTyHiu/F7rFwwJKwHydxOSxBOTn6k816tr3h+S3cCJ08sLlfmw3PUe9cnFDaTWc9vcWitbea0SIiAnrgsT1zmtqVaMfeSGsLKumr2OGiiLAcVo6fp8s77Ykz3NWLnQL2wuzabSy5+VgOorodHsjBASQQzda6KtdKN0ZUcM3Pla2Hafp7wxjzcA47Vq6cEWbYwOKWDT7i6OyBCW9M1o2fg/xbuE9rFbk9dhP9a8+pNS+J2PYo05Ra5YtnTeHbTbcrLGucc5xXv3wuuvsV8nQMyEMce3WvCfB+sxQX8mj63YNpuohAVR+EkwR0P51754OtIZbTT9QtwUa4QZX6AZP614+KbpvU93CctaLSPbfFeiWHj74f6j4e1CNGE1u2xsfMjY+8voQenuK/P+bSoVtZrdUMbohQxIMkKpOw88/j7mv0A0tZLnR1uImIAUq2T6jBr4Z8bJBY+KPEbxuBDJqU6RuoAKKspUAeowOPc+9PA1pTbj6Hm5pRjTUX6nMadp+q6fZ/Z76aJlXhEjOcDPfjr9P/ANWZqADyMHxhsjH+NdVdPEtuWjKnYSjMDkAjg89+Qa5i/KtKdvTceRn+tepTlzSuzxpLlVjElTKmBT3wqn3J717T4Ev1h8Px29v5shhfy5GVxGC4Vc4G5cjpg46YHOK8cMDP5twSCseVGTgk+w6/j0r2/wAH+H9NsdH8qYwzEysdzTFRjAHGD047989sVeJa5UmRTTTujzK7bZAttMnCZLtwc+tYuoWipfWc0cLmCTPmNn7uBkdffHFdBqtpGbXylJBJznd19eK4/wAU3WpweINOsbafNsgDSAJkKWBzu/P8KKC5nZeYqsuXVmzbiW3TzC7CJmztIyD26fjV/T5jHexSW+7y4m2lhwOedp/z0qDRmT7NO85+XycRqwBBJfnn6H9PStjw6hN3cJMoMEkLOYlXAPTleykf1qZNK40m7E2rlJpzK3AC7kGOD/h1NeVa7bXiQq8Pz28OTIoGCGY5JPt716ndorsy3QC21rAzFhy+FBPY8nj9c+uOC0p/tGlWwn3mR4gu9cc+zA06D5FzG9O07wfUuXO12jEcokUqCHHQg9KlSAqPagorP8gAVeAOmAK0beNZEAAok7I6Ye9Kwtk90kLm1GJMcHGaf4X0jW316O+1LxA9rpxRzJKiPJIkoBKgqCDjOM89M1v6NZxBlBUHOM1s6xaW1tpzyxxAYHzEDGa5fbWbiluej9W5oqV3p2Ofu/EVlrrx29+zRXUWRHNt+ZSOM+uD6fjxXuXg3W7ix8IrqsxMsFpEILdsfPI/dse3J/Kvm1YLZLjzimDnOCSc17b4v8Ka54m+HPw7ufCl/JYxRy3wvFAJWU5gxuwR28zHT0zzmsMVRjJRjey8zpwdWcXKdrvsj13wz8ePCQ0S90+b7ZBdWVvJK6TQsokCgsdpI54zj3r5ZcDVphFc7XZ90kmWG4k85Pvyef8A9den+LmSw8I/2Vdae8OoSSPHFcOQpeEHmRVzkBgcAZPcZO3LeUR6ZfWusNLKr/YpfLeJ1IxIhUKOn3QCGJHHrjBowdOMYuUdP+AebmtVyqKDd7fqOlDrpsPLs7R7zkE89+pOeT61z9zJnLZ4POM9DXZXqpLGxiIfbkMQe4OP6VxGrIYFbgBznIB4/Cu6jqzy5qyKMhXa0ZIXzTsJboMnqfp1/CvqTwH4B1afwvZ3MMvkxyqSvmzsrsB8oLDPX5cfhXy3MyPEuU4ZVA74AHP/AOv61966XaXcdlEdPtdNNu0cZjW5jBaMbFAUcH5eMjHHJrHMKvs1HzLw0Ods+LNQnsp43JceWAHZPToABxnGSfwrB120hsdUsvNjUQMglfaOOcZwAM9vrUb39/DP9pt2KyZyDtJ57YxXQazJb65axXEgVJ4YVLbUKqM9SAenNdaTptdjmfvIqSy2tvF8hdRgEIVIYZIAyPxFdPp08WnaKb2JgzynYM8k84ye4x/hXLW9lf2SpPJtd06BhnP9fy9KrzRXYma5SQxlySVGdjN1BIz25/OocVLQq7R011cQC0vJ96tG6SZHB2zIm4Hnjqce+7ArjNMj226Rgfd4FRXU14r4a6JSYYIAGGXPBz+QyPerGntgKMcE8/T/ADiqceRWN6Cb940raAsc4Hv71o29sysR2zTbKMM+wDkc4rds7eL77JwaxlK52U4MtaJEPMVSwHuas+PNZ0200AafYSeddS8bweFHenW2jPc/IJ/LQ9WHpWXrkHh2KYWEum6vNg/8fMSI6fkXBH5VxrldRXPWip+ytHqYel6Vpt/qEUGmTalMW2jzmt8wlyPu8NuXnjJUD3r7P+E9tCngDTdMubUCXT5GkcHkAtjv9BzXivwg8P8Ahe0vYoGuMzvKZjDMhjaVAhwAp56nv1yPavXvH/jGx+HvgrUdS05o4prx3XT4cBQrsOPlwcKufp0HGRXJjK8q0lSgvI7qdKODpOpW06njnx18Q/2t8Q7xNKWGW0so4rEqo+46bi2O2QzlR6Feffz1LxLbUiIoPOia13IrJ8pUqCMEehU/i3vxDYDUtWW7tXeaSSa4DyymTcXKkBl6bjkkn1+lXBHMmyaOP9wgKSIT8gA3FcE44PHHTBX0r04QjSiodj5GrUlWm6ndmnb2rtaq80WxnJkClQCBn5c4zzjb+VcH4ojjjmZQcE4JBGB17nFeiWOoJqGnrOPlLLkr/dPcfnXn3i1Ge6aJWIPc1dG/tCZ25TGtrgW8OfKUu8Owk87VK4OPc5xn0z619+6Zbm70nT7uDyTFPaRSRmVAWKlRgn/CvgKaJlKZ4CD+nFfePw/uGm8J6es1xLJHHbxLbTRQ7klhMashBKnOA2z/AIBXJnDtGEl5muDV20fCk1pcI7R280iPgt8pIyAM/wBKuWlxcWdoGkVpPN5/eAnjnpVyKzjXUY7i9DJHAdz5QkY444/n04p2s3MM7GS2YbYhggt8pJAOf1H5GvRcr6HClbUS0nW5tGMp2lD5bO3IyPfPT19vWlsPCuvXssVy8EYtpO0p25HqBnPTvU2j2U+pw/2fBaAKZS9xKo7EHGD+P+ea9M0uFLeRbjUo1Y5+RANxH0FTdp2RajdXZ5Zqfwr12e4L6beW86bcASbo3B5woHze3JI61y32a/0q7m0rU7Z7a7tn2vG/UH+oIPUcEHI619o+EdL0bxZFJFqWgNcTtgLcJJHDKgVenBGcDnBB5xmsXx3+yenjm4Gt+G9cbStTAigI1W1K2sydBuuIQ43DgZKDIwMDGa39lOS7o0hWjB2eh8yae8zR+bbDMkXRc/eHda6SyuYry2EkLkZ6qeCrdx9a2fEfwQ+JXwvuRP4q8OTJY7sLf27Ca2dd2FO9c7C3UK4ViO1XI/CcUlumsWAzvAE6Dowx94D1H6j6CvOrz9jLlnoe7hqX1iHNTdzGM93aRhopCV7j0rqPCsw1G5itxFAs0x2+ZImQvapE8OSxWjXNwIhDCu6RzwCo7mptG1bwnp11h70RTREFlaJ+CRkdsYPGDnHvXNNxqxvFXOinJ4afLUlY9B1LS7Pw7pBTxLqEaw27pdRXCfKysBwUIw2SuRgdRkdzXkXjfxhceM9XXUbyRk0uOLZbWzt8sShiR04DsVBJ78DkKK2/GuoXvifU7BpZNtrFvSOMkZOcA5U9c/Udetc0+kaXLfvZiSZYpdjM0h4baQeQBwOO3QEjpzVYWgqf7yb1/I4MyzCeLfs4/CvxItCsb6zuLq/luVVQrRuOPm3eh6fdYjjmnRTW7apLbOv/ABLYj5Xlg/6x2BKnv0bJP1Ge1bO17bVIbYrvimj6Iu3YCigMQeCRuJ/4EfQVR1GUPG32X/SGtlOJQ5XpwTj+8AB+fAzzXVdt3PM2VhILW102f7KshAlJYAYxnqfpzx6dfSuI8ZqGvymSdyjBHUH1rto4UjgmunlDFI1IZuBnaCNvYDvn2JPWuI8SMLi+DoQwwBuByCc881dG/OKb90zQCIGaXlnjx0xzlc/yr62+Hvj1tN8GaRp/9nidLe1jjjZrhkO0KPXOR1I56EAAAYr5MlUlIN/y/ICwHbgcV9HabeLdaZZ3K28kSSwI6xoWIUEZxnufX3zUYyKnFJhSfK9Dxk3sBiUX7hZJcsr8DJA4Gff06VW0zQri9DQ3TIIOjkAhyR0xnpx1/wAKZCH1N7ayiVwqDckm04wD2yMdD/hXXRQrbxLAnQDnPWtbcuiMYrmJ7BbXT4RBaoqBOmB/n860rK6YSrIzDOevrWSVxjB61JFIVOOue1NXRbPVPCusGCWOaPG9X59sjHbtjPFex+G/Fb6ciSTWN1C6lUBgcyKT67cZ7HP+cfNvh2/Rpvs/mKsjfKN/Q17J4U1xoFt21FEDODvkkUMGPRiT1ByOuD1HB6V3UJs56kUfQNneeFfEOmfZ3lhubWWLy59o2yQsQAxkjIHyn+8B14YEGvJ/iD+znDoz3GqeDosxXj/aI7WMAxSbhkiLHCN1IT7rA/JtwIz1ek6JaagYr3QpLc3CfOj2t0Y5F9cAcHjPUY6V3ngjW4btZfBvi60MDzE/ZxMu2JjnJUEcA5wRjGGyVxwBeKoU8TDkq/JlYTFVcHU9pRfqu5+f3xr+0Wukw6Pps0qKhEt0IGGXP8KsP7oyG9ztPauF06NV0xWjunkuPMS2fKdGYjByMkj5SenUD8Ptz43/ALLOreI9YuvE3hC4FzNdOiXWnXTJG8rHC745fuHAO5kYjozBvmRB8XzeENa8Hazc6FrGiavZ6jaXW5swyqFQ/dDhgAvynIzznHODivLjhXhafs3069zrr4x4us6r6m/qtrc208V7bobm0S0MbGNwZFZGckkAk8hsAjnKnpxWfJJ/apItIWE0a72cPty3Xp3Oe3+9zitC2vryeSW4uYJltGREhYnLCNA2Gx0wxGMn+8c4zUdpD9l3XO15dkiMyrk7QxJUHtgL13dfrxWaVgbuULm/vL3WBLtANps85w4wilVIK5445GfUDtzV7U7KG3sVg02Dy4pB8xfhiDk7iehwB36dqsJpn2y0uYQrxyTlJcFQshcqCpBI5yADyOvPHNWYYPNkSeRNsce6N2Y4KptwG55yGHTqSRiiUl0Gk1uc87W82mRWwLZjPldB+8CjIyO2cc447d64TWC0F/5UgJBcFflz64x09DnP4eldnq13c2kV7qUsUssFqhWGKOPLyY5AA9cnH4Vxdxf/AGmSS9wWhQ/OTk7B6n24HJ6VtSTvczm1sOvI0It3K7owFDKvBIAAIH5dfcV7npl1I+n2/kxtbqsYQRABvLxxtz/n8a8YljQ2rQiPzGIVEYZ5ckc/kD+fpXuelQxRaXZxlgjLAgYKW5OOTwfWs8Q9EOCZ4/4MVFspbxi2HkKxKegGBkjPPJ/lXSSgja2eoB+pqpp+lw2+kpZxhUZOgXpu6mrsYaSGPd1XitZbkR0QnVBt55xSAMORnIPalZZLcqJF4LA1OnlbwzAsp6kHpQgZNZpb337p5hb3GflY/dJ9D6V33g7xxe+F5E0nxdp0t3p7SiRZUOJocgAtG/RhwPlPBx2zmuJOgyXEP2m1cSKO49K1NE1vWfD8kZvohfafuAkhk+dSncD+7xxx61tC8XczdnofTvhK6hubYaz4cu7TWrEYZnXMU1ueOJAOUbsMgg9iea9g0qfSPElvHY6nDLFdINypeqefTbKuOhOOenA5r5W8IeH5jdHxP8JvEDb4gTLZg4niU9dyfxIR7Ee1e4eEPHd/beTD4s09tNY8Le2qZgY853x9Op7ADjG2u6FTT3v+Ac8qevu/8E9usYj9lNteqweJNsxmOWaMHIOQQGI5wRjOea84+PXwZ0H4kaNp12YDHqVik1sbtFxMYN3+pkxgvGCznGcqzFl6sG9J0nUEvbeKG9MZjuU2x3EBzFKrccHoD7fkPXltc+IOmaH4n1jSJbC9upLfT5tWjtbWJDNJJHJKjxxJlQzt5KnBOWZ/StFCE1yS2Mryj7yPgPxh8GPib4VubOzl8OXN3aRTTLDdWiieKRDhUcbBkbgrcNgjPOCOOcCu040+RXUNGQZDGxDNllbJP1I9RtyOAK+4vhh8afBPxg1K40PT7aPTNbaA3h0qSYSLNFns+AgnCkM0a5wG5OVkCZ3xb+Aui+M411vTFfTtXtyBvRSY5+RsWZV56rsDDkEqMMFCLxVsDp+7Z00sUm/ePjOUvLA8Ew2yQnz2IOAgXOB/48f88021vQVaKXDbyHXfzgE4H5E/n161W8Vw3GhapPoF6LhbyGaRZow6j/VnBUnIG3ORnPOPYZq2E4jCXV7ADJMGj+Vxx8pPQd/vc9OfUEV5nI0tTt5+bYk12ULYSggqVG/az8qT6j1+o9K8vnknt7osoMiycuFbrj0468nH/wBbNeoXtufIleZVGTuUcYII6/ieefX6Z8+u/s6XM3mna2eh6t1B/H+da0nZ2FNXG3JmKSRRucBhJgNgqV6fj1r3rTIp59Ptp2nBeSFHcrwCxUZNeGBdkh3/ACKFO4qc8E+1e+2L2tvY20UauEES7QVHA7dPaoxD0QQPN1hQxAZwVbqOoPb/AD7VaATauMHPOahQAxSEgfKhcfUUltIxkaM9BXTYyvY27HTl1S2lh25aNNwP4ismawntXKsDgHHIrsPBESO92WXOY1X8Cf8A61a19pFkxkLRn5RwM04w543FezOD0i71ewuFk0/O/PKAbgw917iut07VtHvmaTUvDs9s6jEk9i2UHu0Z9/Qioh4Z02dmf96m0qQFYd8+o9q1IdNtbK7vI4hKZI8qk/nOsi7hzypAPXuCK0ppomWup0XhLSIzNFqngvxPFDeWTZWR/wBzIqnJG9TkYyGHBP8ADnrX0J4R8ST3v+g+ONCt1mOEe6tsFJOOS0ZwVJ9f0rwPwT4w1u3v7JmlhmaQiJ3kiBZlL4OWGCTwDk+gr6ZtrdLNrc2rvGJRGzAHPJI9fpXbQSaujlrNrc7Lw3oa6Juj02ZptLuWB+yZ3KnqU756dfSuI+Knhm70r4kaT4v0qSP7PdabJGgViH86OXc5OAMBhMpByTu3dMDPo3h+Z5LSKRsZcnP51q+J7G01Lw0bi6gVpLeSKSMjjDFwp/Rjx9PSt3BJaGEaj5tTwK6Or+CtUvfEVnBfRSW7Wl9BcXTRyWw06WeIyeSGYyIiK0tm8aB23CGQBDMTJqfC74+aR8b73WdCk8OnQdTtE+e2+0G9WVCQvnI3loBh9ikEDloWBPzbaupeJ9S1yx8V+G70RCy0bR7po0RT++YtbSI0uSQxQySBSAMbyeoBHzt8NNbn0P41+DptNtreI3pNhcgBgJkmnlQs2DyyhlK9gYo+DtrB137VQezX5b/menTy+NTL54yD1pzSfmpJ8tvNOLv5NHqX7V37Pc3iOz/4Wb4USIa9aQJJq0MkrL9ojjCjzQ2cBolOdvRlUAcgZ+PlsZLc4jvJG2kyeYU4ZQGPDZ2/3fu9O/ev1gmRJobgyxo4a1DkMoIywOR9MIo/Cvzh+JHgrRfC+ratpOn+fJEutfYw0zhm8pZSAOAB0z271yY6Ci1JdTHDTbvE4e4LzWTNdxzwTQqFkjdsFQQCDnvj1z1rzrXJxBdSuI2Z55FhU8YJLAbT/wB9Z+o5r03xeRDq2qxhFP2eSAIxHP7xjn6Y7Yx+NeYaqfI1siMALh5NvbO3NcVFa3OyexqeSzzkZwQvJPyjk8cmvbLO5tTbRxSTrvgHlNlcZIPJ/P8AyeteFzktqKIcYxjoPevcfBWp3t34ctbmSXa77923gHDEZ/ICs8QrJXKjrsf/2Q==",
-        isEmployee    : true,
-        fullName      : "Fedir Kovbel",
-        id            : "56e696da81046d9741fb66fc"
     };
     var fakeEmployeeForThumb = {
         total: 200,
@@ -1264,6 +1098,62 @@ define([
         fullName      : "Vitaliy Shuba",
         id            : "55b92ad221e4b7c40f00004e"
     };
+    var fakeResponseSaveFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v"            : 0,
+            "attachments"    : [],
+            "lastAccess"     : "2016-06-27T06:19:21.682Z",
+            "profile"        : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{
+                "_id"        : "574335bb27725f815747d579",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : true
+            }, {
+                "_id"        : "576140b0db710fca37a2d950",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "5761467bdb710fca37a2d951",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "57615278db710fca37a2d952",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "576be27e8833d3d250b617a5",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576beedfa96be05a77ce0267",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576bfd2ba96be05a77ce0268",
+                "contentType": "Persons",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576d4c74b4d90a5a6023e0bf",
+                "contentType": "customerPayments",
+                "byDefault"  : false
+            }, {"_id": "5770ed29a7b6d5c50fd66763", "contentType": "Employees", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications" : {"foldWorkflows": ["Empty"], "countPerPage": 87},
+                "opportunities": {"foldWorkflows": ["Empty"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
+        }
+    };
     var fakeUsersForDD = {
         data: [
             {
@@ -1509,78 +1399,6 @@ define([
             {
                 _id : "temporary",
                 name: "Temporary"
-            }
-        ]
-    };
-    var fakeWorkflows = {
-        data: [
-            {
-                _id         : "52d2c1369b57890814000005",
-                __v         : 0,
-                attachments : [],
-                name        : "Contract End",
-                sequence    : 1,
-                status      : "Cancelled",
-                wId         : "Applications",
-                wName       : "",
-                source      : "",
-                targetSource: [
-                    ""
-                ],
-                visible     : true,
-                color       : "#2C3E50"
-            }
-        ]
-    };
-    var fakeEmpNat = {
-        data: [
-            {
-                _id: "British",
-                __v: 0
-            },
-            {
-                _id: "Canadian",
-                __v: 0
-            },
-            {
-                _id: "Czech",
-                __v: 0
-            },
-            {
-                _id: "Danish",
-                __v: 0
-            },
-            {
-                _id: "English",
-                __v: 0
-            },
-            {
-                _id: "Finnish",
-                __v: 0
-            },
-            {
-                _id: "Georgian",
-                __v: 0
-            },
-            {
-                _id: "German",
-                __v: 0
-            },
-            {
-                _id: "Romanian",
-                __v: 0
-            },
-            {
-                _id: "Serbian",
-                __v: 0
-            },
-            {
-                _id: "Turkish",
-                __v: 0
-            },
-            {
-                _id: "Ukrainian",
-                __v: 0
             }
         ]
     };
@@ -3343,7 +3161,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00005f",
-                name    : {
+                name: {
                     last : "Voloshchuk",
                     first: "Peter"
                 },
@@ -3352,7 +3170,7 @@ define([
             },
             {
                 _id     : "55e549309624477a0b000005",
-                name    : {
+                name: {
                     last : "Rospopa",
                     first: "Petro"
                 },
@@ -3361,7 +3179,7 @@ define([
             },
             {
                 _id     : "56cc7ad8541812c071973579",
-                name    : {
+                name: {
                     last : "Tesliuk",
                     first: "Petro"
                 },
@@ -3370,7 +3188,7 @@ define([
             },
             {
                 _id     : "56a78c75aa157ca50f21fb24",
-                name    : {
+                name: {
                     last : "Iyber",
                     first: "Renata"
                 },
@@ -3379,7 +3197,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000051",
-                name    : {
+                name: {
                     last : "Mozes",
                     first: "Richard"
                 },
@@ -3388,7 +3206,7 @@ define([
             },
             {
                 _id     : "56e298ab5def9136621b7803",
-                name    : {
+                name: {
                     last : "Shinkovych",
                     first: "Rikhard"
                 },
@@ -3397,7 +3215,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00007a",
-                name    : {
+                name: {
                     last : "Fogash",
                     first: "Robert"
                 },
@@ -3406,7 +3224,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00004b",
-                name    : {
+                name: {
                     last : "Katona",
                     first: "Roland"
                 },
@@ -3415,7 +3233,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000038",
-                name    : {
+                name: {
                     last : "Babunich",
                     first: "Roman"
                 },
@@ -3424,7 +3242,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000060",
-                name    : {
+                name: {
                     last : "Buchuk",
                     first: "Roman"
                 },
@@ -3433,7 +3251,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00007b",
-                name    : {
+                name: {
                     last : "Guti",
                     first: "Roman"
                 },
@@ -3442,7 +3260,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000086",
-                name    : {
+                name: {
                     last : "Kubichka",
                     first: "Roman"
                 },
@@ -3451,7 +3269,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000b0",
-                name    : {
+                name: {
                     last : "Donchenko",
                     first: "Roman"
                 },
@@ -3460,7 +3278,7 @@ define([
             },
             {
                 _id     : "55dd73d1f09cc2ec0b000008",
-                name    : {
+                name: {
                     last : "Vizenko",
                     first: "Roman"
                 },
@@ -3469,7 +3287,7 @@ define([
             },
             {
                 _id     : "55eef3fd6dceaee10b000020",
-                name    : {
+                name: {
                     last : "Saldan",
                     first: "Roman"
                 },
@@ -3478,7 +3296,7 @@ define([
             },
             {
                 _id     : "5667f43da3fc012a68f0d5f6",
-                name    : {
+                name: {
                     last : "Katsala",
                     first: "Roman"
                 },
@@ -3487,7 +3305,7 @@ define([
             },
             {
                 _id     : "568bbdfd5827e3b24d8123a7",
-                name    : {
+                name: {
                     last : "Chaban",
                     first: "Roman"
                 },
@@ -3496,7 +3314,7 @@ define([
             },
             {
                 _id     : "568cd341b2bcba971ba6f5c4",
-                name    : {
+                name: {
                     last : "Rosul",
                     first: "Roman"
                 },
@@ -3505,7 +3323,7 @@ define([
             },
             {
                 _id     : "568cd4c0b2bcba971ba6f5c5",
-                name    : {
+                name: {
                     last : "Osadchuk",
                     first: "Roman"
                 },
@@ -3514,7 +3332,7 @@ define([
             },
             {
                 _id     : "569e3a73044ae38173244cfb",
-                name    : {
+                name: {
                     last : "Martyniuk",
                     first: "Roman"
                 },
@@ -3523,7 +3341,7 @@ define([
             },
             {
                 _id     : "56d5a0c45132d292750a5e7e",
-                name    : {
+                name: {
                     last : "Ukrainskiy",
                     first: "Rostyslav"
                 },
@@ -3532,7 +3350,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000056",
-                name    : {
+                name: {
                     last : "Labjak",
                     first: "Ruslan"
                 },
@@ -3541,7 +3359,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000097",
-                name    : {
+                name: {
                     last : "Abylgazinov",
                     first: "Samgash"
                 },
@@ -3550,7 +3368,7 @@ define([
             },
             {
                 _id     : "568cdd375527d6691cb68b22",
-                name    : {
+                name: {
                     last : "Melnik",
                     first: "Sergey"
                 },
@@ -3559,7 +3377,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000064",
-                name    : {
+                name: {
                     last : "Tilishevsky",
                     first: "Sergiy"
                 },
@@ -3568,7 +3386,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00007c",
-                name    : {
+                name: {
                     last : "Sheba",
                     first: "Sergiy"
                 },
@@ -3577,7 +3395,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000a1",
-                name    : {
+                name: {
                     last : "Stepaniuk",
                     first: "Sergiy"
                 },
@@ -3586,7 +3404,7 @@ define([
             },
             {
                 _id     : "55d1a2b18f61e2c90b000023",
-                name    : {
+                name: {
                     last : "Degtyar",
                     first: "Sergiy"
                 },
@@ -3595,7 +3413,7 @@ define([
             },
             {
                 _id     : "55dd63f8f09cc2ec0b000006",
-                name    : {
+                name: {
                     last : "Ihnatko",
                     first: "Sergiy"
                 },
@@ -3604,7 +3422,7 @@ define([
             },
             {
                 _id     : "5649b8ccad4bc9e53f1f6192",
-                name    : {
+                name: {
                     last : "Gevelev",
                     first: "Sergiy"
                 },
@@ -3613,7 +3431,7 @@ define([
             },
             {
                 _id     : "5652dd95c4d12cf51e7f7e0b",
-                name    : {
+                name: {
                     last : "Petakh",
                     first: "Sergiy"
                 },
@@ -3622,7 +3440,7 @@ define([
             },
             {
                 _id     : "56e17848f625de2a2f9cacd1",
-                name    : {
+                name: {
                     last : "Biloborodov",
                     first: "Sergiy"
                 },
@@ -3631,7 +3449,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00004c",
-                name    : {
+                name: {
                     last : "Nayda",
                     first: "Sofia"
                 },
@@ -3640,7 +3458,7 @@ define([
             },
             {
                 _id     : "56d823e78230197c0e089038",
-                name    : {
+                name: {
                     last : "Marenych",
                     first: "Sofiya"
                 },
@@ -3649,7 +3467,7 @@ define([
             },
             {
                 _id     : "561b756f9ebb48212ea838c0",
-                name    : {
+                name: {
                     last : "Romanyuk",
                     first: "Stanislav"
                 },
@@ -3658,7 +3476,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000039",
-                name    : {
+                name: {
                     last : "Rikun",
                     first: "Stas"
                 },
@@ -3667,7 +3485,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00007d",
-                name    : {
+                name: {
                     last : "Volskiy",
                     first: "Stas"
                 },
@@ -3676,7 +3494,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000ad",
-                name    : {
+                name: {
                     last : "Krovspey",
                     first: "Stepan"
                 },
@@ -3685,7 +3503,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00008d",
-                name    : {
+                name: {
                     last : "Kira",
                     first: "Svitlana"
                 },
@@ -3694,7 +3512,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000ae",
-                name    : {
+                name: {
                     last : "Dolottseva",
                     first: "Tamara"
                 },
@@ -3703,7 +3521,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000061",
-                name    : {
+                name: {
                     last : "Mondok",
                     first: "Tamas"
                 },
@@ -3712,7 +3530,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000050",
-                name    : {
+                name: {
                     last : "Holovatska",
                     first: "Tamila"
                 },
@@ -3721,7 +3539,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00007e",
-                name    : {
+                name: {
                     last : "Zmiy",
                     first: "Taras"
                 },
@@ -3730,7 +3548,7 @@ define([
             },
             {
                 _id     : "564a02e0ad4bc9e53f1f6194",
-                name    : {
+                name: {
                     last : "Dvorian",
                     first: "Taras"
                 },
@@ -3739,7 +3557,7 @@ define([
             },
             {
                 _id     : "56813fe29cceae182b907755",
-                name    : {
+                name: {
                     last : "Ukrainskiy",
                     first: "Taras"
                 },
@@ -3748,7 +3566,7 @@ define([
             },
             {
                 _id     : "56d9497dae35cc4f0e721074",
-                name    : {
+                name: {
                     last : "TESTING",
                     first: "Test"
                 },
@@ -3757,7 +3575,7 @@ define([
             },
             {
                 _id     : "56cf0928541812c071973593",
-                name    : {
+                name: {
                     last : "Shepitko",
                     first: "Tetiana"
                 },
@@ -3766,7 +3584,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000099",
-                name    : {
+                name: {
                     last : "Smertina",
                     first: "Tetyana"
                 },
@@ -3775,7 +3593,7 @@ define([
             },
             {
                 _id     : "55c98df0cbb0f4910b000007",
-                name    : {
+                name: {
                     last : "Berezhnoi",
                     first: "Timur"
                 },
@@ -3784,7 +3602,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00006a",
-                name    : {
+                name: {
                     last : "Tsipf",
                     first: "Vadim"
                 },
@@ -3793,7 +3611,7 @@ define([
             },
             {
                 _id     : "56011186536bd29228000005",
-                name    : {
+                name: {
                     last : "Khruslov",
                     first: "Valentyn"
                 },
@@ -3802,7 +3620,7 @@ define([
             },
             {
                 _id     : "561bb5329ebb48212ea838c6",
-                name    : {
+                name: {
                     last : "Ladomiryak",
                     first: "Valerii"
                 },
@@ -3811,7 +3629,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000af",
-                name    : {
+                name: {
                     last : "Tokareva",
                     first: "Valeriya"
                 },
@@ -3820,7 +3638,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00007f",
-                name    : {
+                name: {
                     last : "Klimchenko",
                     first: "Vasilisa"
                 },
@@ -3829,7 +3647,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00003a",
-                name    : {
+                name: {
                     last : "Agosta",
                     first: "Vasiliy"
                 },
@@ -3838,7 +3656,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000040",
-                name    : {
+                name: {
                     last : "Almashiy",
                     first: "Vasiliy"
                 },
@@ -3847,7 +3665,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000053",
-                name    : {
+                name: {
                     last : "Seredniy",
                     first: "Vasiliy"
                 },
@@ -3856,7 +3674,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000062",
-                name    : {
+                name: {
                     last : "Cheypesh",
                     first: "Vasiliy"
                 },
@@ -3865,7 +3683,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000080",
-                name    : {
+                name: {
                     last : "Barchiy",
                     first: "Vasiliy"
                 },
@@ -3874,7 +3692,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000093",
-                name    : {
+                name: {
                     last : "Lupchey",
                     first: "Vasiliy"
                 },
@@ -3883,7 +3701,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000b4",
-                name    : {
+                name: {
                     last : "Prokopyshyn",
                     first: "Vasiliy"
                 },
@@ -3892,7 +3710,7 @@ define([
             },
             {
                 _id     : "55d1d860dda01e250c000010",
-                name    : {
+                name: {
                     last : "Hoshovsky",
                     first: "Vasiliy"
                 },
@@ -3901,7 +3719,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000088",
-                name    : {
+                name: {
                     last : "Buchok",
                     first: "Viktor"
                 },
@@ -3910,7 +3728,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000091",
-                name    : {
+                name: {
                     last : "Kiver",
                     first: "Viktor"
                 },
@@ -3919,7 +3737,7 @@ define([
             },
             {
                 _id     : "55f9298456f79c9c0c000006",
-                name    : {
+                name: {
                     last : "Manhur",
                     first: "Viktor"
                 },
@@ -3928,7 +3746,7 @@ define([
             },
             {
                 _id     : "56c2f2a7dfd8a81466e2f71f",
-                name    : {
+                name: {
                     last : "Mateleshka",
                     first: "Viktor"
                 },
@@ -3937,7 +3755,7 @@ define([
             },
             {
                 _id     : "5626278d750d38934bfa1313",
-                name    : {
+                name: {
                     last : "Rogachenko",
                     first: "Viktoria"
                 },
@@ -3946,7 +3764,7 @@ define([
             },
             {
                 _id     : "5637710e5d23a8eb04e80aed",
-                name    : {
+                name: {
                     last : "Kovalenko",
                     first: "Viktoria"
                 },
@@ -3955,7 +3773,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00003b",
-                name    : {
+                name: {
                     last : "Bizilya",
                     first: "Vitaliy"
                 },
@@ -3964,7 +3782,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00004e",
-                name    : {
+                name: {
                     last : "Shuba",
                     first: "Vitaliy"
                 },
@@ -3973,7 +3791,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000081",
-                name    : {
+                name: {
                     last : "Sokhanych",
                     first: "Vitaliy"
                 },
@@ -3982,7 +3800,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000052",
-                name    : {
+                name: {
                     last : "Gerasimenko",
                     first: "Vladimir"
                 },
@@ -3991,7 +3809,7 @@ define([
             },
             {
                 _id     : "561bb1269ebb48212ea838c5",
-                name    : {
+                name: {
                     last : "Pogorilyak",
                     first: "Vladimir"
                 },
@@ -4000,7 +3818,7 @@ define([
             },
             {
                 _id     : "55eeed546dceaee10b00001e",
-                name    : {
+                name: {
                     last : "Turytskyi",
                     first: "Vladyslav"
                 },
@@ -4009,7 +3827,7 @@ define([
             },
             {
                 _id     : "568bbf935827e3b24d8123a8",
-                name    : {
+                name: {
                     last : "Hamalii",
                     first: "Vladyslav"
                 },
@@ -4018,7 +3836,7 @@ define([
             },
             {
                 _id     : "55eee9c26dceaee10b00001d",
-                name    : {
+                name: {
                     last : "Stepanchuk",
                     first: "Volodymyr"
                 },
@@ -4027,7 +3845,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00004d",
-                name    : {
+                name: {
                     last : "Kopinets",
                     first: "Vyacheslav"
                 },
@@ -4036,7 +3854,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000063",
-                name    : {
+                name: {
                     last : "Gusti",
                     first: "Yana"
                 },
@@ -4045,7 +3863,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000ca",
-                name    : {
+                name: {
                     last : "Vengerova",
                     first: "Yana"
                 },
@@ -4054,7 +3872,7 @@ define([
             },
             {
                 _id     : "55f7c20a6d43203d0c000005",
-                name    : {
+                name: {
                     last : "Samaryk",
                     first: "Yana"
                 },
@@ -4063,7 +3881,7 @@ define([
             },
             {
                 _id     : "5602a01550de7f4138000008",
-                name    : {
+                name: {
                     last : "Dufynets",
                     first: "Yana"
                 },
@@ -4072,7 +3890,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000082",
-                name    : {
+                name: {
                     last : "Fuchko",
                     first: "Yaroslav"
                 },
@@ -4081,7 +3899,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f0000cf",
-                name    : {
+                name: {
                     last : "Denysiuk",
                     first: "Yaroslav"
                 },
@@ -4090,7 +3908,7 @@ define([
             },
             {
                 _id     : "568bc0b55827e3b24d8123a9",
-                name    : {
+                name: {
                     last : "Syrota",
                     first: "Yaroslav"
                 },
@@ -4099,7 +3917,7 @@ define([
             },
             {
                 _id     : "56014cc8536bd29228000007",
-                name    : {
+                name: {
                     last : "Bezyk",
                     first: "Yevgenia"
                 },
@@ -4108,7 +3926,7 @@ define([
             },
             {
                 _id     : "56e2e83a74ac46664a83e94b",
-                name    : {
+                name: {
                     last : "Melnyk",
                     first: "Yevgenia"
                 },
@@ -4117,7 +3935,7 @@ define([
             },
             {
                 _id     : "55ed5a437221afe30b000006",
-                name    : {
+                name: {
                     last : "Porokhnitska",
                     first: "Yulia"
                 },
@@ -4126,7 +3944,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000054",
-                name    : {
+                name: {
                     last : "Derevenko",
                     first: "Yuriy"
                 },
@@ -4135,7 +3953,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f000065",
-                name    : {
+                name: {
                     last : "Sirko",
                     first: "Yuriy"
                 },
@@ -4144,7 +3962,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00008f",
-                name    : {
+                name: {
                     last : "Holovatskyi",
                     first: "Yuriy"
                 },
@@ -4153,7 +3971,7 @@ define([
             },
             {
                 _id     : "55b92ad221e4b7c40f00009d",
-                name    : {
+                name: {
                     last : "Fedynec",
                     first: "Yuriy"
                 },
@@ -4162,7 +3980,7 @@ define([
             },
             {
                 _id     : "55f7c3736d43203d0c000006",
-                name    : {
+                name: {
                     last : "Bodak",
                     first: "Yuriy"
                 },
@@ -4171,7 +3989,7 @@ define([
             },
             {
                 _id     : "56090d77066d979a33000009",
-                name    : {
+                name: {
                     last : "Bysaha",
                     first: "Yuriy"
                 },
@@ -4526,39 +4344,57 @@ define([
             }
         ]
     };
-
     var employeeCollection;
     var view;
     var topBarView;
     var listView;
-    var formView;
     var thumbnailView;
-    var windowConfirmStub;
     var createView;
+    var jQueryAjaxSpy;
+    var historyNavigateSpy;
+
+    chai.use(chaiJquery);
+    chai.use(sinonChai);
+    expect = chai.expect;
 
     describe('Employees View', function () {
         var $fixture;
         var $elFixture;
         var selectSpy;
         var removeFilterSpy;
+        var removedFromDBSpy;
         var saveFilterSpy;
+        var debOnceStub;
+
+        before(function () {
+            debOnceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                return debFunction;
+            });
+            jQueryAjaxSpy = sinon.spy($, 'ajax');
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+        });
 
         after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
-            /*formView.remove();*/
             thumbnailView.remove();
             createView.remove();
+
             selectSpy.restore();
             removeFilterSpy.restore();
             saveFilterSpy.restore();
-        });
-
-        before(function () {
-            selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
-            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
-            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
+            debOnceStub.restore();
+            jQueryAjaxSpy.restore();
+            historyNavigateSpy.restore();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            removedFromDBSpy.restore();
+            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -4570,7 +4406,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -4581,7 +4416,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/modules/', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/modules/', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'Employees'});
 
@@ -4606,14 +4441,11 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/Employees');
-
             });
-
         });
 
         describe('TopBarView', function () {
             var server;
-            var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -4624,31 +4456,41 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var employeeListUrl = new RegExp('\/employees\/list', 'i');
+                var employeeListUrl = new RegExp('\/employees\/', 'i');
 
-                server.respondWith('GET', employeeListUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForList)]);
+                historyNavigateSpy.reset();
+
+                server.respondWith('GET', employeeListUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 employeeCollection = new EmployeeCollection({
-                    count      : 100,
+                    filter     : null,
                     viewType   : 'list',
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'Employees'
                 });
                 server.respond();
 
-                //expect(window.location.hash).to.be.equals('#login');
+                expect(historyNavigateSpy.calledOnce).to.be.true;
+                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
             });
 
             it('Try to create TopBarView', function () {
-                var employeeListUrl = new RegExp('\/employees\/list', 'i');
+                var employeeListUrl = new RegExp('\/employees\/', 'i');
 
-                server.respondWith('GET', employeeListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForList)]);
+                server.respondWith('GET', employeeListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForList)]);
 
                 employeeCollection = new EmployeeCollection({
-                    count      : 100,
+                    filter     : null,
                     viewType   : 'list',
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false,
                     contentType: 'Employees'
                 });
-
                 server.respond();
+
+                expect(employeeCollection).to.have.lengthOf(5)
 
                 topBarView = new TopBarView({
                     collection: employeeCollection
@@ -4669,23 +4511,21 @@ define([
 
                 $thumbBtn.click();
                 expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails');
-
             });
-
         });
 
         describe('Employees list view', function () {
             var server;
             var mainSpy;
-            var jQueryAjaxSpy;
             var $thisEl;
             var exportStub;
             var exportStubXlsx;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
+                clock = sinon.useFakeTimers();
                 mainSpy = sinon.spy(App, 'render');
-                jQueryAjaxSpy = sinon.spy($, 'ajax');
                 exportStub = sinon.stub(ListView.prototype, 'exportToCsv');
                 exportStubXlsx = sinon.stub(ListView.prototype, 'exportToXlsx');
                 exportStub.returns(true);
@@ -4694,41 +4534,35 @@ define([
 
             after(function () {
                 server.restore();
+                clock.restore();
                 mainSpy.restore();
-                jQueryAjaxSpy.restore();
                 exportStub.restore();
                 exportStubXlsx.restore();
             });
 
             describe('INITIALIZE', function () {
 
-                it('Try to create Employees listView', function () {
-                    var countColumn;
-                    var $firstRow;
-                    var employeeListUrl = new RegExp('\/employees', 'i');
+                it('Try to create Employees listView', function (done) {
                     var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
+                    var filterUrl = '/filter/Employees';
                     var elementsCount;
                     var subject;
                     var $pagination;
                     var $currentPageList;
                     var $pageList;
-                    server.respondWith('GET', employeeListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForList)]);
+                    var countColumn;
+                    var $firstRow;
 
-                    employeeCollection = new EmployeeCollection({
-                        count      : 100,
-                        viewType   : 'list',
-                        contentType: 'Employees'
-                    });
-                    server.respond();
-
-                    server.respondWith('GET', employeeAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAphabet)]);
-
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
+                    server.respondWith('GET', employeeAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAphabet)]);
                     listView = new ListView({
                         collection: employeeCollection,
                         startTime : new Date()
                     });
 
                     server.respond();
+
+                    clock.tick(700);
 
                     eventsBinder.subscribeCollectionEvents(employeeCollection, listView);
                     eventsBinder.subscribeTopBarEvents(topBarView, listView);
@@ -4796,6 +4630,8 @@ define([
                     $pageList = $pagination.find('#pageList');
                     expect($pageList).to.exist;
                     expect($pageList).to.have.css('display', 'none');
+
+                    done();
                 });
 
                 it('Try to select 25 item per page', function () {
@@ -4901,84 +4737,6 @@ define([
                     expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200');
                 });
 
-                it('Try to filter ListView by FullName', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var employeeThumbUrl = new RegExp('\/employees\/', 'i');
-                    var $fullName;
-                    var elementsCount;
-                    var $country;
-                    var $selectedItem;
-                    var $next;
-                    var $prev;
-
-                    selectSpy.reset();
-
-                    // open filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                    // select fullName
-                    $fullName = $searchContainer.find('#nameFullContainer .groupName');
-                    $fullName.click();
-                    $selectedItem = $searchContainer.find('li[data-value="5638aa635d23a8eb04e80af0"]');
-
-                    server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForList)]);
-                    $selectedItem.click();
-                    server.respond();
-                    expect(selectSpy.calledOnce).to.be.true;
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('#startLetter')).to.exist;
-                    elementsCount = $thisEl.find('#listTable > tr').length;
-                    expect(elementsCount).to.be.equals(5);
-
-                });
-
-                it('Try to save favorites filters', function () {
-                    var userUrl = new RegExp('\/users\/', 'i');
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
-                    var $filterNameInput;
-                    var $saveFilterBtn;
-
-                    saveFilterSpy.reset();
-
-                    $favoritesBtn.click();
-                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
-
-                    $filterNameInput = $searchContainer.find('#forFilterName');
-                    $filterNameInput.val('Test');
-                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
-
-                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    $saveFilterBtn.click();
-                    server.respond();
-                    expect(saveFilterSpy.called).to.be.true;
-
-                    //close filter dropdown
-                    $searchArrow.click();
-                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
-                });
-
-                it('Try to delete FullName filter', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
-                    var employeesThumbUrl = new RegExp('\/employees\/', 'i');
-                    var elementsCount;
-
-                    removeFilterSpy.reset();
-
-                    server.respondWith('GET', employeesThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForList)]);
-                    $closeBtn.click();
-                    server.respond();
-
-                    expect(removeFilterSpy.called).to.be.true;
-                    expect($thisEl).to.exist;
-                    elementsCount = $thisEl.find('#listTable > tr').length;
-                    expect(elementsCount).to.be.equals(5);
-                });
-
                 it('Try to export to Csv', function () {
                     var $needEl = topBarView.$el.find('#top-bar-exportToCsvBtn');
                     $needEl.click();
@@ -4996,7 +4754,7 @@ define([
                     var spyResponse;
                     var $needEl = listView.$el.find('[data-id="560264bb8dc408c632000005"] > td:nth-child(3)');
                     var employeeUrl = new RegExp('\/employees\/', 'i');
-                    server.respondWith('GET', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
+                    server.respondWith('GET', employeeUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
 
                     $needEl.click();
 
@@ -5004,22 +4762,22 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Please refresh browser');
 
                     done();
-
                 });
 
                 it('Try to go to EditForm', function (done) {
-                    this.timeout(4000);
                     var employeeModel;
                     var $dialogEl;
                     var $needEl = listView.$el.find('[data-id="560264bb8dc408c632000005"] > td:nth-child(3)');
                     var employeeUrl = new RegExp('\/employees\/', 'i');
                     var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
                     var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
-                    server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
-                    server.respondWith('GET', depsForDDurl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
+
+                    this.timeout(4000);
+
+                    server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
+                    server.respondWith('GET', depsForDDurl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
 
                     $needEl.click();
 
@@ -5031,21 +4789,223 @@ define([
                     expect($dialogEl).to.exist;
                     $dialogEl.remove();
                     done();
-
                 });
 
                 it('Try to click on alphabet letter', function () {
-                    var userAgent = navigator.userAgent;
-                    var mozilaRegExp = new RegExp('firefox', 'i');
-                    var $needLetterEl = listView.$el.find('#startLetter > a:nth-child(3)');
+                    var $needLetterEl = $thisEl.find('#startLetter > a:nth-child(3)');
+                    var $allLetter = $thisEl.find('#startLetter > a:nth-child(1)');
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var ajaxResponse;
+
+                    jQueryAjaxSpy.reset();
 
                     $needLetterEl.click();
+                    expect(jQueryAjaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    expect(ajaxResponse.data.filter).to.have.property('letter');
+                    expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(1);
 
-                    if (mozilaRegExp.test(userAgent)) {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
-                    } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
-                    }
+                    jQueryAjaxSpy.reset();
+
+                    $allLetter.click();
+                    expect(jQueryAjaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    expect(ajaxResponse.data.filter).to.have.not.property('letter');
+                    expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(0);
+                });
+
+                it('Try to filter listView by  and company', function () {
+                    var url = '/employees/';
+                    var contentType = 'Employees';
+                    var firstValue = 'name';
+                    var secondValue = 'department';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var $secondGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    jQueryAjaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForList)]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(jQueryAjaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // select secondGroup filter
+                    jQueryAjaxSpy.reset();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.exist;
+                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                    expect(filterObject[secondValue]).to.have.property('value');
+                    expect(filterObject[secondValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = jQueryAjaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.not.exist;
+                });
+
+                it('Try to save filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn;
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('TestFilter');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSaveFilter)]);
+                    $saveFilterBtn.click();
+                    server.respond();
+                    expect(saveFilterSpy.called).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove saved filters', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                    var userUrl = new RegExp('\/users\/', 'i');
+
+                    removedFromDBSpy.reset();
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $deleteSavedFilterBtn.click();
+                    server.respond();
+
+                    expect(removedFromDBSpy.calledOnce).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove filter', function () {
+                    var secondValue = 'department';
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $thisEl = $('#content-holder');
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    jQueryAjaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues');
+                    $removeBtn.click();
+                    server.respond();
+
+                    clock.tick(1500);
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(jQueryAjaxSpy.calledOnce).to.be.true;
                 });
             });
         });
@@ -5090,10 +5050,10 @@ define([
                 var employeeThumbUrl = new RegExp('\/employees', 'i');
                 var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
 
-                server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 employeeCollection = new EmployeeCollection({
                     count      : 1,
-                    viewType   : 'thumbnails',
+                    viewType: 'thumbnails',
                     contentType: 'Employees'
                 });
 
@@ -5114,17 +5074,17 @@ define([
                 var employeeThumbUrl = new RegExp('\/employees', 'i');
                 var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
 
-                server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForThumb)]);
+                server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForThumb)]);
 
                 employeeCollection = new EmployeeCollection({
                     count      : 1,
-                    viewType   : 'thumbnails',
+                    viewType: 'thumbnails',
                     contentType: 'Employees'
                 });
 
                 server.respond();
 
-                server.respondWith('GET', employeeAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAphabet)]);
+                server.respondWith('GET', employeeAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAphabet)]);
 
                 thumbnailView = new ThumbnailsView({
                     collection: employeeCollection,
@@ -5151,87 +5111,12 @@ define([
                 expect($thisEl.find('#startLetter')).to.exist;
             });
 
-            it('Try to filter ThumbnailsView by FullName', function () {
-                var $searchContainer = thumbnailView.$el.find('#searchContainer');
-                var $searchArrow = $searchContainer.find('.search-content');
-                var employeeThumbUrl = new RegExp('\/employees\/', 'i');
-                var $fullName;
-                var $country;
-                var $selectedItem;
-                var $next;
-                var $prev;
-
-                selectSpy.reset();
-
-                // open filter dropdown
-                $searchArrow.click();
-                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-                // select fullName
-                $fullName = $searchContainer.find('#nameFullContainer .groupName');
-                $fullName.click();
-                $selectedItem = $searchContainer.find('li[data-value="5638aa635d23a8eb04e80af0"]');
-
-                server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForThumb)]);
-                $selectedItem.click();
-                server.respond();
-                expect(selectSpy.calledOnce).to.be.true;
-                expect($thisEl.find('#searchContainer')).to.exist;
-                expect($thisEl.find('#startLetter')).to.exist;
-                expect($thisEl.find('.thumbnailwithavatar'))
-                    .to.have.lengthOf(2);
-
-            });
-
-            it('Try to save favorites filters', function () {
-                var userUrl = new RegExp('\/users\/', 'i');
-                var $searchContainer = $thisEl.find('#searchContainer');
-                var $searchArrow = $searchContainer.find('.search-content');
-                var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
-                var $filterNameInput;
-                var $saveFilterBtn;
-
-                saveFilterSpy.reset();
-
-                $favoritesBtn.click();
-                expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
-
-                $filterNameInput = $searchContainer.find('#forFilterName');
-                $filterNameInput.val('Test');
-                $saveFilterBtn = $searchContainer.find('#saveFilterButton');
-
-                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                $saveFilterBtn.click();
-                server.respond();
-                expect(saveFilterSpy.called).to.be.true;
-
-                //close filter dropdown
-                $searchArrow.click();
-                expect($searchContainer.find('.search-options')).to.have.class('hidden');
-            });
-
-            it('Try to delete FullName filter', function () {
-                var $searchContainer = $thisEl.find('#searchContainer');
-                var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
-                var employeesThumbUrl = new RegExp('\/employees\/', 'i');
-
-                removeFilterSpy.reset();
-
-                server.respondWith('GET', employeesThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForThumb)]);
-                $closeBtn.click();
-                server.respond();
-
-                expect(removeFilterSpy.called).to.be.true;
-                expect($thisEl).to.exist;
-                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(2);
-            });
-
             it('Try to go to EditForm with error', function (done) {
                 this.timeout(4000);
                 var spyResponse;
                 var $needEl = $thisEl.find('#55b92ad221e4b7c40f00004e');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
-                server.respondWith('GET', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
+                server.respondWith('GET', employeeUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
 
                 $needEl.click();
 
@@ -5265,8 +5150,8 @@ define([
                 var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
                 var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
                 this.timeout(3000);
-                server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
-                server.respondWith('GET', depsForDDurl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
+                server.respondWith('GET', depsForDDurl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
 
                 $needEl.click();
 
@@ -5370,7 +5255,7 @@ define([
             it('Try to save with error', function () {
                 var employeeUrl = '/employees/';
                 var $saveBtn = $dialogEl.find('button.btn.ui-button:nth-child(1)');
-                server.respondWith('POST', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('POST', employeeUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $saveBtn.click();
                 server.respond();
                 expect($('.ui-dialog')).to.exist;
@@ -5381,7 +5266,7 @@ define([
                 var $saveBtn = $dialogEl.find('button.btn.ui-button:nth-child(1)');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
 
-                server.respondWith('PATCH', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('PATCH', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
 
                 $saveBtn.click();
 
@@ -5399,8 +5284,8 @@ define([
                 var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
                 var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
 
-                server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
-                server.respondWith('GET', depsForDDurl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
+                server.respondWith('GET', depsForDDurl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
 
                 $needEl.click();
                 server.respond();
@@ -5412,7 +5297,7 @@ define([
                 var $saveBtn = $dialogEl.find('button.btn.ui-button:nth-child(1)');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
 
-                server.respondWith('PATCH', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('PATCH', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
 
                 $saveBtn.click();
 
@@ -5429,13 +5314,13 @@ define([
 
                 windowConfirmStub.returns(true);
 
-                server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpWithId)]);
+                server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
                 $needEl.click();
                 server.respond();
 
                 $deleteBtn = $('.ui-dialog button:nth-child(3)');
 
-                server.respondWith('DELETE', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('DELETE', employeeUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $deleteBtn.click();
                 server.respond();
 
@@ -5450,7 +5335,7 @@ define([
 
                 $deleteBtn = $('.ui-dialog button:nth-child(3)');
 
-                server.respondWith('DELETE', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('DELETE', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $deleteBtn.click();
                 server.respond();
 
@@ -5460,23 +5345,29 @@ define([
 
             it('Try to click alphabetic letter', function () {
                 var $needLetterEl = thumbnailView.$el.find('#startLetter > a:nth-child(3)');
-                var employeeThumbUrl = new RegExp('\/employees\/thumbnails', 'i');
-                var employeeAlphabetUrl = new RegExp('\/employees\/getEmployeesAlphabet', 'i');
-                var userAgent = navigator.userAgent;
-                var mozilaRegExp = new RegExp('firefox', 'i');
+                var $allLetter = $thisEl.find('#startLetter > a:nth-child(1)');
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var ajaxResponse;
 
-                server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForA)]);
-                server.respondWith('GET', employeeAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAphabet)]);
+                jQueryAjaxSpy.reset();
 
                 $needLetterEl.click();
-
                 server.respond();
+                //expect(jQueryAjaxSpy.calledOnce).to.be.true;
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+                expect(ajaxResponse.data).to.have.property('filter');
+                expect(ajaxResponse.data.filter).to.have.property('letter');
+                expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(1);
 
-                if (mozilaRegExp.test(userAgent)) {
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
-                } else {
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails/c=1/filter=%7B%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22A%22%2C%22type%22%3Anull%7D%7D');
-                }
+                jQueryAjaxSpy.reset();
+
+                $allLetter.click();
+                server.respond();
+                //expect(jQueryAjaxSpy.calledOnce).to.be.true;
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+                expect(ajaxResponse.data).to.have.property('filter');
+                expect(ajaxResponse.data.filter).to.have.not.property('letter');
+                expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(0);
             });
 
             it('Try to create CreateView', function () {
@@ -5486,11 +5377,11 @@ define([
                 var managersUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
                 var jobTypesUrl = new RegExp('\/jobPositions\/jobType', 'i');
 
-                server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPosForDD)]);
-                server.respondWith('GET', usersForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', depsForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
-                server.respondWith('GET', managersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmpPersonsForDD)]);
-                server.respondWith('GET', jobTypesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositionType)]);
+                server.respondWith('GET', jobPositionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobPosForDD)]);
+                server.respondWith('GET', usersForDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', depsForDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', managersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpPersonsForDD)]);
+                server.respondWith('GET', jobTypesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobPositionType)]);
 
                 createView = new CreateView();
                 server.respond();
@@ -5547,14 +5438,12 @@ define([
                 var $selectedGroup;
                 var $chooseGroupBtn;
                 var employeeUrl = '/employees/';
-
                 var $dialogEl = $('.ui-dialog');
                 var $firstName = $dialogEl.find('#first');
                 var $lastName = $dialogEl.find('#last');
                 var $dateOfBirth = $dialogEl.find('#dateBirth');
                 var $jobPositionSelect = $dialogEl.find('#jobPositionDd');
                 var $thirdTab = $dialogEl.find('ul > li:nth-child(3) > a');
-
                 var $hireDateEl;
                 var $salaryEl;
                 var $managerEl;
@@ -5675,28 +5564,30 @@ define([
             it('Try to save with error', function () {
                 var employeeUrl = '/employees/';
                 var $createBtnEl = $('#createBtnDialog');
-                server.respondWith('POST', employeeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('POST', employeeUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $createBtnEl.click();
                 server.respond();
                 expect($('.ui-dialog')).to.exist;
             });
+
             it('Try to save with success', function () {
                 var employeeUrl = '/employees/';
                 var $createBtnEl = $('#createBtnDialog');
-                server.respondWith('POST', employeeUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('POST', employeeUrl, [201, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $createBtnEl.click();
                 server.respond();
 
                 expect($('.ui-dialog')).to.not.exist;
             });
+
             it('Try to show more employees', function () {
                 var $showMoreBtn = thumbnailView.$el.find('#showMore');
                 var employeeThumbUrl = new RegExp('\/employees\/thumbnails', 'i');
                 var totalCollectionUrl = new RegExp('\/employees\/totalCollectionLength', 'i');
                 var $thumbHolder;
 
-                server.respondWith('GET', employeeThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployeeForThumb)]);
-                server.respondWith('GET', totalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('GET', employeeThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeeForThumb)]);
+                server.respondWith('GET', totalCollectionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     showMore: false,
                     count   : 2
                 })]);
@@ -5710,9 +5601,6 @@ define([
                 expect($thumbHolder).to.exist;
 
             });
-
         });
-
     });
-
 });

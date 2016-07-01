@@ -1,5 +1,6 @@
 define([
     'Backbone',
+    'Underscore',
     'modules',
     'text!fixtures/index.html',
     'collections/Opportunities/filterCollection',
@@ -11,12 +12,18 @@ define([
     'views/Opportunities/TopBarView',
     'views/Opportunities/CreateView',
     'views/Opportunities/EditView',
+    'views/Filter/filterView',
+    'views/Filter/filtersGroup',
+    'views/Filter/savedFiltersView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai'
+    'sinon-chai',
+    'testConstants/currentUser',
+    'constantsDir/filters'
 ], function (Backbone,
+             _,
              modules,
              fixtures,
              OpportunitiesCollection,
@@ -28,11 +35,16 @@ define([
              TopBarView,
              CreateView,
              EditView,
+             FilterView,
+             FilterGroup,
+             SavedFilters,
              eventsBinder,
              $,
              chai,
              chaiJquery,
-             sinonChai) {
+             sinonChai,
+             fakeCurrentUser,
+             FILTER_CONSTANTS) {
     'use strict';
 
     var fakeOpportunities = {
@@ -924,7 +936,7 @@ define([
                 type          : "Person",
                 fullName      : "Sharmila ",
                 id            : "55b92ad521e4b7c40f00060f"
-            },
+            }
         ]
     };
     var fakeCustomerWithId = {
@@ -2392,589 +2404,107 @@ define([
             }
         ]
     };
-    var fakeCurrentUser = {
-        user        : {
-            _id            : "52203e707d4dba8813000003",
-            attachments    : [],
-            lastAccess     : "2016-04-22T07:07:14.484Z",
-            profile        : {
-                _id        : 1387275598000,
-                profileName: "admin"
+    var fakeFilters = {
+        _id     : null,
+        customer: [
+            {
+                _id : "56ab5ca674d57e0d56d6bda4",
+                name: "Stian Maurstad"
             },
-            relatedEmployee: {
-                _id     : "55b92ad221e4b7c40f00004f",
-                name    : {
-                    last : "Sokhanych",
-                    first: "Alex"
-                },
-                imageSrc: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCADIAMgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCwBxTgKUCnAVgaCAUoFOApwFIDbtx8i/Sr8QwKpWw+RfpV5OlOO4mPooorYgz9dXdo9zx0TIrzpI3JztOPpXpWqnbps5Izhelc5pcC3Tb5VEcecD3NGwbmJDYzTLnGxPU1ONNhAG6Rj+QrY1m+trcC3gAyOprBN1kk5qG2zVJEj6cMfu5P++qgewnHUD61Zhn3HAq1MZoowxXKHikpNbg4XWhk/YJj1wKX+z37sPyqd2kzkSHaemajJfvL+taGVrEZ0893/Sk/s9e70rY7yD86ZmLvIKYDvsMI6vn8aQ2tuv8AEPzppaH/AJ6VG8sIH3j+VIBxjtx6UmLYdh+VQGWLPejz4v7poAsBrYdEz9BT/NhA4Q/lVX7REP8AlmfzpDdr2j/M0AWjcIOiGiqn2knpGtFAHVgU4ClApwFYmggFOApQKcBSA2rYfu1+lXV6VUtx8i/Sri9KqO4pC0UUVqQUdbYpo90w6hK5Sa5eLT4gpwQvUV1Wugto10B1KVx92Almm4gEDp6mokXAy5JGZiWJJPeoy1IzbiabimUW7ZyHU+9bj3JkhEZA29awIJgCAw4rUQgqMHINRIuJU1NBEiuvTOKyzN7VsXoVoQJM7dwBxSX1hpcNj5sN6skv9wKc1UXoZSWpjGX2ppkqMmmlqskkaU1GXNNJpM0AO3GjNNzSE0AOLGgEmkAJpScDigB+dooqHJJooA74U8CgCnAVgWAFPAoApRQM2YPuL9KtL0qrB9xfpVpelOO5Mh1FFFbEFDXATo9yFBJ2dvrXCao52oAeNtehagzrZStGgkYLwp7153qzZkK7dh7r6e1TI0gZiFy4UHNSEHyiV65oiypJGOBU8aCSzPzBWBPB7ilctIqR7i4yxFbViGA+b0rHjOGrXtSdgweKmRUUJeyYfajYbGRWdBZXF/ciKEqWc8ZOBVu6AZ3ckhlAVffP/wCuqiSyQSB4yVI54pwJqW2F1DRbvT5NlwFBIyCDkGqsNm80gQMBkgZNddYaxa63b/Y78hZhwsnvWNqmmXGmXGGHy/wsOhFaGJFqPh2fT/8AWzKxONuB1FZfkESBM9TjNdnpl0ms6ebG4P79BmNj1PtXM6hA0MrBhhlNAFiHQS8JkaXrE0i4Hde1ZVzB9nK85zXWaLcCa0iDAYWTafo4wa5nWAVkRT1GQaALmm6XHdn94zBRGXOPYVFqemJZAYYligYg9ie1bGkIBBJzjdtT8Op/QVk6zcfab9lXkZ/TtQBUt7YOOaK3dC09ZpPMnO23hG6Rj/KigDaUU8UyMkxqT3FSCsDQXFOFIKGO1GPoKANeE/Iv0qyhqlaPugRj1Iq2hpiZNRSA8UEgDmtU9DMranj+z5s4xt75/pzXm2pN+/baQRnqDkfnXea/cRPpc9usq+bIuFANcPPpj29n5ss6k5+7iiSZcHYziQOuRSq4J+9RJwcYyKYrc/dqTZDycHIrRs5PkAqlt+TJxVm2O2J3H8Kk1L1DYfIC7E0qwB4zkc1KVJjjkxw6hqdF92tErGDdzm5GeG4bY2CDxiuk0nxJHPbiw1dd8J4Enda5q7/4+JPrUacmmSbt066dqTNZziQRsGVlPUdQauatf2l7bR3HAnl4dR2I7/SucC0bc0DsaemXwtlnR2wCp2n36j9QKq6jcC8lEuNu52bbnpk1X20hFIdjYt9WESGMAAIGIPqSAP5VmxTqJjK/zEnpVfbRsoA3NS1dPskdjZnEXDSMP4m/wFFYRU0Uwsehw/6pPoKlFRwf6lP90VKKwLAUkn+qf6GnUkv+qf8A3TQIv2R/0aL/AHRVhp0iXc5wKqWZ/wBGi/3RWJqusbL54UXOzg56VUVdiZoXHiMCV44QAF6saybvX5ZAw8w+1c2928krkn7zE0xXOcE1slYk0zfSHBLkkjGar6vM/wBnjQsTn5jn9KfaRqUMkrAKPU1Tubj7U5zjA4H0qgIYpN0YB6in5qshKSFTU+cisWjaL0H7yRiiS5KwmJer8GoWfAp9hCbq8ReozzTirsUnZHTwS+TYAMAQirwR14AqVIra4H7ohGPbNVL75FdC3y5GazYbpo2aTPBJCit2jAzdTtJrW7cSxlckkHHBFVo/vV2UUqXUHk3arKmOQ3b6VkX2gSQO0toDLD1x/EtQ0NGYozUhUCmICDyOakAJ7VBYhUFaaFBp/NGCKQDAozQVAPFPIIo25oAYwGOlFO2k0UwO6g/1Kf7oqUVHB/qU/wB0VKKxKFFNl/1L/wC6adTJziCQn+6aAEnvfsenRMBlmUAflXGT3DPctKeSxJrcvruOfy4Y33bExiucmyjlT2NbxVjNkR+/ml700n56XPNWAOcoahUlX9qlbkVF3pCFc7z6OP1oWTimScMGpFUuxI+71pNXKjKwrMW+lS28721xHIhxtPOO49KZjmgDc2AM1SVhN3Oj1CSK7tRJGwKsQc5rFll3yjb91eBTAxhiKBj83XmmR9abYkjTt7va+Ca2bG93qh3EAkr9K5PeQzGtDTJiiHPK7v50IGaOu2KTxPewIVkHLBWwGHr061zK3iqB8kmf+unH8q7OyYvBskOeMHPeuOvLMQ3cseeFYilJAiF7l2clWZR6ZzR9pl/56NR5IHek8nHeoGTRXE8hCK2SfWrsNveqQXVHXuPMANZ8O6KRXU5x2NXUv3B+dAfpxSfkNFj7NdOxxHHEgGcvKD/KiqtxeNKAF+UDkg859qKFceh3kP8Aqk/3RUoqKH/VJ9BUgrEodVDV5zHb7F5Zu1Xq5vX5SS7KxGCAMVcFqJmPPIRcFhkZ61Cxy3NI0hkJLct60men1rYgX/lp+NB60f8ALX8aDQAVGetPprDIoAjm6VIB5cQXvjmmrhmGe3NKfm5zQIaMkVMmI1z3pgHOKGNMBGOetA4WkY89etPCO2Nqk/SlcdhmeTV6zJ82KPjB5NVmtZUXey4Hekhf/SFOeFIyfpTTBprc6eBgpAJ/Cue8Qx+VqbsOjjdWlBeEY2RlvfFGv28dxYrdbWV48Dn3pvYRzQdh3NO3H1pu32oINQMN7epp25sdabmg0AKHPrRSoAeelFAHpUX+rX6CpKjj4UfSnCuc0Ir6RorOR0YKwHBNcLPcSyMRI7Ng9zXSa/eSKfJj2gd8muUkI3Gt4KyIbHZozxmos45BJp6guwUdTVCJ05O72zSdRUsqJGQsbbgAMmoh1oAbRSuMGm0AA6k0nHShTnNIaAFHWkPNGeKSgBcAsrHnFWHYNGpBOR71B2q1GFkhVe+cVE0aU3qSRXKMxkkUljweeCPpSy2HHm2xLxHkgdQaqMDEzIyjFWLO8a3Y4+ZG4KmoT5dUaSSki1ZTOPkGEXH3l61Lq7SnTmSJhs6njOaiECR5miYtF1IHUVdt2LQsFRSpU9a6E00c7TTOTzjqKGOT3FTOoMmFU8djTHHzgAVAEbAA55p/Gwcc/wA6dKgDgHgUoAIOMGkMZgqmDnJ6UUEMAM9KKBHoqypt++v50w3gRiBgj61meUf7tJ9l3c7f1rC5rYy9ZkEl3IyDqeT6VlNjbycmtHUkkilKuBg8j6Vns2eiit09DNkB+hqSNinJ9KYRzRKdrYFV0EXrKIzxTyFseWuR7mozwalspkh058j5nYgVCTwDQA/7y+9RHjg04Ng0SLuXcvWgCMfdozzSgEIKjJINAh9JmkDZoNAxd2Ku7Ejt4zuALjJrP3VOrebCAeq8VE9i6ejHySF2w/0zSbM8qcH+dMJIIBHFPjUscDpUGxbtJmXcCCVIOQKvWN0quSDwBgVDZssRJIB4rUEFuu2QIuxuuAPlNaUuplV6GBq9t5U/2iMfu5P0NZpbL9a6jWYGS0ZWIaFhlWxgqa5YnLZPFVJamaHSn94M1IBlcqKjkU7s0+OI+Xktj61Ix/lgoCDj1zRUuT5Xzc4HTH8qKAOr3c8VHPOkEZd2wPT1rQNjxw/PuKyLzw/dXDFvtSH0GDXOrGzMS9vDeOxx06D2qxoFxaQ3bxX8StDOmwsVzsPY1Mnhu9iDf6tiTj73apLTQHS5BvwBEAejdT2FbJpIzaZjXlqY7uSKMFlB+XAzxUM1rOcHyJOn90105U28jMnCMSAvt2qnNLOWOInNJzDkMp7eVIYx5b4AyflPWmrgpjuK2Lf7U8gCRSA+44puu2ywSQsFVZGT59vQmmp3BxsZFGcUrCm1dyR+RgU3g0pXpTTxTENKDqOKbgjrTi/FRl6AFbBHvTA5RuKQsTTc0gLHnqRgg1OkoA6gCqg2G3f+8MEU5NjYJGalxLU2XYpN7jB+QHk1qyXG+0KBsc5HpWOjhV4wAKcsgkGGbGe1VH3RSfMdDJdRXekyIHVmCYP1rl2tZxyI9wJz1FXlmS2tWUY3PVu2iaS3RgOMYpTkEYmLLFKMZjbn26VIEcQ7eQT7VsmFx/CaaUYdQajnK5TIbKxgMvbpRWoUHdaKOYXKdjRml3A0jEKM1gbCfhVLVji2H1q0JdxwMD61S1diLYZIPPahCZjhm4G44HQZqZXb+8arBuakRxVkmlbOxOCxNXvJilUGSNW+ozWZaNlq2YUzHnpSbGinJpllJ963Q/QYqB9D08/8scfQ1psjDoc1XkLg9KSbHZGc2g2JB/1gPs1VJPD9v/DM4/DNa7ktTNpPfJquZi5UYEvh7/nnPn/eXFQf8I5cnpJH+tdJtbPQ/lT9rHsafOxcqOHv7J7GYRSMrMRn5aq4rS1xvM1WX0XCj8qo4Patk9DNoQ8W59SajRipBqQg0YouKwNOew4pombt1p6qpPKinmNP7tFwsRK7MfmNdPo8m6xx/dYr/I/1rnBGo9a2dBlyJk9MGpnsVE2MGk46GgE0HmsjQQquOQKKM0UwNZjt6MajLse5qd0D/WhLKR+QQF9TUFMgBqrqW82bbIy5BHAHNasws7GPfcuOeme9Um1tDbSvDDs2/dYjNGwbmAtvcuM/Z5Rn1FSJZXQ58lq1IfEPnOBJDhCO/HNaUI+0Rh41bafbNVcnlaMKBZ4zzEwq5BdSxud2cHqDWrGke/5yfxGKvva2zRAFFbPeiwr2M9JQ65FHB6inPZCPmInHoaYTUFXEaNT7UnkoBzS7qTNAxfLQDoKUYHam5NKDmgBkttBMP3sSNj1Gaqy6Jp8o+a2jHuoxV6lzRdhYxn8M6eRwjD/gRqu/hi1/haQfQ10OaaQDT5mKyObPhqAHiWT9Kjfw4v8ADK4+orpWQdqYRjrVczDlRzJ8OEjifn3FSafpsunmQy7SXIwRW9tBNMuEzAf9nkU+a4uUoZoooPSgBKKSigDpbOASZc8qP1q24wvpRRUg2chr0nmXqtKxAUYUDmqYuBDF8vAORjvRRUtFxeg2WVAYmRQ6OPmX0rS0W9ex3l5AbbOfm7D2oopF7os/8JMrOQsaSISe2DitOyvorpcxHbj70Z/hooqrkSirF2s+bHmtjpmiimyEMozRRSKDNKDRRSAdmjNFFABzjp+lHfvRRTsITNIRmiigZEVPakYZjZT6UUUwMo8UoooqhCGiiigR/9k=",
-                fullName: "Alex Sokhanych",
-                id      : "55b92ad221e4b7c40f00004f"
+            {
+                _id : "562bc2db62461bfd59ef58c7",
+                name: "AppMedia "
             },
-            savedFilters   : [
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: "salesInvoice"
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : {
-                        _id        : "562b83ccb4677e225aa31df6",
-                        filter     : {
-                            PM: {
-                                department: {
-                                    key  : "department._id",
-                                    value: [
-                                        "55bb1f40cb76ca630b000007"
-                                    ]
-                                }
-                            }
-                        },
-                        contentView: "Employees",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : {
-                        _id        : "564dd4ce9fb8bc3f2195662c",
-                        filter     : {
-                            dfghj: {
-                                name    : {
-                                    key  : "_id",
-                                    value: [
-                                        "55b92ad621e4b7c40f000635",
-                                        "55b92ad621e4b7c40f000637",
-                                        "55b92ad621e4b7c40f00062d",
-                                        "55d37aee226ed3280b000005",
-                                        "55b92ad621e4b7c40f00064a",
-                                        "55b92ad621e4b7c40f00065e",
-                                        "55b92ad621e4b7c40f000636",
-                                        "55b92ad621e4b7c40f000649",
-                                        "55b92ad621e4b7c40f00063c",
-                                        "55ba0479d79a3a3439000010",
-                                        "55ba0701d79a3a3439000012",
-                                        "55b92ad521e4b7c40f00061c",
-                                        "55b92ad621e4b7c40f00062b",
-                                        "55b92ad521e4b7c40f000612",
-                                        "55b92ad521e4b7c40f000619",
-                                        "55b9fa60d79a3a3439000005",
-                                        "55b92ad621e4b7c40f000658",
-                                        "55b92ad521e4b7c40f000613",
-                                        "55b92ad521e4b7c40f000621",
-                                        "55b92ad621e4b7c40f000640",
-                                        "55b92ad621e4b7c40f000659",
-                                        "55b92ad521e4b7c40f00061f",
-                                        "55b92ad621e4b7c40f00064c",
-                                        "55b9ff67d79a3a343900000a",
-                                        "55b92ad621e4b7c40f00064e",
-                                        "55b92ad621e4b7c40f000626",
-                                        "55b92ad521e4b7c40f00060f",
-                                        "55b92ad621e4b7c40f000656",
-                                        "55b92ad621e4b7c40f00065a",
-                                        "55b92ad521e4b7c40f000614",
-                                        "55b92ad521e4b7c40f000616",
-                                        "55b92ad621e4b7c40f00064b",
-                                        "55b92ad521e4b7c40f000620",
-                                        "55b92ad621e4b7c40f000631",
-                                        "55b92ad621e4b7c40f000655",
-                                        "55b92ad621e4b7c40f000625",
-                                        "55b92ad621e4b7c40f000632",
-                                        "55b92ad621e4b7c40f000644",
-                                        "55b92ad621e4b7c40f000654",
-                                        "55b92ad621e4b7c40f00062c"
-                                    ]
-                                },
-                                country : {
-                                    key  : "address.country",
-                                    value: [
-                                        "Australia",
-                                        "Israel",
-                                        "Singapore",
-                                        "Spain",
-                                        "US",
-                                        "USA",
-                                        "USA/Germany",
-                                        "United States"
-                                    ]
-                                },
-                                services: {
-                                    key  : "services",
-                                    value: [
-                                        "isCustomer",
-                                        "isSupplier"
-                                    ]
-                                }
-                            }
-                        },
-                        contentView: "Persons",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: "Projects"
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : {
-                        _id        : "56dfe8e56e2877d85455a6bb",
-                        filter     : {
-                            initial: {
-                                workflow: {
-                                    key  : "workflow._id",
-                                    value: [
-                                        "528ce779f3f67bc40b00001f"
-                                    ],
-                                    type : null
-                                }
-                            }
-                        },
-                        contentView: "Leads",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: "Leads"
-                },
-                {
-                    _id      : {
-                        _id        : "56f3d039c1785edc507e81ea",
-                        filter     : {
-                            ggggg: {
-                                source: {
-                                    key  : "source",
-                                    value: [
-                                        "victor"
-                                    ],
-                                    type : null
-                                }
-                            }
-                        },
-                        contentView: "Leads",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : {
-                        _id        : "57172598526673490fa188ac",
-                        filter     : {
-                            'Can be Purchased': {
-                                canBePurchased: {
-                                    key  : "canBePurchased",
-                                    value: [
-                                        "true"
-                                    ]
-                                }
-                            }
-                        },
-                        contentView: "Product",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                }
-            ],
-            kanbanSettings : {
-                tasks        : {
-                    foldWorkflows: [
-                        "528ce3caf3f67bc40b000013",
-                        "528ce3acf3f67bc40b000012",
-                        "528ce30cf3f67bc40b00000f",
-                        "528ce35af3f67bc40b000010"
-                    ],
-                    countPerPage : 10
-                },
-                applications : {
-                    foldWorkflows: [
-                        "Empty"
-                    ],
-                    countPerPage : 10
-                },
-                opportunities: {
-                    foldWorkflows: [],
-                    countPerPage : 10
-                }
+            {
+                _id : "5717873cc6efb4847a5bc78c",
+                name: "CEEK VR "
+            }
+        ],
+        workflow: [
+            {
+                _id : "56dd819ccc599b971852913b",
+                name: "% 50-75"
             },
-            credentials    : {
-                access_token : "",
-                refresh_token: ""
+            {
+                _id : "528cdd2af3f67bc40b000007",
+                name: "% 25-50"
             },
-            email          : "info@thinkmobiles.com",
-            login          : "admin",
-            imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
-        },
-        savedFilters: {
-            undefined: [
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: "salesInvoice"
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: "Projects"
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                },
-                {
-                    _id      : null,
-                    viewType : "",
-                    byDefault: ""
-                }
-            ],
-            Employees: [
-                {
-                    _id      : {
-                        _id        : "562b83ccb4677e225aa31df6",
-                        filter     : {
-                            PM: {
-                                department: {
-                                    key  : "department._id",
-                                    value: [
-                                        "55bb1f40cb76ca630b000007"
-                                    ]
-                                }
-                            }
-                        },
-                        contentView: "Employees",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                }
-            ],
-            Persons  : [
-                {
-                    _id      : {
-                        _id        : "564dd4ce9fb8bc3f2195662c",
-                        filter     : {
-                            dfghj: {
-                                name    : {
-                                    key  : "_id",
-                                    value: [
-                                        "55b92ad621e4b7c40f000635",
-                                        "55b92ad621e4b7c40f000637",
-                                        "55b92ad621e4b7c40f00062d",
-                                        "55d37aee226ed3280b000005",
-                                        "55b92ad621e4b7c40f00064a",
-                                        "55b92ad621e4b7c40f00065e",
-                                        "55b92ad621e4b7c40f000636",
-                                        "55b92ad621e4b7c40f000649",
-                                        "55b92ad621e4b7c40f00063c",
-                                        "55ba0479d79a3a3439000010",
-                                        "55ba0701d79a3a3439000012",
-                                        "55b92ad521e4b7c40f00061c",
-                                        "55b92ad621e4b7c40f00062b",
-                                        "55b92ad521e4b7c40f000612",
-                                        "55b92ad521e4b7c40f000619",
-                                        "55b9fa60d79a3a3439000005",
-                                        "55b92ad621e4b7c40f000658",
-                                        "55b92ad521e4b7c40f000613",
-                                        "55b92ad521e4b7c40f000621",
-                                        "55b92ad621e4b7c40f000640",
-                                        "55b92ad621e4b7c40f000659",
-                                        "55b92ad521e4b7c40f00061f",
-                                        "55b92ad621e4b7c40f00064c",
-                                        "55b9ff67d79a3a343900000a",
-                                        "55b92ad621e4b7c40f00064e",
-                                        "55b92ad621e4b7c40f000626",
-                                        "55b92ad521e4b7c40f00060f",
-                                        "55b92ad621e4b7c40f000656",
-                                        "55b92ad621e4b7c40f00065a",
-                                        "55b92ad521e4b7c40f000614",
-                                        "55b92ad521e4b7c40f000616",
-                                        "55b92ad621e4b7c40f00064b",
-                                        "55b92ad521e4b7c40f000620",
-                                        "55b92ad621e4b7c40f000631",
-                                        "55b92ad621e4b7c40f000655",
-                                        "55b92ad621e4b7c40f000625",
-                                        "55b92ad621e4b7c40f000632",
-                                        "55b92ad621e4b7c40f000644",
-                                        "55b92ad621e4b7c40f000654",
-                                        "55b92ad621e4b7c40f00062c"
-                                    ]
-                                },
-                                country : {
-                                    key  : "address.country",
-                                    value: [
-                                        "Australia",
-                                        "Israel",
-                                        "Singapore",
-                                        "Spain",
-                                        "US",
-                                        "USA",
-                                        "USA/Germany",
-                                        "United States"
-                                    ]
-                                },
-                                services: {
-                                    key  : "services",
-                                    value: [
-                                        "isCustomer",
-                                        "isSupplier"
-                                    ]
-                                }
-                            }
-                        },
-                        contentView: "Persons",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                }
-            ],
-            Leads    : [
-                {
-                    _id      : {
-                        _id        : "56dfe8e56e2877d85455a6bb",
-                        filter     : {
-                            initial: {
-                                workflow: {
-                                    key  : "workflow._id",
-                                    value: [
-                                        "528ce779f3f67bc40b00001f"
-                                    ],
-                                    type : null
-                                }
-                            }
-                        },
-                        contentView: "Leads",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: "Leads"
-                },
-                {
-                    _id      : {
-                        _id        : "56f3d039c1785edc507e81ea",
-                        filter     : {
-                            ggggg: {
-                                source: {
-                                    key  : "source",
-                                    value: [
-                                        "victor"
-                                    ],
-                                    type : null
-                                }
-                            }
-                        },
-                        contentView: "Leads",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                }
-            ],
-            Product  : [
-                {
-                    _id      : {
-                        _id        : "57172598526673490fa188ac",
-                        filter     : {
-                            'Can be Purchased': {
-                                canBePurchased: {
-                                    key  : "canBePurchased",
-                                    value: [
-                                        "true"
-                                    ]
-                                }
-                            }
-                        },
-                        contentView: "Product",
-                        __v        : 0
-                    },
-                    viewType : "",
-                    byDefault: ""
-                }
-            ]
+            {
+                _id : "528cde9ef3f67bc40b000008",
+                name: "% 75-100"
+            },
+            {
+                _id : "528cdcb4f3f67bc40b000006",
+                name: "New"
+            },
+            {
+                _id : "528cdf1cf3f67bc40b00000b",
+                name: "Lost"
+            },
+            {
+                _id : "528cdef4f3f67bc40b00000a",
+                name: "Won"
+            }
+        ]
+    };
+    var fakeResponseSavedFilter = {
+        "success": {
+            "_id"            : "52203e707d4dba8813000003",
+            "__v"            : 0,
+            "attachments"    : [],
+            "lastAccess"     : "2016-06-28T07:03:57.904Z",
+            "profile"        : 1387275598000,
+            "relatedEmployee": "55b92ad221e4b7c40f00004f",
+            "savedFilters"   : [{
+                "_id"        : "574335bb27725f815747d579",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : true
+            }, {
+                "_id"        : "576140b0db710fca37a2d950",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "5761467bdb710fca37a2d951",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "57615278db710fca37a2d952",
+                "viewType"   : "",
+                "contentType": null,
+                "byDefault"  : false
+            }, {
+                "_id"        : "576be27e8833d3d250b617a5",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576beedfa96be05a77ce0267",
+                "contentType": "Leads",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576bfd2ba96be05a77ce0268",
+                "contentType": "Persons",
+                "byDefault"  : false
+            }, {
+                "_id"        : "576d4c74b4d90a5a6023e0bf",
+                "contentType": "customerPayments",
+                "byDefault"  : false
+            }, {
+                "_id"        : "577221ca58982a9011f8a580",
+                "contentType": "journalEntry",
+                "byDefault"  : false
+            }, {"_id": "57722e0458982a9011f8a581", "contentType": "Opportunities", "byDefault": false}],
+            "kanbanSettings" : {
+                "tasks"        : {"foldWorkflows": ["Empty"], "countPerPage": 10},
+                "applications" : {"foldWorkflows": ["Empty"], "countPerPage": 87},
+                "opportunities": {"foldWorkflows": ["Empty"], "countPerPage": 10}
+            },
+            "credentials"    : {"access_token": "", "refresh_token": ""},
+            "pass"           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+            "email"          : "info@thinkmobiles.com",
+            "login"          : "admin"
         }
     };
     var opportunitiesCollection;
@@ -2983,6 +2513,13 @@ define([
     var listView;
     var kanbanView;
     var expect;
+    var selectSpy;
+    var removeFilterSpy;
+    var saveFilterSpy;
+    var removedFromDBSpy;
+    var debounceStub;
+    var globalClock;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -2994,20 +2531,39 @@ define([
         var historyNavigateSpy;
 
         before(function () {
+            globalClock = sinon.useFakeTimers();
             historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
+            selectSpy = sinon.spy(FilterGroup.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(SavedFilters.prototype, 'saveFilter');
+            removedFromDBSpy = sinon.spy(SavedFilters.prototype, 'removeFilterFromDB');
+            debounceStub = sinon.stub(_, 'debounce', function (debFunction) {
+                globalClock.tick(700);
+                return debFunction;
+            });
+            ajaxSpy = sinon.spy($, 'ajax');
         });
 
         after(function () {
+            var $dialogs = $('.ui-dialog');
+
             view.remove();
             topBarView.remove();
             listView.remove();
             kanbanView.remove();
 
-            if ($('.ui-dialog').length) {
-                $('.ui-dialog').remove();
+            if ($dialogs.length) {
+                $dialogs.remove();
             }
 
+            globalClock.restore();
             historyNavigateSpy.restore();
+            selectSpy.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
+            removedFromDBSpy.restore();
+            debounceStub.restore();
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -3068,27 +2624,6 @@ define([
                 server.restore();
             });
 
-            /*it('Try to fetch collection with error response', function () {
-                var opportunitiesUrl = new RegExp('\/Opportunities\/', 'i');
-
-                historyNavigateSpy.reset();
-
-                server.respondWith('GET', opportunitiesUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                opportunitiesCollection = new OpportunitiesCollection({
-                    contentType: 'Opportunities',
-                    filter     : null,
-                    viewType   : 'list',
-                    page       : 1,
-                    count      : 100,
-                    reset      : true,
-                    showMore   : false
-                });
-                server.respond();
-
-                expect(historyNavigateSpy.calledOnce).to.be.true;
-                expect(historyNavigateSpy.args[0][0]).to.be.equals('#login');
-            });*/
-
             it('Try to create TopBarView', function () {
                 var opportunitiesUrl = new RegExp('\/Opportunities\/', 'i');
 
@@ -3132,10 +2667,10 @@ define([
             var windowConfirmStub;
             var alertStub;
             var $thisEl;
-            var ajaxSpy;
             var listDeleteSpy;
             var sortSpy;
             var chooseOptionSpy;
+            var clock;
 
             before(function () {
                 App.currentViewType = 'list';
@@ -3146,10 +2681,10 @@ define([
                 windowConfirmStub.returns(true);
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
-                ajaxSpy = sinon.spy($, 'ajax');
                 listDeleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
                 sortSpy = sinon.spy(ListView.prototype, 'goSort');
                 chooseOptionSpy = sinon.spy(ListView.prototype, 'chooseOption');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
@@ -3157,16 +2692,17 @@ define([
                 mainSpy.restore();
                 windowConfirmStub.restore();
                 alertStub.restore();
-                ajaxSpy.restore();
                 listDeleteSpy.restore();
                 sortSpy.restore();
                 chooseOptionSpy.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function () {
 
-                it('Try to create Opportunities list view', function () {
+                it('Try to create Opportunities list view', function (done) {
                     var workflowsUrl = new RegExp('\/Workflows', 'i');
+                    var filterUrl = '/filter/Opportunities';
                     var $firstRow;
                     var colCount;
                     var date;
@@ -3181,11 +2717,14 @@ define([
                     var editedBy;
 
                     server.respondWith('GET', workflowsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkFlows)]);
+                    server.respondWith('GET', filterUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeFilters)]);
                     listView = new ListView({
                         collection: opportunitiesCollection,
                         startTime : new Date()
                     });
                     server.respond();
+
+                    clock.tick(700);
 
                     $thisEl = listView.$el;
 
@@ -3236,6 +2775,8 @@ define([
                     editedBy = $firstRow.find('td:nth-child(12)').text();
                     expect(editedBy).not.to.be.empty;
                     expect(editedBy).to.not.match(/object Object|undefined/);
+
+                    done();
                 });
 
                 it('Try to delete item with error response', function () {
@@ -3360,22 +2901,22 @@ define([
                 });
 
                 /*it('Try to change tab in dialog', function () {
-                    var $dialogContainer = $('.ui-dialog');
-                    var $firstTab = $dialogContainer.find('.dialog-tabs > li:nth-child(1) > a');
-                    var $secondTab = $dialogContainer.find('.dialog-tabs > li:nth-child(2) > a');
-                    var $thirdTab = $dialogContainer.find('.dialog-tabs > li:nth-child(3) > a');
+                 var $dialogContainer = $('.ui-dialog');
+                 var $firstTab = $dialogContainer.find('.dialog-tabs > li:nth-child(1) > a');
+                 var $secondTab = $dialogContainer.find('.dialog-tabs > li:nth-child(2) > a');
+                 var $thirdTab = $dialogContainer.find('.dialog-tabs > li:nth-child(3) > a');
 
-                    expect($firstTab).to.have.class('active');
+                 expect($firstTab).to.have.class('active');
 
-                    $secondTab.click();
-                    expect($dialogContainer.find('.dialog-tabs > li:nth-child(2) > a')).to.have.class('active');
+                 $secondTab.click();
+                 expect($dialogContainer.find('.dialog-tabs > li:nth-child(2) > a')).to.have.class('active');
 
-                    $thirdTab.click();
-                    expect($dialogContainer.find('.dialog-tabs > li:nth-child(3) > a')).to.have.class('active');
+                 $thirdTab.click();
+                 expect($dialogContainer.find('.dialog-tabs > li:nth-child(3) > a')).to.have.class('active');
 
-                    $firstTab.click();
-                    expect($dialogContainer.find('.dialog-tabs > li:nth-child(1) > a')).to.have.class('active');
-                });*/
+                 $firstTab.click();
+                 expect($dialogContainer.find('.dialog-tabs > li:nth-child(1) > a')).to.have.class('active');
+                 });*/
 
                 it('Try to edit item', function () {
                     var opportunitiesUrl = new RegExp('\/Opportunities\/', 'i');
@@ -3524,28 +3065,209 @@ define([
                     expect($('.ui-dialog')).to.not.exist;
                 });
 
-                /*it('Try to cancel dialog by keydown', function () {
-                    var keyPresEvent = $.Event('keydown', {which: 27});
-                    var $dialog;
-                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-                    var customerUrl = new RegExp('\/customers\/', 'i');
-                    var opportunityPriorityUrl = '/opportunities/priority';
-                    var employeesForDDUrl = '/employees/getForDD?isEmployee=true';
+                it('Try to filter listView by customer and workflow', function () {
+                    var url = '/Opportunities/';
+                    var contentType = 'Opportunities';
+                    var firstValue = 'customer';
+                    var secondValue = 'workflow';
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var contentUrl = new RegExp(url, 'i');
+                    var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                    var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var elementQuery = '#listTable > tr';
+                    var $firstGroup;
+                    var $secondGroup;
+                    var elementsCount;
+                    var $selectedItem;
+                    var ajaxResponse;
+                    var filterObject;
 
-                    server.respondWith('GET', customerUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
-                    server.respondWith('GET', opportunityPriorityUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeOpportunitiesPriority)]);
-                    server.respondWith('GET', employeesForDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeesForDD)]);
-                    $createBtn.click();
+                    selectSpy.reset();
+
+                    // open filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select firstGroup filter
+                    ajaxSpy.reset();
+                    $firstGroup = $searchContainer.find($firstContainer);
+                    $firstGroup.click();
+
+                    $selectedItem = $searchContainer.find($firstSelector);
+
+                    server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeOpportunities)]);
+                    $selectedItem.click();
                     server.respond();
+
+                    expect(selectSpy.calledOnce).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    expect(ajaxSpy.calledOnce).to.be.true;
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                    expect(filterObject[firstValue]).to.have.property('value');
+                    expect(filterObject[firstValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // select secondGroup filter
+                    ajaxSpy.reset();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
                     server.respond();
 
-                    $dialog = $('.ui-dialog');
+                    expect(selectSpy.calledTwice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                    expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
 
-                    expect($dialog).to.exist;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
 
-                    $dialog.keydown(keyPresEvent);
-                    expect($dialog).to.not.exist;
-                });*/
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.exist;
+                    expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                    expect(filterObject[secondValue]).to.have.property('value');
+                    expect(filterObject[secondValue].value)
+                        .to.be.instanceof(Array)
+                        .and
+                        .to.have.lengthOf(1);
+
+                    // unselect secondGroup filter
+
+                    ajaxSpy.reset();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect(selectSpy.calledThrice).to.be.true;
+                    expect($thisEl.find('#searchContainer')).to.exist;
+                    //expect($thisEl.find('#startLetter')).to.exist;
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                    expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                    elementsCount = $thisEl.find(elementQuery).length;
+                    expect(elementsCount).to.be.not.equals(0);
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    expect(ajaxResponse).to.have.property('url', url);
+                    expect(ajaxResponse).to.have.property('type', 'GET');
+                    expect(ajaxResponse.data).to.have.property('filter');
+                    filterObject = ajaxResponse.data.filter;
+
+                    expect(filterObject[firstValue]).to.exist;
+                    expect(filterObject[secondValue]).to.not.exist;
+                });
+
+                it('Try to save filter', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var userUrl = new RegExp('\/users\/', 'i');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $favoritesBtn;
+                    var $filterNameInput;
+                    var $saveFilterBtn;
+
+                    saveFilterSpy.reset();
+
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                    $favoritesBtn.click();
+                    expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                    $filterNameInput = $searchContainer.find('#forFilterName');
+                    $filterNameInput.val('TestFilter');
+                    $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                    $saveFilterBtn.click();
+                    server.respond();
+
+                    expect(saveFilterSpy.called).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove saved filters', function () {
+                    var $searchContainer = $('#searchContainer');
+                    var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                    var userUrl = new RegExp('\/users\/', 'i');
+
+                    removedFromDBSpy.reset();
+
+                    clock.tick(700);
+                    server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $deleteSavedFilterBtn.click();
+                    server.respond();
+
+                    expect(removedFromDBSpy.calledOnce).to.be.true;
+                    expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                    expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                });
+
+                it('Try to remove filter', function () {
+                    var secondValue = 'supplier';
+                    var $searchContainer = $('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                    var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                    var $thisEl = $('#content-holder');
+                    var $secondGroup;
+                    var $selectedItem;
+                    var $removeBtn;
+                    var ajaxResponse;
+                    var ajaxFilter;
+
+                    $searchArrow.click();
+
+                    $secondGroup = $thisEl.find($secondContainer);
+                    $secondGroup.click();
+                    $selectedItem = $searchContainer.find($secondSelector);
+                    $selectedItem.click();
+                    server.respond();
+
+                    // remove firstGroupFilter
+                    ajaxSpy.reset();
+                    removeFilterSpy.reset();
+
+                    $removeBtn = $searchContainer.find('.removeValues');
+                    $removeBtn.click();
+                    server.respond();
+                    clock.tick(700);
+
+                    expect(removeFilterSpy.calledOnce).to.be.true;
+                    expect(ajaxSpy.calledOnce).to.be.true;
+                    ajaxResponse = ajaxSpy.args[0][0];
+                    ajaxFilter = ajaxResponse.data && ajaxResponse.data.filter;
+                    expect(ajaxFilter).to.not.have.property(secondValue);
+
+                    //expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(0);
+                });
             });
         });
 
@@ -3573,6 +3295,8 @@ define([
                 foldUnfoldSpy = sinon.spy(KanbanView.prototype, 'foldUnfoldKanban');
                 gotoEditFormSpy = sinon.spy(KanbanView.prototype, 'gotoEditForm');
                 saveOpportunitySpy = sinon.spy(EditView.prototype, 'saveItem');
+
+                delete App.filtersObject.filter;
             });
 
             after(function () {
@@ -3815,8 +3539,208 @@ define([
 
                 expect($('.ui-dialog')).to.not.exist;
             });
+
+            it('Try to filter listView by workflow and salesPerson', function () {
+                var url = '/Opportunities/';
+                var contentType = 'Opportunities';
+                var firstValue = 'workflow';
+                var secondValue = 'salesPerson';
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var contentUrl = new RegExp(url, 'i');
+                var $firstContainer = '#' + firstValue + 'FullContainer .groupName';
+                var $firstSelector = '#' + firstValue + 'Ul > li:nth-child(1)';
+                var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                var $firstGroup;
+                var $secondGroup;
+                var $selectedItem;
+                var ajaxResponse;
+                var filterObject;
+                var $kanbanTable;
+
+                selectSpy.reset();
+
+                // open filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                // select firstGroup filter
+                ajaxSpy.reset();
+                $firstGroup = $searchContainer.find($firstContainer);
+                $firstGroup.click();
+
+                $selectedItem = $searchContainer.find($firstSelector);
+
+                server.respondWith('GET', contentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeOpportunitiesKanBan)]);
+                $selectedItem.click();
+                server.respond();
+
+                expect(selectSpy.calledOnce).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                //expect($thisEl.find('#startLetter')).to.exist;
+                expect($searchContainer.find('#searchFilterContainer>div')).to.have.lengthOf(2);
+                expect($searchContainer.find($firstSelector)).to.have.class('checkedValue');
+                $kanbanTable = $thisEl.find('.kanban');
+                expect($kanbanTable.find('tr > td').length).to.be.equals(6);
+                expect($kanbanTable.find('tr > td .item').length).to.be.not.equals(0);
+
+                expect(ajaxSpy.calledOnce).to.be.true;
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxResponse).to.have.property('url', url);
+                expect(ajaxResponse.data).to.have.property('filter');
+                filterObject = ajaxResponse.data.filter;
+
+                expect(filterObject[firstValue]).to.exist;
+                expect(filterObject[firstValue]).to.have.property('key', FILTER_CONSTANTS[contentType][firstValue].backend);
+                expect(filterObject[firstValue]).to.have.property('value');
+                expect(filterObject[firstValue].value)
+                    .to.be.instanceof(Array)
+                    .and
+                    .to.have.lengthOf(1);
+
+                // select secondGroup filter
+                ajaxSpy.reset();
+
+                $secondGroup = $thisEl.find($secondContainer);
+                $secondGroup.click();
+                $selectedItem = $searchContainer.find($secondSelector);
+                $selectedItem.click();
+                server.respond();
+
+                expect(selectSpy.calledTwice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                //expect($thisEl.find('#startLetter')).to.exist;
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(2);
+                expect($searchContainer.find($secondSelector)).to.have.class('checkedValue');
+                $kanbanTable = $thisEl.find('.kanban');
+                expect($kanbanTable.find('tr > td').length).to.be.equals(6);
+                expect($kanbanTable.find('tr > td .item').length).to.be.not.equals(0);
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxResponse).to.have.property('url', url);
+                expect(ajaxResponse.data).to.have.property('filter');
+                filterObject = ajaxResponse.data.filter;
+
+                expect(filterObject[firstValue]).to.exist;
+                expect(filterObject[secondValue]).to.exist;
+                expect(filterObject[secondValue]).to.have.property('key', FILTER_CONSTANTS[contentType][secondValue].backend);
+                expect(filterObject[secondValue]).to.have.property('value');
+                expect(filterObject[secondValue].value)
+                    .to.be.instanceof(Array)
+                    .and
+                    .to.have.lengthOf(1);
+
+                // unselect secondGroup filter
+
+                ajaxSpy.reset();
+                $selectedItem = $searchContainer.find($secondSelector);
+                $selectedItem.click();
+                server.respond();
+
+                expect(selectSpy.calledThrice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                //expect($thisEl.find('#startLetter')).to.exist;
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+                expect($searchContainer.find($secondSelector)).to.have.not.class('checkedValue');
+                expect($kanbanTable.find('tr > td').length).to.be.equals(6);
+                expect($kanbanTable.find('tr > td .item').length).to.be.not.equals(0);
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxResponse).to.have.property('url', url);
+                expect(ajaxResponse.data).to.have.property('filter');
+                filterObject = ajaxResponse.data.filter;
+
+                expect(filterObject[firstValue]).to.exist;
+                expect(filterObject[secondValue]).to.not.exist;
+            });
+
+            it('Try to save filter', function () {
+                var $searchContainer = $('#searchContainer');
+                var userUrl = new RegExp('\/users\/', 'i');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var $favoritesBtn;
+                var $filterNameInput;
+                var $saveFilterBtn;
+
+                saveFilterSpy.reset();
+
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                $favoritesBtn = $searchContainer.find('.filter-dialog-tabs > li:nth-child(2)');
+                $favoritesBtn.click();
+                expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                $filterNameInput = $searchContainer.find('#forFilterName');
+                $filterNameInput.val('TestFilter');
+                $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeResponseSavedFilter)]);
+                $saveFilterBtn.click();
+                server.respond();
+
+                expect(saveFilterSpy.called).to.be.true;
+                expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(1);
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+            });
+
+            it('Try to remove saved filters', function () {
+                var $searchContainer = $('#searchContainer');
+                var $deleteSavedFilterBtn = $searchContainer.find('#savedFiltersElements > li:nth-child(1) > button.removeSavedFilter');
+                var userUrl = new RegExp('\/users\/', 'i');
+
+                removedFromDBSpy.reset();
+
+                clock.tick(700);
+                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                $deleteSavedFilterBtn.click();
+                server.respond();
+
+                expect(removedFromDBSpy.calledOnce).to.be.true;
+                expect($searchContainer.find('#savedFiltersElements > li')).to.have.lengthOf(0);
+                expect($searchContainer.find('#searchFilterContainer > div')).to.have.lengthOf(1);
+            });
+
+            it('Try to remove filter', function () {
+                var secondValue = 'supplier';
+                var $searchContainer = $('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var $secondContainer = '#' + secondValue + 'FullContainer .groupName';
+                var $secondSelector = '#' + secondValue + 'Ul > li:nth-child(1)';
+                var $thisEl = $('#content-holder');
+                var $secondGroup;
+                var $selectedItem;
+                var $removeBtn;
+                var ajaxResponse;
+                var ajaxFilter;
+
+                $searchArrow.click();
+
+                $secondGroup = $thisEl.find($secondContainer);
+                $secondGroup.click();
+                $selectedItem = $searchContainer.find($secondSelector);
+                $selectedItem.click();
+                server.respond();
+
+                // remove firstGroupFilter
+                ajaxSpy.reset();
+                removeFilterSpy.reset();
+
+                $removeBtn = $searchContainer.find('.removeValues');
+                $removeBtn.click();
+                server.respond();
+                clock.tick(700);
+
+                expect(removeFilterSpy.calledOnce).to.be.true;
+                expect(ajaxSpy.calledOnce).to.be.true;
+                ajaxResponse = ajaxSpy.args[0][0];
+                ajaxFilter = ajaxResponse.data && ajaxResponse.data.filter;
+                expect(ajaxFilter).to.not.have.property(secondValue);
+
+                //expect($searchContainer.find('.forFilterIcons')).to.have.lengthOf(0);
+            });
         });
-
     });
-
 });
