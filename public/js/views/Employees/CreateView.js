@@ -359,8 +359,8 @@ define([
 
                     self.attachView.sendToServer(null, model.changed);
 
-                    //Backbone.history.fragment = '';
-                    //Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+                    // Backbone.history.fragment = '';
+                    // Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     self.hideDialog();
                 },
 

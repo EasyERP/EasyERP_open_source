@@ -2,44 +2,43 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Product/CreateTemplate.html",
-    "models/ProductModel",
-    "common",
-    "populate",
+    'text!templates/Product/CreateTemplate.html',
+    'views/dialogViewBase',
+    'models/ProductModel',
+    'common',
+    'populate',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
     'constants',
     "jqueryBarcode"
-], function (Backbone, $, _, CreateTemplate, ProductModel, common, populate, attachView, AssigneesView, CONSTANTS) {
+], function (Backbone, $, _, CreateTemplate, ParentView, ProductModel, common, populate, attachView, AssigneesView, CONSTANTS) {
 
-    var CreateView = Backbone.View.extend({
-        el      : "#content-holder",
+    var CreateView = ParentView.extend({
+        el      : '#content-holder',
         template: _.template(CreateTemplate),
         imageSrc: '',
 
         initialize: function (options) {
-            _.bindAll(this, "saveItem");
+            this.mId = CONSTANTS.MID[this.contentType];
+            _.bindAll(this, 'saveItem');
+            
             if (options && options.contentType) {
                 this.contentType = options.contentType;
             } else {
                 this.contentType = CONSTANTS.PRODUCT;
             }
+            
             this.model = new ProductModel();
             this.responseObj = {};
             this.render();
         },
 
         events: {
-            "mouseenter .avatar"                                              : "showEdit",
-            "mouseleave .avatar"                                              : "hideEdit",
-            'keydown'                                                         : 'keydownHandler',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            "click .current-selected"                                         : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+            "mouseenter .avatar"                                              : "showEdit", // need
+            "mouseleave .avatar"                                              : "hideEdit", // need
             "click .newSelectList li.miniStylePagination"                     : "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click"                                                           : "hideNewSelect",
             "click #subscription"                                             : "eventType",
             'keyup #barcode'                                                  : 'drawBarcode',
             'change #barcode'                                                 : 'drawBarcode'
