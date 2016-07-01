@@ -3,7 +3,7 @@
         <fieldset>
             <div class="inner">
                 <div class="topInputHolder">
-                    <h2>Salary Slip</h2>
+                    <h2>Payroll Slip</h2>
                 </div>
                 <div class="half-block left">
                     <dl class="opp-info">
@@ -50,12 +50,14 @@
                     </dl>
                 </div>
                 <div class="clearfix"></div>
+                <br/>
+                <br/>
                 <div class="half-block left">
                     <table class="list">
                         <caption>Earnings</caption>
                         <thead>
                         <tr>
-                            <td>Formula</td>
+                            <td>Type</td>
                             <td>Amount</td>
                         </tr>
                         </thead>
@@ -63,18 +65,18 @@
                         <%for(var i = model.earnings.length - 1; i >= 0; i--){%>
                         <tr>
                             <td><%=model.earnings[i].formula%></td>
-                            <td class="money"><%=model.earnings[i].amount%></td>
+                            <td class="money"><%= currencySplitter(model.earnings[i].amount.toFixed(2))%></td>
                         </tr>
                         <%}%>
                         </tbody>
                     </table>
                 </div>
-                <div class="half-block left">
+                <div class="half-block right">
                     <table class="list">
                         <caption>Deductions</caption>
                         <thead>
                         <tr>
-                            <td>Formula</td>
+                            <td>Type</td>
                             <td>Amount</td>
                         </tr>
                         </thead>
@@ -82,7 +84,7 @@
                         <%for(var i = model.deductions.length - 1; i >= 0; i--){%>
                         <tr>
                             <td><%=model.deductions[i].formula%></td>
-                            <td class="money"><%=model.deductions[i].amount%></td>
+                            <td class="money"><%= currencySplitter(model.deductions[i].amount.toFixed(2))%></td>
                         </tr>
                         <%}%>
                         </tbody>
@@ -93,15 +95,15 @@
                     <dl class="opp-info">
                         <dt><label>Gross Pay</label></dt>
                         <dd>
-                            <span><%=model.grossPay%></span>
+                            <span class="money"><%= currencySplitter(model.grossPay.toFixed(2))%></span>
                         </dd>
                         <dt><label>Total Deduction</label></dt>
                         <dd>
-                            <span><%=model.totalDeduction%></span>
+                            <span class="money"><%= currencySplitter(model.totalDeduction.toFixed(2))%></span>
                         </dd>
                         <dt><label>Net Pay</label></dt>
                         <dd>
-                            <span><%=model.grossPay - model.totalDeduction%></span>
+                            <span class="money"><%= currencySplitter((model.grossPay - model.totalDeduction).toFixed(2))%></span>
                         </dd>
                     </dl>
                 </div>

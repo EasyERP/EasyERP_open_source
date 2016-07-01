@@ -17,7 +17,8 @@
             <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th>Month</th>
-
+            <th class="oe_sortable" data-sort="calc">Calc<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paid">Paid<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="diff">Diff<span class="arrow down">7</span><span
@@ -48,6 +49,7 @@
                             <td class="centerCell expand"><span class="centerCell fa fa-university"></span></td>
                             <td class="" data-id="<%=model.employee._id%>" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
                             <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
+                            <td data-type="input" data-content="onCash" data-cash="<%=model.calc%>" class="autoCalc cash calc money"><%=currencySplitter(model.calc.toFixed(2))%></td>
                             <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="autoCalc cash paid money"><%=currencySplitter(model.paid.toFixed(2))%></td>
                             <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
                                 <% if (model.diff < 0) { %>

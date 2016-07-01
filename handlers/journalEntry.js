@@ -1597,6 +1597,13 @@ var Module = function (models, event) {
                         hire: {$ne: []}
                     }
                 }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'transfer'
+                    }
+                }, {
                     $project: {
                         isEmployee: 1,
                         department: 1,
@@ -1763,6 +1770,10 @@ var Module = function (models, event) {
 
                     amount: 0
                 };
+
+                if (employeeId.toString() === '55b92ad221e4b7c40f000082') {
+                    console.log('fdfdffd');
+                }
 
                 var cb = _.after(2, asyncCb);
 

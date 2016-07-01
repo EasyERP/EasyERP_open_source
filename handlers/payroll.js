@@ -401,10 +401,10 @@ var Module = function (models) {
 
             earnings = result.earnings;
             deductions = result.deductions;
-            for (i = earnings.length -1; i >= 0; i--) {
+            for (i = earnings.length - 1; i >= 0; i--) {
                 grossPay += earnings[i].amount;
             }
-            for (i = deductions.length -1; i >= 0; i--) {
+            for (i = deductions.length - 1; i >= 0; i--) {
                 totalDeduction += deductions[i].amount;
             }
             result.grossPay = grossPay;
@@ -414,14 +414,14 @@ var Module = function (models) {
             month = result.month;
             year = result.year;
 
-            queryObject = {employee: ObjectId(employeeId),  month: month, year: year};
+            queryObject = {employee: ObjectId(employeeId), month: month, year: year};
 
             Vacation.aggregate([{
                 $match: queryObject
             }, {
                 $unwind: "$vacArray"
             }, {
-                $group: { _id: "$vacArray", sum: { $sum:1} }
+                $group: {_id: "$vacArray", sum: {$sum: 1}}
             }], function (err, resultVacArray) {
                 var obj = {};
                 if (err) {
@@ -708,6 +708,11 @@ var Module = function (models) {
         var employeeQueryForEmployeeByDep;
         var startDateKey = date.year() * 100 + date.isoWeek();
         var endDateKey = endDate.year() * 100 + endDate.isoWeek();
+        var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
+            hour  : 15,
+            minute: 1,
+            second: 0
+        }));
 
         date = new Date(date);
         endDate = new Date(endDate);
@@ -874,15 +879,24 @@ var Module = function (models) {
                 var newPayrollModel;
                 var parallelObject = {};
                 var payrollBody = {};
+                var bodySalary;
+                var journal = CONSTANTS.ADMIN_SALARY_JOURNAL;
+                var createJE = false;
 
                 payrollBody.employee = employee;
                 payrollBody.month = month;
                 payrollBody.year = year;
                 payrollBody.dataKey = dataKey;
 
-                if (employee.toString() === '55b92ad221e4b7c40f0000c7') {
-                    console.log('ddsdss');
-                }
+                bodySalary = {
+                    currency      : CONSTANTS.CURRENCY_USD,
+                    journal       : journal,
+                    date          : localDate,
+                    sourceDocument: {
+                        model: 'Employees',
+                        _id  : employee
+                    }
+                };
 
                 function vacation(pcb) {
                     JournalEntry.aggregate([{
@@ -1008,6 +1022,7 @@ var Module = function (models) {
 
                     if (departmentArray.indexOf(department.toString()) !== -1) {
                         pcb(null, salary * 100);
+                        createJE = true;
                     } else {
                         async.parallel([getIdle, getBase], function (err, result) {
                             var total;
@@ -1148,6 +1163,8 @@ var Module = function (models) {
 
                         payrollBody.diff = payrollBody.calc - payrollBody.paid;
 
+                        bodySalary.amount = payrollBody.calc * 100;
+
                         if (!payrollBody.earnings.length && !payrollBody.deductions.length || (payrollBody.calc <= 0)) {
                             return asyncCb();
                         }
@@ -1157,6 +1174,12 @@ var Module = function (models) {
                         newPayrollModel.save(function (err, result) {
                             if (err) {
                                 return asyncCb(err);
+                            }
+
+                            if (createJE) {
+                                journalEntry.createReconciled(bodySalary, req.session.lastDb, function () {
+
+                                }, req.session.uId);
                             }
 
                             asyncCb();

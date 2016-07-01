@@ -25,7 +25,8 @@ define([
             var model = options.model.toJSON();
 
             var dialog = this.template({
-                model: model
+                model           : model,
+                currencySplitter: helpers.currencySplitter
             });
 
             this.data = options.data;
