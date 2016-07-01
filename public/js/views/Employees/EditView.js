@@ -219,7 +219,7 @@ define([
             this.renderRemoveBtn();
 
             $tr = newTr;
-            salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
+            salary = parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text()), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
             dateText = $.trim($tr.find('td').eq(2).text());
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
@@ -556,7 +556,6 @@ define([
 
             haveSalary = !!$jobTrs.find('td[data-id="salary"]').length;
 
-
             manager = $jobTrs.find('#projectManagerDD').last().attr('data-id') || null;
             jobPosition = $jobTrs.find('#jobPositionDd').last().attr('data-id');
             department = $jobTrs.find('#departmentsDd').last().attr('data-id');
@@ -566,15 +565,26 @@ define([
             date = $.trim($jobTrs.last().find('td').eq(2).text());
             date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
 
-            if (event === 'fired') {
-                date = moment(date);
-                fireArray.push(date);
-                lastFire = date.year() * 100 + date.isoWeek();
-            }
+            $.each($jobTrs, function (index, $tr) {
+                var _$tr = $tr;
+                var _date;
+                var _event;
 
-            if (event === 'hired') {
-                hireArray.push(date);
-            }
+                _$tr = $thisEl.find(_$tr);
+                _date = $.trim(_$tr.find('td').eq(2).text());
+                _date = _date ? helpers.setTimeToDate(new Date(_date)) : helpers.setTimeToDate(new Date());
+                _event = _$tr.attr('data-content');
+
+                if (_event === 'fired') {
+                    fireArray.push(_date);
+                    _date = moment(_date);
+                    lastFire = _date.year() * 100 + _date.isoWeek();
+                }
+
+                if (_event === 'hired') {
+                    hireArray.push(_date);
+                }
+            });
 
             if (quit) {
                 return;
