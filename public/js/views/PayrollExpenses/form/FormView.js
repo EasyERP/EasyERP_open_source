@@ -45,20 +45,23 @@ define([
             click                                     : 'removeNewSelect',
             'click .diff'                             : 'newPayment',
             'click .oe_sortable'                      : 'goSort',
-           // 'click .expand'                           : 'renderDialogView',
+            // 'click .expand'                           : 'renderDialogView',
             'click .mainTr td:not(.expand, .checkbox)': 'goToForm'
         },
 
         goToForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new CurrentModel();
-            var self = this;
+            var month = (this.dataKey.toString()).slice(4);
+            var year = (this.dataKey.toString()).slice(0, 4);
 
             e.preventDefault();
 
             model.fetch({
                 data: {
-                    id: id
+                    id   : id,
+                    month: month,
+                    year : year
                 },
 
                 success: function (model) {
@@ -75,14 +78,14 @@ define([
         },
 
         /* renderDialogView: function (e) {
-            var self = this;
-            var tr = $(e.target).closest('tr').find('[data-content="employee"]');
-            var id = tr.attr('data-id');
+         var self = this;
+         var tr = $(e.target).closest('tr').find('[data-content="employee"]');
+         var id = tr.attr('data-id');
 
-            App.startPreload();
+         App.startPreload();
 
-            new ReportView({_id: id, dataKey: self.dataKey});
-        },*/
+         new ReportView({_id: id, dataKey: self.dataKey});
+         },*/
 
         recount: function () {
             var self = this;

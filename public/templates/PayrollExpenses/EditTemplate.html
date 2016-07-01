@@ -19,6 +19,10 @@
                                 <dd>
                                     <span><%=model.employee.department%></span>
                                 </dd>
+                                <dt><label>Base Salary</label></dt>
+                                <dd>
+                                    <span><%=currencySplitter(model.salary.toFixed(2))%></span>
+                                </dd>
                             </dl>
                         </div>
                         <div class="half-block left">

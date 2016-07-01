@@ -341,6 +341,12 @@ var Module = function (models) {
         var Payroll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var id = data.id;
         var queryObject = {_id: ObjectId(id)};
+        var month = parseInt(data.month, 10);
+        var year = parseInt(data.year, 10);
+        var date = moment().year(year).month(month - 1).startOf('month');
+        var endDate = moment(date).endOf('month');
+
+        endDate = new Date(endDate);
 
         Payroll.aggregate([{
             $match: queryObject
@@ -354,7 +360,89 @@ var Module = function (models) {
         }, {
             $project: {
                 employee  : {$arrayElemAt: ['$employee', 0]},
-                ID        : 1,
+                transfer  : 1,
+                year      : 1,
+                month     : 1,
+                dataKey   : 1,
+                earnings  : 1,
+                deductions: 1,
+                paid      : 1,
+                diff      : 1,
+                date      : 1,
+                status    : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'transfers',
+                localField  : 'employee._id',
+                foreignField: 'employee',
+                as          : 'transfer'
+            }
+        }, {
+            $project: {
+                employee: 1,
+                transfer: {
+                    $filter: {
+                        input: '$transfer',
+                        as   : 'item',
+
+                        cond: {
+                            $lte: ['$$item.date', endDate]
+                        }
+                    }
+                },
+
+                year      : 1,
+                month     : 1,
+                dataKey   : 1,
+                earnings  : 1,
+                deductions: 1,
+                paid      : 1,
+                diff      : 1,
+                date      : 1,
+                status    : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'employee.department',
+                foreignField: '_id',
+                as          : 'employee.department'
+            }
+        }, {
+            $project: {
+                'employee._id'       : 1,
+                'employee.name'      : 1,
+                'employee.department': {$arrayElemAt: ['$employee.department', 0]},
+                transferDate         : {$max: '$transfer.date'},
+                transfer             : 1,
+                year                 : 1,
+                month                : 1,
+                dataKey              : 1,
+                earnings             : 1,
+                deductions           : 1,
+                paid                 : 1,
+                diff                 : 1,
+                date                 : 1,
+                status               : 1
+            }
+        }, {
+            $project: {
+                'employee._id'       : 1,
+                'employee.name'      : 1,
+                'employee.department': 1,
+                transfer             : 1,
+                salary               : {
+                    $filter: {
+                        input: '$transfer',
+                        as   : 'item',
+
+                        cond: {
+                            $eq: ['$$item.date', '$transferDate']
+                        }
+                    }
+                },
+
                 year      : 1,
                 month     : 1,
                 dataKey   : 1,
@@ -369,47 +457,8 @@ var Module = function (models) {
             $project: {
                 'employee._id'       : 1,
                 'employee.name'      : 1,
-                'employee.department': 1,
-                ID                   : 1,
-                year                 : 1,
-                month                : 1,
-                dataKey              : 1,
-                earnings             : 1,
-                deductions           : 1,
-                paid                 : 1,
-                diff                 : 1,
-                date                 : 1,
-                status               : 1
-            }
-        }, {
-            $lookup: {
-                from        : 'Department',
-                localField  : 'employee.department',
-                foreignField: '_id',
-                as          : 'employee.department'
-            }
-        }, {
-            $project: {
-                'employee._id'       : 1,
-                'employee.name'      : 1,
-                'employee.department': {$arrayElemAt: ['$employee.department', 0]},
-                ID                   : 1,
-                year                 : 1,
-                month                : 1,
-                dataKey              : 1,
-                earnings             : 1,
-                deductions           : 1,
-                paid                 : 1,
-                diff                 : 1,
-                date                 : 1,
-                status               : 1
-            }
-        }, {
-            $project: {
-                'employee._id'       : 1,
-                'employee.name'      : 1,
                 'employee.department': '$employee.department.name',
-                ID                   : 1,
+                salary               : {$max: '$salary.salary'},
                 year                 : 1,
                 month                : 1,
                 dataKey              : 1,
