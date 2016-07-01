@@ -1955,8 +1955,8 @@ define([
                                 'cx': function(d) {
                                     return projection([
                                         parseFloat(d.CapitalLongitude),
-                                        parseFloat(d.CapitalLatitude)]
-                                    )[0];
+                                        parseFloat(d.CapitalLatitude)
+                                    ])[0];
                                 },
                                 'cy': function(d) {
                                     return projection([
@@ -1974,7 +1974,7 @@ define([
                             });
                     });
 
-                    g.call(zoom);
+                    svg.call(zoom);
                 })
             });
         }
