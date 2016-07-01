@@ -486,8 +486,8 @@ var Employee = function (event, models) {
             body.notes[0]._id = mongoose.Types.ObjectId();
             body.notes[0].date = new Date();
         }
-        if (data.notes && data.notes.length) {
-            noteObj = data.notes[0];
+        if (body.notes && body.notes.length) {
+            noteObj = body.notes[0];
 
             noteObj._id = mongoose.Types.ObjectId();
             noteObj.date = new Date();
