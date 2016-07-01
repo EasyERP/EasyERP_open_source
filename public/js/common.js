@@ -511,7 +511,7 @@
             callback(response.data);
         });
     };
-    var getSalesByCountry = function(dateRange, callback){
+    var getSalesByCountry = function(dataRange, callback){
         dataService.getData('/invoices/getSalesByCountry', {
             dataRange: dataRange
         }, function (response) {

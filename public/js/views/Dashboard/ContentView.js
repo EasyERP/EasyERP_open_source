@@ -28,7 +28,8 @@ define([
                 opportunitie          : 30,
                 sale                  : 7,
                 opportunitieConversion: 90,
-                winLost               : 30
+                winLost               : 30,
+                salesByCountry        : 30
             };
 
             this.dateItem = {
@@ -1875,21 +1876,30 @@ define([
             var dataUrl = '../../maps/';
             var width = 700;
             var height = 450;
+            var projection;
+            var path;
+            var zoom;
             var svg;
             var g;
-            var projection = d3.geo.mercator()
+            var e;
+
+            common.getSalesByCountry(this.dateRange.salesByCountry, function(data){
+                console.log(data);
+            });
+
+            projection = d3.geo.mercator()
                 .translate([width/2, height/1.5])
                 .scale([width/6]);
 
-            var path = d3.geo.path().projection(projection);
+            path = d3.geo.path().projection(projection);
 
-            var zoom = d3.behavior.zoom()
+            zoom = d3.behavior.zoom()
                 .scaleExtent([1, 50])
                 .on("zoom", function () {
 
                     d3.select('#wrapper div').style("opacity", 0);
 
-                    var e = d3.event,
+                    e = d3.event,
                         tx = Math.min(0, Math.max(e.translate[0], width - width * e.scale)),
                         ty = Math.min(0, Math.max(e.translate[1], height - height * e.scale));
                     zoom.translate([tx, ty]);
