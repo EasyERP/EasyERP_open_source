@@ -11,7 +11,7 @@ define([
     'views/Assignees/AssigneesView',
     'constants',
     "jqueryBarcode"
-], function (Backbone, $, _, CreateTemplate, ParentView, ProductModel, common, populate, attachView, AssigneesView, CONSTANTS) {
+], function (Backbone, $, _, CreateTemplate, ParentView, ProductModel, common, populate, AttachView, AssigneesView, CONSTANTS) {
 
     var CreateView = ParentView.extend({
         el      : '#content-holder',
@@ -21,70 +21,69 @@ define([
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
             _.bindAll(this, 'saveItem');
-            
+
             if (options && options.contentType) {
                 this.contentType = options.contentType;
             } else {
                 this.contentType = CONSTANTS.PRODUCT;
             }
-            
+
             this.model = new ProductModel();
             this.responseObj = {};
             this.render();
         },
 
         events: {
-            "mouseenter .avatar"                                              : "showEdit", // need
-            "mouseleave .avatar"                                              : "hideEdit", // need
-            "click .newSelectList li.miniStylePagination"                     : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click #subscription"                                             : "eventType",
-            'keyup #barcode'                                                  : 'drawBarcode',
-            'change #barcode'                                                 : 'drawBarcode'
+            'mouseenter .avatar'                                              : 'showEdit', // need
+            'mouseleave .avatar'                                              : 'hideEdit', // need
+            'click .newSelectList li.miniStylePagination'                     : 'notHide',
+            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
+            'click #subscription'                                             : 'eventType'
         },
 
-        drawBarcode: function () {
-            var el = this.$el;
-            var content = el.find("#barcode").val();
-
-            if (!content) {
-                el.find("#bcTarget").empty();
+        eventType: function () {
+            var container = this.$('#typeOfEvent');
+            if (container.hasClass('hidden')) {
+                container.removeClass('hidden');
             } else {
-                el.find("#bcTarget").barcode(el.find("#barcode").val(), "code128");
+                container.addClass('hidden');
             }
         },
 
-        eventType           : function () {
-            var container = this.$("#typeOfEvent");
-            if (container.hasClass("hidden")) {
-                container.removeClass("hidden");
-            } else {
-                container.addClass("hidden");
-            }
-        },
-        notHide             : function () {
+        notHide: function () {
             return false;
         },
-        showNewSelect       : function (e, prev, next) {
+
+        showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
+
             return false;
         },
-        chooseOption        : function (e) {
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-            $(".newSelectList").hide();
+
+        chooseOption: function (e) {
+            var $targetEl = $(e.target);
+            var id = $targetEl.attr('id');
+
+            $targetEl.parents('dd').find('.current-selected').text($targetEl.text()).attr('data-id', id);
+            /* $('.newSelectList').hide();*/
         },
-        nextSelect          : function (e) {
+
+        nextSelect: function (e) {
             this.showNewSelect(e, false, true);
         },
-        prevSelect          : function (e) {
+
+        prevSelect: function (e) {
             this.showNewSelect(e, true, false);
         },
-        hideNewSelect       : function () {
+
+        hideNewSelect: function () {
             $(".newSelectList").hide();
         },
-        addAttach           : function (event) {
+
+        addAttach: function (event) {
             var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
+
             $(".attachContainer").append('<li class="attachFile">' +
                 '<a href="javascript:;">' + s + '</a>' +
                 '<a href="javascript:;" class="deleteAttach">Delete</a></li>'
@@ -92,10 +91,12 @@ define([
             $(".attachContainer .attachFile:last").append($(".input-file .inputAttach").attr("hidden", "hidden"));
             $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
         },
-        deleteAttach        : function (e) {
+
+        deleteAttach: function (e) {
             $(e.target).closest(".attachFile").remove();
         },
-        keydownHandler      : function (e) {
+
+        keydownHandler: function (e) {
             switch (e.which) {
                 case 27:
                     this.hideDialog();
@@ -104,7 +105,8 @@ define([
                     break;
             }
         },
-        changeTab           : function (e) {
+
+        changeTab: function (e) {
             var holder = $(e.target);
             var n;
             var dialogHolder;
@@ -123,34 +125,39 @@ define([
             dialogHolder.find(itemActiveSelector).removeClass("active");
             dialogHolder.find(itemSelector).eq(n).addClass("active");
         },
-        hideDialog          : function () {
+
+        hideDialog: function () {
             $(".edit-dialog").remove();
             $(".add-group-dialog").remove();
             $(".add-user-dialog").remove();
             $(".crop-images-dialog").remove();
         },
-        showEdit            : function () {
+
+        showEdit: function () {
             $(".upload").animate({
                 height : "20px",
                 display: "block"
             }, 250);
 
         },
-        hideEdit            : function () {
+
+        hideEdit: function () {
             $(".upload").animate({
                 height : "0px",
                 display: "block"
             }, 250);
 
         },
+
         fileSizeIsAcceptable: function (file) {
             if (!file) {
                 return false;
             }
             return file.size < App.File.MAXSIZE;
         },
-        saveItem            : function () {
-            var currEl = this.$el;
+
+        saveItem: function () {
+            var $currEl = this.$el;
             var self = this;
             var mid = 58;
             var productModel = new ProductModel();
@@ -175,73 +182,76 @@ define([
             var canBeExpensed = currEl.find('#expensed').prop('checked');
             var eventSubscription = currEl.find('#subscription').prop('checked');
             var canBePurchased = currEl.find('#purchased').prop('checked');
-            var salePrice = currEl.find("#salePrice").val();
-            var barcode = $.trim(currEl.find("#barcode").val());
+            var salePrice = currEl.find('#salePrice').val();
+            var barcode = $.trim(currEl.find('#barcode').val());
             var isActive = $('#active').prop('checked');
-            var productType = this.$("#productType").data("id");
+            var productType = this.$('#productType').data('id');
             var categoryEl = currEl.find('#productCategory');
             var category = {
                 _id : categoryEl.data('id'),
                 name: categoryEl.text()
             };
             var valid = productModel.save({
-                    canBeSold        : canBeSold,
-                    canBeExpensed    : canBeExpensed,
-                    eventSubscription: eventSubscription,
-                    canBePurchased   : canBePurchased,
-                    imageSrc         : this.imageSrc,
-                    name             : name,
-                    info             : {
-                        productType: productType,
-                        salePrice  : salePrice ? salePrice : 0,
-                        isActive   : isActive,
-                        barcode    : barcode,
-                        description: description
-                    },
-                    accounting       : {
-                        category: category
-                    },
-                    groups           : {
-                        owner: $("#allUsersSelect").data("id") || null,
-                        users: usersId,
-                        group: groupsId
-                    },
-                    whoCanRW         : whoCanRW
+                canBeSold        : canBeSold,
+                canBeExpensed    : canBeExpensed,
+                eventSubscription: eventSubscription,
+                canBePurchased   : canBePurchased,
+                imageSrc         : this.imageSrc,
+                name             : name,
+                info             : {
+                    productType: productType,
+                    salePrice  : salePrice ? salePrice : 0,
+                    isActive   : isActive,
+                    barcode    : barcode,
+                    description: description
                 },
-                {
-                    headers: {
-                        mid: mid
-                    },
-                    wait   : true,
-                    success: function (model, response) {
-                        self.attachView.sendToServer(null, model.changed);
-                    },
-                    error  : function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
-                });
+                accounting       : {
+                    category: category
+                },
+                groups           : {
+                    owner: $("#allUsersSelect").data("id") || null,
+                    users: usersId,
+                    group: groupsId
+                },
+                whoCanRW         : whoCanRW
+            }, {
+                headers: {
+                    mid: mid
+                },
+                wait   : true,
+                success: function (model, response) {
+                    self.attachView.sendToServer(null, model.changed);
+                },
+                error  : function (model, xhr) {
+                    self.errorNotification(xhr);
+                }
+            });
+
             if (!valid) {
-                $("#createBtnDialog").removeAttr("disabled");
+                $('#createBtnDialog').removeAttr('disabled');
             }
         },
 
         render: function () {
             var formString = this.template({contentType: this.contentType});
             var self = this;
+            var notDiv;
+
             this.$el = $(formString).dialog({
-                dialogClass: "edit-dialog",
+                dialogClass: 'edit-dialog',
                 width      : 800,
-                title      : "Create Product",
+                title      : 'Create Product',
                 buttons    : {
-                    save  : {
-                        text : "Create",
-                        class: "btn",
-                        id   : "createBtnDialog",
+                    save: {
+                        text : 'Create',
+                        class: 'btn',
+                        id   : 'createBtnDialog',
                         click: self.saveItem
                     },
+
                     cancel: {
-                        text : "Cancel",
-                        class: "btn",
+                        text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }
@@ -249,12 +259,14 @@ define([
                 }
             });
 
-            var notDiv = this.$el.find('.attach-container');
-            this.attachView = new attachView({
+            notDiv = this.$el.find('.attach-container');
+
+            this.attachView = new AttachView({
                 model   : new ProductModel,
                 url     : '/product/uploadProductFiles',
                 isCreate: true
             });
+
             notDiv.append(this.attachView.render().el);
             notDiv = this.$el.find('.assignees-container');
             notDiv.append(

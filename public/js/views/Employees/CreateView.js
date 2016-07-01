@@ -470,5 +470,4 @@ define([
     });
 
     return CreateView;
-
 });

@@ -139,10 +139,6 @@
             this.asyncLoadImgs(newModels);
         },
 
-        createItem: function () {
-            new createView();
-        },
-
         exportToCsv: function () {
             //todo change after routes refactoring
             window.location = '/Product/exportToCsv'
