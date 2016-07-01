@@ -651,8 +651,7 @@ var Module = function (models) {
         function getEmployees(mainCb) {
             Employee.aggregate([{
                 $match: {
-                    hire: {$ne: []},
-                    _id : ObjectId('55b92ad221e4b7c40f0000c7')
+                    hire: {$ne: []}
                 }
             }, {
                 $lookup: {
@@ -681,9 +680,9 @@ var Module = function (models) {
                         }
                     }
                 }
-            }/*, {
-             $match: employeeQueryForEmployeeByDep
-             }*/, {
+            }, {
+                $match: employeeQueryForEmployeeByDep
+            }, {
                 $project: {
                     department: 1,
                     transfer  : {
