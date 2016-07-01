@@ -24,6 +24,7 @@ define([
 
             self.type = options.type;
             self.eventChannel = options.eventChannel;
+            self.updateAfterCreate = options.updateAfterCreate;
 
             self.seq = (self.data && self.data.formula && self.data.formula.length) || 0;
 
@@ -141,8 +142,12 @@ define([
             var err;
             var model;
 
+            if (self.type[self.type.length - 1] !== 's') {
+                self.type += 's';
+            }
+
             data.name = name;
-            data.type = self.type + 's';
+            data.type = self.type;
             data.formula = [];
             data.minRange = $.trim($currentEl.find('#minRange').val());
             data.maxRange = $.trim($currentEl.find('#maxRange').val());
@@ -186,6 +191,10 @@ define([
                     self.remove();
 
                     self.eventChannel.trigger('newStructureComponent', data, model);
+
+                    if (self.updateAfterCreate) {
+                        self.eventChannel.trigger('updatePayrollDeductionsType', data, model);
+                    }
                 },
 
                 error: function (model, xhr) {
@@ -294,10 +303,10 @@ define([
 
             self.renderFormula();
 
-            url = '/payrollComponentTypes/forDd/' + type + 's';
-            ddId = '#' + type + 'TypeDd';
+            /* url = '/payrollComponentTypes/forDd/' + type + 's';
+             ddId = '#' + type + 'TypeDd';
 
-            populate.get(ddId, url, {}, 'name', self);
+             populate.get(ddId, url, {}, 'name', self);*/
 
             self.delegateEvents(this.events);
 

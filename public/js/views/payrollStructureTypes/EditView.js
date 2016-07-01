@@ -18,6 +18,10 @@ define([
         componentTemplate: _.template(componentTemplate),
         responseObj      : {},
         componentObject  : {},
+        componentNames   : {
+            earnings  : [],
+            deductions: []
+        },
 
         events: {
             'click .fa-plus'                                   : 'create',
@@ -71,16 +75,18 @@ define([
         newStructureComponent: function (component, modelComponent) {
             var self = this;
             var model = self.model;
+            var modelArray = model.get(component.type);
 
             if (!this.componentObject[component.type]) {
                 this.componentObject[component.type] = [];
             }
 
             this.componentObject[component.type].push(component._id || modelComponent.id);
+            this.componentNames[component.type].push(component.name);
 
             component._id = component._id || modelComponent.id;
 
-            model.set(component.type, component.formula);
+            modelArray.push(component.formula);
 
             self.renderComponents();
         },
@@ -155,12 +161,13 @@ define([
             this.componentObject = {};
         },
 
-        formulaParser: function (arr) {
+        formulaParser: function (arr, type) {
             var formulaStr = '';
             var length = arr.length || 0;
             var i;
             var formulaObject = {};
             var lastSign;
+            var formulaByNames;
             var signs = ['+', '-', '/', '*'];
 
             this.operations = {
@@ -182,7 +189,46 @@ define([
                 formulaStr = formulaStr.substr(0, formulaStr.length - 1);
             }
 
+            formulaByNames = this.formulaNamesParser(type);
+
+            return formulaStr + formulaByNames;
+
+        },
+
+        formulaNamesParser: function (type) {
+            var formulaStr = '';
+            var arr = this.componentNames[type];
+            var length = arr.length || 0;
+            var i;
+            var formulaObject = {};
+            var lastSign;
+
+            for (i = 0; i <= length - 1; i++) {
+                formulaObject = arr[i];
+
+                formulaStr += ' ' + formulaObject + ' +';
+            }
+
+            lastSign = formulaStr[formulaStr.length - 1];
+
+            if (lastSign === '+') {
+                formulaStr = formulaStr.substr(0, formulaStr.length - 1);
+            }
+
             return formulaStr;
+        },
+
+        setFormulasNames: function () {
+            var self = this;
+            var model = this.model.toJSON();
+
+            model.deductions.forEach(function (deduction) {
+                self.componentNames.deductions.push(deduction.name);
+            });
+
+            model.earnings.forEach(function (earning) {
+                self.componentNames.earnings.push(earning.name);
+            });
         },
 
         renderComponents: function () {
@@ -196,21 +242,21 @@ define([
             $deductionComponents.html('');
 
             model.deductions.forEach(function (deduction) {
-                arr = _.union(arr, deduction.formula || [deduction]);
+                arr = arr.concat(deduction.formula || deduction);
             });
 
             if (arr.length) {
-                $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+                $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr, 'deductions')}));
             }
 
             arr = [];
 
             model.earnings.forEach(function (earning) {
-                arr = _.union(arr, earning.formula || [earning]);
+                arr = arr.concat(earning.formula || earning);
             });
 
             if (arr.length) {
-                $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+                $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr, 'earnings')}));
             }
 
         },
@@ -260,6 +306,8 @@ define([
             ddId = '#' + typeDeduction + 'TypeDd';
 
             populate.get(ddId, url, {formula: true}, 'name', self);
+
+            this.setFormulasNames();
 
             this.renderComponents();
 
