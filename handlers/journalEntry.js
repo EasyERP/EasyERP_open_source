@@ -2623,6 +2623,13 @@ var Module = function (models, event) {
                         hours       : 1
                     }
                 }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : 'employee._id',
+                        foreignField: 'employee',
+                        as          : 'employee.transfer'
+                    }
+                }, {
                     $project: {
                         transfer    : '$employee.transfer',
                         employee    : '$employee._id',

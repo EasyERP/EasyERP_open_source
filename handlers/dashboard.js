@@ -305,6 +305,13 @@ var wTrack = function (models) {
                         hire: {$ne: []} // add by Liliya for new Application ToDO review
                     }
                 }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'transfer'
+                    }
+                }, {
                     $project: {
                         isEmployee  : 1,
                         department  : 1,

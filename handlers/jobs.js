@@ -1413,6 +1413,13 @@ var Module = function (models, event) {
                     department     : {$arrayElemAt: ['$department', 0]}
                 }
             }, {
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : 'employee._id',
+                    foreignField: 'employee',
+                    as          : 'employee.transfer'
+                }
+            }, {
                 $project: {
                     name       : 1,
                     invoice    : 1,

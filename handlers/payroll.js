@@ -572,6 +572,13 @@ var Module = function (models) {
                         as          : 'department'
                     }
                 }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'transfer'
+                    }
+                }, {
                     $project: {
                         department: {$arrayElemAt: ['$department', 0]},
                         isEmployee: 1,

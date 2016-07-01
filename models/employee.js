@@ -199,7 +199,7 @@ module.exports = (function () {
         hire: [Date],
         fire: [Date],
 
-        transfer: [{
+       /* transfer: [{
             _id            : false,
             date           : Date,
             status         : {type: String, enum: ['hired', 'fired', 'updated'], default: 'updated'},
@@ -211,7 +211,7 @@ module.exports = (function () {
             jobType        : {type: String, default: ''},
             salary         : {type: Number, default: 0},
             info           : {type: String, default: ''}
-        }],
+        }],*/
 
         lastFire: {type: Number, default: null}
     }, {collection: 'Employees'});
