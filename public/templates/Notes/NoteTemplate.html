@@ -1,3 +1,4 @@
+<div class="attachments"></div>
 <div class="noteWrapper">
     <%if (needNotes) {%>
     <label>Note</label>
@@ -49,8 +50,9 @@
             </div>
             <div>
                 <!--<a class="name" href="javascript:;"><%=val['author'] %></a>--><a class="name" href="javascript:;"><%=val['author']%> </a><span
-                    class="date"><%=val['date'] %></span>
+                    class="dateNote"><%=val['date'] %></span>
                 <%if (needNotes) {%>
+
                 <div class="right">
           <span>
             <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"

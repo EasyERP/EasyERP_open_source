@@ -43,6 +43,13 @@
                     response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY');
                 }
 
+                if (response.notes) {
+                    _.map(response.notes, function (note) {
+                        note.date = common.utcDateToLocaleDate(note.date);
+                        return note;
+                    });
+                }
+
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
                         attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY');

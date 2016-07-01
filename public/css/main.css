@@ -3892,6 +3892,15 @@ dl dd span.ui-spinner {
   color: #555;
   display: none;
 }
+.noteWrapper .addNote .area_holder {
+  position: relative;
+}
+.noteWrapper .addNote .area_holder .attach_file {
+  display: none;
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+}
 .noteWrapper .addNote .addTitle {
   display: none;
 }
@@ -3987,6 +3996,9 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote.active .addTitle {
   display: block;
   line-height: 30px;
+}
+.noteWrapper .addNote.active .area_holder .attach_file {
+  display: block;
 }
 .noteWrapper #noteBody .noteContainer {
   padding: 10px;

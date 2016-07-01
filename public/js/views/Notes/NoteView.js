@@ -23,7 +23,7 @@ define([
         },
 
         clickInput: function () {
-            $('.input-file .inputAttach').click();
+           this.$el.find('.input-file .inputAttach').click();
         },
 
 
@@ -185,12 +185,16 @@ define([
         template: _.template(NoteTemplate),
 
         render: function () {
+            var notDiv;
             var modelObj = this.model.toJSON();
 
             modelObj.needNotes = this.needNotes;
-            this.$el.html(this.template(modelObj));
 
-            this.$el.prepend(
+            this.$el.html(this.template(modelObj));
+            notDiv = this.$el.find('.attachments');
+
+
+            notDiv.html(
                 new AttachView({
                     model      : this.model,
                     contentType: this.contentType

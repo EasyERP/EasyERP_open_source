@@ -310,7 +310,7 @@ define([
             notDiv.append(
                 new noteView({
                     model      : this.currentModel,
-                    contentType: 'Opportunities'
+                    contentType: 'Leads'
                 }).render().el
             );
 

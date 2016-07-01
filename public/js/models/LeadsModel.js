@@ -52,6 +52,20 @@
                 if (response.editedBy) {
                     response.editedBy.date = common.utcDateToLocaleDateTime(response.editedBy.date);
                 }
+
+                if (response.notes) {
+                    _.map(response.notes, function (note) {
+                        note.date = common.utcDateToLocaleDate(note.date);
+                        return note;
+                    });
+                }
+
+                if (response.attachments) {
+                    _.map(response.attachments, function (attachment) {
+                        attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
+                        return attachment;
+                    });
+                }
                 return response;
             }
         },
