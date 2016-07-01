@@ -53,11 +53,11 @@ define([
             },
 
             whoCanRW: 'everyOne'
-        },
+        }/* ,
 
         urlRoot: function () {
             return CONSTANTS.URLS.PRODUCT;
-        }
+        } */
     });
     return ProductModel;
 });

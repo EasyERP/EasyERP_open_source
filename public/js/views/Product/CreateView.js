@@ -162,10 +162,10 @@ define([
             var usersId = [];
             var groupsId = [];
             $(".groupsAndUser tr").each(function () {
-                if ($(this).data("type") == "targetUsers") {
+                if ($(this).data("type") === "targetUsers") {
                     usersId.push($(this).data("id"));
                 }
-                if ($(this).data("type") == "targetGroups") {
+                if ($(this).data("type") === "targetGroups") {
                     groupsId.push($(this).data("id"));
                 }
 
@@ -253,7 +253,7 @@ define([
             var notDiv = this.$el.find('.attach-container');
             this.attachView = new attachView({
                 model   : new ProductModel,
-                url     : "/product/uploadProductFiles",
+                url     : '/product/uploadProductFiles',
                 isCreate: true
             });
             notDiv.append(this.attachView.render().el);
@@ -264,8 +264,8 @@ define([
                 }).render().el
             );
 
-            populate.get("#productType", "/product/getProductsTypeForDd", {}, 'name', this, true, true);
-            populate.get("#productCategory", "/category", {}, 'fullName', this, true);
+            populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this, true, true);
+            populate.get('#productCategory', '/category', {}, 'fullName', this, true);
             common.canvasDraw({model: this.model.toJSON()}, this);
 
             this.delegateEvents(this.events);

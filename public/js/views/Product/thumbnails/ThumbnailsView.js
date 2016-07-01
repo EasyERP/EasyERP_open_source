@@ -59,26 +59,35 @@
         },
 
         gotoEditForm: function (e) {
-            this.$el.delegate('a', 'click', function (e) {
-                e.stopPropagation();
-                e.default;
+            var className;
+            var id;
+            var model;
+            var self = this;
+            var target = $(e.target);
+
+            this.$el.delegate('a', 'click', function (event) {
+                event.stopPropagation();
+                event.preventDefault();
             });
-            var clas = $(e.target).parent().attr("class");
-            if ((clas === "dropDown") || (clas === "inner")) {
-            } else {
-                e.preventDefault();
-                var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                var model = new currentModel({validate: false});
-                model.urlRoot = '/Product/form/';
+
+            className = target.parent().attr('class');
+
+            if ((className !== 'dropDown') || (className !== 'inner')) {
+                id = target.closest('.thumbnailwithavatar').attr('id');
+                model = new CurrentModel({validate: false});
+
+                model.urlRoot = CONSTANTS.URLS.PRODUCT;
+
                 model.fetch({
-                    data   : {id: id},
-                    success: function (model) {
-                        new editView({model: model});
+                    data   : {id: id, viewType: 'form'},
+                    success: function (response) {
+                        return new self.EditView({model: response});
                     },
-                    error  : function () {
+
+                    error: function () {
                         App.render({
                             type   : 'error',
-                            message: "Please refresh browser"
+                            message: 'Please refresh browser'
                         });
                     }
                 });
