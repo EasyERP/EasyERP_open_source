@@ -1,10 +1,16 @@
+<div class="attachments"></div>
 <div class="noteWrapper">
+    <%if (needNotes) {%>
     <label>Note</label>
-
     <div class="addNote">
         <div>
             <label>Note Content</label>
-            <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
+            <div class="area_holder">
+                <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
+                <a href="javascript:;" class="attach_file">
+                    <i class="fa fa-paperclip" aria-hidden="true"></i>
+                </a>
+            </div>
             <div>
                 <a class="addTitle" href="javascript:;">Add a title</a>
             </div>
@@ -13,6 +19,7 @@
                 <label>Note Title</label>
                 <input type="text" id="noteTitleArea" value="" maxlength="64">
             </div>
+
             <div class="buttons">
                 <!--<input type="submit" id="addNote" class="btn" value="Save">-->
                 <buttom class="btn" id="addNote">
@@ -31,6 +38,7 @@
         <div class="clearfix"></div>
 
     </div>
+    <%}%>
     <div class="clearfix"></div>
 
     <div id="noteBody">
@@ -42,7 +50,8 @@
             </div>
             <div>
                 <!--<a class="name" href="javascript:;"><%=val['author'] %></a>--><a class="name" href="javascript:;"><%=val['author']%> </a><span
-                    class="date"><%=val['date'] %></span>
+                    class="dateNote"><%=val['date'] %></span>
+                <%if (needNotes) {%>
 
                 <div class="right">
           <span>
@@ -55,6 +64,7 @@
           </span>
 
                 </div>
+                <%}%>
             </div>
         </div>
         <div class="clearfix"></div>

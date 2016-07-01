@@ -3,6 +3,8 @@ var router = express.Router();
 var OpportunityHandler = require('../handlers/opportunity');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     'use strict';
@@ -17,6 +19,7 @@ module.exports = function (models, event) {
     router.get('/', handler.getByViewType);
     router.get('/getLeadsForChart', handler.getLeadsForChart);
     router.get('/priority', handler.getLeadsPriority);
+    router.post('/uploadFiles', multipartMiddleware, handler.uploadFile);
 
     router.post('/', handler.create);
     router.patch('/:id', handler.updateLead);

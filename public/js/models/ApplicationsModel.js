@@ -43,9 +43,16 @@
                     response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY');
                 }
 
+                if (response.notes) {
+                    _.map(response.notes, function (note) {
+                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        return note;
+                    });
+                }
+
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
-                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY');
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
                         return attachment;
                     });
                 }

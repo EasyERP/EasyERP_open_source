@@ -2,9 +2,9 @@
     'Backbone',
     'Underscore',
     'Validation',
-    'common',
+    'moment',
     'constants'
-], function (Backbone, _, Validation, common, CONSTANTS) {
+], function (Backbone, _, Validation, moment, CONSTANTS) {
     'use strict';
 
     var EmployeeModel = Backbone.Model.extend({
@@ -27,39 +27,45 @@
         parse: function (response) {
             if (!response.data) {
                 if (response.createdBy) {
-                    response.createdBy.date = common.utcDateToLocaleDateTime(response.createdBy.date);
+                    response.createdBy.date = moment(response.createdBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
                 if (response.editedBy) {
-                    response.editedBy.date = common.utcDateToLocaleDateTime(response.editedBy.date);
+                    response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
                 if (response.dateBirth) {
-                    response.dateBirth = common.utcDateToLocaleDate(response.dateBirth);
+                    response.dateBirth = moment(response.dateBirth).format('DD MMM, YYYY');
                 }
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
-                        attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
                         return attachment;
+                    });
+                }
+                if (response.notes) {
+                    _.map(response.notes, function (note) {
+                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        return note;
                     });
                 }
                 if (response.hire) {
                     response.hire = _.map(response.hire, function (hire) {
-                        return common.utcDateToLocaleDate(hire);
+                        return moment(hire).format('DD MMM, YYYY');
                     });
                 }
                 if (response.fire) {
                     response.fire = _.map(response.fire, function (fire) {
-                        return common.utcDateToLocaleDate(fire);
+                        return moment(fire).format('DD MMM, YYYY');
                     });
                 }
                 if (response.transfer) {
                     response.transfer = _.map(response.transfer, function (transfer) {
-                        transfer.date = common.utcDateToLocaleDate(transfer.date);
+                        transfer.date = moment(transfer.date).format('DD MMM, YYYY, H:mm:ss');
                         return transfer;
                     });
                 }
                 if (response.transferred) {
                     response.transferred = _.map(response.transferred, function (obj) {
-                        obj.date = common.utcDateToLocaleDate(obj.date);
+                        obj.date = moment(obj.date).format('DD MMM, YYYY, H:mm:ss');
                         return obj;
                     });
                 }

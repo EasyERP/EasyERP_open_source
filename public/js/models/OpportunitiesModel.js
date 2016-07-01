@@ -1,10 +1,10 @@
 ﻿define([
     'Backbone',
     'Underscore',
-    'common',
+    'moment',
     'Validation',
     'constants'
-], function (Backbone, _, common, Validation, CONSTANTS) {
+], function (Backbone, _, moment, Validation, CONSTANTS) {
     'use strict';
 
     var OpportunityModel = Backbone.Model.extend({
@@ -90,38 +90,39 @@
         parse: function (response) {
             if (!response.data) {
                 if (response.creationDate) {
-                    response.creationDate = common.utcDateToLocaleDate(response.creationDate);
+                    response.creationDate = moment(response.creationDate).format('DD MMM, YYYY');
                 }
 
                 if (response.expectedClosing) {
-                    response.expectedClosing = common.utcDateToLocaleDate(response.expectedClosing);
+                    response.expectedClosing = moment(response.expectedClosing).format('DD MMM, YYYY');
                 }
 
                 if (response.nextAction) {
-                    response.nextAction.date = common.utcDateToLocaleDate(response.nextAction.date);
+                    response.nextAction.date = moment(response.nextAction.date).format('DD MMM, YYYY');
                 }
 
                 if (response.convertedDate) {
-                    response.convertedDate = common.utcDateToLocaleDate(response.convertedDate);
+                    response.convertedDate = moment(response.convertedDate).format('DD MMM, YYYY');
                 }
 
                 if (response.createdBy) {
-                    response.createdBy.date = common.utcDateToLocaleDateTime(response.createdBy.date);
+                    response.createdBy.date = moment(response.createdBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
 
                 if (response.editedBy) {
-                    response.editedBy.date = common.utcDateToLocaleDateTime(response.editedBy.date);
+                    response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
 
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = common.utcDateToLocaleDate(note.date);
+                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
                         return note;
                     });
                 }
+
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
-                        attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
                         return attachment;
                     });
                 }

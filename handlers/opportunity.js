@@ -16,6 +16,7 @@ var Module = function (models, event) {
     var async = require('async');
     var validator = require('validator');
     var CONSTANTS = require('../constants/mainConstants.js');
+    var RESPONSES = require('../constants/responses');
     var pageHelper = require('../helpers/pageHelper');
     var fs = require('fs');
     var Mailer = require('../helpers/mailer');
@@ -416,6 +417,7 @@ var Module = function (models, event) {
 
         data.toBeConvert = req.headers.toBeConvert;
 
+
         if (data.workflowForList || data.workflowForKanban) {
             data = {
                 $set: {
@@ -481,6 +483,7 @@ var Module = function (models, event) {
         var newDirname;
         var fileName = data.fileName;
         var query;
+        var obj;
 
         delete data.fileName;
 
@@ -488,6 +491,23 @@ var Module = function (models, event) {
             user: req.session.uId,
             date: new Date().toISOString()
         };
+
+
+        if (data.notes && data.notes.length !== 0) {
+            obj = data.notes[data.notes.length - 1];
+
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+
+            obj.date = new Date();
+
+            if (!obj.author) {
+                obj.author = req.session.uName;
+            }
+
+            data.notes[data.notes.length - 1] = obj;
+        }
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
             if (data.sequence === -1) {
@@ -527,26 +547,10 @@ var Module = function (models, event) {
         } else {
             query = (data.jobkey) ? {$and: [{name: data.name}, {jobkey: data.jobkey}]} : {name: data.name};
             Opportunity.find(query, function (err) {
-                var obj;
+
 
                 if (err) {
                     return next(err);
-                }
-
-                if (data.notes && data.notes.length !== 0) {
-                    obj = data.notes[data.notes.length - 1];
-
-                    if (!obj._id) {
-                        obj._id = mongoose.Types.ObjectId();
-                    }
-
-                    obj.date = new Date();
-
-                    if (!obj.author) {
-                        obj.author = req.session.uName;
-                    }
-
-                    data.notes[data.notes.length - 1] = obj;
                 }
 
                 Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
@@ -610,6 +614,7 @@ var Module = function (models, event) {
 
             var savetoDb = function (data) {
                 var err;
+                var noteObj;
 
                 try {
                     var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
@@ -638,6 +643,14 @@ var Module = function (models, event) {
                     }
                     if (data.creationDate) {
                         _opportunitie.creationDate = data.creationDate;
+                    }
+                    if (data.notes && data.notes.length) {
+                        noteObj = data.notes[0];
+
+                        noteObj._id = mongoose.Types.ObjectId();
+                        noteObj.date = new Date();
+                        noteObj.author = req.session.uName;
+                        _opportunitie.notes = data.notes;
                     }
                     if (data.company) {
                         if (data.company.id) {
@@ -1692,8 +1705,10 @@ var Module = function (models, event) {
         var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
         var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+        var remove = req.headers.remove;
         var data = req.body;
         var _id = req.params.id;
+        var obj;
 
         var historyOptions = {
             contentType: 'lead',
@@ -1701,6 +1716,19 @@ var Module = function (models, event) {
             req        : req,
             contentId  : _id
         };
+
+        if (data.notes && data.notes.length !== 0 && !remove) {
+            obj = data.notes[data.notes.length - 1];
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+            obj.date = new Date();
+
+            if (!obj.author) {
+                obj.author = req.session.uName;
+            }
+            data.notes[data.notes.length - 1] = obj;
+        }
 
         historyWriter.addEntry(historyOptions);
 
@@ -1855,7 +1883,7 @@ var Module = function (models, event) {
                             }
                         }
 
-                        res.status(200).send({success: 'Opportunities updated success', result: result});
+                        res.status(200).send({success: 'Opportunities updated success', result: result, notes: data.notes});
                     });
                 });
             });

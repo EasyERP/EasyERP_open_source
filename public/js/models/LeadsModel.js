@@ -1,9 +1,9 @@
 ﻿define([
     'Backbone',
     'Validation',
-    'common',
+    'moment',
     'constants'
-], function (Backbone, Validation, common, CONSTANTS) {
+], function (Backbone, Validation, moment, CONSTANTS) {
     'use strict';
 
     var LeadModel = Backbone.Model.extend({
@@ -47,10 +47,24 @@
         parse: function (response) {
             if (!response.data) {
                 if (response.createdBy) {
-                    response.createdBy.date = common.utcDateToLocaleDateTime(response.createdBy.date);
+                    response.createdBy.date = moment(response.createdBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
                 if (response.editedBy) {
-                    response.editedBy.date = common.utcDateToLocaleDateTime(response.editedBy.date);
+                    response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
+                }
+
+                if (response.notes) {
+                    _.map(response.notes, function (note) {
+                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        return note;
+                    });
+                }
+
+                if (response.attachments) {
+                    _.map(response.attachments, function (attachment) {
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
+                        return attachment;
+                    });
                 }
                 return response;
             }

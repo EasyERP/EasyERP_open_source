@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Employees/EditTemplate.html',
-    'views/Notes/AttachView',
+    'views/Notes/NoteView',
     'views/dialogViewBase',
     'common',
     'populate',
@@ -15,7 +15,7 @@ define([
              $,
              _,
              EditTemplate,
-             AttachView,
+             NoteView,
              ParentView,
              common,
              populate,
@@ -626,7 +626,7 @@ define([
 
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(
-                new AttachView({
+                new NoteView({
                     model      : this.currentModel,
                     contentType: self.contentType
                 }).render().el

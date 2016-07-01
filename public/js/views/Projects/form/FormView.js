@@ -1480,11 +1480,7 @@ define([
             App.startPreload();
 
             notesEl = new NoteView({
-                model: this.formModel
-            }).render().el;
-
-            atachEl = new AttachView({
-                model      : this.formModel,
+                model: this.formModel,
                 contentType: self.contentType
             }).render().el;
 

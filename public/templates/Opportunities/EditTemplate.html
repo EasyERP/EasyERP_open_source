@@ -15,10 +15,10 @@
                             <dt><label for="name">Subject </label></dt>
                             <dd><input type="text" class="title-input" id="name" value="<%=model.name%>" placeholder="Subject" required maxlength="48"/></dd>
                         </dl>
-                        <div class="half-block left withPaddingLeft">
+                        <!-- class="half-block left withPaddingLeft">
                             <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500" class="opp-internal"><%=model.internalNotes%></textarea>
                         </div>
-                        <div class="half-block left">
+   -->                  <div class="half-block left">
                             <dl class="opprtunitie-info">
                                 <dt><label for="expectedRevenueValue">Expected Revenue</label></dt>
                                 <dd><input type="text" class="onlyNumber date-min" id="expectedRevenueValue" value="<%=(model.expectedRevenue) ? model.expectedRevenue.value : ''%>" maxlength="9"/></dd>

@@ -10,7 +10,6 @@ define([
     'common',
     'dataService',
     'views/Notes/NoteView',
-    'views/Notes/AttachView',
     'views/Opportunities/CreateView',
     'views/Persons/CreateView',
     'constants'
@@ -25,7 +24,6 @@ define([
              common,
              dataService,
              NoteView,
-             AttachView,
              CreateViewOpportunities,
              CreateViewPersons,
              CONSTANTS) {
@@ -204,12 +202,7 @@ define([
             this.renderMiniPersons();
             this.$el.find('.formLeftColumn').append(
                 new NoteView({
-                    model: this.formModel
-                }).render().el
-            );
-            this.$el.find('.formLeftColumn').append(
-                new AttachView({
-                    model      : this.formModel,
+                    model: this.formModel,
                     contentType: 'Companies'
                 }).render().el
             );
