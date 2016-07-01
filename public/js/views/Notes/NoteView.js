@@ -3,10 +3,8 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Notes/NoteTemplate.html',
-    'views/Notes/AttachView',
-    'moment'
-
-], function (Backbone, $, _, NoteTemplate, AttachView, moment) {
+    'views/Notes/AttachView'
+], function (Backbone, $, _, NoteTemplate, AttachView) {
     var NoteView = Backbone.View.extend({
 
         template: _.template(NoteTemplate),

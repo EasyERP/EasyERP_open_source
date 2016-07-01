@@ -40,6 +40,7 @@
                         <ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Information</a></li>
                             <li><a href="javascript:;">Accounting</a></li>
+                            <li><a href="javascript:;">Notes</a></li>
                         </ul>
                         <div class="dialog-tabs-items childTabs">
                             <div class="dialog-tabs-item childTabs active">
@@ -70,14 +71,14 @@
                                     </dd>
                                 </div>
                                 <div class="clearfix"></div>
-                                <div class="full-width left">
+                                <!--<div class="full-width left">
                                     <div class="inner">
                                         <div class="textarea-wrapper">
                                         <textarea type="text" class="full-width productDescriptionCreate"
                                                   name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
 
                             <div class="dialog-tabs-item childTabs">
@@ -112,6 +113,20 @@
                                         <dt><label for="supplierTaxes">Supplier Taxes</label></dt>
                                         <dd><a id="supplierTaxes" class="current-selected"
                                                href="javascript:;">Select</a></dd>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div class="clearfix"></div>
+                                <div class="full-width left">
+                                    <div class="textarea-wrapper">
+                                        <textarea type="text" class="full-width productDescriptionCreate"
+                                                  name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
+                                    </div>
+                                    <a href="javascript:;" class="attach_file">
+                                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                    </a>
+                                    <div class="attach-container">
                                     </div>
                                 </div>
                             </div>

@@ -3,6 +3,8 @@ var router = express.Router();
 var ProductHandler = require('../handlers/product');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models) {
     var handler = new ProductHandler(models);
@@ -21,6 +23,8 @@ module.exports = function (models) {
     // router.get('/exportToCsv',handler.exportToCsv);
    
     router.post('/', handler.create);
+    router.post('/uploadFiles', multipartMiddleware, handler.uploadFile);
+
     /* router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*/// FixMe
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
    

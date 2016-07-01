@@ -14,16 +14,16 @@ define([
 
     var EditView = ParentView.extend({
         el         : '#content-holder',
-        contentType: 'Product',
+        contentType: 'Products',
         imageSrc   : '',
         template   : _.template(EditTemplate),
         responseObj: {},
 
         initialize: function (options) {
             _.bindAll(this, 'render', 'saveItem', 'deleteItem');
-            
+
             this.currentModel = options.model || options.collection.getElement();
-            
+
             this.render();
         },
 
@@ -41,7 +41,12 @@ define([
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             'click .details'                                                  : 'showDetailsBox',
             'keyup #barcode'                                                  : 'drawBarcode',
-            'change #barcode'                                                 : 'drawBarcode'
+            'change #barcode'                                                 : 'drawBarcode',
+            'click .fa-paperclip'                                             : 'clickInput'
+        },
+
+        clickInput: function () {
+            this.$el.find('.input-file .inputAttach').click();
         },
 
         drawBarcode: function () {
@@ -304,7 +309,7 @@ define([
             common.canvasDraw({model: this.model.toJSON()}, this);
 
             this.delegateEvents(this.events);
-            
+
             return this;
         }
 
