@@ -568,7 +568,9 @@ var Module = function (models, event) {
                 fx.rates = oxr.rates;
                 fx.base = oxr.base;
 
-                data.currency.rate = oxr.rates[data.currency.name];
+                if (data.currency && data.currency.name){
+                    data.currency.rate = oxr.rates[data.currency.name];
+                }
 
                 Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                     if (err) {

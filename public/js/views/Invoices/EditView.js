@@ -5,6 +5,7 @@ define([
     'views/dialogViewBase',
     'text!templates/Invoices/EditTemplate.html',
     'views/Notes/AttachView',
+    'views/Notes/NoteView',
     'views/Invoices/InvoiceProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/CreateView',
@@ -22,6 +23,7 @@ define([
              ParentView,
              EditTemplate,
              AttachView,
+             NoteView,
              InvoiceItemView,
              wTrackRows,
              PaymentCreateView,
@@ -468,10 +470,19 @@ define([
             var isFinancial;
             var dueDate;
             var paidAndNotApproved = false;
+            var needNotes = false;
+            var status;
 
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
             dueDate = model.dueDate;
+
+            status = model.workflow.status;
+
+            // need to check with which statuses can add attachment and notes
+            if (status === 'New') {
+                needNotes = true;
+            }
 
             this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
@@ -621,9 +632,10 @@ define([
 
             notDiv = this.$el.find('#attach-container');
             notDiv.append(
-                new AttachView({
+                new NoteView({
                     model      : this.currentModel,
-                    contentType: CONSTANTS.INVOICES
+                    contentType: CONSTANTS.INVOICES,
+                    needNotes  : needNotes
                 }).render().el
             );
 

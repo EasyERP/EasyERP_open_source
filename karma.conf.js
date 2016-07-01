@@ -24,6 +24,8 @@ module.exports = function (config) {
             {pattern: 'node_modules/sinon-chai/lib/sinon-chai.js', included: false, watching: false},
 
             {pattern: 'constants/test/*.js', included: false, watching: false},
+            {pattern: 'test/uiSpecs/modules/*.js', included: false/*, watching: true*/},
+
             /* {pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
              {pattern: 'constants/test/filter.js', included: false, watching: false},
              {pattern: 'constants/test/projects.js', included: false, watching: false}, */
@@ -33,26 +35,29 @@ module.exports = function (config) {
             {pattern: 'public/js/models/*.js', included: false, watching: false},
             {pattern: 'public/js/helpers/*.js', included: false, watching: false},
             {pattern: 'public/js/views/**/*.js', included: false, watching: false},
+            {pattern: 'public/js/constants/*.js', included: false, watching: false},
             {pattern: 'public/js/services/**/*.js', included: false, watching: false},
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
+            {pattern: 'public/js/constants/*.js', included: false, watching: false},
 
             {pattern: 'test/uiSpecs/collection/*.test.js', included: false /* , watching: true*/},
             {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false /* , watching: true*/},
             {pattern: 'test/uiSpecs/models/*.test.js', included: false /* , watching: true*/},
             {pattern: 'test/uiSpecs/views/login.test.js', included: false /* , watching: true*/},
             {pattern: 'test/uiSpecs/views/salaryReporst.test.js', included: false /* , watching: true*/}
+            //{pattern: 'test/uiSpecs/views/persons.test.js', included: false /* , watching: true*/}
 
             // {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
         ],
 
         exclude: [],
 
-        preprocessors: {
-            'public/js/models/**/*.js'     : ['coverage'],
-            'public/js/views/**/*.js'      : ['coverage'],
-            'public/js/collections/**/*.js': ['coverage']
-        },
+        /*preprocessors: {
+            'public/js/models/!**!/!*.js'     : ['coverage'],
+            'public/js/views/!**!/!*.js'      : ['coverage'],
+            'public/js/collections/!**!/!*.js': ['coverage']
+        },*/
 
         coverageReporter: {
             type: 'html',

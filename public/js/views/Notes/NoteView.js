@@ -10,6 +10,7 @@ define([
 
         initialize: function (options) {
             this.contentType = options.contentType;
+            this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
         },
 
         events: {
@@ -185,14 +186,18 @@ define([
 
         render: function () {
             var notDiv;
-            this.$el.html(this.template(this.model.toJSON()));
+            var modelObj = this.model.toJSON();
+
+            modelObj.needNotes = this.needNotes;
+
+            this.$el.html(this.template(modelObj));
             notDiv = this.$el.find('.attachments');
+
 
             notDiv.html(
                 new AttachView({
                     model      : this.model,
-                    contentType: this.contentType,
-                    hidden     : true
+                    contentType: this.contentType
                 }).render().el
             );
             return this;
