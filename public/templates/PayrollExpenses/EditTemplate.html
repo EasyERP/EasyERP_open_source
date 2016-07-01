@@ -89,6 +89,23 @@
                     </table>
                 </div>
                 <div class="clearfix"></div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label>Gross Pay</label></dt>
+                        <dd>
+                            <span><%=model.grossPay%></span>
+                        </dd>
+                        <dt><label>Total Deduction</label></dt>
+                        <dd>
+                            <span><%=model.totalDeduction%></span>
+                        </dd>
+                        <dt><label>Net Pay</label></dt>
+                        <dd>
+                            <span><%=model.grossPay - model.totalDeduction%></span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
             </div>
         </fieldset>
     </form>

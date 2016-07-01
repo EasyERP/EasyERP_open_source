@@ -385,6 +385,11 @@ var Module = function (models) {
             var queryObject;
             var month;
             var year;
+            var grossPay = 0;
+            var totalDeduction = 0;
+            var i;
+            var earnings;
+            var deductions;
 
             if (err) {
                 return next(err);
@@ -392,6 +397,17 @@ var Module = function (models) {
 
             Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
             result = result && result.length ? result[0] : {};
+
+            earnings = result.earnings;
+            deductions = result.deductions;
+            for (i = earnings.length -1; i >= 0; i--) {
+                grossPay += earnings[i].amount;
+            }
+            for (i = deductions.length -1; i >= 0; i--) {
+                totalDeduction += deductions[i].amount;
+            }
+            result.grossPay = grossPay;
+            result.totalDeduction = totalDeduction;
 
             employeeId = result.employee._id;
             month = result.month;
