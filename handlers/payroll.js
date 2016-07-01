@@ -651,7 +651,8 @@ var Module = function (models) {
         function getEmployees(mainCb) {
             Employee.aggregate([{
                 $match: {
-                    hire: {$ne: []}
+                    hire: {$ne: []},
+                    _id : ObjectId('55b92ad221e4b7c40f0000c7')
                 }
             }, {
                 $lookup: {
@@ -680,9 +681,9 @@ var Module = function (models) {
                         }
                     }
                 }
-            }, {
-                $match: employeeQueryForEmployeeByDep
-            }, {
+            }/*, {
+             $match: employeeQueryForEmployeeByDep
+             }*/, {
                 $project: {
                     department: 1,
                     transfer  : {
@@ -769,6 +770,10 @@ var Module = function (models) {
                 payrollBody.month = month;
                 payrollBody.year = year;
                 payrollBody.dataKey = dataKey;
+
+                if (employee.toString() === '55b92ad221e4b7c40f0000c7') {
+                    console.log('ddsdss');
+                }
 
                 function vacation(pcb) {
                     JournalEntry.aggregate([{
