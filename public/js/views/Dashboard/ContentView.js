@@ -2199,7 +2199,7 @@ define([
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
                 var max = d3.max(data, function (d) {
-                    return d.pays;
+                    return d.pays/100;
                 });
 
                 var xScale = d3.scale.linear()
@@ -2224,7 +2224,7 @@ define([
                             return yScale(i) + offset;
                         },
                         width : function (d) {
-                            return xScale(d.pays);
+                            return xScale(d.pays/100);
                         },
                         height: rect - 2*offset,
                         fill  : '#5CD1C8'

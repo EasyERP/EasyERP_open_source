@@ -126,8 +126,8 @@ var Module = function (models, event) {
     this.getSalesByCountry = function (req, res, next) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var query = req.query;
-        var startDate = query.startDate || query.filter.startDate.value;
-        var endDate = query.endDate || query.filter.endDate.value;
+        var startDate = query.startDay;
+        var endDate = query.endDay;
 
         startDate = new Date(moment(new Date(startDate)).startOf('day'));
         endDate = new Date(moment(new Date(endDate)).endOf('day'));
