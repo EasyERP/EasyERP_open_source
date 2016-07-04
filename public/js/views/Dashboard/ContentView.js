@@ -297,6 +297,7 @@ define([
             self.renderPopulateByType(self, 'source');
             self.renderPopulateByType(self, 'sale');
             self.renderOpportunities();
+            self.renderTreemap();
             self.renderOpportunitiesWinAndLost();
             self.renderOpportunitiesConversion();
             self.renderOpportunitiesAging();
@@ -2090,8 +2091,8 @@ define([
                     }
                 }
 
-                var margin = {top: 20, right: 160, bottom: 30, left: 160},
-                    width = ($('#wrapper').width() - margin.left - margin.right)/2,
+                var margin = {top: 20, right: 160, bottom: 30, left: 1000},
+                    width = ($('#wrapper').width() - margin.right)/2,
                     height = $('#wrapper').width()/4,
                     height1 = data.length * 20;
 
@@ -2264,6 +2265,87 @@ define([
                         'style': 'stroke: #f2f2f2'
                     });
 
+            });
+        },
+
+        renderTreemap: function () {
+
+            d3.selectAll('div.treemap > *').remove();
+
+            common.totalInvoiceBySales(function (data) {
+                var margin = {top: 0, right: 10, bottom: 10, left: 10};
+                var width = $('#wrapper').width()/2 - margin.left - margin.right;
+                var height =  $('#wrapper').width()/4;
+
+                //var color = d3.scale.category10();
+
+                var maxValue = d3.max(data, function (d) {
+                    return d.payment / 100;
+                });
+
+                var minValue = d3.min(data, function (d) {
+                    return d.payment / 100;
+                });
+
+                var color = d3.scale.ordinal().range(['#F4D851', '#374649', '#FD625E', '#02B8AB']);
+
+                var treemap = d3.layout.treemap()
+                    .size([width, height])
+                    .sticky(true)
+                    .value(function (d) {
+                        return d.payment;
+                    });
+
+                var div = d3.select(".treemap").append("div")
+                    .style("position", "relative");
+
+                var root = {
+                    name    : 'tree',
+                    children: data
+                };
+
+                var node = div.datum(root).selectAll(".node")
+                    .data(treemap.nodes)
+                    .enter().append("div")
+                    .attr("class", "nodeTree")
+                    .call(position)
+                    .style("background", function (d) {
+                        return color(d.payment / 100);
+                    })
+                    .text(function (d) {
+                        return d.children ? null : d.name + ',  $' + helpers.currencySplitter((d.payment / 100).toFixed(0));
+                    });
+
+                d3.selectAll("input").on("change", function change() {
+                    var value = this.value === "count"
+                        ? function () {
+                        return 1;
+                    }
+                        : function (d) {
+                        return d.size;
+                    };
+
+                    node
+                        .data(treemap.value(value).nodes)
+                        .transition()
+                        .duration(1500)
+                        .call(position);
+                });
+
+                function position() {
+                    this.style("left", function (d) {
+                        return d.x + "px";
+                    })
+                        .style("top", function (d) {
+                            return d.y + "px";
+                        })
+                        .style("width", function (d) {
+                            return Math.max(0, d.dx - 1) + "px";
+                        })
+                        .style("height", function (d) {
+                            return Math.max(0, d.dy - 1) + "px";
+                        });
+                }
             });
         }
     });
