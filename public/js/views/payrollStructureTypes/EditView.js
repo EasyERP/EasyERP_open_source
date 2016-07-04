@@ -18,10 +18,6 @@ define([
         componentTemplate: _.template(componentTemplate),
         responseObj      : {},
         componentObject  : {},
-        componentNames   : {
-            earnings  : [],
-            deductions: []
-        },
 
         events: {
             'click .fa-plus'                                   : 'create',
@@ -40,6 +36,11 @@ define([
 
             self.eventChannel.on('newStructureComponent', self.newStructureComponent, self);
 
+            this.componentNames = {
+                earnings  : [],
+                deductions: []
+            };
+
             self.render();
         },
 
@@ -49,15 +50,28 @@ define([
             var id = $el.attr('data-id');
             var type = $el.closest('div').attr('data-id') + 's';
             var model = self.model;
-            var tempObj = {};
+            var tempArray = [];
 
             e.preventDefault();
             e.stopPropagation();
 
-            tempObj[type] = [];
-            model.set(tempObj);
+            model.get(type).forEach(function (el) {
+                if (el._id.toString() !== id) {
+                    tempArray.push(el);
+                }
+            });
+
+            model.set(type, tempArray);
 
             $el.remove();
+
+            this.componentObject = {};
+            this.componentNames = {
+                earnings  : [],
+                deductions: []
+            };
+
+            self.setFormulasNames();
 
             self.renderComponents();
         },
@@ -82,11 +96,11 @@ define([
             }
 
             this.componentObject[component.type].push(component._id || modelComponent.id);
-            this.componentNames[component.type].push(component.name);
+            this.componentNames[component.type].push({name: component.name, _id: component._id || modelComponent.id});
 
             component._id = component._id || modelComponent.id;
 
-            modelArray.push(component.formula);
+            modelArray.push(component);
 
             self.renderComponents();
         },
@@ -193,13 +207,7 @@ define([
                 formulaStr = formulaStr.substr(0, formulaStr.length - 1);
             }
 
-            formulaByNames = this.formulaNamesParser(type);
-
-            if (this.$el.find('#resultFormula').text()) {
-                formulaByNames += this.$el.find('#resultFormula').text();
-            }
-
-            this.$el.find('#resultFormula').text(formulaByNames);
+            // formulaByNames = this.formulaNamesParser(type);
 
             return formulaStr;
 
@@ -237,11 +245,17 @@ define([
             var model = this.model.toJSON();
 
             model.deductions.forEach(function (deduction) {
-                self.componentNames.deductions = _.union(self.componentNames.deductions, [deduction.name]);
+                self.componentNames.deductions = _.union(self.componentNames.deductions, [{
+                    name: deduction.name,
+                    _id : deduction._id
+                }]);
             });
 
             model.earnings.forEach(function (earning) {
-                self.componentNames.earnings = _.union(self.componentNames.earnings, [earning.name]);
+                self.componentNames.earnings = _.union(self.componentNames.earnings, [{
+                    name: earning.name,
+                    _id : earning._id
+                }]);
             });
         },
 
@@ -251,6 +265,8 @@ define([
             var arr = [];
             var $earningComponents = self.$el.find('#earningComponents ul');
             var $deductionComponents = self.$el.find('#deductionComponents ul');
+            var deductionsFormula = '';
+            var earningsFormula = '';
 
             $earningComponents.html('');
             $deductionComponents.html('');
@@ -259,8 +275,12 @@ define([
                 arr = arr.concat(deduction.formula || deduction);
             });
 
+            this.componentNames.deductions.forEach(function (deduction) {
+                $deductionComponents.append(self.componentTemplate({formula: deduction}));
+            });
+
             if (arr.length) {
-                $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr, 'deductions')}));
+                deductionsFormula = self.formulaParser(arr, 'deductions');
             }
 
             arr = [];
@@ -269,10 +289,21 @@ define([
                 arr = arr.concat(earning.formula || earning);
             });
 
+            this.componentNames.earnings.forEach(function (earning) {
+                $earningComponents.append(self.componentTemplate({formula: earning}));
+            });
+
             if (arr.length) {
-                $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr, 'earnings')}));
+                earningsFormula = self.formulaParser(arr, 'earnings');
             }
 
+            if (deductionsFormula && earningsFormula) {
+                this.$el.find('#resultFormula').text(earningsFormula + ' - ( ' + deductionsFormula + ' )');
+            } else if (deductionsFormula) {
+                this.$el.find('#resultFormula').text(' - ( ' + deductionsFormula + ' )');
+            } else if (earningsFormula) {
+                this.$el.find('#resultFormula').text(earningsFormula);
+            }
         },
 
         render: function () {

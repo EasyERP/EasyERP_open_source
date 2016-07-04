@@ -1186,40 +1186,53 @@ var Module = function (models) {
 
                 function getResultFormula(array, result) {
                     var resultArray = [];
-                    var newArray = [];
+                    var restResultArray = [];
 
-                    array.forEach(function (el) {
-                        newArray = _.union(newArray, el.formula);
-                    });
+                    array.forEach(function (formulaEl) {
+                        var formula = formulaEl.formula;
+                        var maxRange = formulaEl.maxRange;
+                        var minRange = formulaEl.minRange;
+                        var totalSum = 0;
 
-                    newArray.forEach(function (formulaElem) {
-                        var resultSum = 0;
-                        var resultObject = {};
-                        var operand = formulaElem.operand;
-                        var operation = formulaElem.operation;
-                        var ratio = formulaElem.ratio;
+                        formula.forEach(function (formulaElem) {
+                            var resultSum = 0;
+                            var resultObject = {};
+                            var operand = formulaElem.operand;
+                            var operation = formulaElem.operation;
+                            var ratio = formulaElem.ratio;
 
-                        switch (operation) {
-                            case 'multiply':
-                                resultSum += result[operand] * parseFloat(ratio);
-                                break;
-                            case 'add':
-                                resultSum += result[operand] + parseFloat(ratio);
-                                break;
-                            case 'divide':
-                                resultSum += result[operand] / parseFloat(ratio);
-                                break;
-                            case 'subtract':
-                                resultSum += result[operand] - parseFloat(ratio);
-                                break;
-                            // skip default;
+                            switch (operation) {
+                                case 'multiply':
+                                    resultSum += result[operand] * parseFloat(ratio);
+                                    break;
+                                case 'add':
+                                    resultSum += result[operand] + parseFloat(ratio);
+                                    break;
+                                case 'divide':
+                                    resultSum += result[operand] / parseFloat(ratio);
+                                    break;
+                                case 'subtract':
+                                    resultSum += result[operand] - parseFloat(ratio);
+                                    break;
+                                // skip default;
+                            }
+
+                            totalSum += resultSum / 100;
+
+                            resultObject.amount = resultSum / 100;
+                            resultObject.formula = operand;
+
+                            restResultArray.push(resultObject);
+
+                        });
+
+                        if (maxRange + minRange > 0) {
+                            if (totalSum >= minRange && totalSum <= maxRange) {
+                                resultArray = _.union(restResultArray);
+                            }
+                        } else {
+                            resultArray = _.union(restResultArray);
                         }
-
-                        resultObject.amount = resultSum / 100;
-                        resultObject.formula = operand;
-
-                        resultArray.push(resultObject);
-
                     });
 
                     return resultArray;

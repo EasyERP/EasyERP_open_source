@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var PayrollComponentType = function (models) {
     'use strict';
     var PayrollComponentTypesSchema = mongoose.Schemas.payrollComponentType;
+    var payrollStructureTypesSchema = mongoose.Schemas.payrollStructureTypes;
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
@@ -70,11 +71,19 @@ var PayrollComponentType = function (models) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
+        var payrollStructureTypes = models.get(db, 'payrollStructureTypes', payrollStructureTypesSchema);
 
         PayrollComponentType.findByIdAndRemove(id, function (err, result) {
             if (err) {
                 return next(err);
             }
+
+            payrollStructureTypes.update({}, {$pull: {deductions: result._id, earnings: result._id}}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+            });
+
             res.status(200).send(result);
         });
     };
