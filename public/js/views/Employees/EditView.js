@@ -159,8 +159,6 @@ define([
             if (transferId && transferId.length >= 24) {
                 this.removeTransfer.push(transferId);
             }
-
-
         },
 
         validateNumbers: function (e) {
@@ -687,6 +685,7 @@ define([
                     var transferNewModel;
                     var keys;
                     var key;
+                    var i;
 
                     for (id in self.changedModels) {
 
@@ -696,7 +695,7 @@ define([
                         if (self.changedModels[id].transfered) {
                             transferNewModel = new TransferModel(modelChanged.attributes);
                             keys = Object.keys(modelChanged.attributes);
-                            for (var i = keys.length - 1; i >= 0; i--) {
+                            for (i = keys.length - 1; i >= 0; i--) {
                                 key = keys[i];
                                 if (key !== '_id') {
                                     transferNewModel.changed[key] = modelChanged.attributes[key];
