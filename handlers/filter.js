@@ -1207,8 +1207,8 @@ var Filters = function (models) {
 
     this.getProductsFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
-        var QuotationSchema = mongoose.Schemas.Quotation;
-        var Product = models.get(lastDB, 'Products', productSchema);
+        var ProductSchema = mongoose.Schemas.Products;
+        var Product = models.get(lastDB, 'Products', ProductSchema);
         var pipeLine;
         var aggregation;
 

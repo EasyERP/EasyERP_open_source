@@ -19,7 +19,7 @@ module.exports = function (models) {
     router.get('/salesProforma', handler.getSalesProformaFilters);
     router.get('/customerPayments', handler.getCustomerPaymentsFilters);
     router.get('/supplierPayments', handler.getSupplierPaymentsFilters);
-    router.get('/Product', handler.getProductsFilters);
+    router.get('/Products', handler.getProductsFilters);
     router.get('/Quotations', handler.getQuotationFilters);
     router.get('/salesQuotations', handler.getSalesQuotationFilters);
     router.get('/salesOrders', handler.getSalesOrdersFilters);

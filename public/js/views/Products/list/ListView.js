@@ -3,12 +3,12 @@ define([
     'Underscore',
     'views/listViewBase',
     'text!templates/Product/list/ListHeader.html',
-    'views/Product/CreateView',
-    'views/Product/list/ListItemView',
-    'views/Product/EditView',
+    'views/Products/CreateView',
+    'views/Products/list/ListItemView',
+    'views/Products/EditView',
     'models/ProductModel',
     'text!templates/Alpabet/AphabeticTemplate.html',
-    'collections/Product/filterCollection',
+    'collections/Products/filterCollection',
     'common',
     'dataService'
 ], function ($, _, ListViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, common, dataService) {

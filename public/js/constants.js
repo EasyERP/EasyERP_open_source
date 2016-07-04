@@ -21,7 +21,7 @@ define([], function () {
         SOURCEOFAPPLICANTS: 'SourceOfApplicants',
         LEADSWORKFLOW     : 'LeadsWorkflow',
         MYPROFILE         : 'myProfile',
-        PRODUCT           : 'Product',
+        PRODUCTS          : 'Products',
         SUPPLIERPAYMENTS  : 'supplierPayments',
         CUSTOMERPAYMENTS  : 'customerPayments',
         SALESQUOTATIONS   : 'salesQuotations',
@@ -105,7 +105,7 @@ define([], function () {
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
         DEFAULT_ELEMENTS_PER_PAGE  : 100,
-        DEFAULT_THUMBNAILS_PER_PAGE: 50,
+        DEFAULT_THUMBNAILS_PER_PAGE: 3,
 
         URLS: {
             PROFILES_FOR_DD           : '/profiles/forDd',

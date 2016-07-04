@@ -54,28 +54,6 @@
             }
 
             this.getFirstPage(options);
-        },
-
-        showMoreAlphabet: function (options) {
-            var that = this;
-            var filterObject = options || {};
-
-            that.page = 1;
-            filterObject.page = (options && options.page) ? options.page : this.page;
-            filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-            filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-            filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-            filterObject.filter = options ? options.filter : {};
-
-            this.getFirstPage(filterObject);
-        },
-
-        getAlphabet: function (callback) {
-            dataService.getData(CONSTANTS.URLS.PRODUCT_ALPHABET, {mid: this.mid}, function (response) {
-                if (callback) {
-                    callback(response.data);
-                }
-            });
         }
     });
 

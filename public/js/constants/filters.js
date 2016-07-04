@@ -475,7 +475,7 @@
          }
          },*/
 
-        Product: {
+        Products: {
             name: {
                 displayName: 'Product Name',
                 backend    : '_id'
