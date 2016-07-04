@@ -2,22 +2,22 @@
     <form method="post" action="" class="form" id="invoiceForm">
         <fieldset>
             <div class="clearfix"></div>
-            <br>
+            <br/>
             <h3>Payroll Structure Type</h3>
             <div class="clearfix"></div>
-            <br>
+            <br/>
             <span>Name: </span>
             <input id="payrollStructureName" maxlength="40" size="40" type="text" value="<%= model.name || '' %>">
-            <br>
-            <br>
-            <br>
+            <br/>
+            <br/>
+            <br/>
             <div class="half-block left" id="earningComponents" data-id="earning">
                 <div id="createBtnHolder">
                     <a href="javascript;" class="fa fa-plus" data-id="earning" title="Create" id="top-bar-createBtn"></a>
                     <h3>Earnings:</h3>
                     <a id="earningTypeDd" class="current-selected" href="javascript:;">Select</a>
                 </div>
-                <br>
+                <br/>
                 <ul id="groupList" class="ui-sortable">
                 </ul>
             </div>
@@ -27,10 +27,14 @@
                     <h3>Deductions:</h3>
                     <a id="deductionTypeDd" class="current-selected" href="javascript:;">Select</a>
                 </div>
-                <br>
+                <br/>
                 <ul id="groupList" class="ui-sortable">
                 </ul>
             </div>
+            <br/>
+            <br/>
+            <br/>
+            <span id="resultFormula"></span>
         </fieldset>
     </form>
 </div>

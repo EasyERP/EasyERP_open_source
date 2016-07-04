@@ -159,6 +159,10 @@ define([
             $('.crop-images-dialog').remove();
 
             this.componentObject = {};
+            this.componentNames = {
+                earnings  : [],
+                deductions: []
+            };
         },
 
         formulaParser: function (arr, type) {
@@ -190,8 +194,10 @@ define([
             }
 
             formulaByNames = this.formulaNamesParser(type);
+            
+            this.$el.find('#resultFormula').text(this.$el.find('#resultFormula').text() + ' + ' + formulaByNames);
 
-            return formulaStr + formulaByNames;
+            return formulaStr;
 
         },
 
@@ -223,11 +229,11 @@ define([
             var model = this.model.toJSON();
 
             model.deductions.forEach(function (deduction) {
-                self.componentNames.deductions.push(deduction.name);
+                self.componentNames.deductions = _.union(self.componentNames.deductions, [deduction.name]);
             });
 
             model.earnings.forEach(function (earning) {
-                self.componentNames.earnings.push(earning.name);
+                self.componentNames.earnings = _.union(self.componentNames.earnings, [earning.name]);
             });
         },
 
