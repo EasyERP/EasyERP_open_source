@@ -194,8 +194,12 @@ define([
             }
 
             formulaByNames = this.formulaNamesParser(type);
-            
-            this.$el.find('#resultFormula').text(this.$el.find('#resultFormula').text() + ' + ' + formulaByNames);
+
+            if (this.$el.find('#resultFormula').text()) {
+                formulaByNames += this.$el.find('#resultFormula').text();
+            }
+
+            this.$el.find('#resultFormula').text(formulaByNames);
 
             return formulaStr;
 
@@ -208,16 +212,20 @@ define([
             var i;
             var formulaObject = {};
             var lastSign;
+            var signs = {
+                earnings  : ' +',
+                deductions: ' -'
+            };
 
             for (i = 0; i <= length - 1; i++) {
                 formulaObject = arr[i];
 
-                formulaStr += ' ' + formulaObject + ' +';
+                formulaStr += signs[type] + ' ' + formulaObject + signs[type];
             }
 
             lastSign = formulaStr[formulaStr.length - 1];
 
-            if (lastSign === '+') {
+            if (lastSign === '+' || lastSign === '-') {
                 formulaStr = formulaStr.substr(0, formulaStr.length - 1);
             }
 
