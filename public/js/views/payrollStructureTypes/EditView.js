@@ -48,7 +48,6 @@ define([
             var self = this;
             var $el = $(e.target).closest('li');
             var id = $el.attr('data-id');
-            var name = $.trim($el.text());
             var type = $el.closest('div').attr('data-id') + 's';
             var model = self.model;
             var tempArray = model.get(type);
@@ -248,6 +247,8 @@ define([
                     name: deduction.name,
                     _id : deduction._id
                 }]);
+
+                self.componentObject.deductions =  _.union(self.componentObject.deductions, [deduction._id]);
             });
 
             model.earnings.forEach(function (earning) {
@@ -255,6 +256,9 @@ define([
                     name: earning.name,
                     _id : earning._id
                 }]);
+
+                self.componentObject.earnings =  _.union(self.componentObject.earnings, [earning._id]);
+
             });
         },
 
