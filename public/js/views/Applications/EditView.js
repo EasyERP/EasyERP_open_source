@@ -575,8 +575,8 @@
             }
 
             manager = $tr.find('#projectManagerDD').last().attr('data-id') || null;
-            jobPosition = $tr.find('#jobPositionDd').last().attr('data-id');
-            department = $tr.find('#departmentsDd').last().attr('data-id');
+            jobPosition = $tr.find('#jobPositionDd').last().attr('data-id') || null;
+            department = $tr.find('#departmentsDd').last().attr('data-id') || null;
             weeklyScheduler = $tr.find('#weeklySchedulerDd').last().attr('data-id');
             event = $tr.last().attr('data-content');
             if (this.hireEmployee) {
