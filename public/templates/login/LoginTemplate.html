@@ -6,6 +6,11 @@
     <div class="loginContainer col m-6 bsReset">
         <div class="loginContent">
             <form id="loginForm" class="">
+    <div class="loginContainer">
+        <h2 id="titleForm">Login to your account</h2>
+        <div class="error">Such user doesn't registered</div>
+        <form id="loginForm" class="" action="javascript:;">
+            <fieldset>
                 <div class="margin">
                     <select id="dbs">
                         <% for(var dbName in options){%>
@@ -15,55 +20,49 @@
                         <%}%>
                     </select>
                 </div>
-                <h2>Login to your account</h2>
-
-
-                <div class="error">Such user doesn't registered</div>
-                <div class="row">
-                    <div class="col s-6">
-                        <input type="text" placeholder="Username or Email" class="ulogin inputField" name="ulogin" value=""
+                <div class="formGroup">
+                    <div class="icon-login">
+                        <span class="icon"></span>
+                        <input type="text" placeholder="Username or Email" class="ulogin" name="ulogin" value=""
                                autofocus
                                maxlength="24"/>
                     </div>
+                    <p>
 
-
-
-                    <div class="col s-6">
-                        <input type="password" placeholder="Password" id="upass" name="upass" class="inputField" value="" maxlength="24"/>
+                    <div class="icon-pass">
+                        <span class="icon"></span>
+                        <input type="password" placeholder="Password" id="upass" name="upass" value="" maxlength="24"/>
                     </div>
-
+                    </p>
                 </div>
-                <div class="row">
-                    <div class="col s6">
-                        <div class="remeberMe">
-                            <input type="checkbox" name="switch" class="customCheckbox" id="switchElement" checked>
-                            <label class="customCheckboxLabel" for="switchElement"></label>
-                            <label class="customCheckboxText" for="switchElement">Remember Me</label>
+                <div class="formActions">
+                    <a class="login-button" href="javascript:;">Sign In<i></i></a>
+                    <div class="remeberMe">
+                        <span>Remember Me</span>
+                        <div class="switch">
+                            <input type="checkbox" name="switch" class="switchCheckbox" id="switchElement" checked>
+                            <label class="switchLabel" for="switchElement"></label>
                         </div>
-                    </div>
-                    <div class="col s6">
-                        <a id="forgotPass" class="forgotPass" href="javascript:;">forgot password?</a>
-                        <a class="btn green" href="javascript:;">Sign In</a>
+                        <a id="forgotPass" class="forgotButton" href="javascript:;">forgot password?<i></i></a>
                     </div>
                 </div>
                 <input type="submit" class="right" value="">
-            </form>
-            <form id="forgotPassword" class="">
-                <fieldset>
-                    <h3>Forgot Your password?</h3>
-                    <span class="forgotDescription">Enter your e-mail address below to reset your password.</span>
+            </fieldset>
+        </form>
+        <form id="forgotPassword" class="hidden" action="javascript:;">
+            <fieldset>
+                <span class="forgotDescription">Enter your e-mail address below to reset your password.</span>
 
-                    <div class="formGroup">
-                        <input type="text" placeholder="Username or Email" class="ulogin" name="ulogin" value="" autofocus
-                               maxlength="24"/>
-                    </div>
-                    <div class="formActions">
-                        <a id="backToLogin" class="forgot-button" href="javascript:;">Back to login</a>
-                        <a id="submitButton" class="submitButton" href="javascript:;">Submit</a>
-                    </div>
-                    <input type="submit" class="right" value="">
-                </fieldset>
-            </form>
-        </div>
+                <div class="formGroup">
+                    <input type="text" placeholder="Username or Email" class="ulogin" name="ulogin" value="" autofocus
+                           maxlength="24"/>
+                </div>
+                <div class="formActions">
+                    <a id="backToLogin" class="forgot-button" href="javascript:;">Back to login</a>
+                    <a class="submitButton" href="javascript:;">Submit</a>
+                </div>
+                <input type="submit" class="right" value="">
+            </fieldset>
+        </form>
     </div>
 </div>
