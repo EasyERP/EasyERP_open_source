@@ -4,7 +4,9 @@
         <div id="backstretch"></div>
     </div>
     <div class="loginContainer">
-        <form id="loginForm" class="">
+        <h2 id="titleForm">Login to your account</h2>
+        <div class="error">Such user doesn't registered</div>
+        <form id="loginForm" class="" action="javascript:;">
             <fieldset>
                 <div class="margin">
                     <select id="dbs">
@@ -15,10 +17,6 @@
                         <%}%>
                     </select>
                 </div>
-                <h2>Login to your account</h2>
-
-                <p>
-                <div class="error">Such user doesn't registered</div>
                 <div class="formGroup">
                     <div class="icon-login">
                         <span class="icon"></span>
@@ -26,7 +24,6 @@
                                autofocus
                                maxlength="24"/>
                     </div>
-                    </p>
                     <p>
 
                     <div class="icon-pass">
@@ -49,9 +46,8 @@
                 <input type="submit" class="right" value="">
             </fieldset>
         </form>
-        <form id="forgotPassword" class="">
+        <form id="forgotPassword" class="hidden" action="javascript:;">
             <fieldset>
-                <h3>Forgot Your password?</h3>
                 <span class="forgotDescription">Enter your e-mail address below to reset your password.</span>
 
                 <div class="formGroup">
@@ -60,7 +56,7 @@
                 </div>
                 <div class="formActions">
                     <a id="backToLogin" class="forgot-button" href="javascript:;">Back to login</a>
-                    <a id="submitButton" class="submitButton" href="javascript:;">Submit</a>
+                    <a class="submitButton" href="javascript:;">Submit</a>
                 </div>
                 <input type="submit" class="right" value="">
             </fieldset>
