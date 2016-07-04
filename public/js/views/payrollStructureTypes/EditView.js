@@ -248,7 +248,7 @@ define([
                     _id : deduction._id
                 }]);
 
-                self.componentObject.deductions =  _.union(self.componentObject.deductions, [deduction._id]);
+                self.componentObject.deductions = _.union(self.componentObject.deductions, [deduction._id]);
             });
 
             model.earnings.forEach(function (earning) {
@@ -257,7 +257,7 @@ define([
                     _id : earning._id
                 }]);
 
-                self.componentObject.earnings =  _.union(self.componentObject.earnings, [earning._id]);
+                self.componentObject.earnings = _.union(self.componentObject.earnings, [earning._id]);
 
             });
         },

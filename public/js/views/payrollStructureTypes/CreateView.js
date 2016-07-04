@@ -36,6 +36,11 @@ define([
 
             self.eventChannel.on('newStructureComponent', self.newStructureComponent, self);
 
+            this.componentNames = {
+                earnings  : [],
+                deductions: []
+            };
+
             self.render();
         },
 
@@ -49,16 +54,18 @@ define([
         newStructureComponent: function (component, modelComponent) {
             var self = this;
             var model = self.model;
+            var modelArray = model.get(component.type);
 
             if (!this.componentObject[component.type]) {
                 this.componentObject[component.type] = [];
             }
 
             this.componentObject[component.type].push(component._id || modelComponent.id);
+            this.componentNames[component.type].push({name: component.name, _id: component._id || modelComponent.id});
 
             component._id = component._id || modelComponent.id;
 
-            model.set(component.type, component.formula);
+            modelArray.push(component);
 
             self.renderComponents();
         },
@@ -101,22 +108,32 @@ define([
             var self = this;
             var $el = $(e.target).closest('li');
             var id = $el.attr('data-id');
-            var type = $el.closest('div').attr('data-id');
+            var type = $el.closest('div').attr('data-id') + 's';
             var model = self.model;
-            var tempObj = {};
-            var arr;
+            var tempArray = model.get(type);
+            var tempObj = _.find(tempArray, function (el) {
+                return el._id === id;
+            });
+            var indexOfObject = tempArray.indexOf(tempObj && tempObj.length ? tempObj[0] : tempObj);
 
             e.preventDefault();
             e.stopPropagation();
 
-            arr = model.get(type);
-            delete arr[id];
-            tempObj[type] = arr;
-            model.set(tempObj);
+            tempArray.splice(indexOfObject, 1);
+
+            $el.remove();
+
+            this.componentObject = {};
+            this.componentNames = {
+                earnings  : [],
+                deductions: []
+            };
+
+            self.setFormulasNames();
 
             self.renderComponents();
         },
-
+        
         create: function (e) {
             var self = this;
             var type = $(e.target).attr('data-id');
@@ -180,7 +197,12 @@ define([
 
         hideDialog: function () {
             $('.edit-dialog').remove();
+
             this.componentObject = {};
+            this.componentNames = {
+                earnings  : [],
+                deductions: []
+            };
         },
 
         formulaParser: function (arr) {
@@ -219,28 +241,69 @@ define([
             var arr = [];
             var $earningComponents = self.$el.find('#earningComponents ul');
             var $deductionComponents = self.$el.find('#deductionComponents ul');
+            var deductionsFormula = '';
+            var earningsFormula = '';
 
             $earningComponents.html('');
             $deductionComponents.html('');
 
-            Object.keys(model.deductions).forEach(function (deduction) {
-                arr.push(model.deductions[deduction]);
+            model.deductions.forEach(function (deduction) {
+                arr = arr.concat(deduction.formula || deduction);
+            });
+
+            this.componentNames.deductions.forEach(function (deduction) {
+                $deductionComponents.append(self.componentTemplate({formula: deduction}));
             });
 
             if (arr.length) {
-                $deductionComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+                deductionsFormula = self.formulaParser(arr, 'deductions');
             }
 
             arr = [];
 
-            Object.keys(model.earnings).forEach(function (earning) {
-                arr.push(model.earnings[earning]);
+            model.earnings.forEach(function (earning) {
+                arr = arr.concat(earning.formula || earning);
+            });
+
+            this.componentNames.earnings.forEach(function (earning) {
+                $earningComponents.append(self.componentTemplate({formula: earning}));
             });
 
             if (arr.length) {
-                $earningComponents.append(self.componentTemplate({formula: self.formulaParser(arr)}));
+                earningsFormula = self.formulaParser(arr, 'earnings');
             }
 
+            if (deductionsFormula && earningsFormula) {
+                this.$el.find('#resultFormula').text(earningsFormula + ' - ( ' + deductionsFormula + ' )');
+            } else if (deductionsFormula) {
+                this.$el.find('#resultFormula').text(' - ( ' + deductionsFormula + ' )');
+            } else if (earningsFormula) {
+                this.$el.find('#resultFormula').text(earningsFormula);
+            }
+        },
+
+        setFormulasNames: function () {
+            var self = this;
+            var model = this.model.toJSON();
+
+            model.deductions.forEach(function (deduction) {
+                self.componentNames.deductions = _.union(self.componentNames.deductions, [{
+                    name: deduction.name,
+                    _id : deduction._id
+                }]);
+
+                self.componentObject.deductions = _.union(self.componentObject.deductions, [deduction._id]);
+            });
+
+            model.earnings.forEach(function (earning) {
+                self.componentNames.earnings = _.union(self.componentNames.earnings, [{
+                    name: earning.name,
+                    _id : earning._id
+                }]);
+
+                self.componentObject.earnings = _.union(self.componentObject.earnings, [earning._id]);
+
+            });
         },
 
         render: function () {
@@ -286,6 +349,8 @@ define([
             ddId = '#' + typeDeduction + 'TypeDd';
 
             populate.get(ddId, url, {formula: true}, 'name', self);
+
+            this.setFormulasNames();
 
             self.renderComponents();
 
