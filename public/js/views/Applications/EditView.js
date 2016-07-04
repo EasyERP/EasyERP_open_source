@@ -92,20 +92,20 @@
         },
 
         events: {
-            'click .breadcrumb a, #refuse'                     : 'changeWorkflow',
-            'change #workflowNames'                            : 'changeWorkflows',
-            'mouseenter .avatar'                               : 'showEdit',
-            'mouseleave .avatar'                               : 'hideEdit',
-            'click .current-selected'                          : 'showNewSelect',
+            'click .breadcrumb a, #refuse'                    : 'changeWorkflow',
+            'change #workflowNames'                           : 'changeWorkflows',
+            'mouseenter .avatar'                              : 'showEdit',
+            'mouseleave .avatar'                              : 'hideEdit',
+            'click .current-selected'                         : 'showNewSelect',
             //'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .hireEmployee'                              : 'isEmployee',
-            'click .refuseEmployee'                            : 'refuseEmployee',
-            'click td.editable'                                : 'editJob',
-            'click #jobPosition,#department,#manager,#jobType' : 'showNotification',
-            'click .fa-trash'                                  : 'deleteRow',
-            'keydown input.editing'                            : 'keyDown',
-            'change .editable '                                : 'setEditable',
-            'keyup .salary'                                    : 'validateNumbers'
+            'click .hireEmployee'                             : 'isEmployee',
+            'click .refuseEmployee'                           : 'refuseEmployee',
+            'click td.editable'                               : 'editJob',
+            'click #jobPosition,#department,#manager,#jobType': 'showNotification',
+            'click .fa-trash'                                 : 'deleteRow',
+            'keydown input.editing'                           : 'keyDown',
+            'change .editable '                               : 'setEditable',
+            'keyup .salary'                                   : 'validateNumbers'
         },
 
         keyDown: function (e) {
@@ -578,8 +578,11 @@
             jobPosition = $tr.find('#jobPositionDd').last().attr('data-id');
             department = $tr.find('#departmentsDd').last().attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').last().attr('data-id');
-            event = $tr.last().attr('data-content') || this.hireEmployee ? 'hired' : null;
-            this.hireEmployee = false;
+            event = $tr.last().attr('data-content');
+            if (this.hireEmployee) {
+                event = 'hired';
+                this.hireEmployee = false;
+            }
             jobType = $.trim($tr.find('#jobTypeDd').last().text());
             salary = self.isSalary ? parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').last().val() || $tr.find('[data-id="salary"]').last().text()), 10) : null;
             date = $.trim($tr.last().find('td').eq(2).text());

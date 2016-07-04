@@ -74,7 +74,6 @@
                 Validation.checkGroupsNameField(errors, true, attrs.manager, 'Manager');
                 Validation.checkJobPositionField(errors, true, attrs.jobPosition, 'Job position');
                 Validation.checkGroupsNameField(errors, true, attrs.department, 'Department');
-                Validation.checkMoneyField(errors, true, attrs.proposedSalary, 'Proposed salary');
             }
             Validation.checkPhoneField(errors, false, attrs.workPhones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs.workPhones.mobile, 'Mobile');
