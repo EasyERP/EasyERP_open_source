@@ -35,12 +35,15 @@ define([
             var $currentEl = $(e.target);
             var id = $currentEl.attr('id');
             var $thisEl = this.$el;
+            var $title = $thisEl.find('#titleForm');
             var $loginForm = $thisEl.find('#loginForm');
             var $forgotForm = $thisEl.find('#forgotPassword');
 
             var title = id === 'forgotPass' ? 'Forgot Your password?' : 'Login to your account';
 
             e.preventDefault();
+
+            $title.text(title);
 
             $loginForm.toggleClass('hidden');
             $forgotForm.toggleClass('hidden');
@@ -58,7 +61,7 @@ define([
             var $thisEl = this.$el;
             var currentDb = $thisEl.find('#dbs :selected').data('id');
             var $loginForm = $thisEl.find('#loginForm');
-            var $errorContainer = $loginForm.find('.error');
+            var $errorContainer = $thisEl.find('.error');
             var login = $loginForm.find('.ulogin').val() || '';
             var pass = $thisEl.find('#upass').val() || '';
             var $checkedEl = $thisEl.find('#switchElement');
@@ -69,8 +72,6 @@ define([
             event.preventDefault();
             App.currentDb = currentDb;
             App.weTrack = true;
-
-            $title.text(title);
 
             $loginForm.removeClass('notRegister');
 
@@ -115,11 +116,10 @@ define([
         },
 
         forgotPassword: function (event) {
-            var title = 'Forgot Your password?';
             var $thisEl = this.$el;
-            var $title = $thisEl.find('#titleForm');
             var currentDb = $thisEl.find('#dbs :selected').data('id');
             var $forgotForm = $thisEl.find('#forgotPassword');
+            var $errorContainer = $thisEl.find('.error');
             var login = $forgotForm.find('.ulogin').val() || '';
             var err = '';
             var data;
@@ -127,8 +127,6 @@ define([
             event.preventDefault();
             App.currentDb = currentDb;
             App.weTrack = true;
-
-            $title.text(title);
 
             data = {
                 login: login,
@@ -141,8 +139,7 @@ define([
 
             if (err) {
                 $errorContainer.html(err);
-                $loginForm.addClass('notRegister');
-
+                $forgotForm.addClass('notRegister');
                 return;
             }
 
@@ -156,8 +153,8 @@ define([
                 },
 
                 error: function () {
-                    $loginForm.addClass('notRegister');
-                    $errorContainer.text("Wrong Password or such user doesn't registered");
+                    $forgotForm.addClass('notRegister');
+                    $errorContainer.text('Please try again');
                 }
             });
         },
