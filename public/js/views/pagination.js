@@ -40,8 +40,8 @@ define([
                 return self;
             });
         },
-        
-        beforeRender: function(options) {
+
+        beforeRender: function (options) {
             if (this.viewType === 'thumbnails') {
                 this.$el.html('');
                 this.$el
@@ -654,8 +654,11 @@ define([
             var CreateView = this.CreateView || Backbone.View.extend({});
             var startData = {};
             var cid;
-            var model = this.CurrentModel ? new this.CurrentModel() : {};
+            var model;
 
+            this.CurrentModel = this.CurrentModel || Backbone.Model.extend();
+            model = new this.CurrentModel();
+            
             cid = model.cid;
 
             startData.cid = cid;
