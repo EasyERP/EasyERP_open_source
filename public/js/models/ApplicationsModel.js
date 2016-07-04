@@ -69,6 +69,13 @@
             if (attrs.department) {
                 Validation.checkGroupsNameField(errors, true, attrs.department._id || attrs.department, 'Department');
             }
+            if (attrs.isEmployee) {
+                Validation.checkGroupsNameField(errors, true, attrs.jobType, 'Job type');
+                Validation.checkGroupsNameField(errors, true, attrs.manager, 'Manager');
+                Validation.checkJobPositionField(errors, true, attrs.jobPosition, 'Job position');
+                Validation.checkGroupsNameField(errors, true, attrs.department, 'Department');
+                Validation.checkMoneyField(errors, true, attrs.proposedSalary, 'Proposed salary');
+            }
             Validation.checkPhoneField(errors, false, attrs.workPhones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs.workPhones.mobile, 'Mobile');
             Validation.checkMoneyField(errors, false, attrs.expectedSalary, 'Expected salary');

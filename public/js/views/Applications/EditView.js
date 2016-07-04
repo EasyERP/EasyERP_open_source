@@ -97,7 +97,7 @@
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
             'click .current-selected'                          : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            //'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .hireEmployee'                              : 'isEmployee',
             'click .refuseEmployee'                            : 'refuseEmployee',
             'click td.editable'                                : 'editJob',
@@ -221,9 +221,9 @@
                 info = $thisEl.find('#statusInfoDd').val() || null;
                 event = 'hired';
                 employeeId = this.currentModel.get('_id');
-
-                this.hireEmployee = true;
             }
+
+            this.hireEmployee = true;
 
             transfer = {
                 employee       : employeeId,
@@ -238,7 +238,9 @@
                 weeklyScheduler: weeklyScheduler
             };
             model = new TransferModel(transfer);
-            // newTr.attr('id', model.cid);
+            if (this.currentModel.get('transfer').length) {
+                newTr.attr('id', model.cid);
+            }
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
         },
@@ -548,7 +550,6 @@
                 $tr = $thisEl;
                 if (this.hireEmployee) {
                     hireArray.push(helpers.setTimeToDate(new Date()));
-                    this.hireEmployee = false;
                 }
             } else {
                 $.each($jobTrs, function (index, $tr) {
@@ -577,8 +578,9 @@
             jobPosition = $tr.find('#jobPositionDd').last().attr('data-id');
             department = $tr.find('#departmentsDd').last().attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').last().attr('data-id');
-            event = $tr.last().attr('data-content') || 'hired';
-            jobType = $.trim($tr.find('#jobTypeDd').last().attr('data-id'));
+            event = $tr.last().attr('data-content') || this.hireEmployee ? 'hired' : null;
+            this.hireEmployee = false;
+            jobType = $.trim($tr.find('#jobTypeDd').last().text());
             salary = self.isSalary ? parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').last().val() || $tr.find('[data-id="salary"]').last().text()), 10) : null;
             date = $.trim($tr.last().find('td').eq(2).text());
             date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
@@ -598,8 +600,12 @@
 
             $el = $thisEl.find('.edit-employee-info');
             expectedSalary = parseInt(helpers.spaceReplacer($.trim($el.find('#expectedSalary').val())), 10) || 0;
-            salary = parseInt(helpers.spaceReplacer($.trim($el.find('#proposedSalary').val())), 10) || 0;
-            proposedSalary = salary;
+            if (!this.currentModel.get('transfer').length) {
+                salary = parseInt(helpers.spaceReplacer($.trim($el.find('#proposedSalary').val())), 10) || 0;
+                proposedSalary = salary;
+            } else {
+                proposedSalary = parseInt(helpers.spaceReplacer($.trim($el.find('#proposedSalary').val())), 10) || 0;
+            }
 
             isEmployee = (event === 'hired') || (event === 'updated');
 
@@ -833,7 +839,8 @@
 
                 this.setEditable($element);
 
-                if (!this.changedModels[modelId]) {
+
+                if (!this.changedModels && !this.changedModels[modelId]) {
                     if (!model.id) {
                         this.changedModels[modelId] = model.attributes;
                     } else {
@@ -845,8 +852,10 @@
                 $element.attr('data-id', valueId);
                 datacontent = $element.attr('data-content');
 
-                changedAttr = this.changedModels[modelId];
-                changedAttr[datacontent] = valueId;
+                if (!this.changedModels) {
+                    changedAttr = this.changedModels[modelId];
+                    changedAttr[datacontent] = valueId;
+                }
 
                 if (id === 'departmentsDd') {
 
@@ -868,8 +877,9 @@
                         $element.text(manager);
                         $element.attr('data-id', managerId);
                     }
-
-                    changedAttr.transfered = true;
+                    if (!this.changedModels) {
+                        changedAttr.transfered = true;
+                    }
                 }
             } else {
                 $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
