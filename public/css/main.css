@@ -1689,8 +1689,32 @@ body {
 .sliderContainer {
   height: 100vh;
 }
-.loginContent {
+.loginTitle {
+  font-size: 30px;
+  font-weight: 300;
+  color: #4e5a64;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.loginContainer {
   padding: 0 80px;
+  margin: auto 0;
+}
+.loginContent {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  height: 100vh;
+}
+@media (max-width: 1365px) {
+  .loginContainer {
+    padding: 0 40px;
+  }
 }
 input:not([type="checkbox"]).inputField {
   height: 34px;
