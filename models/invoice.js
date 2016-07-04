@@ -79,7 +79,19 @@ module.exports = (function () {
             taxes      : {type: Number, default: 0},
             subTotal   : Number
         }],
+        project: {type: ObjectId, ref: 'Project', default: null}
+    });
 
+    var writeOffSchema = baseSchema.extend({
+        products: [{
+            _id        : false,
+            quantity   : {type: Number, default: 1},
+            unitPrice  : Number,
+            description: {type: String, default: ''},
+            jobs       : {type: ObjectId, ref: 'jobs', default: null},
+            taxes      : {type: Number, default: 0},
+            subTotal   : Number
+        }],
         project: {type: ObjectId, ref: 'Project', default: null}
     });
 
@@ -152,7 +164,7 @@ module.exports = (function () {
     dividendInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
-    proformaSchema.set('toJSON', {getters: true});
+    writeOffSchema.set('toJSON', {getters: true});
 
     mongoose.model('wTrackInvoice', jobsInvoiceSchema);
     mongoose.model('payRollInvoice', payRollInvoiceSchema);
@@ -160,6 +172,7 @@ module.exports = (function () {
     mongoose.model('expensesInvoice', expensesInvoiceSchema);
     mongoose.model('dividendInvoice', dividendInvoiceSchema);
     mongoose.model('Proforma', proformaSchema);
+    mongoose.model('writeOff', writeOffSchema);
 
     function setName(next) {
         var proforma = this;
@@ -198,4 +211,5 @@ module.exports = (function () {
     mongoose.Schemas.expensesInvoice = expensesInvoiceSchema;
     mongoose.Schemas.dividendInvoice = dividendInvoiceSchema;
     mongoose.Schemas.Proforma = proformaSchema;
+    mongoose.Schemas.writeOff = writeOffSchema;
 })();

@@ -18,6 +18,7 @@ define([], function () {
         QUOTATIONS        : 'Quotations',
         DASHBOARD         : 'Dashboard',
         DEGREES           : 'Degrees',
+        WRITEOFF          : 'WriteOff',
         SOURCEOFAPPLICANTS: 'SourceOfApplicants',
         LEADSWORKFLOW     : 'LeadsWorkflow',
         MYPROFILE         : 'myProfile',
@@ -179,7 +180,8 @@ define([], function () {
             SUPPLIER                  : '/supplier',
             WORKFLOWS_FETCH           : '/workflows/fetch',
             PAYMENT_AMOUNT_LEFT       : '/payment/amountLeftCalc',
-            SALARY_REPORT             : '/salaryReport/'
+            SALARY_REPORT             : '/salaryReport/',
+            WRITE_OFF                 : '/writeOff/'
         },
 
         MID: {

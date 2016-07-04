@@ -234,6 +234,25 @@
             array: ['supplier', 'workflow']
         },
 
+        WriteOff: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
+           /* supplier: {
+                displayName: 'Supplier',
+                backend    : 'supplier._id'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
+            },*/
+
+            array: []
+        },
+
         DividendInvoice: {
             forSales: {
                 backend: 'forSales',

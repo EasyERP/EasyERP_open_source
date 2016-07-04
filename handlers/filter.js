@@ -2151,6 +2151,75 @@ var Filters = function (models) {
         });
     };
 
+    this.getWriteOffFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
+        var ExpensesInvoice = models.get(lastDB, 'expensesInvoice', ExpensesInvoiceSchema);
+        var query = {
+            forSales: false
+        };
+        var pipeLine;
+        var aggregation;
+
+        pipeLine = [{
+            $match: query
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'supplier',
+                foreignField: '_id',
+                as          : 'supplier'
+            }
+        }, {
+            $project: {
+                workflow: {$arrayElemAt: ['$workflow', 0]},
+                supplier: {$arrayElemAt: ['$supplier', 0]}
+            }
+        }, {
+            $group: {
+                _id     : null,
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    }
+                },
+
+                supplier: {
+                    $addToSet: {
+                        _id : '$supplier._id',
+                        name: {
+                            $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                        }
+                    }
+                }
+            }
+        }];
+
+        aggregation = ExpensesInvoice.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getDividendInvoiceFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;

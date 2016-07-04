@@ -1,0 +1,90 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs" data-class="mainTabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                    <li class="right">
+                        <%if(isFinancial && !model.approved){%>
+                        <button class="btn approve">
+                            <span>Approve</span>
+                        </button>
+                        <%}%>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="supplier">Supplier</label></dt>
+                                <dd>
+                                    <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
+                                       href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first
+                                        + ' ' + model.supplier.name.last:"Select"%></a>
+                                </dd>
+
+                                <dt><label for="projectDd">Project</label></dt>
+                                <dd>
+                                    <span id="projectDd"><%= model.project ?  model.project.name : '' %></span>
+                                </dd>
+
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+
+                                <dt><label for="invoice_date">Invoice Date</label></dt>
+                                <dd>
+                                    <input type="text" class="date" id="invoice_date"
+                                           value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32"
+                                           placeholder="Invoice Date" readonly/>
+                                </dd>
+
+
+                                <dt><label for="due_date">Due Date</label></dt>
+                                <dd>
+                                    <input type="text" class="date <% if (!model.dueDate) {%>  errorContent"
+
+                                    <% } else { %>
+                                    "
+                                    <% } %>
+                                    id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32"
+                                    placeholder="Due Date" readonly />
+                                </dd>
+
+                                <dt><label for="currencyDd">Currency</label></dt>
+                                <dd>
+                                    <a id="currencyDd" class="<%= model.approved ? ''  :'current-selected' %>" data-id="<%= model.currency._id._id %>" href="javascript:;"><%= model.currency._id.name %></a>
+                                </dd>
+
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Invoice</a></li>
+                            <li><a href="javascript:;">Attachments</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div id="invoiceItemsHolder">
+
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div id="attach-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item mainTabs">
+                        <div class="assignees-container"></div>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </form>
+</div>
