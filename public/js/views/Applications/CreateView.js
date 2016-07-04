@@ -40,6 +40,22 @@ define([
                     name: 'unmarried'
                 }
             ];
+
+            this.responseObj['#sourceDd'] = [
+                {
+                    _id : 'www.rabota.ua',
+                    name: 'www.rabota.ua'
+                }, {
+                    _id : 'www.work.ua',
+                    name: 'www.work.ua'
+                }, {
+                    _id : 'www.ain.net',
+                    name: 'www.ain.net'
+                }, {
+                    _id : 'other',
+                    name: 'other'
+                }
+            ];
             
             this.render();
         },
