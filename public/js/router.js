@@ -1197,14 +1197,14 @@ define([
                         Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
 
-                    if (contentType === 'salesProduct') {
+                    if (contentType === 'salesProducts') {
                         filter = {
                             canBeSold: {
                                 key  : 'canBeSold',
                                 value: ['true']
                             }
                         };
-                    } else if (contentType === 'Product') {
+                    } else if (contentType === 'Products') {
                         filter = {
                             canBePurchased: {
                                 key  : 'canBePurchased',
