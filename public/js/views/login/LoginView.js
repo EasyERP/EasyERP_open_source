@@ -24,7 +24,17 @@ define([
             'focus #ulogin'      : 'usernameFocus',
             'focus #upass'       : 'passwordFocus',
             'blur #ulogin'       : 'usernameFocus',
-            'blur #upass'        : 'passwordFocus'
+            'blur #upass'        : 'passwordFocus',
+            'click #forgotPass'  : 'goForgotPass'
+        },
+
+        goForgotPass: function (e) {
+            var forgotUrl = 'forgotPass';
+
+            e.preventDefault();
+
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(forgotUrl, {trigger: true});
         },
 
         usernameFocus: function () {
@@ -91,14 +101,24 @@ define([
         },
 
         render: function (options) {
+            var $thisEl = this.$el;
+            var $backStratch;
+
             $('title').text('Login');
 
             if (options) {
-                this.$el.html(_.template(LoginTemplate, {options: options.dbs}));
+                $thisEl.html(_.template(LoginTemplate, {options: options.dbs}));
             } else {
-                this.$el.html(LoginTemplate);
-                this.$el.find('#loginForm').addClass('notRegister');
+                $thisEl.html(LoginTemplate);
+                $thisEl.find('#loginForm').addClass('notRegister');
             }
+
+            $backStratch = $thisEl.find('#backstretch');
+            $backStratch.backstretch([
+                "http://dl.dropbox.com/u/515046/www/outside.jpg"
+                , "http://dl.dropbox.com/u/515046/www/garfield-interior.jpg"
+                , "http://dl.dropbox.com/u/515046/www/cheers.jpg"
+            ], {duration: 3000, fade: 750});
 
             return this;
         }

@@ -1,33 +1,69 @@
 <div>
-    <form id="loginForm">
-        <fieldset>
-            <div class="margin">
-                <select id="dbs">
-                    <% for(var dbName in options){%>
-                    <option data-id="<%=dbName%>"
-                    <%if(dbName === 'weTrack') {%>selected="selected"<%}%>><%=dbName%> (<%=options[dbName].url%>)
-                    </option>
-                    <%}%>
-                </select>
-            </div>
-            <h2>Login to your account</h2>
-
-            <p>
-                <div class="error">Such user doesn't registered</div>
-                <div class="icon-login">
-                    <span class="icon"></span>
-                    <input type="text" placeholder="Username" id="ulogin" name="ulogin" value="" autofocus maxlength="24"/>
+    <div id="slider">
+        <img src="" alt="" class="logo">
+        <div id="backstretch"></div>
+    </div>
+    <div class="loginContainer">
+        <form id="loginForm" class="">
+            <fieldset>
+                <div class="margin">
+                    <select id="dbs">
+                        <% for(var dbName in options){%>
+                        <option data-id="<%=dbName%>"
+                        <%if(dbName === 'weTrack') {%>selected="selected"<%}%>><%=dbName%> (<%=options[dbName].url%>)
+                        </option>
+                        <%}%>
+                    </select>
                 </div>
-            </p>
-            <p>
+                <h2>Login to your account</h2>
 
-            <div class="icon-pass">
-                <span class="icon"></span>
-                <input type="password" placeholder="Password" id="upass" name="upass" value="" maxlength="24"/>
-            </div>
-            </p>
-            <a class="login-button" href="javascript:;">Login<i></i></a>
-            <input type="submit" class="right" value="">
-        </fieldset>
-    </form>
+                <p>
+                <div class="error">Such user doesn't registered</div>
+                <div class="formGroup">
+                    <div class="icon-login">
+                        <span class="icon"></span>
+                        <input type="text" placeholder="Username or Email" class="ulogin" name="ulogin" value=""
+                               autofocus
+                               maxlength="24"/>
+                    </div>
+                    </p>
+                    <p>
+
+                    <div class="icon-pass">
+                        <span class="icon"></span>
+                        <input type="password" placeholder="Password" id="upass" name="upass" value="" maxlength="24"/>
+                    </div>
+                    </p>
+                </div>
+                <div class="formActions">
+                    <a class="login-button" href="javascript:;">Sign In<i></i></a>
+                    <div class="remeberMe">
+                        <span>Remember Me</span>
+                        <div class="switch">
+                            <input type="checkbox" name="switch" class="switchCheckbox" id="switchElement" checked>
+                            <label class="switchLabel" for="switchElement"></label>
+                        </div>
+                        <a id="forgotPass" class="forgotButton" href="javascript:;">forgot password?<i></i></a>
+                    </div>
+                </div>
+                <input type="submit" class="right" value="">
+            </fieldset>
+        </form>
+        <form id="forgotPassword" class="">
+            <fieldset>
+                <h3>Forgot Your password?</h3>
+                <span class="forgotDescription">Enter your e-mail address below to reset your password.</span>
+
+                <div class="formGroup">
+                    <input type="text" placeholder="Username or Email" class="ulogin" name="ulogin" value="" autofocus
+                           maxlength="24"/>
+                </div>
+                <div class="formActions">
+                    <a id="backToLogin" class="forgot-button" href="javascript:;">Back to login</a>
+                    <a id="submitButton" class="submitButton" href="javascript:;">Submit</a>
+                </div>
+                <input type="submit" class="right" value="">
+            </fieldset>
+        </form>
+    </div>
 </div>
