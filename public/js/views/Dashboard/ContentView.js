@@ -345,15 +345,15 @@ define([
 
         render: function () {
             var self = this;
-
-            this.startDate = moment(new Date()).startOf('month').format('D MMM YYYY');
-            this.endDate = moment(new Date()).endOf('month').format('D MMM YYYY');
+            var date = moment(new Date());
+            this.startDate = (date.startOf('month')).format('D MMM, YYYY');
+            this.endDate = (moment(this.startDate).endOf('month')).format('D MMM, YYYY');
 
             this.$el.html(this.template({startDate: this.startDate, endDate: this.endDate}));
             this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
             $(window).unbind('resize').resize(self.resizeHandler);
 
-            this.bindDataPickers(new Date(), new Date());
+            this.bindDataPickers(this.startDate, this.endDate);
             return this;
         },
 
@@ -2072,9 +2072,6 @@ define([
             d3.selectAll('svg.salesByCountryChart > *').remove();
             d3.selectAll('svg.salesByCountryBarChart > *').remove();
 
-            console.log(this.startDate + "start");
-            console.log( this.endDate + "end");
-
             common.getSalesByCountry({
                 startDay: this.startDate,
                 endDay: this.endDate
@@ -2092,12 +2089,11 @@ define([
                         }
                     }
                 }
-                console.log(data);
 
                 var margin = {top: 20, right: 160, bottom: 30, left: 160},
                     width = ($('#wrapper').width() - margin.left - margin.right)/2,
                     height = $('#wrapper').width()/4,
-                    height1 = data.length * 40;
+                    height1 = data.length * 20;
 
                 projection = d3.geo.mercator()
                     .translate([width/2, height/1.5])
@@ -2244,7 +2240,7 @@ define([
                     .orient('left')
                     .scale(yScale)
                     .tickSize(0)
-                    .tickPadding(padding)
+                    .tickPadding(offset)
                     .tickFormat(function(d, i){
                         return data[i]._id;
                     })
@@ -2257,7 +2253,7 @@ define([
 
                 barChart.append('g')
                     .attr('class', 'y axis')
-                    .attr('transform', 'translate(0,' + (padding + 2*offset) + ')')
+                    .attr('transform', 'translate(0,' + (padding - 2*offset) + ')')
                     .call(yAxis);
 
                 barChart.selectAll('.x .tick line')
