@@ -19,10 +19,11 @@
                                href="javascript:;"><%= componentType ? componentType.name : 'Select' %></a>
                         </span>
                     </dd>-->
-                    <dt><label for="minRange">Min Range</label></dt>
-                    <dd><input id="minRange" value="0"/></dd>
-                    <dt><label for="maxRange">Max Range</label></dt>
-                    <dd><input id="maxRange" value="0"/></dd>
+                    <input id="range" type="checkbox"/><label for="range">Use with range</label>
+                    <dt><label style="display: none" for="minRange" class="minRange">Min Range</label></dt>
+                    <dd><input style="display: none" class="minRange" id="minRange" value="0"/></dd>
+                    <dt><label style="display: none" class="maxRange" for="maxRange">Max Range</label></dt>
+                    <dd><input style="display: none" class="maxRange" id="maxRange" value="0"/></dd>
                 </dl>
             </div>
             <br>

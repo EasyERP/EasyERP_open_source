@@ -96,16 +96,23 @@ define([
 
         events: {
             'click #addFormulaElement': 'addFormulaElement',
-            'click .fa-trash-o'       : 'removeEl'
+            'click .fa-trash-o'       : 'removeEl',
+            'click #range'            : 'toggleRange'
         },
 
         removeEl: function (e) {
-            var self = this;
 
             e.preventDefault();
             e.stopPropagation();
 
             $(e.target).closest('div.formulaElement').remove();
+        },
+
+        toggleRange: function () {
+
+            this.$el.find('.maxRange').toggle();
+            this.$el.find('.minRange').toggle();
+
         },
 
         addFormulaElement: function (e) {
