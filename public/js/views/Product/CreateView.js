@@ -34,12 +34,8 @@ define([
         },
 
         events: {
-            'mouseenter .avatar'                                              : 'showEdit', // need
-            'mouseleave .avatar'                                              : 'hideEdit', // need
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click #subscription'                                             : 'eventType'
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit'
         },
 
         eventType: function () {
@@ -56,26 +52,8 @@ define([
             /* $('.newSelectList').hide();*/
         },
 
-        addAttach: function (event) {
-            var s = $(".inputAttach:last").val().split("\\")[$(".inputAttach:last").val().split('\\').length - 1];
-
-            $(".attachContainer").append('<li class="attachFile">' +
-                '<a href="javascript:;">' + s + '</a>' +
-                '<a href="javascript:;" class="deleteAttach">Delete</a></li>'
-            );
-            $(".attachContainer .attachFile:last").append($(".input-file .inputAttach").attr("hidden", "hidden"));
-            $(".input-file").append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
-        },
-
         deleteAttach: function (e) {
             $(e.target).closest('.attachFile').remove();
-        },
-
-        hideEdit: function () {
-            $('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
         },
 
         fileSizeIsAcceptable: function (file) {
@@ -92,67 +70,80 @@ define([
             var productModel = new ProductModel();
             var name = $.trim($currEl.find('#product').val());
             var description = $.trim($currEl.find('.productDescriptionCreate').val());
-
-            $("#createBtnDialog").attr("disabled", "disabled");
-
             var usersId = [];
             var groupsId = [];
-            $(".groupsAndUser tr").each(function () {
-                if ($(this).data("type") === "targetUsers") {
-                    usersId.push($(this).data("id"));
+            var valid;
+
+
+            var whoCanRW = $currEl.find("[name='whoCanRW']:checked").val();
+
+            var canBeSold = $currEl.find('#sold').prop('checked');
+            var canBeExpensed = $currEl.find('#expensed').prop('checked');
+            var eventSubscription = $currEl.find('#subscription').prop('checked');
+            var canBePurchased = $currEl.find('#purchased').prop('checked');
+            var salePrice = $currEl.find('#salePrice').val();
+            var barcode = $.trim($currEl.find('#barcode').val());
+            var isActive = $currEl.find('#active').prop('checked');
+            var productType = $currEl.find('#productType').attr('data-id');
+            var $categoryEl = $currEl.find('#productCategory');
+            var category = {
+                _id : $categoryEl.attr('data-id'),
+                name: $categoryEl.text()
+            };
+
+            $currEl.find('#createBtnDialog').attr('disabled', 'disabled');
+
+            $currEl.find('.groupsAndUser tr').each(function () {
+                var type = $(this).attr('data-type');
+                var id = $(this).attr('data-id');
+
+                if (type === 'targetUsers') {
+                    usersId.push(id);
                 }
-                if ($(this).data("type") === "targetGroups") {
-                    groupsId.push($(this).data("id"));
+                if (type === 'targetGroups') {
+                    groupsId.push(id);
                 }
 
             });
-            var whoCanRW = currEl.find("[name='whoCanRW']:checked").val();
 
-            var canBeSold = currEl.find('#sold').prop('checked');
-            var canBeExpensed = currEl.find('#expensed').prop('checked');
-            var eventSubscription = currEl.find('#subscription').prop('checked');
-            var canBePurchased = currEl.find('#purchased').prop('checked');
-            var salePrice = currEl.find('#salePrice').val();
-            var barcode = $.trim(currEl.find('#barcode').val());
-            var isActive = $('#active').prop('checked');
-            var productType = this.$('#productType').data('id');
-            var categoryEl = currEl.find('#productCategory');
-            var category = {
-                _id : categoryEl.data('id'),
-                name: categoryEl.text()
-            };
-            var valid = productModel.save({
+            valid = productModel.save({
                 canBeSold        : canBeSold,
                 canBeExpensed    : canBeExpensed,
                 eventSubscription: eventSubscription,
                 canBePurchased   : canBePurchased,
                 imageSrc         : this.imageSrc,
                 name             : name,
-                info             : {
+                whoCanRW         : whoCanRW,
+
+                info: {
                     productType: productType,
                     salePrice  : salePrice ? salePrice : 0,
                     isActive   : isActive,
                     barcode    : barcode,
                     description: description
                 },
-                accounting       : {
+
+                accounting: {
                     category: category
                 },
-                groups           : {
-                    owner: $("#allUsersSelect").data("id") || null,
+
+                groups: {
+                    owner: $currEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
-                },
-                whoCanRW         : whoCanRW
+                }
             }, {
                 headers: {
                     mid: mid
                 },
-                wait   : true,
+
+                wait: true,
+
                 success: function (model, response) {
                     self.attachView.sendToServer(null, model.changed);
                 },
-                error  : function (model, xhr) {
+
+                error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
