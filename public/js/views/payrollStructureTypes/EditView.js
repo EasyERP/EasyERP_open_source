@@ -48,20 +48,19 @@ define([
             var self = this;
             var $el = $(e.target).closest('li');
             var id = $el.attr('data-id');
+            var name = $.trim($el.text());
             var type = $el.closest('div').attr('data-id') + 's';
             var model = self.model;
-            var tempArray = [];
+            var tempArray = model.get(type);
+            var tempObj = _.find(tempArray, function (el) {
+                return el._id === id;
+            });
+            var indexOfObject = tempArray.indexOf(tempObj && tempObj.length ? tempObj[0] : tempObj);
 
             e.preventDefault();
             e.stopPropagation();
 
-            model.get(type).forEach(function (el) {
-                if (el._id.toString() !== id) {
-                    tempArray.push(el);
-                }
-            });
-
-            model.set(type, tempArray);
+            tempArray.splice(indexOfObject, 1);
 
             $el.remove();
 
