@@ -86,6 +86,8 @@
             this.removeTransfer = [];
             this.changedModels = {};
 
+            this.hireEmployee = false;
+
             this.render();
         },
 
@@ -99,7 +101,6 @@
             'click .hireEmployee'                              : 'isEmployee',
             'click .refuseEmployee'                            : 'refuseEmployee',
             'click td.editable'                                : 'editJob',
-            //'click #update'                                    : 'addNewRow',
             'click #jobPosition,#department,#manager,#jobType' : 'showNotification',
             'click .fa-trash'                                  : 'deleteRow',
             'keydown input.editing'                            : 'keyDown',
@@ -155,78 +156,6 @@
                 return false;
             }
         },
-
-        /*addNewRow: function () {
-            var $thisEl = this.$el;
-            var table;
-            var lastTr;
-            var newTr;
-            var trId;
-            var now;
-            var $tr;
-            var salary;
-            var manager;
-            var dateText;
-            var date;
-            var jobPosition;
-            var weeklyScheduler;
-            var department;
-            var jobType;
-            var info;
-            var event;
-            var employeeId;
-            var transfer;
-            var model;
-
-            table = $thisEl.find('#hireFireTable');
-            lastTr = table.find('tr').last();
-            newTr = lastTr.clone();
-            trId = newTr.attr('data-id');
-            now = moment();
-
-            now = common.utcDateToLocaleDate(now);
-
-            newTr.attr('data-id', ++trId);
-            newTr.find('td').eq(2).text(now);
-            newTr.attr('data-content', 'hired');
-            newTr.find('td').eq(1).text('hired');
-            newTr.find('td').last().text('');
-
-            table.append(newTr);
-
-            $thisEl.find('#update').hide();
-
-            this.renderRemoveBtn();
-
-            $tr = newTr;
-            salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
-            manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            date = helpers.setTimeToDate(new Date());
-            jobPosition = $tr.find('#jobPositionDd').attr('data-id');
-            weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-            department = $tr.find('#departmentsDd').attr('data-id');
-            jobType = $.trim($tr.find('#jobTypeDd').text());
-            info = $tr.find('#statusInfoDd').val();
-            event = $tr.attr('data-content');
-            employeeId = this.currentModel.get('_id');
-
-            transfer = {
-                employee       : employeeId,
-                status         : event,
-                date           : date,
-                department     : department,
-                jobPosition    : jobPosition,
-                manager        : manager,
-                jobType        : jobType,
-                salary         : salary,
-                info           : info,
-                weeklyScheduler: weeklyScheduler
-            };
-            model = new TransferModel(transfer);
-            newTr.attr('id', model.cid);
-            this.changedModels[model.cid] = transfer;
-            this.editCollection.add(model);
-        },*/
 
         setTransfer: function () {
             var $thisEl = this.$el;
@@ -287,11 +216,13 @@
                 date = helpers.setTimeToDate(new Date());
                 jobPosition = $thisEl.find('#jobPositionDd').attr('data-id');
                 weeklyScheduler = $thisEl.find('#weeklySchedulerDd').attr('data-id');
-                department = $thisEl.find('#departmentDd').attr('data-id');
+                department = $thisEl.find('#departmentsDd').attr('data-id');
                 jobType = $thisEl.find('#jobTypeDd').attr('data-id');
                 info = $thisEl.find('#statusInfoDd').val() || null;
                 event = 'hired';
                 employeeId = this.currentModel.get('_id');
+
+                this.hireEmployee = true;
             }
 
             transfer = {
@@ -307,7 +238,7 @@
                 weeklyScheduler: weeklyScheduler
             };
             model = new TransferModel(transfer);
-            //newTr.attr('id', model.cid);
+            // newTr.attr('id', model.cid);
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
         },
@@ -615,6 +546,10 @@
             $tr = $jobTrs;
             if (!this.currentModel.get('transfer').length) {
                 $tr = $thisEl;
+                if (this.hireEmployee) {
+                    hireArray.push(helpers.setTimeToDate(new Date()));
+                    this.hireEmployee = false;
+                }
             } else {
                 $.each($jobTrs, function (index, $tr) {
                     var _$tr = $tr;
@@ -665,108 +600,6 @@
             expectedSalary = parseInt(helpers.spaceReplacer($.trim($el.find('#expectedSalary').val())), 10) || 0;
             salary = parseInt(helpers.spaceReplacer($.trim($el.find('#proposedSalary').val())), 10) || 0;
             proposedSalary = salary;
-
-            /* $.each($jobTrs, function (i, $tr) {
-             var $previousTr;
-
-             $tr = $($tr);
-             event = $tr.attr('data-content');
-             date = new Date($.trim($tr.find('td').eq(2).text()));
-             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
-             department = $tr.find('#departmentsDd').attr('data-id');
-             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-             info = $tr.find('#statusInfoDd').val();
-             jobType = $.trim($tr.find('#jobTypeDd').text());
-             salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) : null;
-
-             if (!previousDep) {
-             previousDep = department;
-             }
-
-             if (previousDep !== department) {
-             $previousTr = $($jobTrs[i - 1]);
-
-             transferArray.push({
-             status         : 'transfer',
-             date           : moment(date).subtract(1, 'day'),
-             department     : previousDep,
-             jobPosition    : $previousTr.find('#jobPositionDd').attr('data-id') || null,
-             manager        : $previousTr.find('#projectManagerDD').attr('data-id') || null,
-             jobType        : $.trim($previousTr.find('#jobTypeDd').text()),
-             salary         : salary,
-             info           : $previousTr.find('#statusInfoDd').val(),
-             weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
-             });
-
-             previousDep = department;
-             }
-
-             transferArray.push({
-             status         : event,
-             date           : date,
-             department     : department,
-             jobPosition    : jobPosition,
-             manager        : manager,
-             jobType        : jobType,
-             salary         : salary,
-             info           : info,
-             weeklyScheduler: weeklyScheduler
-             });
-
-             if ((salary === null) && self.isSalary) {
-             App.render({
-             type   : 'error',
-             message: 'Salary can`t be empty'
-             });
-             quit = true;
-             return false;
-             }
-
-             if (event === 'fired') {
-             date = moment(date);
-             fireArray.push(date);
-             lastFire = date.year() * 100 + date.isoWeek();
-             }
-
-             if (event === 'hired') {
-             hireArray.push(date);
-             }
-             });*/
-
-            /* transferArray = transferArray.sort(function (a, b) {
-             return a.date - b.date;
-             });
-
-             if (!transferArray.length) {
-             $el = $thisEl.find('.edit-employee-info');
-             position = $.trim($el.find('#jobPositionDd').text());
-             jobType = $.trim($el.find('#jobTypeDd').text());
-             jobPosition = $el.find('#jobPositionDd').attr('data-id');
-             weeklyScheduler = $el.find('#weeklySchedulerDd').attr('data-id');
-             department = $el.find('#departmentsDd').attr('data-id');
-             manager = $el.find('#projectManagerDD').attr('data-id');
-             expectedSalary = parseInt($.trim($el.find('#expectedSalary').val()), 10) || 0;
-             salary = parseInt($.trim($el.find('#proposedSalary').val()), 10) || 0;
-             proposedSalary = salary;
-
-             if (toEmployyes) {
-             event = 'hired';
-             transferArray.push({
-             status         : 'hired',
-             date           : moment(),
-             department     : department,
-             jobPosition    : jobPosition,
-             weeklyScheduler: weeklyScheduler,
-             manager        : manager,
-             jobType        : jobType,
-             salary         : salary,
-             info           : ''
-             });
-             }
-             } else {
-             position = $.trim($jobTrs.last().find('#jobPositionDd').text());
-             }*/
 
             isEmployee = (event === 'hired') || (event === 'updated');
 
@@ -980,84 +813,6 @@
             });
 
         },
-
-        /* deleteItem: function (event) {
-         var mid = 39;
-         var self = this;
-         var answer = confirm('Really DELETE items ?!');
-
-         event.preventDefault();
-
-         if (answer == true) {
-         this.currentModel.destroy({
-         headers: {
-         mid: mid
-         },
-         success: function (model) {
-         var viewType = custom.getCurrentVT();
-         var wId;
-         var total$;
-         var newTotal;
-
-         model = model.toJSON();
-
-         switch (viewType) {
-         case 'list':
-         $('tr[data-id="' + model._id + '"] td').remove();
-         break;
-         case 'kanban':
-         $('#' + model._id).remove();
-         wId = model.workflow._id;
-         total$ = $('td[data-id="' + wId + '"] .totalCount');
-         newTotal = total$.html() - 1;
-         total$.html(newTotal);
-         break;
-         }
-         self.hideDialog();
-         },
-
-         error: function (model, xhr) {
-         self.errorNotification(xhr);
-         }
-         });
-         }
-         },*/
-
-        /* hideNewSelect: function () {
-         var editingDates = this.$el.find('td.date');
-
-         editingDates.each(function () {
-         $(this).text($(this).find('input').val());
-         });
-
-         this.$el.find('.newSelectList').hide();
-
-         if (this.SelectView) {
-         this.SelectView.remove();
-         }
-         },*/
-
-        /* showNewSelect: function (e) {
-         var $target = $(e.target);
-         e.stopPropagation();
-
-         if ($target.attr('id') === 'selectInput') {
-         return false;
-         }
-
-         if (this.SelectView) {
-         this.SelectView.remove();
-         }
-
-         this.SelectView = new SelectView({
-         e          : e,
-         responseObj: this.responseObj
-         });
-
-         $target.append(this.SelectView.render().el);
-
-         return false;
-         },*/
 
         chooseOption: function (e) {
             var $target = $(e.target);
