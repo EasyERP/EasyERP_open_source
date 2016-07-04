@@ -873,6 +873,29 @@ th {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
 }
+.settings_modal .check_wrap {
+  float: left;
+  width: 20px;
+}
+.settings_modal .setting_element {
+  margin-bottom: 25px;
+}
+.settings_modal .setting_element .fa {
+  color: #000000;
+  text-decoration: none;
+  vertical-align: top;
+}
+.settings_modal .setting_element .fa,
+.settings_modal .setting_element .selected {
+  line-height: 30px;
+}
+.settings_modal .setting_element .setting_title {
+  display: inline-block;
+}
+.settings_modal .setting_element .selected {
+  vertical-align: top;
+  padding-left: 15px;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;

@@ -1,36 +1,34 @@
 <div class="form-holder">
-    <form method="post" action="" class="form" id="invoiceForm">
-        <fieldset>
-            <div class="clearfix"></div>
-            <br>
-            <h3>New Payroll Structure Type</h3>
-            <div class="clearfix"></div>
-            <br>
-            <span>Name: </span>
-            <input id="payrollStructureName" maxlength="40" size="40" type="text" value="<%= name || '' %>">
-            <br>
-            <br>
-            <br>
-            <div class="half-block left" id="earningComponents" data-id="earning">
-                <div id="createBtnHolder">
-                    <a href="javascript:;" class="fa fa-plus" data-id="earning" title="Create" id="top-bar-createBtn"></a>
-                    <h3>Earnings:</h3>
-                    <a id="earningTypeDd" class="current-selected" href="javascript:;">Select</a>
+    <div class="settings_modal">
+        <form method="post" action="" class="form" id="invoiceForm">
+            <fieldset>
+                <div class="clearfix"></div>
+                <h3 class="setting_title">New Payroll Structure Type</h3>
+
+                <div class="setting_element half-block left">
+                    <span>Name: </span>
+                    <input id="payrollStructureName" maxlength="40" size="40" type="text" value="<%= name || '' %>">
                 </div>
-                <br>
-                <ul id="groupList" class="ui-sortable earningTypeDd">
-                </ul>
-            </div>
-            <div class="half-block right" id="deductionComponents"  data-id="deduction">
-                <div id="createBtnHolder">
-                    <a href="javascript:;" class="fa fa-plus" title="Create" data-id="deduction" id="top-bar-createBtn"></a>
-                    <h3>Deductions:</h3>
-                    <a id="deductionTypeDd" class="current-selected" href="javascript:;">Select</a>
+                <div class="clearfix"></div>
+                <div class="half-block left" id="earningComponents" data-id="earning">
+                    <div class="setting_element">
+                        <a href="javascript:;" class="fa fa-plus" data-id="earning" title="Create"></a>
+                        <h3 class="setting_title">Earnings:</h3>
+                        <a id="earningTypeDd" class="selected" href="javascript:;">Select</a>
+                    </div>
+                    <ul id="groupList" class="ui-sortable earningTypeDd">
+                    </ul>
                 </div>
-                <br>
-                <ul id="groupList" class="ui-sortable deductionTypeDd">
-                </ul>
-            </div>
-        </fieldset>
-    </form>
+                <div class="half-block right" id="deductionComponents"  data-id="deduction">
+                    <div class="setting_element">
+                        <a href="javascript:;" class="fa fa-plus" title="Create" data-id="deduction"></a>
+                        <h3 class="setting_title">Deductions:</h3>
+                        <a id="deductionTypeDd" class="selected" href="javascript:;">Select</a>
+                    </div>
+                    <ul id="groupList" class="ui-sortable deductionTypeDd">
+                    </ul>
+                </div>
+            </fieldset>
+        </form>
+    </div>
 </div>
