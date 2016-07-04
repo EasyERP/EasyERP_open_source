@@ -125,20 +125,18 @@ var Module = function (models, event) {
 
     this.getSalesByCountry = function (req, res, next) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        var data = req.query;
-        var now = new Date();
-        var fromDateTicks;
-        var fromDate;
+        var query = req.query;
+        var startDate = query.startDate || query.filter.startDate.value;
+        var endDate = query.endDate || query.filter.endDate.value;
 
-        data.dataRange = parseInt(data.dataRange, 10) || 365;
-        fromDateTicks = now - data.dataRange * 24 * 60 * 60 * 1000;
-        fromDate = new Date(fromDateTicks);
+        startDate = new Date(moment(new Date(startDate)).startOf('day'));
+        endDate = new Date(moment(new Date(endDate)).endOf('day'));
 
         Invoice.aggregate([{
             $match: {
                 forSales   : true,
                 _type      : 'wTrackInvoice',
-                invoiceDate: {$gte: fromDate}
+                invoiceDate: {$lte: endDate, $gte: startDate}
             }
         }, {
             $lookup: {
@@ -153,6 +151,10 @@ var Module = function (models, event) {
                 localField  : '_id',
                 foreignField: 'sourceDocument._id',
                 as          : 'journalEntries'
+            }
+        }, {
+            $match: {
+                journalEntries: {$exists: true, $not: {$size: 0}}
             }
         }, {
             $project: {
