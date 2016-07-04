@@ -896,6 +896,13 @@ th {
   vertical-align: top;
   padding-left: 15px;
 }
+.settings_modal .setting_element .settings_list .content {
+  margin: 0;
+  border-width: 0 0 1px 0 !important;
+}
+.settings_modal .resultFormula {
+  text-align: center;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;

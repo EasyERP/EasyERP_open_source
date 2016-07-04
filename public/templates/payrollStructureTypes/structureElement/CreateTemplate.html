@@ -5,11 +5,11 @@
                 <div class="clearfix"></div>
                 <h3><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h3>
                 <div class="clearfix"></div>
-                <div class="half-block left">
+                <div class="setting_element half-block left">
                     <span>Name: </span>
                     <input id="structureComponentName" maxlength="40" size="40" type="text" value="<%= name || ''%>">
                 </div>
-                <div class="half-block right">
+                <div class="setting_element half-block right">
                     <dl class="opp-info">
                         <label for="range">Based on range</label>
                         <div class="check_wrap">
@@ -22,11 +22,14 @@
                         <dd><input style="display: none" class="maxRange" id="maxRange" value="0"/></dd>
                     </dl>
                 </div>
-                <span>Formula: </span>
-                <span id="formula"></span>
+                <div class="setting_element half-block left">
+                    <span>Formula: </span>
+                    <span id="formula"></span>
                 <span>
                     <a href="javascript:;" id="addFormulaElement">...</a>
                 </span>
+                </div>
+
             </fieldset>
         </form>
     </div>
