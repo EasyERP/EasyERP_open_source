@@ -10,7 +10,8 @@ var User = function (event, models) {
     var constants = require('../constants/responses');
     var mainConstants = require('../constants/mainConstants');
     var pageHelper = require('../helpers/pageHelper');
-
+    var Mailer = require('../helpers/mailer');
+    var mailer = new Mailer();
     var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
 
@@ -68,7 +69,7 @@ var User = function (event, models) {
             var byDefault;
             var contentType;
             var newSavedFilters;
-            
+
             if (filterModel && typeof filterModel !== 'function') {
                 byDefault = newFilter.useByDefault;
                 contentType = newFilter.key;
@@ -176,7 +177,7 @@ var User = function (event, models) {
 
                     return next(customError);
                 }
-                
+
                 query = {
                     $pull: {
                         savedFilters: deleteFilter
@@ -281,6 +282,7 @@ var User = function (event, models) {
 
             UserModel.findOne(queryObject, {login: 1, pass: 1, kanbanSettings: 1, profile: 1}, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
+                var session = req.session;
                 var lastAccess;
 
                 shaSum.update(data.pass);
@@ -296,15 +298,22 @@ var User = function (event, models) {
                     return next(err);
                 }
 
-                req.session.loggedIn = true;
-                req.session.uId = _user._id;
-                req.session.uName = _user.login;
-                req.session.lastDb = data.dbId;
-                req.session.profileId = _user.profile;
-                req.session.kanbanSettings = _user.kanbanSettings;
+                if (data.rememberMe === 'true') {
+                    session.rememberMe = true;
+                } else {
+                    delete session.rememberMe;
+                    session.cookie.expires = false;
+                }
+
+                session.loggedIn = true;
+                session.uId = _user._id;
+                session.uName = _user.login;
+                session.lastDb = data.dbId;
+                session.profileId = _user.profile;
+                session.kanbanSettings = _user.kanbanSettings;
 
                 lastAccess = new Date();
-                req.session.lastAccess = lastAccess;
+                session.lastAccess = lastAccess;
 
                 UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err) {
                     if (err) {
@@ -320,6 +329,59 @@ var User = function (event, models) {
 
             return next(err);
         }
+    };
+
+    this.forgotPassword = function (req, res, next) {
+        var data = req.body;
+        var UserModel = models.get(data.dbId, 'Users', userSchema);
+        var login = data.login || data.email;
+        var err;
+        var queryObject;
+
+        if (!login) {
+            err = new Error(constants.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        queryObject = {
+            $or: [
+                {
+                    login: login
+                }, {
+                    email: login
+                }
+            ]
+        };
+
+        UserModel.findOne(queryObject, {login: 1, email: 1}, function (err, _user) {
+            if (err) {
+                return next(err);
+            }
+
+            if (!_user || !_user._id || !_user.email) {
+                err = new Error(constants.BAD_REQUEST);
+                err.status = 400;
+
+                return next(err);
+            }
+
+            crypto.randomBytes(6, function (err, buffer) {
+                var token = buffer.toString('hex');
+
+                mailer.forgotPassword({
+                    email   : _user.email,
+                    password: token
+                }, function (err, sent) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.send(200);
+                });
+            });
+        });
     };
 
     /**

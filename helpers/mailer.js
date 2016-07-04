@@ -6,8 +6,6 @@ module.exports = function () {
 
     var fs = require('fs');
 
-    this.deliver = deliver;
-
     function deliver(mailOptions, cb) {
         var transport = nodemailer.createTransport(smtpTransportObject);
 
@@ -26,11 +24,11 @@ module.exports = function () {
         });
     }
 
-    this.forgotPassword = function (options) {
+    this.forgotPassword = function (options, cb) {
         var templateOptions = {
-            // name: options.firstname + ' ' + options.lastname,
-            email: options.email,
-            url  : 'http://easyerp.com/password_change/?forgotToken=' + options.forgotToken
+            password: options.password,
+            email   : options.email,
+            url     : process.env.HOST + '#login'
         };
         var mailOptions = {
             from                : 'easyerp <no-replay@easyerp.com>',
@@ -40,7 +38,7 @@ module.exports = function () {
             html                : _.template(fs.readFileSync('public/templates/mailer/forgotPassword.html', encoding = 'utf8'), templateOptions)
         };
 
-        deliver(mailOptions);
+        deliver(mailOptions, cb);
     };
 
     this.changePassword = function (options) {
