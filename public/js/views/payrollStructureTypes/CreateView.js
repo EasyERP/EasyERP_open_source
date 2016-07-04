@@ -47,6 +47,7 @@ define([
         events: {
             // 'click li'                                         : 'goToEditDialog',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click .selected'                                  : 'showNewSelect',
             'click .fa-plus'                                   : 'create',
             'click .fa-trash-o'                                : 'remove'
         },

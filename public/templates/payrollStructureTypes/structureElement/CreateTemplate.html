@@ -1,39 +1,33 @@
 <div class="form-holder">
-    <form method="post" action="" class="form" id="invoiceForm">
-        <fieldset>
-            <div class="clearfix"></div>
-            <br>
-            <h3><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h3>
-            <div class="clearfix"></div>
-            <br>
-            <div class="half-block left">
-                <span>Name: </span>
-                <input id="structureComponentName" maxlength="40" size="40" type="text" value="<%= name || ''%>">
-            </div>
-            <div class="half-block right">
-                <dl class="opp-info">
-                   <!-- <dt><label for="<%= type %>TypeDd">Type</label></dt>
-                    <dd>
-                        <span>
-                            <a id="<%= type %>TypeDd" class="current-selected" data-id="<%= componentType ? componentType._id : '' %>"
-                               href="javascript:;"><%= componentType ? componentType.name : 'Select' %></a>
-                        </span>
-                    </dd>-->
-                    <input id="range" type="checkbox"/><label for="range">Based on range</label>
-                    <dt><label style="display: none" for="minRange" class="minRange">Min Range</label></dt>
-                    <dd><input style="display: none" class="minRange" id="minRange" value="0"/></dd>
-                    <dt><label style="display: none" class="maxRange" for="maxRange">Max Range</label></dt>
-                    <dd><input style="display: none" class="maxRange" id="maxRange" value="0"/></dd>
-                </dl>
-            </div>
-            <br>
-            <br>
-            <br>
-            <br>
-            <span>Formula: </span>
-            <br>
-            <br>
-            <span id="formula"></span><span><a href="javascript:;" id="addFormulaElement">...</a></span>
-        </fieldset>
-    </form>
+    <div class="settings_modal">
+        <form method="post" action="" class="form" id="invoiceForm">
+            <fieldset>
+                <div class="clearfix"></div>
+                <h3><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h3>
+                <div class="clearfix"></div>
+                <div class="half-block left">
+                    <span>Name: </span>
+                    <input id="structureComponentName" maxlength="40" size="40" type="text" value="<%= name || ''%>">
+                </div>
+                <div class="half-block right">
+                    <dl class="opp-info">
+                        <label for="range">Based on range</label>
+                        <div class="check_wrap">
+                            <input id="range" type="checkbox"/>
+                        </div>
+
+                        <dt><label style="display: none" for="minRange" class="minRange">Min Range</label></dt>
+                        <dd><input style="display: none" class="minRange" id="minRange" value="0"/></dd>
+                        <dt><label style="display: none" class="maxRange" for="maxRange">Max Range</label></dt>
+                        <dd><input style="display: none" class="maxRange" id="maxRange" value="0"/></dd>
+                    </dl>
+                </div>
+                <span>Formula: </span>
+                <span id="formula"></span>
+                <span>
+                    <a href="javascript:;" id="addFormulaElement">...</a>
+                </span>
+            </fieldset>
+        </form>
+    </div>
 </div>
