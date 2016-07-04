@@ -1,36 +1,31 @@
-<div>
-    <div id="slider">
+<div class="loginWrapper row bsReset">
+    <div id="slider" class="col m-6 bsReset sliderWrap">
         <img src="" alt="" class="logo">
-        <div id="backstretch"></div>
+        <div id="backstretch" class="sliderContainer"></div>
     </div>
-    <div class="loginContainer">
-        <h2 id="titleForm">Login to your account</h2>
-        <div class="error">Such user doesn't registered</div>
-        <form id="loginForm" class="" action="javascript:;">
-            <fieldset>
-                <div class="margin">
-                    <select id="dbs">
-                        <% for(var dbName in options){%>
-                        <option data-id="<%=dbName%>"
-                        <%if(dbName === 'weTrack') {%>selected="selected"<%}%>><%=dbName%> (<%=options[dbName].url%>)
-                        </option>
-                        <%}%>
-                    </select>
-                </div>
-                <div class="formGroup">
-                    <div class="icon-login">
-                        <span class="icon"></span>
-                        <input type="text" placeholder="Username or Email" class="ulogin" name="ulogin" value=""
+    <div class="loginContent col m-6 bsReset">
+        <div class="loginContainer">
+            <div class="row bsReset">
+                <h1 id="titleForm" class="loginTitle float-left">Login to your account</h2>
+                <select id="dbs" class="float-right">
+                    <% for(var dbName in options){%>
+                    <option data-id="<%=dbName%>"
+                    <%if(dbName === 'weTrack') {%>selected="selected"<%}%>><%=dbName%> (<%=options[dbName].url%>)
+                    </option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="error hidden">Such user doesn't registered</div>
+            <form id="loginForm" class="" action="javascript:;">
+                <div class="row">
+                    <div class="col s-6">
+                        <input type="text" placeholder="Username or Email" class="ulogin inputField" name="ulogin" value=""
                                autofocus
                                maxlength="24"/>
                     </div>
-                    <p>
-
-                    <div class="icon-pass">
-                        <span class="icon"></span>
-                        <input type="password" placeholder="Password" id="upass" name="upass" value="" maxlength="24"/>
+                    <div class="col s-6">
+                        <input type="password" placeholder="Password" id="upass" name="upass" class="inputField" value="" maxlength="24"/>
                     </div>
-                    </p>
                 </div>
                 <div class="formActions">
                     <a class="login-button" href="javascript:;">Sign In<i></i></a>
@@ -44,10 +39,8 @@
                     </div>
                 </div>
                 <input type="submit" class="right" value="">
-            </fieldset>
-        </form>
-        <form id="forgotPassword" class="hidden" action="javascript:;">
-            <fieldset>
+            </form>
+            <form id="forgotPassword" class="hidden" action="javascript:;">
                 <span class="forgotDescription">Enter your e-mail address below to reset your password.</span>
 
                 <div class="formGroup">
@@ -59,7 +52,7 @@
                     <a class="submitButton" href="javascript:;">Submit</a>
                 </div>
                 <input type="submit" class="right" value="">
-            </fieldset>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
