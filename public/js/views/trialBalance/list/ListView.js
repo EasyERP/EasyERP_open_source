@@ -32,7 +32,7 @@ define([
 
         initialize: function (options) {
             var dateRange;
-
+            
             this.startTime = options.startTime;
             this.collection = options.collection;
             _.bind(this.collection.showMore, this.collection);

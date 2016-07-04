@@ -3,6 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Dashboard/DashboardTemplate.html',
+    'custom',
     'collections/Filter/filterCollection',
     'collections/Workflows/WorkflowsCollection',
     'collections/Opportunities/OpportunitiesCollection',
@@ -12,7 +13,7 @@ define([
     'helpers',
     'moment',
     'topojson'
-], function (Backbone, $, _, DashboardTemplate, filterValuesCollection, workflowsCollection, OpportunitiesCollection, d3, common, dataService, helpers, moment, topojson) {
+], function (Backbone, $, _, DashboardTemplate, Custom, filterValuesCollection, workflowsCollection, OpportunitiesCollection, d3, common, dataService, helpers, moment, topojson) {
     var ContentView = Backbone.View.extend({
         contentType: 'Dashboard',
         actionType : 'Content',
@@ -29,7 +30,7 @@ define([
                 sale                  : 7,
                 opportunitieConversion: 90,
                 winLost               : 30,
-                salesByCountry        : 30
+                salesByCountry: 30
             };
 
             this.dateItem = {
@@ -46,9 +47,116 @@ define([
         },
 
         events: {
+            'click .dateRange'                  : 'toggleDateRange',
+            'click #updateDate'                 : 'changeDateRange',
+            'click li.filterValues:not(#custom)': 'setDateRange',
             'click .choseDateRange .item': 'newRange',
             'click .choseDateItem .item' : 'newItem',
-            'click .chart-tabs a'        : 'changeTab'
+            'click .chart-tabs a'        : 'changeTab',
+            'click #custom'                     : 'showDatePickers',
+            'click #cancelBtn'                  : 'cancel'
+        },
+
+        setDateRange: function (e) {
+            var $target = $(e.target);
+            var id = $target.attr('id');
+            var date = moment(new Date());
+            var quarter;
+
+            var startDate;
+            var endDate;
+
+            this.$el.find('.customTime').addClass('hidden');
+
+            this.removeAllChecked();
+
+            $target.toggleClass('checkedValue');
+
+            switch (id) {
+                case 'thisMonth':
+                    startDate = date.startOf('month');
+                    endDate = moment(startDate).endOf('month');
+                    break;
+                case 'thisYear':
+                    startDate = date.startOf('year');
+                    endDate = moment(startDate).endOf('year');
+                    break;
+                case 'lastMonth':
+                    startDate = date.subtract(1, 'month').startOf('month');
+                    endDate = moment(startDate).endOf('month');
+                    break;
+                case 'lastQuarter':
+                    quarter = date.quarter();
+
+                    startDate = date.quarter(quarter - 1).startOf('quarter');
+                    endDate = moment(startDate).endOf('quarter');
+                    break;
+                case 'lastYear':
+                    startDate = date.subtract(1, 'year').startOf('year');
+                    endDate = moment(startDate).endOf('year');
+                    break;
+                default:
+                    break;
+            }
+
+            this.$el.find('#startDate').datepicker('setDate', new Date(startDate));
+            this.$el.find('#endDate').datepicker('setDate', new Date(endDate));
+
+            this.changeDateRange();
+        },
+
+        changeDateRange: function (e) {
+            var dateFilter = e ? $(e.target).closest('ul.dateFilter') : this.$el.find('ul.dateFilter');
+            var startDate = dateFilter.find('#startDate');
+            var endDate = dateFilter.find('#endDate');
+            var startTime = dateFilter.find('#startTime');
+            var endTime = dateFilter.find('#endTime');
+
+            startDate = startDate.val();
+            endDate = endDate.val();
+
+            startTime.text(startDate);
+            endTime.text(endDate);
+
+
+            this.startDate = startDate;
+            this.endDate  = endDate;
+            this.renderSalesByCountry();
+            this.trigger('changeDateRange');
+            this.toggleDateRange();
+        },
+
+        toggleDateRange: function (e) {
+            var ul = e ? $(e.target).closest('ul') : this.$el.find('.dateFilter');
+
+            if (!ul.hasClass('frameDetail')) {
+                ul.find('.frameDetail').toggleClass('hidden');
+            } else {
+                ul.toggleClass('hidden');
+            }
+        },
+
+        removeAllChecked: function () {
+            var filter = this.$el.find('ul.dateFilter');
+            var li = filter.find('li');
+
+            li.removeClass('checkedValue');
+        },
+
+        showDatePickers: function (e) {
+            var $target = $(e.target);
+
+            this.removeAllChecked();
+
+            $target.toggleClass('checkedValue');
+            this.$el.find('.customTime').toggleClass('hidden');
+        },
+
+        cancel: function (e) {
+            var targetEl = $(e.target);
+            var ul = targetEl.closest('ul.frameDetail');
+
+            ul.addClass('hidden');
         },
 
         changeTab: function (e) {
@@ -201,11 +309,52 @@ define([
             }
         },
 
+        bindDataPickers: function (startDate, endDate) {
+            var self = this;
+
+            this.$el.find('#startDate')
+                .datepicker({
+                    dateFormat : 'd M, yy',
+                    changeMonth: true,
+                    changeYear : true,
+                    defaultDate: startDate,
+                    onSelect   : function () {
+                        var endDatePicker = self.$endDate;
+                        var endDateValue;
+
+                        endDatePicker.datepicker('option', 'minDate', $(this).val());
+
+                        endDateValue = moment(new Date($(this).val())).endOf('month');
+                        endDateValue = new Date(endDateValue);
+
+                        endDatePicker.datepicker('setDate', endDateValue);
+
+                        return false;
+                    }
+                })
+                .datepicker('setDate', startDate);
+            this.$endDate = this.$el.find('#endDate')
+                .datepicker({
+                    dateFormat : 'd M, yy',
+                    changeMonth: true,
+                    changeYear : true,
+                    defaultDate: endDate
+                })
+                .datepicker('setDate', endDate);
+        },
+
         render: function () {
             var self = this;
-            this.$el.html(this.template());
+
+            this.startDate = moment(new Date()).startOf('month').format('D MMM YYYY');
+            this.endDate = moment(new Date()).endOf('month').format('D MMM YYYY');
+
+            this.$el.html(this.template({startDate: this.startDate, endDate: this.endDate}));
             this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
             $(window).unbind('resize').resize(self.resizeHandler);
+
+            this.bindDataPickers(new Date(), new Date());
+            return this;
         },
 
         renderPopulateByType: function (that, type) {
@@ -1873,11 +2022,43 @@ define([
 
         renderSalesByCountry: function (){
             var self = this;
+            var continentLabel = [
+                {
+                    continent: 'Asia',
+                    longitude: 107,
+                    latitude : 63
+                },
+                {
+                    continent: 'Europe',
+                    longitude: 4.9,
+                    latitude : 52
+                },
+                {
+                    continent: 'South America',
+                    longitude: -76,
+                    latitude : -11
+                },
+                {
+                    continent: 'Africa',
+                    longitude: 7.5,
+                    latitude : 9
+                },
+                {
+                    continent: 'North America',
+                    longitude: -130,
+                    latitude : 55
+                },
+                {
+                    continent: 'Australia',
+                    longitude: 125,
+                    latitude : -25
+                }
+            ];
             var dataUrl = '../../maps/';
-            var width = 700;
-            var height = 450;
             var projection;
+            var barChart;
             var path;
+            var max;
             var zoom;
             var svg;
             var tx;
@@ -1885,23 +2066,38 @@ define([
             var g;
             var e;
             var i;
+            var offset = 2;
+            var padding= 15;
 
             d3.selectAll('svg.salesByCountryChart > *').remove();
+            d3.selectAll('svg.salesByCountryBarChart > *').remove();
 
-            common.getSalesByCountry(this.dateRange.salesByCountry, function(data){
+            console.log(this.startDate + "start");
+            console.log( this.endDate + "end");
+
+            common.getSalesByCountry({
+                startDay: this.startDate,
+                endDay: this.endDate
+            }, function(data){
 
                 function chooseRadius(csvData){
 
-                    var max = d3.max(data, function (d) {
+                    max = d3.max(data, function (d) {
                         return d.pays;
                     });
 
                     for(i = data.length; i--;){
                         if(csvData.CountryName === data[i]._id){
-                            return 15*data[i].pays/max;
+                            return 20 * data[i].pays/max;
                         }
                     }
                 }
+                console.log(data);
+
+                var margin = {top: 20, right: 160, bottom: 30, left: 160},
+                    width = ($('#wrapper').width() - margin.left - margin.right)/2,
+                    height = $('#wrapper').width()/4,
+                    height1 = data.length * 40;
 
                 projection = d3.geo.mercator()
                     .translate([width/2, height/1.5])
@@ -1926,8 +2122,9 @@ define([
                     .attr({
                         'width' : width,
                         'height': height,
-                        'style' : 'background: #ACC7F2'
-                    });
+                        'style' : 'background: #ACC7F2; margin-left: '+ margin.left +''
+                    })
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
                 g = svg.append('g');
 
@@ -1937,7 +2134,7 @@ define([
                         .data(topojson.object(topology, topology.objects.countries)
                             .geometries)
                         .enter()
-                        .append("path")
+                        .append('path')
                         .attr({
                             'd'   : path,
                             'fill': '#F4F3EF',
@@ -1974,10 +2171,106 @@ define([
                             });
                     });
 
+                    g.selectAll('text')
+                        .data(continentLabel)
+                        .enter()
+                        .append('text')
+                        .text(function(d){
+                            return d.continent;
+                        })
+                        .attr({
+                            'x': function(d) {
+                                return projection([
+                                    parseFloat(d.longitude),
+                                    parseFloat(d.latitude)
+                                ])[0];
+                            },
+                            'y': function(d) {
+                                return projection([
+                                    parseFloat(d.longitude),
+                                    parseFloat(d.latitude)]
+                                )[1];
+                            }
+                        });
+
                     svg.call(zoom);
-                })
+                });
+
+                barChart = d3.select('svg.salesByCountryBarChart')
+                    .attr('width', width + margin.left + margin.right)
+                    .attr('height', height1 + margin.top + margin.bottom)
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                var max = d3.max(data, function (d) {
+                    return d.pays;
+                });
+
+                var xScale = d3.scale.linear()
+                    .domain([0, max])
+                    .range([0, width]);
+
+                var yScale = d3.scale.linear()
+                    .domain([0, data.length])
+                    .range([0, height1]);
+
+                var rect = height1 / (data.length);
+
+                barChart.selectAll('rect')
+                    .data(data)
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        x     : function () {
+                            return 0;
+                        },
+                        y     : function (d, i) {
+                            return yScale(i) + offset;
+                        },
+                        width : function (d) {
+                            return xScale(d.pays);
+                        },
+                        height: rect - 2*offset,
+                        fill  : '#5CD1C8'
+                    });
+
+                var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom');
+
+                var yAxis = d3.svg.axis();
+
+                yAxis
+                    .orient('left')
+                    .scale(yScale)
+                    .tickSize(0)
+                    .tickPadding(padding)
+                    .tickFormat(function(d, i){
+                        return data[i]._id;
+                    })
+                    .tickValues(d3.range(data.length));
+
+                barChart.append('g')
+                    .attr('class', 'x axis')
+                    .attr('transform', 'translate(0,' + height1 + ')')
+                    .call(xAxis);
+
+                barChart.append('g')
+                    .attr('class', 'y axis')
+                    .attr('transform', 'translate(0,' + (padding + 2*offset) + ')')
+                    .call(yAxis);
+
+                barChart.selectAll('.x .tick line')
+                    .attr({
+                        'y2'    : function (d) {
+                            return -height1
+                        },
+                        'style': 'stroke: #f2f2f2'
+                    });
+
             });
         }
     });
+
     return ContentView;
 });

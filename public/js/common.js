@@ -511,13 +511,14 @@
             callback(response.data);
         });
     };
-    var getSalesByCountry = function(dataRange, callback){
+    var getSalesByCountry = function(filter, callback){
         dataService.getData('/invoices/getSalesByCountry', {
-            dataRange: dataRange
+            startDay: filter.startDay,
+            endDay: filter.endDay
         }, function (response) {
             callback(response.data);
         });
-    }
+    };
     var totalInvoiceBySales = function (callback) {
         dataService.getData('revenue/totalInvoiceBySales', {}, function (response) {
             callback(response.data);

@@ -1,4 +1,5 @@
 CountryName,CapitalName,CapitalLatitude,CapitalLongitude,CountryCode,ContinentName
+Mongolia,Ulaanbaatar,47.916666666666664,106.916667,MN,Asia
 Somaliland,Hargeisa,9.55,44.050000,NULL,Africa
 South Georgia and South Sandwich Islands,King Edward Point,-54.283333,-36.500000,GS,Antarctica
 French Southern and Antarctic Lands,Port-aux-Français,-49.35,70.216667,TF,Antarctica
@@ -19,7 +20,7 @@ Antigua and Barbuda,Saint John's,17.116666666666667,-61.850000,AG,North America
 Argentina,Buenos Aires,-34.583333333333336,-58.666667,AR,South America
 Armenia,Yerevan,40.166666666666664,44.500000,AM,Europe
 Aruba,Oranjestad,12.516666666666667,-70.033333,AW,North America
-Australia,Canberra,-35.266666666666666,149.133333,AU,Australia
+Australia,Canberra,-25.266666666666666,135.133333,AU,Australia
 Austria,Vienna,48.2,16.366667,AT,Europe
 Azerbaijan,Baku,40.38333333333333,49.866667,AZ,Europe
 Bahamas,Nassau,25.083333333333332,-77.350000,BS,North America
@@ -145,7 +146,6 @@ Mexico,Mexico City,19.433333333333334,-99.133333,MX,Central America
 Federated States of Micronesia,Palikir,6.916666666666667,158.150000,FM,Australia
 Moldova,Chisinau,47,28.850000,MD,Europe
 Monaco,Monaco,43.733333333333334,7.416667,MC,Europe
-Mongolia,Ulaanbaatar,47.916666666666664,106.916667,MN,Asia
 Montenegro,Podgorica,42.43333333333333,19.266667,ME,Europe
 Montserrat,Plymouth,16.7,-62.216667,MS,North America
 Morocco,Rabat,34.016666666666666,-6.816667,MA,Africa
