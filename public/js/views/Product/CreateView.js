@@ -43,22 +43,9 @@ define([
         },
 
         eventType: function () {
-            var container = this.$('#typeOfEvent');
-            if (container.hasClass('hidden')) {
-                container.removeClass('hidden');
-            } else {
-                container.addClass('hidden');
-            }
-        },
+            var $container = this.$('#typeOfEvent');
 
-        notHide: function () {
-            return false;
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-
-            return false;
+            return $container.toggleClass('hidden');
         },
 
         chooseOption: function (e) {
@@ -67,18 +54,6 @@ define([
 
             $targetEl.parents('dd').find('.current-selected').text($targetEl.text()).attr('data-id', id);
             /* $('.newSelectList').hide();*/
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        hideNewSelect: function () {
-            $(".newSelectList").hide();
         },
 
         addAttach: function (event) {
@@ -93,60 +68,14 @@ define([
         },
 
         deleteAttach: function (e) {
-            $(e.target).closest(".attachFile").remove();
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find("a.active").removeClass("active");
-            holder.addClass("active");
-
-            n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass("active");
-            dialogHolder.find(itemSelector).eq(n).addClass("active");
-        },
-
-        hideDialog: function () {
-            $(".edit-dialog").remove();
-            $(".add-group-dialog").remove();
-            $(".add-user-dialog").remove();
-            $(".crop-images-dialog").remove();
-        },
-
-        showEdit: function () {
-            $(".upload").animate({
-                height : "20px",
-                display: "block"
-            }, 250);
-
+            $(e.target).closest('.attachFile').remove();
         },
 
         hideEdit: function () {
-            $(".upload").animate({
-                height : "0px",
-                display: "block"
+            $('.upload').animate({
+                height : '0px',
+                display: 'block'
             }, 250);
-
         },
 
         fileSizeIsAcceptable: function (file) {
@@ -161,8 +90,9 @@ define([
             var self = this;
             var mid = 58;
             var productModel = new ProductModel();
-            var name = $.trim(currEl.find("#product").val());
-            var description = $.trim(currEl.find('.productDescriptionCreate').val());
+            var name = $.trim($currEl.find('#product').val());
+            var description = $.trim($currEl.find('.productDescriptionCreate').val());
+
             $("#createBtnDialog").attr("disabled", "disabled");
 
             var usersId = [];
