@@ -30,8 +30,8 @@ define([
             'click #loginPanel': 'openLogin'
         },
 
-        openLogin: function(){
-
+        openLogin: function(e){
+            $(e.target).parent().find('#loginSelect').toggleClass('opened')
         },
 
         openRoot: function (e) {
@@ -43,6 +43,8 @@ define([
             if (isSubMenu){
                 return;
             }
+
+            self.$el.find('#loginSelect').removeClass('opened');
 
             $activeRoot.find('ul').animate({height: 0}, 200, function () {
                 $activeRoot.removeClass('opened');
