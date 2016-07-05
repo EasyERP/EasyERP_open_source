@@ -28,7 +28,28 @@ define([
             'blur #ulogin'          : 'usernameFocus',
             'blur #upass'           : 'passwordFocus',
             'click #forgotPass'     : 'goForgotPass',
-            'click #backToLogin'    : 'goForgotPass'
+            'click #backToLogin'    : 'goForgotPass',
+            'click #selectedDb'     : 'showHideDbs',
+            'click #dbs li'         : 'selectDb'
+        },
+
+        showHideDbs: function (e) {
+            var $thisEl = this.$el;
+            var $ul = $thisEl.find('#dbs');
+
+            $ul.toggleClass('openDd');
+        },
+
+        selectDb: function (e) {
+            var $thisEl = this.$el;
+            var $targetEl = $(e.target);
+            var $li = $targetEl.closest('li');
+            var $selectedDb = $thisEl.find('#selectedDb');
+            var dbName = $li.attr('data-id');
+            var fullText = $li.text();
+
+            $selectedDb.attr('data-id', dbName);
+            $selectedDb.text(fullText);
         },
 
         goForgotPass: function (e) {
@@ -47,6 +68,7 @@ define([
 
             $loginForm.toggleClass('hidden');
             $forgotForm.toggleClass('hidden');
+            $title.toggleClass('green');
         },
 
         usernameFocus: function () {
@@ -59,7 +81,7 @@ define([
 
         login: function (event) {
             var $thisEl = this.$el;
-            var currentDb = $thisEl.find('#dbs :selected').data('id');
+            var currentDb = $thisEl.find('#selectedDb').attr('data-id');
             var $loginForm = $thisEl.find('#loginForm');
             var $errorContainer = $thisEl.find('.error');
             var login = $loginForm.find('.ulogin').val() || '';
@@ -117,7 +139,7 @@ define([
 
         forgotPassword: function (event) {
             var $thisEl = this.$el;
-            var currentDb = $thisEl.find('#dbs .selected').attr('data-id');
+            var currentDb = $thisEl.find('#selectedDb').attr('data-id');
             var $backToLogin = $thisEl.find('#backToLogin');
             var $forgotForm = $thisEl.find('#forgotPassword');
             var $errorContainer = $thisEl.find('.error');

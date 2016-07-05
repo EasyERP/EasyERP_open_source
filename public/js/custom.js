@@ -32,7 +32,7 @@ define([
         }
         if (success) {
             url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
-            if ((url === '') || (url === 'login')) {
+            if ((url === '') || url === 'login' || emailRedirectRegExp.test(url)) {
                 url = 'easyErp';
             }
 
