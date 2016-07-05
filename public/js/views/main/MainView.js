@@ -22,7 +22,7 @@ define([
         events: {
             'click #loginPanel': 'showSelect',
             click              : 'hideProp',
-            'click #logo .fa' : 'expandCollapse'
+            'click .sidebar_toggler' : 'expandCollapse'
         },
 
         expandCollapse: function(){
