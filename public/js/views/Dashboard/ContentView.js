@@ -122,6 +122,7 @@ define([
             this.startDate = startDate;
             this.endDate  = endDate;
             this.renderSalesByCountry();
+            this.renderTreemap();
             this.trigger('changeDateRange');
             this.toggleDateRange();
         },
@@ -510,7 +511,7 @@ define([
                     left  : 200
                 };
 
-                width = $('#wrapper').width() - margin.left - margin.right;
+                width = $('#wrapper').width()/2 - margin.left - margin.right;
                 height = 40 * data.length;
 
                 formatxAxis = d3.format('.0f');
@@ -557,6 +558,7 @@ define([
 
                 yAxis = d3.svg.axis()
                     .scale(y)
+                    .tickPadding(10)
                     .orient('left');
 
                 $('svg.opportunitieConversionAmount').empty();
@@ -2332,7 +2334,10 @@ define([
 
             d3.selectAll('div.treemap_sales > *').remove();
 
-            common.totalInvoiceBySales(function (data) {
+            common.totalInvoiceBySales({
+                startDay: this.startDate,
+                endDay: this.endDate
+            }, function (data) {
 
                 function position() {
                     this.style('left', function (d) {
@@ -2347,6 +2352,13 @@ define([
                         .style('height', function (d) {
                             return Math.max(0, d.dy - 1) + 'px';
                         });
+                }
+               
+                if(!data.length){
+                    data[0] = {
+                        name: 'null',
+                        payment: 0
+                    }
                 }
 
                 margin = {top: 0, right: 10, bottom: 10, left: 100};

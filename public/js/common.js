@@ -519,8 +519,11 @@
             callback(response.data);
         });
     };
-    var totalInvoiceBySales = function (callback) {
-        dataService.getData('revenue/totalInvoiceBySales', {}, function (response) {
+    var totalInvoiceBySales = function (filter, callback) {
+        dataService.getData('revenue/totalInvoiceBySales', {
+            startDate: filter.startDay,
+            endDate: filter.endDay
+        }, function (response) {
             callback(response.data);
         });
 

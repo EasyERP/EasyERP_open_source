@@ -388,7 +388,10 @@ define([
 
         renderTreemap: function () {
 
-            common.totalInvoiceBySales(function (data) {
+            common.totalInvoiceBySales({
+                startDay: '',
+                endDay: ''
+            }, function (data) {
                 var margin = {top: 0, right: 10, bottom: 10, left: 10};
                 var width = 960 - margin.left - margin.right;
                 var height = 500 - margin.top - margin.bottom;
@@ -460,7 +463,7 @@ define([
 
             $('.dashboard-stat').children('.number').empty();
             $('.dashboard-stat').children('.desc').empty();
-
+            
             common.getEmployeesCount({month: self.month, year: self.year}, function (response) {
                 var totalEmployeesCount = response.employeeCount;
                 var hiredCount = response.hiredCount;

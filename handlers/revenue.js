@@ -2612,18 +2612,21 @@ var wTrack = function (models) {
         var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
 
-        var startDate = query.startDate || query.filter.startDate.value;
-        var endDate = query.endDate || query.filter.endDate.value;
+        var matchObject =  {
+            _type   : 'wTrackInvoice',
+            forSales: true
+        };
+        var startDate;
+        var endDate;
 
-        startDate = new Date(moment(new Date(startDate)).startOf('day'));
-        endDate = new Date(moment(new Date(endDate)).endOf('day'));
+        if(query.startDate && query.endDate){
+            startDate = new Date(moment(new Date(query.startDate)).startOf('day'));
+            endDate = new Date(moment(new Date(query.endDate)).endOf('day'));
+            matchObject.invoiceDate = {$lte: endDate, $gte: startDate};
+        }
 
         Invoice.aggregate([{
-            $match: {
-                _type   : 'wTrackInvoice',
-                forSales: true,
-                invoiceDate: {$lte: endDate, $gte: startDate}
-            }
+            $match: matchObject
         }, {
             $project: {
                 salesPerson: 1,
