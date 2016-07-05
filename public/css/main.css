@@ -1939,6 +1939,13 @@ input:not([type="checkbox"]).inputBordered:focus {
   font-size: 15px;
   line-height: 22px;
 }
+@media (max-width: 650px) {
+  .sliderWrap,
+  .sliderContainer,
+  .loginContent {
+    height: 50vh;
+  }
+}
 @media (max-width: 992px) {
   .sliderWrap,
   .sliderContainer,
