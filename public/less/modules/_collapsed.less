@@ -20,7 +20,12 @@
           left: 100%;
           margin-left: 5px;
           width: 150px;
-
+          li {
+            &:first-child {
+              margin-left: -5px;
+              padding-right: 5px;
+            }
+          }
         }
         &:hover {
           .login_list {

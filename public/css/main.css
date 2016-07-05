@@ -1655,6 +1655,10 @@ th {
   margin-left: 5px;
   width: 150px;
 }
+.collapsed .side_menu .login_panel .dropdown-button .login_list li:first-child {
+  margin-left: -5px;
+  padding-right: 5px;
+}
 .collapsed .side_menu .login_panel .dropdown-button:hover .login_list {
   display: block;
 }
@@ -6344,6 +6348,7 @@ table#workflows tr td.edit-status {
 .side_menu .login_panel .dropdown-button .login_list li {
   text-align: center;
   color: #e7e7e7;
+  background: #364150;
 }
 .side_menu .login_panel .dropdown-button .login_list li a {
   display: block;
