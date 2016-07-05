@@ -37,7 +37,7 @@ define([
             'click .groupName'                     : 'showHideValues',
             'click .removeValues'                  : 'removeFilter',
             'click .showLast'                      : 'showManyFilters',
-            'keydown #searchInput'                 : 'deleteFilterByBackspace'
+            'keydown #searchInput'                 : 'searchInputKeyDown'
         },
 
         initialize: function (options) {
@@ -60,12 +60,14 @@ define([
             _.bindAll(this, 'renderFilterContent');
         },
 
-        deleteFilterByBackspace: function (e) {
-            var searchInputVal;
+        searchInputKeyDown: function (e) {
+            var $searchInput = $(e.currentTarget);
+            var searchInputVal = $searchInput.text();
             var searchFilterContainer;
 
+            var allResults;
+
             if (e.which === 8) {
-                searchInputVal = $('#searchInput').text();
                 if (searchInputVal.length === 0) {
                     searchFilterContainer = $('#searchFilterContainer').children('div:last');
                     if (searchFilterContainer.length !== 0) {
@@ -73,6 +75,23 @@ define([
                         this.removeFilter(e);
                     }
                 }
+            } else if (e.which === 13) {
+                allResults = $searchInput.next().find('.ui-autocomplete-category');
+
+                if (allResults.length) {
+                    self.clickSearchResult(allResults.first());
+                }
+
+                if (!allResults.length && $searchInput.html()) {  // added message in case of search unsuccessful
+                    App.render({
+                        type   : 'error',
+                        message: 'No such result'
+                    });
+                }
+
+                $searchInput.catcomplete('close');
+                $searchInput.html('');// to prevent appearing value in Search after selecting
+                e.preventDefault();  // to prevent appearing previous values by pressing Backspace
             }
         },
 
@@ -453,13 +472,15 @@ define([
         render: function (options) {
             var self = this;
             var $curEl = this.$el;
-            var $searchInput = $curEl.find('#searchInput');
+            var $searchInput;
             var filterName = this.contentType + '.filter';
             var filters = custom.retriveFromCash(filterName) || App.filtersObject.filter;
             var allResults;
 
             App.filtersObject.filter = filters;
             $curEl.html(this.template());
+
+            $searchInput = $curEl.find('#searchInput');
 
             this.renderFilterContent(options, function () {
                 $searchInput.catcomplete({
@@ -526,33 +547,33 @@ define([
 
             //$searchInput = $curEl.find('#searchInput');
 
-            $searchInput.keydown(function (e) {
-                if (e.which === 13) {
-                    allResults = $searchInput.next().find('.ui-autocomplete-category');
+            /*$searchInput.keydown(function (e) {
+             if (e.which === 13) {
+             allResults = $searchInput.next().find('.ui-autocomplete-category');
 
-                    /*allResults.each(function () {
-                     var element = $(this);
+             /!*allResults.each(function () {
+             var element = $(this);
 
-                     self.clickSearchResult(element);
-                     });*/
+             self.clickSearchResult(element);
+             });*!/
 
-                    if (allResults.length) {
-                        self.clickSearchResult(allResults.first());
-                    }
+             if (allResults.length) {
+             self.clickSearchResult(allResults.first());
+             }
 
-                    if (!allResults.length && $searchInput.html()) {  // added message in case of search unsuccessful
-                        App.render({
-                            type   : 'error',
-                            message: 'No such result'
-                        });
-                    }
+             if (!allResults.length && $searchInput.html()) {  // added message in case of search unsuccessful
+             App.render({
+             type   : 'error',
+             message: 'No such result'
+             });
+             }
 
-                    // allResults.remove(); // to prevent appearing last filters after selecting new
-                    $searchInput.catcomplete('close');
-                    $searchInput.html('');// to prevent appearing value in Search after selecting
-                    e.preventDefault();  // to prevent appearing previous values by pressing Backspace
-                }
-            });
+             // allResults.remove(); // to prevent appearing last filters after selecting new
+             $searchInput.catcomplete('close');
+             $searchInput.html('');// to prevent appearing value in Search after selecting
+             e.preventDefault();  // to prevent appearing previous values by pressing Backspace
+             }
+             });*/
 
             return this;
         }
