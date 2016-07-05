@@ -1715,6 +1715,9 @@ a {
 h2.green {
   color: #32c5d2;
 }
+body {
+  overflow: hidden;
+}
 ::-webkit-input-placeholder {
   color: #a0a9b4;
 }
@@ -1983,18 +1986,6 @@ input:not([type="checkbox"]).inputBordered:focus {
   font-size: 15px;
   line-height: 22px;
 }
-@media (max-width: 768px) {
-  .loginContainer .loginTitle {
-    margin-bottom: 30px;
-  }
-  .loginContainer .selectDd {
-    float: left;
-    clear: both;
-  }
-  .loginContainer input:not([type="checkbox"]).inputField {
-    margin-bottom: 45px;
-  }
-}
 @media (max-width: 1600px) {
   .loginContent {
     padding: 0 60px;
@@ -2036,21 +2027,40 @@ input:not([type="checkbox"]).inputBordered:focus {
     height: 50vh;
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
+  .loginContainer .loginTitle {
+    margin-bottom: 30px;
+  }
+  .loginContainer .selectDd {
+    float: left;
+    clear: both;
+  }
+  .loginContainer input:not([type="checkbox"]).inputField {
+    margin-bottom: 25px;
+  }
   .loginWrapper .selectDd {
     width: 230px;
   }
   .loginWrap {
-    margin-top: 45px;
+    margin-top: 25px;
   }
   .loginCopyright {
     position: absolute;
-    bottom: 0;
-    margin: 0 0 33px 0;
+    bottom: calc((50vh - 272px) / 4);
+    margin: 0;
     right: 40px;
   }
   .formActions {
     white-space: nowrap;
+  }
+}
+@media (max-width: 410px) {
+  .loginContent {
+    padding: 0 20px;
+  }
+  .loginCopyright {
+    right: auto;
+    left: 20px;
   }
 }
 .btn {
