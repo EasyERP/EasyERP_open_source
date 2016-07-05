@@ -26,12 +26,13 @@ h2 {
 
 .selectDd {
   position: relative;
+  display: inline-block;
+  width: 230px;
   height: 22px;
   border: 0;
   color: #666;
   border-bottom: 2px solid #666;
   padding-right: 15px;
-  cursor: pointer;
 
   &:after {
     content: '';
@@ -43,6 +44,50 @@ h2 {
     border-top: 4px solid #666;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
+    cursor: pointer;
+  }
+
+  .selectedDb {
+    display: block;
+    height: 22px;
+    cursor: pointer;
+  }
+
+  ul {
+    visibility: hidden;
+    opacity: 0;
+
+    position: absolute;
+    top: 22px;
+    width: 100%;
+    background-image: none;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    font-size: 13px;
+    padding: 5px 0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+    z-index: 10;
+
+    transform: translateY(50px);
+    transition: all .2s ease;
+
+    li {
+      padding: 3px 25px;
+      white-space: nowrap;
+      line-height: 18px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #eef0f0;
+        transition: background-color .2s ease;
+      }
+    }
+
+    &.openDd{
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
@@ -61,13 +106,13 @@ h2 {
     }
   }
 
-  &Wrapper {
-
-  }
-
   &Container {
     padding: 0 80px;
     margin: auto 0;
+
+    .selectDd {
+      float: right;
+    }
   }
 
   &Content {
@@ -272,5 +317,17 @@ input {
   .sliderContainer,
   .loginContent {
     height: 50vh;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1220px) {
+  .loginContainer {
+    padding: 0 20px;
+  }
+  .selectDd {
+    width: 200px;
+  }
+  .loginTitle {
+    font-size: 25px;
   }
 }

@@ -10,7 +10,7 @@
 
                     <h1 id="titleForm" class="loginTitle float-left">Login to your account</h1>
                     <div class="selectDd">
-                        <span id="selectedDb"></span>
+                        <span id="selectedDb" class="selectedDb"></span>
                         <ul id="dbs" class="float-right">
                             <% for(var dbName in dbs){%>
                             <li data-id="<%=dbName%>"
@@ -37,14 +37,14 @@
                 </div>
                 <div class="formActions">
                     <div class="row">
-                        <div class="col s-4">
+                        <div class="col xs-5 s-4">
                             <label class="switchLabel rememberCheckWrap" for="switchElement">
                                 <input type="checkbox" name="switch" class="rememberCheck" id="switchElement" checked>
                                 Remember me
                                 <span></span>
                             </label>
                         </div>
-                        <div class="col s-8 align-right loginForgot">
+                        <div class="col xs-7 s-8 align-right loginForgot">
                             <a id="forgotPass" class="forgotPass" href="javascript:;">Forgot Password?</a>
                             <a class="login-button btn green" href="javascript:;">Sign In</a>
                         </div>
