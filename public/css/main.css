@@ -1860,6 +1860,9 @@ input:not([type="checkbox"]).inputBordered {
 input:not([type="checkbox"]).inputBordered:focus {
   border-color: #93a1bb;
 }
+.notRegister input:not([type="checkbox"]) {
+  border-bottom: 1px solid #ff9393;
+}
 :focus::-webkit-input-placeholder {
   color: transparent!important;
 }

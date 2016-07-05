@@ -191,7 +191,14 @@ input {
         border-color: #93a1bb;
       }
     }
+  }
+}
 
+.notRegister {
+  input {
+    &:not([type="checkbox"]) {
+      border-bottom: 1px solid #ff9393;
+    }
   }
 }
 
