@@ -12,7 +12,8 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+// var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production');
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
@@ -24,15 +25,15 @@ var Campaign = dbObject.model("campaign", CampaignSchema);
 
 var campaigns = [
     {
-        _id : ObjectId('572340e28ba4fd133006271e'),
+        _id : 'ThinkMobiles',
         name: 'ThinkMobiles'
     },
     {
-        _id : ObjectId('572340e28ba4fd133006271a'),
+        _id : 'EasyERP',
         name: 'EasyERP'
     },
     {
-        _id : ObjectId('572340e28ba4fd133006271b'),
+        _id : 'Vike',
         name: 'Vike'
     }
 ];
