@@ -4878,55 +4878,6 @@ a.red:hover {
 .ui-front {
   z-index: 1000;
 }
-#loginPanel {
-  position: absolute;
-  left: 0;
-  top: auto;
-  right: auto;
-  bottom: auto;
-}
-#loginPanel .dropdown-button {
-  text-indent: 5px;
-  cursor: pointer;
-  padding: 0 10px;
-  box-sizing: border-box;
-  width: 200px;
-  float: left;
-  height: auto;
-}
-#loginPanel .dropdown-button #loginSelect {
-  display: none;
-  position: relative;
-  z-index: 999;
-  border: 1px solid #7f7f80;
-  background-color: #ffffff;
-}
-#loginPanel .dropdown-button #loginSelect li {
-  height: 20px;
-  line-height: 20px;
-}
-#loginPanel .dropdown-button #loginSelect li a {
-  color: #000000;
-}
-#loginPanel .dropdown-button img {
-  float: left;
-  margin: 2px 5px 2px 2px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-}
-#loginPanel .dropdown-button span {
-  display: block;
-  line-height: 30px;
-  color: #000000;
-}
-#loginPanel .dropdown-button span:hover {
-  color: #fff;
-}
-#loginPanel .dropdown-button:hover {
-  background: #3e88b9;
-  color: #fff;
-}
 .ui-widget-overlay {
   background-color: #444444;
   opacity: .3;
@@ -5369,7 +5320,6 @@ table#workflows tr td.edit-status {
   height: 30px;
   padding: 0;
   margin: 0;
-  border-bottom: 1px solid #7f7f80;
   z-index: 1000;
 }
 #mainmenu-holder nav {
@@ -5569,6 +5519,55 @@ table#workflows tr td.edit-status {
   content: "\f104";
   font-weight: 300;
   text-shadow: none;
+}
+.side_menu .login_panel {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  right: auto;
+  bottom: auto;
+}
+.side_menu .login_panel .dropdown-button {
+  text-indent: 5px;
+  cursor: pointer;
+  padding: 0 10px;
+  box-sizing: border-box;
+  width: 200px;
+  float: left;
+  height: auto;
+}
+.side_menu .login_panel .dropdown-button #loginSelect {
+  display: none;
+  position: relative;
+  z-index: 999;
+  border: 1px solid #7f7f80;
+  background-color: #ffffff;
+}
+.side_menu .login_panel .dropdown-button #loginSelect li {
+  height: 20px;
+  line-height: 20px;
+}
+.side_menu .login_panel .dropdown-button #loginSelect li a {
+  color: #000000;
+}
+.side_menu .login_panel .dropdown-button img {
+  float: left;
+  margin: 2px 5px 2px 2px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+.side_menu .login_panel .dropdown-button span {
+  display: block;
+  line-height: 30px;
+  color: #000000;
+}
+.side_menu .login_panel .dropdown-button span:hover {
+  color: #fff;
+}
+.side_menu .login_panel .dropdown-button:hover {
+  background: #3e88b9;
+  color: #fff;
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {

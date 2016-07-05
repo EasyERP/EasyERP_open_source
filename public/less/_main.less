@@ -768,7 +768,6 @@ input::-ms-clear {
   background: @bg-main;
   height: @height;
   .noPaddingMargin;
-  border-bottom: @thin-border @border-color;
   z-index: 1000;
   nav {
     .left;
@@ -3310,58 +3309,6 @@ button.red, a.red {
 
 .ui-front {
   z-index: 1000;
-}
-
-#loginPanel {
-  .position(absolute, 0, auto, auto, auto);
-
-
-  .dropdown-button {
-    text-indent: 5px;
-    cursor: pointer;
-    padding: 0 10px;
-    box-sizing: border-box;
-    width: 200px;
-    float: left;
-    height: auto;
-    #loginSelect {
-      display: none;
-      position: relative;
-      z-index: 999;
-      border: 1px solid @border-color-main;
-      background-color: @bg-main;
-      li {
-        height: 20px;
-        line-height: 20px;
-
-        a {
-          color: @login-text;
-        }
-      }
-    }
-
-
-
-    img {
-      float: left;
-      margin: 2px 5px 2px 2px;
-      .border-radius;
-    }
-
-    span {
-      display: block;
-      line-height: 30px;
-      color: @login-text;
-      &:hover {
-        color: #fff;
-      }
-    }
-
-    &:hover {
-      background: @bg-main-menu-selected;
-      color: #fff;
-    }
-  }
 }
 
 .ui-widget-overlay {
