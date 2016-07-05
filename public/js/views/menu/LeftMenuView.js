@@ -31,12 +31,18 @@ define([
         },
 
         openLogin: function(e){
-            $(e.target).parent().find('#loginSelect').toggleClass('opened')
+            var $activeRoot = this.$el.find('.opened');
+            $(e.target).parent().find('#loginSelect').toggleClass('opened');
+            $activeRoot.find('ul').animate({height: 0}, 200, function () {
+                $activeRoot.removeClass('opened');
+            });
+
+
         },
 
         openRoot: function (e) {
             var self = this;
-            var $activeRoot = self.$el.find('.root.opened');
+            var $activeRoot = self.$el.find('.opened');
             var $current = $(e.target).closest('.root');
             var isSubMenu = !!$(e.target).closest($current.find('ul')).length;
 
