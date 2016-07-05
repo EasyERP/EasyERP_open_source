@@ -1,4 +1,16 @@
 .collapsed {
+
+  .mainmenu_holder {
+    .logo {
+      width: 40px;
+      text-align: center;
+    }
+    a {
+      display: none;
+      padding: 0;
+    }
+  }
+
   .side_menu {
     width: 40px !important;
     margin-right: -100%;
@@ -11,17 +23,32 @@
 
     .root {
       position: relative;
-      ul {
+      >ul {
         display: none;
       }
       >a {
         display: none !important;
       }
+      &:hover {
+        >ul {
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 100%;
+          width: 150px;
+          margin-left: 10px;
+          li {
+            &:first-child {
+              margin-left: -10px;
+              padding-right: 10px;
+            }
+          }
+        }
+      }
       &.active {
         height: 30px !important;
-        ul {
+        >ul {
           display: none;
-          margin-left: 10px;
         }
         &:hover {
           >ul {
@@ -30,6 +57,13 @@
             top: 0;
             left: 100%;
             width: 150px;
+            margin-left: 10px;
+            li {
+              &:first-child {
+                margin-left: -10px;
+                padding-right: 10px;
+              }
+            }
           }
         }
       }

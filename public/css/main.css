@@ -873,6 +873,14 @@ th {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
 }
+.collapsed .mainmenu_holder .logo {
+  width: 40px;
+  text-align: center;
+}
+.collapsed .mainmenu_holder a {
+  display: none;
+  padding: 0;
+}
 .collapsed .side_menu {
   width: 40px !important;
   margin-right: -100%;
@@ -886,18 +894,29 @@ th {
 .collapsed .side_menu .root {
   position: relative;
 }
-.collapsed .side_menu .root ul {
+.collapsed .side_menu .root > ul {
   display: none;
 }
 .collapsed .side_menu .root > a {
   display: none !important;
 }
+.collapsed .side_menu .root:hover > ul {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 150px;
+  margin-left: 10px;
+}
+.collapsed .side_menu .root:hover > ul li:first-child {
+  margin-left: -10px;
+  padding-right: 10px;
+}
 .collapsed .side_menu .root.active {
   height: 30px !important;
 }
-.collapsed .side_menu .root.active ul {
+.collapsed .side_menu .root.active > ul {
   display: none;
-  margin-left: 10px;
 }
 .collapsed .side_menu .root.active:hover > ul {
   display: block;
@@ -905,6 +924,11 @@ th {
   top: 0;
   left: 100%;
   width: 150px;
+  margin-left: 10px;
+}
+.collapsed .side_menu .root.active:hover > ul li:first-child {
+  margin-left: -10px;
+  padding-right: 10px;
 }
 .collapsed .content_wrapper .content-holder,
 .collapsed .content_wrapper .top-bar {
@@ -1270,18 +1294,15 @@ th {
   width: 100%;
   display: block;
   float: left;
-  margin-top: 10px;
+  margin-top: 41px;
 }
 .content_wrapper .content-holder,
 .content_wrapper .top-bar {
   margin-left: 200px;
 }
 .mainmenu_holder .logo {
-  width: 120px;
+  width: 200px;
   color: #000000;
-}
-.mainmenu_holder .logo a {
-  padding: 0 10px;
 }
 .mainmenu_holder .logo .fa,
 .mainmenu_holder .logo a {
@@ -1292,6 +1313,8 @@ th {
 }
 .mainmenu_holder .logo .fa {
   cursor: pointer;
+  float: right;
+  padding: 0 10px;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -5359,7 +5382,7 @@ table#workflows tr td.edit-status {
 #mainmenu-holder {
   display: block;
   float: none;
-  position: relative;
+  position: fixed;
   left: 0;
   top: 0;
   right: auto;
@@ -5486,10 +5509,6 @@ table#workflows tr td.edit-status {
   font-size: 14px;
   line-height: 30px;
   color: #e7e7e7;
-}
-.side_menu nav .root > ul li:first-child {
-  margin-left: -10px;
-  padding-right: 10px;
 }
 .side_menu nav .root > ul li:hover,
 .side_menu nav .root > ul li.selected {
