@@ -25,7 +25,7 @@
                                 </dd>
                             </dl>
                         </div>
-                        <div class="half-block left">
+                        <div class="half-block right">
                             <dl class="opp-info">
                                 <dt><label>Month</label></dt>
                                 <dd>
@@ -62,12 +62,13 @@
                             </dl>
                         </div>
                         <div class="clearfix"></div>
-                        <br/>
-                        <br/>
+
                         <div class="half-block left">
                             <table class="list">
-                                <caption>Earnings</caption>
                                 <thead>
+                                <tr>
+                                    <th colspan="2" class="forCaption text-left">Earnings</th>
+                                </tr>
                                 <tr>
                                     <td>Type</td>
                                     <td>Amount</td>
@@ -83,10 +84,13 @@
                                 </tbody>
                             </table>
                         </div>
+
                         <div class="half-block right">
                             <table class="list">
-                                <caption>Deductions</caption>
                                 <thead>
+                                <tr>
+                                    <th colspan="2" class="forCaption text-left">Deductions</th>
+                                </tr>
                                 <tr>
                                     <td>Type</td>
                                     <td>Amount</td>
@@ -103,8 +107,9 @@
                             </table>
                         </div>
                         <div class="clearfix"></div>
-                        <div class="half-block left">
-                            <dl class="opp-info">
+                        <div class="half-block left"></div>
+                        <div class="half-block right">
+                            <dl class="opp-info text-right">
                                 <dt><label>Gross Pay</label></dt>
                                 <dd>
                                     <span class="money"><%= currencySplitter(model.grossPay.toFixed(2))%></span>
