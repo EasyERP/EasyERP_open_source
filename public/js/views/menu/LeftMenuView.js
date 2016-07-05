@@ -33,7 +33,7 @@ define([
 
         openRoot: function (e) {
             var self = this;
-            var $activeRoot = self.$el.find('.root.active');
+            var $activeRoot = self.$el.find('.root.opened');
             var $current = $(e.target).closest('.root');
             var isSubMenu = !!$(e.target).closest($current.find('ul')).length;
 
@@ -42,15 +42,15 @@ define([
             }
 
             $activeRoot.find('ul').animate({height: 0}, 200, function () {
-                $activeRoot.removeClass('active');
+                $activeRoot.removeClass('opened');
             });
 
-            if (!$current.hasClass('active')){
+            if (!$current.hasClass('opened')){
                 $activeRoot.find('ul').animate({height: 0}, 200, function () {
-                    $activeRoot.removeClass('active');
+                    $activeRoot.removeClass('opened');
                 });
 
-                $current.addClass('active').find('ul').css({height: 0}).animate({height: $current.find('ul').get(0).scrollHeight}, 200);
+                $current.addClass('opened').find('ul').css({height: 0}).animate({height: $current.find('ul').get(0).scrollHeight}, 200);
             }
         },
 
