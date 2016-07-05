@@ -1,4 +1,4 @@
-process.env.HOST = 'http://localhost:8089/';
+process.env.HOST = 'http://testdemo.easyerp.com/';
 
 process.env.MAIN_DB_HOST = '144.76.56.111';
 process.env.MAIN_DB_NAME = 'mainDB';

@@ -1,5 +1,5 @@
 //process.env.MAIN_DOMAIN = 'testerp.com';
-process.env.HOST = 'http://localhost:8089/';
+process.env.HOST = 'http://erp.thinkmobiles.com/';
 
 process.env.MAIN_DB_HOST = 'localhost';
 process.env.MAIN_DB_NAME = 'mainDB';

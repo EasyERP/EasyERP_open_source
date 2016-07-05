@@ -220,11 +220,9 @@ define([
 
             $backStratch = $thisEl.find('#backstretch');
             $backStratch.backstretch([
-                'images/imgs/front-img-1.jpg',
-                'images/imgs/front-img-2.jpg',
-                'images/imgs/front-img-3.jpg',
-                'images/imgs/front-img-4.jpg',
-                'images/imgs/front-img-5.jpg'
+                'http://dl.dropbox.com/u/515046/www/outside.jpg',
+                'http://dl.dropbox.com/u/515046/www/garfield-interior.jpg',
+                'http://dl.dropbox.com/u/515046/www/cheers.jpg'
             ], {duration: 3000, fade: 750});
 
             return this;
