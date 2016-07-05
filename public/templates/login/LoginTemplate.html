@@ -8,7 +8,9 @@
             <div class="row bsReset">
                 <div class="loginWrapper row bsReset">
                     <h1 id="titleForm" class="loginTitle float-left">Login to your account</h1>
-                    <%var validDb = currentDb ? !!dbs[currentDb] : false;
+                    <%
+                    currentDb = currentDb || 'production';
+                    var validDb = currentDb ? !!dbs[currentDb] : false;
                     var dbNames = Object.keys(dbs);
                     var firstDb = dbNames[0];
                     %>
