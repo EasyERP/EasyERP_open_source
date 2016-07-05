@@ -15,8 +15,7 @@
     <!--<td><%=(application.fire.length) ? application.fire[application.fire.length - 1].date : ''%></td>-->
     <td id='<%=application._id%>' data-sequence='<%=application.sequence%>'>
         <a href="javascript:;" class="stageSelect blue"
-           data-id="<%=(application.workflow) ? application.workflow._id : ''%>"><%=(application.workflow) ?
-            application.workflow.name : 'Undefinded'%></a>
+           data-id="<%=(application.workflow) ? application.workflow._id : ''%>"><%=(application.workflow) ? application.workflow.name : 'Undefinded'%></a>
     </td>
     <td><%=application.jobType%></td>
     <td><%=(application.createdBy&&application.createdBy.date)?( application.createdBy.date +
