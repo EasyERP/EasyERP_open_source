@@ -1303,6 +1303,8 @@ th {
 .mainmenu_holder .logo {
   width: 200px;
   color: #000000;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 .mainmenu_holder .logo .fa,
 .mainmenu_holder .logo a {
@@ -1314,7 +1316,6 @@ th {
 .mainmenu_holder .logo .fa {
   cursor: pointer;
   float: right;
-  padding: 0 10px;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -2595,7 +2596,7 @@ select:not([type="checkbox"]) {
   cursor: pointer;
 }
 a {
-  color: #e7e7e7;
+  color: #000000;
   text-decoration: none;
 }
 a:hover {
@@ -5505,6 +5506,7 @@ table#workflows tr td.edit-status {
   text-align: center;
 }
 .side_menu nav .root > ul li .sub_item {
+  display: block;
   text-decoration: none;
   font-size: 14px;
   line-height: 30px;
