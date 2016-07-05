@@ -1,4 +1,7 @@
-@fontLight: 'Open Sans Light';
+@font-light: 'Open Sans Light';
+@input-placeholder: #a0a9b4;
+@input-border: @input-placeholder;
+
 *{
   box-sizing: border-box;
 }
@@ -11,34 +14,46 @@ h2 {
   }
 }
 
+::-webkit-input-placeholder {
+  color: @input-placeholder;
+}
+:-moz-placeholder {
+  color: @input-placeholder;
+}
+::-moz-placeholder {
+  color: @input-placeholder;
+}
+:-ms-input-placeholder {
+  color: @input-placeholder;
+}
+
+
 .loginWrap {
   margin-top: 100px;
 
   .formActions{
-    line-height: 30px;
+    line-height: 29px;
   }
 }
 
 .forgotWrap {
-  margin-top: 77px;
+  margin-top: 69px;
 }
-
 
 .selectDd {
   position: relative;
   display: inline-block;
-  width: 230px;
-  height: 22px;
+  width: 100%;
   border: 0;
-  color: #666;
-  border-bottom: 2px solid #666;
+  color: @input-placeholder;
+  border-bottom: 1px solid #a0a9b4;
   //padding-right: 15px;
 
   &:after {
     content: '';
     position: absolute;
     right: 5px;
-    top: 11px;
+    top: 16px;
     height: 0;
     width: 0;
     border-top: 4px solid #666;
@@ -49,7 +64,8 @@ h2 {
 
   .selectedDb {
     display: block;
-    height: 22px;
+    font-size: 14px;
+    line-height: 34px;
     cursor: pointer;
   }
 
@@ -58,7 +74,7 @@ h2 {
     opacity: 0;
 
     position: absolute;
-    top: 22px;
+    top: 34px;
     width: 100%;
     background-image: none;
     background-color: #fff;
@@ -95,10 +111,11 @@ h2 {
 .login {
 
   &Title {
+    color: #4e5a64;
     font-size: 30px;
     font-weight: 300;
-    color: #4e5a64;
-    font-family: @fontLight;
+    font-family: @font-light;
+    white-space: nowrap;
 
     &Block {
       margin-top: 20px;
@@ -107,7 +124,6 @@ h2 {
   }
 
   &Container {
-    padding: 0 80px;
     margin: auto 0;
 
     .selectDd {
@@ -116,6 +132,7 @@ h2 {
   }
 
   &Content {
+    padding: 0 80px;
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
@@ -131,13 +148,12 @@ h2 {
     color: #a4aab2;
     font-size: 13px;
   }
-}
 
-@media (max-width: 1365px) {
-  .login {
-    &Container {
-      padding: 0 40px;
-    }
+  &Copyright {
+    margin: 0 0 25px 0;
+    text-align: right;
+    font-size: 13px;
+    color: #a9b5be;
   }
 }
 
@@ -177,6 +193,22 @@ input {
     }
   }
 }
+
+.notRegister {
+  input {
+    &:not([type="checkbox"]) {
+      border-color: #ff9393;
+      &:focus {
+        border-color: #ff9393;
+      }
+    }
+  }
+}
+
+:focus::-webkit-input-placeholder {color:transparent!important;}
+:focus::-moz-placeholder          {color:transparent!important;}
+:focus:-moz-placeholder           {color:transparent!important;}
+:focus:-ms-input-placeholder      {color:transparent!important;}
 
 .btn {
   display: inline-block;
@@ -236,7 +268,7 @@ input {
 }
 
 .formGroup {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 
 .rememberCheck {
@@ -312,6 +344,68 @@ input {
   }
 }
 
+@media (max-width: 768px) {
+  .loginContainer {
+    .loginTitle {
+      margin-bottom: 30px;
+    }
+    .selectDd {
+      float: left;
+      clear: both;
+    }
+    input {
+      &:not([type="checkbox"]) {
+        &.inputField {
+          margin-bottom: 45px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1600px) {
+  .login {
+    &Content {
+      padding: 0 60px;
+    }
+  }
+}
+
+@media (max-width: 1500px) {
+  .login {
+    &Content {
+      padding: 0 40px;
+    }
+    &Title {
+      font-size: 26px;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .loginWrapper {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+    -ms-grid-row-align: flex-end;
+    align-items: flex-end;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1220px) {
+  .loginContent {
+    padding: 0 20px;
+  }
+
+  .loginTitle {
+    font-size: 23px;
+  }
+}
+
 @media (max-width: 992px) {
   .sliderWrap,
   .sliderContainer,
@@ -320,14 +414,24 @@ input {
   }
 }
 
-@media (min-width: 992px) and (max-width: 1220px) {
-  .loginContainer {
-    padding: 0 20px;
+@media (max-width: 768px) {
+  .login {
+    &Wrapper {
+      .selectDd {
+        width: 230px;
+      }
+    }
+    &Wrap {
+      margin-top: 45px;
+    }
+    &Copyright {
+      position: absolute;
+      bottom: 0;
+      margin: 0 0 33px 0;
+      right: 40px;
+    }
   }
-  .selectDd {
-    width: 200px;
-  }
-  .loginTitle {
-    font-size: 25px;
+  .formActions {
+    white-space: nowrap;
   }
 }
