@@ -6,17 +6,19 @@
     <div class="loginContent col m-6 bsReset">
         <div class="loginContainer">
             <div class="row bsReset">
-                <h1 id="titleForm" class="loginTitle float-left">Login to your account</h2>
-                <select id="dbs" class="float-right">
-                    <% for(var dbName in options){%>
-                    <option data-id="<%=dbName%>"
-                    <%if(dbName === 'weTrack') {%>selected="selected"<%}%>><%=dbName%> (<%=options[dbName].url%>)
-                    </option>
-                    <%}%>
-                </select>
+                <div class="loginTitleBlock clearfix">
+                    <h1 id="titleForm" class="loginTitle float-left">Login to your account</h1>
+                    <select id="dbs" class="float-right">
+                        <% for(var dbName in options){%>
+                        <option data-id="<%=dbName%>"
+                        <%if(dbName === 'weTrack') {%>selected="selected"<%}%>><%=dbName%> (<%=options[dbName].url%>)
+                        </option>
+                        <%}%>
+                    </select>
+                </div>
             </div>
             <div class="error hidden">Such user doesn't registered</div>
-            <form id="loginForm" class="" action="javascript:;">
+            <form id="loginForm" class="loginWrap" action="javascript:;">
                 <div class="row">
                     <div class="col s-6">
                         <input type="text" placeholder="Username or Email" class="ulogin inputField" name="ulogin" value=""
@@ -28,30 +30,34 @@
                     </div>
                 </div>
                 <div class="formActions">
-                    <a class="login-button" href="javascript:;">Sign In<i></i></a>
-                    <div class="remeberMe">
-                        <span>Remember Me</span>
-                        <div class="switch">
-                            <input type="checkbox" name="switch" class="switchCheckbox" id="switchElement" checked>
-                            <label class="switchLabel" for="switchElement"></label>
+                    <div class="row">
+                        <div class="col s-4">
+                            <label class="switchLabel rememberCheckWrap" for="switchElement">
+                                <input type="checkbox" name="switch" class="rememberCheck" id="switchElement" checked>
+                                Remember me
+                                <span></span>
+                            </label>
                         </div>
-                        <a id="forgotPass" class="forgotButton" href="javascript:;">forgot password?<i></i></a>
+                        <div class="col s-8 align-right loginForgot">
+                            <a id="forgotPass" class="forgotPass" href="javascript:;">Forgot Password?</a>
+                            <a class="login-button btn green" href="javascript:;">Sign In</a>
+                        </div>
                     </div>
                 </div>
-                <input type="submit" class="right" value="">
+                <input type="submit" class="right hidden" value="">
             </form>
-            <form id="forgotPassword" class="hidden" action="javascript:;">
-                <span class="forgotDescription">Enter your e-mail address below to reset your password.</span>
+            <form id="forgotPassword" class="forgotWrap hidden" action="javascript:;">
+                <p class="forgotDescription">Enter your e-mail address below to reset your password.</p>
 
                 <div class="formGroup">
-                    <input type="text" placeholder="Username or Email" class="ulogin" name="ulogin" value="" autofocus
+                    <input type="text" placeholder="Username or Email" class="ulogin inputBordered" name="ulogin" value="" autofocus
                            maxlength="24"/>
                 </div>
                 <div class="formActions">
-                    <a id="backToLogin" class="forgot-button" href="javascript:;">Back to login</a>
-                    <a class="submitButton" href="javascript:;">Submit</a>
+                    <a id="backToLogin" class="forgot-button btn btnRounded green" href="javascript:;">Back</a>
+                    <a class="submitButton btn green float-right" href="javascript:;">Submit</a>
                 </div>
-                <input type="submit" class="right" value="">
+                <input type="submit" class="right hidden" value="">
             </form>
         </div>
     </div>

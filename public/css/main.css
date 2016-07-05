@@ -12,7 +12,7 @@
   src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'), url("../font/easyERP.woff") format('woff'), url("../font/easyERP.ttf") format('truetype'), url("../font/easyERP.svg#quartzregular") format('svg');
 }
 @font-face {
-  font-family: 'Open Sans';
+  font-family: 'Open Sans Light';
   font-style: normal;
   font-weight: 300;
   src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/Open-Sans-Light.woff) format('woff');
@@ -1689,10 +1689,28 @@ body {
 .sliderContainer {
   height: 100vh;
 }
+* {
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+}
+h2.green {
+  color: #32c5d2;
+}
+.loginWrap {
+  margin-top: 100px;
+}
+.loginWrap .formActions {
+  line-height: 30px;
+}
 .loginTitle {
   font-size: 30px;
   font-weight: 300;
   color: #4e5a64;
+  font-family: 'Open Sans Light';
+}
+.loginTitleBlock {
   margin-top: 20px;
   margin-bottom: 10px;
 }
@@ -1711,6 +1729,10 @@ body {
   flex-direction: column;
   height: 100vh;
 }
+.loginForgot {
+  color: #a4aab2;
+  font-size: 13px;
+}
 @media (max-width: 1365px) {
   .loginContainer {
     padding: 0 40px;
@@ -1727,6 +1749,134 @@ input:not([type="checkbox"]).inputField {
   margin-bottom: 30px;
   outline: 0 !important;
   box-shadow: none !important;
+}
+input:not([type="checkbox"]).inputBordered {
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857;
+  color: #555;
+  display: block;
+  background-color: #fff;
+  border: 1px solid #c2cad8;
+  transition: border-color ease-in-out 0.15s;
+  outline: 0!important;
+}
+input:not([type="checkbox"]).inputBordered:focus {
+  border-color: #93a1bb;
+}
+.btn {
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 32px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 0;
+  outline: 0!important;
+  box-shadow: none!important;
+}
+.btn:hover {
+  transition: all .3s;
+}
+.btn.green {
+  color: #FFF;
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+}
+.btn.green:hover {
+  background-color: #26a1ab;
+  border-color: #2499a3;
+  text-decoration: none;
+}
+.btnRounded {
+  background-color: #fff;
+  color: #000;
+}
+.btnRounded.green {
+  color: #32c5d2;
+  background-color: #fff;
+  border-color: #32c5d2;
+}
+.btnRounded.green:hover {
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+  color: #fff;
+}
+.formGroup {
+  margin-bottom: 15px;
+}
+.rememberCheckWrap {
+  position: relative;
+  display: inline-block;
+  padding-left: 30px;
+  margin-bottom: 15px;
+  line-height: 18px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .3s;
+  color: #a4aab2;
+}
+.rememberCheckWrap input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+.rememberCheckWrap input ~ span:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+.rememberCheckWrap input:checked ~ span:after {
+  display: block;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 9px;
+  border: solid #666;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.rememberCheckWrap > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 19px;
+  width: 19px;
+  border: 1px solid #d9d9d9;
+}
+.forgotPass {
+  margin-right: 1em;
+  color: #a4aab2;
+}
+.forgotPass:hover {
+  color: #337ab7;
+  text-decoration: none;
+}
+.forgotDescription {
+  margin: 22px 0;
+  color: #a0a9b4;
+  font-size: 15px;
+  line-height: 22px;
+}
+@media (max-width: 992px) {
+  .sliderWrap,
+  .sliderContainer,
+  .loginContent {
+    height: 50vh;
+  }
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -5418,6 +5568,25 @@ dl dd span.ui-spinner {
   margin: 5px 1px 4px 1px !important;
 }
 button {
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px;
+  margin-bottom: 0;
+  font-weight: 400;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 32px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 0;
+  outline: 0!important;
+  box-shadow: none!important;
   border: 1px solid #7f7f80;
   margin: 0;
   padding: .4em 1em;
@@ -5428,6 +5597,33 @@ button {
   -webkit-font-smoothing: antialiased;
   outline: none;
   background: #ffffff;
+}
+button:hover {
+  transition: all .3s;
+}
+button.green {
+  color: #FFF;
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+}
+button.green:hover {
+  background-color: #26a1ab;
+  border-color: #2499a3;
+  text-decoration: none;
+}
+buttonRounded {
+  background-color: #fff;
+  color: #000;
+}
+buttonRounded.green {
+  color: #32c5d2;
+  background-color: #fff;
+  border-color: #32c5d2;
+}
+buttonRounded.green:hover {
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+  color: #fff;
 }
 button span,
 button a {
@@ -5445,6 +5641,25 @@ button:hover a {
 }
 button.red,
 a.red {
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px;
+  margin-bottom: 0;
+  font-weight: 400;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 32px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 0;
+  outline: 0!important;
+  box-shadow: none!important;
   border: 1px solid #7f7f80;
   margin: 0;
   padding: .4em 1em;
@@ -5461,6 +5676,39 @@ a.red {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   color: #000000;
   line-height: 20px;
+}
+button.red:hover,
+a.red:hover {
+  transition: all .3s;
+}
+button.red.green,
+a.red.green {
+  color: #FFF;
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+}
+button.red.green:hover,
+a.red.green:hover {
+  background-color: #26a1ab;
+  border-color: #2499a3;
+  text-decoration: none;
+}
+button.redRounded,
+a.redRounded {
+  background-color: #fff;
+  color: #000;
+}
+button.redRounded.green,
+a.redRounded.green {
+  color: #32c5d2;
+  background-color: #fff;
+  border-color: #32c5d2;
+}
+button.redRounded.green:hover,
+a.redRounded.green:hover {
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+  color: #fff;
 }
 button.red span,
 a.red span,
@@ -7715,6 +7963,24 @@ ul.dialog-tabs .withEndContract .endContractReasonList,
 ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px;
+  margin-bottom: 0;
+  font-weight: 400;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 32px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: 0!important;
+  box-shadow: none!important;
   border: 1px solid #7f7f80;
   margin: 0;
   padding: .4em 1em;
@@ -7739,6 +8005,39 @@ ul.dialog-tabs .withEndContract .arrow {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   color: white;
   line-height: 15px;
+}
+ul.dialog-tabs .withEndContract .endContractReasonList:hover,
+ul.dialog-tabs .withEndContract .arrow:hover {
+  transition: all .3s;
+}
+ul.dialog-tabs .withEndContract .endContractReasonList.green,
+ul.dialog-tabs .withEndContract .arrow.green {
+  color: #FFF;
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+}
+ul.dialog-tabs .withEndContract .endContractReasonList.green:hover,
+ul.dialog-tabs .withEndContract .arrow.green:hover {
+  background-color: #26a1ab;
+  border-color: #2499a3;
+  text-decoration: none;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListRounded,
+ul.dialog-tabs .withEndContract .arrowRounded {
+  background-color: #fff;
+  color: #000;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListRounded.green,
+ul.dialog-tabs .withEndContract .arrowRounded.green {
+  color: #32c5d2;
+  background-color: #fff;
+  border-color: #32c5d2;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListRounded.green:hover,
+ul.dialog-tabs .withEndContract .arrowRounded.green:hover {
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+  color: #fff;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList span,
 ul.dialog-tabs .withEndContract .arrow span,
@@ -7852,6 +8151,24 @@ ul.chart-tabs .withEndContract .endContractReasonList,
 ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px;
+  margin-bottom: 0;
+  font-weight: 400;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 32px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: 0!important;
+  box-shadow: none!important;
   border: 1px solid #7f7f80;
   margin: 0;
   padding: .4em 1em;
@@ -7875,6 +8192,39 @@ ul.chart-tabs .withEndContract .arrow {
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   color: white;
+}
+ul.chart-tabs .withEndContract .endContractReasonList:hover,
+ul.chart-tabs .withEndContract .arrow:hover {
+  transition: all .3s;
+}
+ul.chart-tabs .withEndContract .endContractReasonList.green,
+ul.chart-tabs .withEndContract .arrow.green {
+  color: #FFF;
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+}
+ul.chart-tabs .withEndContract .endContractReasonList.green:hover,
+ul.chart-tabs .withEndContract .arrow.green:hover {
+  background-color: #26a1ab;
+  border-color: #2499a3;
+  text-decoration: none;
+}
+ul.chart-tabs .withEndContract .endContractReasonListRounded,
+ul.chart-tabs .withEndContract .arrowRounded {
+  background-color: #fff;
+  color: #000;
+}
+ul.chart-tabs .withEndContract .endContractReasonListRounded.green,
+ul.chart-tabs .withEndContract .arrowRounded.green {
+  color: #32c5d2;
+  background-color: #fff;
+  border-color: #32c5d2;
+}
+ul.chart-tabs .withEndContract .endContractReasonListRounded.green:hover,
+ul.chart-tabs .withEndContract .arrowRounded.green:hover {
+  background-color: #32c5d2;
+  border-color: #32c5d2;
+  color: #fff;
 }
 ul.chart-tabs .withEndContract .endContractReasonList span,
 ul.chart-tabs .withEndContract .arrow span,
