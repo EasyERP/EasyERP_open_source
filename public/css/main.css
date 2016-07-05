@@ -1650,7 +1650,7 @@ th {
   display: none !important;
 }
 .collapsed .side_menu .login_panel .dropdown-button .login_list {
-  top: 20%;
+  top: 15%;
   left: 100%;
   margin-left: 5px;
   width: 150px;
@@ -6359,6 +6359,9 @@ table#workflows tr td.edit-status {
 }
 .side_menu .login_panel .dropdown-button .login_list li:hover {
   background-color: #404d5f;
+}
+.side_menu .login_panel .dropdown-button .login_list.opened {
+  display: block;
 }
 .side_menu .login_panel .dropdown-button .user_name {
   display: block;
