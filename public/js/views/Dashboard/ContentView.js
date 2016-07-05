@@ -762,6 +762,7 @@ define([
             var self = this;
 
             common.getOpportunitiesAgingChart(function (data) {
+                var verticalBarSpacing = 3;
                 var margin;
                 var x;
                 var y;
@@ -769,18 +770,19 @@ define([
                 var yAxis;
                 var xScaleDomain;
                 var baseY;
+                var baseX;
                 var chart;
                 var chart1;
                 var tip;
                 var tip1;
                 var colorMap;
+                var yScaleDomain;
                 var outerWidth;
                 var outerHeight;
                 var innerWidth;
                 var innerHeight;
                 var barsMap;
                 var labelsMap;
-                var verticalBarSpacing = 3;
 
                 labelsMap = {
                     ySum  : 'Opportunities Expected Revenue Sum',
@@ -789,6 +791,15 @@ define([
                 };
 
                 baseY = {
+                    '0-7'   : 0,
+                    '8-15'  : 0,
+                    '16-30' : 0,
+                    '31-60' : 0,
+                    '61-120': 0,
+                    '>120'  : 0
+                };
+
+                baseX = {
                     '0-7'   : 0,
                     '8-15'  : 0,
                     '16-30' : 0,
@@ -813,21 +824,268 @@ define([
                 };
 
                 margin = {
-                    top   : 160,
-                    right : 30,
+                    top   : 20,
+                    right : 50,
                     bottom: 100,
-                    left  : 120
+                    left  : 140
                 };
 
                 xScaleDomain = ['0-7', '8-15', '16-30', '31-60', '61-120', '>120'];
 
-                outerWidth = $('#wrapper').width() - 40;
-                outerHeight = 800;
+                yScaleDomain = ['>120', '61-120', '31-60', '16-30', '8-15', '0-7'];
 
+                outerWidth = $('#wrapper').width() - 40;
+                outerHeight = 600;
                 innerWidth = outerWidth - margin.left - margin.right;
                 innerHeight = outerHeight - margin.top - margin.bottom;
 
-                x = d3.scale.ordinal()
+                $('svg.opportunitieAgingSum').empty();
+
+                x = d3.scale.linear()
+                    .range([0, (innerWidth / 2 - margin.right)])
+                    .domain([0, d3.max(data, function (d) {
+                        return d['0-7_Sum'] + d['8-15_Sum'] + d['16-30_Sum'] + d['31-60_Sum'] + d['61-120_Sum'] + d['>120_Sum'];
+                    })]);
+
+                y = d3.scale.ordinal()
+                    .rangeRoundBands([0, innerHeight])
+                    .domain(yScaleDomain);
+
+                yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient('left')
+                    .tickFormat(function (d) {
+                        return d + ' days';
+                    });
+
+                xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient('bottom')
+                    .tickFormat(function (d) {
+                        return '$' + d / 1000 + 'k';
+                    });
+
+                chart = d3.select('svg.opportunitieAgingSum')
+                    .attr({
+                        'width' : outerWidth / 2,
+                        'height': outerHeight
+                    })
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                chart.append('g')
+                    .attr('class', 'x axis')
+                    .call(yAxis);
+
+                chart.append('g')
+                    .attr('class', 'y axis')
+                    .call(xAxis)
+                    .attr('transform', 'translate(0,' + innerHeight + ')');
+
+                chart.selectAll('line.x')
+                    .data(x.ticks())
+                    .enter()
+                    .append('line')
+                    .attr({
+                        'class': 'x',
+                        'x1': x,
+                        'x2': x,
+                        'y1': y,
+                        'y2': innerHeight,
+                        'stroke': '#ccc'
+                    });
+
+                chart.append('text')
+                    .attr('class', 'y label')
+                    .attr('text-anchor', 'middle')
+                    .attr('x', -innerHeight / 2)
+                    .attr('y', -100)
+                    .attr('transform', 'rotate(-90)')
+                    .text(labelsMap.x);
+
+                chart.append('text')
+                    .attr('class', 'y2 label')
+                    .attr('text-anchor', 'middle')
+                    .attr('x', innerWidth / 4)
+                    .attr('y', innerHeight + 60)
+                    .text(labelsMap.ySum);
+
+                tip = chart.append('text')
+                    .attr({
+                        'class': 'tip',
+                        'font-size': '12',
+                        'text-anchor': 'middle'
+                    });
+
+                data.forEach(function (dataEl) {
+
+                    chart.selectAll('.' + barsMap[dataEl.workflow])
+                        .data(yScaleDomain)
+                        .enter()
+                        .append('rect')
+                        .attr({
+                            'class': barsMap[dataEl.workflow],
+                            'x': function (d) {
+                                baseX[d] += x(dataEl[d + '_Sum']);
+                                return baseX[d] - x(dataEl[d + '_Sum']);
+                            },
+                            'y': function(d){
+                                return y(d) + verticalBarSpacing;
+                            },
+                            'width': function (d) {
+                                var width = x(dataEl[d + '_Sum']);
+
+                                if (width > verticalBarSpacing) {
+                                    return width - verticalBarSpacing;
+                                } else {
+                                    return width;
+                                }
+                            },
+                            'height': y.rangeBand() - 2*verticalBarSpacing,
+                            'fill': colorMap[dataEl.workflow]
+                        })
+                        .on('mouseover', function (d) {
+                            var attrs = this.attributes;
+
+                            d3.select(this)
+                                .style('stroke-width', '3')
+                                .attr('stroke', colorMap.barStroke);
+
+                            tip
+                                .attr('x', + attrs.x.value + attrs.width.value / 2)
+                                .attr('y', + attrs.y.value + attrs.height.value / 2 + 5)
+                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()));
+                        })
+                        .on('mouseout', function (d) {
+                            d3.select(this)
+                                .style('stroke-width', '0');
+
+                            tip.text('');
+                        });
+                });
+
+                $('svg.opportunitieAgingCount').empty();
+
+               x = d3.scale.linear()
+               .range([0, innerWidth / 2 - 1.5 * margin.left])
+               .domain([0, d3.max(data, function (d) {
+               return d['0-7_Count'] + d['8-15_Count'] + d['16-30_Count'] + d['31-60_Count'] + d['61-120_Count'] + d['>120_Count'];
+               })]);
+
+                xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient('bottom')
+                    .tickFormat(d3.format('d'));
+
+                chart1 = d3.select('svg.opportunitieAgingCount')
+                    .attr({
+                        'width' : outerWidth / 2,
+                        'height': outerHeight
+                    })
+                    .append('g')
+                    .attr('transform', 'translate(' + (margin.left) + ',' + margin.top + ')');
+
+                chart1.append('g')
+                    .attr('class', 'x axis')
+                    .call(yAxis);
+
+                chart1.append('g')
+                    .attr('class', 'y axis')
+                    .call(xAxis)
+                    .attr('transform', 'translate(0,' + innerHeight + ')');
+
+                chart1.selectAll('line.x')
+                    .data(x.ticks())
+                    .enter()
+                    .append('line')
+                    .attr({
+                        'class': 'x',
+                        'x1': x,
+                        'x2': x,
+                        'y1': y,
+                        'y2': innerHeight,
+                        'stroke': '#ccc'
+                    });
+
+                chart1.append('text')
+                    .attr('class', 'y label')
+                    .attr('text-anchor', 'middle')
+                    .attr('x', -innerHeight / 2)
+                    .attr('y', -100)
+                    .attr('transform', 'rotate(-90)')
+                    .text(labelsMap.x);
+
+                chart1.append('text')
+                    .attr('class', 'y2 label')
+                    .attr('text-anchor', 'middle')
+                    .attr('x', innerWidth / 4)
+                    .attr('y', innerHeight + 60)
+                    .text(labelsMap.yCount);
+
+                baseX = {
+                    '0-7'   : 0,
+                    '8-15'  : 0,
+                    '16-30' : 0,
+                    '31-60' : 0,
+                    '61-120': 0,
+                    '>120'  : 0
+                };
+
+                tip1 = chart1.append('text')
+                    .attr({
+                        'class': 'tip',
+                        'font-size': '12',
+                        'text-anchor': 'middle'
+                    });
+
+                data.forEach(function (dataEl) {
+
+                    chart1.selectAll('.' + barsMap[dataEl.workflow])
+                        .data(yScaleDomain)
+                        .enter()
+                        .append('rect')
+                        .attr({
+                            'class': barsMap[dataEl.workflow],
+                            'x': function (d) {
+                                baseX[d] += x(dataEl[d + '_Count']);
+                                return baseX[d] - x(dataEl[d + '_Count']);
+                            },
+                            'y': function(d){
+                                return y(d) + verticalBarSpacing;
+                            },
+                            'width': function (d) {
+                                var width = x(dataEl[d + '_Count']);
+
+                                if (width > verticalBarSpacing) {
+                                    return width - verticalBarSpacing;
+                                } else {
+                                    return width;
+                                }
+                            },
+                            'height': y.rangeBand() - 2*verticalBarSpacing,
+                            'fill': colorMap[dataEl.workflow]
+                        })
+                        .on('mouseover', function (d) {
+                            var attrs = this.attributes;
+
+                            d3.select(this)
+                                .style('stroke-width', '3')
+                                .attr('stroke', colorMap.barStroke);
+
+                            tip1
+                                .attr('x', + attrs.x.value + attrs.width.value / 2)
+                                .attr('y', + attrs.y.value + attrs.height.value / 2 + 5)
+                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()));
+                        })
+                        .on('mouseout', function (d) {
+                            d3.select(this)
+                                .style('stroke-width', '0');
+
+                            tip1.text('');
+                        });
+                });
+
+                /*x = d3.scale.ordinal()
                     .rangeRoundBands([0, innerWidth], 0.3)
                     .domain(xScaleDomain);
 
@@ -1045,115 +1303,9 @@ define([
                 chart1.append('text')
                     .attr('class', 'y2 label')
                     .attr('text-anchor', 'middle')
-                    .attr('x', innerWidth / 2)
+                    .attr('x', (innerWidth / 2 - margin.right))
                     .attr('y', innerHeight + 60)
-                    .text(labelsMap.x);
-
-                $('svg.opportunitieAgingSumReverted').empty();
-
-                var yScaleDomain = ['0-7', '8-15', '16-30', '31-60', '61-120', '>120'];
-
-                var x2 = d3.scale.linear()
-                   .range([0, innerWidth/2])
-                   .domain([0, d3.max(data, function (d) {
-                       return d['0-7_Sum'] + d['8-15_Sum'] + d['16-30_Sum'] + d['31-60_Sum'] + d['61-120_Sum'] + d['>120_Sum'];
-                   })]);
-
-                var y2 = d3.scale.ordinal()
-                    .rangeRoundBands([0, innerHeight])
-                    .domain(yScaleDomain);
-
-                var reYaxis = d3.svg.axis()
-                    .scale(y2)
-                    .orient('left')
-                    .tickFormat(function (d) {
-                        return d + ' days';
-                    });
-                var reXaxis = d3.svg.axis()
-                    .scale(x2)
-                    .orient('bottom')
-                    .tickFormat(function (d) {
-                        return '$' + d / 1000 + 'k';
-                    });
-
-                var revertedChart = d3.select('svg.opportunitieAgingSumReverted')
-                    .attr('width', outerWidth/2)
-                    .attr('height', outerHeight)
-                    .append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-                revertedChart.append('g')
-                    .attr({
-                        'class': 'x axis'
-                    })
-                    .call(reYaxis);
-
-                revertedChart.append('g')
-                    .attr('class', 'y axis')
-                    .call(reXaxis)
-                    .attr('transform', 'translate(0,' + innerHeight + ')');
-
-                revertedChart.selectAll('line.x')
-                    .data(x2.ticks())
-                    .enter().append('line')
-                    .attr('class', 'x')
-                    .attr('x1', x2)
-                    .attr('x2', x2)
-                    .attr('y1', y2)
-                    .attr('y2', innerHeight)
-                    .style('stroke', '#ccc');
-
-                var baseX = {
-                    '0-7'   : 0,
-                    '8-15'  : 0,
-                    '16-30' : 0,
-                    '31-60' : 0,
-                    '61-120': 0,
-                    '>120'  : 0
-                };
-
-                data.forEach(function (dataEl) {
-
-                    revertedChart.selectAll('.' + barsMap[dataEl.workflow])
-                        .data(yScaleDomain)
-                        .enter().append('rect')
-                        .attr('class', barsMap[dataEl.workflow])
-                        .attr('x', function (d) {
-                            baseX[d] += x2(dataEl[d + '_Sum']);
-                            return baseX[d];
-                        })
-                        .attr('y', y2)
-                        .attr('width', function (d) {
-                            var width = x2(dataEl[d + '_Sum']);
-
-                            if (width > verticalBarSpacing) {
-                                return width - verticalBarSpacing;
-                            } else {
-                                return width;
-                            }
-
-                        })
-                        .attr('height', y2.rangeBand() - 2*verticalBarSpacing)
-                        .attr('fill', colorMap[dataEl.workflow])
-                        .on('mouseover', function (d) {
-                            var attrs = this.attributes;
-
-                            d3.select(this)
-                                .style('stroke-width', '3')
-                                .attr('stroke', colorMap.barStroke);
-
-                            tip
-                                .attr('x', +attrs.x.value + attrs.width.value / 2)
-                                .attr('y', +attrs.y.value + attrs.height.value / 2 + 5)
-                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()));
-                        })
-                        .on('mouseout', function (d) {
-                            d3.select(this)
-                                .style('stroke-width', '0');
-
-                            tip.text('');
-                        });
-                });
+                    .text(labelsMap.x);*/
             });
 
         },
