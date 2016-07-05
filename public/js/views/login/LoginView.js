@@ -118,6 +118,7 @@ define([
         forgotPassword: function (event) {
             var $thisEl = this.$el;
             var currentDb = $thisEl.find('#dbs :selected').data('id');
+            var $backToLogin = $thisEl.find('#backToLogin');
             var $forgotForm = $thisEl.find('#forgotPassword');
             var $errorContainer = $thisEl.find('.error');
             var login = $forgotForm.find('.ulogin').val() || '';
@@ -144,12 +145,12 @@ define([
             }
 
             $.ajax({
-                url : '/users/login',
+                url : '/users/forgotPassword',
                 type: 'POST',
                 data: data,
 
                 success: function () {
-                    Custom.runApplication(true);
+                    $backToLogin.click();
                 },
 
                 error: function () {
