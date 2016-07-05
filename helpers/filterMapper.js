@@ -37,6 +37,7 @@ var FilterMapper = function () {
                     result.$lte = new Date(endDate);
                 }
 
+
                 break;
             case 'integer':
                 result.$in = _.map(values, function (element) {
@@ -87,7 +88,10 @@ var FilterMapper = function () {
 
             filterType = filterType && filterType !== '' ? filterType : filterConstantsByName.type || 'ObjectId';
 
-            filterResObject[filterBackend] = ConvertType(filterValues, filterType);
+            if (filterName !== 'startDate' || filterName !== 'endDate')  {
+                filterResObject[filterBackend] = ConvertType(filterValues, filterType);
+            }
+
 
         }
 

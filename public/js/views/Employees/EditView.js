@@ -196,7 +196,8 @@ define([
             $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '" ' + 'readonly' + '>');
 
             if (parseInt(trNum, 10) > 0) {
-                minDate = $tr.prev().find('td.date').text();
+
+                minDate = new Date($tr.prev().find('td.date').text());
             }
 
             if ($tr.next()) {
