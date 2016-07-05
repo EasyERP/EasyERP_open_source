@@ -24,12 +24,26 @@ h2 {
 }
 
 
-.celectDb {
-  display: inline-block;
+.selectDb {
+  position: relative;
+  height: 22px;
   border: 0;
+  color: #666;
   border-bottom: 2px solid #666;
   padding-right: 15px;
   cursor: pointer;
+
+  &:after {
+    content: '';
+    position: absolute;
+    right: 5px;
+    top: 11px;
+    height: 0;
+    width: 0;
+    border-top: 4px solid #666;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
 }
 
 
