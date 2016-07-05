@@ -855,7 +855,7 @@ var Employee = function (event, models) {
                                 'createdBy.user'  : '$root.createdBy.user.login',
                                 'editedBy.user'   : '$root.editedBy.user.login',
                                 'editedBy.date'   : '$root.editedBy.date',
-                                'createdBy.date'  : '$root.createdBy.createdBy',
+                                'createdBy.date'  : '$root.createdBy.date',
                                 'department._id'  : '$root.department._id',
                                 'department.name' : '$root.department.name',
                                 name              : '$root.name',
