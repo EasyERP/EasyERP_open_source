@@ -25,16 +25,19 @@ var Campaign = dbObject.model("campaign", CampaignSchema);
 
 var campaigns = [
     {
-        _id : 'ThinkMobiles',
-        name: 'ThinkMobiles'
+        _id     : 'ThinkMobiles',
+        name    : 'ThinkMobiles',
+        sequence: 0
     },
     {
-        _id : 'EasyERP',
-        name: 'EasyERP'
+        _id     : 'EasyERP',
+        name    : 'EasyERP',
+        sequence: 1
     },
     {
-        _id : 'Vike',
-        name: 'Vike'
+        _id     : 'Vike',
+        name    : 'Vike',
+        sequence: 2
     }
 ];
 Campaign.collection.drop();
