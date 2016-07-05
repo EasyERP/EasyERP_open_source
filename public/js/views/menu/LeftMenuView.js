@@ -6,9 +6,7 @@ define([
 ], function (Backbone, _, $, LeftMenuTemplate) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
-        tagName: 'nav',
-        className: 'menu',
-        el: '#submenu-holder nav',
+        el: '#submenu-holder',
         currentSection: null,
         selectedId: null,
 
@@ -28,7 +26,12 @@ define([
         },
 
         events: {
-            'click .root': 'openRoot'
+            'click .root': 'openRoot',
+            'click #loginPanel': 'openLogin'
+        },
+
+        openLogin: function(){
+
         },
 
         openRoot: function (e) {
@@ -68,7 +71,7 @@ define([
         render: function () {
             var $el = this.$el;
 
-            $el.html(_.template(LeftMenuTemplate)({
+            $el.find('nav').html(_.template(LeftMenuTemplate)({
                 menuList: this.collection.toJSON(),
                 currentRoot: this.currentRoot,
                 currentModule: this.currentModule

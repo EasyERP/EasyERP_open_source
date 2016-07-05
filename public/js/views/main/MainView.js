@@ -27,6 +27,7 @@ define([
              $('body').toggleClass('collapsed');
         },
 
+
         createMenuViews: function () {
             var modules = this.collection.toJSON();
 
