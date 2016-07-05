@@ -37,13 +37,20 @@
     </div>
     <div class="bottom">
         <div class="half-block left">
+            <div class="left"><label>Project Type: </label>&nbsp;</div>
+            <div class="forProjectsTypes">
+                    <a id="projectTypeDD" class="current-selected"
+                       data-id="<%=project.projecttype?project.projecttype:''%>"
+                       href="javascript:;"><%=project.projecttype? project.projecttype:'Select'%></a>
+            </div>
+
             <p class="inner">
-                <a id="<%=project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%>Tasks</a>
+                <a id="<%= project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%>Tasks</a>
             </p>
 
             <div class="inner">
                 <div class="left"><label>Status: </label>&nbsp;</div>
-                <div class="left">
+                <div class="left forStage">
                     <a href="javascript:;"
                        class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(' ','') === 'closed' ? 'projectClosed' : project.workflow.name.toLowerCase().replace(' ','') ) : '' %>">
                         <%=(project.workflow) ? project.workflow.name : ''%>

@@ -118,7 +118,6 @@ define([
             'keydown input.editing '                                                               : 'keyDown',
             click                                                                                  : 'hideSelect',
             keydown                                                                                : 'keydownHandler',
-            'click a.quotation'                                                                    : 'viewQuotation',
             'click a.invoice'                                                                      : 'viewInvoice',
             'click a.proforma'                                                                     : 'viewProforma',
             'click .report'                                                                        : 'showReport'
@@ -1480,7 +1479,7 @@ define([
             App.startPreload();
 
             notesEl = new NoteView({
-                model: this.formModel,
+                model      : this.formModel,
                 contentType: self.contentType
             }).render().el;
 
