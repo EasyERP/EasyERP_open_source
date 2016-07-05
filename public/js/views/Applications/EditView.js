@@ -843,7 +843,7 @@
                 this.setEditable($element);
 
 
-                if (!this.changedModels && !this.changedModels[modelId]) {
+                if (modelId && !this.changedModels[modelId]) {
                     if (!model.id) {
                         this.changedModels[modelId] = model.attributes;
                     } else {
@@ -855,7 +855,7 @@
                 $element.attr('data-id', valueId);
                 datacontent = $element.attr('data-content');
 
-                if (!this.changedModels) {
+                if (modelId && this.changedModels) {
                     changedAttr = this.changedModels[modelId];
                     changedAttr[datacontent] = valueId;
                 }

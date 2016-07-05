@@ -533,7 +533,7 @@ define([
             relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
             coach = $.trim($thisEl.find('#coachDd').attr('data-id')) || null;
             whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
-            dateBirthSt = $.trim(self.$el.find('#dateBirth').val());
+            dateBirthSt = helpers.setTimeToDate($.trim(self.$el.find('#dateBirth').val()));
             $jobTable = $thisEl.find('#hireFireTable');
             marital = $thisEl.find('#maritalDd').attr('data-id') || null;
             nationality = $thisEl.find('#nationality').attr('data-id');
