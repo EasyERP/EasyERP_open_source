@@ -1278,13 +1278,14 @@ th {
 }
 .mainmenu_holder .logo {
   width: 120px;
+  color: #000000;
 }
 .mainmenu_holder .logo a {
   padding: 0 10px;
 }
 .mainmenu_holder .logo .fa,
 .mainmenu_holder .logo a {
-  color: #000000;
+  color: inherit;
   text-decoration: none;
   font-size: 20px;
   line-height: 30px;
@@ -2296,13 +2297,13 @@ input::-ms-clear {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #000000 !important;
+  color: #e7e7e7 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #000000 !important;
+  color: #e7e7e7 !important;
 }
 .addUserDialog,
 .addGroupDialog {
@@ -2571,7 +2572,7 @@ select:not([type="checkbox"]) {
   cursor: pointer;
 }
 a {
-  color: #000000;
+  color: #e7e7e7;
   text-decoration: none;
 }
 a:hover {
@@ -3595,7 +3596,7 @@ dl dd span.ui-spinner {
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
-  color: #000000;
+  color: #e7e7e7;
 }
 #details-dialog {
   display: none;
@@ -4018,13 +4019,13 @@ dl dd span.ui-spinner {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #000000 !important;
+  color: #e7e7e7 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #000000 !important;
+  color: #e7e7e7 !important;
 }
 .noteWrapper .addNote.active .buttons input {
   width: auto;
@@ -4039,7 +4040,7 @@ dl dd span.ui-spinner {
 }
 .noteWrapper .addNote.active label {
   display: block;
-  color: #000000;
+  color: #e7e7e7;
 }
 .noteWrapper .addNote.active textarea {
   height: 60px;
@@ -4290,7 +4291,7 @@ dl dd span.ui-spinner {
   line-height: 20px;
 }
 .customer-info dt {
-  color: #000000;
+  color: #e7e7e7;
 }
 .project-edit-info {
   clear: both;
@@ -5484,6 +5485,7 @@ table#workflows tr td.edit-status {
   text-decoration: none;
   font-size: 14px;
   line-height: 30px;
+  color: #e7e7e7;
 }
 .side_menu nav .root > ul li:first-child {
   margin-left: -10px;
@@ -6961,13 +6963,13 @@ ul.dialog-tabs li.right button {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #000000 !important;
+  color: #e7e7e7 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #000000 !important;
+  color: #e7e7e7 !important;
 }
 .form-holder form label {
   font-weight: normal;
@@ -8816,7 +8818,7 @@ textarea#editInput {
   height: 25px;
   line-height: 25px;
   display: block;
-  color: #000000;
+  color: #e7e7e7;
 }
 .grid tr td {
   border-top: 1px solid #7f7f80;
