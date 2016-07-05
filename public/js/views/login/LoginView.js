@@ -146,7 +146,10 @@ define([
 
                 error: function () {
                     $loginForm.addClass('notRegister');
-                    $errorContainer.text("Wrong Password or such user doesn't registered");
+                    App.render({
+                        type   : 'error',
+                        message: 'Wrong Password or such user doesn\'t registered'
+                    });
                 }
             });
         },
