@@ -301,7 +301,7 @@ var User = function (event, models) {
                     tracker.track({
                         name       : 'production:login:error',
                         status     : 301,
-                        registrType: 'checkIt',
+                        registrType: process.env.SERVER_TYPE,
                         ip         : ip,
                         country    : (geo) ? geo.country : '',
                         city       : (geo) ? geo.city : '',
@@ -341,7 +341,7 @@ var User = function (event, models) {
                 tracker.track({
                     name       : 'production:login:success',
                     status     : 301,
-                    registrType: 'checkIt',
+                    registrType: process.env.SERVER_TYPE,
                     ip         : ip,
                     country    : (geo) ? geo.country : '',
                     city       : (geo) ? geo.city : '',
