@@ -156,7 +156,7 @@ var Module = function (models, event) {
         }
 
         function fetchFirstWorkflow(callback) {
-            if (forSales === 'true') {
+            if (forSales) {
                 request = {
                     query: {
                         wId         : 'Sales Invoice',

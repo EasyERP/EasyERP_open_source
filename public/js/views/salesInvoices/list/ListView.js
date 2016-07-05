@@ -40,6 +40,7 @@ define([
             name : 'forSales',
             value: {
                 key  : 'forSales',
+                type : 'boolean',
                 value: [true]
             }
         },
@@ -55,7 +56,7 @@ define([
             this.parrentContentId = options.collection.parrentContentId;
             this.sort = options.sort;
             this.filter = options.filter ? options.filter : {};
-            this.filter.forSales = {key: 'forSales', value: [true]};
+            this.filter.forSales = {key: 'forSales', value: [true], type: 'boolean'};
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
