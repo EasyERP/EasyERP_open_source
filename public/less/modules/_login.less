@@ -353,14 +353,6 @@ input {
   }
 }
 
-@media (max-width: 992px) {
-  .sliderWrap,
-  .sliderContainer,
-  .loginContent {
-    height: 50vh;
-  }
-}
-
 @media (max-width: 1600px) {
   .login {
     &Content {
@@ -380,14 +372,42 @@ input {
   }
 }
 
+@media (min-width: 992px) {
+  .loginWrapper {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+    -ms-grid-row-align: flex-end;
+    align-items: flex-end;
+  }
+}
+
 @media (min-width: 992px) and (max-width: 1220px) {
   .loginContent {
     padding: 0 20px;
   }
+
   .loginTitle {
-    font-size: 24px;
+    font-size: 23px;
   }
-  .selectDd {
-    width: 200px;
+}
+
+@media (max-width: 992px) {
+  .sliderWrap,
+  .sliderContainer,
+  .loginContent {
+    height: 50vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .loginWrapper {
+    .selectDd {
+      width: 230px;
+    }
   }
 }
