@@ -25,14 +25,21 @@ module.exports = function () {
     }
 
     this.forgotPassword = function (options, cb) {
-        var templateOptions = {
-            password: options.password,
-            email   : options.email,
-            url     : process.env.HOST + '#login'
+        var pass = options.password;
+        var dbId = options.dateBase;
+        var email = options.email;
+        var templateOptions;
+        var mailOptions;
+
+        templateOptions = {
+            password: pass,
+            email   : email,
+            url     : process.env.HOST + '#login?password=' + pass + '&dbId=' + dbId + '&email=' + email
         };
-        var mailOptions = {
+
+        mailOptions = {
             from                : 'easyerp <no-replay@easyerp.com>',
-            to                  : templateOptions.email,
+            to                  : email,
             subject             : 'Change password',
             generateTextFromHTML: true,
             html                : _.template(fs.readFileSync('public/templates/mailer/forgotPassword.html', encoding = 'utf8'), templateOptions)

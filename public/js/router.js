@@ -64,7 +64,7 @@ define([
 
         routes: {
             home                                                                                            : 'any',
-            login                                                                                           : 'login',
+            'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
@@ -106,12 +106,13 @@ define([
                             App.filtersObject = {};
                         }
                         App.filtersObject.savedFilters = response.savedFilters;
-                    } /*else {
-                        App.render({
-                            type   : 'error',
-                            message: 'can\'t fetch currentUser'
-                        });
-                    }*/
+                    }
+                    /*else {
+                                           App.render({
+                                               type   : 'error',
+                                               message: 'can\'t fetch currentUser'
+                                           });
+                                       }*/
                 });
             }
         },
@@ -1334,17 +1335,24 @@ define([
             this.changeWrapperView(this.mainView);
         },
 
-        login: function () {
-            var url = "/getDBS";
+        login: function (password, dbId, email) {
+            var url = '/getDBS';
             var self = this;
 
+            dbId = dbId || '';
+            
             this.mainView = null;
 
             $.ajax({
                 url    : url,
-                type   : "GET",
+                type   : 'GET',
                 success: function (response) {
-                    self.changeWrapperView(new loginView({dbs: response.dbsNames}));
+                    self.changeWrapperView(new loginView({
+                        dbs      : response.dbsNames,
+                        currentDb: dbId,
+                        password : password,
+                        login    : email
+                    }));
                 },
                 error  : function () {
                     self.changeWrapperView(new loginView());
