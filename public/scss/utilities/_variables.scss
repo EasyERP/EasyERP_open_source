@@ -66,3 +66,11 @@ $vars : (
   @warn "Unknown `#{$type}` in #{$var}.";
   @return null;
 }
+
+// flexgrid variables
+
+
+$global-width: rem-calc(1200);
+$grid-row-width: $global-width;
+$grid-column-count: 12;
+$grid-column-gutter: 30px;
