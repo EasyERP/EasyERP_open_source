@@ -1,6 +1,6 @@
 <ul>
   <% _.forEach(menuList, function(parent, index){%>
-  <li class="root<%=(parent.href===currentRoot)?' active':''%>">
+  <li class="root<%=(parent.href===currentRoot)?' active opened':''%>">
 	  <!--<i class="fa fa-credit-card" aria-hidden="true"></i>-->
 	  <i class="fa icon-<%=parent.href%>"></i>
 	  <a href="javascript:;"><%=parent.mname%></a>
