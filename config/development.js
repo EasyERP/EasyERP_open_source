@@ -1,5 +1,5 @@
 process.env.HOST = 'http://testdemo.easyerp.com/';
-
+process.env.TRACKER_HOST = 'http://projects.thinkmobiles.com:8091';
 process.env.MAIN_DB_HOST = '144.76.56.111';
 process.env.MAIN_DB_NAME = 'mainDB';
 process.env.DB_PORT = 28017;
