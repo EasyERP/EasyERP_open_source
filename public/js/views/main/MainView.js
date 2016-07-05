@@ -20,23 +20,11 @@ define([
         },
 
         events: {
-            'click #loginPanel': 'showSelect',
-            click              : 'hideProp',
             'click .sidebar_toggler' : 'expandCollapse'
         },
 
         expandCollapse: function(){
              $('body').toggleClass('collapsed');
-        },
-
-        hideProp: function (e) {
-            var select;
-
-            if ($(e.target).closest('#loginPanel').length === 0) {
-                select = this.$el.find('#loginSelect');
-                select.hide();
-                select.prop('hidden', true);
-            }
         },
 
         createMenuViews: function () {
@@ -88,18 +76,6 @@ define([
                     }
                 }
             this.leftMenu.selectMenuItem(rootIndex, childIndex);
-        },
-
-        showSelect: function (e) {
-            var select = this.$el.find('#loginSelect');
-
-            if (select.prop('hidden')) {
-                select.show();
-                select.prop('hidden', false);
-            } else {
-                select.hide();
-                select.prop('hidden', true);
-            }
         },
 
         render: function () {
