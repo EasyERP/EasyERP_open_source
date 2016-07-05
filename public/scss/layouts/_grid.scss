@@ -24,12 +24,16 @@
   @media (min-width: $large-screen) {
     max-width: $large-container;
   }
+
+  @media (min-width: $xlarge-screen) {
+    max-width: $xlarge-container;
+  }
 }
 
 .row {
-  @include rem(margin-left, ($gutter-width / -2));
-  @include rem(margin-right, ($gutter-width / -2));
   @extend %clearfix;
+  margin-left: ($gutter-width / -2);
+  margin-right: ($gutter-width / -2);
 }
 
 .col {
@@ -38,29 +42,29 @@
   min-height: 1px;
   position: relative;
   box-sizing: border-box;
-  @include rem(padding-left, ($gutter-width / 2));
-  @include rem(padding-right, ($gutter-width / 2));
+  padding-left: ($gutter-width / 2);
+  padding-right: ($gutter-width / 2);
 }
 
 @media (max-width: $small-screen-down) {
   .container {
-    @include rem(padding-left, ($gutter-width / 2.5));
-    @include rem(padding-right, ($gutter-width / 2.5));
+    padding-left: ($gutter-width / 2.5);
+    padding-right: ($gutter-width / 2.5);
 
     &-full {
-      @include rem(padding-left, ($gutter-width / 2.5));
-      @include rem(padding-right, ($gutter-width / 2.5));
+      padding-left: ($gutter-width / 2.5);
+      padding-right: ($gutter-width / 2.5);
     }
   }
 
   .row {
-    @include rem(margin-left, ($gutter-width / -2.5));
-    @include rem(margin-right, ($gutter-width / -2.5));
+    margin-left: ($gutter-width / -2.5);
+    margin-right: ($gutter-width / -2.5);
   }
 
   .col {
-    @include rem(padding-left, ($gutter-width / 2.5));
-    @include rem(padding-right, ($gutter-width / 2.5));
+    padding-left: ($gutter-width / 2.5);
+    padding-right: ($gutter-width / 2.5);
   }
 }
 
