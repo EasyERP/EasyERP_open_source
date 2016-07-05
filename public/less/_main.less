@@ -3313,11 +3313,17 @@ button.red, a.red {
 }
 
 #loginPanel {
-  .position(absolute, auto, 0, 0, auto);
+  .position(absolute, 0, auto, auto, auto);
+
 
   .dropdown-button {
     text-indent: 5px;
     cursor: pointer;
+    padding: 0 10px;
+    box-sizing: border-box;
+    width: 200px;
+    float: left;
+    height: auto;
     #loginSelect {
       display: none;
       position: relative;
@@ -3334,10 +3340,7 @@ button.red, a.red {
       }
     }
 
-    width: 200px;
-    float: left;
-    height: auto;
-    padding: 0;
+
 
     img {
       float: left;
