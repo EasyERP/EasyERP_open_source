@@ -593,6 +593,8 @@
                                 <th>Manager</th>
                                 <th>Job Type</th>
                                 <th>Schedule</th>
+                                <th>Contract</th>
+                                <th>Scheduled Pay</th>
                                 <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
                                 <th>Salary</th>
                                 <% } %>
@@ -653,14 +655,25 @@
                                         <%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : "Select"%>
                                     </a>
                                 </td>
+                                <td>
+                                    <a id="payrollStructureTypeDd" class="current-selected" data-content="payrollStructureType"
+                                       data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>"
+                                       href="javascript:;">
+                                        <%=transfer.payrollStructureType ? transfer.payrollStructureType.name : "Select"%>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a id="scheduledPayDd" class="current-selected" data-content="scheduledPay"
+                                       data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>"
+                                       href="javascript:;">
+                                        <%=transfer.scheduledPay ? transfer.scheduledPay.name : "Select"%>
+                                    </a>
+                                </td>
                                 <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
                                 <td class="editable dollar"  data-content="salary" data-id="salary"><%= currencySplitter(transfer.salary.toFixed()) %></td>
                                 <% } %>
                                 <td class="editable" class="statusInfo" data-content="info"
                                     data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>
-
-
-
                                 </td>
                             </tr>
 

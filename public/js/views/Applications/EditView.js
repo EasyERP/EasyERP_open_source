@@ -1,4 +1,4 @@
-﻿﻿define([
+﻿define([
     'Backbone',
     'jQuery',
     'Underscore',
@@ -16,7 +16,23 @@
     'dataService',
     'helpers',
     'helpers/keyCodeHelper'
-], function (Backbone, $, _, EditTemplate, SelectView, AttachView, ParentView, TransferModel, EditCollection, common, populate, custom, moment, CONSTANTS, dataService, helpers, keyCodes) {
+], function (Backbone,
+             $,
+             _,
+             EditTemplate,
+             SelectView,
+             AttachView,
+             ParentView,
+             TransferModel,
+             EditCollection,
+             common,
+             populate,
+             custom,
+             moment,
+             CONSTANTS,
+             dataService,
+             helpers,
+             keyCodes) {
     'use strict';
     var EditView = ParentView.extend({
         el            : '#content-holder',
@@ -888,7 +904,7 @@
                         $element.text(manager);
                         $element.attr('data-id', managerId);
                     }
-                    if (!this.changedModels) {
+                    if (modelId && this.changedModels) {
                         changedAttr.transfered = true;
                     }
                 }
@@ -944,6 +960,8 @@
 
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);
+            populate.get('#payrollStructureTypeDd', '/payrollStructureTypes/forDd', {}, 'name', this, true);
+            populate.get('#scheduledPayDd', '/scheduledPay/forDd', {}, 'name', this, true);
             populate.get('#departmentManagers', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
             populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this);
             populate.get('#jobTypeDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, '_id', this);

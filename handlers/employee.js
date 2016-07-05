@@ -640,7 +640,7 @@ var Employee = function (event, models) {
                     manager             : 1,
                     date                : 1,
                     status              : 1,
-                    //isDeveloper         : 1,
+                    // isDeveloper         : 1,
                     jobType             : 1,
                     info                : 1,
                     employee            : 1,
@@ -655,7 +655,7 @@ var Employee = function (event, models) {
                     manager             : 1,
                     date                : 1,
                     status              : 1,
-                    //isDeveloper         : 1,
+                    // isDeveloper         : 1,
                     jobType             : 1,
                     info                : 1,
                     employee            : 1,
@@ -697,6 +697,20 @@ var Employee = function (event, models) {
                         as          : 'manager'
                     }
                 }, {
+                    $lookup: {
+                        from        : 'scheduledPays',
+                        localField  : 'scheduledPay',
+                        foreignField: '_id',
+                        as          : 'scheduledPay'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'payrollStructureTypes',
+                        localField  : 'payrollStructureType',
+                        foreignField: '_id',
+                        as          : 'payrollStructureType'
+                    }
+                }, {
                     $project: {
                         department          : {$arrayElemAt: ['$department', 0]},
                         jobPosition         : {$arrayElemAt: ['$jobPosition', 0]},
@@ -704,33 +718,35 @@ var Employee = function (event, models) {
                         manager             : {$arrayElemAt: ['$manager', 0]},
                         date                : 1,
                         status              : 1,
-                        //isDeveloper         : 1,
+                        // isDeveloper         : 1,
                         jobType             : 1,
                         salary              : 1,
                         info                : 1,
                         employee            : 1,
-                        scheduledPay        : 1,
-                        payrollStructureType: 1
+                        scheduledPay        : {$arrayElemAt: ['$scheduledPay', 0]},
+                        payrollStructureType: {$arrayElemAt: ['$payrollStructureType', 0]}
                     }
                 }, {
                     $project: {
-                        'department._id'      : '$department._id',
-                        'department.name'     : '$department.name',
-                        'jobPosition._id'     : '$jobPosition._id',
-                        'jobPosition.name'    : '$jobPosition.name',
-                        'weeklyScheduler._id' : '$weeklyScheduler._id',
-                        'weeklyScheduler.name': '$weeklyScheduler.name',
-                        'manager._id'         : '$manager._id',
-                        'manager.name'        : '$manager.name',
-                        date                  : 1,
-                        status                : 1,
-                        //isDeveloper           : 1,
-                        jobType               : 1,
-                        salary                : 1,
-                        info                  : 1,
-                        employee              : 1,
-                        scheduledPay          : 1,
-                        payrollStructureType  : 1
+                        'department._id'           : '$department._id',
+                        'department.name'          : '$department.name',
+                        'jobPosition._id'          : '$jobPosition._id',
+                        'jobPosition.name'         : '$jobPosition.name',
+                        'weeklyScheduler._id'      : '$weeklyScheduler._id',
+                        'weeklyScheduler.name'     : '$weeklyScheduler.name',
+                        'manager._id'              : '$manager._id',
+                        'manager.name'             : '$manager.name',
+                        date                       : 1,
+                        status                     : 1,
+                        // isDeveloper           : 1,
+                        jobType                    : 1,
+                        salary                     : 1,
+                        info                       : 1,
+                        employee                   : 1,
+                        'scheduledPay._id'         : '$scheduledPay._id',
+                        'scheduledPay.name'        : '$scheduledPay.name',
+                        'payrollStructureType._id' : '$payrollStructureType._id',
+                        'payrollStructureType.name': '$payrollStructureType.name'
                     }
                 }, {
                     $project: projectSalary
@@ -1222,17 +1238,17 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-               /* if (data.transfer) {
-                    data.transfer = data.transfer.map(function (tr) {
+                /* if (data.transfer) {
+                 data.transfer = data.transfer.map(function (tr) {
 
-                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                            tr.isDeveloper = false;
-                        } else {
-                            tr.isDeveloper = true;
-                        }
-                        return tr;
-                    });
-                }*/
+                 if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                 tr.isDeveloper = false;
+                 } else {
+                 tr.isDeveloper = true;
+                 }
+                 return tr;
+                 });
+                 }*/
 
                 Model.findById(_id, query, {new: true}, function (err, emp) {
                     if (err) {
