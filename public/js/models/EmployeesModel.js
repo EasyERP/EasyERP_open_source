@@ -150,7 +150,8 @@
 
             dateBirth: null,
             hire     : [],
-            fire     : []
+            fire     : [],
+            notes    : []
         },
 
         urlRoot: function () {
