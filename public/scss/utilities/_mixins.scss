@@ -34,7 +34,7 @@ $base-font-size: 16;
   @if $px == $rem {
     #{$property}: $px;
   } @else {
-    #{$property}: $px;
+    //#{$property}: $px;
     #{$property}: $rem;
   }
 }

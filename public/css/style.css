@@ -2,8 +2,8 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 0.9375em;
-  padding-right: 0.9375em; }
+  padding-left: 0.75rem;
+  padding-right: 0.75rem; }
 
 .clearfix:before, .container:before, .container-full:before, .row:before, .clearfix:after, .container:after, .container-full:after, .row:after {
   content: " ";
@@ -11,7 +11,6 @@
 .clearfix:after, .container:after, .container-full:after, .row:after {
   clear: both; }
 
-/*! normalize.css v4.2.0 | MIT License | github.com/necolas/normalize.css */
 html {
   font-family: sans-serif;
   line-height: 1.15;
@@ -197,23 +196,196 @@ textarea {
   -webkit-appearance: button;
   font: inherit; }
 
+@font-face {
+  font-family: "OpenSans Light";
+  src: url("../fonts/opensans/opensans-light.eot");
+  src: url("../fonts/opensans/opensans-light.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-light.woff") format("woff"), url("../fonts/opensans/opensans-light.ttf") format("truetype"), url("../fonts/opensans/opensans-light.svg#open_sanslight") format("svg");
+  font-weight: 300; }
+@font-face {
+  font-family: "OpenSans Regular";
+  src: url("../fonts/opensans/opensans-regular.eot");
+  src: url("../fonts/opensans/opensans-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-regular.woff") format("woff"), url("../fonts/opensans/opensans-regular.ttf") format("truetype"), url("../fonts/opensans/opensans-regular.svg#open_sansregular") format("svg");
+  font-weight: 400; }
+@font-face {
+  font-family: "OpenSans Bold";
+  src: url("../fonts/opensans/opensans-bold.eot");
+  src: url("../fonts/opensans/opensans-bold.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-bold.woff") format("woff"), url("../fonts/opensans/opensans-bold.ttf") format("truetype"), url("../fonts/opensans/opensans-bold.svg#open_sansbold") format("svg");
+  font-weight: 700; }
 *:before, *:after {
   box-sizing: border-box; }
 
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%; }
+
+body, h1, h2, h3, h4, h5, h6 {
+  font-size-adjust: 0.5; }
+
+body {
+  font-family: "OpenSans Regular", sans-serif; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "OpenSans Bold", sans-serif; }
+
+body {
+  font-size: 1rem;
+  line-height: 1.25; }
+  @media (min-width: 544px) {
+    body {
+      font-size: 1rem;
+      line-height: 1.375; } }
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.25;
+  margin-top: 0.9375em;
+  margin-bottom: 0.3125em; }
+  @media (min-width: 544px) {
+    h1 {
+      font-size: 2.5rem;
+      line-height: 1.125; } }
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 3rem;
+      line-height: 1.05; } }
+  @media (min-width: 544px) {
+    h1 {
+      margin-top: 0.825em;
+      margin-bottom: 0.275em; } }
+  @media (min-width: 768px) {
+    h1 {
+      margin-top: 0.6875em;
+      margin-bottom: 0.22917em; } }
+
+h2 {
+  font-size: 1.625rem;
+  line-height: 1.15385;
+  margin-top: 1.15385em;
+  margin-bottom: 0.38462em; }
+  @media (min-width: 544px) {
+    h2 {
+      font-size: 2rem;
+      line-height: 1.25; } }
+  @media (min-width: 768px) {
+    h2 {
+      font-size: 2.25rem; } }
+  @media (min-width: 544px) {
+    h2 {
+      margin-top: 1.03125em;
+      margin-bottom: 0.34375em; } }
+
+h3 {
+  font-size: 1.375rem;
+  line-height: 1.13636;
+  margin-top: 1.36364em;
+  margin-bottom: 0.45455em; }
+  @media (min-width: 544px) {
+    h3 {
+      font-size: 1.5rem;
+      line-height: 1.25; } }
+  @media (min-width: 768px) {
+    h3 {
+      font-size: 1.75rem; } }
+  @media (min-width: 544px) {
+    h3 {
+      margin-top: 1.375em;
+      margin-bottom: 0.45833em; } }
+
+h4 {
+  font-size: 1.125rem;
+  line-height: 1.11111;
+  margin-top: 1.66667em;
+  margin-bottom: 0.55556em; }
+  @media (min-width: 544px) {
+    h4 {
+      font-size: 1.125rem;
+      line-height: 1.22222; } }
+  @media (min-width: 544px) {
+    h4 {
+      margin-top: 1.83333em;
+      margin-bottom: 0.61111em; } }
+
+h5 {
+  font-size: 1rem;
+  line-height: 1.25;
+  margin-top: 1.875em;
+  margin-bottom: 0.625em; }
+  @media (min-width: 544px) {
+    h5 {
+      font-size: 1rem;
+      line-height: 1.375; } }
+  @media (min-width: 544px) {
+    h5 {
+      margin-top: 2.0625em;
+      margin-bottom: 0.6875em; } }
+
+h6 {
+  font-size: 0.875rem;
+  line-height: 1.42857;
+  margin-top: 2.14286em;
+  margin-bottom: 0.71429em; }
+  @media (min-width: 544px) {
+    h6 {
+      font-size: 0.875rem;
+      line-height: 1.57143; } }
+  @media (min-width: 544px) {
+    h6 {
+      margin-top: 2.35714em;
+      margin-bottom: 0.78571em; } }
+
+blockquote, q {
+  font-size: 1.25rem;
+  line-height: 1.25; }
+  @media (min-width: 544px) {
+    blockquote, q {
+      font-size: 1.5rem;
+      line-height: 1.45833; } }
+
+@media print {
+  body {
+    font-size: 12pt; }
+
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.25; }
+
+  h1 {
+    font-size: 36pt; }
+
+  h2 {
+    font-size: 24pt; }
+
+  h3 {
+    font-size: 18pt; }
+
+  h4 {
+    font-size: 14pt; }
+
+  h5 {
+    font-size: 12pt; }
+
+  h6 {
+    font-size: 10.5pt; }
+
+  blockquote, q {
+    font-size: 24pt;
+    line-height: 1.4583; } }
 @media (min-width: 544px) {
   .container {
-    max-width: 820px; } }
+    max-width: 576px; } }
 @media (min-width: 768px) {
   .container {
-    max-width: 960px; } }
+    max-width: 720px; } }
 @media (min-width: 992px) {
   .container {
-    max-width: 1200px; } }
+    max-width: 940px; } }
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px; } }
 
 .row {
-  margin-left: -15px;
   margin-left: -0.9375rem;
-  margin-right: -15px;
   margin-right: -0.9375rem; }
 
 .col {
@@ -222,33 +394,23 @@ textarea {
   min-height: 1px;
   position: relative;
   box-sizing: border-box;
-  padding-left: 15px;
   padding-left: 0.9375rem;
-  padding-right: 15px;
   padding-right: 0.9375rem; }
 
 @media (max-width: 543px) {
   .container {
-    padding-left: 12px;
     padding-left: 0.75rem;
-    padding-right: 12px;
     padding-right: 0.75rem; }
     .container-full {
-      padding-left: 12px;
       padding-left: 0.75rem;
-      padding-right: 12px;
       padding-right: 0.75rem; }
 
   .row {
-    margin-left: -12px;
     margin-left: -0.75rem;
-    margin-right: -12px;
     margin-right: -0.75rem; }
 
   .col {
-    padding-left: 12px;
     padding-left: 0.75rem;
-    padding-right: 12px;
     padding-right: 0.75rem; } }
 .xs-1 {
   width: 8.33333%; }
