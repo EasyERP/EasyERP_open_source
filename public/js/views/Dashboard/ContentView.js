@@ -2056,19 +2056,29 @@ define([
                 }
             ];
             var dataUrl = '../../maps/';
+            var $wrapper = $('#wrapper');
+            var offset = 2;
+            var padding= 15;
             var projection;
             var barChart;
+            var margin;
             var path;
-            var max;
+            var width;
+            var height;
+            var height1;
+            var xScale;
+            var yScale;
+            var xAxis;
+            var yAxis;
+            var rect;
             var zoom;
+            var max;
             var svg;
             var tx;
             var ty;
             var g;
             var e;
             var i;
-            var offset = 2;
-            var padding= 15;
 
             d3.selectAll('svg.salesByCountryChart > *').remove();
             d3.selectAll('svg.salesByCountryBarChart > *').remove();
@@ -2091,10 +2101,14 @@ define([
                     }
                 }
 
-                var margin = {top: 20, right: 160, bottom: 30, left: 1000},
-                    width = ($('#wrapper').width() - margin.right)/2,
-                    height = $('#wrapper').width()/4,
-                    height1 = data.length * 20;
+                data.sort(function(obj1, obj2) {
+                    return obj2.pays-obj1.pays;
+                });
+
+                margin = {top: 20, right: 160, bottom: 30, left: 1000};
+                width = ($wrapper.width() - margin.right)/2;
+                height = $wrapper.width()/4;
+                height1 = data.length * 20;
 
                 projection = d3.geo.mercator()
                     .translate([width/2, height/1.5])
@@ -2199,19 +2213,19 @@ define([
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                var max = d3.max(data, function (d) {
+                max = d3.max(data, function (d) {
                     return d.pays/100;
                 });
 
-                var xScale = d3.scale.linear()
+                xScale = d3.scale.linear()
                     .domain([0, max])
                     .range([0, width]);
 
-                var yScale = d3.scale.linear()
+                yScale = d3.scale.linear()
                     .domain([0, data.length])
                     .range([0, height1]);
 
-                var rect = height1 / (data.length);
+                rect = height1 / (data.length);
 
                 barChart.selectAll('rect')
                     .data(data)
@@ -2231,11 +2245,11 @@ define([
                         fill  : '#5CD1C8'
                     });
 
-                var xAxis = d3.svg.axis()
+                xAxis = d3.svg.axis()
                     .scale(xScale)
                     .orient('bottom');
 
-                var yAxis = d3.svg.axis();
+                yAxis = d3.svg.axis();
 
                 yAxis
                     .orient('left')
@@ -2269,55 +2283,82 @@ define([
         },
 
         renderTreemap: function () {
+            var $wrapper = $('#wrapper');
+            var margin;
+            var width;
+            var maxValue;
+            var minValue;
+            var height;
+            var color;
+            var treemap;
+            var div;
+            var root;
+            var node;
 
-            d3.selectAll('div.treemap > *').remove();
+            d3.selectAll('div.treemap_sales > *').remove();
 
             common.totalInvoiceBySales(function (data) {
-                var margin = {top: 0, right: 10, bottom: 10, left: 10};
-                var width = $('#wrapper').width()/2 - margin.left - margin.right;
-                var height =  $('#wrapper').width()/4;
 
-                //var color = d3.scale.category10();
+                function position() {
+                    this.style('left', function (d) {
+                        return d.x + 'px';
+                    })
+                        .style('top', function (d) {
+                            return d.y + 'px';
+                        })
+                        .style('width', function (d) {
+                            return Math.max(0, d.dx - 1) + 'px';
+                        })
+                        .style('height', function (d) {
+                            return Math.max(0, d.dy - 1) + 'px';
+                        });
+                }
 
-                var maxValue = d3.max(data, function (d) {
+                margin = {top: 0, right: 10, bottom: 10, left: 10};
+                width = $('#wrapper').width()/2 - margin.left - margin.right;
+                height =  $('#wrapper').width()/4;
+
+                maxValue = d3.max(data, function (d) {
                     return d.payment / 100;
                 });
 
-                var minValue = d3.min(data, function (d) {
+                minValue = d3.min(data, function (d) {
                     return d.payment / 100;
                 });
 
-                var color = d3.scale.ordinal().range(['#F4D851', '#374649', '#FD625E', '#02B8AB']);
+                color = d3.scale.linear()
+                    .range(['#BDE892', '#ACC7F2'])
+                    .domain([minValue, maxValue]);
 
-                var treemap = d3.layout.treemap()
+                treemap = d3.layout.treemap()
                     .size([width, height])
                     .sticky(true)
                     .value(function (d) {
                         return d.payment;
                     });
 
-                var div = d3.select(".treemap").append("div")
-                    .style("position", "relative");
+                div = d3.select('.treemap_sales').append('div')
+                    .style('position', 'relative');
 
-                var root = {
+                root = {
                     name    : 'tree',
                     children: data
                 };
 
-                var node = div.datum(root).selectAll(".node")
+                node = div.datum(root).selectAll('.node')
                     .data(treemap.nodes)
-                    .enter().append("div")
-                    .attr("class", "nodeTree")
+                    .enter().append('div')
+                    .attr('class', 'nodeTree')
                     .call(position)
-                    .style("background", function (d) {
+                    .style('background', function (d) {
                         return color(d.payment / 100);
                     })
                     .text(function (d) {
                         return d.children ? null : d.name + ',  $' + helpers.currencySplitter((d.payment / 100).toFixed(0));
                     });
 
-                d3.selectAll("input").on("change", function change() {
-                    var value = this.value === "count"
+                d3.selectAll('input').on('change', function change() {
+                    var value = this.value === 'count'
                         ? function () {
                         return 1;
                     }
@@ -2331,21 +2372,6 @@ define([
                         .duration(1500)
                         .call(position);
                 });
-
-                function position() {
-                    this.style("left", function (d) {
-                        return d.x + "px";
-                    })
-                        .style("top", function (d) {
-                            return d.y + "px";
-                        })
-                        .style("width", function (d) {
-                            return Math.max(0, d.dx - 1) + "px";
-                        })
-                        .style("height", function (d) {
-                            return Math.max(0, d.dy - 1) + "px";
-                        });
-                }
             });
         }
     });
