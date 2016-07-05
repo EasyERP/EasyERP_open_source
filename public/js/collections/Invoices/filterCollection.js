@@ -30,6 +30,7 @@
                     options.filter = {
                         forSales: {
                             key  : 'forSales',
+                            type: 'boolean',
                             value: ['true']
                         }
                     };
@@ -37,6 +38,7 @@
                     options.filter = {
                         forSales: {
                             key  : 'forSales',
+                            type: 'boolean',
                             value: ['false']
                         }
                     };
