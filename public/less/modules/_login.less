@@ -312,9 +312,22 @@ input {
   }
 }
 
-@media (max-width: 650px) {
-  .loginWrapper {
-
+@media (max-width: 768px) {
+  .loginContainer {
+    .loginTitle {
+      margin-bottom: 30px;
+    }
+    .selectDd {
+      float: left;
+      clear: both;
+    }
+    input {
+      &:not([type="checkbox"]) {
+        &.inputField {
+          margin-bottom: 45px;
+        }
+      }
+    }
   }
 }
 

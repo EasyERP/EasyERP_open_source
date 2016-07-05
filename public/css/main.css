@@ -1939,11 +1939,16 @@ input:not([type="checkbox"]).inputBordered:focus {
   font-size: 15px;
   line-height: 22px;
 }
-@media (max-width: 650px) {
-  .sliderWrap,
-  .sliderContainer,
-  .loginContent {
-    height: 50vh;
+@media (max-width: 768px) {
+  .loginContainer .loginTitle {
+    margin-bottom: 30px;
+  }
+  .loginContainer .selectDd {
+    float: left;
+    clear: both;
+  }
+  .loginContainer input:not([type="checkbox"]).inputField {
+    margin-bottom: 45px;
   }
 }
 @media (max-width: 992px) {
