@@ -897,6 +897,7 @@ th {
 }
 .collapsed .side_menu .root.active ul {
   display: none;
+  margin-left: 10px;
 }
 .collapsed .side_menu .root.active:hover > ul {
   display: block;
