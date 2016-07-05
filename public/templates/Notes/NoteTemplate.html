@@ -42,6 +42,7 @@
     <div class="clearfix"></div>
 
     <div id="noteBody">
+        <% notes = notes || [];%>
         <% notes.reverse();
         _.each(notes, function(val,key){ %>
         <div id="<%=val['_id'] %>" class="noteContainer">
