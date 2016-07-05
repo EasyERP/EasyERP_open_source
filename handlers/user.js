@@ -272,21 +272,6 @@ var User = function (event, models) {
         var err;
         var queryObject;
 
-        function trackIt() {
-            tracker.track({
-                name         : 'production:login',
-                status       : 301,
-                registrType  : 'checkIt',
-                ip           : ip,
-                country      : (geo) ? geo.country : '',
-                city         : (geo) ? geo.city : '',
-                region       : geo ? geo.region : '',
-                subDomainName: 'production'
-            });
-        }
-
-        process.nextTick(trackIt);
-
         if (login && data.pass) {
             queryObject = {
                 $or: [
@@ -312,6 +297,18 @@ var User = function (event, models) {
                 if (!_user || !_user._id || _user.pass !== shaSum.digest('hex')) {
                     err = new Error(constants.BAD_REQUEST);
                     err.status = 400;
+
+                    tracker.track({
+                        name       : 'production:login:error',
+                        status     : 301,
+                        registrType: 'checkIt',
+                        ip         : ip,
+                        country    : (geo) ? geo.country : '',
+                        city       : (geo) ? geo.city : '',
+                        region     : geo ? geo.region : '',
+                        login      : login,
+                        message    : err.message
+                    });
 
                     return next(err);
                 }
@@ -340,6 +337,18 @@ var User = function (event, models) {
                 });
 
                 res.send(200);
+
+                tracker.track({
+                    name       : 'production:login:success',
+                    status     : 301,
+                    registrType: 'checkIt',
+                    ip         : ip,
+                    country    : (geo) ? geo.country : '',
+                    city       : (geo) ? geo.city : '',
+                    region     : geo ? geo.region : '',
+                    login      : login,
+                    message    : 'loggedIn'
+                });
             });
         } else {
             err = new Error(constants.BAD_REQUEST);
