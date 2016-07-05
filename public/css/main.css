@@ -1720,7 +1720,6 @@ h2.green {
   border: 0;
   color: #666;
   border-bottom: 2px solid #666;
-  padding-right: 15px;
 }
 .selectDd:after {
   content: '';
