@@ -14,8 +14,9 @@ var User = function (event, models) {
     var mailer = new Mailer();
     var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
-
+    var tracker = require('../helpers/tracker.js');
     var ObjectId = mongoose.Types.ObjectId;
+    var geoip = require('geoip-lite');
 
     function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
@@ -266,6 +267,8 @@ var User = function (event, models) {
         var data = req.body;
         var UserModel = models.get(data.dbId, 'Users', userSchema);
         var login = data.login || data.email;
+        var ip = req.ip;
+        var geo = geoip.lookup(ip);
         var err;
         var queryObject;
 
@@ -295,6 +298,18 @@ var User = function (event, models) {
                     err = new Error(constants.BAD_REQUEST);
                     err.status = 400;
 
+                    tracker.track({
+                        name       : 'production:login:error',
+                        status     : 301,
+                        registrType: process.env.SERVER_TYPE,
+                        ip         : ip,
+                        country    : (geo) ? geo.country : '',
+                        city       : (geo) ? geo.city : '',
+                        region     : geo ? geo.region : '',
+                        login      : login,
+                        message    : err.message
+                    });
+
                     return next(err);
                 }
 
@@ -322,6 +337,18 @@ var User = function (event, models) {
                 });
 
                 res.send(200);
+
+                tracker.track({
+                    name       : 'production:login:success',
+                    status     : 301,
+                    registrType: process.env.SERVER_TYPE,
+                    ip         : ip,
+                    country    : (geo) ? geo.country : '',
+                    city       : (geo) ? geo.city : '',
+                    region     : geo ? geo.region : '',
+                    login      : login,
+                    message    : 'loggedIn'
+                });
             });
         } else {
             err = new Error(constants.BAD_REQUEST);

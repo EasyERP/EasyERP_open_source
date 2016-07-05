@@ -7,16 +7,18 @@ module.exports = {
     track: function (body, req, callback) {
 
         request({
-            url: process.env.TRACKER_HOST + '/events',
-            method: "POST",
-            json: true,
+            url   : process.env.TRACKER_HOST + '/events',
+            method: 'POST',
+            json  : true,
+
             headers: {
-                "content-type": "application/json"
+                'content-type': 'application/json'
             },
+
             body: body
         }, callback)
             .on('error', function (err) {
-                console.error(err)
+                console.error(err);
             });
     }
 };
