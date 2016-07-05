@@ -129,6 +129,7 @@ define([
                 data: {
                     id       : id,
                     viewType : 'form',
+                    contentType : this.contentType,
                     currentDb: App.currentDb,
                     forSales : 'false'
                 },

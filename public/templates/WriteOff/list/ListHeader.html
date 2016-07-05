@@ -5,12 +5,12 @@
         <tr>
             <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
             <th class="centerCell">N</th>
-            <th class="oe_sortable" data-sort="project.name.">Project<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="project.name">Project<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="name">Invoice Number<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="name">WriteOff Number<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+         <!--   <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>-->
             <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.unTaxed"><%= currentDb ? 'Paid' : 'Untaxed'%><span
@@ -18,9 +18,7 @@
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="invoiceDate">WriteOff Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <!--<th class="oe_sortable" data-sort="validated">Validated<span class="arrow down">7</span><span-->
             <!--class="arrow up">v</span></th>-->
@@ -29,7 +27,7 @@
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listTotal">
         <tr>
-            <td colspan="6"></td>
+            <td colspan="4"></td>
             <td class="money"><span id="balance"></span></td>
             <td class="money"><span id="paid"></span></td>
             <td class="money"><span id="total"></span></td>

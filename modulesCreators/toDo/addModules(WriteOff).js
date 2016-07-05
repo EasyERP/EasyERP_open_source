@@ -15,7 +15,7 @@ var profiles = dbObject.collection('Profile');
 function childModule(callback) {
     var module = {
         _id     : 105,
-        mname   : 'WriteOff',
+        mname   : 'Write Off',
         href    : 'WriteOff',
         sequence: 105,
         parrent : 96,

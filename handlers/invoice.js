@@ -1117,7 +1117,7 @@ var Module = function (models, event) {
                         'salesPerson._id' : '$root.salesPerson._id',
                         workflow          : '$root.workflow',
                         supplier          : '$root.supplier',
-                         project           : '$root.project',
+                        project           : '$root.project',
                         expense           : '$root.expense',
                         // forSales          : '$root.forSales',
                         currency          : '$root.currency',
@@ -1258,10 +1258,12 @@ var Module = function (models, event) {
             };
 
             query = Invoice.findOne(optionsObject);
-
-            query.populate('products.product')
-                .populate('products.jobs')
+            query
+                .populate('products.jobs', '_id name')
+                .populate('products.product', '_id name')
+                .populate('project', '_id name paymentMethod paymentTerms')
                 .populate('currency._id')
+                .populate('journal', '_id name')
                 .populate('payments', '_id name date paymentRef paidAmount')
                 .populate('department', '_id name')
                 .populate('paymentTerms', '_id name')
@@ -1272,10 +1274,9 @@ var Module = function (models, event) {
                 .populate('groups.owner', '_id login')
                 .populate('sourceDocument', '_id name')
                 .populate('workflow', '_id name status')
-                .populate('project', '_id name paymentMethod paymentTerms')
                 .populate('supplier', '_id name fullName');
 
-            query.lean().exec(waterfallCallback);
+            query.exec(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];

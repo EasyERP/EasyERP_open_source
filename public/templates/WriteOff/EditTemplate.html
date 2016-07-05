@@ -5,13 +5,13 @@
                 <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
-                    <li class="right">
+                    <!--<li class="right">
                         <%if(isFinancial && !model.approved){%>
                         <button class="btn approve">
                             <span>Approve</span>
                         </button>
                         <%}%>
-                    </li>
+                    </li>-->
                 </ul>
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
@@ -20,22 +20,27 @@
                             <dl class="opp-info">
                                 <dt><label for="supplier">Supplier</label></dt>
                                 <dd>
-                                    <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
+                                    <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
                                        href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first
-                                        + ' ' + model.supplier.name.last:"Select"%></a>
+                                        + ' ' + model.supplier.name.last:"Select"%></span>
                                 </dd>
 
                                 <dt><label for="projectDd">Project</label></dt>
                                 <dd>
                                     <span id="projectDd"><%= model.project ?  model.project.name : '' %></span>
                                 </dd>
+                                <dt><label for="supplier_invoice_num">Write Off Number</label></dt>
+                                <dd>
+                                    <span id="supplier_invoice_num"><%=model.name%></span>
+                                </dd>
+
 
                             </dl>
                         </div>
                         <div class="half-block left">
                             <dl class="opp-info">
 
-                                <dt><label for="invoice_date">Invoice Date</label></dt>
+                                <dt><label for="invoice_date">WriteOff Date</label></dt>
                                 <dd>
                                     <input type="text" class="date" id="invoice_date"
                                            value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32"
@@ -43,7 +48,7 @@
                                 </dd>
 
 
-                                <dt><label for="due_date">Due Date</label></dt>
+                                <!--<dt><label for="due_date">Due Date</label></dt>
                                 <dd>
                                     <input type="text" class="date <% if (!model.dueDate) {%>  errorContent"
 
@@ -52,13 +57,16 @@
                                     <% } %>
                                     id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32"
                                     placeholder="Due Date" readonly />
-                                </dd>
+                                </dd>-->
 
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
-                                    <a id="currencyDd" class="<%= model.approved ? ''  :'current-selected' %>" data-id="<%= model.currency._id._id %>" href="javascript:;"><%= model.currency._id.name %></a>
+                                    <span id="currencyDd" class="<%= model.approved ? ''  :'current-selected' %>" data-id="<%= model.currency._id._id %>" href="javascript:;"><%= model.currency._id.name %></span>
                                 </dd>
-
+                                <dt><label for="writeOffWay">Journal</label></dt>
+                                <dd>
+                                    <span id="writeOffWay" href="javascript:;"><%= model.journal.name %></span>
+                                </dd>
                             </dl>
                         </div>
                         <div class="clearfix"></div>
@@ -69,7 +77,7 @@
                         <div class="clearfix"></div>
                         <div class="dialog-tabs-items childTabs">
                             <div class="dialog-tabs-item childTabs active">
-                                <div id="invoiceItemsHolder">
+                                <div id="productItemsHolder">
 
                                 </div>
                                 <div class="clearfix"></div>

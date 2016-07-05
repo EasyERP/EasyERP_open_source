@@ -4,8 +4,8 @@ define([
     'Backbone',
     'views/dialogViewBase',
     'text!templates/WriteOff/EditTemplate.html',
-    'views/Notes/AttachView',
-    'views/Invoices/InvoiceProductItems',
+    'views/Notes/NoteView',
+    'views/Product/InvoiceOrder/ProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/CreateView',
     'views/salesInvoices/EmailView',
@@ -20,8 +20,8 @@ define([
              Backbone,
              ParentView,
              EditTemplate,
-             AttachView,
-             InvoiceItemView,
+             NoteView,
+             ProductItemView,
              wTrackRows,
              PaymentCreateView,
              EmailVew,
@@ -34,23 +34,24 @@ define([
     'use strict';
 
     var EditView = ParentView.extend({
+        el         : '#content-holder',
         contentType: 'Invoices',
         template   : _.template(EditTemplate),
 
         events: {
             'click #saveBtn'      : 'saveItem',
-            'click .details'      : 'showDetailsBox',
-            'click .newPayment'   : 'newPayment',
+            'click .details'      : 'showDetailsBox'
+           /* 'click .newPayment'   : 'newPayment',
             'click .sendEmail'    : 'sendEmail',
-            'click .approve'      : 'approve',
-            'click .cancelInvoice': 'cancelInvoice',
-            'click .setDraft'     : 'setDraft'
+            'click .approve'      : 'approve',*/
+            /*'click .cancelInvoice': 'cancelInvoice',
+            'click .setDraft'     : 'setDraft'*/
 
         },
 
         initialize: function (options) {
 
-            _.bindAll(this, 'render', 'deleteItem');
+            _.bindAll(this, 'render', 'deleteItem',  'saveItem');
 
             this.eventChannel = options.eventChannel;
 
@@ -71,7 +72,7 @@ define([
             App.stopPreload();
         },
 
-        approve: function (e) {
+        /*approve: function (e) {
             var self = this;
             var data;
             var url;
@@ -125,6 +126,144 @@ define([
                     });
                 }
             });
+        },*/
+
+        saveItem: function () {
+            var self = this;
+            var mid = 56;
+
+            var $thisEl = this.$el;
+
+            var errors = $thisEl.find('.errorContent');
+            var selectedProducts = $thisEl.find('.productItem');
+            var products = [];
+            var selectedLength = selectedProducts.length;
+            var targetEl;
+            var productId;
+            var quantity;
+            var price;
+            var description;
+            var taxes;
+            var amount;
+            var data;
+            var workflow = this.currentModel.workflow || this.currentModel.get('workflow');
+            var currency = {
+                _id : $thisEl.find('#currencyDd').attr('data-id'),
+                name: $.trim($thisEl.find('#currencyDd').text())
+            };
+
+            var invoiceDate = $thisEl.find('#invoice_date').val();
+            var dueDate = $thisEl.find('#due_date').val();
+
+            var supplier = $thisEl.find('#supplier').attr('data-id');
+
+            var total = parseFloat($thisEl.find('#totalAmount').text());
+            var unTaxed = parseFloat($thisEl.find('#totalUntaxes').text());
+            var balance = parseFloat($thisEl.find('#balance').text());
+
+            var journalId = this.$el.find('#journal').attr('data-id') || null;
+
+            var usersId = [];
+            var groupsId = [];
+
+            var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
+            var i;
+
+            if (errors.length) {
+                App.stopPreload();
+
+                return App.render({
+                    type   : 'error',
+                    message: 'Please fill all required fields.'
+                });
+            }
+
+            if (selectedLength) {
+                for (i = selectedLength - 1; i >= 0; i--) {
+                    targetEl = $(selectedProducts[i]);
+                    productId = targetEl.data('id');
+
+                    if (productId) {
+                        quantity = targetEl.find('[data-name="quantity"]').text();
+                        price = targetEl.find('[data-name="price"]').text();
+                        description = targetEl.find('[data-name="productDescr"]').text();
+                        taxes = targetEl.find('.taxes').text();
+                        amount = targetEl.find('.amount').text();
+
+                        products.push({
+                            product    : productId,
+                            description: description,
+                            unitPrice  : price,
+                            quantity   : quantity,
+                            taxes      : taxes,
+                            amount     : amount
+                        });
+                    }
+                }
+            }
+
+            $('.groupsAndUser tr').each(function () {
+                if ($(this).data('type') === 'targetUsers') {
+                    usersId.push($(this).data('id'));
+                }
+                if ($(this).data('type') === 'targetGroups') {
+                    groupsId.push($(this).data('id'));
+                }
+
+            });
+
+            data = {
+                currency      : currency,
+                supplier      : supplier,
+                fiscalPosition: null,
+                name          : $.trim(this.$el.find('#supplier_invoice_num').val()),
+                invoiceDate   : helpers.setTimeToDate(invoiceDate),
+                dueDate       : dueDate,
+                account       : null,
+                journal       : journalId,
+                groups: {
+                    owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
+                    users: usersId,
+                    group: groupsId
+                },
+
+                whoCanRW: whoCanRW,
+                workflow: workflow
+
+            };
+
+            if (supplier) {
+                this.model.save(data, {
+                    headers: {
+                        mid: mid
+                    },
+                    wait   : true,
+                    patch  : true,
+                    success: function (err, result) {
+
+                        var url = window.location.hash;
+                        self.hideDialog();
+                        Backbone.history.fragment = '';
+
+                        Backbone.history.navigate(url, {trigger: true});
+
+                    },
+
+                    error: function (model, xhr) {
+                        self.errorNotification(xhr);
+
+                        if (paymentCb && typeof paymentCb === 'function') {
+                            return paymentCb(xhr.text);
+                        }
+                    }
+                });
+
+            } else {
+                App.render({
+                    type   : 'error',
+                    message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                });
+            }
         },
 
         cancelInvoice: function (e) {
@@ -168,7 +307,7 @@ define([
             });
         },
 
-        setDraft: function (e) {
+       /* setDraft: function (e) {
             var self = this;
             var wId;
             var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
@@ -203,7 +342,7 @@ define([
                     }
                 });
             });
-        },
+        },*/
 
         showDetailsBox: function (e) {
             $(e.target).parent().find('.details-box').toggle();
@@ -260,7 +399,6 @@ define([
             var notDiv;
             var model;
             var invoiceItemContainer;
-            var paymentContainer;
             var wTracks;
             var project;
             var assigned;
@@ -301,31 +439,18 @@ define([
                 isFinancial     : isFinancial
             });
 
+
             buttons = [
-                {
-                    text : 'Save',
-                    click: self.saveItem
-                }, {
-                    text : 'Delete',
-                    click: self.deleteItem
-                },
                 {
                     text : 'Close',
                     click: self.hideDialog
+                }, {
+                    text : 'Delete',
+                    click: self.deleteItem
                 }
             ];
-            if (model.approved) {
 
-                buttons = [
-                    {
-                        text : 'Close',
-                        click: self.hideDialog
-                    }, {
-                        text : 'Delete',
-                        click: self.deleteItem
-                    }
-                ];
-            }
+
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -346,9 +471,9 @@ define([
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
 
             invoiceItemContainer.append(
-                new InvoiceItemView({
+                new ProductItemView({
                     balanceVisible: true,
-                    forSales      : self.forSales,
+                    service       : true,
                     isPaid        : this.isPaid,
                     notAddItem    : this.notAddItem
                 }).render({model: model}).el
@@ -356,17 +481,17 @@ define([
 
             notDiv = this.$el.find('#attach-container');
             notDiv.append(
-                new AttachView({
-                    model: this.currentModel,
-                    url  : '/uploadInvoiceFiles'
+                new NoteView({
+                    model      : this.currentModel,
+                    contentType: CONSTANTS.INVOICES
                 }).render().el
             );
-            populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+           /* populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);*/
 
-            if (model.approved) {
+           /* if (model.approved) {*/
                 self.$el.find('.input-file').remove();
                 self.$el.find('a.deleteAttach').remove();
-            } else {
+           /* } else {
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : 'd M, yy',
                     changeMonth: true,
@@ -376,9 +501,14 @@ define([
                 this.$el.find('#due_date').datepicker({
                     dateFormat : 'd M, yy',
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                    onSelect    : function () {
+                        var targetInput = $(this);
+
+                        targetInput.removeClass('errorContent');
+                    }
                 });
-            }
+            }*/
 
             return this;
         }

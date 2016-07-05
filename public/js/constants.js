@@ -181,7 +181,8 @@ define([], function () {
             WORKFLOWS_FETCH           : '/workflows/fetch',
             PAYMENT_AMOUNT_LEFT       : '/payment/amountLeftCalc',
             SALARY_REPORT             : '/salaryReport/',
-            WRITE_OFF                 : '/writeOff/'
+            WRITE_OFF                 : '/writeOff/',
+            WRITE_OFF_WAY             : '/journals/writeOff'
         },
 
         MID: {

@@ -133,7 +133,6 @@ define([
 
                     App.startPreload();
 
-                    $buttons = $selfEl.find('button.sendEmail, button.newPayment');
                     url = '/invoices/approve';
                     data = {
                         invoiceId  : invoiceId,
@@ -146,10 +145,6 @@ define([
                             $buttons.show();
 
                             App.stopPreload();
-
-                            if (self.eventChannel) {
-                                self.eventChannel.trigger('invoiceUpdated');
-                            }
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();

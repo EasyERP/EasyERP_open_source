@@ -1569,6 +1569,7 @@ var Module = function (models, event) {
 
     this.getForDD = function (req, res, next) {
         var pId = req.query.projectId;
+        var notPayed = req.query.notPayed;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var all = req.query.all;
         var queryObj;
@@ -1581,6 +1582,9 @@ var Module = function (models, event) {
 
         if (all) {
             queryObj = {project: objectId(pId)};
+        }
+        if (notPayed) {
+            queryObj = {workflow: {$ne: objectId('56337c675d49d8d6537832ea')}, project: objectId(pId)};
         }
 
         query.find(queryObj, {

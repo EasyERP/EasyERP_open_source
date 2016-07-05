@@ -86,6 +86,7 @@ define([
             }
 
             this.forSales = options.service;
+            this.notPayed = options.notPayed;
 
             products = new productCollection(options);
             products.bind('reset', function () {
@@ -192,7 +193,7 @@ define([
             e.preventDefault();
 
             if (project && project.length >= 24) {
-                dataService.getData('/jobs/getForDD', {projectId: project}, function (jobs) {
+                dataService.getData('/jobs/getForDD', {projectId: project, notPayed : this.notPayed}, function (jobs) {
                     var aEl;
 
                     self.responseObj['#jobs'] = jobs;

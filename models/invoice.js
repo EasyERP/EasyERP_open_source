@@ -64,7 +64,8 @@ module.exports = (function () {
         invoiced   : {type: Boolean, default: false},
         removable  : {type: Boolean, default: true},
         approved   : {type: Boolean, default: false},
-        emailed    : {type: Boolean, default: false}
+        emailed    : {type: Boolean, default: false},
+        project : {type: ObjectId, ref: 'Project', default: null}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
@@ -87,12 +88,14 @@ module.exports = (function () {
             _id        : false,
             quantity   : {type: Number, default: 1},
             unitPrice  : Number,
+            product    : productForJobs,
             description: {type: String, default: ''},
             jobs       : {type: ObjectId, ref: 'jobs', default: null},
             taxes      : {type: Number, default: 0},
             subTotal   : Number
+
         }],
-        project: {type: ObjectId, ref: 'Project', default: null}
+        project : {type: ObjectId, ref: 'Project', default: null}
     });
 
     var proformaSchema = jobsInvoiceSchema.extend({});

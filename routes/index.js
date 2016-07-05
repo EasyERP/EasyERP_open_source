@@ -67,7 +67,7 @@ module.exports = function (app, mainDb) {
     var profilesRouter = require('./profiles')(models);
     var tasksRouter = require('./tasks')(models, event);
     var journalEntriesRouter = require('./journalEntries')(models, event);
-    var writeOffRouter = require('./writeOff')(models);
+    var writeOffRouter = require('./writeOff')(models, event);
 
     var logger = require('../helpers/logger');
     var async = require('async');

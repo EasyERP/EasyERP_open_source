@@ -84,20 +84,21 @@ define([
             var price;
             var taxes;
             var amount;
-            var description;
+            var jobs;
 
             var forSales = this.forSales || false;
 
-            var supplier = $currentEl.find('#supplierDd').data('id');
-            var project = $currentEl.find('#projectDd').data('id');
+            var supplier = $currentEl.find('#supplierDd').attr('data-id');
+            var project = $currentEl.find('#projectDd').attr('data-id');
            /* var salesPersonId = $currentEl.find('#salesPerson').data('id') ? this.$('#salesPerson').data('id') : null;*/
            /* var paymentTermId = $currentEl.find('#payment_terms').data('id') ? this.$('#payment_terms').data('id') : null;*/
             var invoiceDate = $currentEl.find('#invoice_date').val();
-            var dueDate = $currentEl.find('#due_date').val();
+           /* var dueDate = $currentEl.find('#due_date').val();*/
             var i;
-            var total = parseFloat($currentEl.find('#totalAmount').text());
-            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text());
-            var balance = parseFloat($currentEl.find('#balance').text());
+            var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
+            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
+            var balance = parseFloat($currentEl.find('#balance').text()) * 100;
+            var journal = $currentEl.find('#writeOffWay').attr('data-id');
 
             var payments = {
                 total  : total,
@@ -123,13 +124,27 @@ define([
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        jobs = targetEl.find('.current-selected.jobs').attr('data-id');
                         taxes = targetEl.find('.taxes').text();
                         amount = targetEl.find('.amount').text();
 
+                        if (price === '') {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Unit price can\'t be empty'
+                            });
+                        }
+
+                        if (jobs === 'jobs') {
+                            return App.render({
+                                type   : 'notify',
+                                message: "Job field can't be empty. Please, choose or create one."
+                            });
+                        }
+
                         products.push({
                             product    : productId,
-                            description: description,
+                            jobs       : jobs,
                             unitPrice  : price,
                             quantity   : quantity,
                             taxes      : taxes,
@@ -159,16 +174,16 @@ define([
                 supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
              /*   paymentReference     : $.trim($('#payment_reference').val()),*/
                 invoiceDate          : helpers.setTimeToDate(invoiceDate),
-                dueDate              : dueDate,
+               /* dueDate              : dueDate,*/
                 account              : null,
-                journal              : null,
+                journal              : journal,
                 project              : project,
 /*
                 salesPerson : salesPersonId,
                 paymentTerms: paymentTermId,*/
 
                 products   : products,
-             /*   paymentInfo: payments,*/
+                paymentInfo: payments,
                 currency   : currency,
 
                 groups: {
@@ -196,6 +211,7 @@ define([
                         var redirectUrl = window.location.hash;
 
                         self.hideDialog();
+                        Backbone.history.fragment = '';
                         Backbone.history.navigate(redirectUrl, {trigger: true});
                     },
 
@@ -249,10 +265,11 @@ define([
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
             invoiceItemContainer.append(
-                new ProductItemView({canBeSold: true, service: true}).render().el
+                new ProductItemView({canBeSold: true, service: true, notPayed : true}).render().el
             );
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            populate.get('#writeOffWay', CONSTANTS.URLS.WRITE_OFF_WAY, {}, 'name', this, true);
             populate.get2name('#supplier', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
             populate.get('#payment_terms', '/paymentTerm', {}, 'name', this, true, true);
@@ -273,11 +290,11 @@ define([
                 changeYear : true
             }).datepicker('setDate', new Date());
 
-            this.$el.find('#due_date').datepicker({
+           /* this.$el.find('#due_date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
-            });
+            });*/
 
             this.delegateEvents(this.events);
 

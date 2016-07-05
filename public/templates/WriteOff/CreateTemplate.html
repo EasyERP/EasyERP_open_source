@@ -21,7 +21,7 @@
                             <dl class="opp-info">
                                 <dt><label for="supplierDd">Supplier</label></dt>
                                 <dd>
-                                    <a id="supplierDd"  class="current-selected" href="javascript:;">Select</a>
+                                    <span id="supplierDd" href="javascript:;"></span>
                                 </dd>
 
                                 <dt><label for="projectDd">Project</label></dt>
@@ -39,33 +39,29 @@
                                 <!--<input type="text"  id="source_document" name="source_document" placeholder="" maxlength="32"/>-->
                                 <!--</dd>-->
 
-                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dt><label for="supplier_invoice_num">Write Off Number</label></dt>
                                 <dd>
                                     <input type="text" id="supplier_invoice_num" name="supplier_invoice_num"
                                            placeholder="" maxlength="32"/>
                                 </dd>
 
-                                <dt><label for="write_off">Write Off</label></dt>
-                                <dd>
-                                    <a id="write_off" href="javascript:;">Select</a>
-                                </dd>
+
 
                             </dl>
                         </div>
                         <div class="half-block left">
                             <dl class="opp-info">
 
-                                <dt><label for="invoice_date">Invoice Date</label></dt>
+                                <dt><label for="invoice_date">WriteOff Date</label></dt>
                                 <dd>
                                     <input class="extrainfo" type="text" name="invoiceDate" id="invoice_date" value=""
                                            readonly="" placeholder="Invoice Date">
                                 </dd>
-
-                                <dt><label for="due_date">Due Date</label></dt>
+                                <!--<dt><label for="due_date">Due Date</label></dt>
                                 <dd>
                                     <input class="extrainfo" type="text" name="dueDate" id="due_date" value=""
                                            readonly="" placeholder="Due Date">
-                                </dd>
+                                </dd>-->
 
                                 <!--<dt><label for="journal">Journal</label></dt>-->
                                 <!--<dd>-->
@@ -75,6 +71,11 @@
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
                                     <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
+                                </dd>
+
+                                <dt><label for="writeOffWay">Journal</label></dt>
+                                <dd>
+                                    <a id="writeOffWay"  class="current-selected"  href="javascript:;">Select</a>
                                 </dd>
 
                             </dl>
