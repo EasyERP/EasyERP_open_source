@@ -1655,6 +1655,9 @@ th {
   margin-left: 5px;
   width: 150px;
 }
+.collapsed .side_menu .login_panel .dropdown-button:hover .login_list {
+  display: block;
+}
 .collapsed .side_menu .logo {
   display: none;
 }
