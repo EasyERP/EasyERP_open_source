@@ -117,7 +117,7 @@ define([
 
         forgotPassword: function (event) {
             var $thisEl = this.$el;
-            var currentDb = $thisEl.find('#dbs :selected').data('id');
+            var currentDb = $thisEl.find('#dbs .selected').attr('data-id');
             var $backToLogin = $thisEl.find('#backToLogin');
             var $forgotForm = $thisEl.find('#forgotPassword');
             var $errorContainer = $thisEl.find('.error');
