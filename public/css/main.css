@@ -1723,9 +1723,9 @@ h2.green {
   top: 11px;
   height: 0;
   width: 0;
-  border-top: 10px solid #666;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
+  border-top: 4px solid #666;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
 }
 .loginTitle {
   font-size: 30px;
