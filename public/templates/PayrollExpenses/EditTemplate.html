@@ -21,7 +21,7 @@
                                 </dd>
                                 <dt><label>Base Salary</label></dt>
                                 <dd>
-                                    <span><%=currencySplitter(model.salary.toFixed(2))%></span>
+                                    <span class="dollar"><%=currencySplitter(model.salary.toFixed(2))%></span>
                                 </dd>
                             </dl>
                         </div>
@@ -40,7 +40,6 @@
                                 <dd>
                                     <%if (model.vacArray.V) {%>
                                     <span class="V">Vacation</span> <span><%=model.vacArray.V || 0%></span>
-                                    <br/>
                                     <%}%>
                                     <%if (model.vacArray.S) {%>
                                     <span class="S">Sick</span> <span><%=model.vacArray.S || 0%></span>
@@ -52,7 +51,6 @@
                                 <dd>
                                     <%if (model.vacArray.E) {%>
                                     <span class="E">Education</span> <span><%=model.vacArray.E || 0%></span>
-                                    <br/>
                                     <%}%>
                                     <%if (model.vacArray.P) {%>
                                     <span class="P">Personal</span> <span><%=model.vacArray.P || 0%></span>
