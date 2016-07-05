@@ -877,6 +877,15 @@ th {
   width: 40px !important;
   margin-right: -100%;
 }
+.collapsed .side_menu .sidebar_toggler:before {
+  content: "\f105";
+}
+.collapsed .side_menu .login_panel .user_name {
+  display: none !important;
+}
+.collapsed .side_menu .logo {
+  display: none;
+}
 .collapsed .side_menu nav {
   width: auto !important;
 }
@@ -921,6 +930,7 @@ th {
 .collapsed .side_menu .root.active:hover > ul li:first-child {
   margin-left: -10px;
   padding-right: 10px;
+  background: #2c3542;
 }
 .collapsed .content_wrapper .content-holder,
 .collapsed .content_wrapper .top-bar {
@@ -1286,7 +1296,6 @@ th {
   width: 100%;
   display: block;
   float: left;
-  margin-top: 41px;
 }
 .content_wrapper .content-holder,
 .content_wrapper .top-bar {
@@ -5386,10 +5395,10 @@ table#workflows tr td.edit-status {
   z-index: 100;
   width: auto;
   height: 100%;
-  background-color: #4d5a75;
-  border-right: 1px solid #4d5a75;
+  background-color: #364150;
+  border-right: 1px solid #364150;
   box-sizing: border-box;
-  padding-top: 53px;
+  padding-top: 62px;
   left: 0;
   top: 0;
 }
@@ -5419,7 +5428,7 @@ table#workflows tr td.edit-status {
   height: 30px;
   display: block;
   width: 100%;
-  background: #4d5a75;
+  background: #364150;
 }
 .side_menu nav .root {
   text-align: left;
@@ -5435,12 +5444,13 @@ table#workflows tr td.edit-status {
   display: block;
   text-decoration: none;
   font-size: 14px;
+  font-weight: 300;
   line-height: 30px;
   color: #e7e7e7;
 }
 .side_menu nav .root > ul li:hover,
 .side_menu nav .root > ul li.selected {
-  background-color: #576684;
+  background-color: #404d5f;
 }
 .side_menu nav .root > a,
 .side_menu nav .root .fa {
@@ -5477,9 +5487,12 @@ table#workflows tr td.edit-status {
 }
 .side_menu nav .root:hover,
 .side_menu nav .root.active {
-  background-color: #3e88b9;
   cursor: pointer;
   height: 30px;
+  background-color: #2c3542;
+}
+.side_menu nav .root.opened {
+  background-color: #3e88b9;
 }
 .side_menu nav .root.active {
   height: auto;
@@ -5489,7 +5502,7 @@ table#workflows tr td.edit-status {
 }
 .side_menu .logo {
   position: absolute;
-  bottom: 25px;
+  bottom: 15px;
   left: 0;
   right: 0;
   text-align: center;
@@ -5497,6 +5510,7 @@ table#workflows tr td.edit-status {
   margin: 0 auto;
 }
 .side_menu .sidebar_toggler {
+  position: relative;
   border-radius: 4px 0 0 4px;
   cursor: pointer;
   display: block;
@@ -5508,6 +5522,7 @@ table#workflows tr td.edit-status {
   height: 23px;
   margin-right: -1px;
   background-color: #ffffff;
+  z-index: 9999;
 }
 .side_menu .sidebar_toggler:before {
   margin: 0 2px 0 8px;
@@ -5523,47 +5538,59 @@ table#workflows tr td.edit-status {
 .side_menu .login_panel {
   position: absolute;
   left: 0;
-  top: 5px;
+  top: 0;
   right: auto;
   bottom: auto;
+  width: 100%;
 }
 .side_menu .login_panel .dropdown-button {
   text-indent: 5px;
   cursor: pointer;
-  padding: 0 10px;
+  padding: 5px;
   box-sizing: border-box;
-  width: 200px;
+  max-width: 200px;
+  width: 100%;
   float: left;
   height: auto;
 }
-.side_menu .login_panel .dropdown-button #loginSelect {
+.side_menu .login_panel .dropdown-button .login_list {
   display: none;
-  position: relative;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
   z-index: 999;
-  border: 1px solid #7f7f80;
-  background-color: #ffffff;
 }
-.side_menu .login_panel .dropdown-button #loginSelect li {
-  height: 20px;
-  line-height: 20px;
+.side_menu .login_panel .dropdown-button .login_list li {
+  text-align: center;
 }
-.side_menu .login_panel .dropdown-button #loginSelect li a {
-  color: #000000;
+.side_menu .login_panel .dropdown-button .login_list li a {
+  display: block;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 30px;
+  color: #e7e7e7;
 }
-.side_menu .login_panel .dropdown-button img {
-  float: left;
-  margin: 2px 5px 2px 2px;
+.side_menu .login_panel .dropdown-button .login_list li:hover {
+  background-color: #404d5f;
+}
+.side_menu .login_panel .dropdown-button .user_name {
+  display: block;
+  line-height: 30px;
+  color: #e7e7e7;
+  font-size: 14px;
+}
+.side_menu .login_panel .dropdown-button .user_name:hover {
+  color: #ffffff;
+}
+.side_menu .login_panel .dropdown-button .iconEmployee {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-}
-.side_menu .login_panel .dropdown-button span {
-  display: block;
-  line-height: 30px;
-  color: #000000;
-}
-.side_menu .login_panel .dropdown-button span:hover {
-  color: #fff;
+  float: left;
+  margin: 2px 5px 2px 2px;
+  width: 26px;
+  height: 26px;
 }
 .side_menu .login_panel .dropdown-button:hover {
   background: #3e88b9;

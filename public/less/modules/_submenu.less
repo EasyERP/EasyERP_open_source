@@ -7,7 +7,7 @@
   background-color: @defaultColor;
   border-right: 1px solid @defaultColor;
   box-sizing: border-box;
-  padding-top: 53px;
+  padding-top: 62px;
   left: 0;
   top: 0;
   nav {
@@ -35,12 +35,14 @@
             display: block;
             text-decoration: none;
             font-size: 14px;
+            font-weight: 300;
             line-height: @height;
             color: @submenu-text-color;
           }
           &:hover, &.selected {
             background-color: @submenu-selected;
           }
+
         }
       }
       > a, .fa {
@@ -91,13 +93,21 @@
           }
         }
       }
+      &:hover {
+
+      }
       &:hover, &.active {
-        background-color: @submenu-active;
         cursor: pointer;
         height: @height;
+        background-color: @submenu-hover;
+      }
+
+      &.opened {
+        background-color: @submenu-opened;
       }
       &.active {
         height: auto;
+        //background-color: @submenu-active;
         ul {
           display: block;
         }
@@ -107,14 +117,16 @@
 
   .logo {
     position: absolute;
-    bottom: 25px;
+    bottom: 15px;
     left: 0;
     right: 0;
     text-align: center;
     width: 80%;
     margin: 0 auto;
   }
+
   .sidebar_toggler {
+    position: relative;
     border-radius: 4px 0 0 4px;
     cursor: pointer;
     display: block;
@@ -126,6 +138,7 @@
     height: 23px;
     margin-right: -1px;
     background-color: @bg-main;
+    z-index: 9999;
     &:before {
       margin: 0 2px 0 8px;
       display: inline-block;
@@ -138,47 +151,57 @@
       text-shadow: none;
     }
   }
+
   .login_panel {
-    .position(absolute, 0, 5px, auto, auto);
+    .position(absolute, 0, 0, auto, auto);
+    width: 100%;
     .dropdown-button {
       text-indent: 5px;
       cursor: pointer;
-      padding: 0 10px;
+      padding: 5px;
       box-sizing: border-box;
-      width: 200px;
+      max-width: 200px;
+      width: 100%;
       float: left;
       height: auto;
-      #loginSelect {
+      .login_list {
         display: none;
-        position: relative;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
         z-index: 999;
-        border: 1px solid @border-color-main;
-        background-color: @bg-main;
         li {
-          height: 20px;
-          line-height: 20px;
-
+          text-align: center;
           a {
-            color: @login-text;
+            display: block;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: @height;
+            color: @submenu-text-color;
+          }
+          &:hover {
+            background-color: @submenu-selected;
           }
         }
       }
 
-
-
-      img {
-        float: left;
-        margin: 2px 5px 2px 2px;
-        .border-radius;
-      }
-
-      span {
+      .user_name {
         display: block;
         line-height: 30px;
         color: @login-text;
+        font-size: 14px;
         &:hover {
-          color: #fff;
+          color: @login-hover-text;
         }
+      }
+
+      .iconEmployee {
+        .border-radius;
+        float: left;
+        margin: 2px 5px 2px 2px;
+        width: 26px;
+        height: 26px;
       }
 
       &:hover {

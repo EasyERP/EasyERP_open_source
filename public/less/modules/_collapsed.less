@@ -1,19 +1,25 @@
 .collapsed {
 
-  .mainmenu_holder {
-    //.logo {
-    //  width: 40px;
-    //  text-align: center;
-    //}
-    //a {
-    //  display: none;
-    //  padding: 0;
-    //}
-  }
-
   .side_menu {
     width: 40px !important;
     margin-right: -100%;
+
+    .sidebar_toggler {
+      &:before {
+        content: "\f105";
+      }
+    }
+
+    .login_panel {
+      .user_name {
+        display: none !important;
+      }
+    }
+
+    .logo {
+      display: none;
+    }
+
     nav {
       width: auto !important;
       >ul {
@@ -62,6 +68,7 @@
               &:first-child {
                 margin-left: -10px;
                 padding-right: 10px;
+                background: @submenu-hover;
               }
             }
           }
