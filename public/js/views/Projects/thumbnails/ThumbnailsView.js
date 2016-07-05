@@ -46,6 +46,7 @@
             var filter = {
                 project: {
                     key  : 'project._id',
+                    type : 'ObjectId',
                     value: [project]
                 }
             };

@@ -30,12 +30,23 @@ define([
             'click #forgotPass'     : 'goForgotPass',
             'click #backToLogin'    : 'goForgotPass',
             'click #selectedDb'     : 'showHideDbs',
-            'click #dbs li'         : 'selectDb'
+            'click #dbs li'         : 'selectDb',
+            click                   : 'hideSelect'
+        },
+
+        hideSelect: function () {
+            var $thisEl = this.$el;
+            var $ul = $thisEl.find('#dbs');
+
+            $ul.removeClass('openDd');
         },
 
         showHideDbs: function (e) {
             var $thisEl = this.$el;
             var $ul = $thisEl.find('#dbs');
+
+            e.preventDefault();
+            e.stopPropagation();
 
             $ul.toggleClass('openDd');
         },
@@ -47,6 +58,9 @@ define([
             var $selectedDb = $thisEl.find('#selectedDb');
             var dbName = $li.attr('data-id');
             var fullText = $li.text();
+            var $ul = $thisEl.find('#dbs');
+
+            $ul.removeClass('openDd');
 
             $selectedDb.attr('data-id', dbName);
             $selectedDb.text(fullText);
@@ -132,7 +146,10 @@ define([
 
                 error: function () {
                     $loginForm.addClass('notRegister');
-                    $errorContainer.text("Wrong Password or such user doesn't registered");
+                    App.render({
+                        type   : 'error',
+                        message: 'Wrong Password or such user doesn\'t registered'
+                    });
                 }
             });
         },
@@ -173,6 +190,12 @@ define([
 
                 success: function () {
                     $backToLogin.click();
+                    setTimeout(function () {
+                        App.render({
+                            type   : 'notify',
+                            message: 'The new password was sent to your email. Please check it'
+                        });
+                    }, 1000);
                 },
 
                 error: function () {
@@ -197,9 +220,11 @@ define([
 
             $backStratch = $thisEl.find('#backstretch');
             $backStratch.backstretch([
-                'http://dl.dropbox.com/u/515046/www/outside.jpg',
-                'http://dl.dropbox.com/u/515046/www/garfield-interior.jpg',
-                'http://dl.dropbox.com/u/515046/www/cheers.jpg'
+                'images/imgs/front-img-1.jpg',
+                'images/imgs/front-img-2.jpg',
+                'images/imgs/front-img-3.jpg',
+                'images/imgs/front-img-4.jpg',
+                'images/imgs/front-img-5.jpg'
             ], {duration: 3000, fade: 750});
 
             return this;

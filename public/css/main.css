@@ -3790,6 +3790,16 @@ dl dd span.ui-spinner {
   text-overflow: ellipsis;
   color: #000000;
 }
+.form .formTitle .area_holder {
+  position: relative;
+}
+.form .formTitle .area_holder .attach_file {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 18px;
+  color: #000000;
+}
 .form h3 {
   margin-bottom: 10px;
   display: block;
@@ -4031,7 +4041,7 @@ dl dd span.ui-spinner {
 }
 .form textarea {
   width: 99%;
-  min-height: 160px;
+  min-height: 60px;
   resize: none;
 }
 .form .job-create-info textarea {
@@ -4367,6 +4377,16 @@ dl dd span.ui-spinner {
   text-overflow: ellipsis;
   color: #000000;
 }
+.formLeftColumn .form .formTitle .area_holder {
+  position: relative;
+}
+.formLeftColumn .form .formTitle .area_holder .attach_file {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 18px;
+  color: #000000;
+}
 .formLeftColumn .form h3 {
   margin-bottom: 10px;
   display: block;
@@ -4608,7 +4628,7 @@ dl dd span.ui-spinner {
 }
 .formLeftColumn .form textarea {
   width: 99%;
-  min-height: 160px;
+  min-height: 60px;
   resize: none;
 }
 .formLeftColumn .form .job-create-info textarea {
@@ -4700,6 +4720,16 @@ dl dd span.ui-spinner {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: #000000;
+}
+.formRightColumn .form .formTitle .area_holder {
+  position: relative;
+}
+.formRightColumn .form .formTitle .area_holder .attach_file {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 18px;
   color: #000000;
 }
 .formRightColumn .form h3 {
@@ -4943,7 +4973,7 @@ dl dd span.ui-spinner {
 }
 .formRightColumn .form textarea {
   width: 99%;
-  min-height: 160px;
+  min-height: 60px;
   resize: none;
 }
 .formRightColumn .form .job-create-info textarea {
@@ -4991,10 +5021,10 @@ dl dd span.ui-spinner {
   position: relative;
 }
 .noteWrapper .addNote .area_holder .attach_file {
-  display: none;
   position: absolute;
   bottom: 5px;
   right: 10px;
+  font-size: 18px;
 }
 .noteWrapper .addNote .addTitle {
   display: none;
@@ -5091,9 +5121,6 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote.active .addTitle {
   display: block;
   line-height: 30px;
-}
-.noteWrapper .addNote.active .area_holder .attach_file {
-  display: block;
 }
 .noteWrapper #noteBody .noteContainer {
   padding: 10px;
@@ -7471,7 +7498,7 @@ ul.dialog-tabs li.right button {
 .ui-dialog textarea {
   padding: 0;
   margin: 0;
-  width: 95%;
+  width: 100%;
   resize: none;
 }
 .ui-dialog textarea#description {
@@ -9292,8 +9319,9 @@ a.cancelled {
   margin-top: 5px;
 }
 .form-holder form .opp-internal-create {
-  height: 235px;
+  height: 60px;
   margin-top: 5px;
+  border-bottom-color: transparent;
 }
 .form-holder form .startDate,
 .form-holder form .endDate {

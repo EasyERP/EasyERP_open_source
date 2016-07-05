@@ -7,24 +7,26 @@
         <div class="loginContainer">
             <div class="row bsReset">
                 <div class="loginWrapper row bsReset">
-                <h1 id="titleForm" class="loginTitle float-left">Login to your account</h1>
-                <%var validDb = currentDb ? !!dbs[currentDb] : false;
-                  var dbNames = Object.keys(dbs);
-                  var firstDb = dbNames[0];
-                %>
+                    <h1 id="titleForm" class="loginTitle float-left">Login to your account</h1>
+                    <%
+                    currentDb = currentDb || 'production';
+                    var validDb = currentDb ? !!dbs[currentDb] : false;
+                    var dbNames = Object.keys(dbs);
+                    var firstDb = dbNames[0];
+                    %>
                     <div class="selectDd">
-                    <span id="selectedDb" class="selectedDb" data-id="<%= validDb ? currentDb : firstDb %>"><%= validDb ? currentDb + ' (' + dbs[currentDb].url + ')' : firstDb +' (' + dbs[firstDb].url + ')'%></span>
-                    <ul id="dbs" class="float-right">
-                        <% for(var i = dbNames.length-1; i>=0; i-- ){
-                        var dbName = dbNames[i];
-                        %>
-                        <li data-id="<%=dbName%>"
-                        <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%> (<%=dbs[dbName].url%>)
-                        </li>
-                        <%}%>
-                    </ul>
-                        </div>
+                        <span id="selectedDb" class="selectedDb" data-id="<%= validDb ? currentDb : firstDb %>"><%= validDb ? currentDb + ' (' + dbs[currentDb].url + ')' : firstDb +' (' + dbs[firstDb].url + ')'%></span>
+                        <ul id="dbs" class="float-right">
+                            <% for(var i = dbNames.length-1; i>=0; i-- ){
+                            var dbName = dbNames[i];
+                            %>
+                            <li data-id="<%=dbName%>"
+                            <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%> (<%=dbs[dbName].url%>)
+                            </li>
+                            <%}%>
+                        </ul>
                     </div>
+                </div>
             </div>
             <div class="error hidden">Such user doesn't registered</div>
             <form id="loginForm" class="loginWrap" action="javascript:;">
@@ -61,7 +63,8 @@
                 <p class="forgotDescription">Enter your e-mail address below to reset your password.</p>
 
                 <div class="formGroup">
-                    <input type="text" placeholder="Username or Email" class="ulogin inputBordered" name="ulogin" value="" autofocus
+                    <input type="text" placeholder="Username or Email" class="ulogin inputBordered" name="ulogin"
+                           value="" autofocus
                            maxlength="24"/>
                 </div>
                 <div class="formActions">
