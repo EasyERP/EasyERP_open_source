@@ -8,15 +8,17 @@
             <div class="row bsReset">
                 <div class="loginWrapper row bsReset">
 
-                <h1 id="titleForm" class="loginTitle float-left">Login to your account</h2>
-                    <span id="selectedDb"></span>>
-                    <ul id="dbs" class="float-right">
-                        <% for(var dbName in dbs){%>
-                        <li data-id="<%=dbName%>"
-                        <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%> (<%=dbs[dbName].url%>)
-                        </li>
-                        <%}%>
-                    </ul>
+                    <h1 id="titleForm" class="loginTitle float-left">Login to your account</h1>
+                    <div class="selectDd">
+                        <span id="selectedDb"></span>
+                        <ul id="dbs" class="float-right">
+                            <% for(var dbName in dbs){%>
+                            <li data-id="<%=dbName%>"
+                            <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%> (<%=dbs[dbName].url%>)
+                            </li>
+                            <%}%>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="error hidden">Such user doesn't registered</div>

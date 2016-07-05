@@ -1707,7 +1707,7 @@ h2.green {
 .forgotWrap {
   margin-top: 77px;
 }
-.selectDb {
+.selectDd {
   position: relative;
   height: 22px;
   border: 0;
@@ -1716,7 +1716,7 @@ h2.green {
   padding-right: 15px;
   cursor: pointer;
 }
-.selectDb:after {
+.selectDd:after {
   content: '';
   position: absolute;
   right: 5px;
