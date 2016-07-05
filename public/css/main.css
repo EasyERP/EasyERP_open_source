@@ -2106,6 +2106,20 @@ body {
     height: 100vh;
 }
 
+.sliderWrap {
+    position: relative;
+}
+
+.sliderWrap:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -2118,33 +2132,48 @@ h2.green {
     color: #32c5d2;
 }
 
+::-webkit-input-placeholder {
+    color: #a0a9b4;
+}
+
+:-moz-placeholder {
+    color: #a0a9b4;
+}
+
+::-moz-placeholder {
+    color: #a0a9b4;
+}
+
+:-ms-input-placeholder {
+    color: #a0a9b4;
+}
+
 .loginWrap {
     margin-top: 100px;
 }
 
 .loginWrap .formActions {
-    line-height: 30px;
+    line-height: 29px;
 }
 
 .forgotWrap {
-    margin-top: 77px;
+    margin-top: 69px;
 }
 
 .selectDd {
     position: relative;
     display: inline-block;
-    width: 230px;
-    height: 22px;
+    width: 100%;
     border: 0;
-    color: #666;
-    border-bottom: 2px solid #666;
+    color: #a0a9b4;
+    border-bottom: 1px solid #a0a9b4;
 }
 
 .selectDd:after {
     content: '';
     position: absolute;
     right: 5px;
-    top: 11px;
+    top: 16px;
     height: 0;
     width: 0;
     border-top: 4px solid #666;
@@ -2155,7 +2184,8 @@ h2.green {
 
 .selectDd .selectedDb {
     display: block;
-    height: 22px;
+    font-size: 14px;
+    line-height: 34px;
     cursor: pointer;
 }
 
@@ -2163,7 +2193,7 @@ h2.green {
     visibility: hidden;
     opacity: 0;
     position: absolute;
-    top: 22px;
+    top: 34px;
     width: 100%;
     background-image: none;
     background-color: #fff;
@@ -2195,10 +2225,11 @@ h2.green {
 }
 
 .loginTitle {
+    color: #4e5a64;
     font-size: 30px;
     font-weight: 300;
-    color: #4e5a64;
     font-family: 'Open Sans Light';
+    white-space: nowrap;
 }
 
 .loginTitleBlock {
@@ -2207,7 +2238,6 @@ h2.green {
 }
 
 .loginContainer {
-    padding: 0 80px;
     margin: auto 0;
 }
 
@@ -2216,6 +2246,7 @@ h2.green {
 }
 
 .loginContent {
+    padding: 0 80px;
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
@@ -2232,10 +2263,11 @@ h2.green {
     font-size: 13px;
 }
 
-@media (max-width: 1365px) {
-    .loginContainer {
-        padding: 0 40px;
-    }
+.loginCopyright {
+    margin: 0 0 25px 0;
+    text-align: right;
+    font-size: 13px;
+    color: #a9b5be;
 }
 
 input:not([type="checkbox"]).inputField {
@@ -2267,6 +2299,30 @@ input:not([type="checkbox"]).inputBordered {
 
 input:not([type="checkbox"]).inputBordered:focus {
     border-color: #93a1bb;
+}
+
+.notRegister input:not([type="checkbox"]) {
+    border-color: #ff9393;
+}
+
+.notRegister input:not([type="checkbox"]):focus {
+    border-color: #ff9393;
+}
+
+:focus::-webkit-input-placeholder {
+    color: transparent !important;
+}
+
+:focus::-moz-placeholder {
+    color: transparent !important;
+}
+
+:focus:-moz-placeholder {
+    color: transparent !important;
+}
+
+:focus:-ms-input-placeholder {
+    color: transparent !important;
 }
 
 .btn {
@@ -2326,7 +2382,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 
 .formGroup {
-    margin-bottom: 15px;
+    margin-bottom: 25px;
 }
 
 .rememberCheckWrap {
@@ -2390,6 +2446,61 @@ input:not([type="checkbox"]).inputBordered:focus {
     line-height: 22px;
 }
 
+@media (max-width: 768px) {
+    .loginContainer .loginTitle {
+        margin-bottom: 30px;
+    }
+
+    .loginContainer .selectDd {
+        float: left;
+        clear: both;
+    }
+
+    .loginContainer input:not([type="checkbox"]).inputField {
+        margin-bottom: 45px;
+    }
+}
+
+@media (max-width: 1600px) {
+    .loginContent {
+        padding: 0 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .loginContent {
+        padding: 0 40px;
+    }
+
+    .loginTitle {
+        font-size: 26px;
+    }
+}
+
+@media (min-width: 992px) {
+    .loginWrapper {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-align: end;
+        -ms-flex-align: end;
+        -ms-grid-row-align: flex-end;
+        align-items: flex-end;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1220px) {
+    .loginContent {
+        padding: 0 20px;
+    }
+
+    .loginTitle {
+        font-size: 23px;
+    }
+}
+
 @media (max-width: 992px) {
     .sliderWrap,
     .sliderContainer,
@@ -2398,17 +2509,24 @@ input:not([type="checkbox"]).inputBordered:focus {
     }
 }
 
-@media (min-width: 992px) and (max-width: 1220px) {
-    .loginContainer {
-        padding: 0 20px;
+@media (max-width: 768px) {
+    .loginWrapper .selectDd {
+        width: 230px;
     }
 
-    .selectDd {
-        width: 200px;
+    .loginWrap {
+        margin-top: 45px;
     }
 
-    .loginTitle {
-        font-size: 25px;
+    .loginCopyright {
+        position: absolute;
+        bottom: 0;
+        margin: 0 0 33px 0;
+        right: 40px;
+    }
+
+    .formActions {
+        white-space: nowrap;
     }
 }
 
