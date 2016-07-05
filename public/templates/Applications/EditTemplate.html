@@ -610,7 +610,7 @@
 
                             <tr class="transfer" id="<%=transfer._id%>" data-id="<%=key%>" data-content=<%= transfer.status %>>
                                 <td class="remove">
-                                    <% if (key === transfers.length - 1 && key) {%>
+                                    <% if (key === transfers.length - 1 && key && transfer.status !== 'hired' && transfer.status !== 'fired') {%>
                                     <a class="fa fa-trash"></a>
                                     <% } %>
                                 </td>
@@ -654,7 +654,7 @@
                                     </a>
                                 </td>
                                 <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
-                                <td class="editable dollar"  data-content="salary" data-id="salary"><%= transfer.salary %></td>
+                                <td class="editable dollar"  data-content="salary" data-id="salary"><%= currencySplitter(transfer.salary.toFixed()) %></td>
                                 <% } %>
                                 <td class="editable" class="statusInfo" data-content="info"
                                     data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>

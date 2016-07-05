@@ -436,7 +436,7 @@
                             %>
                             <tr class="transfer" id="<%=transfer._id%>" data-id="<%=key%>" data-content=<%= transfer.status %>>
                                 <td class="remove">
-                                    <% if (key === transfers.length - 1 && key) {%>
+                                    <% if (key === transfers.length - 1 && key && transfer.status !== 'hired' && transfer.status !== 'fired') {%>
                                     <a class="fa fa-trash"></a>
                                     <% } %>
                                 </td>

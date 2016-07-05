@@ -14,8 +14,9 @@
     'moment',
     'constants',
     'dataService',
-    'helpers'
-], function (Backbone, $, _, EditTemplate, SelectView, AttachView, ParentView, TransferModel, EditCollection, common, populate, custom, moment, CONSTANTS, dataService, helpers) {
+    'helpers',
+    'helpers/keyCodeHelper'
+], function (Backbone, $, _, EditTemplate, SelectView, AttachView, ParentView, TransferModel, EditCollection, common, populate, custom, moment, CONSTANTS, dataService, helpers, keyCodes) {
     'use strict';
     var EditView = ParentView.extend({
         el            : '#content-holder',
@@ -97,7 +98,7 @@
             'mouseenter .avatar'                              : 'showEdit',
             'mouseleave .avatar'                              : 'hideEdit',
             'click .current-selected'                         : 'showNewSelect',
-            //'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            // 'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .hireEmployee'                             : 'isEmployee',
             'click .refuseEmployee'                           : 'refuseEmployee',
             'click td.editable'                               : 'editJob',
@@ -273,12 +274,10 @@
 
             tempContainer = ($target.text()).trim();
 
-
             if (dataContent === 'salary') {
                 $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
                 return false;
             }
-
 
             if (dataContent === 'info') {
                 $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
@@ -430,12 +429,22 @@
                         if (!this.changedModels[editedElementRowId]) {
                             this.changedModels[editedElementRowId] = {};
                         }
+
+                        if (editedElementContent === 'salary') {
+                            editedElementValue = helpers.spaceReplacer(editedElementValue);
+                        }
+
                         this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     }
                 } else {
                     if (!this.changedModels[editedElementRowId]) {
                         this.changedModels[editedElementRowId] = {};
                     }
+
+                    if (editedElementContent === 'salary') {
+                        editedElementValue = helpers.spaceReplacer(editedElementValue);
+                    }
+
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                 }
                 editedCol.text(editedElementValue);
@@ -842,7 +851,6 @@
 
                 this.setEditable($element);
 
-
                 if (modelId && !this.changedModels[modelId]) {
                     if (!model.id) {
                         this.changedModels[modelId] = model.attributes;
@@ -893,7 +901,8 @@
             var self = this;
             var notDiv;
             var formString = this.template({
-                model: this.currentModel.toJSON()
+                model           : this.currentModel.toJSON(),
+                currencySplitter: helpers.currencySplitter
             });
             var $thisEl;
 
@@ -969,7 +978,7 @@
             this.hireDate = this.currentModel.get('hire')[0];
             this.fireDate = $thisEl.find('[data-content="fire"]').last().find('.fireDate').text();
 
-            this.renderRemoveBtn();
+           // this.renderRemoveBtn();
 
             return this;
         }

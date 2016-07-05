@@ -362,11 +362,18 @@ define([
                         if (!this.changedModels[editedElementRowId]) {
                             this.changedModels[editedElementRowId] = {};
                         }
+
+                        if (editedElementContent === 'salary') {
+                            editedElementValue = helpers.spaceReplacer(editedElementValue);
+                        }
                         this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     }
                 } else {
                     if (!this.changedModels[editedElementRowId]) {
                         this.changedModels[editedElementRowId] = {};
+                    }
+                    if (editedElementContent === 'salary') {
+                        editedElementValue = helpers.spaceReplacer(editedElementValue);
                     }
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                 }
