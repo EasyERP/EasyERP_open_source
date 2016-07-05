@@ -243,7 +243,7 @@ define([
                 homeAddress[el.attr('name')] = $.trim(el.val());
             });
 
-            salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
+            salary = parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val()) || helpers.spaceReplacer($tr.find('[data-id="salary"]').text()), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
             dateText = $.trim($tr.find('td').eq(2).text());
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
@@ -256,9 +256,6 @@ define([
 
             hireArray.push(date);
 
-            date = moment(date);
-            fireArray.push(date);
-            lastFire = date.year() * 100 + date.isoWeek();
             isEmployee = true;
 
             $thisEl.find('.groupsAndUser tr').each(function (index, element) {

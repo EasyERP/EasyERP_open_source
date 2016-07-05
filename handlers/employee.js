@@ -1222,24 +1222,24 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-                //if (data.transfer) {
-                //    data.transfer = data.transfer.map(function (tr) {
-                //
-                //        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                //            tr.isDeveloper = false;
-                //        } else {
-                //            tr.isDeveloper = true;
-                //        }
-                //        return tr;
-                //    });
-                //}
+               /* if (data.transfer) {
+                    data.transfer = data.transfer.map(function (tr) {
+
+                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                            tr.isDeveloper = false;
+                        } else {
+                            tr.isDeveloper = true;
+                        }
+                        return tr;
+                    });
+                }*/
 
                 Model.findById(_id, query, {new: true}, function (err, emp) {
                     if (err) {
                         return next(err);
                     }
 
-                    /*if (!accessEmployeeSalary(profileId)) {
+                    /* if (!accessEmployeeSalary(profileId)) {
                      data.transfer = data.transfer.map(function (tr, i) {
                      if (i !== 0) {
                      if (emp.transfer[i] && emp.transfer[i].salary) {

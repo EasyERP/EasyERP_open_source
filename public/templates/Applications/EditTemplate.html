@@ -296,7 +296,7 @@
                                         <label for="jobPositionDd">Job position</label></dt>
                                     <dd>
                                         <a id="jobPositionDd"
-                                           class="current-selected required"
+                                           class="current-selected"
                                            href="javascript:;"
                                            data-id="<%= model.jobPosition ? model.jobPosition._id : '' %>">
                                             <%= model.jobPosition ? model.jobPosition.name : 'select position' %>
@@ -308,7 +308,7 @@
                                     </dt>
                                     <dd>
                                         <a id="departmentsDd"
-                                           class="current-selected required"
+                                           class="current-selected"
                                            href="javascript:;"
                                            data-id="<%= model.department ? model.department._id : '' %>">
                                             <%= model.department ? model.department.name : 'select department'%>
@@ -320,7 +320,7 @@
                                     </dt>
                                     <dd>
                                         <a id="projectManagerDD"
-                                           class="current-selected required"
+                                           class="current-selected"
                                            href="javascript:;"
                                            data-id="<%=model.manager ? model.manager._id : ''%>">
                                             <%=model.manager ? model.manager.fullName : "select manager"%>
@@ -332,7 +332,7 @@
                                     </dt>
                                     <dd>
                                         <a id="jobTypeDd"
-                                           class="current-selected required"
+                                           class="current-selected"
                                            href="javascript:;"
                                            data-id="<%=model.jobType ? model.jobType : ''%>">
                                             <%=model.jobType ? model.jobType : 'select job type'%>
@@ -615,16 +615,16 @@
                                     <% } %>
                                 </td>
                                 <td><%= transfer.status %></td>
-                                <td class="editable date"><%= transfer.date %></td>
+                                <td class="editable date" data-content="date"><%= transfer.date %></td>
                                 <td>
-                                    <a id="jobPositionDd" class="current-selected"
+                                    <a id="jobPositionDd" class="current-selected" data-content="jobPosition"
                                        data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>"
                                        href="javascript:;">
                                         <%=transfer.jobPosition ? transfer.jobPosition.name : 'Select'%>
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="departmentsDd" class="current-selected"
+                                    <a id="departmentsDd" class="current-selected" data-content="department"
                                        data-id="<%=transfer.department ? transfer.department._id : null%>"
                                        href="javascript:;">
                                         <%=transfer.department ? transfer.department.name :
@@ -632,7 +632,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="projectManagerDD" class="current-selected"
+                                    <a id="projectManagerDD" class="current-selected" data-content="manager"
                                        data-id="<%= transfer.manager ?  transfer.manager._id : null%>"
                                        href="javascript:;">
                                         <%=transfer.manager ? transfer.manager.name.first + ' ' +
@@ -640,14 +640,14 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="jobTypeDd" class="current-selected"
+                                    <a id="jobTypeDd" class="current-selected" data-content="jobType"
                                        data-id="<%transfer.jobType ? transfer.jobType :''%>"
                                        href="javascript:;">
                                         <%=transfer.jobType ? transfer.jobType : "Select"%>
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="weeklySchedulerDd" class="current-selected"
+                                    <a id="weeklySchedulerDd" class="current-selected" data-content="weeklyScheduler"
                                        data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>"
                                        href="javascript:;">
                                         <%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : "Select"%>
@@ -668,8 +668,6 @@
 
                             </tbody>
                         </table>
-                        <a id="update">Update</a>
-
                     </div>
                     <%}%>
                     <div class="dialog-tabs-item">

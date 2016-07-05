@@ -8,8 +8,9 @@ define([
     'populate',
     'views/Notes/AttachView',
     'views/dialogViewBase',
-    'constants'
-], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, ParentView, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, ParentView, CONSTANTS, helpers) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -38,6 +39,22 @@ define([
                 }, {
                     _id : 'unmarried',
                     name: 'unmarried'
+                }
+            ];
+
+            this.responseObj['#sourceDd'] = [
+                {
+                    _id : 'www.rabota.ua',
+                    name: 'www.rabota.ua'
+                }, {
+                    _id : 'www.work.ua',
+                    name: 'www.work.ua'
+                }, {
+                    _id : 'www.ain.net',
+                    name: 'www.ain.net'
+                }, {
+                    _id : 'other',
+                    name: 'other'
                 }
             ];
             
@@ -133,7 +150,7 @@ define([
 
             var homeAddress = {};
 
-            var dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
+            var dateBirthSt = helpers.setTimeToDate($.trim($thisEl.find('#dateBirth').val()));
 
             var sourceId = $thisEl.find('#sourceDd').attr('data-id');
 
@@ -148,9 +165,9 @@ define([
 
             var referredBy = $.trim($thisEl.find('#referredBy').val());
 
-            var expectedSalary = $.trim($thisEl.find('#expectedSalary').val());
+            var expectedSalary = parseInt(helpers.spaceReplacer($.trim($thisEl.find('#expectedSalary').val())), 10);
 
-            var proposedSalary = parseInt($.trim($thisEl.find('#proposedSalary').val()), 10);
+            var proposedSalary = parseInt(helpers.spaceReplacer($.trim($thisEl.find('#proposedSalary').val())), 10);
 
             var workflow = $thisEl.find('#workflowsDd').attr('data-id') || null;
 
