@@ -30,12 +30,23 @@ define([
             'click #forgotPass'     : 'goForgotPass',
             'click #backToLogin'    : 'goForgotPass',
             'click #selectedDb'     : 'showHideDbs',
-            'click #dbs li'         : 'selectDb'
+            'click #dbs li'         : 'selectDb',
+            click                   : 'hideSelect'
+        },
+
+        hideSelect: function () {
+            var $thisEl = this.$el;
+            var $ul = $thisEl.find('#dbs');
+
+            $ul.removeClass('openDd');
         },
 
         showHideDbs: function (e) {
             var $thisEl = this.$el;
             var $ul = $thisEl.find('#dbs');
+
+            e.preventDefault();
+            e.stopPropagation();
 
             $ul.toggleClass('openDd');
         },
@@ -47,6 +58,9 @@ define([
             var $selectedDb = $thisEl.find('#selectedDb');
             var dbName = $li.attr('data-id');
             var fullText = $li.text();
+            var $ul = $thisEl.find('#dbs');
+
+            $ul.removeClass('openDd');
 
             $selectedDb.attr('data-id', dbName);
             $selectedDb.text(fullText);
@@ -173,6 +187,12 @@ define([
 
                 success: function () {
                     $backToLogin.click();
+                    setTimeout(function () {
+                        App.render({
+                            type   : 'notify',
+                            message: 'The new password was sent to your email. Please check it'
+                        });
+                    }, 1000);
                 },
 
                 error: function () {
