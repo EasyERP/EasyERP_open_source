@@ -21,12 +21,12 @@
             <form id="loginForm" class="loginWrap" action="javascript:;">
                 <div class="row">
                     <div class="col s-6">
-                        <input type="text" placeholder="Username or Email" class="ulogin inputField" name="ulogin" value=""
+                        <input type="text" placeholder="Username or Email" class="ulogin inputField" name="ulogin" value="<%-login || ''%>"
                                autofocus
                                maxlength="24"/>
                     </div>
                     <div class="col s-6">
-                        <input type="password" placeholder="Password" id="upass" name="upass" class="inputField" value="" maxlength="24"/>
+                        <input type="password" placeholder="Password" id="upass" name="upass" class="inputField" value="<%-password || ''" maxlength="24"/>
                     </div>
                 </div>
                 <div class="formActions">
