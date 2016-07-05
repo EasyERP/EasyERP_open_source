@@ -355,32 +355,70 @@ var User = function (event, models) {
             ]
         };
 
-        UserModel.findOne(queryObject, {login: 1, email: 1}, function (err, _user) {
+        function findUser(waterfallCb) {
+            UserModel.findOne(queryObject, {login: 1, email: 1}, function (err, _user) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                if (!_user || !_user._id || !_user.email) {
+                    err = new Error(constants.BAD_REQUEST);
+                    err.status = 400;
+
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, _user);
+            });
+        }
+
+        function paswordGenerator(_user, waterfallCb) {
+            crypto.randomBytes(6, function (err, buffer) {
+                var token = buffer.toString('hex');
+
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, token, _user);
+            });
+        }
+
+        function sendMail(token, _user, waterfallCb) {
+            mailer.forgotPassword({
+                email   : _user.email,
+                dateBase: data.dbId,
+                password: token
+            }, function (err, sent) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, token, _user);
+            });
+        }
+
+        function updateUser(token, _user, waterfallCb) {
+            var shaSum = crypto.createHash('sha256');
+
+            shaSum.update(token);
+            token = shaSum.digest('hex');
+
+            UserModel.findByIdAndUpdate(_user._id, {$set: {pass: token}}, {new: true}, function (err, user) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, user);
+            });
+        }
+
+        async.waterfall([findUser, paswordGenerator, sendMail, updateUser], function (err) {
             if (err) {
                 return next(err);
             }
 
-            if (!_user || !_user._id || !_user.email) {
-                err = new Error(constants.BAD_REQUEST);
-                err.status = 400;
-
-                return next(err);
-            }
-
-            crypto.randomBytes(6, function (err, buffer) {
-                var token = buffer.toString('hex');
-
-                mailer.forgotPassword({
-                    email   : _user.email,
-                    password: token
-                }, function (err, sent) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.send(200);
-                });
-            });
+            res.status(200).send();
         });
     };
 

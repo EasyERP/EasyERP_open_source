@@ -167,7 +167,7 @@ define([
             $('title').text('Login');
 
             if (options) {
-                $thisEl.html(_.template(LoginTemplate, {options: options.dbs}));
+                $thisEl.html(_.template(LoginTemplate, options));
             } else {
                 $thisEl.html(LoginTemplate);
                 $thisEl.find('#loginForm').addClass('notRegister');

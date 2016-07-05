@@ -23,6 +23,8 @@ define([
     };
 
     var runApplication = function (success) {
+        var location = window.location.hash;
+        var emailRedirectRegExp = /password/;
         var url;
 
         if (!Backbone.History.started) {
@@ -41,7 +43,14 @@ define([
                 App.requestedURL = Backbone.history.fragment;
             }
             Backbone.history.fragment = '';
-            Backbone.history.navigate('login', {trigger: true});
+
+            if (emailRedirectRegExp.test(location)) {
+                url = location;
+            } else {
+                url = 'login'
+            }
+
+            Backbone.history.navigate(url, {trigger: true});
         }
     };
 
