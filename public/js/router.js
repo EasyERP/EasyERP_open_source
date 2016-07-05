@@ -1340,7 +1340,9 @@ define([
             var self = this;
 
             dbId = dbId || '';
-            
+            email = email || '';
+            password = password || '';
+
             this.mainView = null;
 
             $.ajax({
