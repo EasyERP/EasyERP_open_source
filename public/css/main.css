@@ -1731,7 +1731,7 @@ h2.green {
   margin-top: 100px;
 }
 .loginWrap .formActions {
-  line-height: 30px;
+  line-height: 29px;
 }
 .forgotWrap {
   margin-top: 69px;
@@ -2039,6 +2039,17 @@ input:not([type="checkbox"]).inputBordered:focus {
 @media (max-width: 768px) {
   .loginWrapper .selectDd {
     width: 230px;
+  }
+  .loginWrap {
+    margin-top: 45px;
+  }
+  .loginCopyright {
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+  }
+  .formActions {
+    white-space: nowrap;
   }
 }
 .btn {

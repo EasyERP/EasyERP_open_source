@@ -32,7 +32,7 @@ h2 {
   margin-top: 100px;
 
   .formActions{
-    line-height: 30px;
+    line-height: 29px;
   }
 }
 
@@ -415,9 +415,22 @@ input {
 }
 
 @media (max-width: 768px) {
-  .loginWrapper {
-    .selectDd {
-      width: 230px;
+  .login {
+    &Wrapper {
+      .selectDd {
+        width: 230px;
+      }
     }
+    &Wrap {
+      margin-top: 45px;
+    }
+    &Copyright {
+      position: absolute;
+      bottom: 0;
+      right: 40px;
+    }
+  }
+  .formActions {
+    white-space: nowrap;
   }
 }
