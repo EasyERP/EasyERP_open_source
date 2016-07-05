@@ -1704,6 +1704,16 @@ h2.green {
 .loginWrap .formActions {
   line-height: 30px;
 }
+.forgotWrap {
+  margin-top: 77px;
+}
+.celectDb {
+  display: inline-block;
+  border: 0;
+  border-bottom: 2px solid #666;
+  padding-right: 15px;
+  cursor: pointer;
+}
 .loginTitle {
   font-size: 30px;
   font-weight: 300;
