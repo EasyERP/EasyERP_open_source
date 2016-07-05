@@ -1715,6 +1715,18 @@ a {
 h2.green {
   color: #32c5d2;
 }
+::-webkit-input-placeholder {
+  color: #a0a9b4;
+}
+:-moz-placeholder {
+  color: #a0a9b4;
+}
+::-moz-placeholder {
+  color: #a0a9b4;
+}
+:-ms-input-placeholder {
+  color: #a0a9b4;
+}
 .loginWrap {
   margin-top: 100px;
 }
@@ -1722,22 +1734,21 @@ h2.green {
   line-height: 30px;
 }
 .forgotWrap {
-  margin-top: 77px;
+  margin-top: 69px;
 }
 .selectDd {
   position: relative;
   display: inline-block;
-  width: 230px;
-  height: 22px;
+  width: 100%;
   border: 0;
-  color: #666;
-  border-bottom: 2px solid #666;
+  color: #a0a9b4;
+  border-bottom: 1px solid #a0a9b4;
 }
 .selectDd:after {
   content: '';
   position: absolute;
   right: 5px;
-  top: 11px;
+  top: 16px;
   height: 0;
   width: 0;
   border-top: 4px solid #666;
@@ -1747,14 +1758,15 @@ h2.green {
 }
 .selectDd .selectedDb {
   display: block;
-  height: 22px;
+  font-size: 14px;
+  line-height: 34px;
   cursor: pointer;
 }
 .selectDd ul {
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  top: 22px;
+  top: 34px;
   width: 100%;
   background-image: none;
   background-color: #fff;
@@ -1782,23 +1794,24 @@ h2.green {
   transform: none;
 }
 .loginTitle {
+  color: #4e5a64;
   font-size: 30px;
   font-weight: 300;
-  color: #4e5a64;
   font-family: 'Open Sans Light';
+  white-space: nowrap;
 }
 .loginTitleBlock {
   margin-top: 20px;
   margin-bottom: 10px;
 }
 .loginContainer {
-  padding: 0 80px;
   margin: auto 0;
 }
 .loginContainer .selectDd {
   float: right;
 }
 .loginContent {
+  padding: 0 80px;
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -1813,10 +1826,11 @@ h2.green {
   color: #a4aab2;
   font-size: 13px;
 }
-@media (max-width: 1365px) {
-  .loginContainer {
-    padding: 0 40px;
-  }
+.loginCopyright {
+  margin: 0 0 25px 0;
+  text-align: right;
+  font-size: 13px;
+  color: #a9b5be;
 }
 input:not([type="checkbox"]).inputField {
   height: 34px;
@@ -1845,6 +1859,18 @@ input:not([type="checkbox"]).inputBordered {
 }
 input:not([type="checkbox"]).inputBordered:focus {
   border-color: #93a1bb;
+}
+:focus::-webkit-input-placeholder {
+  color: transparent!important;
+}
+:focus::-moz-placeholder {
+  color: transparent!important;
+}
+:focus:-moz-placeholder {
+  color: transparent!important;
+}
+:focus:-ms-input-placeholder {
+  color: transparent!important;
 }
 .btn {
   display: inline-block;
@@ -1896,7 +1922,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   color: #fff;
 }
 .formGroup {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 .rememberCheckWrap {
   position: relative;
@@ -1970,15 +1996,28 @@ input:not([type="checkbox"]).inputBordered:focus {
     height: 50vh;
   }
 }
+@media (max-width: 1600px) {
+  .loginContent {
+    padding: 0 60px;
+  }
+}
+@media (max-width: 1500px) {
+  .loginContent {
+    padding: 0 40px;
+  }
+  .loginTitle {
+    font-size: 26px;
+  }
+}
 @media (min-width: 992px) and (max-width: 1220px) {
-  .loginContainer {
+  .loginContent {
     padding: 0 20px;
+  }
+  .loginTitle {
+    font-size: 24px;
   }
   .selectDd {
     width: 200px;
-  }
-  .loginTitle {
-    font-size: 25px;
   }
 }
 .btn {
