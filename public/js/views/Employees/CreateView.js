@@ -212,6 +212,8 @@ define([
             var $tr;
             var el;
             var $thisEl = this.$el;
+            var payrollStructureType;
+            var scheduledPay;
 
             if ($thisEl.find('.errorContent').length) {
                 return App.render({
@@ -249,6 +251,8 @@ define([
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+            payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+            scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
             department = $tr.find('#departmentsDd').attr('data-id');
             jobType = $.trim($tr.find('#jobTypeDd').text());
             info = $tr.find('#statusInfoDd').val();
@@ -362,8 +366,8 @@ define([
                         info                : info,
                         weeklyScheduler     : weeklyScheduler,
                         employee            : model.get('id'),
-                        scheduledPay        : null,
-                        payrollStructureType: null
+                        scheduledPay        : scheduledPay,
+                        payrollStructureType: payrollStructureType
                     };
 
                     transferModel = new TransferModel();

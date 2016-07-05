@@ -194,6 +194,13 @@ define([
             var employeeId;
             var transfer;
             var model;
+            var payrollStructureType;
+            var scheduledPay;
+
+            lastTr.find('a').removeClass('current-selected');
+            lastTr.find('[data-content="date"]').removeClass('editable');
+            lastTr.find('[data-content="salary"]').removeClass('editable');
+            lastTr.find('[data-content="info"]').removeClass('editable');
 
             now = common.utcDateToLocaleDate(now);
 
@@ -223,6 +230,8 @@ define([
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+            payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+            scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
             department = $tr.find('#departmentsDd').attr('data-id');
             jobType = $.trim($tr.find('#jobTypeDd').text());
             info = $tr.find('#statusInfoDd').val();
@@ -230,16 +239,18 @@ define([
             employeeId = this.currentModel.get('_id');
 
             transfer = {
-                employee       : employeeId,
-                status         : event,
-                date           : date,
-                department     : department,
-                jobPosition    : jobPosition,
-                manager        : manager,
-                jobType        : jobType,
-                salary         : salary,
-                info           : info,
-                weeklyScheduler: weeklyScheduler
+                employee            : employeeId,
+                status              : event,
+                date                : date,
+                department          : department,
+                jobPosition         : jobPosition,
+                manager             : manager,
+                jobType             : jobType,
+                salary              : salary,
+                info                : info,
+                weeklyScheduler     : weeklyScheduler,
+                payrollStructureType: null,     // toDo payrollStructureType
+                scheduledPay        : null      // toDo scheduledPay
             };
             model = new TransferModel(transfer);
             newTr.attr('id', model.cid);
@@ -251,9 +262,21 @@ define([
             var table = this.$el.find('#hireFireTable');
             var trs = table.find('tr');
             var removeBtn = CONSTANTS.TRASH_BIN;
+            var lastTr;
+            var status;
 
             trs.find('td:first-child').text('');
-            trs.last().find('td').first().html(removeBtn);
+            lastTr = trs.last();
+
+            status = lastTr.attr('data-content');
+            if (status !== 'hired' && status !== 'fired') {
+                lastTr.find('td').first().html(removeBtn);
+            }
+
+            lastTr.find('a').addClass('current-selected');
+            lastTr.find('[data-content="date"]').addClass('editable');
+            lastTr.find('[data-content="salary"]').addClass('editable');
+            lastTr.find('[data-content="info"]').addClass('editable');
         },
 
         editJob: function (e) {
@@ -710,6 +733,7 @@ define([
                             }
                             delete transferNewModel.attributes._id;
                             delete transferNewModel._id;
+                            delete transferNewModel.id;
                             transferNewModel.changed.date = moment(modelChanged.changed.date).subtract(1, 'day');
                             transferNewModel.changed.status = 'transfer';
                             self.editCollection.add(transferNewModel);
@@ -838,6 +862,8 @@ define([
             );
 
             this.renderAssignees(this.currentModel);
+
+            this.renderRemoveBtn();
 
             common.getWorkflowContractEnd('Applications', null, null, CONSTANTS.URLS.WORKFLOWS, null, 'Contract End', function (workflow) {
                 self.$el.find('.endContractReasonList').attr('data-id', workflow[0]._id);

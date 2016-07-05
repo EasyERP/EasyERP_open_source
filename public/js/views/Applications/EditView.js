@@ -195,6 +195,8 @@
             var employeeId;
             var transfer;
             var model;
+            var payrollStructureType;
+            var scheduledPay;
 
             if (this.currentModel.get('transfer').length) {
 
@@ -220,6 +222,8 @@
                 date = helpers.setTimeToDate(new Date());
                 jobPosition = $tr.find('#jobPositionDd').attr('data-id');
                 weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+                payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+                scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
                 department = $tr.find('#departmentsDd').attr('data-id');
                 jobType = $.trim($tr.find('#jobTypeDd').text());
                 info = $tr.find('#statusInfoDd').val();
@@ -233,6 +237,8 @@
                 date = helpers.setTimeToDate(new Date());
                 jobPosition = $thisEl.find('#jobPositionDd').attr('data-id');
                 weeklyScheduler = $thisEl.find('#weeklySchedulerDd').attr('data-id');
+                payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+                scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
                 department = $thisEl.find('#departmentsDd').attr('data-id');
                 jobType = $thisEl.find('#jobTypeDd').attr('data-id');
                 info = $thisEl.find('#statusInfoDd').val() || null;
@@ -243,16 +249,18 @@
             this.hireEmployee = true;
 
             transfer = {
-                employee       : employeeId,
-                status         : event,
-                date           : date,
-                department     : department,
-                jobPosition    : jobPosition,
-                manager        : manager,
-                jobType        : jobType,
-                salary         : salary,
-                info           : info,
-                weeklyScheduler: weeklyScheduler
+                employee            : employeeId,
+                status              : event,
+                date                : date,
+                department          : department,
+                jobPosition         : jobPosition,
+                manager             : manager,
+                jobType             : jobType,
+                salary              : salary,
+                info                : info,
+                weeklyScheduler     : weeklyScheduler,
+                payrollStructureType: payrollStructureType,
+                scheduledPay        : scheduledPay
             };
             model = new TransferModel(transfer);
             if (this.currentModel.get('transfer').length) {
@@ -996,7 +1004,7 @@
             this.hireDate = this.currentModel.get('hire')[0];
             this.fireDate = $thisEl.find('[data-content="fire"]').last().find('.fireDate').text();
 
-           // this.renderRemoveBtn();
+            // this.renderRemoveBtn();
 
             return this;
         }
