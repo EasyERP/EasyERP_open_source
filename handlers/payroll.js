@@ -233,7 +233,7 @@ var Module = function (models) {
     };
 
     function getByDataKey(req, res, next) {
-        var id = req.query.id  || req.params.id || req.query.dataKey;
+        var id = req.query.id || req.params.id || req.query.dataKey;
         var data = req.query;
         var error;
         var sort = data.sort || {'employee.name.first': 1, 'employee.name.last': 1};
@@ -336,7 +336,7 @@ var Module = function (models) {
         var id = req.params.id;
         var sort = query.sort || {};
 
-        if (Object.keys(sort).length){
+        if (Object.keys(sort).length) {
             return getByDataKey(req, res, next);
         }
 
@@ -364,37 +364,37 @@ var Module = function (models) {
         var filterMapper = new FilterMapper();
 
         /*function caseFilterEmployee(filter) {
-            var condition;
-            var resArray = [];
-            var filtrElement = {};
-            var filterName;
-            var keyCase;
-            var i;
-            var filterNameKeys = Object.keys(filter);
+         var condition;
+         var resArray = [];
+         var filtrElement = {};
+         var filterName;
+         var keyCase;
+         var i;
+         var filterNameKeys = Object.keys(filter);
 
-            for (i = filterNameKeys.length - 1; i >= 0; i--) {
-                filterName = filterNameKeys[i];
-                condition = filter[filterName].value;
-                keyCase = filter[filterName].key;
+         for (i = filterNameKeys.length - 1; i >= 0; i--) {
+         filterName = filterNameKeys[i];
+         condition = filter[filterName].value;
+         keyCase = filter[filterName].key;
 
-                switch (filterName) {
-                    case 'employee':
-                        filtrElement[keyCase] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'department':
-                        filtrElement[keyCase] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'onlyEmployees':
-                        resArray.push({isEmployee: true});
-                        break;
-                    // skip default;
-                }
-            }
+         switch (filterName) {
+         case 'employee':
+         filtrElement[keyCase] = {$in: condition.objectID()};
+         resArray.push(filtrElement);
+         break;
+         case 'department':
+         filtrElement[keyCase] = {$in: condition.objectID()};
+         resArray.push(filtrElement);
+         break;
+         case 'onlyEmployees':
+         resArray.push({isEmployee: true});
+         break;
+         // skip default;
+         }
+         }
 
-            return resArray;
-        }*/
+         return resArray;
+         }*/
 
         function checkFilter(callback) {
             callback(null, filter);
@@ -445,9 +445,13 @@ var Module = function (models) {
 
             if (filter && typeof filter === 'object') {
                 /*filterValue = caseFilterEmployee(filter);
-                if (filterValue.length) {*/
-                    // matchObj.$and.push({$and: caseFilterEmployee(filter)});
-                    matchObj.$and.push(filterMapper.mapFilter(filter, 'salaryReport'));
+                 if (filterValue.length) {*/
+                // matchObj.$and.push({$and: caseFilterEmployee(filter)});
+                
+                delete filter.startDate;
+                delete filter.endDate;
+
+                matchObj.$and.push(filterMapper.mapFilter(filter, 'salaryReport'));
                 // }
             }
 
