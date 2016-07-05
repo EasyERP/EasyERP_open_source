@@ -1,0 +1,150 @@
+// General variables ----
+$serif: sans-serif;
+$fontPath: '../fonts/';
+// ----------------------
+
+// Fonts path -----------
+$baseFontPath  : 'lato/';
+//$extraFontPath : 'raleway/';
+// Fonts file count -----
+$baseFontCount  : 3;
+//$extraFontCount : 2;
+// ----------------------
+
+// Fonts files ----------
+$baseFontFile  : (
+    1: 'lato-regular',
+    2: 'lato-bold',
+    3: 'lato-black',
+);
+
+//$extraFontFile : (
+//    1: 'raleway-regular',
+//    2: 'raleway-bold',
+//);
+// ----------------------
+
+// Fonts name -----------
+$baseFontName  : (
+    1: 'Lato Regular',
+    2: 'Lato Bold',
+    3: 'Lato Black',
+);
+
+//$extraFontName : (
+//    1: 'Raleway Regular',
+//    2: 'Raleway Bold',
+//);
+// ----------------------
+
+// Fonts svg id ---------
+$baseFontSvgId  : (
+    1: 'latoregular',
+    2: 'latobold',
+    3: 'latoblack',
+);
+
+//$extraFontSvgId : (
+//    1: 'ralewayregular',
+//    2: 'ralewaybold',
+//);
+// ----------------------
+
+// Fonts weight ---------
+$baseFontWeight  : (
+    1: 400,
+    2: 700,
+    3: 900,
+);
+
+//$extraFontWeight : (
+//    1: 400,
+//    2: 700,
+//);
+// ----------------------
+$baseFont : (
+    'regular' : 'Lato Regular',
+    'bold'    : 'Lato Bold',
+    'xbold'   : 'Lato Black',
+);
+
+//$extraFont : (
+//    'regular' : 'Raleway Regular',
+//    'bold'    : 'Raleway Bold',
+//);
+
+// All fonts array
+$fonts: (
+    "baseFont"  : $baseFont,
+    //'extraFont' : $extraFont,
+);
+
+// usage: font("type_of_font", "name_of_font")
+// to avoid to repeating map-get($fonts, ...)
+
+@function font($font, $type) {
+  @if map-has-key($fonts, $font) {
+    $curr_font: map-get($fonts, $font);
+    @if map-has-key($curr_font, $type) {
+      @return map-get($curr_font, $type);
+    }
+  }
+  @warn "Unknown `#{name}` in `#{$font}`.";
+  @return null;
+}
+
+// Fonts family variables
+$base-font-family  : font("baseFont", "regular"), $serif !default;
+$bold-font-family  : font("baseFont", "bold"), $serif !default;
+$xbold-font-family : font("baseFont", "xbold"), $serif !default;
+//$extraFontFamily: font("extraFont", "regular"), $serif !default;
+
+// Typography -----------
+@function lineHeight($x, $y) {
+  @return $x / $y; // values in px
+}
+
+$size-body : (
+    null   : (16px, lineHeight(20, 16)),          // 1rem, 1.25
+    small  : (16px, lineHeight(22, 16)),          // 1rem, 1.375
+);
+
+$size-h1   : (
+    null   : (38px, lineHeight(40, 32), 20px),   // 2.375rem, 1.25
+    small  : (46px, lineHeight(46, 40), 22px),   // 2.875rem, 1.15
+    medium : (54px, lineHeight(54 ,48), 22px),   // 3.375rem, 1.125
+);
+
+$size-h2   : (
+    null   : (32px, lineHeight(40, 32), 20px),   // 2rem, 1.25
+    small  : (40px, lineHeight(45, 40), 22px),   // 2.5rem, 1.125
+    medium : (48px, lineHeight(50.4, 48), 22px), // 3rem, 1.05
+);
+
+$size-h3   : (
+    null   : (26px, lineHeight(30, 26), 20px),   // 1.625rem, 1.1538
+    small  : (32px, lineHeight(40, 32), 22px),   // 2rem, 1.25
+    medium : 36px,                               // 2.25 rem
+);
+
+$size-h4   : (
+    null   : (18px, lineHeight(27, 18), 20px),   // 1.125rem, 1.5
+    small  : (22px, lineHeight(33, 22), 22px),   // 1.375rem, 1.5
+    medium : 24px,                               // 1.5 rem
+);
+
+$size-h5   : (
+    null   : (16px, lineHeight(20, 16), 20px),   // 1rem, 1.25
+    small  : (16px, lineHeight(22, 16), 22px),   // 1rem, 1.375
+);
+
+$size-h6   : (
+    null   : (14px, lineHeight(20, 14), 20px),   // 0.875rem, 1.4285
+    small  : (14px, lineHeight(22, 14), 22px),   // 0.875rem, 1.5714
+);
+
+$size-q    : (
+    null   : (20px, lineHeight(25, 20)),         // 1.25rem, 1.25
+    small  : (24px, lineHeight(35, 24)),         // 1.5rem, 1.4583
+);
+// ----------------------

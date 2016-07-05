@@ -1,0 +1,7 @@
+* {
+  &:before,
+  &:after {
+    box-sizing: border-box;
+    transform: rotate(0deg);
+  }
+}

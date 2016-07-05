@@ -1,0 +1,67 @@
+// Grid vars ------------
+$num-cols     : 12 !default;
+$gutter-width : 30px !default;
+
+$screen-breakpoints : (
+    xsmall : 480px,
+    small  : 768px,
+    medium : 992px,
+    large  : 1200px
+);
+
+$small-container    : 820px;
+$medium-container   : 960px !default;
+$large-container    : 1200px !default;
+
+$xsmall-screen      : map_get($screen-breakpoints, 'xsmall') !default;
+$small-screen       : map_get($screen-breakpoints, 'small') !default;
+$medium-screen      : map_get($screen-breakpoints, 'medium') !default;
+$large-screen       : map_get($screen-breakpoints, 'large') !default;
+// ----------------------
+
+// Grid vars -1 ---------
+$xsmall-screen-down : (map_get($screen-breakpoints, 'xsmall') - 1)!default;
+$small-screen-down  : (map_get($screen-breakpoints, 'small') - 1) !default;
+$medium-screen-down : (map_get($screen-breakpoints, 'medium') - 1) !default;
+$large-screen-down  : (map_get($screen-breakpoints, 'large') - 1) !default;
+// ----------------------
+
+// Grid vars +1 ---------
+$xsmall-screen-up   : (map_get($screen-breakpoints, 'xsmall') + 1)!default;
+$small-screen-up    : (map_get($screen-breakpoints, 'small') + 1) !default;
+$medium-screen-up   : (map_get($screen-breakpoints, 'medium') + 1) !default;
+$large-screen-up    : (map_get($screen-breakpoints, 'large') + 1) !default;
+// ----------------------
+
+// Header ---------------
+$logo : (
+    'width'  : 60px,
+    'height' : 60px,
+);
+
+$header : (
+    xsmall : 60px,
+    small  : 90px,
+    medium : 90px,
+    large  : 90px,
+);
+// ----------------------
+
+$vars : (
+    'logo'   : $logo,
+    'header' : $header,
+);
+
+// usage: var("name_of_var", "type_of_var")
+// to avoid to repeating map-get($vars, ...)
+
+@function var($var, $type) {
+  @if map-has-key($vars, $var) {
+    $curr_var: map-get($vars, $var);
+    @if map-has-key($curr_var, $type) {
+      @return map-get($curr_var, $type);
+    }
+  }
+  @warn "Unknown `#{$type}` in #{$var}.";
+  @return null;
+}
