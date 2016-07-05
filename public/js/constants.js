@@ -822,6 +822,7 @@ define([], function () {
             WORKFLOWS_FETCH            : '/workflows/fetch',
             PAYMENT_AMOUNT_LEFT        : '/payment/amountLeftCalc',
             SALARY_REPORT              : '/salaryReport/',
+            WEEKLYSCHEDULER            : '/weeklyScheduler/forDd',
             SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd'
         },

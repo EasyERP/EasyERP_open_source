@@ -26,7 +26,7 @@ define([
              populate,
              moment,
              keyCodes,
-             constants,
+             CONSTANTS,
              helpers,
              dataService) {
     'use strict';
@@ -250,7 +250,7 @@ define([
         renderRemoveBtn: function () {
             var table = this.$el.find('#hireFireTable');
             var trs = table.find('tr');
-            var removeBtn = constants.TRASH_BIN;
+            var removeBtn = CONSTANTS.TRASH_BIN;
 
             trs.find('td:first-child').text('');
             trs.last().find('td').first().html(removeBtn);
@@ -675,7 +675,7 @@ define([
             }
 
             if (!isEmployee) {
-                data.workflow = constants.END_CONTRACT_WORKFLOW_ID;
+                data.workflow = CONSTANTS.END_CONTRACT_WORKFLOW_ID;
             }
 
             this.currentModel.set(data);
@@ -719,7 +719,7 @@ define([
                     self.editCollection.save();
 
                     if (self.removeTransfer.length) {
-                        dataService.deleteData(constants.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
+                        dataService.deleteData(CONSTANTS.URLS.TRANSFER, {removeTransfer: self.removeTransfer}, function (err, response) {
                             if (err) {
                                 return App.render({
                                     type   : 'error',
@@ -839,17 +839,20 @@ define([
 
             this.renderAssignees(this.currentModel);
 
-            common.getWorkflowContractEnd('Applications', null, null, constants.URLS.WORKFLOWS, null, 'Contract End', function (workflow) {
+            common.getWorkflowContractEnd('Applications', null, null, CONSTANTS.URLS.WORKFLOWS, null, 'Contract End', function (workflow) {
                 self.$el.find('.endContractReasonList').attr('data-id', workflow[0]._id);
             });
-            populate.get('#departmentManagers', constants.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
-            populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this);
-            populate.get('#jobTypeDd', constants.URLS.JOBPOSITIONS_JOBTYPE, {}, 'name', this);
-            populate.get('#nationality', constants.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this);
-            populate.get2name('#projectManagerDD', constants.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
-            populate.get('#jobPositionDd', constants.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, false, false);
-            populate.get('#relatedUsersDd', constants.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
-            populate.get('#departmentsDd', constants.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
+            populate.get('#departmentManagers', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
+            populate.get('#weeklySchedulerDd', CONSTANTS.URLS.WEEKLYSCHEDULER, {}, 'name', this);
+            populate.get('#jobTypeDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, 'name', this);
+            populate.get('#nationality', CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this);
+            populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
+            populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, false, false);
+            populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
+            populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
+            populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
+            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
             $thisEl.find('#dateBirth').datepicker({
