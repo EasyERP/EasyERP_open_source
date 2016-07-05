@@ -1659,6 +1659,12 @@ th {
   margin-left: -5px;
   padding-right: 5px;
 }
+.collapsed .side_menu .login_panel .dropdown-button .login_list.opened {
+  display: none;
+}
+.collapsed .side_menu .login_panel .dropdown-button .login_list.opened:hover {
+  display: block;
+}
 .collapsed .side_menu .login_panel .dropdown-button:hover .login_list {
   display: block;
 }
