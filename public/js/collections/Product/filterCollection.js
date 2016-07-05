@@ -32,6 +32,7 @@
                         options.filter = {
                             'canBeSold': {
                                 key  : 'canBeSold',
+                                type : 'boolean',
                                 value: ['true']
                             }
 
@@ -40,6 +41,7 @@
                         options.filter = {
                             'canBePurchased': {
                                 key  : 'canBePurchased',
+                                type : 'boolean',
                                 value: ['true']
                             }
                         };
@@ -48,9 +50,9 @@
 
                 this.filter = options.filter;
 
-               /* if (options && options.viewType) {
-                    this.url += options.viewType;
-                }*/
+                /* if (options && options.viewType) {
+                 this.url += options.viewType;
+                 }*/
 
                 this.fetch({
                     data   : options,
@@ -83,6 +85,7 @@
                         filterObject.filter = {
                             'canBeSold': {
                                 key  : 'canBeSold',
+                                type : 'boolean',
                                 value: ['true']
                             }
 
@@ -91,6 +94,7 @@
                         filterObject.filter = {
                             'canBePurchased': {
                                 key  : 'canBePurchased',
+                                type : 'boolean',
                                 value: ['true']
                             }
                         };
@@ -130,6 +134,7 @@
                         filterObject.filter = {
                             'canBeSold': {
                                 key  : 'canBeSold',
+                                type : 'boolean',
                                 value: ['true']
                             }
 
@@ -138,6 +143,7 @@
                         filterObject.filter = {
                             'canBePurchased': {
                                 key  : 'canBePurchased',
+                                type : 'boolean',
                                 value: ['true']
                             }
                         };
