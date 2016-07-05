@@ -2,7 +2,7 @@
   <% _.forEach(menuList, function(parent, index){%>
   <li class="root<%=(parent.href===currentRoot)?' active opened':''%>">
 	  <!--<i class="fa fa-credit-card" aria-hidden="true"></i>-->
-	  <i class="fa icon-<%=parent.href%>"></i>
+	  <i class="icons icon-<%=parent.href%>"></i>
 	  <a href="javascript:;"><%=parent.mname%></a>
 	<ul>
 	  <% _.forEach(parent.subModules, function(child, index){%>

@@ -1,4 +1,4 @@
-.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
+.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 35px, @bg: @submenu-text-color) {
   display: block;
   position: fixed;
   z-index: 100;
@@ -45,67 +45,76 @@
 
         }
       }
-      > a, .fa {
+
+      .icons {
+        padding: 0 11px;
+        display: inline-block;
+        font: normal normal normal 14px/1 simple-line-icons;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transform: translate(0, 0);
+        font-style: normal;
+        font-variant: normal;
+        text-transform: none;
+      }
+      > a, .icons {
         color: @sub-menu-root-color;
         font-size: 16px;
         line-height: @height;
         display: block;
         float: left;
         text-decoration: none;
-      }
-      .fa {
-        padding: 0 11px;
+        text-shadow: none;
       }
       .icon {
         &-Sales {
           &:before {
-            content: "\f0b1";
+            content: "\e043";
           }
         }
         &-HR {
           &:before {
-            content: "\f0c0";
+            content: "\e001";
           }
         }
         &-Project {
           &:before {
-            content: "\f02c";
+            content: "\e02d";
           }
         }
         &-Settings {
           &:before {
-            content: "\f085";
+            content: "\e09a";
           }
         }
         &-Accounting {
           &:before {
-            content: "\f201";
+            content: "\e04b";
           }
         }
         &-Expenses {
           &:before {
-            content: "\f200";
+            content: "\e077";
           }
         }
         &-Payroll {
           &:before {
-            content: "\f1fe";
+            content: "\e025";
           }
         }
       }
-      &:hover {
-
-      }
-      &:hover, &.active {
+      &:hover, &.opened {
         cursor: pointer;
         height: @height;
         background-color: @submenu-hover;
       }
 
-      &.opened {
+      &.active {
         background-color: @submenu-opened;
       }
-      &.active {
+      &.opened {
         height: auto;
         //background-color: @submenu-active;
         ul {
@@ -173,6 +182,7 @@
         z-index: 999;
         li {
           text-align: center;
+          color: @submenu-text-color;
           a {
             display: block;
             text-decoration: none;

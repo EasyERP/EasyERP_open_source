@@ -14,6 +14,14 @@
       .user_name {
         display: none !important;
       }
+      .dropdown-button {
+        .login_list {
+          top: 20%;
+          left: 100%;
+          margin-left: 5px;
+          width: 150px;
+        }
+      }
     }
 
     .logo {
@@ -42,17 +50,17 @@
           top: 0;
           left: 100%;
           width: 150px;
-          margin-left: 10px;
+          margin-left: 5px;
           li {
             &:first-child {
-              margin-left: -10px;
-              padding-right: 10px;
+              margin-left: -5px;
+              padding-right: 5px;
             }
           }
         }
       }
-      &.active {
-        height: 30px !important;
+      &.opened {
+        height: 35px !important;
         >ul {
           display: none;
         }
@@ -63,14 +71,6 @@
             top: 0;
             left: 100%;
             width: 150px;
-            margin-left: 10px;
-            li {
-              &:first-child {
-                margin-left: -10px;
-                padding-right: 10px;
-                background: @submenu-hover;
-              }
-            }
           }
         }
       }
