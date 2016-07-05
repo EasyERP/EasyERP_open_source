@@ -2046,6 +2046,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   .loginCopyright {
     position: absolute;
     bottom: 0;
+    margin: 0 0 33px 0;
     right: 40px;
   }
   .formActions {
