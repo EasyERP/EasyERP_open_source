@@ -34,8 +34,7 @@ define([
         initialize: function (options) {
             var isSalary;
 
-            _.bindAll(this, 'saveItem');
-            _.bindAll(this, 'render', 'deleteItem');
+            _.bindAll(this, 'saveItem', 'render', 'deleteItem');
 
             if (options.collection) {
                 this.employeesCollection = options.collection;
@@ -300,6 +299,7 @@ define([
         },
 
         saveItem: function () {
+            var $thisEl = this.$el;
             var weeklyScheduler;
             var transferArray;
             var homeAddress;
@@ -333,7 +333,6 @@ define([
             var data;
             var date;
             var info;
-            var $thisEl = this.$el;
             var haveSalary;
 
             relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
@@ -565,6 +564,7 @@ define([
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     }
+                    
                     self.hideDialog();
                 },
 

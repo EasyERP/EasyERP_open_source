@@ -1,187 +1,83 @@
 ﻿define([
-        'Backbone',
-        'models/ProductModel',
-        "dataService",
-        'constants'
-    ],
-    function (Backbone, ProductModel, dataService, CONSTANTS) {
-        'use strict';
+    'Backbone',
+    'collections/parent',
+    'models/ProductModel',
+    'dataService',
+    'constants'
+], function (Backbone, Parent, ProductModel, dataService, CONSTANTS) {
+    'use strict';
 
-        var ProductCollection = Backbone.Collection.extend({
-            model       : ProductModel,
-            url         : CONSTANTS.URLS.PRODUCT,
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
+    var ProductCollection = Parent.extend({
+        model   : ProductModel,
+        url     : CONSTANTS.URLS.PRODUCT,
+        pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
-            initialize: function (options) {
-                var that = this;
-                var regex = /^sales/;
+        initialize: function (options) {
+            var regex = /^sales/;
+            var page;
 
-                this.startTime = new Date();
-
-                this.namberToShow = options.count;
-                this.viewType = options.viewType;
-                this.contentType = options.contentType;
-                this.page = options.page || 1;
-
-                if (options && options.contentType && !(options.filter)) {
-                    options.filter = {};
-                    if (regex.test(this.contentType)) {
-                        options.filter = {
-                            'canBeSold': {
-                                key  : 'canBeSold',
-                                type : 'boolean',
-                                value: ['true']
-                            }
-
-                        };
-                    } else {
-                        options.filter = {
-                            'canBePurchased': {
-                                key  : 'canBePurchased',
-                                type : 'boolean',
-                                value: ['true']
-                            }
-                        };
-                    }
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
                 }
-
-                this.filter = options.filter;
-
-                /* if (options && options.viewType) {
-                 this.url += options.viewType;
-                 }*/
-
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function () {
-                        that.page++;
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                    }
-                });
-            },
-
-            showMore        : function (options) {
-                var that = this;
-                var regex = /^sales/;
-                var filterObject = options || {};
-
-                filterObject.page = (options && options.page) ? options.page : this.page;
-                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject.filter = options ? options.filter : {};
-
-                if (options && options.contentType && !(options.filter)) {
-                    options.filter = {};
-                    if (regex.test(this.contentType)) {
-                        filterObject.filter = {
-                            'canBeSold': {
-                                key  : 'canBeSold',
-                                type : 'boolean',
-                                value: ['true']
-                            }
-
-                        };
-                    } else {
-                        filterObject.filter = {
-                            'canBePurchased': {
-                                key  : 'canBePurchased',
-                                type : 'boolean',
-                                value: ['true']
-                            }
-                        };
-                    }
-                }
-
-                this.fetch({
-                    data   : filterObject,
-                    waite  : true,
-                    success: function (models) {
-                        that.page += 1;
-                        that.trigger('showmore', models);
-                    },
-                    error  : function () {
-                        App.render({
-                            type   : 'error',
-                            message: "Some Error."
-                        });
-                    }
-                });
-            },
-            showMoreAlphabet: function (options) {
-                var that = this;
-                var regex = /^sales/;
-                var filterObject = options || {};
-
-                that.page = 1;
-                filterObject.page = (options && options.page) ? options.page : this.page;
-                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject.filter = options ? options.filter : {};
-
-                if (options && options.contentType && !(options.filter)) {
-                    options.filter = {};
-                    if (regex.test(this.contentType)) {
-                        filterObject.filter = {
-                            'canBeSold': {
-                                key  : 'canBeSold',
-                                type : 'boolean',
-                                value: ['true']
-                            }
-
-                        };
-                    } else {
-                        filterObject.filter = {
-                            'canBePurchased': {
-                                key  : 'canBePurchased',
-                                type : 'boolean',
-                                value: ['true']
-                            }
-                        };
-                    }
-                }
-
-                this.fetch({
-                    data   : filterObject,
-                    waite  : true,
-                    success: function (models) {
-                        that.page++;
-                        that.trigger('showmoreAlphabet', models);
-                    },
-                    error  : function () {
-                        App.render({
-                            type   : 'error',
-                            message: "Some Error."
-                        });
-
-                    }
-                });
-            },
-            getAlphabet     : function (callback) {
-                var data = {};
-
-                data.mid = 58;
-
-                data.filter = this.filter;
-
-                dataService.getData(CONSTANTS.URLS.PRODUCT_ALPHABET, data, function (response) {
-                    if (callback) {
-                        callback(response.data);
-                    }
-                });
-            },
-            parse           : function (response) {
-                return response.success;
             }
-        });
-        return ProductCollection;
+
+            options = options || {};
+            options.error = options.error || _errHandler;
+            page = options.page;
+
+            this.startTime = new Date();
+            this.mid = options.contentType && options.contentType === 'Products' ? 58 : 65;
+
+            if (options.contentType && !(options.filter)) {
+                options.filter = {};
+                if (regex.test(options.contentType)) {
+                    options.filter = {
+                        canBeSold: {
+                            key  : 'canBeSold',
+                            value: ['true']
+                        }
+
+                    };
+                } else {
+                    options.filter = {
+                        canBePurchased: {
+                            key  : 'canBePurchased',
+                            value: ['true']
+                        }
+                    };
+                }
+            }
+
+            if (page) {
+                return this.getPage(page, options);
+            }
+
+            this.getFirstPage(options);
+        },
+
+        showMoreAlphabet: function (options) {
+            var that = this;
+            var filterObject = options || {};
+
+            that.page = 1;
+            filterObject.page = (options && options.page) ? options.page : this.page;
+            filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+            filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+            filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+            filterObject.filter = options ? options.filter : {};
+
+            this.getFirstPage(filterObject);
+        },
+
+        getAlphabet: function (callback) {
+            dataService.getData(CONSTANTS.URLS.PRODUCT_ALPHABET, {mid: this.mid}, function (response) {
+                if (callback) {
+                    callback(response.data);
+                }
+            });
+        }
     });
+
+    return ProductCollection;
+});

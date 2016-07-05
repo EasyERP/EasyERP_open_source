@@ -40,7 +40,7 @@ var FilterMapper = function () {
                 break;
             case 'integer':
                 result.$in = _.map(values, function (element) {
-                    return parseInt(element);
+                    return parseInt(element, 10);
                 });
                 break;
             case 'boolean':
@@ -72,8 +72,13 @@ var FilterMapper = function () {
         var filterConstants = FILTER_CONSTANTS[contentType] || {};
         var filterConstantsByName;
         var filterObject;
+        var filterName;
 
-        for (var filterName in filter) {
+        var filterNames = Object.keys(filter);
+        var i;
+
+        for (i = filterNames.length - 1; i >= 0; i--) {
+            filterName = filterNames[i];
             filterObject = filter[filterName];
             filterValues = filterObject.value;
             filterType = filterObject.type;

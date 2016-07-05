@@ -1,0 +1,13 @@
+before_script:
+  - apt-get update -qq && apt-get install -y -qq mc
+  - node -v
+  - which node
+  - npm i
+
+rspec:
+  script:
+    - grunt
+
+EasyERP:
+  script:
+    - node server.js

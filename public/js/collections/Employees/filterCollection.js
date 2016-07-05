@@ -34,30 +34,6 @@
             this.getFirstPage(options);
         },
 
-        /* showMore: function (options) {
-         var that = this;
-         var filterObject = options || {};
-         filterObject.page = (options && options.page) ? options.page : this.page;
-         filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-         filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-         filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-         filterObject.filter = options ? options.filter : {};
-         this.fetch({
-         data   : filterObject,
-         waite  : true,
-         success: function (models) {
-         that.page += 1;
-         that.trigger('showmore', models);
-         },
-         error  : function () {
-         App.render({
-         type   : 'error',
-         message: 'Some Error.'
-         });
-         }
-         });
-         },*/
-
         showMoreAlphabet: function (options) {
             var that = this;
             var filterObject = options || {};
@@ -71,7 +47,7 @@
 
             this.getFirstPage(filterObject);
         },
-
+        
         getAlphabet: function (callback) {
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_ALPHABET, {mid: 39}, function (response) {
                 if (callback) {

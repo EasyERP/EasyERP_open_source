@@ -1,297 +1,155 @@
 ﻿define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        "text!templates/Product/thumbnails/ThumbnailsItemTemplate.html",
-        'views/Product/EditView',
-        'views/Product/CreateView',
-        'dataService',
-        'models/ProductModel',
-        'views/Filter/filterView',
-        'common',
-        'text!templates/Alpabet/AphabeticTemplate.html'
-    ],
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Product/thumbnails/ThumbnailsItemTemplate.html',
+    'views/thumbnailsViewBase',
+    'views/Product/EditView',
+    'views/Product/CreateView',
+    'dataService',
+    'models/ProductModel',
+    'common',
+    'constants'
+], function (Backbone, $, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, dataService, CurrentModel, common, CONSTANTS) {
+    var ProductThumbnalView = BaseView.extend({
+        el         : '#content-holder',
+        template   : _.template(thumbnailsItemTemplate),
+        contentType: 'Products',
+        hasAlphabet : true,
+        
+        initialize: function (options) {
+            $(document).off('click');
 
-    function (Backbone, $, _, thumbnailsItemTemplate, editView, createView, dataService, currentModel, filterView, common, AphabeticTemplate) {
-        var ProductThumbnalView = Backbone.View.extend({
-            el                : '#content-holder',
-            countPerPage      : 0,
-            template          : _.template(thumbnailsItemTemplate),
-            defaultItemsNumber: null,
-            listLength        : null,
-            filter            : null,
-            newCollection     : null,
-            //page: null, //if reload page, and in url is valid page
-            contentType       : 'Product',//needs in view.prototype.changeLocationHash
-            viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
+            this.EditView = EditView;
+            this.CreateView = CreateView;
 
-            initialize: function (options) {
-                this.startTime = options.startTime;
-                this.collection = options.collection;
-                _.bind(this.collection.showMore, this.collection);
-                _.bind(this.collection.showMoreAlphabet, this.collection);
-                this.allAlphabeticArray = common.buildAllAphabeticArray();
-                this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 100;
-                this.newCollection = options.newCollection;
-                this.deleteCounter = 0;
-                this.page = options.collection.page;
+            _.bind(this.collection.showMoreAlphabet, this.collection);
 
-                this.render();
+            this.allAlphabeticArray = common.buildAllAphabeticArray();
+            this.filter = options.filter;
 
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
-                this.asyncLoadImgs(this.collection);
-            },
+            this.asyncLoadImgs(this.collection);
 
-            events        : {
-                "click #showMore"           : "showMore",
-                "click .thumbnailwithavatar": "gotoEditForm",
-                "click .letter:not(.empty)" : "alpabeticalRender",
-                "click .saveFilterButton"   : "saveFilter",
-                "click .removeFilterButton" : "removeFilter"
-            },
+            BaseView.prototype.initialize.call(this, options);
+        },
 
-            getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/product/totalCollectionLength', {
-                    currentNumber: currentNumber,
-                    filter       : filter,
-                    newCollection: newCollection,
-                    contentType  : this.contentType
-                }, function (response, context) {
-                    var showMore = context.$el.find('#showMoreDiv');
+        events: {
+            'click #showMore'           : 'showMore',
+            'click .thumbnailwithavatar': 'gotoEditForm',
+            'click .letter:not(.empty)' : 'alpabeticalRender',
+            'click .saveFilterButton'   : 'saveFilter',
+            'click .removeFilterButton' : 'removeFilter'
+        },
 
-                    if (response.showMore) {
-                        if (showMore.length === 0) {
-                            var created = context.$el.find('#timeRecivingDataFromServer');
-                            created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
-                        } else {
-                            showMore.show();
-                        }
-                    } else {
-                        showMore.hide();
-                    }
-                }, this);
-            },
+        asyncLoadImgs: function (collection) {
+            var ids = _.map(collection.toJSON(), function (item) {
+                return item._id;
+            });
+            common.getImages(ids, '/products/getProductsImages');
+        },
 
-            asyncLoadImgs    : function (collection) {
-                var ids = _.map(collection.toJSON(), function (item) {
-                    return item._id;
-                });
-                common.getImages(ids, "/product/getProductsImages");
-            },
+        render: function () {
+            var $currentEl = this.$el;
 
-            alpabeticalRender: function (e) {
-                var selectedLetter;
-                var target;
+            $currentEl
+                .find('#thumbnailContent')
+                .append(this.template({collection: this.collection.toJSON()}));
 
-                if (e && e.target) {
-                    target = $(e.target);
-                    selectedLetter = $(e.target).text();
+            return this;
+        },
 
-                    if (!this.filter) {
-                        this.filter = {};
-                    }
-                    this.filter['letter'] = {
-                        key  : 'letter',
-                        value: selectedLetter,
-                        type : null
-                    };
+        gotoEditForm: function (e) {
+            var className;
+            var id;
+            var model;
+            var self = this;
+            var target = $(e.target);
 
-                    target.parent().find(".current").removeClass("current");
-                    target.addClass("current");
-                    if ($(e.target).text() === "All") {
-                        delete this.filter;
-                        delete App.filtersObject.filter.letter;
-                    } else {
-                        App.filtersObject.filter.letter = this.filter.letter;
-                    }
-                }
+            this.$el.delegate('a', 'click', function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            });
 
-                this.filter = App.filtersObject.filter;
+            className = target.parent().attr('class');
 
-                this.filterView.renderFilterContent(this.filter);
-                _.debounce(
-                    function () {
-                        this.trigger('filter', App.filtersObject.filter);
-                    }, 10);
+            if ((className !== 'dropDown') || (className !== 'inner')) {
+                id = target.closest('.thumbnailwithavatar').attr('id');
+                model = new CurrentModel({validate: false});
 
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.$el.find('.thumbnailwithavatar').remove();
+                model.urlRoot = CONSTANTS.URLS.PRODUCT;
 
-                this.defaultItemsNumber = 0;
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
-            },
+                model.fetch({
+                    data   : {id: id, viewType: 'form'},
+                    success: function (response) {
+                        return new self.EditView({model: response});
+                    },
 
-            hideItemsNumber: function (e) {
-                var el = $(e.target);
-
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $('.search-content').removeClass('fa-caret-up');
-                }
-            },
-
-            render: function () {
-                var self = this;
-                var $currentEl = this.$el;
-                var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-
-                $currentEl.html('');
-                common.buildAphabeticArray(this.collection, function (arr) {
-                    self.alphabeticArray = arr;
-                    $('#startLetter').remove();
-                    $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray   : self.alphabeticArray,
-                        allAlphabeticArray: self.allAlphabeticArray
-                    }));
-                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : "All";
-                    if (currentLetter) {
-                        $('#startLetter a').each(function () {
-                            var target = $(this);
-                            if (target.text() == currentLetter) {
-                                target.addClass("current");
-                            }
+                    error: function () {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
                         });
                     }
                 });
-
-                $currentEl.append(this.template({collection: this.collection.toJSON()}));
-
-                $currentEl.append(createdInTag);
-
-                $(document).on("click", function (e) {
-                    self.hideItemsNumber(e);
-                });
-
-                self.filterView = new filterView({contentType: self.contentType});
-
-                self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
-                });
-
-                self.filterView.render();
-
-                return this;
-            },
-
-            showFilteredPage: function (filter, context) {
-                $("#top-bar-deleteBtn").hide();
-                $('#checkAll').prop('checked', false);
-
-                context.startTime = new Date();
-                context.newCollection = false;
-
-                if (Object.keys(filter).length === 0) {
-                    this.filter = {};
-                }
-                this.defaultItemsNumber = 0;
-                context.$el.find('.thumbnailwithavatar').remove();
-
-                context.changeLocationHash(null, context.defaultItemsNumber, filter);
-                context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
-                context.getTotalLength(this.defaultItemsNumber, filter);
-            },
-
-            /*gotoForm: function (e) {
-                e.preventDefault();
-                App.ownContentType = true;
-                var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                window.location.hash = "#easyErp/Product/form/" + id;
-            },*/
-
-            gotoEditForm: function (e) {
-                this.$el.delegate('a', 'click', function (e) {
-                    e.stopPropagation();
-                    e.default;
-                });
-                var clas = $(e.target).parent().attr("class");
-                if ((clas === "dropDown") || (clas === "inner")) {
-                } else {
-                    e.preventDefault();
-                    var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                    var model = new currentModel({validate: false});
-                    model.urlRoot = '/Product/form/';
-                    model.fetch({
-                        data   : {id: id},
-                        success: function (model) {
-                            new editView({model: model});
-                        },
-                        error  : function () {
-                            App.render({
-                                type: 'error',
-                                message: "Please refresh browser"
-                            });
-                        }
-                    });
-                }
-            },
-
-            showMore        : function (event) {
-                event.preventDefault();
-                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
-            },
-
-            showMoreContent : function (newModels) {
-                var holder = this.$el;
-                var content = holder.find("#thumbnailContent");
-                var showMore = holder.find('#showMoreDiv');
-                var created = holder.find('#timeRecivingDataFromServer');
-                this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-                if (showMore.length != 0) {
-                    showMore.before(this.template({collection: this.collection.toJSON()}));
-                    $(".filter-check-list").eq(1).remove();
-
-                    showMore.after(created);
-                } else {
-                    content.html(this.template({collection: this.collection.toJSON()}));
-
-                }
-                this.asyncLoadImgs(newModels);
-
-                this.filterView.renderFilterContent();
-            },
-
-            showMoreAlphabet: function (newModels) {
-                var holder = this.$el;
-                var created = holder.find('#timeRecivingDataFromServer');
-                var showMore = holder.find('#showMoreDiv');
-
-                this.defaultItemsNumber += newModels.length;
-
-                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-                holder.append(this.template({collection: newModels.toJSON()}));
-                holder.append(created);
-                created.before(showMore);
-
-                this.asyncLoadImgs(newModels);
-            },
-
-            createItem: function () {
-                new createView();
-            },
-
-            exportToCsv: function () {
-                //todo change after routes refactoring
-                window.location = '/Product/exportToCsv'
-            },
-
-            exportToXlsx: function () {
-                //todo change after routes refactoring
-                window.location = '/Product/exportToXlsx'
             }
+        },
 
-        });
+        showMore: function (event) {
+            event.preventDefault();
+            this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
+        },
 
-        return ProductThumbnalView;
+        showMoreContent: function (newModels) {
+            var holder = this.$el;
+            var content = holder.find("#thumbnailContent");
+            var showMore = holder.find('#showMoreDiv');
+            var created = holder.find('#timeRecivingDataFromServer');
+            this.defaultItemsNumber += newModels.length;
+            this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+            this.getTotalLength(this.defaultItemsNumber, this.filter);
+
+            if (showMore.length != 0) {
+                showMore.before(this.template({collection: this.collection.toJSON()}));
+                $(".filter-check-list").eq(1).remove();
+
+                showMore.after(created);
+            } else {
+                content.html(this.template({collection: this.collection.toJSON()}));
+
+            }
+            this.asyncLoadImgs(newModels);
+
+            this.filterView.renderFilterContent();
+        },
+
+        showMoreAlphabet: function (newModels) {
+            var holder = this.$el;
+            var created = holder.find('#timeRecivingDataFromServer');
+            var showMore = holder.find('#showMoreDiv');
+
+            this.defaultItemsNumber += newModels.length;
+
+            this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+            this.getTotalLength(this.defaultItemsNumber, this.filter);
+
+            holder.append(this.template({collection: newModels.toJSON()}));
+            holder.append(created);
+            created.before(showMore);
+
+            this.asyncLoadImgs(newModels);
+        },
+
+        exportToCsv: function () {
+            //todo change after routes refactoring
+            window.location = '/Product/exportToCsv'
+        },
+
+        exportToXlsx: function () {
+            //todo change after routes refactoring
+            window.location = '/Product/exportToXlsx'
+        }
+
     });
+
+    return ProductThumbnalView;
+});
