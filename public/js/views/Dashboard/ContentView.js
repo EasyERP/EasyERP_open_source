@@ -508,11 +508,11 @@ define([
                     top   : 120,
                     right : 10,
                     bottom: 80,
-                    left  : 200
+                    left  : 150
                 };
 
-                width = $('#wrapper').width()/2 - margin.left - margin.right;
-                height = 40 * data.length;
+                width = $('#wrapper').width()/2 - margin.left - margin.right - 100;
+                height = 40 * data.length - margin.bottom;
 
                 formatxAxis = d3.format('.0f');
 
@@ -520,10 +520,10 @@ define([
                     .rangeRoundBands([0, height], 0.3);
 
                 x = d3.scale.linear()
-                    .range([0, width - margin.left]);
+                    .range([0, width - margin.right]);
 
                 x2 = d3.scale.linear()
-                    .range([0, width - margin.left]);
+                    .range([0, width - margin.right]);
 
                 max = d3.max(data, function (d) {
                     return (d.wonSum + d.lostSum);
@@ -792,15 +792,6 @@ define([
                     x     : 'Last Activity Days Ranges'
                 };
 
-                baseY = {
-                    '0-7'   : 0,
-                    '8-15'  : 0,
-                    '16-30' : 0,
-                    '31-60' : 0,
-                    '61-120': 0,
-                    '>120'  : 0
-                };
-
                 baseX = {
                     '0-7'   : 0,
                     '8-15'  : 0,
@@ -832,10 +823,7 @@ define([
                     left  : 140
                 };
 
-                xScaleDomain = ['0-7', '8-15', '16-30', '31-60', '61-120', '>120'];
-
                 yScaleDomain = ['>120', '61-120', '31-60', '16-30', '8-15', '0-7'];
-
                 outerWidth = $('#wrapper').width() - 40;
                 outerHeight = 600;
                 innerWidth = outerWidth - margin.left - margin.right;
@@ -2353,7 +2341,7 @@ define([
                             return Math.max(0, d.dy - 1) + 'px';
                         });
                 }
-               
+
                 if(!data.length){
                     data[0] = {
                         name: 'null',
