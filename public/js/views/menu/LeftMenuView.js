@@ -32,9 +32,28 @@ define([
         },
 
         openRoot: function (e) {
-            this.$el.find('.root.opened').removeClass('active');
-            $(e.target).closest('.root').addClass('active');
+            var self = this;
+            var $activeRoot = self.$el.find('.root.active');
+            var $current = $(e.target).closest('.root');
+            var isSubMenu = !!$(e.target).closest($current.find('ul')).length;
+
+            if (isSubMenu){
+                return;
+            }
+
+            $activeRoot.find('ul').animate({height: 0}, 200, function () {
+                $activeRoot.removeClass('active');
+            });
+
+            if (!$current.hasClass('active')){
+                $activeRoot.find('ul').animate({height: 0}, 200, function () {
+                    $activeRoot.removeClass('active');
+                });
+
+                $current.addClass('active').find('ul').css({height: 0}).animate({height: $current.find('ul').get(0).scrollHeight}, 200);
+            }
         },
+
         selectMenuItem: function (rootIndex, childIndex) {
             var $rootElement = this.$el.find('li.root').eq(rootIndex);
 
@@ -45,18 +64,6 @@ define([
             $rootElement.find('li').eq(childIndex).addClass('selected');
             $rootElement.addClass('active opened');
         },
-
-        updateState: function (isCollapsed) {
-            var $submenu = this.$el.closest('#submenu-holder');
-
-            if (isCollapsed) {
-                $submenu.addClass('collapsed');
-            } else {
-                $submenu.removeClass('collapsed');
-            }
-
-        },
-
 
         render: function () {
             var $el = this.$el;
