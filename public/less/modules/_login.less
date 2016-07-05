@@ -197,7 +197,10 @@ input {
 .notRegister {
   input {
     &:not([type="checkbox"]) {
-      border-bottom: 1px solid #ff9393;
+      border-color: #ff9393;
+      &:focus {
+        border-color: #ff9393;
+      }
     }
   }
 }
