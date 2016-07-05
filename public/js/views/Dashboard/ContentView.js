@@ -822,7 +822,7 @@ define([
                 xScaleDomain = ['0-7', '8-15', '16-30', '31-60', '61-120', '>120'];
 
                 outerWidth = $('#wrapper').width() - 40;
-                outerHeight = 600;
+                outerHeight = 800;
 
                 innerWidth = outerWidth - margin.left - margin.right;
                 innerHeight = outerHeight - margin.top - margin.bottom;
@@ -1048,6 +1048,112 @@ define([
                     .attr('x', innerWidth / 2)
                     .attr('y', innerHeight + 60)
                     .text(labelsMap.x);
+
+                $('svg.opportunitieAgingSumReverted').empty();
+
+                var yScaleDomain = ['0-7', '8-15', '16-30', '31-60', '61-120', '>120'];
+
+                var x2 = d3.scale.linear()
+                   .range([0, innerWidth/2])
+                   .domain([0, d3.max(data, function (d) {
+                       return d['0-7_Sum'] + d['8-15_Sum'] + d['16-30_Sum'] + d['31-60_Sum'] + d['61-120_Sum'] + d['>120_Sum'];
+                   })]);
+
+                var y2 = d3.scale.ordinal()
+                    .rangeRoundBands([0, innerHeight])
+                    .domain(yScaleDomain);
+
+                var reYaxis = d3.svg.axis()
+                    .scale(y2)
+                    .orient('left')
+                    .tickFormat(function (d) {
+                        return d + ' days';
+                    });
+                var reXaxis = d3.svg.axis()
+                    .scale(x2)
+                    .orient('bottom')
+                    .tickFormat(function (d) {
+                        return '$' + d / 1000 + 'k';
+                    });
+
+                var revertedChart = d3.select('svg.opportunitieAgingSumReverted')
+                    .attr('width', outerWidth/2)
+                    .attr('height', outerHeight)
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                revertedChart.append('g')
+                    .attr({
+                        'class': 'x axis'
+                    })
+                    .call(reYaxis);
+
+                revertedChart.append('g')
+                    .attr('class', 'y axis')
+                    .call(reXaxis)
+                    .attr('transform', 'translate(0,' + innerHeight + ')');
+
+                revertedChart.selectAll('line.x')
+                    .data(x2.ticks())
+                    .enter().append('line')
+                    .attr('class', 'x')
+                    .attr('x1', x2)
+                    .attr('x2', x2)
+                    .attr('y1', y2)
+                    .attr('y2', innerHeight)
+                    .style('stroke', '#ccc');
+
+                var baseX = {
+                    '0-7'   : 0,
+                    '8-15'  : 0,
+                    '16-30' : 0,
+                    '31-60' : 0,
+                    '61-120': 0,
+                    '>120'  : 0
+                };
+
+                data.forEach(function (dataEl) {
+
+                    revertedChart.selectAll('.' + barsMap[dataEl.workflow])
+                        .data(yScaleDomain)
+                        .enter().append('rect')
+                        .attr('class', barsMap[dataEl.workflow])
+                        .attr('x', function (d) {
+                            baseX[d] += x2(dataEl[d + '_Sum']);
+                            return baseX[d];
+                        })
+                        .attr('y', y2)
+                        .attr('width', function (d) {
+                            var width = x2(dataEl[d + '_Sum']);
+
+                            if (width > verticalBarSpacing) {
+                                return width - verticalBarSpacing;
+                            } else {
+                                return width;
+                            }
+
+                        })
+                        .attr('height', y2.rangeBand() - 2*verticalBarSpacing)
+                        .attr('fill', colorMap[dataEl.workflow])
+                        .on('mouseover', function (d) {
+                            var attrs = this.attributes;
+
+                            d3.select(this)
+                                .style('stroke-width', '3')
+                                .attr('stroke', colorMap.barStroke);
+
+                            tip
+                                .attr('x', +attrs.x.value + attrs.width.value / 2)
+                                .attr('y', +attrs.y.value + attrs.height.value / 2 + 5)
+                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()));
+                        })
+                        .on('mouseout', function (d) {
+                            d3.select(this)
+                                .style('stroke-width', '0');
+
+                            tip.text('');
+                        });
+                });
             });
 
         },
@@ -2327,7 +2433,7 @@ define([
                 });
 
                 color = d3.scale.linear()
-                    .range(['#BDE892', '#ACC7F2'])
+                    .range(['#5CD1C8', '#ACC7F2'])
                     .domain([minValue, maxValue]);
 
                 treemap = d3.layout.treemap()
