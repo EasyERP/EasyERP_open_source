@@ -68,7 +68,7 @@ var User = function (event, models) {
             var byDefault;
             var contentType;
             var newSavedFilters;
-            
+
             if (filterModel && typeof filterModel !== 'function') {
                 byDefault = newFilter.useByDefault;
                 contentType = newFilter.key;
@@ -176,7 +176,7 @@ var User = function (event, models) {
 
                     return next(customError);
                 }
-                
+
                 query = {
                     $pull: {
                         savedFilters: deleteFilter
@@ -551,6 +551,63 @@ var User = function (event, models) {
         aggregateQuery = [
             {
                 $lookup: {
+                    from        : 'Employees',
+                    localField  : 'relatedEmployee',
+                    foreignField: '_id',
+                    as          : 'relatedEmployee'
+                }
+            },
+            {
+                $project: {
+                    kanbanSettings : 1,
+                    credentials    : 1,
+                    email          : 1,
+                    login          : 1,
+                    imageSrc       : 1,
+                    lastAccess     : 1,
+                    savedFilters   : 1,
+                    total          : 1,
+                    profile        : 1,
+                    relatedEmployee: {$arrayElemAt: ['$relatedEmployee', 0]}
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'relatedEmployee.department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            },
+            {
+                $project: {
+                    kanbanSettings: 1,
+                    credentials   : 1,
+                    email         : 1,
+                    login         : 1,
+                    imageSrc      : 1,
+                    lastAccess    : 1,
+                    savedFilters  : 1,
+                    total         : 1,
+                    profile       : 1,
+                    department    : {$arrayElemAt: ['$department', 0]}
+                }
+            },
+            {
+                $project: {
+                    kanbanSettings: 1,
+                    credentials   : 1,
+                    email         : 1,
+                    login         : 1,
+                    imageSrc      : 1,
+                    lastAccess    : 1,
+                    savedFilters  : 1,
+                    total         : 1,
+                    profile       : 1,
+                    department    : '$department.name'
+                }
+            }, {
+                $lookup: {
                     from        : 'Profile',
                     localField  : 'profile',
                     foreignField: '_id',
@@ -569,17 +626,17 @@ var User = function (event, models) {
             },
             {
                 $project: {
-                    _id            : '$root._id',
-                    kanbanSettings : '$root.kanbanSettings',
-                    credentials    : '$root.credentials',
-                    email          : '$root.email',
-                    login          : '$root.login',
-                    imageSrc       : '$root.imageSrc',
-                    lastAccess     : '$root.lastAccess',
-                    savedFilters   : '$root.savedFilters',
-                    relatedEmployee: '$root.relatedEmployee',
-                    total          : 1,
-                    profile        : {
+                    _id           : '$root._id',
+                    kanbanSettings: '$root.kanbanSettings',
+                    credentials   : '$root.credentials',
+                    email         : '$root.email',
+                    login         : '$root.login',
+                    imageSrc      : '$root.imageSrc',
+                    lastAccess    : '$root.lastAccess',
+                    savedFilters  : '$root.savedFilters',
+                    department    : '$root.department',
+                    total         : 1,
+                    profile       : {
                         $arrayElemAt: ['$root.profile', 0]
                     }
                 }
@@ -593,6 +650,7 @@ var User = function (event, models) {
             {
                 $limit: limit
             }
+
         ];
 
         UserModel.aggregate(aggregateQuery, function (err, result) {
@@ -630,7 +688,7 @@ var User = function (event, models) {
             $lookup: {
                 from        : 'Profile',
                 localField  : 'profile',
-                foreignField: "_id",
+                foreignField: '_id',
                 as          : 'profile'
             }
         });
@@ -639,7 +697,7 @@ var User = function (event, models) {
             $lookup: {
                 from        : 'Employees',
                 localField  : 'relatedEmployee',
-                foreignField: "_id",
+                foreignField: '_id',
                 as          : 'relatedEmployee'
             }
         });

@@ -549,50 +549,50 @@ var Employee = function (event, models) {
 
         });
     };
-    
+
     /*TODO remove after filters check*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var keys = Object.keys(filter);
-        var i;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var keys = Object.keys(filter);
+     var i;
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            filterName = keys[i];
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (i = keys.length - 1; i >= 0; i--) {
+     filterName = keys[i];
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'letter':
-                    filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                    resArray.push(filtrElement);
-                    break;
-                case 'department':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'manager':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'jobPosition':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                // skip default
-            }
-        }
+     switch (filterName) {
+     case 'name':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'letter':
+     filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+     resArray.push(filtrElement);
+     break;
+     case 'department':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'manager':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'jobPosition':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     // skip default
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     function getById(req, res, next) {
         var project = {};
@@ -652,7 +652,7 @@ var Employee = function (event, models) {
         var project;
         var projectSecond;
         var projectAfterRoot;
-        
+
         var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
@@ -984,7 +984,6 @@ var Employee = function (event, models) {
     this.updateOnlySelectedFields = function (req, res, next) {
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
-        var remove = req.headers.remove;
         var _id = req.params.id;
         var profileId = req.session.profileId;
         var UsersSchema = mongoose.Schemas.User;
@@ -994,6 +993,8 @@ var Employee = function (event, models) {
         var fileName = data.fileName;
         var query = {};
         var obj;
+
+        var remove = req.headers.remove;
 
         data.editedBy = {
             user: req.session.uId,
@@ -1045,7 +1046,15 @@ var Employee = function (event, models) {
                             return next(err);
                         }
 
-                        res.status(200).send({success: 'Employees updated'});
+                        if (data.relatedUser) {
+                            UsersModel.findByIdAndUpdate(data.relatedUser, {$set: {relatedEmployee: _id}}, function (error) {
+                                if (error) {
+                                    return next(error);
+                                }
+
+                                res.status(200).send({success: 'Employees updated'});
+                            });
+                        }
                     });
                 });
             }
@@ -1120,6 +1129,14 @@ var Employee = function (event, models) {
 
                         if (err) {
                             return next(err);
+                        }
+
+                        if (data.relatedUser) {
+                            UsersModel.findByIdAndUpdate(data.relatedUser, {$set: {relatedEmployee: _id}}, function (error) {
+                                if (error) {
+                                    return next(error);
+                                }
+                            });
                         }
 
                         if (data.dateBirth || data.hired) {
