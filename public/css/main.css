@@ -873,14 +873,6 @@ th {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
 }
-.collapsed .mainmenu_holder .logo {
-  width: 40px;
-  text-align: center;
-}
-.collapsed .mainmenu_holder a {
-  display: none;
-  padding: 0;
-}
 .collapsed .side_menu {
   width: 40px !important;
   margin-right: -100%;
@@ -1299,23 +1291,6 @@ th {
 .content_wrapper .content-holder,
 .content_wrapper .top-bar {
   margin-left: 200px;
-}
-.mainmenu_holder .logo {
-  width: 200px;
-  color: #000000;
-  padding: 0 10px;
-  box-sizing: border-box;
-}
-.mainmenu_holder .logo .fa,
-.mainmenu_holder .logo a {
-  color: inherit;
-  text-decoration: none;
-  font-size: 20px;
-  line-height: 30px;
-}
-.mainmenu_holder .logo .fa {
-  cursor: pointer;
-  float: right;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -4905,18 +4880,19 @@ a.red:hover {
 }
 #loginPanel {
   position: absolute;
-  left: auto;
-  top: 0;
-  right: 0;
+  left: 0;
+  top: auto;
+  right: auto;
   bottom: auto;
 }
 #loginPanel .dropdown-button {
   text-indent: 5px;
   cursor: pointer;
+  padding: 0 10px;
+  box-sizing: border-box;
   width: 200px;
   float: left;
   height: auto;
-  padding: 0;
 }
 #loginPanel .dropdown-button #loginSelect {
   display: none;
@@ -5560,6 +5536,39 @@ table#workflows tr td.edit-status {
 }
 .side_menu nav .root.active ul {
   display: block;
+}
+.side_menu .logo {
+  position: absolute;
+  bottom: 25px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+}
+.side_menu .sidebar_toggler {
+  border-radius: 4px 0 0 4px;
+  cursor: pointer;
+  display: block;
+  float: right;
+  margin: 0;
+  border: 0;
+  margin-bottom: 15px;
+  width: 24px;
+  height: 23px;
+  margin-right: -1px;
+  background-color: #ffffff;
+}
+.side_menu .sidebar_toggler:before {
+  margin: 0 2px 0 8px;
+  display: inline-block;
+  font-size: 20px;
+  line-height: 23px;
+  font-family: FontAwesome;
+  height: auto;
+  content: "\f104";
+  font-weight: 300;
+  text-shadow: none;
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {

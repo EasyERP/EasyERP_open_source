@@ -104,4 +104,38 @@
       }
     }
   }
+
+  .logo {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: 80%;
+    margin: 0 auto;
+  }
+  .sidebar_toggler {
+    border-radius: 4px 0 0 4px;
+    cursor: pointer;
+    display: block;
+    float: right;
+    margin: 0;
+    border: 0;
+    margin-bottom: 15px;
+    width: 24px;
+    height: 23px;
+    margin-right: -1px;
+    background-color: @bg-main;
+    &:before {
+      margin: 0 2px 0 8px;
+      display: inline-block;
+      font-size: 20px;
+      line-height: 23px;
+      font-family: FontAwesome;
+      height: auto;
+      content: "\f104";
+      font-weight: 300;
+      text-shadow: none;
+    }
+  }
 }
