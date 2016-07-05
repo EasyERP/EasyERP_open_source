@@ -2105,7 +2105,7 @@ define([
                     return obj2.pays-obj1.pays;
                 });
 
-                margin = {top: 20, right: 160, bottom: 30, left: 1000};
+                margin = {top: 20, right: 160, bottom: 30, left: 150};
                 width = ($wrapper.width() - margin.right)/2;
                 height = $wrapper.width()/4;
                 height1 = data.length * 20;
@@ -2314,9 +2314,9 @@ define([
                         });
                 }
 
-                margin = {top: 0, right: 10, bottom: 10, left: 10};
-                width = $('#wrapper').width()/2 - margin.left - margin.right;
-                height =  $('#wrapper').width()/4;
+                margin = {top: 0, right: 10, bottom: 10, left: 100};
+                width = $wrapper.width()/2 - margin.left - margin.right;
+                height =  $wrapper.width()/4;
 
                 maxValue = d3.max(data, function (d) {
                     return d.payment / 100;
