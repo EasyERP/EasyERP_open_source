@@ -769,6 +769,7 @@ input::-ms-clear {
   height: @height;
   .noPaddingMargin;
   border-bottom: @thin-border @border-color;
+  z-index: 1000;
   nav {
     .left;
     background: @bg-main-menu;
@@ -3830,14 +3831,13 @@ table#workflows {
   a {
     float: left;
     display: block;
-    //width: 18px;
-    //height: 18px;
+
     overflow: hidden;
     margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @creatBtn-color;
-    line-height: 29px; //it was 18px
+    line-height: 40px; //it was 18px
 
     &:hover {
       color: @creatBtn-color + #333;
@@ -6339,7 +6339,7 @@ textarea#editInput {
   float: right;
   width: 35%;
   position: relative;
-  margin-top: -27px;
+  margin-top: -35px;
   margin-right: 90px;
 
   .btn {

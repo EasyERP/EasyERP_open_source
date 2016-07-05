@@ -1,13 +1,15 @@
 .submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
   display: block;
-  position: relative;
-  z-index: 1000;
+  position: fixed;
+  z-index: 100;
   width: auto;
   height: 100%;
   background-color: @defaultColor;
   border-right: 1px solid @defaultColor;
   box-sizing: border-box;
   padding-top: 53px;
+  left: 0;
+  top: 0;
   nav {
     width: 200px;
     ul {
@@ -32,6 +34,10 @@
             text-decoration: none;
             font-size: 14px;
             line-height: @height;
+          }
+          &:first-child {
+            margin-left: -10px;
+            padding-right: 10px;
           }
           &:hover, &.selected {
             background-color: @submenu-selected;

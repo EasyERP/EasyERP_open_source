@@ -1269,6 +1269,7 @@ th {
   width: 100%;
   display: block;
   float: left;
+  margin-top: 10px;
 }
 .content_wrapper .content-holder,
 .content_wrapper .top-bar {
@@ -5367,6 +5368,7 @@ table#workflows tr td.edit-status {
   padding: 0;
   margin: 0;
   border-bottom: 1px solid #7f7f80;
+  z-index: 1000;
 }
 #mainmenu-holder nav {
   float: left;
@@ -5428,14 +5430,16 @@ table#workflows tr td.edit-status {
 }
 .side_menu {
   display: block;
-  position: relative;
-  z-index: 1000;
+  position: fixed;
+  z-index: 100;
   width: auto;
   height: 100%;
   background-color: #4d5a75;
   border-right: 1px solid #4d5a75;
   box-sizing: border-box;
   padding-top: 53px;
+  left: 0;
+  top: 0;
 }
 .side_menu nav {
   width: 200px;
@@ -5479,6 +5483,10 @@ table#workflows tr td.edit-status {
   text-decoration: none;
   font-size: 14px;
   line-height: 30px;
+}
+.side_menu nav .root > ul li:first-child {
+  margin-left: -10px;
+  padding-right: 10px;
 }
 .side_menu nav .root > ul li:hover,
 .side_menu nav .root > ul li.selected {
@@ -5676,7 +5684,7 @@ table#workflows tr td.edit-status {
   cursor: pointer;
   vertical-align: baseline;
   color: #000000;
-  line-height: 29px;
+  line-height: 40px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
@@ -9901,7 +9909,7 @@ textarea#editInput {
   float: right;
   width: 35%;
   position: relative;
-  margin-top: -27px;
+  margin-top: -35px;
   margin-right: 90px;
 }
 #searchContainer .btn {
