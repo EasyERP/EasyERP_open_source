@@ -49,6 +49,7 @@ define([
             var endDate;
 
             this.$el.find('.customTime').addClass('hidden');
+            this.$el.find('.buttons').addClass('hidden');
 
             this.removeAllChecked();
 
@@ -93,6 +94,7 @@ define([
 
             $target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
+            this.$el.find('.buttons').toggleClass('hidden');
         },
 
         changeDateRange: function (e) {
