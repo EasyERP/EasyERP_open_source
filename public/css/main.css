@@ -6773,8 +6773,9 @@ table#workflows tr td.edit-status {
   margin-bottom: 5px;
 }
 #top-bar .vocationFilter .dateFilter .buttons {
+  width: 100%;
   margin: 15px 0;
-  padding: 0 15%;
+  text-align: center;
 }
 .dashBoardVocationSearch {
   margin-top: 4px !important;
@@ -6841,8 +6842,9 @@ table#workflows tr td.edit-status {
   margin-bottom: 5px;
 }
 .projectInfoTopBar .vocationFilter .dateFilter .buttons {
+  width: 100%;
   margin: 15px 0;
-  padding: 0 15%;
+  text-align: center;
 }
 .noPadding {
   padding: 0 !important;
