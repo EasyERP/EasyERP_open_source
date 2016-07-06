@@ -2089,6 +2089,36 @@ input:not([type="checkbox"]).inputBordered:focus {
     left: 20px;
   }
 }
+.settings_modal .check_wrap {
+  float: left;
+  width: 20px;
+}
+.settings_modal .setting_element {
+  margin-bottom: 25px;
+}
+.settings_modal .setting_element .fa {
+  color: #000000;
+  text-decoration: none;
+  vertical-align: top;
+}
+.settings_modal .setting_element .fa,
+.settings_modal .setting_element .selected {
+  line-height: 30px;
+}
+.settings_modal .setting_element .setting_title {
+  display: inline-block;
+}
+.settings_modal .setting_element .selected {
+  vertical-align: top;
+  padding-left: 15px;
+}
+.settings_modal .settings_list .content {
+  margin: 0;
+  border-width: 0 0 1px 0 !important;
+}
+.settings_modal .resultFormula {
+  text-align: center;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -2227,6 +2257,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  overflow: hidden;
   color: #000000;
   line-height: 23px;
   font-size: 13px;
@@ -2317,6 +2348,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  overflow: hidden;
   color: #000000;
   line-height: 23px;
   font-size: 13px;
@@ -7193,6 +7225,7 @@ ul.dialog-tabs li.right button {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  overflow: hidden;
   color: #000000;
   line-height: 23px;
   font-size: 13px;
@@ -11470,4 +11503,10 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
+}
+.text-left {
+  text-align: left !important;
+}
+.text-right {
+  text-align: right !important;
 }

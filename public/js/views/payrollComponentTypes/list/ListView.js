@@ -3,7 +3,8 @@ define([
     'Underscore',
     'Backbone',
     'views/listViewBase',
-    'views/payrollComponentTypes/CreateView',
+    // 'views/payrollComponentTypes/CreateView',
+    'views/payrollStructureTypes/structureElement/CreateView',
     'views/payrollComponentTypes/EditView',
     'views/payrollComponentTypes/list/ListItemView',
     'text!templates/payrollComponentTypes/list/ListHeader.html',
@@ -51,8 +52,9 @@ define([
             e.preventDefault();
 
             new CreateView({
-                eventChannel: self.eventChannel,
-                type        : self.type
+                eventChannel     : self.eventChannel,
+                updateAfterCreate: true,
+                type             : self.type
             });
         },
 
@@ -102,7 +104,7 @@ define([
             $currentEl = this.$el;
 
             $currentEl.html('');
-            
+
             if (this.type === 'deductions') {
                 header = 'Payroll Deduction Types';
             } else if (this.type === 'earnings') {

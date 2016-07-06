@@ -1613,6 +1613,13 @@ var Module = function (models, event) {
                         hire: {$ne: []}
                     }
                 }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'transfer'
+                    }
+                }, {
                     $project: {
                         isEmployee: 1,
                         department: 1,
@@ -2628,6 +2635,13 @@ var Module = function (models, event) {
                         dateByMonth : 1,
                         holidays    : 1,
                         hours       : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : 'employee._id',
+                        foreignField: 'employee',
+                        as          : 'employee.transfer'
                     }
                 }, {
                     $project: {

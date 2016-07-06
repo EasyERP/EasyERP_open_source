@@ -6,6 +6,7 @@ define([
     'text!templates/PayrollExpenses/form/sortTemplate.html',
     'text!templates/PayrollExpenses/form/cancelEdit.html',
     'views/PayrollExpenses/form/dialogView',
+    'views/PayrollExpenses/EditView',
     'collections/PayrollExpenses/editCollection',
     'collections/PayrollExpenses/sortCollection',
     'collections/PayrollPayments/editCollection',
@@ -19,7 +20,7 @@ define([
     'dataService',
     'async',
     'constants'
-], function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, ReportView, editCollection, sortCollection, PaymentCollection, CurrentModel, selectView, PaymentCreateView, CreateView, helpers, moment, populate, dataService, async, CONSTANTS) {
+], function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, ReportView, EditView, editCollection, sortCollection, PaymentCollection, CurrentModel, selectView, PaymentCreateView, CreateView, helpers, moment, populate, dataService, async, CONSTANTS) {
     var PayrollExpanses = Backbone.View.extend({
 
         el           : '#content-holder',
@@ -35,28 +36,56 @@ define([
         },
 
         events: {
-            'click .checkbox'        : 'checked',
-            'click td.editable'      : 'editRow',
-            'click .newSelectList li': 'chooseOption',
-            'change .autoCalc'       : 'autoCalc',
-            'change .editable'       : 'setEditable',
-            'keydown input.editing'  : 'keyDown',
-            click                    : 'removeNewSelect',
-            'click .diff'            : 'newPayment',
-            'click .oe_sortable'     : 'goSort',
-            'click .expand'          : 'renderDialogView'
-
+            'click .checkbox'                         : 'checked',
+            'click td.editable'                       : 'editRow',
+            'click .newSelectList li'                 : 'chooseOption',
+            'change .autoCalc'                        : 'autoCalc',
+            'change .editable'                        : 'setEditable',
+            'keydown input.editing'                   : 'keyDown',
+            click                                     : 'removeNewSelect',
+            'click .diff'                             : 'newPayment',
+            'click .oe_sortable'                      : 'goSort',
+            // 'click .expand'                           : 'renderDialogView',
+            'click .mainTr td:not(.expand, .checkbox)': 'goToForm'
         },
 
-        renderDialogView: function (e) {
-            var self = this;
-            var tr = $(e.target).closest('tr').find('[data-content="employee"]');
-            var id = tr.attr('data-id');
+        goToForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var model = new CurrentModel();
+            var month = (this.dataKey.toString()).slice(4);
+            var year = (this.dataKey.toString()).slice(0, 4);
 
-            App.startPreload();
+            e.preventDefault();
 
-            new ReportView({_id: id, dataKey: self.dataKey});
+            model.fetch({
+                data: {
+                    id   : id,
+                    month: month,
+                    year : year
+                },
+
+                success: function (model) {
+                    return new EditView({model: model});
+                },
+
+                error: function () {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please refresh browser'
+                    });
+                }
+            });
         },
+
+        /* renderDialogView: function (e) {
+         var self = this;
+         var tr = $(e.target).closest('tr').find('[data-content="employee"]');
+         var id = tr.attr('data-id');
+
+         App.startPreload();
+
+         new ReportView({_id: id, dataKey: self.dataKey});
+         },*/
 
         recount: function () {
             var self = this;
@@ -169,9 +198,9 @@ define([
             var $currentEl = this.$el;
             var tBody = $currentEl.find('#payRoll-TableBody');
 
-                tBody.empty();
-                $('#top-bar-deleteBtn').hide();
-                $('#checkAll').prop('checked', false);
+            tBody.empty();
+            $('#top-bar-deleteBtn').hide();
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 tBody.append(_.template(sortTemplate, {

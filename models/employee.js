@@ -202,7 +202,19 @@ module.exports = (function () {
         hire: [Date],
         fire: [Date],
 
-        transfer: {type: Array, default: []},
+       /* transfer: [{
+            _id            : false,
+            date           : Date,
+            status         : {type: String, enum: ['hired', 'fired', 'updated'], default: 'updated'},
+            department     : {type: ObjectId, ref: 'Department', default: null},
+            isDeveloper    : {type: Boolean, required: true},
+            jobPosition    : {type: ObjectId, ref: 'JobPosition', default: null},
+            manager        : {type: ObjectId, ref: 'Employees', default: null},
+            weeklyScheduler: {type: ObjectId, ref: 'weeklyScheduler', default: null},
+            jobType        : {type: String, default: ''},
+            salary         : {type: Number, default: 0},
+            info           : {type: String, default: ''}
+        }],*/
 
         lastFire: {type: Number, default: null}
     }, {collection: 'Employees'});

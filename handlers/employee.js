@@ -141,6 +141,272 @@ var Employee = function (event, models) {
         });
     };
 
+    this.getEmployeesCountForDashboard = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var month = parseInt(req.query.month, 10) + 1;
+        var year = parseInt(req.query.year, 10);
+        var startMomentDate = moment().year(year).month(month - 1).startOf('month');
+        var endMomentDate = moment().year(year).month(month - 1).endOf('month');
+        var startDate = year * 100 + moment(startMomentDate).week();
+        var endDate = year * 100 + moment(endMomentDate).week();
+        var employeeQueryForEmployeeByDep = {
+            $and: [{
+                $or: [{
+                    $and: [{
+                        isEmployee: true
+                    }, {
+                        $or: [{
+                            lastFire: null,
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }, {
+                            lastFire: {
+                                $ne : null,
+                                $gte: startDate
+                            }
+                        }, {
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }]
+                    }]
+                }, {
+                    $and: [{
+                        isEmployee: false
+                    }, {
+                        lastFire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }]
+            }]
+        };
+
+        function isEmployee(callback) {
+            Employee.aggregate([{
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : '_id',
+                    foreignField: 'employee',
+                    as          : 'transfer'
+                }
+            }, {
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHire  : {
+                        $let: {
+                            vars: {
+                                lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                            },
+
+                            in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: employeeQueryForEmployeeByDep
+            }, {
+                $group: {
+                    _id  : null,
+                    count: {$sum: 1}
+                }
+            }], function (err, result) {
+                var count;
+
+                if (err) {
+                    return callback(err);
+                }
+
+                count = result && result.length ? result[0].count : 0;
+
+                callback(null, count);
+            });
+        }
+
+        function hired(callback) {
+            Employee.aggregate([{
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : '_id',
+                    foreignField: 'employee',
+                    as          : 'transfer'
+                }
+            }, {
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHire  : {
+                        $let: {
+                            vars: {
+                                lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                            },
+
+                            in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: {
+                    $and: [{
+                        lastFire: null,
+                        lastHire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }
+            }, {
+                $group: {
+                    _id  : null,
+                    count: {$sum: 1}
+                }
+            }], function (err, result) {
+                var count;
+
+                if (err) {
+                    return callback(err);
+                }
+
+                count = result && result.length ? result[0].count : 0;
+
+                callback(null, count);
+            });
+        }
+
+        function fired(callback) {
+            Employee.aggregate([{
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : '_id',
+                    foreignField: 'employee',
+                    as          : 'transfer'
+                }
+            }, {
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHire  : {
+                        $let: {
+                            vars: {
+                                lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                            },
+
+                            in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: {
+                    $and: [{
+                        isEmployee: false
+                    }, {
+                        lastFire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }
+            }, {
+                $group: {
+                    _id  : null,
+                    count: {$sum: 1}
+                }
+            }], function (err, result) {
+                var count;
+
+                if (err) {
+                    return callback(err);
+                }
+
+                count = result && result.length ? result[0].count : 0;
+
+                callback(null, count);
+            });
+        }
+
+        async.parallel([
+            isEmployee,
+            hired,
+            fired
+        ], function (err, result) {
+            var employeeCount;
+            var hiredCount;
+            var firedCount;
+
+            if (err) {
+                return next(err);
+            }
+
+            result = result && result.length ? result : [];
+
+            employeeCount = result[0];
+            hiredCount = result[1];
+            firedCount = result[2];
+
+            res.status(200).send({employeeCount: employeeCount, hiredCount: hiredCount, firedCount: firedCount});
+        });
+    };
+
+    this.getSalaryByMonth = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var query = req.query;
+        var _id = query._id;
+        var month = query.month;
+        var year = query.year;
+        var date = moment().year(year).month(month - 1).date(1);
+
+        Employee.findById(_id, {transfer: 1}, function (err, result) {
+            var salary = 0;
+            var hire;
+            var i;
+            var length;
+
+            if (err) {
+                return next(err);
+            }
+
+            if (result) {
+                hire = result.transfer;
+                length = hire.length;
+
+                for (i = length - 1; i >= 0; i--) {
+                    if (date >= hire[i].date) {
+                        salary = hire[i].salary;
+                        break;
+                    }
+                }
+            }
+
+            res.status(200).send({data: salary});
+        });
+    };
+
     this.getYears = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
@@ -1299,7 +1565,7 @@ var Employee = function (event, models) {
                         return next(err);
                     }
 
-                    /* if (!accessEmployeeSalary(profileId)) {
+                    /*if (!accessEmployeeSalary(profileId)) {
                      data.transfer = data.transfer.map(function (tr, i) {
                      if (i !== 0) {
                      if (emp.transfer[i] && emp.transfer[i].salary) {
