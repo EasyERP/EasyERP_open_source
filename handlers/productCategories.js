@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
+var async = require('async');
+var _ = require('lodash');
+
 var Categories = function (models, event) {
     var CategorySchema = mongoose.Schemas.ProductCategory;
+    var ProductsSchema = mongoose.Schemas.Products;
     var objectId = mongoose.Types.ObjectId;
     var MAINCONSTANTS = require('../constants/mainConstants');
 
@@ -64,10 +68,37 @@ var Categories = function (models, event) {
         getById(req, res, next);
     };
 
+    this.getProsterityForAncestor = function (req, res, next) {
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var id = req.params.id;
+
+        ProductCategory
+            .find({
+                ancestors: {
+                    $elemMatch: {$eq: id}
+                }
+            }, {_id: 1}, function (err, result) {
+                var ids;
+
+                if (err) {
+                    return next(err);
+                }
+
+                if (result && result.length) {
+                    ids = _.pluck(result, '_id');
+                }
+
+                res.status(200).send(ids || []);
+            });
+    };
+
     this.create = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var body = req.body;
+        var parentId = body.parent;
         var category;
+        var getParentAncestors;
+        var saveProductCategory;
 
         if (!Object.keys(body).length) {
             return res.status(400).send();
@@ -80,9 +111,52 @@ var Categories = function (models, event) {
             user: req.session.uId
         };
 
-        category = new ProductCategory(body);
+        getParentAncestors = function (parentId, callback) {
+            var ancestors = [];
 
-        category.save(function (err, category) {
+            if (!parentId) {
+                return callback(null, ancestors);
+            }
+
+            ProductCategory.findById(parentId, function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (result && result.ancestors && result.ancestors.length) {
+                    ancestors = result.ancestors;
+                }
+
+                ancestors.push(parentId);
+
+                callback(null, ancestors);
+            });
+
+        };
+
+        saveProductCategory = function (ancestors, callback) {
+            body.ancestors = ancestors;
+
+            category = new ProductCategory(body);
+
+            category.save(function (err, category) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, category);
+            });
+        };
+
+
+        async.waterfall([
+            function (wCb) {
+                getParentAncestors(parentId, wCb);
+            },
+            function (ancestors, wCb) {
+                saveProductCategory(ancestors, wCb);
+            }
+        ], function (err, category) {
             if (err) {
                 return next(err);
             }
@@ -278,36 +352,75 @@ var Categories = function (models, event) {
         }
     };
 
-    function removeAllChild(req, arrId, callback) {
+    function removeAllChild(req, id, callback) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var Product = models.get(req.session.lastDb, 'Product', ProductsSchema);
 
-        if (arrId.length > 0) {
-            ProductCategory.find({parent: {$in: arrId}}, {_id: 1}, function (err, res) {
-                ProductCategory.find({parent: {$in: arrId}}, {multi: true}).remove().exec(function (err, result) {
-                    arrId = res.map(function (item) {
-                        return item._id;
-                    });
-                    removeAllChild(req, arrId, callback);
-                });
+        ProductCategory.find({
+            $or: [
+                {ancestors: {$elemMatch: {$eq: id}}},
+                {_id: id}
+            ]
+        }, {_id: 1}, function (err, result) {
+            var ids;
 
-            });
-        } else {
-            if (callback) {
-                callback();
+            if (err) {
+                return callback(err);
             }
-        }
+
+            ids = _.pluck(result, '_id');
+
+            function deleteCategories(parCb) {
+                ProductCategory.remove({_id: {$in: ids}}, function (err) {
+                    if (err) {
+                        return parCb(err);
+                    }
+
+                    parCb(null);
+                });
+            }
+
+            function deleteProducts(parCb) {
+                Product.remove({'accounting.category._id': {$in: ids}}, function (err) {
+                    if (err) {
+                        return parCb(err);
+                    }
+
+                    parCb(null);
+                });
+            }
+
+            async
+                .parallel([deleteCategories, deleteProducts], function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null);
+                });
+        });
     }
 
     this.remove = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var _id = req.param('id');
 
-        ProductCategory.remove({_id: _id}, function (err, result) {
+        ProductCategory.findOne({_id: _id}, function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            removeAllChild(req, [_id].objectID(), function () {
+            if (result.main) {
+                err = new Error('Can`t remove main category');
+                err.status = 400;
+                return next(err);
+            }
+
+            removeAllChild(req, _id, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
                 res.status(200).send({success: 'Category was removed'});
             });
 

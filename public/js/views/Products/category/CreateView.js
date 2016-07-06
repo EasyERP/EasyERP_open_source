@@ -14,22 +14,13 @@ define([
         contentType: 'Departments',
         template   : _.template(CreateTemplate),
         events     : {
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click #sourceUsers li'                                           : 'addUsers',
-            'click #targetUsers li'                                           : 'removeUsers',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .prevUserList'                                             : 'prevUserList',
-            'click .nextUserList'                                             : 'nextUserList',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
             // 'keydown': 'keydownHandler'
         },
 
         initialize: function (options) {
             _.bindAll(this, 'saveItem', 'render');
+
+            this.parentId = options._id || null;
             this.model = new Model();
             this.responseObj = {};
             this.render();
@@ -72,7 +63,7 @@ define([
                     wait   : true,
                     success: function (model) {
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate('easyErp/productSettings', {trigger: true});
+                        Backbone.history.navigate('easyErp/Products', {trigger: true});
                     },
 
                     error: function (model, xhr) {
@@ -85,22 +76,8 @@ define([
             $('.create-dialog').remove();
         },
 
-        hideNewSelect: function (e) {
-            $('.newSelectList').hide();
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },
-
-        chooseOption: function (e) {
-            var $target = $(e.target);
-
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id')).attr('data-level', $target.data('level')).attr('data-fullname', $target.data('fullname'));
-        },
-
         render: function () {
+            var categoryUrl = '/category/' + this.parentId;
             var self = this;
             var formString = this.template({});
 
@@ -125,7 +102,8 @@ define([
 
             });
 
-            populate.getParrentCategory('#parentCategory', '/category', {}, this, true);
+            populate.getParrentCategoryById('#parentCategory', categoryUrl, {}, this, true);
+
             this.delegateEvents(this.events);
 
             return this;

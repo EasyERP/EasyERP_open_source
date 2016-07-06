@@ -12,19 +12,19 @@
     'constants'
 ], function (Backbone, $, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, dataService, CurrentModel, common, CONSTANTS) {
     var ProductThumbnalView = BaseView.extend({
-        el         : '#content-holder',
+        //el         : '#content-holder',
         template   : _.template(thumbnailsItemTemplate),
         contentType: 'Products',
-        hasAlphabet: true,
+        //hasAlphabet: true,
 
 
         initialize: function (options) {
-            $(document).off('click');
+            //$(document).off('click');
 
             this.EditView = EditView;
             this.CreateView = CreateView;
 
-            _.bind(this.collection.showMoreAlphabet, this.collection);
+            //_.bind(this.collection.showMoreAlphabet, this.collection);
 
             this.allAlphabeticArray = common.buildAllAphabeticArray();
             this.filter = options.filter;
@@ -36,7 +36,8 @@
 
         events: {
             'click #showMore'           : 'showMore',
-            'click .thumbnailwithavatar': 'gotoEditForm'
+            'click .thumbnailwithavatar': 'gotoEditForm',
+            'click .addProduct'         : 'createItem'
         },
 
         asyncLoadImgs: function (collection) {
@@ -48,7 +49,7 @@
 
         render: function () {
             var $currentEl = this.$el;
-
+            $currentEl.find('#thumbnailContent').append('<div id="searchContainer"></div><div class="addProduct">+</div>')
             $currentEl
                 .find('#thumbnailContent')
                 .append(this.template({collection: this.collection.toJSON()}));

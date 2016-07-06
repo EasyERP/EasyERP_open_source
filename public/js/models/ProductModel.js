@@ -2,8 +2,9 @@ define([
     'Backbone',
     'Underscore',
     'Validation',
-    'moment'
-], function (Backbone, _, Validation, moment) {
+    'moment',
+    'constants'
+], function (Backbone, _, Validation, moment, CONSTANTS) {
     'use strict';
 
     var ProductModel = Backbone.Model.extend({

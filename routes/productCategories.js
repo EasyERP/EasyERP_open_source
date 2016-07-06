@@ -15,7 +15,8 @@ module.exports = function (models, event) {
 
     router.get('/', handler.getForDd);
     router.get('/getExpenses', handler.getExpenses);
-    router.get('/:id', handler.getForDd);
+    router.get('/posterity/:id', handler.getProsterityForAncestor);
+    router.get('/:id', handler.getById);
 
     router.post('/', handler.create);
     router.put('/:id', handler.update);

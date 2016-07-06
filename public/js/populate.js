@@ -83,6 +83,28 @@ define([
             });
         };
 
+        var getParrentCategoryById = function (id, url, data, content, isCreate, canBeEmpty) {
+            dataService.getData(url, data, function (response) {
+
+                content.responseObj[id] = [];
+                if (canBeEmpty) {
+                    content.responseObj[id].push({_id: "", name: "Select"});
+                }
+
+                content.responseObj[id][0] = {
+                    _id     : response._id,
+                    name    : response.name,
+                    level   : response.nestingLevel,
+                    parent  : response.parent,
+                    fullName: response.fullName
+                };
+
+                if (isCreate) {
+                    $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
+                }
+            });
+        };
+
         var getPriority = function (id, content, isCreate) {
             dataService.getData("/tasks/priority", {}, function (response) {
                 content.responseObj[id] = _.map(response.data, function (item) {
@@ -466,16 +488,17 @@ define([
         };
 
         return {
-            get                 : get,
-            get2name            : get2name,
-            getPriority         : getPriority,
-            getWorkflow         : getWorkflow,
-            showSelect          : showSelect,
-            getParrentDepartment: getParrentDepartment,
-            getParrentCategory  : getParrentCategory,
-            getCompanies        : getCompanies,
-            showSelectPriority  : showSelectPriority,
-            showProductsSelect  : showProductsSelect,
-            fetchWorkflow       : fetchWorkflow
+            get                   : get,
+            get2name              : get2name,
+            getPriority           : getPriority,
+            getWorkflow           : getWorkflow,
+            showSelect            : showSelect,
+            getParrentDepartment  : getParrentDepartment,
+            getParrentCategory    : getParrentCategory,
+            getCompanies          : getCompanies,
+            showSelectPriority    : showSelectPriority,
+            showProductsSelect    : showProductsSelect,
+            fetchWorkflow         : fetchWorkflow,
+            getParrentCategoryById: getParrentCategoryById
         };
     });

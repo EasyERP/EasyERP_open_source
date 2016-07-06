@@ -19,7 +19,7 @@ define([
         contentCollection       : contentCollection,
         totalCollectionLengthUrl: '/product/totalCollectionLength',
         page                    : null, // if reload page, and in url is valid page
-        contentType             : 'Product', // needs in view.prototype.changeLocationHash
+        contentType             : 'Products', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl         : '/Product/exportToXlsx',
         exportToCsvUrl          : '/Product/exportToCsv',
 
@@ -74,7 +74,7 @@ define([
             var model = new productModel({validate: false});
 
             e.preventDefault();
-            model.urlRoot = '/Product/form';
+            model.urlRoot = '/Product/';
             model.fetch({
                 data   : {id: id},
                 success: function (model) {

@@ -5,12 +5,14 @@ var Products = function (models) {
     var mongoose = require('mongoose');
 
     var ProductSchema = mongoose.Schemas.Products;
+    var CategorySchema = mongoose.Schemas.CategorySchema;
     var DepartmentSchema = mongoose.Schemas.Department;
     var objectId = mongoose.Types.ObjectId;
 
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var async = require('async');
+    var _ = require('lodash');
     var fs = require('fs');
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Products;
@@ -101,7 +103,9 @@ var Products = function (models) {
         var parallelTasks;
         var getTotal;
         var getData;
+        var posteritySearch;
         var filterMapper = new FilterMapper();
+        var categoryId = req.query.categoryId;
 
         Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
@@ -119,7 +123,43 @@ var Products = function (models) {
             accessRoll(req, Product, cb);
         };
 
-        contentSearcher = function (productsIds, waterfallCallback) {
+        posteritySearch = function (productsIds, waterfallCallback) {
+            var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+            var searchObj;
+
+            if (!categoryId) {
+                return waterfallCallback(null, productsIds, []);
+            }
+
+            searchObj = {
+                ancestors: {
+                    $elemMatch: {$eq: categoryId}
+                }
+            };
+
+            ProductCategory
+                .find(searchObj, {_id: 1}, function (err, result) {
+                    var ids = [];
+
+                    if (err) {
+                        return waterfallCallback(err);
+                    }
+
+                    if (result && result.length) {
+                        ids = _.pluck(result, '_id');
+                    }
+
+                    ids.push(categoryId);
+
+                    waterfallCallback(null, productsIds, ids);
+                });
+        };
+
+        contentSearcher = function (productsIds, posterityIds, waterfallCallback) {
+
+            if (posterityIds.length) {
+                optionsObject.$and.push({'accounting.category._id': {$in: posterityIds}});
+            }
 
             optionsObject.$and.push({_id: {$in: productsIds}});
 
@@ -164,7 +204,7 @@ var Products = function (models) {
 
         };
 
-        waterfallTasks = [accessRollSearcher, contentSearcher];
+        waterfallTasks = [accessRollSearcher, posteritySearch, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, products) {
             if (err) {

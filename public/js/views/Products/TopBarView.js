@@ -11,7 +11,7 @@ define([
 ], function (Backbone, $, _, ContentTopBarTemplate, importTemplate, attachView, Custom, Common, CONSTANTS) {
     var TopBarView = Backbone.View.extend({
         el         : '#top-bar',
-        contentType: CONSTANTS.PRODUCT,
+        contentType: CONSTANTS.PRODUCTS,
         actionType : null, // Content, Edit, Create
         template   : _.template(ContentTopBarTemplate),
 

@@ -524,9 +524,8 @@ define([
                 }
             });
 
-            //$searchInput = $curEl.find('#searchInput');
-
-            $searchInput.keydown(function (e) {
+            $searchInput
+            .keydown(function (e) {
                 if (e.which === 13) {
                     allResults = $searchInput.next().find('.ui-autocomplete-category');
 

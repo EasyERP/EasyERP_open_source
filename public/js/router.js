@@ -65,6 +65,7 @@ define([
         routes: {
             home                                                                                            : 'any',
             login                                                                                           : 'login',
+            //'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
@@ -106,12 +107,13 @@ define([
                             App.filtersObject = {};
                         }
                         App.filtersObject.savedFilters = response.savedFilters;
-                    } /*else {
-                        App.render({
-                            type   : 'error',
-                            message: 'can\'t fetch currentUser'
-                        });
-                    }*/
+                    }
+                    /*else {
+                     App.render({
+                     type   : 'error',
+                     message: 'can\'t fetch currentUser'
+                     });
+                     }*/
                 });
             }
         },
@@ -553,7 +555,7 @@ define([
                 var startTime = new Date();
                 var contentViewUrl = 'views/settingsProduct/ContentView';
                 var topBarViewUrl = 'views/settingsProduct/TopBarView';
-                var collectionUrl = 'collections/Product/ProductCategories';
+                var collectionUrl = 'collections/Products/ProductCategories';
                 var self = context;
 
                 if (context.mainView === null) {
@@ -584,6 +586,91 @@ define([
                         context.changeTopBarView(topbarView);
 
                         url = '#easyErp/productSettings';
+
+                        Backbone.history.navigate(url, {replace: true});
+                    }
+                });
+            }
+        },
+
+        goToProduct: function (countPerPage, filter) {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goProduct(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goProduct(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/Products/IndexView';
+                var topBarViewUrl = 'views/Products/category/TopBarView';
+                var collectionUrl = 'collections/Products/ProductCategories';
+                var self = context;
+                var contentType = 'Products';
+
+                if (context.mainView === null) {
+                    context.main('products');
+                } else {
+                    context.mainView.updateMenu('products');
+                }
+
+                if (countPerPage) {
+                    countPerPage = parseInt(countPerPage, 10);
+
+                    if (isNaN(countPerPage)) {
+                        countPerPage = 0;
+                    }
+                }
+
+                if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
+
+                    filter = {
+                        canBePurchased: {
+                            key  : 'canBePurchased',
+                            value: ['true']
+                        }
+                    };
+
+                } else {
+                    filter = JSON.parse(filter);
+                }
+
+                require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
+                    var collection = new ContentCollection();
+
+                    collection.bind('reset', _.bind(createViews, self));
+                    custom.setCurrentVT('thumbnails');
+
+                    function createViews() {
+                        var url;
+                        var contentView;
+                        var topBarView;
+
+                        collection.unbind('reset');
+
+                        contentView = new ContentView({collection: collection, startTime: startTime, countPerPage: countPerPage, filter: filter});
+                        topBarView = new TopBarView({actionType: 'Content'});
+
+                        topBarView.bind('createEvent', contentView.createItem, contentView);
+                        topBarView.bind('editEvent', contentView.editItem, contentView);
+                        topBarView.bind('deleteEvent', contentView.deleteItems, contentView);
+                        topBarView.bind('saveEvent', contentView.saveItem, contentView);
+
+                        context.changeView(contentView);
+                        context.changeTopBarView(topBarView);
+
+                        url = '#easyErp/Products';
 
                         Backbone.history.navigate(url, {replace: true});
                     }
