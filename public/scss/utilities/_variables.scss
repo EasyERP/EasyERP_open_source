@@ -68,8 +68,14 @@ $vars : (
 
 // flexgrid variables
 
+$container-width: 1000px;
+$sm-break: 30em;  // 480px
+$md-break: 45em;  // 720px
+$lg-break: 60em;  // 960px
+$xl-break: 90em;  // 1440px
+$gutter: 16px;
+$cols: 12;
 
-$global-width: rem-calc(1200);
-$grid-row-width: $global-width;
-$grid-column-count: 12;
-$grid-column-gutter: 30px;
+$small-spacing: 4px;
+$medium-spacing: 16px;
+$large-spacing: 24px;
