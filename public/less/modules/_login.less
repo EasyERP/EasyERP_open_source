@@ -218,7 +218,7 @@ input {
 .btn {
   display: inline-block;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 12px!important;
   margin-bottom: 0;
   font-weight: 400;
   text-align: center;
@@ -228,7 +228,7 @@ input {
   border: 1px solid transparent;
   white-space: nowrap;
   font-size: 14px;
-  line-height: 32px;
+  line-height: 30px!important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -255,19 +255,43 @@ input {
     }
   }
 
+  &.blue {
+    color: #FFF;
+    background-color: #3e88b9;
+    border-color: #4d5a75;
+    &:hover {
+      background-color: #4d5a75;
+      border-color: #4d5a75;
+      text-decoration: none;
+    }
+  }
+
   &Rounded {
     background-color: #fff;
     color: #000;
 
     &.green {
-      color: #32c5d2;
       background-color: #fff;
       border-color: #32c5d2;
+      color: #32c5d2;
 
       &:hover {
         background-color: #32c5d2;
         border-color: #32c5d2;
         color: #fff;
+      }
+    }
+
+    &.blue {
+      background-color: #fff;
+      border-color: #3e88b9;
+      color: #3e88b9;
+
+      &:hover {
+        background-color: #3e88b9;
+        border-color: #3e88b9;
+        color: #fff;
+        text-decoration: none;
       }
     }
   }

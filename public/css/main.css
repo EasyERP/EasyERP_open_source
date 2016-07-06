@@ -1886,7 +1886,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .btn {
   display: inline-block;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 12px!important;
   margin-bottom: 0;
   font-weight: 400;
   text-align: center;
@@ -1896,7 +1896,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   border: 1px solid transparent;
   white-space: nowrap;
   font-size: 14px;
-  line-height: 32px;
+  line-height: 30px!important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1919,19 +1919,40 @@ input:not([type="checkbox"]).inputBordered:focus {
   border-color: #2499a3;
   text-decoration: none;
 }
+.btn.blue {
+  color: #FFF;
+  background-color: #3e88b9;
+  border-color: #4d5a75;
+}
+.btn.blue:hover {
+  background-color: #4d5a75;
+  border-color: #4d5a75;
+  text-decoration: none;
+}
 .btnRounded {
   background-color: #fff;
   color: #000;
 }
 .btnRounded.green {
-  color: #32c5d2;
   background-color: #fff;
   border-color: #32c5d2;
+  color: #32c5d2;
 }
 .btnRounded.green:hover {
   background-color: #32c5d2;
   border-color: #32c5d2;
   color: #fff;
+}
+.btnRounded.blue {
+  background-color: #fff;
+  border-color: #3e88b9;
+  color: #3e88b9;
+}
+.btnRounded.blue:hover {
+  background-color: #3e88b9;
+  border-color: #3e88b9;
+  color: #fff;
+  text-decoration: none;
 }
 .formGroup {
   margin-bottom: 25px;
@@ -5787,7 +5808,7 @@ dl dd span.ui-spinner {
 button {
   display: inline-block;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 12px!important;
   margin-bottom: 0;
   font-weight: 400;
   vertical-align: middle;
@@ -5796,7 +5817,7 @@ button {
   border: 1px solid transparent;
   white-space: nowrap;
   font-size: 14px;
-  line-height: 32px;
+  line-height: 30px!important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -5829,19 +5850,40 @@ button.green:hover {
   border-color: #2499a3;
   text-decoration: none;
 }
+button.blue {
+  color: #FFF;
+  background-color: #3e88b9;
+  border-color: #4d5a75;
+}
+button.blue:hover {
+  background-color: #4d5a75;
+  border-color: #4d5a75;
+  text-decoration: none;
+}
 buttonRounded {
   background-color: #fff;
   color: #000;
 }
 buttonRounded.green {
-  color: #32c5d2;
   background-color: #fff;
   border-color: #32c5d2;
+  color: #32c5d2;
 }
 buttonRounded.green:hover {
   background-color: #32c5d2;
   border-color: #32c5d2;
   color: #fff;
+}
+buttonRounded.blue {
+  background-color: #fff;
+  border-color: #3e88b9;
+  color: #3e88b9;
+}
+buttonRounded.blue:hover {
+  background-color: #3e88b9;
+  border-color: #3e88b9;
+  color: #fff;
+  text-decoration: none;
 }
 button span,
 button a {
@@ -5861,7 +5903,7 @@ button.red,
 a.red {
   display: inline-block;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 12px!important;
   margin-bottom: 0;
   font-weight: 400;
   vertical-align: middle;
@@ -5870,7 +5912,7 @@ a.red {
   border: 1px solid transparent;
   white-space: nowrap;
   font-size: 14px;
-  line-height: 32px;
+  line-height: 30px!important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -5912,6 +5954,18 @@ a.red.green:hover {
   border-color: #2499a3;
   text-decoration: none;
 }
+button.red.blue,
+a.red.blue {
+  color: #FFF;
+  background-color: #3e88b9;
+  border-color: #4d5a75;
+}
+button.red.blue:hover,
+a.red.blue:hover {
+  background-color: #4d5a75;
+  border-color: #4d5a75;
+  text-decoration: none;
+}
 button.redRounded,
 a.redRounded {
   background-color: #fff;
@@ -5919,15 +5973,28 @@ a.redRounded {
 }
 button.redRounded.green,
 a.redRounded.green {
-  color: #32c5d2;
   background-color: #fff;
   border-color: #32c5d2;
+  color: #32c5d2;
 }
 button.redRounded.green:hover,
 a.redRounded.green:hover {
   background-color: #32c5d2;
   border-color: #32c5d2;
   color: #fff;
+}
+button.redRounded.blue,
+a.redRounded.blue {
+  background-color: #fff;
+  border-color: #3e88b9;
+  color: #3e88b9;
+}
+button.redRounded.blue:hover,
+a.redRounded.blue:hover {
+  background-color: #3e88b9;
+  border-color: #3e88b9;
+  color: #fff;
+  text-decoration: none;
 }
 button.red span,
 a.red span,
@@ -8186,7 +8253,7 @@ ul.dialog-tabs .withEndContract .arrow {
   width: 80px;
   display: inline-block;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 12px!important;
   margin-bottom: 0;
   font-weight: 400;
   vertical-align: middle;
@@ -8195,7 +8262,7 @@ ul.dialog-tabs .withEndContract .arrow {
   border: 1px solid transparent;
   white-space: nowrap;
   font-size: 14px;
-  line-height: 32px;
+  line-height: 30px!important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -8244,6 +8311,18 @@ ul.dialog-tabs .withEndContract .arrow.green:hover {
   border-color: #2499a3;
   text-decoration: none;
 }
+ul.dialog-tabs .withEndContract .endContractReasonList.blue,
+ul.dialog-tabs .withEndContract .arrow.blue {
+  color: #FFF;
+  background-color: #3e88b9;
+  border-color: #4d5a75;
+}
+ul.dialog-tabs .withEndContract .endContractReasonList.blue:hover,
+ul.dialog-tabs .withEndContract .arrow.blue:hover {
+  background-color: #4d5a75;
+  border-color: #4d5a75;
+  text-decoration: none;
+}
 ul.dialog-tabs .withEndContract .endContractReasonListRounded,
 ul.dialog-tabs .withEndContract .arrowRounded {
   background-color: #fff;
@@ -8251,15 +8330,28 @@ ul.dialog-tabs .withEndContract .arrowRounded {
 }
 ul.dialog-tabs .withEndContract .endContractReasonListRounded.green,
 ul.dialog-tabs .withEndContract .arrowRounded.green {
-  color: #32c5d2;
   background-color: #fff;
   border-color: #32c5d2;
+  color: #32c5d2;
 }
 ul.dialog-tabs .withEndContract .endContractReasonListRounded.green:hover,
 ul.dialog-tabs .withEndContract .arrowRounded.green:hover {
   background-color: #32c5d2;
   border-color: #32c5d2;
   color: #fff;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListRounded.blue,
+ul.dialog-tabs .withEndContract .arrowRounded.blue {
+  background-color: #fff;
+  border-color: #3e88b9;
+  color: #3e88b9;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListRounded.blue:hover,
+ul.dialog-tabs .withEndContract .arrowRounded.blue:hover {
+  background-color: #3e88b9;
+  border-color: #3e88b9;
+  color: #fff;
+  text-decoration: none;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList span,
 ul.dialog-tabs .withEndContract .arrow span,
@@ -8375,7 +8467,7 @@ ul.chart-tabs .withEndContract .arrow {
   width: 80px;
   display: inline-block;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 12px!important;
   margin-bottom: 0;
   font-weight: 400;
   vertical-align: middle;
@@ -8384,7 +8476,7 @@ ul.chart-tabs .withEndContract .arrow {
   border: 1px solid transparent;
   white-space: nowrap;
   font-size: 14px;
-  line-height: 32px;
+  line-height: 30px!important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -8432,6 +8524,18 @@ ul.chart-tabs .withEndContract .arrow.green:hover {
   border-color: #2499a3;
   text-decoration: none;
 }
+ul.chart-tabs .withEndContract .endContractReasonList.blue,
+ul.chart-tabs .withEndContract .arrow.blue {
+  color: #FFF;
+  background-color: #3e88b9;
+  border-color: #4d5a75;
+}
+ul.chart-tabs .withEndContract .endContractReasonList.blue:hover,
+ul.chart-tabs .withEndContract .arrow.blue:hover {
+  background-color: #4d5a75;
+  border-color: #4d5a75;
+  text-decoration: none;
+}
 ul.chart-tabs .withEndContract .endContractReasonListRounded,
 ul.chart-tabs .withEndContract .arrowRounded {
   background-color: #fff;
@@ -8439,15 +8543,28 @@ ul.chart-tabs .withEndContract .arrowRounded {
 }
 ul.chart-tabs .withEndContract .endContractReasonListRounded.green,
 ul.chart-tabs .withEndContract .arrowRounded.green {
-  color: #32c5d2;
   background-color: #fff;
   border-color: #32c5d2;
+  color: #32c5d2;
 }
 ul.chart-tabs .withEndContract .endContractReasonListRounded.green:hover,
 ul.chart-tabs .withEndContract .arrowRounded.green:hover {
   background-color: #32c5d2;
   border-color: #32c5d2;
   color: #fff;
+}
+ul.chart-tabs .withEndContract .endContractReasonListRounded.blue,
+ul.chart-tabs .withEndContract .arrowRounded.blue {
+  background-color: #fff;
+  border-color: #3e88b9;
+  color: #3e88b9;
+}
+ul.chart-tabs .withEndContract .endContractReasonListRounded.blue:hover,
+ul.chart-tabs .withEndContract .arrowRounded.blue:hover {
+  background-color: #3e88b9;
+  border-color: #3e88b9;
+  color: #fff;
+  text-decoration: none;
 }
 ul.chart-tabs .withEndContract .endContractReasonList span,
 ul.chart-tabs .withEndContract .arrow span,
