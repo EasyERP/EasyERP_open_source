@@ -25,6 +25,7 @@ define([
             name : 'forSales',
             value: {
                 key  : 'forSales',
+                type : 'boolean',
                 value: [true]
             }
         },

@@ -1,0 +1,485 @@
+@font-light: 'Open Sans Light';
+@input-placeholder: #a0a9b4;
+@input-border: @input-placeholder;
+
+*{
+  box-sizing: border-box;
+}
+a{
+  text-decoration: none;
+}
+h2 {
+  &.green {
+    color: #32c5d2;
+  }
+}
+
+::-webkit-input-placeholder {
+  color: @input-placeholder;
+}
+:-moz-placeholder {
+  color: @input-placeholder;
+}
+::-moz-placeholder {
+  color: @input-placeholder;
+}
+:-ms-input-placeholder {
+  color: @input-placeholder;
+}
+
+
+.loginWrap {
+  margin-top: 100px;
+
+  .formActions{
+    line-height: 29px;
+  }
+}
+
+.forgotWrap {
+  margin-top: 69px;
+}
+
+.selectDd {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  border: 0;
+  color: @input-placeholder;
+  border-bottom: 1px solid #a0a9b4;
+  //padding-right: 15px;
+
+  &:after {
+    content: '';
+    position: absolute;
+    right: 5px;
+    top: 16px;
+    height: 0;
+    width: 0;
+    border-top: 4px solid #666;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    cursor: pointer;
+  }
+
+  .selectedDb {
+    display: block;
+    font-size: 14px;
+    line-height: 34px;
+    cursor: pointer;
+  }
+
+  ul {
+    visibility: hidden;
+    opacity: 0;
+
+    position: absolute;
+    top: 34px;
+    width: 100%;
+    background-image: none;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    font-size: 13px;
+    padding: 5px 0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+    z-index: 10;
+
+    -webkit-transform: translateY(50px);
+    transform: translateY(50px);
+    -webkit-transition: all .2s ease;
+    transition: all .2s ease;
+
+    li {
+      padding: 3px 25px;
+      white-space: nowrap;
+      line-height: 18px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #eef0f0;
+        -webkit-transition: background-color .2s ease;
+        transition: background-color .2s ease;
+      }
+    }
+
+    &.openDd{
+      visibility: visible;
+      opacity: 1;
+      -webkit-transform: none;
+      transform: none;
+    }
+  }
+}
+
+
+.login {
+
+  &Title {
+    color: #4e5a64;
+    font-size: 30px;
+    font-weight: 300;
+    font-family: @font-light;
+    white-space: nowrap;
+
+    &Block {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+  }
+
+  &Container {
+    margin: auto 0;
+
+    .selectDd {
+      float: right;
+    }
+  }
+
+  &Content {
+    padding: 0 80px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  &Forgot {
+    color: #a4aab2;
+    font-size: 13px;
+  }
+
+  &Copyright {
+    margin: 0 0 25px 0;
+    text-align: right;
+    font-size: 13px;
+    color: #a9b5be;
+  }
+}
+
+input {
+  &:not([type="checkbox"]) {
+
+    &.inputField {
+      height: 34px;
+      width: 100%;
+      padding: 10px 0;
+      border: 0;
+      border-bottom: 1px solid #a0a9b4;
+      color: #868e97;
+      font-size: 14px;
+      margin-bottom: 30px;
+
+      outline: 0 !important;
+      box-shadow: none !important;
+    }
+
+    &.inputBordered {
+      width: 100%;
+      height: 34px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1.42857;
+      color: #555;
+      display: block;
+      background-color: #fff;
+      border: 1px solid #c2cad8;
+      -webkit-transition: border-color ease-in-out .15s;
+      transition: border-color ease-in-out .15s;
+      outline: 0!important;
+
+      &:focus {
+        border-color: #93a1bb;
+      }
+    }
+  }
+}
+
+.notRegister {
+  input {
+    &:not([type="checkbox"]) {
+      border-color: #ff9393;
+      &:focus {
+        border-color: #ff9393;
+      }
+    }
+  }
+}
+
+:focus::-webkit-input-placeholder {color:transparent!important;}
+:focus::-moz-placeholder          {color:transparent!important;}
+:focus:-moz-placeholder           {color:transparent!important;}
+:focus:-ms-input-placeholder      {color:transparent!important;}
+
+.btn {
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px!important;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 30px!important;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 0;
+
+  outline: 0!important;
+  box-shadow: none!important;
+
+  &:hover {
+    -webkit-transition: all .3s;
+    transition: all .3s;
+  }
+
+  &.green {
+    color: #FFF;
+    background-color: #32c5d2;
+    border-color: #32c5d2;
+
+    &:hover {
+      background-color: #26a1ab;
+      border-color: #2499a3;
+      text-decoration: none;
+    }
+  }
+
+  &.blue {
+    color: #FFF;
+    background-color: #3e88b9;
+    border-color: #4d5a75;
+    &:hover {
+      background-color: #4d5a75;
+      border-color: #4d5a75;
+      text-decoration: none;
+    }
+  }
+
+  &Rounded {
+    background-color: #fff;
+    color: #000;
+
+    &.green {
+      background-color: #fff;
+      border-color: #32c5d2;
+      color: #32c5d2;
+
+      &:hover {
+        background-color: #32c5d2;
+        border-color: #32c5d2;
+        color: #fff;
+      }
+    }
+
+    &.blue {
+      background-color: #fff;
+      border-color: #3e88b9;
+      color: #3e88b9;
+
+      &:hover {
+        background-color: #3e88b9;
+        border-color: #3e88b9;
+        color: #fff;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.formGroup {
+  margin-bottom: 25px;
+}
+
+.rememberCheck {
+
+  &Wrap {
+    position: relative;
+    display: inline-block;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    line-height: 18px;
+    cursor: pointer;
+    font-size: 14px;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+    color: #a4aab2;
+
+    input {
+      position: absolute;
+      z-index: -1;
+      opacity: 0;
+
+      ~ span {
+        &:after {
+          content: '';
+          position: absolute;
+          display: none;
+        }
+      }
+
+      &:checked {
+        ~ span {
+          &:after {
+            display: block;
+            left: 6px;
+            top: 2px;
+            width: 4px;
+            height: 9px;
+            border: solid #666;
+            border-width: 0 2px 2px 0;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+          }
+        }
+      }
+    }
+
+    > span {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 19px;
+      width: 19px;
+      border: 1px solid #d9d9d9;
+    }
+  }
+}
+
+.forgot {
+
+  &Pass {
+    margin-right: 1em;
+    color: #a4aab2;
+
+    &:hover {
+      color: #337ab7;
+      text-decoration: none;
+    }
+  }
+
+  &Description {
+    margin: 22px 0;
+    color: #a0a9b4;
+    font-size: 15px;
+    line-height: 22px;
+  }
+}
+
+@media (max-width: 1600px) {
+  .login {
+    &Content {
+      padding: 0 60px;
+    }
+  }
+}
+
+@media (max-width: 1500px) {
+  .login {
+    &Content {
+      padding: 0 40px;
+    }
+    &Title {
+      font-size: 26px;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .loginWrapper {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+    -ms-grid-row-align: flex-end;
+    align-items: flex-end;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1220px) {
+  .loginContent {
+    padding: 0 20px;
+  }
+
+  .loginTitle {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sliderWrap,
+  .sliderContainer,
+  .loginContent {
+    height: 50vh;
+  }
+}
+
+@media (max-width: 767px) {
+  .login {
+    &Container {
+      .loginTitle {
+        margin-bottom: 30px;
+      }
+      .selectDd {
+        float: left;
+        clear: both;
+      }
+
+      input {
+        &:not([type="checkbox"]) {
+          &.inputField {
+            margin-bottom: 25px;
+          }
+        }
+      }
+    }
+
+    &Wrapper {
+      .selectDd {
+        width: 230px;
+      }
+    }
+
+    &Wrap {
+      margin-top: 25px;
+    }
+
+    &Copyright {
+      position: absolute;
+      bottom: calc(~"(50vh - 272px) / 4");
+      margin: 0;
+      right: 40px;
+    }
+  }
+
+  .formActions {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 410px) {
+  .login {
+
+    &Content {
+      padding: 0 20px;
+    }
+
+    &Copyright {
+      right: auto;
+      left: 20px;
+    }
+  }
+}

@@ -30,7 +30,8 @@ require.config({
         d3           : './libs/d3.v3.min',
         jqueryBarcode: './libs/jquery-barcode.min',
         moment       : './libs/moment/moment',
-        socketio     : '/socket.io/socket.io.js'
+        socketio     : '/socket.io/socket.io.js',
+        backstratch  : './libs/jquery-backstretch/jquery.backstretch.min'
     },
 
     shim: {
@@ -42,13 +43,14 @@ require.config({
             exports: '$'
         },
 
-        jqueryui : ['jQuery'],
-        ajaxForm : ['jQuery'],
-        imageCrop: ['jQuery'],
-        spinJs   : ['jQuery'],
-        Backbone : ['Underscore', 'jQuery'],
-        app      : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3'],
-        d3       : {
+        jqueryui   : ['jQuery'],
+        ajaxForm   : ['jQuery'],
+        imageCrop  : ['jQuery'],
+        spinJs     : ['jQuery'],
+        backstratch: ['jQuery'],
+        Backbone   : ['Underscore', 'jQuery'],
+        app        : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch'],
+        d3         : {
             exports: 'd3'
         },
 

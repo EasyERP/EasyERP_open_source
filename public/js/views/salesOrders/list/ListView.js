@@ -52,6 +52,7 @@ define([
             this.filter = options.filter || {};
             this.filter.forSales = {
                 key  : 'forSales',
+                type : 'boolean',
                 value: ['true']
             };
 
