@@ -10,8 +10,9 @@
     'populate',
     'custom',
     'moment',
-    'constants'
-], function (Backbone, $, _, EditTemplate, SelectView, NoteView, ParentView, common, populate, custom, moment, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, EditTemplate, SelectView, NoteView, ParentView, common, populate, custom, moment, CONSTANTS, helpers) {
     'use strict';
     var EditView = ParentView.extend({
         el         : '#content-holder',
@@ -347,7 +348,7 @@
                 manager = $tr.find('#projectManagerDD').attr('data-id') || null;
                 info = $tr.find('#statusInfoDd').val();
                 jobType = $.trim($tr.find('#jobTypeDd').text());
-                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) : null;
+                salary = self.isSalary ? parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val()) || helpers.spaceReplacer($tr.find('[data-id="salary"]').text()), 10) : null;
 
                 if (!previousDep) {
                     previousDep = department;
