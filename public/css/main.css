@@ -1928,7 +1928,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .btn.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 .btn.blue:hover {
   background-color: #4d5a75;
@@ -5871,7 +5871,7 @@ button.green:hover {
 button.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 button.blue:hover {
   background-color: #4d5a75;
@@ -5976,7 +5976,7 @@ button.red.blue,
 a.red.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 button.red.blue:hover,
 a.red.blue:hover {
@@ -8333,7 +8333,7 @@ ul.dialog-tabs .withEndContract .endContractReasonList.blue,
 ul.dialog-tabs .withEndContract .arrow.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList.blue:hover,
 ul.dialog-tabs .withEndContract .arrow.blue:hover {
@@ -8546,7 +8546,7 @@ ul.chart-tabs .withEndContract .endContractReasonList.blue,
 ul.chart-tabs .withEndContract .arrow.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 ul.chart-tabs .withEndContract .endContractReasonList.blue:hover,
 ul.chart-tabs .withEndContract .arrow.blue:hover {
