@@ -2086,6 +2086,7 @@ define([
             var padding= 15;
             var projection;
             var barChart;
+            var gradient;
             var margin;
             var path;
             var width;
@@ -2234,7 +2235,7 @@ define([
 
                 barChart = d3.select('svg.salesByCountryBarChart')
                     .attr({
-                        'width': width + margin.left + margin.right,
+                        'width': width - 30 + margin.left + margin.right,
                         'height': height1 + margin.top + margin.bottom
                     })
                     .append('g')
@@ -2246,13 +2247,31 @@ define([
 
                 xScale = d3.scale.linear()
                     .domain([0, max])
-                    .range([0, width]);
+                    .range([0, width - 30]);
 
                 yScale = d3.scale.linear()
                     .domain([0, data.length])
                     .range([0, height1]);
 
                 rect = height1 / (data.length);
+
+                gradient = svg.append("linearGradient")
+                    .attr("y1", 0)
+                    .attr("y2", 0)
+                    .attr("x1", "0")
+                    .attr("x2", width - 30)
+                    .attr("id", "gradientBar")
+                    .attr("gradientUnits", "userSpaceOnUse");
+
+                gradient
+                    .append("stop")
+                    .attr("offset", "0")
+                    .attr("stop-color", '#ACC7F2');
+
+                gradient
+                    .append("stop")
+                    .attr("offset", "0.5")
+                    .attr("stop-color", '#FFA17F');
 
                 barChart.selectAll('rect')
                     .data(data)
@@ -2269,7 +2288,7 @@ define([
                             return xScale(d.pays/100);
                         },
                         height: rect - 2*offset,
-                        fill  : '#5CD1C8'
+                        fill  : "url(#gradientBar)"
                     });
 
                 xAxis = d3.svg.axis()
@@ -2364,9 +2383,9 @@ define([
                 minValue = d3.min(data, function (d) {
                     return d.payment / 100;
                 });
-
+                //['#ACC7F2','#F4F3EF']
                 color = d3.scale.linear()
-                    .range(['#ACC7F2','#F4F3EF'])
+                    .range(['#ACC7F2','#FFA17F'])
                     .domain([minValue, maxValue]);
 
                 treemap = d3.layout.treemap()
