@@ -155,8 +155,23 @@ define([
             },
 
             getSavedFilters: function (object) {
-                var savedFiltersObject = object && object.filtersObject && object.filtersObject.savedFilters ? object.filtersObject.savedFilters[this.contentType] : [];
-                var savedFilters = savedFiltersObject && savedFiltersObject.length ? savedFiltersObject[0].filter : [];
+                var savedFiltersObject
+                var savedFilters;
+
+                object.filtersObject = object.filtersObject || {};
+                object.filtersObject.savedFilters = object.filtersObject.savedFilters || {};
+                object.filtersObject.savedFilters[this.contentType] = object.filtersObject.savedFilters[this.contentType] || [];
+
+                savedFiltersObject = object.filtersObject.savedFilters[this.contentType];
+
+                if (!savedFiltersObject.length) {
+                    savedFiltersObject.push({
+                        filter: []
+                    });
+                }
+
+                savedFilters = savedFiltersObject[0].filter;
+
 
                 return savedFilters;
             },
@@ -230,7 +245,14 @@ define([
 
                             filterObj._id = id;
 
-                            self.savedFilters.push(filterObj);
+                            self.savedFilters.push(
+                                {
+                                    _id      : id,
+                                    byDefault: justSavedFilter.byDefault,
+                                    filters  : filterObj.filter,
+                                    name     : filterObj.name
+                                }
+                            );
                             $byDefEl.attr('checked', false);
                             $filterNameEl.val('');
                             self.renderSavedFiltersElements();

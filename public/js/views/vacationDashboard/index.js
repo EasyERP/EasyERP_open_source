@@ -556,6 +556,7 @@ define([
             var self = this;
 
             this.filterView = new FilterView({
+                el         : $('#searchContainer'),
                 contentType: 'DashVacation'
             });
 

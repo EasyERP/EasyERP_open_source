@@ -19,7 +19,7 @@ define([
     'use strict';
 
     var FilterView = Backbone.View.extend({
-        el                 : '#searchContainer',
+        // el                 : '#searchContainer',
         contentType        : 'Filter',
         savedFilters       : {},
         filterIcons        : {},
