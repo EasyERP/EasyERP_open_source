@@ -478,6 +478,8 @@ var Employee = function (event, models) {
 
     this.create = function (req, res, next) {
         var dbName = req.session.lastDb;
+        var UsersSchema = mongoose.Schemas.User;
+        var UsersModel = models.get(dbName, 'Users', UsersSchema);
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
         var employee;
         var body = req.body;
@@ -535,6 +537,14 @@ var Employee = function (event, models) {
                 employee.save(function (error, result) {
                     if (error) {
                         return next(error);
+                    }
+
+                    if (body.relatedUser) {
+                        UsersModel.findByIdAndUpdate(body.relatedUser, {$set: {relatedEmployee: result._id}}, function (error) {
+                            if (error) {
+                                return next(error);
+                            }
+                        });
                     }
 
                     res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
