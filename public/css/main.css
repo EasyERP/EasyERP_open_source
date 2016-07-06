@@ -1778,7 +1778,9 @@ body {
   padding: 5px 0;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
   z-index: 10;
+  -webkit-transform: translateY(50px);
   transform: translateY(50px);
+  -webkit-transition: all .2s ease;
   transition: all .2s ease;
 }
 .selectDd ul li {
@@ -1789,11 +1791,13 @@ body {
 }
 .selectDd ul li:hover {
   background-color: #eef0f0;
+  -webkit-transition: background-color 0.2s ease;
   transition: background-color 0.2s ease;
 }
 .selectDd ul.openDd {
   visibility: visible;
   opacity: 1;
+  -webkit-transform: none;
   transform: none;
 }
 .loginTitle {
@@ -1857,6 +1861,7 @@ input:not([type="checkbox"]).inputBordered {
   display: block;
   background-color: #fff;
   border: 1px solid #c2cad8;
+  -webkit-transition: border-color ease-in-out 0.15s;
   transition: border-color ease-in-out 0.15s;
   outline: 0!important;
 }
@@ -1904,6 +1909,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   box-shadow: none!important;
 }
 .btn:hover {
+  -webkit-transition: all .3s;
   transition: all .3s;
 }
 .btn.green {
@@ -1941,6 +1947,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   line-height: 18px;
   cursor: pointer;
   font-size: 14px;
+  -webkit-transition: all .3s;
   transition: all .3s;
   color: #a4aab2;
 }
@@ -1962,6 +1969,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   height: 9px;
   border: solid #666;
   border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 .rememberCheckWrap > span {
@@ -5811,6 +5819,7 @@ button {
   background: #ffffff;
 }
 button:hover {
+  -webkit-transition: all .3s;
   transition: all .3s;
 }
 button.green {
@@ -5891,6 +5900,7 @@ a.red {
 }
 button.red:hover,
 a.red:hover {
+  -webkit-transition: all .3s;
   transition: all .3s;
 }
 button.red.green,
@@ -8220,6 +8230,7 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
+  -webkit-transition: all .3s;
   transition: all .3s;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList.green,
@@ -8407,6 +8418,7 @@ ul.chart-tabs .withEndContract .arrow {
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
+  -webkit-transition: all .3s;
   transition: all .3s;
 }
 ul.chart-tabs .withEndContract .endContractReasonList.green,
