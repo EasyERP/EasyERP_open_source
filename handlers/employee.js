@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var objectId = mongoose.Types.ObjectId;
+var moment = require('../public/js/libs/moment/moment');
 
 var Employee = function (event, models) {
     'use strict';
@@ -563,10 +564,18 @@ var Employee = function (event, models) {
 
         async.each(removeIdArray, function (id, cb) {
 
-            TransferModel.remove({_id: objectId(id)}, function (err, result) {
+            TransferModel.findByIdAndRemove(id, function (err, result) {
+                var transferKey;
+                var employee;
+
                 if (err) {
-                    return next(err);
+                    return cb(err);
                 }
+
+                transferKey = result.transferKey;
+                employee = result.employee;
+
+                TransferModel.remove({employee: employee, transferKey: transferKey}, cb);
             });
 
         }, function (err) {
