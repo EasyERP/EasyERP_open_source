@@ -20,11 +20,11 @@ define([
         },
 
         events: {
-            'click .sidebar_toggler' : 'expandCollapse'
+            'click .sidebar_toggler': 'expandCollapse'
         },
 
-        expandCollapse: function(){
-             $('body').toggleClass('collapsed');
+        expandCollapse: function () {
+            $('body').toggleClass('collapsed');
         },
 
 
@@ -34,14 +34,14 @@ define([
             if (this.contentType) {
                 this.currentModule = this.contentType;
 
-                for (var i=modules.length;i--;){
-                    for (var j=modules[i].subModules.length;j--;){
-                        if (modules[i].subModules[j].href===this.contentType){
+                for (var i = modules.length; i--;) {
+                    for (var j = modules[i].subModules.length; j--;) {
+                        if (modules[i].subModules[j].href === this.contentType) {
                             this.currentRoot = modules[i].href;
                             break;
                         }
                     }
-                    if (this.currentRoot){
+                    if (this.currentRoot) {
                         break;
                     }
                 }
@@ -49,33 +49,35 @@ define([
                 this.currentRoot = modules[0].href;
                 this.currentModule = modules[0].subModules[0].href;
 
-                Backbone.history.navigate('easyErp/'+this.currentModule, {trigger:true});
+                Backbone.history.navigate('easyErp/' + this.currentModule, {trigger: true});
             }
 
             this.leftMenu = new LeftMenuView({
-                collection     : this.collection,
-                currentRoot:this.currentRoot,
+                collection   : this.collection,
+                currentRoot  : this.currentRoot,
                 currentModule: this.currentModule
-        });
-     },
+            });
+        },
 
         updateMenu: function (contentType) {
             var modules = this.collection.toJSON();
             var rootIndex;
             var childIndex;
 
-                for (var i=modules.length;i--;){
-                    for (var j=modules[i].subModules.length;j--;){
-                        if (modules[i].subModules[j].href===contentType){
-                            rootIndex = i;
-                            childIndex = j;
-                            break;
-                        }
-                    }
-                    if (this.rootIndex){
+            for (var i = modules.length; i--;) {
+                for (var j = modules[i].subModules.length; j--;) {
+                    if (modules[i].subModules[j].href === contentType) {
+                        rootIndex = i;
+                        childIndex = j;
                         break;
                     }
                 }
+
+                if (rootIndex) {
+                    break;
+                }
+            }
+
             this.leftMenu.selectMenuItem(rootIndex, childIndex);
         },
 

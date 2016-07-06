@@ -6,14 +6,14 @@ define([
 ], function (Backbone, _, $, LeftMenuTemplate) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
-        el: '#submenu-holder',
+        el            : '#submenu-holder',
         currentSection: null,
-        selectedId: null,
+        selectedId    : null,
 
         initialize: function (options) {
             if (!options.collection) {
                 App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: 'No collection specified!'
                 });
             }
@@ -26,12 +26,13 @@ define([
         },
 
         events: {
-            'click .root': 'openRoot',
+            'click .root'      : 'openRoot',
             'click #loginPanel': 'openLogin'
         },
 
-        openLogin: function(e){
+        openLogin: function (e) {
             var $activeRoot = this.$el.find('.opened');
+
             $(e.target).parent().find('#loginSelect').toggleClass('opened');
             $activeRoot.find('ul').animate({height: 0}, 200, function () {
                 $activeRoot.removeClass('opened');
@@ -41,22 +42,21 @@ define([
         },
 
         openRoot: function (e) {
-            var self = this;
-            var $activeRoot = self.$el.find('.opened');
+            var $activeRoot = this.$el.find('.opened');
             var $current = $(e.target).closest('.root');
             var isSubMenu = !!$(e.target).closest($current.find('ul')).length;
 
-            if (isSubMenu){
+            if (isSubMenu) {
                 return;
             }
 
-            self.$el.find('#loginSelect').removeClass('opened');
+            this.$el.find('#loginSelect').removeClass('opened');
 
             $activeRoot.find('ul').animate({height: 0}, 200, function () {
                 $activeRoot.removeClass('opened');
             });
 
-            if (!$current.hasClass('opened')){
+            if (!$current.hasClass('opened')) {
                 $activeRoot.find('ul').animate({height: 0}, 200, function () {
                     $activeRoot.removeClass('opened');
                 });
@@ -80,8 +80,8 @@ define([
             var $el = this.$el;
 
             $el.find('nav').html(_.template(LeftMenuTemplate)({
-                menuList: this.collection.toJSON(),
-                currentRoot: this.currentRoot,
+                menuList     : this.collection.toJSON(),
+                currentRoot  : this.currentRoot,
                 currentModule: this.currentModule
             }));
 
