@@ -3,8 +3,8 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  @include em(padding-left, ($gutter-width / 2));
-  @include em(padding-right, ($gutter-width / 2));
+  padding-left: ($gutter-width / 2.5);
+  padding-right: ($gutter-width / 2.5);
 }
 
 %colFloat {
