@@ -72,7 +72,7 @@ define([
             this.$el.find('li.active').removeClass('active');
             this.$el.find('li.selected').removeClass('selected');
 
-            $rootElement.find('li').eq(childIndex).addClass('selected');
+            $rootElement.find('li').eq(childIndex+1).addClass('selected');
             $rootElement.addClass('active opened');
         },
 
