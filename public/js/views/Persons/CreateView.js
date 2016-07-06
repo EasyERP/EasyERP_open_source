@@ -140,7 +140,8 @@ define([
                 wait   : true,
                 success: function () {
                     self.hideDialog();
-                    Backbone.history.navigate('easyErp/Persons', {trigger: true});
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(window.location.hash, {trigger: true});
                 },
 
                 error: function (model, xhr) {
