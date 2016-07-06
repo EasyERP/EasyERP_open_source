@@ -2130,7 +2130,7 @@ define([
                     return obj2.pays-obj1.pays;
                 });
 
-                margin = {top: 20, right: 160, bottom: 30, left: 150};
+                margin = {top: 20, right: 160, bottom: 30, left: 130};
                 width = ($wrapper.width() - margin.right)/2;
                 height = $wrapper.width()/4;
                 height1 = data.length * 20;
@@ -2362,7 +2362,7 @@ define([
                 });
 
                 color = d3.scale.linear()
-                    .range(['#5CD1C8', '#ACC7F2'])
+                    .range(['#ACC7F2','#F4F3EF'])
                     .domain([minValue, maxValue]);
 
                 treemap = d3.layout.treemap()
