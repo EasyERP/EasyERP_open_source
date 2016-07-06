@@ -72,6 +72,10 @@ define([
                 this.renderPagination($curEl, this);
             }
 
+            if (this.contentType === 'Products') {
+                this.$el.find('.product').draggable({});
+            }
+
             createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
             $curEl.append(createdInTag);
         },
@@ -427,9 +431,9 @@ define([
 
             this.filterView.showFilterIcons(this.filter);
             /*_.debounce(
-                function () {
-                    this.trigger('filter', App.filtersObject.filter);
-                }, 10);*/
+             function () {
+             this.trigger('filter', App.filtersObject.filter);
+             }, 10);*/
 
             $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
@@ -658,7 +662,7 @@ define([
 
             this.CurrentModel = this.CurrentModel || Backbone.Model.extend();
             model = new this.CurrentModel();
-            
+
             cid = model.cid;
 
             startData.cid = cid;

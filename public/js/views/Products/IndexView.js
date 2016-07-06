@@ -160,7 +160,7 @@ define([
         },
 
         renderItem: function (product, index, className, selected) {
-            return '<li class="' + className + ' item ' + selected + '" data-id="' + product._id + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
+            return '<li style="display: inline-block; height: 30px; width: 150px; border: 1px solid black; margin: 10px;" class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
         },
 
         renderFoldersTree: function (products) {
@@ -187,6 +187,54 @@ define([
                 }
 
             });
+
+            $('.groupList .item').droppable({
+                accept: '.product',
+                drop  : function (event, ui) {
+                    var $droppable = $(this);
+                    var $draggable = ui.draggable;
+                    var productId = $draggable.attr('id');
+                    var currentModel = self.productCollection.get(productId);
+                    var categoryId = $droppable.data('id');
+                    var categoryName = $droppable.data('name');
+                    var update = {
+                        category: {
+                            _id : categoryId,
+                            name: categoryName
+                        }
+                    };
+                    var changed;
+
+                    currentModel.set({
+                        accounting: update
+                    });
+
+                    changed = currentModel.changed;
+
+                    currentModel.save(changed, {
+                        patch  : true,
+                        wait   : true,
+                        success: function () {
+                            self.productCollection.getPage(1, {
+                                categoryId : categoryId,
+                                contentType: 'Products',
+                                viewType   : 'thumbnails',
+                                filter     : this.filter
+                            });
+                        }
+                    });
+
+
+                },
+
+                over: function (event, ui) {
+                    $(this).css('background-color', 'gray');
+                },
+
+                out: function () {
+                    $(this).css('background-color', '#fff');
+                }
+            });
         },
 
         renderThumbnails: function () {
@@ -207,7 +255,6 @@ define([
                 currentPage : this.productCollection.currentPage,
                 pageSize    : this.productCollection.pageSize
             });
-
         },
 
         render: function () {

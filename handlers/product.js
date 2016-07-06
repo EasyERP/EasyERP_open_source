@@ -383,6 +383,20 @@ var Products = function (models) {
         remove(req, res, next, id);
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        Product.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
+        });
+    };
+
     this.getAll = function (req, res, next) {
         getAll(req, res, next);
     };

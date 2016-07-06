@@ -10,34 +10,35 @@ define([
     'text!templates/Alpabet/AphabeticTemplate.html',
     'collections/Products/filterCollection',
     'common',
-    'dataService'
-], function ($, _, ListViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, common, dataService) {
+    'constants'
+], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, EditView, ProductModel, aphabeticTemplate, contentCollection, common, CONSTANTS) {
     var ProductsListView = ListViewBase.extend({
-        createView              : createView,
-        listTemplate            : listTemplate,
-        listItemView            : listItemView,
-        contentCollection       : contentCollection,
-        totalCollectionLengthUrl: '/product/totalCollectionLength',
-        page                    : null, // if reload page, and in url is valid page
-        contentType             : 'Products', // needs in view.prototype.changeLocationHash
-        exportToXlsxUrl         : '/Product/exportToXlsx',
-        exportToCsvUrl          : '/Product/exportToCsv',
+        CreateView       : CreateView,
+        EditView         : EditView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        page             : null, // if reload page, and in url is valid page
+        contentType      : 'Products', // needs in view.prototype.changeLocationHash
+        exportToXlsxUrl  : '/Product/exportToXlsx',
+        exportToCsvUrl   : '/Product/exportToCsv',
+        hasPagination    : true,
 
         initialize: function (options) {
+            this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            _.bind(this.collection.showMoreAlphabet, this.collection);
+            //_.bind(this.collection.showMoreAlphabet, this.collection);
             this.allAlphabeticArray = common.buildAllAphabeticArray();
-            this.filter = options.filter ? options.filter : {};
+            this.filter = options.filter;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
+
             this.deleteCounter = 0;
-            this.page = options.collection.page;
+            this.page = options.collection.currentPage;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
 
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
 
@@ -50,33 +51,31 @@ define([
             var $currentEl;
 
             $('.ui-dialog ').remove();
-            
+
             $currentEl = this.$el;
 
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
-            $currentEl.append(new listItemView({
+            $currentEl.append(new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
             }).render());
-
-            this.renderPagination($currentEl, this);
-            this.renderAlphabeticalFilter(this);
-            this.renderFilter();
-
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
         },
 
         goToEditDialog: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').data('id');
-            var model = new productModel({validate: false});
+            var model = new ProductModel({validate: false});
 
             e.preventDefault();
-            model.urlRoot = '/Product/';
+            model.urlRoot = '/Products/';
             model.fetch({
-                data   : {id: id},
+                data: {
+                    id      : id,
+                    viewType: 'form'
+                },
+
                 success: function (model) {
                     return new self.EditView({model: model});
                 },

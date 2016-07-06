@@ -234,7 +234,8 @@ define([
                         success: function () {
                             // $('.edit-product-dialog').remove();
                             self.hideDialog();
-                            Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true});
                         },
 
                         error: function (model, err) {

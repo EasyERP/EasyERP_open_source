@@ -29,6 +29,7 @@ module.exports = function (models) {
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
    
     router.delete('/:_id', handler.removeProduct);
+    router.delete('/', handler.bulkRemove);
 
     return router;
 };

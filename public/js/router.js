@@ -64,7 +64,7 @@ define([
 
         routes: {
             home                                                                                           : 'login',
-            //'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
+            'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
