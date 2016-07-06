@@ -3,6 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Employees/EditTemplate.html',
+    'text!templates/Employees/EditTransferTemplate.html',
     'views/Notes/AttachView',
     'views/dialogViewBase',
     'models/TransferModel',
@@ -18,6 +19,7 @@ define([
              $,
              _,
              EditTemplate,
+             EditTransferTemplate,
              AttachView,
              ParentView,
              TransferModel,
@@ -35,6 +37,7 @@ define([
         contentType   : 'Employees',
         imageSrc      : '',
         template      : _.template(EditTemplate),
+        templateEdit  : _.template(EditTransferTemplate),
         responseObj   : {},
         editCollection: null,
         changedModels : {},
@@ -145,6 +148,21 @@ define([
             var target = $(e.target);
             var tr = target.closest('tr');
             var transferId = tr.attr('id');
+            var prevTr = tr.prev('tr');
+            var prevTrId;
+            var transfer;
+            var editRow;
+
+            if (prevTr.length) {
+                prevTrId = prevTr.attr('id');
+                transfer = this.editCollection.get(prevTrId);
+                editRow = this.templateEdit({
+                    transfer        : transfer.toJSON(),
+                    currencySplitter: helpers.currencySplitter
+                });
+                prevTr.after(editRow);
+                prevTr.remove();
+            }
 
             tr.remove();
 
@@ -194,8 +212,8 @@ define([
             var employeeId;
             var transfer;
             var model;
-            var payrollStructureType;
-            var scheduledPay;
+            //var payrollStructureType;
+            //var scheduledPay;
 
             lastTr.find('a').removeClass('current-selected');
             lastTr.find('[data-content="date"]').removeClass('editable');
@@ -230,8 +248,8 @@ define([
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-            payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
-            scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
+            //payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+            //scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
             department = $tr.find('#departmentsDd').attr('data-id');
             jobType = $.trim($tr.find('#jobTypeDd').text());
             info = $tr.find('#statusInfoDd').val();
@@ -239,18 +257,18 @@ define([
             employeeId = this.currentModel.get('_id');
 
             transfer = {
-                employee            : employeeId,
-                status              : event,
-                date                : date,
-                department          : department,
-                jobPosition         : jobPosition,
-                manager             : manager,
-                jobType             : jobType,
-                salary              : salary,
-                info                : info,
-                weeklyScheduler     : weeklyScheduler,
-                payrollStructureType: null,     // toDo payrollStructureType
-                scheduledPay        : null      // toDo scheduledPay
+                employee       : employeeId,
+                status         : event,
+                date           : date,
+                department     : department,
+                jobPosition    : jobPosition,
+                manager        : manager,
+                jobType        : jobType,
+                salary         : salary,
+                info           : info,
+                weeklyScheduler: weeklyScheduler,
+                //payrollStructureType: null,     // toDo payrollStructureType
+                //scheduledPay        : null      // toDo scheduledPay
             };
             model = new TransferModel(transfer);
             newTr.attr('id', model.cid);
@@ -272,11 +290,11 @@ define([
             if (status !== 'hired' && status !== 'fired') {
                 lastTr.find('td').first().html(removeBtn);
             }
-
-            lastTr.find('a').addClass('current-selected');
-            lastTr.find('[data-content="date"]').addClass('editable');
-            lastTr.find('[data-content="salary"]').addClass('editable');
-            lastTr.find('[data-content="info"]').addClass('editable');
+            //
+            //lastTr.find('a').addClass('current-selected');
+            //lastTr.find('[data-content="date"]').addClass('editable');
+            //lastTr.find('[data-content="salary"]').addClass('editable');
+            //lastTr.find('[data-content="info"]').addClass('editable');
         },
 
         editJob: function (e) {
@@ -815,9 +833,15 @@ define([
                 model           : this.currentModel.toJSON(),
                 currencySplitter: helpers.currencySplitter
             });
+            var transfer = this.currentModel.toJSON().transfer;
+            var editRow = this.templateEdit({
+                transfer        : transfer[transfer.length - 1],
+                currencySplitter: helpers.currencySplitter
+            });
             var self = this;
             var notDiv;
             var $thisEl;
+            var lastTr;
 
             if (this.currentModel.get('dateBirth')) {
                 this.currentModel.set({
@@ -853,6 +877,14 @@ define([
             });
             $thisEl = this.$el;
 
+            if (transfer.length === 1) {
+                lastTr = $thisEl.find('#transfersTable');
+                lastTr.append(editRow);
+            } else {
+                lastTr = $thisEl.find('.transfer').last();
+                lastTr.after(editRow);
+            }
+
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(
                 new AttachView({
@@ -876,8 +908,8 @@ define([
             populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, false, false);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
-            populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
-            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            //populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
+            //populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

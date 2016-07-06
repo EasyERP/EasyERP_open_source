@@ -428,15 +428,18 @@
                                 <th>Status info</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <%_.each(model.transfer, function(transfer, key, transfers) {
+                            <tbody id="transfersTable">
+
+                            <%var i;%>
+                            <%for(i=0;i<=model.transfer.length-2;i++){
+                            var transfer = model.transfer[i];
 
                             if (transfer.status === 'transfer') {
-                            return;
+                            continue;
                             }
 
                             %>
-                            <tr class="transfer" id="<%=transfer._id%>" data-id="<%=key%>" data-content=<%=
+                            <tr class="transfer" id="<%=transfer._id%>" data-id="" data-content=<%=
                                 transfer.status %>>
                                 <td class="remove">
                                 </td>
@@ -463,14 +466,14 @@
                                     data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>">
                                     <span><%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : ""%></span>
                                 </td>
-                                <td data-content="payrollStructureType"
-                                    data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">
-                                    <span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>
-                                </td>
-                                <td data-content="scheduledPay"
-                                    data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
-                                    <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
-                                </td>
+                                <!--<td data-content="payrollStructureType"-->
+                                    <!--data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">-->
+                                    <!--<span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>-->
+                                <!--</td>-->
+                                <!--<td data-content="scheduledPay"-->
+                                    <!--data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">-->
+                                    <!--<span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>-->
+                                <!--</td>-->
                                 <%if (transfer.salary || transfer.salary === 0) {%>
                                 <td class="dollar" data-content="salary" data-id="salary">
                                     <%=currencySplitter(transfer.salary.toString())%>
@@ -482,7 +485,7 @@
                                 </td>
                             </tr>
 
-                            <% }); %>
+                            <% }; %>
 
                             </tbody>
                         </table>
