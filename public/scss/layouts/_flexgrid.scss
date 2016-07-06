@@ -10,7 +10,7 @@
 }
 
 @for $i from 1 through $cols {
-  .col-#{$i}--max {
+  .col-#{$i}-max {
     max-width: (($container-width / 12) * $i);
   }
 }
@@ -57,19 +57,19 @@
     #{$name}: $value;
   }
 
-  .#{$name}-top#{$size} {
+  .#{$name}Top#{$size} {
     #{$name}-top: $value;
   }
 
-  .#{$name}-bottom#{$size} {
+  .#{$name}Bottom#{$size} {
     #{$name}-bottom: $value;
   }
 
-  .#{$name}-right#{$size} {
+  .#{$name}Right#{$size} {
     #{$name}-right: $value;
   }
 
-  .#{$name}-left#{$size} {
+  .#{$name}Left#{$size} {
     #{$name}-left: $value;
   }
 }
@@ -84,6 +84,8 @@
 
 
 [class^="flexRow"] > .col, [class^="flexRow"] > [class^="col-"] {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
@@ -97,6 +99,8 @@
 }
 
 [class^="flexRow"] > [class^="col-"] {
+  -webkit-box-flex: 0 0 auto;
+  -moz-box-flex: 0 0 auto;
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
   flex: 0 0 auto;
@@ -107,6 +111,8 @@
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   -js-display: flex;
+  display: -webkit-box;
+  display: -moz-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -125,30 +131,42 @@
 
 .flexRow {
   &Middle {
+    -webkit-box-align: center;
+    -moz-box-align: center;
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
   }
 
   &Top {
+    -webkit-box-align: start;
+    -moz-box-align: start;
     -webkit-align-items: flex-start;
     -ms-flex-align: start;
     align-items: flex-start;
   }
 
   &Bottom {
+    -webkit-box-align: end;
+    -moz-box-align: end;
     -webkit-align-items: flex-end;
     -ms-flex-align: end;
     align-items: flex-end;
   }
 
   &Center {
-    -webkit-justify-content: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
     -ms-flex-pack: center;
+    -webkit-justify-content: center;
     justify-content: center;
   }
 
   &Reverse {
+    -webkit-box-direction: reverse;
+    -moz-box-direction: reverse;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
     -webkit-flex-direction: row-reverse;
     -ms-flex-direction: row-reverse;
     flex-direction: row-reverse;
@@ -161,19 +179,57 @@
   }
 
   &Between {
-    -webkit-justify-content: space-between;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
     -ms-flex-pack: justify;
+    -webkit-justify-content: space-between;
     justify-content: space-between;
   }
 
+  &End {
+    -webkit-box-pack: end;
+    -moz-box-pack: end;
+    -ms-flex-pack: end;
+    -webkit-justify-content: flex-end;
+    justify-content: flex-end;
+  }
+
+  &Start {
+    -webkit-box-pack: start;
+    -moz-box-pack: start;
+    -ms-flex-pack: start;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+  }
+
   &Stretch {
+    -webkit-box-align: stretch;
+    -moz-box-align: stretch;
+    -webkit-align-items: stretch;
+    -ms-flex-align: stretch;
     align-items: stretch;
-    flex-flow: row wrap;
+
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+
+    -webkit-box-pack: start;
+    -moz-box-pack: start;
+    -ms-flex-pack: start;
+    -webkit-justify-content: flex-start;
     justify-content: flex-start;
   }
 
   &Stretch > .col, &Stretch > [class^="col-"] {
     -js-display: flex;
+    display: -webkit-box;
+    display: -moz-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
@@ -200,15 +256,47 @@
   }
 }
 
+.self {
+  &Center {
+    -webkit-align-self: center;
+    -ms-flex-item-align: center;
+    align-self: center;
+  }
+  &Bottom {
+    -webkit-align-self: flex-end;
+    -ms-flex-item-align: end;
+    align-self: flex-end;
+  }
+  &Top {
+    -webkit-align-self: flex-start;
+    -ms-flex-item-align: start;
+    align-self: flex-start;
+  }
+  &Stretch {
+    -webkit-align-self: stretch;
+    -ms-flex-item-align: stretch;
+    align-self: stretch;
+  }
+  &Base {
+    -webkit-align-self: baseline;
+    -ms-flex-item-align: baseline;
+    align-self: baseline;
+  }
+}
+
 .colFirst {
-  -webkit-order: -1;
+  -webkit-box-ordinal-group: -1;
+  -moz-box-ordinal-group: -1;
   -ms-flex-order: -1;
+  -webkit-order: -1;
   order: -1;
 }
 
 .colLast {
-  -webkit-order: 1;
+  -webkit-box-ordinal-group: 1;
+  -moz-box-ordinal-group: 1;
   -ms-flex-order: 1;
+  -webkit-order: 1;
   order: 1;
 }
 
@@ -229,30 +317,34 @@
 
 @mixin columnGenerator($suffix) {
   @for $i from 1 through $cols {
-    [class^="flexRow"] > .col-#{$i}\@#{$suffix} {
+    [class^="flexRow"] > .col-#{$i}-#{$suffix} {
       max-width: percentage($i/$cols);
       width: percentage($i/$cols);
     }
   }
 
-  .show\@#{$suffix} {
+  .show-#{$suffix} {
     display: block;
   }
 
-  .hide\@#{$suffix} {
+  .hide-#{$suffix} {
     display: none;
   }
 
-  .colFirst\@#{$suffix} {
-    -webkit-order: -1;
+  .colFirst-#{$suffix} {
+    -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
+    -webkit-order: -1;
     order: -1;
   }
 
-  .colLast\@#{$suffix} {
-    -webkit-order: 1;
-    -ms-flex-order: 1;
-    order: 1;
+  .colLast-#{$suffix} {
+    -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
+    -ms-flex-order: -1;
+    -webkit-order: -1;
+    order: -1;
   }
 }
 
