@@ -519,6 +519,15 @@
             callback(response.data);
         });
     };
+    var getSalary = function(filter, callback){
+        dataService.getData('/employee/getSalaryForChart', {
+            month: filter.month,
+            year: filter.year
+        }, function (response) {
+            callback(response.data);
+        });
+    };
+
     var totalInvoiceBySales = function (filter, callback) {
         dataService.getData('revenue/totalInvoiceBySales', {
             startDate: filter.startDay,
@@ -1214,6 +1223,7 @@
         getEmployeesCount                 : getEmployeesCount,
         byDepartmentForChart              : byDepartmentForChart,
         totalInvoiceBySales               : totalInvoiceBySales,
-        getSalesByCountry                 : getSalesByCountry
+        getSalesByCountry                 : getSalesByCountry,
+        getSalary                           : getSalary
     }
 });

@@ -774,26 +774,6 @@ define([
         
         renderSalaryChart: function(){
             var padding = 15;
-            var labelPadding = 20;
-
-            var data = {
-                "data": [120, 350, 800, 0, 0, 800, 0, 114, 114, 500, 114, 350, 350, 450, 350, 800, 800, 450, 350,
-                    300, 500, 500, 450, 250, 189, 500, 400, 114, 500, 700, 450, 400, 900, 450, 300, 350, 250, 400, 300,
-                    400, 500, 500, 350, 400, 500, 600, 1300, 900, 350, null, 700, 1700, 500, 800, 800, 1400, 1400, 1400, 250, 400, 550, 250, 500,
-                    1000, 550, 1500, 600, 350, 400, 2200, 700, 800, 0, 114, 750, 350,
-                    600, 250, 350, 450, 250, 1500, 350, 1000, 1000, 350, 250, 600, 200, 500, 1000, 1200, 120, 350, 450, 1000, 350,
-                    1100, 1200, 900, 500, 200, 500, 1400, 350, 250, 2700, 1000, 100, 700, 346, 1400, 350, 0, 350, 450, 700, 1000, 350, 600, 1100,
-                    150, 1200,1200, 700, 1000, 2200, 600, 2200, 300, 500, 350, 1600, 150, 450, 250, 500, 1000, 350, 700, 450, 250, 900, 500, 400, 450, 1200,
-                    800, 500, 350, 800, 450, 650, 600, 600, 600, 250, 550, 800, 300, 450, 300, 1000, 600, 1100, 500, 350,
-                    1200, 600, 800, 350, 550, 350,
-                    800, 450, 550, 500, 250, 100, 700, 350, 700, 650, 400, 300, 500, 550, 800, 300, 500, 700, 400, 700, 350, 600, 400, 600
-                ]
-            };
-
-            data = data.data;
-
-            var labels = ['>=$2000', '$2000-1750', '$1750-1500', '$1500-1750', '$1250-1500', '$1000-1250', '$750-1000', '$500-750', '$250-500', '<$250'];
-
             var globalSalary = {
                 '>=$2000'   : [],
                 '$2000-1750': [],
@@ -806,116 +786,138 @@ define([
                 '$250-500'  : [],
                 '<$250'     : []
             };
-
-            var dataLength = data.length;
             var lengthArr = [];
-            for (var i = dataLength; i--;) {
-
-                if (data[i] >= 2000) {
-                    globalSalary['>=$2000'].push(data[i]);
-                } else if (data[i] < 2000 && data[i] > 1750) {
-                    globalSalary['$2000-1750'].push(data[i]);
-                } else if (data[i] < 1750 && data[i] > 1500) {
-                    globalSalary['$1750-1500'].push(data[i]);
-                } else if (data[i] < 1500 && data[i] > 1250) {
-                    globalSalary['$1250-1500'].push(data[i]);
-                } else if (data[i] < 1250 && data[i] > 1000) {
-                    globalSalary['$1000-1250'].push(data[i]);
-                } else if (data[i] < 1000 && data[i] > 750) {
-                    globalSalary['$750-1000'].push(data[i]);
-                } else if (data[i] < 750 && data[i] > 500) {
-                    globalSalary['$500-750'].push(data[i]);
-                } else if (data[i] < 500 && data[i] > 250) {
-                    globalSalary['$250-500'].push(data[i]);
-                } else {
-                    globalSalary['<$250'].push(data[i]);
-                }
-            }
-
-            var keys = Object.keys(globalSalary);
-            var margin = {top: 20, right: 160, bottom: 30, left: 10};
-            var $wrapper = $('#wrapper');
-            var width = ($wrapper.width() - margin.right)/2;
-            var height = keys.length*30;
-
-            for (var j = keys.length; j--;){
-                lengthArr.push(globalSalary[keys[j]].length)
-            }
-
-            var chart = d3.select('.salaryChart')
-                .attr({
-                    'width' : width + margin.left + margin.right,
-                    'height': height + margin.top + margin.bottom,
-                    'style' : 'padding: 150px'
-                })
-                .append('g')
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');;
-
-            var max = Math.ceil(Math.max.apply(null, lengthArr)/10)*10;
-
-            var xScale = d3.scale.linear()
-                .domain([0, max])
-                .range([0, width]);
-
-            var yScale = d3.scale.linear()
-                .domain([0, keys.length])
-                .range([0, height]);
-
-            var rect = height / (keys.length);
             var offset = 4;
+            var dataLength;
+            var $wrapper;
+            var margin;
+            var xScale;
+            var yScale;
+            var height;
+            var xAxis;
+            var yAxis;
+            var width;
+            var chart;
+            var rect;
+            var keys;
+            var max;
+            var j;
+            var i;
+            
+            common.getSalary({
+                month: this.month, year: this.year
+            }, function(data){
+                data = data.data;
+                dataLength = data.length;
+               
+                for (i = dataLength; i--;) {
 
-            chart.selectAll('rect')
-                .data(keys)
-                .enter()
-                .append('rect')
-                .attr({
-                    x     : function () {
-                        return 0;
-                    },
-                    y     : function (d, i) {
-                        return yScale(i);
-                    },
-                    width : function (d) {
-                        return xScale(globalSalary[d].length);
-                    },
-                    height: rect - 2*offset,
-                    fill  : '#5CD1C8'
-                });
+                    if (data[i] >= 2000) {
+                        globalSalary['>=$2000'].push(data[i]);
+                    } else if (data[i] < 2000 && data[i] > 1750) {
+                        globalSalary['$2000-1750'].push(data[i]);
+                    } else if (data[i] < 1750 && data[i] > 1500) {
+                        globalSalary['$1750-1500'].push(data[i]);
+                    } else if (data[i] < 1500 && data[i] > 1250) {
+                        globalSalary['$1250-1500'].push(data[i]);
+                    } else if (data[i] < 1250 && data[i] > 1000) {
+                        globalSalary['$1000-1250'].push(data[i]);
+                    } else if (data[i] < 1000 && data[i] > 750) {
+                        globalSalary['$750-1000'].push(data[i]);
+                    } else if (data[i] < 750 && data[i] > 500) {
+                        globalSalary['$500-750'].push(data[i]);
+                    } else if (data[i] < 500 && data[i] > 250) {
+                        globalSalary['$250-500'].push(data[i]);
+                    } else {
+                        globalSalary['<$250'].push(data[i]);
+                    }
+                }
 
-            var xAxis = d3.svg.axis()
-                .scale(xScale)
-                .orient('bottom');
+                keys = Object.keys(globalSalary);
+                margin = {top: 20, right: 160, bottom: 30, left: 10};
+                $wrapper = $('#wrapper');
+                width = ($wrapper.width() - margin.right)/2;
+                height = keys.length*30;
 
-            var yAxis = d3.svg.axis();
+                for (j = keys.length; j--;){
+                    lengthArr.push(globalSalary[keys[j]].length)
+                }
 
-            yAxis
-                .orient('left')
-                .scale(yScale)
-                .tickSize(0)
-                .tickPadding(offset)
-                .tickFormat(function(d, i){
-                    return keys[i];
-                })
-                .tickValues(d3.range(keys.length));
+                chart = d3.select('.salaryChart')
+                    .attr({
+                        'width' : width + margin.left + margin.right,
+                        'height': height + margin.top + margin.bottom,
+                        'style' : 'padding: 150px'
+                    })
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');;
 
-            chart.append('g')
-                .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + height + ')')
-                .call(xAxis);
+                max = Math.ceil(Math.max.apply(null, lengthArr)/10)*10;
 
-            chart.append('g')
-                .attr('class', 'y axis')
-                .attr('transform', 'translate('+ (-offset) +',' + (padding - offset) + ')')
-                .call(yAxis);
+                xScale = d3.scale.linear()
+                    .domain([0, max])
+                    .range([0, width]);
 
-            chart.selectAll('.x .tick line')
-                .attr({
-                    'y2'    : function (d) {
-                        return -height
-                    },
-                    'style': 'stroke: #f2f2f2'
-                });
+                yScale = d3.scale.linear()
+                    .domain([0, keys.length])
+                    .range([0, height]);
 
+                rect = height / (keys.length);
+                
+
+                chart.selectAll('rect')
+                    .data(keys)
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        x     : function () {
+                            return 0;
+                        },
+                        y     : function (d, i) {
+                            return yScale(i);
+                        },
+                        width : function (d) {
+                            return xScale(globalSalary[d].length);
+                        },
+                        height: rect - 2*offset,
+                        fill  : '#5CD1C8'
+                    });
+
+                xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom');
+
+                yAxis = d3.svg.axis();
+
+                yAxis
+                    .orient('left')
+                    .scale(yScale)
+                    .tickSize(0)
+                    .tickPadding(offset)
+                    .tickFormat(function(d, i){
+                        return keys[i];
+                    })
+                    .tickValues(d3.range(keys.length));
+
+                chart.append('g')
+                    .attr('class', 'x axis')
+                    .attr('transform', 'translate(0,' + height + ')')
+                    .call(xAxis);
+
+                chart.append('g')
+                    .attr('class', 'y axis')
+                    .attr('transform', 'translate('+ (-offset) +',' + (padding - offset) + ')')
+                    .call(yAxis);
+
+                chart.selectAll('.x .tick line')
+                    .attr({
+                        'y2'    : function (d) {
+                            return -height
+                        },
+                        'style': 'stroke: #f2f2f2'
+                    });
+                
+            });
         },
         
         render: function () {
@@ -1000,7 +1002,7 @@ define([
             self.renderDepartmentsTree();
             self.renderDepartmentsTreeRadial();
             self.renderTreemap();
-            self.renderSalaryChart();
+            //self.renderSalaryChart();
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;
