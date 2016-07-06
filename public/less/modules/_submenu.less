@@ -5,7 +5,6 @@
   width: auto;
   height: 100%;
   background-color: @defaultColor;
-  border-right: 1px solid @defaultColor;
   box-sizing: border-box;
   padding-top: 73px;
   left: 0;
@@ -26,7 +25,6 @@
         border-bottom: 1px solid @submenu-border;
       }
     }
-
     .root {
       text-align: left;
       > ul {
@@ -45,6 +43,9 @@
           }
           &:hover, &.selected {
             background-color: @submenu-selected;
+          }
+          &:first-child {
+            display: none;
           }
         }
       }
@@ -158,6 +159,9 @@
         ul {
           display: block;
         }
+        &:before {
+          transform: rotate(-90deg);
+        }
       }
     }
   }
@@ -190,24 +194,20 @@
     margin: 0;
     margin-bottom: 15px;
     width: 24px;
-    height: 23px;
+    height: 24px;
     background-color: @bg-submenu;
+    border-left: 1px solid @submenu-border;
     &:before {
-      margin: 0 2px 0 8px;
-      display: inline-block;
-      font-size: 20px;
-      line-height: 23px;
-      font-family: FontAwesome;
-      height: auto;
-      content: "\f104";
-      font-weight: 300;
-      text-shadow: none;
-      color: @submenu-text-color;
-    }
-    &:hover {
-      &:before {
-        color: @submenu-active-text-color;
-      }
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-75%, -50%);
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 6px 5px 0;
+      border-color: transparent @submenu-active-text-color transparent transparent;
     }
   }
 
@@ -255,6 +255,7 @@
         line-height: 30px;
         color: @login-text;
         font-size: 14px;
+        font-weight: 300;
         &:hover {
           color: @login-hover-text;
         }

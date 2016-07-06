@@ -1652,12 +1652,12 @@ th {
 .collapsed .side_menu .login_panel .dropdown-button .login_list {
   top: 15%;
   left: 100%;
-  margin-left: 5px;
+  margin-left: 1px;
   width: 150px;
 }
 .collapsed .side_menu .login_panel .dropdown-button .login_list li:first-child {
-  margin-left: -5px;
-  padding-right: 5px;
+  margin-left: -1px;
+  padding-right: 1px;
 }
 .collapsed .side_menu .login_panel .dropdown-button .login_list.opened {
   display: none;
@@ -1683,6 +1683,10 @@ th {
 .collapsed .side_menu .root > ul {
   display: none;
 }
+.collapsed .side_menu .root > ul li:first-child {
+  display: block;
+  background-color: #2c3542;
+}
 .collapsed .side_menu .root > a {
   display: none !important;
 }
@@ -1695,11 +1699,11 @@ th {
   top: 0;
   left: 100%;
   width: 150px;
-  margin-left: 5px;
+  margin-left: 1px;
 }
 .collapsed .side_menu .root:hover > ul li:first-child {
-  margin-left: -5px;
-  padding-right: 5px;
+  margin-left: -1px;
+  padding-right: 1px;
 }
 .collapsed .side_menu .root.opened {
   height: 35px !important;
@@ -1707,15 +1711,18 @@ th {
 .collapsed .side_menu .root.opened > ul {
   display: none;
 }
-.collapsed .side_menu .root.opened > ul li {
-  transform: rotate(90deg);
-}
 .collapsed .side_menu .root.opened:hover > ul {
   display: block;
   position: absolute;
   top: 0;
   left: 100%;
   width: 150px;
+}
+.collapsed .side_menu .root.active > ul li:first-child {
+  background-color: #7eadcc;
+}
+.collapsed .side_menu .root.active > ul li:first-child a {
+  color: #ffffff;
 }
 .collapsed .content_wrapper .content-holder {
   margin-left: 45px;
@@ -6186,7 +6193,6 @@ table#workflows tr td.edit-status {
   width: auto;
   height: 100%;
   background-color: #364150;
-  border-right: 1px solid #364150;
   box-sizing: border-box;
   padding-top: 73px;
   left: 0;
@@ -6245,6 +6251,9 @@ table#workflows tr td.edit-status {
 .side_menu nav .root > ul li.selected {
   background-color: #404d5f;
 }
+.side_menu nav .root > ul li:first-child {
+  display: none;
+}
 .side_menu nav .root .icons {
   padding: 0 11px;
   display: inline-block;
@@ -6297,7 +6306,7 @@ table#workflows tr td.edit-status {
   background-color: #2c3542;
 }
 .side_menu nav .root.active {
-  background-color: #3e88b9;
+  background-color: #7eadcc;
 }
 .side_menu nav .root.active a,
 .side_menu nav .root.active .icons {
@@ -6334,6 +6343,9 @@ table#workflows tr td.edit-status {
 .side_menu nav .root.opened ul {
   display: block;
 }
+.side_menu nav .root.opened:before {
+  transform: rotate(-90deg);
+}
 .side_menu .logo {
   position: absolute;
   bottom: 15px;
@@ -6346,7 +6358,7 @@ table#workflows tr td.edit-status {
 .side_menu .logo a {
   font-size: 35px;
   text-decoration: none;
-  color: #3e88b9;
+  color: #7eadcc;
 }
 .side_menu .sidebar_toggler {
   position: absolute;
@@ -6359,23 +6371,21 @@ table#workflows tr td.edit-status {
   margin: 0;
   margin-bottom: 15px;
   width: 24px;
-  height: 23px;
+  height: 24px;
   background-color: #364150;
+  border-left: 1px solid #3d4957;
 }
 .side_menu .sidebar_toggler:before {
-  margin: 0 2px 0 8px;
-  display: inline-block;
-  font-size: 20px;
-  line-height: 23px;
-  font-family: FontAwesome;
-  height: auto;
-  content: "\f104";
-  font-weight: 300;
-  text-shadow: none;
-  color: #b4bcc8;
-}
-.side_menu .sidebar_toggler:hover:before {
-  color: #ffffff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-75%, -50%);
+  content: '';
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 6px 5px 0;
+  border-color: transparent #ffffff transparent transparent;
 }
 .side_menu .login_panel {
   position: absolute;
@@ -6424,8 +6434,9 @@ table#workflows tr td.edit-status {
 .side_menu .login_panel .dropdown-button .user_name {
   display: block;
   line-height: 30px;
-  color: #e7e7e7;
+  color: #b4bcc8;
   font-size: 14px;
+  font-weight: 300;
 }
 .side_menu .login_panel .dropdown-button .user_name:hover {
   color: #ffffff;
