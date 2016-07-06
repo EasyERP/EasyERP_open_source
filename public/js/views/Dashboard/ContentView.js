@@ -2266,12 +2266,12 @@ define([
                 gradient
                     .append("stop")
                     .attr("offset", "0")
-                    .attr("stop-color", '#ACC7F2');
+                    .attr("stop-color", '#FFA17F');
 
                 gradient
                     .append("stop")
                     .attr("offset", "0.5")
-                    .attr("stop-color", '#FFA17F');
+                    .attr("stop-color", '#ACC7F2');
 
                 barChart.selectAll('rect')
                     .data(data)
@@ -2385,7 +2385,7 @@ define([
                 });
                 //['#ACC7F2','#F4F3EF']
                 color = d3.scale.linear()
-                    .range(['#ACC7F2','#FFA17F'])
+                    .range(['#FFA17F', '#ACC7F2'])
                     .domain([minValue, maxValue]);
 
                 treemap = d3.layout.treemap()
