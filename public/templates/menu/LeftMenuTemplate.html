@@ -5,6 +5,9 @@
 	  <i class="icons icon-<%=parent.href%>"></i>
 	  <a href="javascript:;"><%=parent.mname%></a>
 	<ul>
+		<li>
+			<a href="javascript:;" class="sub_item"><%=parent.mname%></a>
+		</li>
 	  <% _.forEach(parent.subModules, function(child, index){%>
 	  <li class="<%=(child.href===currentModule)?'selected':''%>">
 		  <a href="#easyErp/<%=child.href%>" class="sub_item"><%=child.mname%></a>
