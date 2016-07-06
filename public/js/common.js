@@ -521,8 +521,8 @@
     };
     var getSalary = function(filter, callback){
         dataService.getData('/employee/getSalaryForChart', {
-            month: filter.month,
-            year: filter.year
+            year: filter.year,
+            month: filter.month
         }, function (response) {
             callback(response.data);
         });
