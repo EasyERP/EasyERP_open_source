@@ -212,8 +212,8 @@ define([
             var employeeId;
             var transfer;
             var model;
-            //var payrollStructureType;
-            //var scheduledPay;
+            // var payrollStructureType;
+            // var scheduledPay;
 
             lastTr.find('a').removeClass('current-selected');
             lastTr.find('[data-content="date"]').removeClass('editable');
@@ -248,8 +248,8 @@ define([
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-            //payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
-            //scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
+            // payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+            // scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
             department = $tr.find('#departmentsDd').attr('data-id');
             jobType = $.trim($tr.find('#jobTypeDd').text());
             info = $tr.find('#statusInfoDd').val();
@@ -267,8 +267,8 @@ define([
                 salary         : salary,
                 info           : info,
                 weeklyScheduler: weeklyScheduler,
-                //payrollStructureType: null,     // toDo payrollStructureType
-                //scheduledPay        : null      // toDo scheduledPay
+                // payrollStructureType: null,     // toDo payrollStructureType
+                // scheduledPay        : null      // toDo scheduledPay
             };
             model = new TransferModel(transfer);
             newTr.attr('id', model.cid);
@@ -291,10 +291,10 @@ define([
                 lastTr.find('td').first().html(removeBtn);
             }
             //
-            //lastTr.find('a').addClass('current-selected');
-            //lastTr.find('[data-content="date"]').addClass('editable');
-            //lastTr.find('[data-content="salary"]').addClass('editable');
-            //lastTr.find('[data-content="info"]').addClass('editable');
+            // lastTr.find('a').addClass('current-selected');
+            // lastTr.find('[data-content="date"]').addClass('editable');
+            // lastTr.find('[data-content="salary"]').addClass('editable');
+            // lastTr.find('[data-content="info"]').addClass('editable');
         },
 
         editJob: function (e) {
@@ -734,8 +734,11 @@ define([
                     var keys;
                     var key;
                     var i;
+                    var k;
+                    var keysChanged = Object.keys(self.changedModels);
 
-                    for (id in self.changedModels) {
+                    for (k = keysChanged.length - 1; k >= 0; k--) {
+                        id = self.changedModels[keysChanged[k]];
 
                         modelChanged = self.editCollection.get(id);
                         modelChanged.changed = self.changedModels[id];
@@ -908,8 +911,8 @@ define([
             populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, false, false);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
-            //populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
-            //populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            // populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
+            // populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
