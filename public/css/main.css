@@ -6348,10 +6348,6 @@ table#workflows tr td.edit-status {
   text-decoration: none;
   color: #3e88b9;
 }
-.side_menu .logo a span {
-  color: #008000;
-  text-transform: uppercase;
-}
 .side_menu .sidebar_toggler {
   position: absolute;
   top: 10px;
