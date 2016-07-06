@@ -15,12 +15,14 @@
     ul {
       .clearfix;
       li {
+        position: relative;
         list-style: none;
         line-height: @height;
         height: @height;
         display: block;
         width: 100%;
         background: @defaultColor;
+        border-bottom: 1px solid @submenu-border;
       }
     }
 
@@ -31,6 +33,7 @@
         height: auto;
         li {
           text-align: center;
+          border-bottom-color: @transparent;
           .sub_item {
             display: block;
             text-decoration: none;
@@ -42,7 +45,6 @@
           &:hover, &.selected {
             background-color: @submenu-selected;
           }
-
         }
       }
 
@@ -59,15 +61,18 @@
         font-variant: normal;
         text-transform: none;
       }
+
       > a, .icons {
-        color: @sub-menu-root-color;
+        color: @submenu-text-color;
         font-size: 16px;
         line-height: @height;
         display: block;
         float: left;
         text-decoration: none;
         text-shadow: none;
+        font-weight: 300;
       }
+
       .icon {
         &-Sales {
           &:before {
@@ -105,6 +110,7 @@
           }
         }
       }
+
       &:hover, &.opened {
         cursor: pointer;
         height: @height;
@@ -113,10 +119,41 @@
 
       &.active {
         background-color: @submenu-opened;
+        a, .icons {
+          color: @submenu-active-text-color;
+        }
+        &:before {
+          color: @submenu-active-text-color;
+        }
+        &.opened {
+          &:before {
+            transform: rotate(-90deg);
+            color: @submenu-active-text-color;
+          }
+        }
       }
+
+      &:before {
+        float: right;
+        width: 20px;
+        text-align: center;
+        display: inline;
+        font-size: 16px;
+        font-family: FontAwesome;
+        height: auto;
+        content: "\f104";
+        font-weight: 300;
+        text-shadow: none;
+        position: absolute;
+        top: 0;
+        right: 14px;
+        line-height: 35px;
+        color: @submenu-arrow;
+        transition: all 0.3s;
+      }
+
       &.opened {
         height: auto;
-        //background-color: @submenu-active;
         ul {
           display: block;
         }
@@ -130,24 +167,34 @@
     left: 0;
     right: 0;
     text-align: center;
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
+
+    a {
+      font-size: 35px;
+      text-decoration: none;
+      color: @submenu-opened;
+      span {
+        color: @green-lights-color;
+        text-transform: uppercase;
+      }
+
+    }
   }
 
   .sidebar_toggler {
-    position: relative;
-    border-radius: 4px 0 0 4px;
+    position: absolute;
+    top: 10px;
+    left: 100%;
+    border-radius: 0 4px 4px 0;
     cursor: pointer;
     display: block;
     float: right;
     margin: 0;
-    border: 0;
     margin-bottom: 15px;
     width: 24px;
     height: 23px;
-    margin-right: -1px;
-    background-color: @bg-main;
-    z-index: 9999;
+    background-color: @bg-submenu;
     &:before {
       margin: 0 2px 0 8px;
       display: inline-block;
@@ -158,6 +205,12 @@
       content: "\f104";
       font-weight: 300;
       text-shadow: none;
+      color: @submenu-text-color;
+    }
+    &:hover {
+      &:before {
+        color: @submenu-active-text-color;
+      }
     }
   }
 

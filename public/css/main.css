@@ -1686,6 +1686,9 @@ th {
 .collapsed .side_menu .root > a {
   display: none !important;
 }
+.collapsed .side_menu .root:before {
+  display: none;
+}
 .collapsed .side_menu .root:hover > ul {
   display: block;
   position: absolute;
@@ -1704,6 +1707,9 @@ th {
 .collapsed .side_menu .root.opened > ul {
   display: none;
 }
+.collapsed .side_menu .root.opened > ul li {
+  transform: rotate(90deg);
+}
 .collapsed .side_menu .root.opened:hover > ul {
   display: block;
   position: absolute;
@@ -1711,9 +1717,11 @@ th {
   left: 100%;
   width: 150px;
 }
-.collapsed .content_wrapper .content-holder,
-.collapsed .content_wrapper .top-bar {
+.collapsed .content_wrapper .content-holder {
   margin-left: 45px;
+}
+.collapsed .content_wrapper .top-bar {
+  margin-left: 65px;
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -1840,7 +1848,7 @@ th {
   background-color: transparent;
 }
 .list2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
   table-layout: fixed;
 }
@@ -2076,9 +2084,11 @@ th {
   display: block;
   float: left;
 }
-.content_wrapper .content-holder,
-.content_wrapper .top-bar {
+.content_wrapper .content-holder {
   margin-left: 200px;
+}
+.content_wrapper .top-bar {
+  margin-left: 220px;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -2131,6 +2141,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== btn ===*/
 /*== Dialog =============================*/
 /*== Birthday ===========================*/
+/*== Top Bar =======================*/
 /*== Lights =========================*/
 /*== Borders=========================*/
 /*==Main menu==========================*/
@@ -3084,13 +3095,13 @@ input::-ms-clear {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #e7e7e7 !important;
+  color: #b4bcc8 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #e7e7e7 !important;
+  color: #b4bcc8 !important;
 }
 .addUserDialog,
 .addGroupDialog {
@@ -3377,7 +3388,7 @@ h3 {
   text-overflow: ellipsis;
 }
 body {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   font-size: 12px;
   height: 100%;
   min-width: 1349px;
@@ -3581,7 +3592,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -3730,7 +3741,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -3741,7 +3752,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -4158,7 +4169,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formLeftColumn .form .mainInfo p {
   height: 20px !important;
@@ -4307,7 +4318,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formLeftColumn .form h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -4318,7 +4329,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -4383,7 +4394,7 @@ dl dd span.ui-spinner {
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
-  color: #e7e7e7;
+  color: #b4bcc8;
 }
 #details-dialog {
   display: none;
@@ -4493,7 +4504,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formRightColumn .form .mainInfo p {
   height: 20px !important;
@@ -4642,7 +4653,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formRightColumn .form h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -4653,7 +4664,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -4806,13 +4817,13 @@ dl dd span.ui-spinner {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #e7e7e7 !important;
+  color: #b4bcc8 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #e7e7e7 !important;
+  color: #b4bcc8 !important;
 }
 .noteWrapper .addNote.active .buttons input {
   width: auto;
@@ -4827,7 +4838,7 @@ dl dd span.ui-spinner {
 }
 .noteWrapper .addNote.active label {
   display: block;
-  color: #e7e7e7;
+  color: #b4bcc8;
 }
 .noteWrapper .addNote.active textarea {
   height: 60px;
@@ -5078,7 +5089,7 @@ dl dd span.ui-spinner {
   line-height: 20px;
 }
 .customer-info dt {
-  color: #e7e7e7;
+  color: #b4bcc8;
 }
 .project-edit-info {
   clear: both;
@@ -6202,12 +6213,14 @@ table#workflows tr td.edit-status {
   clear: both;
 }
 .side_menu nav ul li {
+  position: relative;
   list-style: none;
   line-height: 35px;
   height: 35px;
   display: block;
   width: 100%;
   background: #364150;
+  border-bottom: 1px solid #3d4957;
 }
 .side_menu nav .root {
   text-align: left;
@@ -6218,6 +6231,7 @@ table#workflows tr td.edit-status {
 }
 .side_menu nav .root > ul li {
   text-align: center;
+  border-bottom-color: transparent;
 }
 .side_menu nav .root > ul li .sub_item {
   display: block;
@@ -6225,7 +6239,7 @@ table#workflows tr td.edit-status {
   font-size: 14px;
   font-weight: 300;
   line-height: 35px;
-  color: #e7e7e7;
+  color: #b4bcc8;
 }
 .side_menu nav .root > ul li:hover,
 .side_menu nav .root > ul li.selected {
@@ -6246,13 +6260,14 @@ table#workflows tr td.edit-status {
 }
 .side_menu nav .root > a,
 .side_menu nav .root .icons {
-  color: #ffffff;
+  color: #b4bcc8;
   font-size: 16px;
   line-height: 35px;
   display: block;
   float: left;
   text-decoration: none;
   text-shadow: none;
+  font-weight: 300;
 }
 .side_menu nav .root .icon-Sales:before {
   content: "\e043";
@@ -6284,6 +6299,35 @@ table#workflows tr td.edit-status {
 .side_menu nav .root.active {
   background-color: #3e88b9;
 }
+.side_menu nav .root.active a,
+.side_menu nav .root.active .icons {
+  color: #ffffff;
+}
+.side_menu nav .root.active:before {
+  color: #ffffff;
+}
+.side_menu nav .root.active.opened:before {
+  transform: rotate(-90deg);
+  color: #ffffff;
+}
+.side_menu nav .root:before {
+  float: right;
+  width: 20px;
+  text-align: center;
+  display: inline;
+  font-size: 16px;
+  font-family: FontAwesome;
+  height: auto;
+  content: "\f104";
+  font-weight: 300;
+  text-shadow: none;
+  position: absolute;
+  top: 0;
+  right: 14px;
+  line-height: 35px;
+  color: #606c7d;
+  transition: all 0.3s;
+}
 .side_menu nav .root.opened {
   height: auto;
 }
@@ -6296,23 +6340,31 @@ table#workflows tr td.edit-status {
   left: 0;
   right: 0;
   text-align: center;
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
 }
+.side_menu .logo a {
+  font-size: 35px;
+  text-decoration: none;
+  color: #3e88b9;
+}
+.side_menu .logo a span {
+  color: #008000;
+  text-transform: uppercase;
+}
 .side_menu .sidebar_toggler {
-  position: relative;
-  border-radius: 4px 0 0 4px;
+  position: absolute;
+  top: 10px;
+  left: 100%;
+  border-radius: 0 4px 4px 0;
   cursor: pointer;
   display: block;
   float: right;
   margin: 0;
-  border: 0;
   margin-bottom: 15px;
   width: 24px;
   height: 23px;
-  margin-right: -1px;
-  background-color: #ffffff;
-  z-index: 9999;
+  background-color: #364150;
 }
 .side_menu .sidebar_toggler:before {
   margin: 0 2px 0 8px;
@@ -6324,6 +6376,10 @@ table#workflows tr td.edit-status {
   content: "\f104";
   font-weight: 300;
   text-shadow: none;
+  color: #b4bcc8;
+}
+.side_menu .sidebar_toggler:hover:before {
+  color: #ffffff;
 }
 .side_menu .login_panel {
   position: absolute;
@@ -6353,7 +6409,7 @@ table#workflows tr td.edit-status {
 }
 .side_menu .login_panel .dropdown-button .login_list li {
   text-align: center;
-  color: #e7e7e7;
+  color: #b4bcc8;
   background: #364150;
 }
 .side_menu .login_panel .dropdown-button .login_list li a {
@@ -6361,7 +6417,7 @@ table#workflows tr td.edit-status {
   text-decoration: none;
   font-size: 14px;
   line-height: 35px;
-  color: #e7e7e7;
+  color: #b4bcc8;
 }
 .side_menu .login_panel .dropdown-button .login_list li:hover {
   background-color: #404d5f;
@@ -6400,7 +6456,7 @@ table#workflows tr td.edit-status {
 #top-bar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #000000 !important;
+  color: #666666 !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -6467,7 +6523,7 @@ table#workflows tr td.edit-status {
 .projectInfoTopBar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #000000 !important;
+  color: #666666 !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -6537,12 +6593,12 @@ table#workflows tr td.edit-status {
   margin-right: 3px;
   cursor: pointer;
   vertical-align: baseline;
-  color: #000000;
+  color: #666666;
   line-height: 40px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
-  color: #333333;
+  color: #999999;
 }
 .createBtnHolder .fa,
 #createBtnHolder .fa {
@@ -6856,7 +6912,7 @@ ul.dialog-tabs li.right button {
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
 .thumbnailwithavatar h4 span,
@@ -6882,7 +6938,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .thumbnailwithavatar .inner .info p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
   font-size: 12px;
   font-weight: 200 !important;
@@ -6953,7 +7009,7 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .list {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
 .list td,
@@ -7110,7 +7166,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
 }
 .thumbnail span {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   position: relative;
   color: #4c4c4c;
   font-size: 13px;
@@ -7135,7 +7191,7 @@ ul.dialog-tabs li.right button {
   text-decoration: underline;
 }
 .thumbnail p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
 }
@@ -7143,7 +7199,7 @@ ul.dialog-tabs li.right button {
   font-weight: normal !important;
 }
 .thumbnail h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   margin: 0 0 8px;
@@ -7814,13 +7870,13 @@ ul.dialog-tabs li.right button {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #e7e7e7 !important;
+  color: #b4bcc8 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #e7e7e7 !important;
+  color: #b4bcc8 !important;
 }
 .form-holder form label {
   font-weight: normal;
@@ -9669,7 +9725,7 @@ textarea#editInput {
   height: 25px;
   line-height: 25px;
   display: block;
-  color: #e7e7e7;
+  color: #b4bcc8;
 }
 .grid tr td {
   border-top: 1px solid #7f7f80;
@@ -10614,7 +10670,7 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   padding: 5px 25px;
   position: absolute;
   z-index: 10;
