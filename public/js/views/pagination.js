@@ -193,7 +193,7 @@ define([
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
             sortConst = 1;
-            sortBy = target$.data('sort');
+            sortBy = target$.data('sort').split(' ');
             sortObject = {};
 
             if (!sortClass) {
@@ -215,7 +215,9 @@ define([
                 // skip default case
             }
 
-            sortObject[sortBy] = sortConst;
+            sortBy.forEach(function(sortField){
+                sortObject[sortField] = sortConst;
+            });
 
             data = {
                 sort: sortObject

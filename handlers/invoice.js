@@ -586,7 +586,7 @@ var Module = function (models, event) {
                 fx.rates = oxr.rates;
                 fx.base = oxr.base;
 
-                if (data.currency && data.currency.name){
+                if (data.currency && data.currency.name) {
                     data.currency.rate = oxr.rates[data.currency.name];
                 }
 
@@ -800,69 +800,69 @@ var Module = function (models, event) {
     /*TODO remove after filters check*/
 
     /*function ConvertType(element, type) {
-        if (type === 'boolean') {
-            if (element === 'true') {
-                element = true;
-            } else if (element === 'false') {
-                element = false;
-            }
-        }
+     if (type === 'boolean') {
+     if (element === 'true') {
+     element = true;
+     } else if (element === 'false') {
+     element = false;
+     }
+     }
 
-        return element;
-    }*/
+     return element;
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var keys = Object.keys(filter);
-        var i;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var keys = Object.keys(filter);
+     var i;
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            filterName = keys[i];
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (i = keys.length - 1; i >= 0; i--) {
+     filterName = keys[i];
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'project':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'salesPerson':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'supplier':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'workflow':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'forSales':
-                    if (condition) {
-                        condition = ConvertType(condition[0], 'boolean');
-                        filtrElement[key] = condition;
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                // skip default;
-            }
-        }
+     switch (filterName) {
+     case 'project':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'salesPerson':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'supplier':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'workflow':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'forSales':
+     if (condition) {
+     condition = ConvertType(condition[0], 'boolean');
+     filtrElement[key] = condition;
+     resArray.push(filtrElement);
+     }
+     break;
+     // skip default;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
@@ -879,7 +879,7 @@ var Module = function (models, event) {
         var paginationObject = pageHelper(query);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
-        var key;
+        var keys;
         var filterMapper = new FilterMapper();
 
         if (contentType === 'salesProforma') {
@@ -919,8 +919,10 @@ var Module = function (models, event) {
         }
 
         if (req.query.sort) {
-            key = Object.keys(req.query.sort)[0];
-            req.query.sort[key] = parseInt(req.query.sort[key], 10);
+            for(var key in req.query.sort){
+                req.query.sort[key] = parseInt(req.query.sort[key], 10);
+            }
+
             sort = req.query.sort;
         } else {
             sort = {'editedBy.date': -1};
@@ -1127,7 +1129,7 @@ var Module = function (models, event) {
                         editedBy          : '$root.editedBy',
                         total             : 1
                     }
-                }, {
+                },{
                     $sort: sort
                 }, {
                     $skip: skip
