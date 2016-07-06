@@ -158,9 +158,8 @@
                 self.stages = stages || [];
             });
 
-            populate.get('#projectTypeDD', CONSTANTS.URLS.PROJECT_TYPE, {}, 'name', this, false, true);
+            populate.get('.current-selected', CONSTANTS.URLS.PROJECT_TYPE, {}, 'name', this, false, true);
             populate.getPriority('#priority', this);
-
             return this;
         }
     });
