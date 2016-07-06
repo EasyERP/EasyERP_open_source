@@ -8,7 +8,6 @@ module.exports = (function () {
         date                : Date,
         status              : {type: String, enum: ['hired', 'fired', 'updated', 'transfer'], default: 'updated'},
         department          : {type: ObjectId, ref: 'Department', default: null},
-        //isDeveloper         : {type: Boolean, required: true},
         jobPosition         : {type: ObjectId, ref: 'JobPosition', default: null},
         manager             : {type: ObjectId, ref: 'Employees', default: null},
         weeklyScheduler     : {type: ObjectId, ref: 'weeklyScheduler', default: null},
@@ -17,7 +16,8 @@ module.exports = (function () {
         info                : {type: String, default: ''},
         employee            : {type: ObjectId, ref: 'Employees'},
         scheduledPay        : {type: ObjectId, ref: 'scheduledPays', default: null},
-        payrollStructureType: {type: ObjectId, ref: 'payrollStructureTypes', default: null}
+        payrollStructureType: {type: ObjectId, ref: 'payrollStructureTypes', default: null},
+        transferKey         : {type: Number}
 
     }, {collection: 'transfers'});
 

@@ -738,12 +738,13 @@ define([
                     var keysChanged = Object.keys(self.changedModels);
 
                     for (k = keysChanged.length - 1; k >= 0; k--) {
-                        id = self.changedModels[keysChanged[k]];
+                        id = keysChanged[k];
 
                         modelChanged = self.editCollection.get(id);
                         modelChanged.changed = self.changedModels[id];
 
                         if (self.changedModels[id].transfered) {
+                            modelChanged.changed.transferKey = new Date().getTime();
                             transferNewModel = new TransferModel(modelChanged.attributes);
                             keys = Object.keys(modelChanged.attributes);
                             for (i = keys.length - 1; i >= 0; i--) {
@@ -757,6 +758,7 @@ define([
                             delete transferNewModel.id;
                             transferNewModel.changed.date = moment(modelChanged.changed.date).subtract(1, 'day');
                             transferNewModel.changed.status = 'transfer';
+                            transferNewModel.changed.transferKey = modelChanged.changed.transferKey;
                             self.editCollection.add(transferNewModel);
                         }
                     }
@@ -837,14 +839,23 @@ define([
                 currencySplitter: helpers.currencySplitter
             });
             var transfer = this.currentModel.toJSON().transfer;
-            var editRow = this.templateEdit({
-                transfer        : transfer[transfer.length - 1],
-                currencySplitter: helpers.currencySplitter
-            });
+            var lastTransfer = transfer[transfer.length - 1];
+            var editRow;
             var self = this;
             var notDiv;
             var $thisEl;
             var lastTr;
+            var firstEL = false;
+
+            if (lastTransfer.status === 'transfer') {
+                lastTransfer = transfer[transfer.length - 2] || null;
+                firstEL = transfer.length - 2 === 0;
+            }
+
+            editRow = this.templateEdit({
+                transfer        : lastTransfer,
+                currencySplitter: helpers.currencySplitter
+            });
 
             if (this.currentModel.get('dateBirth')) {
                 this.currentModel.set({
@@ -880,12 +891,17 @@ define([
             });
             $thisEl = this.$el;
 
-            if (transfer.length === 1) {
+            if (firstEL) {
                 lastTr = $thisEl.find('#transfersTable');
-                lastTr.append(editRow);
+                lastTr.html(editRow);
             } else {
-                lastTr = $thisEl.find('.transfer').last();
-                lastTr.after(editRow);
+                if (transfer.length === 1 && lastTransfer) {
+                    lastTr = $thisEl.find('#transfersTable');
+                    lastTr.append(editRow);
+                } else if (lastTransfer) {
+                    lastTr = $thisEl.find('.transfer').last();
+                    lastTr.after(editRow);
+                }
             }
 
             notDiv = $thisEl.find('.attach-container');
