@@ -1,4 +1,4 @@
-.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 35px, @bg: @submenu-text-color) {
+.submenu(@defaultColor: @bg-submenu, @height: 35px) {
   display: block;
   position: fixed;
   z-index: 100;
@@ -6,7 +6,7 @@
   height: 100%;
   background-color: @defaultColor;
   box-sizing: border-box;
-  padding-top: 73px;
+  padding-top: 101px;
   left: 0;
   top: 0;
 
@@ -22,17 +22,19 @@
         display: block;
         width: 100%;
         background: @defaultColor;
-        border-bottom: 1px solid @submenu-border;
+        text-align: center;
       }
     }
+
     .root {
       text-align: left;
-      > ul {
+      border-bottom: 1px solid @submenu-border;
+
+       ul {
         display: none;
         height: auto;
+
         li {
-          text-align: center;
-          border-bottom-color: @transparent;
           .sub_item {
             display: block;
             text-decoration: none;
@@ -41,9 +43,11 @@
             line-height: @height;
             color: @submenu-text-color;
           }
+
           &:hover, &.selected {
             background-color: @submenu-selected;
           }
+
           &:first-child {
             display: none;
           }
@@ -53,7 +57,7 @@
       .icons {
         padding: 0 11px;
         display: inline-block;
-        font: normal normal normal 14px/1 simple-line-icons;
+        font: normal normal normal 14px simple-line-icons;
         font-size: inherit;
         text-rendering: auto;
         -webkit-font-smoothing: antialiased;
@@ -189,10 +193,7 @@
     left: 100%;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
-    display: block;
-    float: right;
     margin: 0;
-    margin-bottom: 15px;
     width: 24px;
     height: 24px;
     background-color: @bg-submenu;
@@ -214,6 +215,7 @@
   .login_panel {
     .position(absolute, 0, 0, auto, auto);
     width: 100%;
+
     .dropdown-button {
       text-indent: 5px;
       cursor: pointer;
@@ -223,51 +225,6 @@
       width: 100%;
       float: left;
       height: auto;
-      .login_list {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        z-index: 999;
-        li {
-          text-align: center;
-          color: @submenu-text-color;
-          background: @defaultColor;
-          a {
-            display: block;
-            text-decoration: none;
-            font-size: 14px;
-            line-height: @height;
-            color: @submenu-text-color;
-          }
-          &:hover {
-            background-color: @submenu-selected;
-          }
-        }
-        &.opened {
-          display: block;
-        }
-      }
-
-      .user_name {
-        display: block;
-        line-height: 30px;
-        color: @login-text;
-        font-size: 14px;
-        font-weight: 300;
-        &:hover {
-          color: @login-hover-text;
-        }
-      }
-
-      .iconEmployee {
-        .border-radius;
-        float: left;
-        margin: 2px 5px 2px 2px;
-        width: 26px;
-        height: 26px;
-      }
 
       &:hover {
         background: @bg-main-menu-selected;
@@ -275,5 +232,52 @@
       }
     }
 
+    .login_list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+
+      li {
+        text-align: center;
+        color: @submenu-text-color;
+        background: @defaultColor;
+        &:hover {
+          background-color: @submenu-selected;
+        }
+      }
+
+      a {
+        display: block;
+        text-decoration: none;
+        font-size: 14px;
+        line-height: @height;
+        color: @submenu-text-color;
+      }
+      &.opened {
+        display: block;
+      }
+    }
+
+    .user_name {
+      display: block;
+      line-height: 30px;
+      color: @login-text;
+      font-size: 14px;
+      font-weight: 300;
+      &:hover {
+        color: @login-hover-text;
+      }
+    }
+
+    .iconEmployee {
+      .border-radius;
+      float: left;
+      margin: 2px 5px 2px 2px;
+      width: 26px;
+      height: 26px;
+    }
   }
 }

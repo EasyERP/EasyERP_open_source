@@ -6,7 +6,7 @@
 
     .sidebar_toggler {
       &:before {
-        content: "\f105";
+        transform: rotate(180deg) translate(75%, 50%);
       }
     }
 
@@ -54,8 +54,13 @@
 
     .root {
       position: relative;
-      >ul {
+      ul {
         display: none;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        width: 150px;
+        margin-left: 1px;
         li {
           &:first-child {
             display: block;
@@ -66,17 +71,14 @@
       >a {
         display: none !important;
       }
+
       &:before {
         display: none;
       }
+
       &:hover {
         >ul {
           display: block;
-          position: absolute;
-          top: 0;
-          left: 100%;
-          width: 150px;
-          margin-left: 1px;
           li {
             &:first-child {
               margin-left: -1px;
@@ -85,6 +87,7 @@
           }
         }
       }
+
       &.opened {
         height: 35px !important;
         >ul {
@@ -93,13 +96,11 @@
         &:hover {
           >ul {
             display: block;
-            position: absolute;
-            top: 0;
-            left: 100%;
-            width: 150px;
+
           }
         }
       }
+
       &.active {
         >ul {
           li {

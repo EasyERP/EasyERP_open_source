@@ -1644,7 +1644,7 @@ th {
   margin-right: -100%;
 }
 .collapsed .side_menu .sidebar_toggler:before {
-  content: "\f105";
+  transform: rotate(180deg) translate(75%, 50%);
 }
 .collapsed .side_menu .login_panel .user_name {
   display: none !important;
@@ -1680,10 +1680,15 @@ th {
 .collapsed .side_menu .root {
   position: relative;
 }
-.collapsed .side_menu .root > ul {
+.collapsed .side_menu .root ul {
   display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 150px;
+  margin-left: 1px;
 }
-.collapsed .side_menu .root > ul li:first-child {
+.collapsed .side_menu .root ul li:first-child {
   display: block;
   background-color: #2c3542;
 }
@@ -1695,11 +1700,6 @@ th {
 }
 .collapsed .side_menu .root:hover > ul {
   display: block;
-  position: absolute;
-  top: 0;
-  left: 100%;
-  width: 150px;
-  margin-left: 1px;
 }
 .collapsed .side_menu .root:hover > ul li:first-child {
   margin-left: -1px;
@@ -1713,10 +1713,6 @@ th {
 }
 .collapsed .side_menu .root.opened:hover > ul {
   display: block;
-  position: absolute;
-  top: 0;
-  left: 100%;
-  width: 150px;
 }
 .collapsed .side_menu .root.active > ul li:first-child {
   background-color: #7eadcc;
@@ -6194,7 +6190,7 @@ table#workflows tr td.edit-status {
   height: 100%;
   background-color: #364150;
   box-sizing: border-box;
-  padding-top: 73px;
+  padding-top: 101px;
   left: 0;
   top: 0;
 }
@@ -6226,20 +6222,17 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   background: #364150;
-  border-bottom: 1px solid #3d4957;
+  text-align: center;
 }
 .side_menu nav .root {
   text-align: left;
+  border-bottom: 1px solid #3d4957;
 }
-.side_menu nav .root > ul {
+.side_menu nav .root ul {
   display: none;
   height: auto;
 }
-.side_menu nav .root > ul li {
-  text-align: center;
-  border-bottom-color: transparent;
-}
-.side_menu nav .root > ul li .sub_item {
+.side_menu nav .root ul li .sub_item {
   display: block;
   text-decoration: none;
   font-size: 14px;
@@ -6247,17 +6240,17 @@ table#workflows tr td.edit-status {
   line-height: 35px;
   color: #b4bcc8;
 }
-.side_menu nav .root > ul li:hover,
-.side_menu nav .root > ul li.selected {
+.side_menu nav .root ul li:hover,
+.side_menu nav .root ul li.selected {
   background-color: #404d5f;
 }
-.side_menu nav .root > ul li:first-child {
+.side_menu nav .root ul li:first-child {
   display: none;
 }
 .side_menu nav .root .icons {
   padding: 0 11px;
   display: inline-block;
-  font: normal normal normal 14px/1 simple-line-icons;
+  font: normal normal normal 14px simple-line-icons;
   font-size: inherit;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
@@ -6366,10 +6359,7 @@ table#workflows tr td.edit-status {
   left: 100%;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
-  display: block;
-  float: right;
   margin: 0;
-  margin-bottom: 15px;
   width: 24px;
   height: 24px;
   background-color: #364150;
@@ -6405,7 +6395,11 @@ table#workflows tr td.edit-status {
   float: left;
   height: auto;
 }
-.side_menu .login_panel .dropdown-button .login_list {
+.side_menu .login_panel .dropdown-button:hover {
+  background: #3e88b9;
+  color: #fff;
+}
+.side_menu .login_panel .login_list {
   display: none;
   position: absolute;
   top: 100%;
@@ -6413,35 +6407,35 @@ table#workflows tr td.edit-status {
   width: 100%;
   z-index: 999;
 }
-.side_menu .login_panel .dropdown-button .login_list li {
+.side_menu .login_panel .login_list li {
   text-align: center;
   color: #b4bcc8;
   background: #364150;
 }
-.side_menu .login_panel .dropdown-button .login_list li a {
+.side_menu .login_panel .login_list li:hover {
+  background-color: #404d5f;
+}
+.side_menu .login_panel .login_list a {
   display: block;
   text-decoration: none;
   font-size: 14px;
   line-height: 35px;
   color: #b4bcc8;
 }
-.side_menu .login_panel .dropdown-button .login_list li:hover {
-  background-color: #404d5f;
-}
-.side_menu .login_panel .dropdown-button .login_list.opened {
+.side_menu .login_panel .login_list.opened {
   display: block;
 }
-.side_menu .login_panel .dropdown-button .user_name {
+.side_menu .login_panel .user_name {
   display: block;
   line-height: 30px;
   color: #b4bcc8;
   font-size: 14px;
   font-weight: 300;
 }
-.side_menu .login_panel .dropdown-button .user_name:hover {
+.side_menu .login_panel .user_name:hover {
   color: #ffffff;
 }
-.side_menu .login_panel .dropdown-button .iconEmployee {
+.side_menu .login_panel .iconEmployee {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
@@ -6449,10 +6443,6 @@ table#workflows tr td.edit-status {
   margin: 2px 5px 2px 2px;
   width: 26px;
   height: 26px;
-}
-.side_menu .login_panel .dropdown-button:hover {
-  background: #3e88b9;
-  color: #fff;
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
