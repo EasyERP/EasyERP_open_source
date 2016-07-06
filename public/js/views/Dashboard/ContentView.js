@@ -2233,8 +2233,10 @@ define([
                 });
 
                 barChart = d3.select('svg.salesByCountryBarChart')
-                    .attr('width', width + margin.left + margin.right)
-                    .attr('height', height1 + margin.top + margin.bottom)
+                    .attr({
+                        'width': width + margin.left + margin.right,
+                        'height': height1 + margin.top + margin.bottom
+                    })
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -2274,11 +2276,9 @@ define([
                     .scale(xScale)
                     .orient('bottom');
 
-                yAxis = d3.svg.axis();
-
-                yAxis
-                    .orient('left')
+                yAxis = d3.svg.axis()
                     .scale(yScale)
+                    .orient('left')
                     .tickSize(0)
                     .tickPadding(offset)
                     .tickFormat(function(d, i){
@@ -2287,13 +2287,17 @@ define([
                     .tickValues(d3.range(data.length));
 
                 barChart.append('g')
-                    .attr('class', 'x axis')
-                    .attr('transform', 'translate(0,' + height1 + ')')
+                    .attr({
+                        'class': 'x axis',
+                        'transform': 'translate(0,' + height1 + ')'
+                    })
                     .call(xAxis);
 
                 barChart.append('g')
-                    .attr('class', 'y axis')
-                    .attr('transform', 'translate(0,' + (padding - 2*offset) + ')')
+                    .attr({
+                        'class': 'y axis',
+                        'transform': 'translate(0,' + (padding - 2*offset) + ')'
+                    })
                     .call(yAxis);
 
                 barChart.selectAll('.x .tick line')
