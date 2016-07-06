@@ -45,7 +45,9 @@ var Module = function (models) {
                             'profileAccess.access.read': true
                         }
                     }, {
-                        $group: {_id: '$profileAccess.module'}
+                        $group: {
+                            _id: '$profileAccess.module'
+                        }
                     }],
 
                     function (err, modulesId) {
@@ -68,10 +70,10 @@ var Module = function (models) {
                     }
                 }, {
                     $lookup: {
-                        from: 'Profile',
-                        localField: 'profile',
+                        from        : 'Profile',
+                        localField  : 'profile',
                         foreignField: '_id',
-                        as: 'profile'
+                        as          : 'profile'
                     }
                 }, {
                     $project: {
@@ -81,7 +83,7 @@ var Module = function (models) {
                                 0
                             ]
                         },
-                        _id: 0
+                        _id            : 0
                     }
                 }, {
                     $match: {
@@ -95,10 +97,10 @@ var Module = function (models) {
                     }
                 }, {
                     $lookup: {
-                        from: 'modules',
-                        localField: '_id',
+                        from        : 'modules',
+                        localField  : '_id',
                         foreignField: '_id',
-                        as: 'module'
+                        as          : 'module'
                     }
                 }, {
                     $match: {
@@ -112,16 +114,16 @@ var Module = function (models) {
                                 0
                             ]
                         },
-                        _id: 0
+                        _id   : 0
                     }
                 }, {
                     $project: {
-                        _id: '$module._id',
-                        mname: '$module.mname',
-                        href: '$module.href',
+                        _id     : '$module._id',
+                        mname   : '$module.mname',
+                        href    : '$module.href',
                         sequence: '$module.sequence',
-                        parrent: '$module.parrent',
-                        link: '$module.link'
+                        parrent : '$module.parrent',
+                        link    : '$module.link'
 
                     }
                 }, {
@@ -130,7 +132,7 @@ var Module = function (models) {
                     }
                 }, {
                     $group: {
-                        _id: '$parrent',
+                        _id       : '$parrent',
                         subModules: {
                             $push: '$$ROOT'
                         }
@@ -143,15 +145,15 @@ var Module = function (models) {
                     }
                 }, {
                     $lookup: {
-                        from: 'modules',
-                        localField: '_id',
+                        from        : 'modules',
+                        localField  : '_id',
                         foreignField: '_id',
-                        as: 'module'
+                        as          : 'module'
                     }
 
                 }, {
                     $project: {
-                        module: {
+                        module    : {
                             $arrayElemAt: [
                                 '$module',
                                 0
@@ -159,10 +161,10 @@ var Module = function (models) {
                         },
                         subModules: {
                             mname: 1,
-                            href: 1,
-                            link: 1
+                            href : 1,
+                            link : 1
                         },
-                        _id: 0
+                        _id       : 0
                     }
                 }, {
                     $match: {
@@ -174,10 +176,10 @@ var Module = function (models) {
                     }
                 }, {
                     $project: {
-                        _id: '$module._id',
-                        mname: '$module.mname',
-                        href: '$module.href',
-                        link: '$module.link',
+                        _id       : '$module._id',
+                        mname     : '$module.mname',
+                        href      : '$module.href',
+                        link      : '$module.link',
                         subModules: 1
 
                     }
@@ -211,7 +213,7 @@ var Module = function (models) {
 
         function moduleRetriver(modulesId, waterFallCb) {
             models.get(req.session.lastDb, 'modules', moduleSchema).find({
-                _id: {$in: modulesId},
+                _id    : {$in: modulesId},
                 visible: true,
                 parrent: id
             }).sort({sequence: 1}).exec(function (err, mod) {
