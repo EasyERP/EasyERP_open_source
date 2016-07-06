@@ -773,43 +773,8 @@ define([
         },
         
         renderSalaryChart: function(){
-            var h = 400;
-            var w = 600;
             var padding = 15;
             var labelPadding = 20;
-
-            /*var data = [
-             {"count":2,"source":"olga.sikora","isOpp":true},
-             {"count":5,"source":"olga.sikora","isOpp":false},
-             {"count":6,"source":"alex.vinogradov","isOpp":false},
-             {"count":4,"source":"roman.siladii","isOpp":false},
-             {"count":2,"source":"dima.lylyk","isOpp":true},
-             {"count":2,"source":"peter.volosh","isOpp":false},
-             {"count":7,"source":"alona.yelahina","isOpp":false},
-             {"count":1,"source":"roland.katona","isOpp":true},
-             {"count":1,"source":"yana.dufynets","isOpp":false},
-             {"count":1,"source":"galina.milchevych","isOpp":true},
-             {"count":5,"source":"natalia.yartysh","isOpp":false},
-             {"count":2,"source":"alina.yurenko","isOpp":true},
-             {"count":2,"source":"roland.katona","isOpp":false},
-             {"count":7,"isOpp":true},
-             {"count":1,"source":"alex.vinogradov","isOpp":true},
-             {"count":9,"source":"sergiy.biloborodov","isOpp":false},
-             {"count":2,"source":"patritsiia.danch","isOpp":false},
-             {"count":5,"source":"galina.milchevych","isOpp":false},
-             {"count":1,"source":"yevgenia.melnyk","isOpp":true},
-             {"count":37,"isOpp":false},
-             {"count":21,"source":"alina.yurenko","isOpp":false},
-             {"count":7,"source":"andriy.merentsov","isOpp":false},
-             {"count":8,"source":"yevgenia.melnyk","isOpp":false},
-             {"count":2,"source":"natalia.yartysh","isOpp":true},
-             {"count":3,"source":"larysa.popp","isOpp":false},
-             {"count":22,"source":"dima.lylyk","isOpp":false},
-             {"count":4,"source":"alina.slavska","isOpp":false},
-             {"count":9,"source":"bohdana.stets","isOpp":false},
-             {"count":1,"source":"oksana.pylyp","isOpp":true},
-             {"count":6,"source":"oksana.pylyp","isOpp":false}];*/
-
 
             var data = {
                 "data": [120, 350, 800, 0, 0, 800, 0, 114, 114, 500, 114, 350, 350, 450, 350, 800, 800, 450, 350,
@@ -825,12 +790,13 @@ define([
                 ]
             };
 
-            var labels = ['>=$2000', '$1750-1500', '$1500-1750', '$1250-1500', '$1000-1250', '$750-1000',
-                '$500-750', '$250-500', '<$250'];
+            data = data.data;
+
+            var labels = ['>=$2000', '$2000-1750', '$1750-1500', '$1500-1750', '$1250-1500', '$1000-1250', '$750-1000', '$500-750', '$250-500', '<$250'];
 
             var globalSalary = {
                 '>=$2000'   : [],
-                '':[],
+                '$2000-1750': [],
                 '$1750-1500': [],
                 '$1500-1750': [],
                 '$1250-1500': [],
@@ -842,123 +808,63 @@ define([
             };
 
             var dataLength = data.length;
-            var arrLength = [];
+            var lengthArr = [];
             for (var i = dataLength; i--;) {
 
-                if (data[i] >= 100000) {
-                    globalSalary['100-100'].push(data[i]);
-                } else if (data[i] === 90000) {
-                    globalSalary['90-90'].push(data[i]);
-                } else if (data[i] < 90000 && data[i] > 80000) {
+                if (data[i] >= 2000) {
+                    globalSalary['>=$2000'].push(data[i]);
+                } else if (data[i] < 2000 && data[i] > 1750) {
+                    globalSalary['$2000-1750'].push(data[i]);
+                } else if (data[i] < 1750 && data[i] > 1500) {
                     globalSalary['$1750-1500'].push(data[i]);
-                } else if (data[i] < 80000 && data[i] > 70000) {
+                } else if (data[i] < 1500 && data[i] > 1250) {
                     globalSalary['$1250-1500'].push(data[i]);
-                } else if (data[i] < 70000 && data[i] > 60000) {
+                } else if (data[i] < 1250 && data[i] > 1000) {
                     globalSalary['$1000-1250'].push(data[i]);
-                } else if (data[i] < 60000 && data[i] > 50000) {
+                } else if (data[i] < 1000 && data[i] > 750) {
                     globalSalary['$750-1000'].push(data[i]);
-                } else if (data[i] < 50000 && data[i] > 40000) {
+                } else if (data[i] < 750 && data[i] > 500) {
                     globalSalary['$500-750'].push(data[i]);
-                } else if (data[i] < 40000 && data[i] > 30000) {
+                } else if (data[i] < 500 && data[i] > 250) {
                     globalSalary['$250-500'].push(data[i]);
                 } else {
                     globalSalary['<$250'].push(data[i]);
                 }
-
             }
-
-            var svg = d3.select('#wrapper')
-                .append('svg')
-                .attr({
-                    'width' : w,
-                    'height': h,
-                    'style' : 'padding: 150px'
-                });
 
             var keys = Object.keys(globalSalary);
+            var margin = {top: 20, right: 160, bottom: 30, left: 10};
+            var $wrapper = $('#wrapper');
+            var width = ($wrapper.width() - margin.right)/2;
+            var height = keys.length*30;
 
-            for (var j = keys.length; j--;) {
-                arrLength.push(globalSalary[keys[j]].length)
+            for (var j = keys.length; j--;){
+                lengthArr.push(globalSalary[keys[j]].length)
             }
 
-            var maxLength = Math.max.apply(null, arrLength);
-            var step = 5;
-            var numOfGrids = Math.ceil(maxLength / 10) * 10 / step + 1;
+            var chart = d3.select('.salaryChart')
+                .attr({
+                    'width' : width + margin.left + margin.right,
+                    'height': height + margin.top + margin.bottom,
+                    'style' : 'padding: 150px'
+                })
+                .append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');;
 
-            var xGrid = d3.range(numOfGrids).map(function (i) {
-                return {
-                    'x1': 0,
-                    'y1': 0,
-                    'x2': 0,
-                    'y2': h + padding
-                };
-            });
-
-            var yGrid = d3.range(keys.length + 1).map(function(i){
-                return {
-                    'x1': - padding,
-                    'y1': 0,
-                    'x2': 0,
-                    'y2': 0
-                };
-            });
+            var max = Math.ceil(Math.max.apply(null, lengthArr)/10)*10;
 
             var xScale = d3.scale.linear()
-                .domain([0, Math.ceil(maxLength / 10) * 10])
-                .range([0, w]);
+                .domain([0, max])
+                .range([0, width]);
 
             var yScale = d3.scale.linear()
                 .domain([0, keys.length])
-                .range([0, h]);
+                .range([0, height]);
 
-            var grids = svg.append('g')
-                .attr('id', 'x-grid')
-                .selectAll('line')
-                .data(xGrid)
-                .enter()
-                .append('line')
-                .attr({
-                    'x1': function (d, i) {
-                        return xScale(i * step);
-                    },
-                    'y1': function (d) {
-                        return d.y1;
-                    },
-                    'x2': function (d, i) {
-                        return xScale(i * step);
-                    },
-                    'y2': function (d) {
-                        return d.y2;
-                    }
-                })
-                .style({'stroke': '#000', 'stroke-width': '1px'});
+            var rect = height / (keys.length);
+            var offset = 4;
 
-            var gridsY = svg.append('g')
-                .attr('id', 'y-grid')
-                .selectAll('line')
-                .data(yGrid)
-                .enter()
-                .append('line')
-                .attr({
-                    'x1': function (d, i) {
-                        return d.x1;
-                    },
-                    'y1': function (d, i) {
-                        return yScale(i);
-                    },
-                    'x2': function (d, i) {
-                        return  d.x2;
-                    },
-                    'y2': function (d, i) {
-                        return yScale(i);
-                    }
-                })
-                .style({'stroke': '#000', 'stroke-width': '1px'});
-
-            var dy = h / (keys.length);
-            var rectWidth =  dy / 3;
-
-            svg.selectAll('rect')
+            chart.selectAll('rect')
                 .data(keys)
                 .enter()
                 .append('rect')
@@ -967,50 +873,49 @@ define([
                         return 0;
                     },
                     y     : function (d, i) {
-                        return yScale(i) + rectWidth;
+                        return yScale(i);
                     },
-                    width : function (d, i) {
-                        return xScale(globalSalary[keys[i]].length);
+                    width : function (d) {
+                        return xScale(globalSalary[d].length);
                     },
-                    height: function (d,i) {
-                        return rectWidth;
-                    },
-                    fill  : 'blue'
+                    height: rect - 2*offset,
+                    fill  : '#5CD1C8'
                 });
 
-            var xTickVal = xGrid.map(function(d,i){
-                return i*step;
-            });
-
-            var	xAxis = d3.svg.axis();
-            xAxis
-                .orient('bottom')
+            var xAxis = d3.svg.axis()
                 .scale(xScale)
-                .tickPadding(labelPadding)
-                .tickSize(1)
-                .tickValues(xTickVal);
+                .orient('bottom');
 
-            var	yAxis = d3.svg.axis();
+            var yAxis = d3.svg.axis();
+
             yAxis
                 .orient('left')
                 .scale(yScale)
                 .tickSize(0)
-                .tickPadding(padding)
+                .tickPadding(offset)
                 .tickFormat(function(d, i){
-                    return labels[i];
+                    return keys[i];
                 })
-                .tickValues(d3.range(9));
+                .tickValues(d3.range(keys.length));
 
-            var y_xis = svg.append('g')
-                .attr('id','yaxis')
-                .attr('transform', 'translate(0,' + dy/2 + ')')
+            chart.append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + height + ')')
+                .call(xAxis);
+
+            chart.append('g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate('+ (-offset) +',' + (padding - offset) + ')')
                 .call(yAxis);
 
-            var x_xis = svg.append('g')
-                .attr("transform", 'translate(0,' + h + ')')
-                .attr('id','xaxis')
-                .call(xAxis);
-            
+            chart.selectAll('.x .tick line')
+                .attr({
+                    'y2'    : function (d) {
+                        return -height
+                    },
+                    'style': 'stroke: #f2f2f2'
+                });
+
         },
         
         render: function () {
@@ -1095,6 +1000,7 @@ define([
             self.renderDepartmentsTree();
             self.renderDepartmentsTreeRadial();
             self.renderTreemap();
+            self.renderSalaryChart();
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;
