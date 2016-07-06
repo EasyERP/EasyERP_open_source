@@ -431,72 +431,54 @@
                             <tbody>
                             <%_.each(model.transfer, function(transfer, key, transfers) {
 
-                                if (transfer.status === 'transfer') {
-                                     return;
-                                }
+                            if (transfer.status === 'transfer') {
+                            return;
+                            }
 
                             %>
-                            <tr class="transfer" id="<%=transfer._id%>" data-id="<%=key%>" data-content=<%= transfer.status %>>
+                            <tr class="transfer" id="<%=transfer._id%>" data-id="<%=key%>" data-content=<%=
+                                transfer.status %>>
                                 <td class="remove">
                                 </td>
                                 <td data-content="status"><%= transfer.status %></td>
                                 <td class="date" data-content="date"><%= transfer.date %></td>
-                                <td>
-                                    <a id="jobPositionDd" class="" data-content="jobPosition"
-                                       data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>"
-                                       href="javascript:;">
-                                        <%=transfer.jobPosition ? transfer.jobPosition.name : 'Select'%>
-                                    </a>
+                                <td class="" data-content="jobPosition"
+                                    data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>">
+                                    <span><%=transfer.jobPosition ? transfer.jobPosition.name : ''%></span>
                                 </td>
-                                <td>
-                                    <a id="departmentsDd" class="" data-content="department"
-                                       data-id="<%=transfer.department ? transfer.department._id : null%>"
-                                       href="javascript:;">
-                                        <%=transfer.department ? transfer.department.name :
-                                        "Select" %>
-                                    </a>
+                                <td class="" data-content="department"
+                                    data-id="<%=transfer.department ? transfer.department._id : null%>">
+                                    <span><%=transfer.department ? transfer.department.name : "" %></span>
                                 </td>
-                                <td>
-                                    <a id="projectManagerDD" class="" data-content="manager"
-                                       data-id="<%= transfer.manager ?  transfer.manager._id : null%>"
-                                       href="javascript:;">
-                                        <%=transfer.manager ? transfer.manager.name.first + ' ' +
-                                        transfer.manager.name.last : "Select"%>
-                                    </a>
+                                <td class="" data-content="manager"
+                                    data-id="<%= transfer.manager ?  transfer.manager._id : null%>">
+                                        <span><%=transfer.manager ? transfer.manager.name.first + ' ' +
+                                        transfer.manager.name.last : "Select"%></span>
                                 </td>
-                                <td>
-                                    <a id="jobTypeDd" class="" data-content="jobType"
-                                       data-id="<%= transfer.jobType ? transfer.jobType :''%>"
-                                       href="javascript:;">
-                                        <%=transfer.jobType ? transfer.jobType : "Select"%>
-                                    </a>
+                                <td class="" data-content="jobType"
+                                    data-id="<%= transfer.jobType ? transfer.jobType :''%>">
+                                    <span><%=transfer.jobType ? transfer.jobType : ""%></span>
                                 </td>
-                                <td>
-                                    <a id="weeklySchedulerDd" class="" data-content="weeklyScheduler"
-                                       data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>"
-                                       href="javascript:;">
-                                        <%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : "Select"%>
-                                    </a>
+                                <td data-content="weeklyScheduler"
+                                    data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>">
+                                    <span><%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : ""%></span>
                                 </td>
-                                <td>
-                                    <a id="payrollStructureTypeDd" class="" data-content="payrollStructureType"
-                                       data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>"
-                                       href="javascript:;">
-                                        <%=transfer.payrollStructureType ? transfer.payrollStructureType.name : "Select"%>
-                                    </a>
+                                <td data-content="payrollStructureType"
+                                    data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">
+                                    <span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>
                                 </td>
-                                <td>
-                                    <a id="scheduledPayDd" class="" data-content="scheduledPay"
-                                       data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>"
-                                       href="javascript:;">
-                                        <%=transfer.scheduledPay ? transfer.scheduledPay.name : "Select"%>
-                                    </a>
+                                <td data-content="scheduledPay"
+                                    data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
+                                    <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
                                 </td>
                                 <%if (transfer.salary || transfer.salary === 0) {%>
-                                <td class="dollar" data-content="salary" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
+                                <td class="dollar" data-content="salary" data-id="salary">
+                                    <%=currencySplitter(transfer.salary.toString())%>
+                                </td>
                                 <% } %>
                                 <td class="statusInfo" data-content="info"
-                                    data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>
+                                    data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info &&
+                                    transfer.info.length > 1 ? transfer.info : ""%>
                                 </td>
                             </tr>
 
@@ -506,10 +488,9 @@
                         </table>
                         <div class="ui-dialog-buttonset">
                             <% if (model.transfer.length && model.transfer[0].hasOwnProperty('salary')) {%>
-                                <button id="update" class="btn"><span>Add</span></button>
+                            <button id="update" class="btn"><span>Add</span></button>
                             <%}%>
                         </div>
-                        <!--<a id="update">Add</a> &lt;!&ndash;changed by Pasha from Update to Add&ndash;&gt;-->
                     </div>
                     <div class="clearfix"></div>
                     <div class="dialog-tabs-item">

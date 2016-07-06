@@ -112,7 +112,7 @@ define([
             // 'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
             'click td.editable'                                    : 'editJob',
             'click #update'                                        : 'addNewRow',
-            'keyup .salary'                                        : 'validateNumbers',
+            'keydown .salary'                                      : 'validateNumbers',
             'click .fa-trash'                                      : 'deleteRow',
             'click #jobPosition,#department,#manager,#jobType'     : 'showNotification',
             'change .editable '                                    : 'setEditable',
