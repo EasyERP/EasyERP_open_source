@@ -109,20 +109,20 @@
         },
 
         events: {
-            'click .breadcrumb a, #refuse'                    : 'changeWorkflow',
-            'change #workflowNames'                           : 'changeWorkflows',
-            'mouseenter .avatar'                              : 'showEdit',
-            'mouseleave .avatar'                              : 'hideEdit',
-            'click .current-selected'                         : 'showNewSelect',
+            'click .breadcrumb a, #refuse': 'changeWorkflow',
+            'change #workflowNames'       : 'changeWorkflows',
+            'mouseenter .avatar'          : 'showEdit',
+            'mouseleave .avatar'          : 'hideEdit',
+            'click .current-selected'     : 'showNewSelect',
             // 'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .hireEmployee'                             : 'isEmployee',
-            'click .refuseEmployee'                           : 'refuseEmployee',
+            'click .hireEmployee'         : 'isEmployee',
+            'click .refuseEmployee'       : 'refuseEmployee',
             //'click td.editable'                               : 'editJob',
             //'click #jobPosition,#department,#manager,#jobType': 'showNotification',
             //'click .fa-trash'                                 : 'deleteRow',
-            'keydown input.editing'                           : 'keyDown',
-            'change .editable '                               : 'setEditable',
-            'keydown .salary'                                 : 'validateNumbers'
+            'keydown input.editing'       : 'keyDown',
+            'change .editable '           : 'setEditable',
+            'keydown .salary'             : 'validateNumbers'
         },
 
         keyDown: function (e) {
@@ -195,8 +195,8 @@
             var employeeId;
             var transfer;
             var model;
-            var payrollStructureType;
-            var scheduledPay;
+            //var payrollStructureType;
+            //var scheduledPay;
 
             if (this.currentModel.get('transfer').length) {
 
@@ -222,8 +222,8 @@
                 date = helpers.setTimeToDate(new Date());
                 jobPosition = $tr.find('[data-content="jobPosition"]').attr('data-id');
                 weeklyScheduler = $tr.find('[data-content="weeklyScheduler"]').attr('data-id');
-                payrollStructureType = $tr.find('[data-content="payrollStructureType"]').attr('data-id') || null;
-                scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
+                //payrollStructureType = $tr.find('[data-content="payrollStructureType"]').attr('data-id') || null;
+                //scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
                 department = $tr.find('[data-content="department"]').attr('data-id');
                 jobType = $.trim($tr.find('[data-content="jobType"]').text());
                 info = $tr.find('[data-content="status"]').val();
@@ -233,15 +233,15 @@
             } else {
 
                 salary = parseInt(helpers.spaceReplacer($.trim($thisEl.find('#proposedSalary').val())), 10) || 0;
-                manager = $thisEl.find('[data-content="manager"]').attr('data-id');
+                manager = $thisEl.find('#projectManagerDD').attr('data-id');
                 date = helpers.setTimeToDate(new Date());
-                jobPosition = $thisEl.find('[data-content="jobPosition"]').attr('data-id');
-                weeklyScheduler = $thisEl.find('[data-content="weeklyScheduler"]').attr('data-id');
-                payrollStructureType = $tr.find('[data-content="payrollStructureType"]').attr('data-id') || null;
-                scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
-                department = $thisEl.find('[data-content="department"]').attr('data-id');
-                jobType = $thisEl.find('[data-content="jobType"]').attr('data-id');
-                info = $thisEl.find('[data-content="status"]').val() || null;
+                jobPosition = $thisEl.find('#jobPositionDd').attr('data-id');
+                weeklyScheduler = $thisEl.find('#weeklySchedulerDd').attr('data-id');
+                //payrollStructureType = $thisEl.find('#payrollStructureTypeDd').attr('data-id') || null;
+                //scheduledPay = $thisEl.find('#scheduledPayDd').attr('data-id') || null;
+                department = $thisEl.find('#departmentsDd').attr('data-id');
+                jobType = $thisEl.find('#jobTypeDd').attr('data-id');
+                info = $thisEl.find('#statusInfoDd').val() || null;
                 event = 'hired';
                 employeeId = this.currentModel.get('_id');
             }
@@ -258,9 +258,9 @@
                 jobType             : jobType,
                 salary              : salary,
                 info                : info,
-                weeklyScheduler     : weeklyScheduler,
-                payrollStructureType: payrollStructureType,
-                scheduledPay        : scheduledPay
+                weeklyScheduler     : weeklyScheduler
+                //payrollStructureType: payrollStructureType,
+                //scheduledPay        : scheduledPay
             };
             model = new TransferModel(transfer);
             if (this.currentModel.get('transfer').length) {
@@ -534,8 +534,9 @@
             var $el;
             var $thisEl = this.$el;
             var $tr;
-            var payrollStructureType;
-            var scheduledPay;
+            //var payrollStructureType;
+            //var scheduledPay;
+            var lastTr;
 
             this.setChangedValueToModel();
 
@@ -608,22 +609,22 @@
                     }
                 });
             }
-
-            manager = $tr.find('[data-content="manager"]').last().attr('data-id') || null;
-            jobPosition = $tr.find('[data-content="jobPosition"]').last().attr('data-id') || null;
-            department = $tr.find('[data-content="department"]').last().attr('data-id') || null;
-            weeklyScheduler = $tr.find('[data-content="weeklyScheduler"]').last().attr('data-id');
-            weeklyScheduler = $tr.find('[data-content="weeklyScheduler"]').last().attr('data-id');
-            payrollStructureType = $tr.find('[data-content="payrollStructureTypeDd"]').last().attr('data-id');
-            scheduledPay = $tr.find('[data-content="scheduledPayDd"]').last().attr('data-id');
-            event = $tr.last().attr('data-content');
+            
+            lastTr = $tr.last();
+            manager = lastTr.find('[data-content="manager"]').attr('data-id') || lastTr.find('#projectManagerDD').attr('data-id') || null;
+            jobPosition = lastTr.find('[data-content="jobPosition"]').attr('data-id') || lastTr.find('#jobPositionDd').attr('data-id') || null;
+            department = lastTr.find('[data-content="department"]').attr('data-id') || lastTr.find('#departmentsDd').last().attr('data-id') || null;
+            weeklyScheduler = lastTr.find('[data-content="weeklyScheduler"]').attr('data-id') || lastTr.find('#weeklySchedulerDd').last().attr('data-id') || null;
+            //payrollStructureType = lastTr.find('[data-content="payrollStructureTypeDd"]').attr('data-id') || lastTr.find('#payrollStructureTypeDd').last().attr('data-id') || null;
+            //scheduledPay = lastTr.find('[data-content="scheduledPayDd"]').attr('data-id') || lastTr.find('#scheduledPayDd').last().attr('data-id') || null;
+            event = lastTr.attr('data-content');
             if (this.hireEmployee) {
                 event = 'hired';
                 this.hireEmployee = false;
             }
-            jobType = $.trim($tr.find('[data-content="jobType"]').last().text());
-            salary = self.isSalary ? parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').last().val() || $tr.find('[data-id="salary"]').last().text()), 10) : null;
-            date = $.trim($tr.last().find('td').eq(2).text());
+            jobType = $.trim(lastTr.find('[data-content="jobType"]').text()) || $.trim(lastTr.find('#jobTypeDd').text());
+            salary = self.isSalary ? parseInt(helpers.spaceReplacer(lastTr.find('[data-id="salary"] input').val() || lastTr.find('[data-id="salary"]').text()), 10) : null;
+            date = $.trim(lastTr.find('td').eq(2).text());
             date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
 
             if ((salary === null) && self.isSalary) {
@@ -691,25 +692,27 @@
                     mobile: $.trim($thisEl.find('#mobile').val())
                 },
 
-                officeLocation : $.trim($thisEl.find('#officeLocation').val()),
-                bankAccountNo  : $.trim($('#bankAccountNo').val()),
-                relatedUser    : relatedUser,
-                department     : department,
-                jobPosition    : jobPosition,
-                manager        : manager,
-                coach          : coach,
-                weeklyScheduler: weeklyScheduler,
-                identNo        : $.trim($('#identNo').val()),
-                passportNo     : $.trim($thisEl.find('#passportNo').val()),
-                otherId        : $.trim($thisEl.find('#otherId').val()),
-                homeAddress    : homeAddress,
-                dateBirth      : dateBirthSt,
-                source         : sourceId,
-                imageSrc       : this.imageSrc,
-                nationality    : nationality,
-                isEmployee     : isEmployee,
-                lastFire       : lastFire,
-                groups         : {
+                officeLocation      : $.trim($thisEl.find('#officeLocation').val()),
+                bankAccountNo       : $.trim($('#bankAccountNo').val()),
+                relatedUser         : relatedUser,
+                department          : department,
+                jobPosition         : jobPosition,
+                manager             : manager,
+                coach               : coach,
+                weeklyScheduler     : weeklyScheduler,
+                //payrollStructureType: payrollStructureType,
+                //scheduledPay        : scheduledPay,
+                identNo             : $.trim($('#identNo').val()),
+                passportNo          : $.trim($thisEl.find('#passportNo').val()),
+                otherId             : $.trim($thisEl.find('#otherId').val()),
+                homeAddress         : homeAddress,
+                dateBirth           : dateBirthSt,
+                source              : sourceId,
+                imageSrc            : this.imageSrc,
+                nationality         : nationality,
+                isEmployee          : isEmployee,
+                lastFire            : lastFire,
+                groups              : {
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
@@ -979,8 +982,8 @@
             populate.get('#nationality', CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this);
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
-            populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
-            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            //populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
+            //populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
