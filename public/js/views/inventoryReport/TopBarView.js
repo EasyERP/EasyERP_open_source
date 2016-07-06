@@ -184,7 +184,7 @@ define([
             var viewType = Custom.getCurrentVT();
             // var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
 
-            var filter = Custom.retriveFromCash('journalEntry.filter');
+            var filter = Custom.retriveFromCash('inventoryReport.filter');
             var dateRange = filter && filter.date ? filter.date.value : [];
 
             /*this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
