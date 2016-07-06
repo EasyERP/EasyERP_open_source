@@ -150,6 +150,37 @@ define([
             this.listenTo(eventChannel, 'generatedTcards', this.getWTrack);
         },
 
+        editRow: function (e) {
+            var el = $(e.target);
+            var tr = $(e.target).closest('tr');
+            var tempContainer;
+            var editedElement;
+            var editedCol;
+            var editedElementValue;
+            var insertedInput;
+
+            if (el.prop('tagName') !== 'INPUT') {
+                editedElement = $('#projectTeam').find('.editing');
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementValue = editedElement.val();
+
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
+            }
+
+            tempContainer = el.text();
+            el.html('<input class="editing" type="text" maxlength="32" value="' + tempContainer + '">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
+
+            insertedInput = el.find('input');
+            insertedInput.focus();
+            insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+            return false;
+        },
+
         viewQuotation: function (e) {
             var self = this;
             var $target = $(e.target);

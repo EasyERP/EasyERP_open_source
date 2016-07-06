@@ -364,7 +364,7 @@ define([
                 var $previousTr;
 
                 $tr = $thisEl.find($tr);
-                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) : null;
+                salary = self.isSalary ? parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text()), 10) : null;
                 manager = $tr.find('#projectManagerDD').attr('data-id') || null;
                 date = $.trim($tr.find('td').eq(2).text());
                 date = date ? new Date(date) : new Date();
@@ -565,7 +565,7 @@ define([
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     }
-                    
+
                     self.hideDialog();
                 },
 

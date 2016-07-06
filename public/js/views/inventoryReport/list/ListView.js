@@ -60,9 +60,11 @@ define([
             /*this.startDate = new Date(this.filter.startDate.value);
             this.endDate = new Date(this.filter.endDate.value);*/
 
-            listViewBase.prototype.initialize.call(this, options);
-
             custom.cacheToApp('inventoryReport.filter', this.filter);
+
+            options.filter = this.filter;
+
+            listViewBase.prototype.initialize.call(this, options);
         },
 
         changeDateRange: function () {
