@@ -535,9 +535,10 @@ var Employee = function (event, models) {
                 if (result.isEmployee) {
                     event.emit('recalculate', req, {}, next);
                 }
-                    event.emit('recollectVacationDash', {dbName: dbName});
-                });
+                event.emit('recollectVacationDash', {dbName: dbName});
             });
+        });
+    };
 
     this.createTransfer = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
