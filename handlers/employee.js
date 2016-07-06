@@ -774,6 +774,8 @@ var Employee = function (event, models) {
                 .populate('manager', '_id name')
                 .populate('jobPosition', '_id name fullName')
                 .populate('weeklyScheduler', '_id name')
+                .populate('payrollStructureTypes', '_id name')
+                .populate('scheduledPay', '_id name')
                 .populate('department', '_id name')
                 .populate('groups.group')
                 .populate('groups.owner', '_id login');

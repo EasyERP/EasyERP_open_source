@@ -117,12 +117,12 @@
             // 'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .hireEmployee'                             : 'isEmployee',
             'click .refuseEmployee'                           : 'refuseEmployee',
-            'click td.editable'                               : 'editJob',
-            'click #jobPosition,#department,#manager,#jobType': 'showNotification',
-            'click .fa-trash'                                 : 'deleteRow',
+            //'click td.editable'                               : 'editJob',
+            //'click #jobPosition,#department,#manager,#jobType': 'showNotification',
+            //'click .fa-trash'                                 : 'deleteRow',
             'keydown input.editing'                           : 'keyDown',
             'change .editable '                               : 'setEditable',
-            'keyup .salary'                                   : 'validateNumbers'
+            'keydown .salary'                                 : 'validateNumbers'
         },
 
         keyDown: function (e) {
@@ -217,31 +217,31 @@
                 table.append(newTr);
 
                 $tr = newTr;
-                salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
-                manager = $tr.find('#projectManagerDD').attr('data-id') || null;
+                salary = parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text()), 10) || 0;
+                manager = $tr.find('[data-content="manager"]').attr('data-id') || null;
                 date = helpers.setTimeToDate(new Date());
-                jobPosition = $tr.find('#jobPositionDd').attr('data-id');
-                weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-                payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
-                scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
-                department = $tr.find('#departmentsDd').attr('data-id');
-                jobType = $.trim($tr.find('#jobTypeDd').text());
-                info = $tr.find('#statusInfoDd').val();
+                jobPosition = $tr.find('[data-content="jobPosition"]').attr('data-id');
+                weeklyScheduler = $tr.find('[data-content="weeklyScheduler"]').attr('data-id');
+                payrollStructureType = $tr.find('[data-content="payrollStructureType"]').attr('data-id') || null;
+                scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
+                department = $tr.find('[data-content="department"]').attr('data-id');
+                jobType = $.trim($tr.find('[data-content="jobType"]').text());
+                info = $tr.find('[data-content="status"]').val();
                 event = $tr.attr('data-content');
                 employeeId = this.currentModel.get('_id');
 
             } else {
 
-                salary = parseInt($.trim($thisEl.find('#proposedSalary').val()), 10) || 0;
-                manager = $thisEl.find('#projectManagerDD').attr('data-id');
+                salary = parseInt(helpers.spaceReplacer($.trim($thisEl.find('#proposedSalary').val())), 10) || 0;
+                manager = $thisEl.find('[data-content="manager"]').attr('data-id');
                 date = helpers.setTimeToDate(new Date());
-                jobPosition = $thisEl.find('#jobPositionDd').attr('data-id');
-                weeklyScheduler = $thisEl.find('#weeklySchedulerDd').attr('data-id');
-                payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
-                scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
-                department = $thisEl.find('#departmentsDd').attr('data-id');
-                jobType = $thisEl.find('#jobTypeDd').attr('data-id');
-                info = $thisEl.find('#statusInfoDd').val() || null;
+                jobPosition = $thisEl.find('[data-content="jobPosition"]').attr('data-id');
+                weeklyScheduler = $thisEl.find('[data-content="weeklyScheduler"]').attr('data-id');
+                payrollStructureType = $tr.find('[data-content="payrollStructureType"]').attr('data-id') || null;
+                scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
+                department = $thisEl.find('[data-content="department"]').attr('data-id');
+                jobType = $thisEl.find('[data-content="jobType"]').attr('data-id');
+                info = $thisEl.find('[data-content="status"]').val() || null;
                 event = 'hired';
                 employeeId = this.currentModel.get('_id');
             }
@@ -534,6 +534,8 @@
             var $el;
             var $thisEl = this.$el;
             var $tr;
+            var payrollStructureType;
+            var scheduledPay;
 
             this.setChangedValueToModel();
 
@@ -607,16 +609,19 @@
                 });
             }
 
-            manager = $tr.find('#projectManagerDD').last().attr('data-id') || null;
-            jobPosition = $tr.find('#jobPositionDd').last().attr('data-id') || null;
-            department = $tr.find('#departmentsDd').last().attr('data-id') || null;
-            weeklyScheduler = $tr.find('#weeklySchedulerDd').last().attr('data-id');
+            manager = $tr.find('[data-content="manager"]').last().attr('data-id') || null;
+            jobPosition = $tr.find('[data-content="jobPosition"]').last().attr('data-id') || null;
+            department = $tr.find('[data-content="department"]').last().attr('data-id') || null;
+            weeklyScheduler = $tr.find('[data-content="weeklyScheduler"]').last().attr('data-id');
+            weeklyScheduler = $tr.find('[data-content="weeklyScheduler"]').last().attr('data-id');
+            payrollStructureType = $tr.find('[data-content="payrollStructureTypeDd"]').last().attr('data-id');
+            scheduledPay = $tr.find('[data-content="scheduledPayDd"]').last().attr('data-id');
             event = $tr.last().attr('data-content');
             if (this.hireEmployee) {
                 event = 'hired';
                 this.hireEmployee = false;
             }
-            jobType = $.trim($tr.find('#jobTypeDd').last().text());
+            jobType = $.trim($tr.find('[data-content="jobType"]').last().text());
             salary = self.isSalary ? parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').last().val() || $tr.find('[data-id="salary"]').last().text()), 10) : null;
             date = $.trim($tr.last().find('td').eq(2).text());
             date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
