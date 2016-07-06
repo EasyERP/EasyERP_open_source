@@ -98,7 +98,7 @@ define([], function () {
         IT_SERVICES: 'IT services',
 
         END_CONTRACT_WORKFLOW_ID: '52d2c1369b57890814000005',
-        TRASH_BIN               : "<a class='fa fa - trash'></a>",
+        TRASH_BIN               : "<a class='fa fa-trash'></a>",
 
         DASH_VAC_WEEK_BEFORE    : 2,
         DASH_VAC_WEEK_AFTER     : 8,
@@ -140,6 +140,7 @@ define([], function () {
             TASKS                     : '/Tasks/',
             VACATION                  : '/vacation/',
             WTRACK                    : '/wTrack/',
+            TRANSFER                   : '/employees/transfer/',
             BIRTHDAYS                 : '/employees/birthdays/',
             BONUSTYPE                 : '/bonusType/',
             BONUSTYPE_FORDD           : '/bonusType/getForDD',
@@ -180,6 +181,9 @@ define([], function () {
             WORKFLOWS_FETCH           : '/workflows/fetch',
             PAYMENT_AMOUNT_LEFT       : '/payment/amountLeftCalc',
             SALARY_REPORT             : '/salaryReport/'
+            WEEKLYSCHEDULER            : '/weeklyScheduler/forDd',
+            SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
+            PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd'
         },
 
         MID: {

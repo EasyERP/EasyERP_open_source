@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var objectId = mongoose.Types.ObjectId;
+var moment = require('../public/js/libs/moment/moment');
 
 var Employee = function (event, models) {
     'use strict';
@@ -12,6 +13,7 @@ var Employee = function (event, models) {
     var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
     var birthdaysSchema = mongoose.Schemas.birthday;
+    var TransferSchema = mongoose.Schemas.Transfer;
 
     var _ = require('underscore');
     var fs = require('fs');
@@ -523,30 +525,82 @@ var Employee = function (event, models) {
 
             employee.sequence = sequence;
 
-            Department.findById(employee.department, function (error, dep) {
-                if (employee.transfer && employee.transfer[0]) {
-                    if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
-                        employee.transfer[0].isDeveloper = true;
-                    } else if (employee.transfer && employee.transfer[0]) {
-                        employee.transfer[0].isDeveloper = false;
-                    }
+            employee.save(function (error, result) {
+                if (error) {
+                    return next(error);
                 }
 
-                employee.save(function (error, result) {
-                    if (error) {
-                        return next(error);
-                    }
+                res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
-                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
-
-                    if (result.isEmployee) {
-                        event.emit('recalculate', req, {}, next);
-                    }
-
+                if (result.isEmployee) {
+                    event.emit('recalculate', req, {}, next);
+                }
                     event.emit('recollectVacationDash', {dbName: dbName});
                 });
             });
 
+    this.createTransfer = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
+
+        var transfer = new Model(body);
+
+        transfer.save(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.send(201, {success: 'A new Transfer create success'/* , data: result*/});
+        });
+    };
+
+    this.updateTransfer = function (req, res, next) {
+
+        var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
+
+        async.each(body, function (data, cb) {
+            var id = data._id;
+
+            delete data._id;
+            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'A Transfer update success'});
+        });
+    };
+
+    this.removeTransfer = function (req, res, next) {
+
+        var TransferModel = models.get(req.session.lastDb, 'Transfers', TransferSchema);
+        var body = req.body;
+        var removeIdArray = body.removeTransfer;
+
+        async.each(removeIdArray, function (id, cb) {
+
+            TransferModel.findByIdAndRemove(id, function (err, result) {
+                var transferKey;
+                var employee;
+
+                if (err) {
+                    return cb(err);
+                }
+
+                transferKey = result.transferKey;
+                employee = result.employee;
+
+                TransferModel.remove({employee: employee, transferKey: transferKey}, cb);
+            });
+
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'A Transfers delete success'});
         });
     };
 
@@ -595,41 +649,186 @@ var Employee = function (event, models) {
      }*/
 
     function getById(req, res, next) {
-        var project = {};
+        var projectSalary = {};
         var data = req.query;
         var profileId = req.session.profileId;
         var query;
+        var getTransfer;
+        var getEmployee;
+        var parallelTasks;
 
-        if (!accessEmployeeSalary(profileId)) {
-            project = {'transfer.salary': 0};
-        }
+        getTransfer = function (pCb) {
+            var transfers = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
-        query = models.get(req.session.lastDb, 'Employees', EmployeeSchema)
-            .findById(data.id, project);
+            if (!accessEmployeeSalary(profileId)) {
+                projectSalary = {
+                    department          : 1,
+                    jobPosition         : 1,
+                    weeklyScheduler     : 1,
+                    manager             : 1,
+                    date                : 1,
+                    status              : 1,
+                    // isDeveloper         : 1,
+                    jobType             : 1,
+                    info                : 1,
+                    employee            : 1,
+                    scheduledPay        : 1,
+                    payrollStructureType: 1
+                };
+            } else {
+                projectSalary = {
+                    department          : 1,
+                    jobPosition         : 1,
+                    weeklyScheduler     : 1,
+                    manager             : 1,
+                    date                : 1,
+                    status              : 1,
+                    // isDeveloper         : 1,
+                    jobType             : 1,
+                    info                : 1,
+                    employee            : 1,
+                    scheduledPay        : 1,
+                    payrollStructureType: 1,
+                    salary              : 1
+                };
+            }
 
-        query.populate('coach', 'name _id')
-            .populate('relatedUser', 'login _id')
-            .populate('workflow')
-            .populate('createdBy.user')
-            .populate('editedBy.user')
-            .populate('groups.users')
-            .populate('manager', '_id name')
-            .populate('jobPosition', '_id name fullName')
-            .populate('weeklyScheduler', '_id name')
-            .populate('department', '_id name')
-            .populate('groups.group')
-            .populate('transfer.department', '_id name')
-            .populate('transfer.jobPosition', '_id name')
-            .populate('transfer.manager', '_id name')
-            .populate('transfer.weeklyScheduler', '_id name')
-            .populate('groups.owner', '_id login');
+            transfers
+                .aggregate([{
+                    $match: {employee: objectId(data.id)}
+                }, {
+                    $lookup: {
+                        from        : 'Department',
+                        localField  : 'department',
+                        foreignField: '_id',
+                        as          : 'department'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'JobPosition',
+                        localField  : 'jobPosition',
+                        foreignField: '_id',
+                        as          : 'jobPosition'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'weeklySchedulers',
+                        localField  : 'weeklyScheduler',
+                        foreignField: '_id',
+                        as          : 'weeklyScheduler'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'manager',
+                        foreignField: '_id',
+                        as          : 'manager'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'scheduledPays',
+                        localField  : 'scheduledPay',
+                        foreignField: '_id',
+                        as          : 'scheduledPay'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'payrollStructureTypes',
+                        localField  : 'payrollStructureType',
+                        foreignField: '_id',
+                        as          : 'payrollStructureType'
+                    }
+                }, {
+                    $project: {
+                        department          : {$arrayElemAt: ['$department', 0]},
+                        jobPosition         : {$arrayElemAt: ['$jobPosition', 0]},
+                        weeklyScheduler     : {$arrayElemAt: ['$weeklyScheduler', 0]},
+                        manager             : {$arrayElemAt: ['$manager', 0]},
+                        date                : 1,
+                        status              : 1,
+                        // isDeveloper         : 1,
+                        jobType             : 1,
+                        salary              : 1,
+                        info                : 1,
+                        employee            : 1,
+                        scheduledPay        : {$arrayElemAt: ['$scheduledPay', 0]},
+                        payrollStructureType: {$arrayElemAt: ['$payrollStructureType', 0]}
+                    }
+                }, {
+                    $project: {
+                        'department._id'           : '$department._id',
+                        'department.name'          : '$department.name',
+                        'jobPosition._id'          : '$jobPosition._id',
+                        'jobPosition.name'         : '$jobPosition.name',
+                        'weeklyScheduler._id'      : '$weeklyScheduler._id',
+                        'weeklyScheduler.name'     : '$weeklyScheduler.name',
+                        'manager._id'              : '$manager._id',
+                        'manager.name'             : '$manager.name',
+                        date                       : 1,
+                        status                     : 1,
+                        // isDeveloper           : 1,
+                        jobType                    : 1,
+                        salary                     : 1,
+                        info                       : 1,
+                        employee                   : 1,
+                        'scheduledPay._id'         : '$scheduledPay._id',
+                        'scheduledPay.name'        : '$scheduledPay.name',
+                        'payrollStructureType._id' : '$payrollStructureType._id',
+                        'payrollStructureType.name': '$payrollStructureType.name'
+                    }
+                }, {
+                    $project: projectSalary
+                }, {
+                    $sort: {date: 1}
+                }], function (err, transfer) {
+                    if (err) {
+                        return pCb(err);
+                    }
 
-        query.exec(function (err, foundEmployee) {
+                    pCb(null, transfer);
+                });
+        };
+
+        getEmployee = function (pCb) {
+            query = models.get(req.session.lastDb, 'Employees', EmployeeSchema)
+                .findById(data.id);
+
+            query.populate('coach', 'name _id')
+                .populate('relatedUser', 'login _id')
+                .populate('workflow')
+                .populate('createdBy.user')
+                .populate('editedBy.user')
+                .populate('groups.users')
+                .populate('manager', '_id name')
+                .populate('jobPosition', '_id name fullName')
+                .populate('weeklyScheduler', '_id name')
+                .populate('payrollStructureTypes', '_id name')
+                .populate('scheduledPay', '_id name')
+                .populate('department', '_id name')
+                .populate('groups.group')
+                .populate('groups.owner', '_id login');
+
+            query.exec(function (err, foundEmployee) {
+                if (err) {
+                    return pCb(err);
+                }
+
+                pCb(null, foundEmployee);
+            });
+        };
+
+        parallelTasks = [getEmployee, getTransfer];
+
+        async.parallel(parallelTasks, function (err, result) {
+            var response = {};
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(foundEmployee);
+            response = result[0].set('transfer', result[1]);
+
+            res.status(200).send(response);
         });
 
     }
@@ -1082,20 +1281,24 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-                if (data.transfer) {
-                    data.transfer = data.transfer.map(function (tr) {
+                /* if (data.transfer) {
+                 data.transfer = data.transfer.map(function (tr) {
 
-                        tr.isDeveloper = adminDeps.indexOf(tr.department.toString()) === -1;
-                        return tr;
-                    });
-                }
+                 if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                 tr.isDeveloper = false;
+                 } else {
+                 tr.isDeveloper = true;
+                 }
+                 return tr;
+                 });
+                 }*/
 
                 Model.findById(_id, query, {new: true}, function (err, emp) {
                     if (err) {
                         return next(err);
                     }
 
-                    /*if (!accessEmployeeSalary(profileId)) {
+                    /* if (!accessEmployeeSalary(profileId)) {
                      data.transfer = data.transfer.map(function (tr, i) {
                      if (i !== 0) {
                      if (emp.transfer[i] && emp.transfer[i].salary) {
@@ -1173,6 +1376,7 @@ var Employee = function (event, models) {
         var _id = req.params.id;
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
+        var TransferModel = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
         Model.findByIdAndRemove(_id, function (err, result) {
             if (err) {
@@ -1187,12 +1391,19 @@ var Employee = function (event, models) {
             event.emit('recollectVacationDash', {dbName: dbName});
 
             res.status(200).send({success: 'Employees removed'});
+
+            TransferModel.remove({employee: objectId(_id)}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+            });
         });
     };
 
     this.bulkRemove = function (req, res, next) {
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
+        var TransferModel = models.get(req.session.lastDb, 'transfers', TransferSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -1208,6 +1419,12 @@ var Employee = function (event, models) {
 
                 event.emit('recalculate', req, null, next);
                 event.emit('recollectVacationDash', {dbName: dbName});
+
+                TransferModel.remove({employee: objectId(id)}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                });
                 cb();
             });
         }, function (err) {

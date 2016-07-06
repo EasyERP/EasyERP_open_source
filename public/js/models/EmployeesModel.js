@@ -75,7 +75,7 @@
 
         validate: function (attrs) {
             var errors = [];
-            Validation.checkGroupsNameField(errors, true, attrs.dateBirth, 'Date of Birth');
+            Validation.validDate(errors, true, attrs.dateBirth, 'Date of Birth');
             Validation.checkNameField(errors, true, attrs.name.first, 'First name');
             Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
             Validation.checkPhoneField(errors, false, attrs.workPhones.phone, 'Phone');

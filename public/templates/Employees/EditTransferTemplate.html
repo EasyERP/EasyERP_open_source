@@ -1,0 +1,66 @@
+<tr class="transfer" id="<%=transfer._id%>" data-id="" data-content="<%=transfer.status%>">
+    <td class="remove">
+        <%if(transfer.status!=='hired' && transfer.status!=='fired'){%>
+        <a class="fa fa-trash"></a>
+        <%}%>
+    </td>
+    <td data-content="status"><%= transfer.status %></td>
+    <td class="date editable" data-content="date"><%= transfer.date %></td>
+    <td>
+        <a id="jobPositionDd" class="current-selected" data-content="jobPosition"
+           data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>"
+           href="javascript:;">
+            <%=transfer.jobPosition ? transfer.jobPosition.name : 'Select'%>
+        </a>
+    </td>
+    <td>
+        <a id="departmentsDd" class="current-selected" data-content="department"
+           data-id="<%=transfer.department ? transfer.department._id : null%>"
+           href="javascript:;">
+            <%=transfer.department ? transfer.department.name :
+            "Select" %>
+        </a>
+    </td>
+    <td>
+        <a id="projectManagerDD" class="current-selected" data-content="manager"
+           data-id="<%= transfer.manager ?  transfer.manager._id : null%>"
+           href="javascript:;">
+            <%=transfer.manager ? transfer.manager.name.first + ' ' +
+            transfer.manager.name.last : "Select"%>
+        </a>
+    </td>
+    <td>
+        <a id="jobTypeDd" class="current-selected" data-content="jobType"
+           data-id="<%= transfer.jobType ? transfer.jobType :''%>"
+           href="javascript:;">
+            <%=transfer.jobType ? transfer.jobType : "Select"%>
+        </a>
+    </td>
+    <td>
+        <a id="weeklySchedulerDd" class="current-selected" data-content="weeklyScheduler"
+           data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>"
+           href="javascript:;">
+            <%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : "Select"%>
+        </a>
+    </td>
+    <!--<td>-->
+        <!--<a id="payrollStructureTypeDd" class="current-selected" data-content="payrollStructureType"-->
+           <!--data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>"-->
+           <!--href="javascript:;">-->
+            <!--<%=transfer.payrollStructureType ? transfer.payrollStructureType.name : "Select"%>-->
+        <!--</a>-->
+    <!--</td>-->
+    <!--<td>-->
+        <!--<a id="scheduledPayDd" class="current-selected" data-content="scheduledPay"-->
+           <!--data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>"-->
+           <!--href="javascript:;">-->
+            <!--<%=transfer.scheduledPay ? transfer.scheduledPay.name : "Select"%>-->
+        <!--</a>-->
+    <!--</td>-->
+    <%if (transfer.salary || transfer.salary === 0) {%>
+    <td class="dollar editable" data-content="salary" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
+    <% } %>
+    <td class="statusInfo editable" data-content="info"
+        data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>
+    </td>
+</tr>

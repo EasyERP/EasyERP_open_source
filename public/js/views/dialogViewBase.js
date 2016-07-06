@@ -14,7 +14,7 @@
             click                                              : 'hideNewSelect',
             'click .dialog-tabs a'                             : 'changeTab',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+            'click .newSelectList li:not(.miniStylePagination, .endContract)': 'chooseOption'
         },
 
         showEdit: function () {

@@ -72,9 +72,15 @@
             Validation.checkNameField(errors, true, attrs.name.first, 'First name');
             Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
             Validation.checkEmailField(errors, false, attrs.personalEmail, 'Email');
-            Validation.checkGroupsNameField(errors, true, attrs.dateBirth, 'Date of Birth');
+            Validation.validDate(errors, true, attrs.dateBirth, 'Date of Birth');
             if (attrs.department) {
                 Validation.checkGroupsNameField(errors, true, attrs.department._id || attrs.department, 'Department');
+            }
+            if (attrs.isEmployee) {
+                Validation.checkGroupsNameField(errors, true, attrs.jobType, 'Job type');
+                Validation.checkGroupsNameField(errors, true, attrs.manager, 'Manager');
+                Validation.checkJobPositionField(errors, true, attrs.jobPosition, 'Job position');
+                Validation.checkGroupsNameField(errors, true, attrs.department, 'Department');
             }
             Validation.checkPhoneField(errors, false, attrs.workPhones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs.workPhones.mobile, 'Mobile');
