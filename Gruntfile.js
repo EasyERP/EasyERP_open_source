@@ -3,20 +3,6 @@
  */
 module.exports = function (grunt) {
 
-    var autoprefixer = require('autoprefixer')({
-        browsers: [
-            'Chrome >= 35', 
-            'Firefox >= 31',
-            'Edge >= 12',
-            'Explorer >= 10',
-            'iOS >= 8',
-            'Safari >= 8',
-            'Android 2.3',
-            'Android >= 4',
-            'Opera >= 12'
-        ]
-    });
-    
     // Project configuration.
     grunt.initConfig({
         jsdoc    : {
@@ -38,7 +24,6 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     sourcemap: 'file'
-                    // style: 'expanded'
                 },
                 files: {
                     'public/css/style.css': 'public/scss/style.scss'
@@ -47,12 +32,15 @@ module.exports = function (grunt) {
         },
         postcss: {
             options: {
-                // map: true,
                 processors: [
-                    autoprefixer
+                    require('pixrem')(), // add fallbacks for rem units
+                    require('autoprefixer')({browsers: ['ie >= 10', 'last 4 versions', '> 1%']}) // add vendor prefixes
+                    // require('cssnano')() // minify the result
                 ]
             },
-            src: 'public/css/style.css'
+            dist: {
+                src: 'public/css/style.css'
+            }
         }
     });
 
@@ -63,9 +51,10 @@ module.exports = function (grunt) {
 
     //grunt.registerTask('default', ['jsdoc']);
     grunt.registerTask('default', ['karma']);
-    grunt.registerTask('dist-css', ['sass', 'postcss']);
-    // grunt.registerTask('scss', ['sass']);
+    grunt.registerTask('dist-css', ['sass', 'postcss:dist']);
 };
+
+// Old version
 
 // /**
 //  * http://gruntjs.com/configuring-tasks
