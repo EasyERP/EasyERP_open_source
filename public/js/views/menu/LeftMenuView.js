@@ -69,6 +69,7 @@ define([
             var $rootElement = this.$el.find('li.root').eq(rootIndex);
 
             this.$el.find('li.opened').removeClass('opened');
+            this.$el.find('ul.opened').removeClass('opened');
             this.$el.find('li.active').removeClass('active');
             this.$el.find('li.selected').removeClass('selected');
 
