@@ -212,7 +212,7 @@ define([
             var transfer;
             var model;
             // var payrollStructureType;
-            // var scheduledPay;
+            var scheduledPay;
 
             lastTr.find('a').removeClass('current-selected');
             lastTr.find('[data-content="date"]').removeClass('editable');
@@ -248,7 +248,7 @@ define([
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
             // payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
-            // scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
+            scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
             department = $tr.find('#departmentsDd').attr('data-id');
             jobType = $.trim($tr.find('#jobTypeDd').text());
             info = $tr.find('#statusInfoDd').val();
@@ -267,7 +267,7 @@ define([
                 info           : info,
                 weeklyScheduler: weeklyScheduler,
                 // payrollStructureType: null,     // toDo payrollStructureType
-                // scheduledPay        : null      // toDo scheduledPay
+                scheduledPay        : scheduledPay
             };
             model = new TransferModel(transfer);
             newTr.attr('id', model.cid);
@@ -444,7 +444,7 @@ define([
 
             e.stopPropagation();
 
-            if (id === 'jobPositionDd' || id === 'departmentsDd' || id === 'projectManagerDD' || id === 'jobTypeDd' || id === 'hireFireDd') {
+            if (id === 'jobPositionDd' || id === 'departmentsDd' || id === 'projectManagerDD' || id === 'jobTypeDd' || id === 'hireFireDd' || id == 'scheduledPayDd') {
 
                 this.setEditable($element);
 
@@ -929,7 +929,7 @@ define([
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             // populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
-            // populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

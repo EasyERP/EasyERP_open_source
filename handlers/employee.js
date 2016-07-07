@@ -923,9 +923,9 @@ var Employee = function (event, models) {
         var getTransfer;
         var getEmployee;
         var parallelTasks;
+        var transfers = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
         getTransfer = function (pCb) {
-            var transfers = models.get(req.session.lastDb, 'transfers', TransferSchema);
 
             if (!accessEmployeeSalary(profileId)) {
                 projectSalary = {

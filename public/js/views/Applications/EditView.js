@@ -2,7 +2,8 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Applications/EditTemplate.html',
+    'text!' +
+    '',
     'views/selectView/selectView',
     'views/Notes/NoteView',
     'views/dialogViewBase',
@@ -196,7 +197,7 @@
             var transfer;
             var model;
             //var payrollStructureType;
-            //var scheduledPay;
+            var scheduledPay;
 
             if (this.currentModel.get('transfer').length) {
 
@@ -223,7 +224,7 @@
                 jobPosition = $tr.find('[data-content="jobPosition"]').attr('data-id');
                 weeklyScheduler = $tr.find('[data-content="weeklyScheduler"]').attr('data-id');
                 //payrollStructureType = $tr.find('[data-content="payrollStructureType"]').attr('data-id') || null;
-                //scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
+                scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
                 department = $tr.find('[data-content="department"]').attr('data-id');
                 jobType = $.trim($tr.find('[data-content="jobType"]').text());
                 info = $tr.find('[data-content="status"]').val();
@@ -238,7 +239,7 @@
                 jobPosition = $thisEl.find('#jobPositionDd').attr('data-id');
                 weeklyScheduler = $thisEl.find('#weeklySchedulerDd').attr('data-id');
                 //payrollStructureType = $thisEl.find('#payrollStructureTypeDd').attr('data-id') || null;
-                //scheduledPay = $thisEl.find('#scheduledPayDd').attr('data-id') || null;
+                scheduledPay = $thisEl.find('#scheduledPayDd').attr('data-id') || null;
                 department = $thisEl.find('#departmentsDd').attr('data-id');
                 jobType = $thisEl.find('#jobTypeDd').attr('data-id');
                 info = $thisEl.find('#statusInfoDd').val() || null;
@@ -258,9 +259,9 @@
                 jobType             : jobType,
                 salary              : salary,
                 info                : info,
-                weeklyScheduler     : weeklyScheduler
+                weeklyScheduler     : weeklyScheduler,
                 //payrollStructureType: payrollStructureType,
-                //scheduledPay        : scheduledPay
+                scheduledPay        : scheduledPay
             };
             model = new TransferModel(transfer);
             if (this.currentModel.get('transfer').length) {
@@ -535,7 +536,7 @@
             var $thisEl = this.$el;
             var $tr;
             //var payrollStructureType;
-            //var scheduledPay;
+            var scheduledPay;
             var lastTr;
 
             this.setChangedValueToModel();
@@ -616,7 +617,7 @@
             department = lastTr.find('[data-content="department"]').attr('data-id') || lastTr.find('#departmentsDd').last().attr('data-id') || null;
             weeklyScheduler = lastTr.find('[data-content="weeklyScheduler"]').attr('data-id') || lastTr.find('#weeklySchedulerDd').last().attr('data-id') || null;
             //payrollStructureType = lastTr.find('[data-content="payrollStructureTypeDd"]').attr('data-id') || lastTr.find('#payrollStructureTypeDd').last().attr('data-id') || null;
-            //scheduledPay = lastTr.find('[data-content="scheduledPayDd"]').attr('data-id') || lastTr.find('#scheduledPayDd').last().attr('data-id') || null;
+            scheduledPay = lastTr.find('[data-content="scheduledPayDd"]').attr('data-id') || lastTr.find('#scheduledPayDd').last().attr('data-id') || null;
             event = lastTr.attr('data-content');
             if (this.hireEmployee) {
                 event = 'hired';
@@ -701,7 +702,7 @@
                 coach               : coach,
                 weeklyScheduler     : weeklyScheduler,
                 //payrollStructureType: payrollStructureType,
-                //scheduledPay        : scheduledPay,
+                scheduledPay        : scheduledPay,
                 identNo             : $.trim($('#identNo').val()),
                 passportNo          : $.trim($thisEl.find('#passportNo').val()),
                 otherId             : $.trim($thisEl.find('#otherId').val()),
@@ -983,7 +984,7 @@
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             //populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
-            //populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

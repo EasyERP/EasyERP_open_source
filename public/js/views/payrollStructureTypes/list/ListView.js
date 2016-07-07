@@ -8,7 +8,7 @@ define([
     'views/payrollStructureTypes/list/ListItemView',
     'text!templates/payrollStructureTypes/list/ListHeader.html',
     'collections/payrollStructure/filterCollection',
-    'models/payrollStructureTypesModel'
+    'models/PayrollStructureTypesModel'
 ], function ($,
              _,
              Backbone,

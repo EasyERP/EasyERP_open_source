@@ -50,13 +50,13 @@
             <!--<%=transfer.payrollStructureType ? transfer.payrollStructureType.name : "Select"%>-->
         <!--</a>-->
     <!--</td>-->
-    <!--<td>-->
-        <!--<a id="scheduledPayDd" class="current-selected" data-content="scheduledPay"-->
-           <!--data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>"-->
-           <!--href="javascript:;">-->
-            <!--<%=transfer.scheduledPay ? transfer.scheduledPay.name : "Select"%>-->
-        <!--</a>-->
-    <!--</td>-->
+    <td>
+        <a id="scheduledPayDd" class="current-selected" data-content="scheduledPay"
+           data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>"
+           href="javascript:;">
+            <%=transfer.scheduledPay ? transfer.scheduledPay.name : "Select"%>
+        </a>
+    </td>
     <%if (transfer.salary || transfer.salary === 0) {%>
     <td class="dollar editable" data-content="salary" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
     <% } %>

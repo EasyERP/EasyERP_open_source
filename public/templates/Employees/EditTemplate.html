@@ -470,10 +470,10 @@
                                     <!--data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">-->
                                     <!--<span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>-->
                                 <!--</td>-->
-                                <!--<td data-content="scheduledPay"-->
-                                    <!--data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">-->
-                                    <!--<span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>-->
-                                <!--</td>-->
+                                <td data-content="scheduledPay"
+                                    data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
+                                    <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
+                                </td>
                                 <%if (transfer.salary || transfer.salary === 0) {%>
                                 <td class="dollar" data-content="salary" data-id="salary">
                                     <%=currencySplitter(transfer.salary.toString())%>

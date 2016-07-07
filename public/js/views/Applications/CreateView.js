@@ -146,9 +146,9 @@ define([
 
             //var payrollStructureTypeDd = $thisEl.find('#payrollStructureTypeDd');
             //var payrollStructureType = payrollStructureTypeDd.attr('data-id') || null;
-            //
-            //var scheduledPayDd = $thisEl.find('#scheduledPayDd');
-            //var scheduledPay = scheduledPayDd.attr('data-id') || null;
+
+            var scheduledPayDd = $thisEl.find('#scheduledPayDd');
+            var scheduledPay = scheduledPayDd.attr('data-id') || null;
 
             var projectManagerDD = $thisEl.find('#projectManagerDD');
             var manager = projectManagerDD.attr('data-id') || null;
@@ -237,7 +237,7 @@ define([
                 weeklyScheduler     : weeklyScheduler,
                 notes          : notes,
                 //payrollStructureType: payrollStructureType,
-                //scheduledPay        : scheduledPay,
+                scheduledPay        : scheduledPay,
                 manager             : manager,
                 identNo             : identNo,
                 passportNo          : passportNo,
@@ -333,7 +333,7 @@ define([
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);
             //populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
-            //populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
             $thisEl.find('#nextAction').datepicker({

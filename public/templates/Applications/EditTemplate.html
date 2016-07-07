@@ -361,16 +361,16 @@
                                         <!--</a>-->
                                     <!--</dd>-->
 
-                                    <!--<dt>-->
-                                        <!--<label for="scheduledPayDd">Scheduled Pay</label>-->
-                                    <!--</dt>-->
-                                    <!--<dd>-->
-                                        <!--<a id="scheduledPayDd" class="current-selected"-->
-                                           <!--data-id="<%=model.scheduledPay ? model.scheduledPay._id : ''%>"-->
-                                           <!--href="javascript:;">-->
-                                            <!--<%=model.scheduledPay ? model.scheduledPay.name : 'Select'%>-->
-                                        <!--</a>-->
-                                    <!--</dd>-->
+                                    <dt>
+                                        <label for="scheduledPayDd">Scheduled Pay</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="scheduledPayDd" class="current-selected"
+                                           data-id="<%=model.scheduledPay ? model.scheduledPay._id : ''%>"
+                                           href="javascript:;">
+                                            <%=model.scheduledPay ? model.scheduledPay.name : 'Select'%>
+                                        </a>
+                                    </dd>
 
                                     <dt>
                                         <label for="workEmail">Work Email</label>
@@ -616,7 +616,7 @@
                                 <th>Job Type</th>
                                 <th>Schedule</th>
                                 <!--<th>Contract</th>-->
-                                <!--<th>Scheduled Pay</th>-->
+                                <th>Scheduled Pay</th>
                                 <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
                                 <th>Salary</th>
                                 <% } %>
@@ -665,10 +665,10 @@
                                 <!--data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">-->
                                 <!--<span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>-->
                                 <!--</td>-->
-                                <!--<td data-content="scheduledPay"-->
-                                <!--data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">-->
-                                <!--<span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>-->
-                                <!--</td>-->
+                                <td data-content="scheduledPay"
+                                data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
+                                <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
+                                </td>
                                 <%if (transfer.salary || transfer.salary === 0) {%>
                                 <td class="dollar" data-content="salary" data-id="salary">
                                     <%=currencySplitter(transfer.salary.toString())%>
