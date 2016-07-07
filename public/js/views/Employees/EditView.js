@@ -324,7 +324,6 @@ define([
             $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '" ' + 'readonly' + '>');
 
             if (($tr.prev()).length) {
-
                 minDate = new Date($tr.prev().find('td.date').text());
             }
 
