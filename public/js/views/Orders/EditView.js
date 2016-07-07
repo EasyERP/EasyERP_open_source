@@ -5,7 +5,7 @@ define([
     'views/dialogViewBase',
     'text!templates/Orders/EditTemplate.html',
     'views/Assignees/AssigneesView',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'common',
     'custom',
     'dataService',

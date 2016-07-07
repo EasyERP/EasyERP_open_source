@@ -7,7 +7,7 @@ define([
     'Underscore',
     'text!templates/Product/ProductItemsList.html',
     'text!templates/Product/ProductInputContent.html',
-    'collections/Product/products',
+    'collections/Products/products',
     'populate',
     'helpers'
 ], function (Backbone, $, _, productItemTemplate, ProductInputContent, productCollection, populate, helpers) {

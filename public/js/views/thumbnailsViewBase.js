@@ -90,7 +90,9 @@
             this.asyncLoadImgs(newModels);
 
             if (this.contentType === 'Products') {
-                this.$el.find('.product').draggable({});
+                this.$el.find('.product').draggable({
+                    revert: true
+                });
             }
         },
 

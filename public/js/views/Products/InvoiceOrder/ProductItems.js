@@ -10,7 +10,7 @@ define([
     'text!templates/Product/InvoiceOrder/ProductItemsEditList.html',
     'text!templates/Product/InvoiceOrder/ItemsEditList.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
-    'collections/Product/products',
+    'collections/Products/products',
     'views/Projects/projectInfo/wTracks/generateWTrack',
     'populate',
     'helpers',

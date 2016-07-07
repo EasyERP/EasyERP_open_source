@@ -6,7 +6,7 @@ define([
     'text!templates/Invoices/InvoiceProductInputContent.html',
     'text!templates/Proforma/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
-    'collections/Product/products',
+    'collections/Products/products',
     'populate',
     'helpers/keyValidator',
     'helpers',

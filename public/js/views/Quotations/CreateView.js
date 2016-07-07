@@ -6,7 +6,7 @@ define([
     'collections/Persons/PersonsCollection',
     'collections/Departments/DepartmentsCollection',
     'views/dialogViewBase',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'models/QuotationModel',
     'common',
     'populate',

@@ -6,7 +6,7 @@ define([
     'views/dialogViewBase',
     'views/Projects/projectInfo/proformas/proformaView',
     'views/Assignees/AssigneesView',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
     'collections/Quotations/filterCollection',
     'collections/Proforma/filterCollection',

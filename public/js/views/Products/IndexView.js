@@ -26,7 +26,6 @@ define([
         },
 
         initialize: function (options) {
-            var self = this;
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.collection.bind('reset', _.bind(this.render, this));
@@ -68,7 +67,6 @@ define([
         },
 
         selectCategory: function (e) {
-            var self = this;
             var $targetEl = $(e.target);
             var $thisEl = this.$el;
             var $groupList = $thisEl.find('.groupList');
@@ -102,7 +100,6 @@ define([
         },
 
         editItem: function (e) {
-            var self = this;
             var model = new CurrentModel({validate: false});
             var id = $(e.target).closest('li').data('id');
 
@@ -119,6 +116,7 @@ define([
                     });
                 }
             });
+
             return false;
         },
 

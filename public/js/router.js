@@ -63,7 +63,7 @@ define([
         view       : null,
 
         routes: {
-            home                                                                                           : 'login',
+            home                                                                                            : 'login',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
@@ -107,12 +107,13 @@ define([
                             App.filtersObject = {};
                         }
                         App.filtersObject.savedFilters = response.savedFilters;
-                    } /*else {
-                        App.render({
-                            type   : 'error',
-                            message: 'can\'t fetch currentUser'
-                        });
-                    }*/
+                    }
+                    /*else {
+                     App.render({
+                     type   : 'error',
+                     message: 'can\'t fetch currentUser'
+                     });
+                     }*/
                 });
             }
         },
@@ -612,9 +613,9 @@ define([
                 var contentType = 'Products';
 
                 if (context.mainView === null) {
-                    context.main('products');
+                    context.main(contentType);
                 } else {
-                    context.mainView.updateMenu('products');
+                    context.mainView.updateMenu(contentType);
                 }
 
                 if (countPerPage) {
@@ -658,7 +659,12 @@ define([
 
                         collection.unbind('reset');
 
-                        contentView = new ContentView({collection: collection, startTime: startTime, countPerPage: countPerPage, filter: filter});
+                        contentView = new ContentView({
+                            collection  : collection,
+                            startTime   : startTime,
+                            countPerPage: countPerPage,
+                            filter      : filter
+                        });
                         topBarView = new TopBarView({actionType: 'Content'});
 
                         topBarView.bind('createEvent', contentView.createItem, contentView);

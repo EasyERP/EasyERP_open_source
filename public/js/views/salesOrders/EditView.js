@@ -5,7 +5,7 @@ define([
     'text!templates/salesOrders/EditTemplate.html',
     'text!templates/salesOrders/ViewTemplate.html',
     'views/dialogViewBase',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/invoices/invoiceView',
     'collections/salesInvoices/filterCollection',
     'common',
