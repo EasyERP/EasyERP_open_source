@@ -923,6 +923,122 @@ define([
                     });
             });
         },
+
+        renderSalaryByDepartmentChart: function () {
+            var padding = 15;
+            var salary = [];
+            var offset = 4;
+            var globalSalary;
+            var dataLength;
+            var $wrapper;
+            var margin;
+            var xScale;
+            var yScale;
+            var height;
+            var xAxis;
+            var yAxis;
+            var width;
+            var chart;
+            var rect;
+            var max;
+            var j;
+            var i;
+            common.getSalaryByDepartment({
+                month: this.month,
+                year : this.year
+            }, function (data) {
+
+                data = data.data;
+
+                for (i = data.length; i--;) {
+                    salary[i] = {
+                        department: data[i]._id[0],
+                        salary    : data[i].salary
+                    };
+                }
+
+                max = Math.ceil(d3.max(salary, function (d) {
+                            return d.salary;
+                        }) / 1000) * 1000;
+
+                $wrapper = $('#wrapper');
+                margin = {top: 20, right: 160, bottom: 30, left: 10};
+                width = ($wrapper.width() - margin.right) / 2;
+                height = salary.length * 30;
+                rect = height / (salary.length);
+
+                xScale = d3.scale.linear()
+                    .domain([0, max])
+                    .range([0, width]);
+
+                yScale = d3.scale.linear()
+                    .domain([0, salary.length])
+                    .range([0, height]);
+
+                xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom');
+
+                yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient('left')
+                    .tickSize(0)
+                    .tickPadding(offset)
+                    .tickFormat(function (d, i) {
+                        return salary[i].department;
+                    })
+                    .tickValues(d3.range(salary.length));
+
+                chart = d3.select('.salaryByDepartmentChart')
+                    .attr({
+                        'width' : width + margin.left + margin.right,
+                        'height': height + margin.top + margin.bottom,
+                        'style' : 'padding: 150px'
+                    })
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                chart.selectAll('rect')
+                    .data(salary)
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        x     : function () {
+                            return 0;
+                        },
+                        y     : function (d, i) {
+                            return yScale(i);
+                        },
+                        width : function (d) {
+                            return xScale(d.salary);
+                        },
+                        height: rect - 2 * offset,
+                        fill  : '#5CD1C8'
+                    });
+
+                chart.append('g')
+                    .attr({
+                        'class'    : 'x axis',
+                        'transform': 'translate(0,' + height + ')'
+                    })
+                    .call(xAxis);
+
+                chart.append('g')
+                    .attr({
+                        'class'    : 'y axis',
+                        'transform': 'translate(' + (-offset) + ',' + (padding - offset) + ')'
+                    })
+                    .call(yAxis);
+
+                chart.selectAll('.x .tick line')
+                    .attr({
+                        'y2'   : function (d) {
+                            return -height
+                        },
+                        'style': 'stroke: #f2f2f2'
+                    });
+            })
+        },
         
         render: function () {
             var self = this;
@@ -989,6 +1105,7 @@ define([
                     self.renderHoursDashbord();
                     self.renderVocationDashbord();
                     self.renderSalaryChart();
+                    self.renderSalaryByDepartmentChart();
                     $(this).val($.datepicker.formatDate('MM yy', new Date(self.year, self.month, 1)));
                 }
             }).focus(function () {
@@ -1008,6 +1125,7 @@ define([
             self.renderDepartmentsTreeRadial();
             self.renderTreemap();
             self.renderSalaryChart();
+            self.renderSalaryByDepartmentChart();
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;
