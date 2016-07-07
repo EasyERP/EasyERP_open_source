@@ -216,6 +216,10 @@ define([
             var payrollStructureType;
             var scheduledPay;
 
+            if (e) {
+                e.stopPropagation();
+            }
+
             lastTr.find('a').removeClass('current-selected');
             lastTr.find('[data-content="date"]').removeClass('editable');
             lastTr.find('[data-content="salary"]').removeClass('editable');

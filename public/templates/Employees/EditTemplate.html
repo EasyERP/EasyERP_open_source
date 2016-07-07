@@ -110,7 +110,7 @@
                                     </dt>
                                     <dd><input type="text"
                                                id="personalEmail"
-                                               value="<%=model.personalEmail%>" required
+                                               value="<%=model.personalEmail%>"
                                                maxlength="48"/>
                                     </dd>
                                     <dt>
@@ -198,7 +198,7 @@
                                         <label for="workEmail">Work Email</label>
                                     </dt>
                                     <dd>
-                                        <input type="text" id="workEmail" value="<%=model.workEmail%>" required
+                                        <input type="text" id="workEmail" value="<%=model.workEmail%>"
                                                maxlength="48"/>
                                     </dd>
                                     <dt>
@@ -209,7 +209,7 @@
                                                name="phone"
                                                id="phone"
                                                value="<%=model.workPhones.phone%>"
-                                               required maxlength="32"/>
+                                               maxlength="32"/>
                                     </dd>
                                 </dl>
                             </div>
@@ -255,7 +255,7 @@
                                                name="identNo"
                                                id="identNo"
                                                value="<%=model.identNo%>"
-                                               required maxlength="32"/>
+                                               maxlength="32"/>
                                     </dd>
                                     <dt>
                                         <label for="passportNo">Passport №</label>
@@ -264,7 +264,6 @@
                                                name="passportNo"
                                                id="passportNo"
                                                value="<%=model.passportNo%>"
-                                               required
                                                maxlength="32"/>
                                     </dd>
                                 </dl>
@@ -284,7 +283,6 @@
                                                name="otherId"
                                                id="otherId"
                                                value="<%=model.otherId%>"
-                                               required
                                                maxlength="32"/>
                                     </dd>
                                 </dl>
@@ -491,7 +489,7 @@
                         </table>
                         <div class="ui-dialog-buttonset">
                             <% if (model.transfer.length && model.transfer[0].hasOwnProperty('salary')) {%>
-                            <button id="update" class="btn"><span>Add</span></button>
+                            <a href="javascript:;" id="update" class="btn"><span>Add</span></a>
                             <%}%>
                         </div>
                     </div>
