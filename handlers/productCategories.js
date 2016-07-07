@@ -78,7 +78,7 @@ var Categories = function (models, event) {
                     $elemMatch: {$eq: id}
                 }
             }, {_id: 1}, function (err, result) {
-                var ids;
+                var ids = [];
 
                 if (err) {
                     return next(err);
@@ -88,7 +88,9 @@ var Categories = function (models, event) {
                     ids = _.pluck(result, '_id');
                 }
 
-                res.status(200).send(ids || []);
+                ids.push(id);
+
+                res.status(200).send(ids);
             });
     };
 

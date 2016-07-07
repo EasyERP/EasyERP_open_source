@@ -10,7 +10,7 @@ define([
     'views/Products/thumbnails/ThumbnailsView',
     'helpers/eventsBinder',
     'dataService'
-], function (Backbone, $, _, ContentTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder) {
+], function (Backbone, $, _, ContentTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService) {
     var ProductsView = Backbone.View.extend({
         el                : '#content-holder',
         thumbnailsView    : null,
@@ -72,20 +72,30 @@ define([
             var $groupList = $thisEl.find('.groupList');
             var $currentLi;
             var id;
+            var categoryUrl;
+            var self = this;
 
-            this.thumbnailsView.$el.find('.thumbnailwithavatar').remove();
             $groupList.find('.selected').removeClass('selected');
             $targetEl.closest('li').addClass('selected');
 
             $currentLi = $targetEl.closest('li');
             id = $currentLi.attr('data-id');
 
-            this.productCollection.getPage(1, {
-                categoryId : id,
-                contentType: 'Products',
-                viewType   : 'thumbnails',
-                filter     : this.filter
-            });
+            categoryUrl = '/category/posterity/' + id;
+            dataService.getData(categoryUrl, {}, function (ids) {
+                App.filtersObject = {
+                    filter: {
+                        productCategory: {
+                            key  : 'accounting.category._id',
+                            value: ids,
+                            type : this.filterType || null
+                        }
+                    }
+                };
+
+                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
+
+            }, this);
         },
 
         createItem: function () {
@@ -199,6 +209,7 @@ define([
                         }
                     };
                     var changed;
+                    var categoryUrl;
 
                     currentModel.set({
                         accounting: update
@@ -210,15 +221,22 @@ define([
                         patch  : true,
                         wait   : true,
                         success: function () {
-                            self.thumbnailsView.$el.find('.thumbnailwithavatar').remove();
+                            categoryUrl = '/category/posterity/' + categoryId;
+                            dataService.getData(categoryUrl, {}, function (ids) {
+                                App.filtersObject = {
+                                    filter: {
+                                        productCategory: {
+                                            key  : 'accounting.category._id',
+                                            value: ids,
+                                            type : this.filterType || null
+                                        }
+                                    }
+                                };
 
-                            self.productCollection.getPage(1, {
-                                categoryId : categoryId,
-                                contentType: 'Products',
-                                viewType   : 'thumbnails',
-                                filter     : this.filter
-                            });
-                        }
+                                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
+
+                            }, this);
+                        },
                     });
 
                     $(this).addClass('selected');

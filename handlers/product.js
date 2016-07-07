@@ -123,7 +123,7 @@ var Products = function (models) {
             accessRoll(req, Product, cb);
         };
 
-        posteritySearch = function (productsIds, waterfallCallback) {
+        /*posteritySearch = function (productsIds, waterfallCallback) {
             var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
             var searchObj;
 
@@ -153,13 +153,13 @@ var Products = function (models) {
 
                     waterfallCallback(null, productsIds, ids);
                 });
-        };
+        };*/
 
-        contentSearcher = function (productsIds, posterityIds, waterfallCallback) {
+        contentSearcher = function (productsIds, waterfallCallback) {
 
-            if (posterityIds.length) {
+            /*if (posterityIds.length) {
                 optionsObject.$and.push({'accounting.category._id': {$in: posterityIds}});
-            }
+            }*/
 
             optionsObject.$and.push({_id: {$in: productsIds}});
 
@@ -204,7 +204,7 @@ var Products = function (models) {
 
         };
 
-        waterfallTasks = [accessRollSearcher, posteritySearch, contentSearcher];
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, products) {
             if (err) {
