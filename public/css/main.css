@@ -2083,6 +2083,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .colorCardWrap {
   width: 280px;
   padding: 0 10px;
+  margin-bottom: -30px;
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #d6dadc;
@@ -2135,6 +2136,9 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .inputBlock {
   width: 100%;
+}
+.inputBlock > label {
+  line-height: 25px;
 }
 .btn {
   border: 1px solid #7f7f80;
