@@ -813,13 +813,17 @@ var Module = function (models) {
         var endDate = moment(date).endOf('month');
         var employeesIds = [];
         var employeeQueryForEmployeeByDep;
-        var startDateKey = date.year() * 100 + date.isoWeek();
-        var endDateKey = endDate.year() * 100 + endDate.isoWeek();
+        var startDateKey = date.isoWeekYear() * 100 + date.isoWeek();
+        var endDateKey = endDate.isoWeekYear() * 100 + endDate.isoWeek();
         var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
             hour  : 15,
             minute: 1,
             second: 0
         }));
+
+        if (endDateKey < startDateKey){
+            endDateKey = (endDate.year() + 1) * 100 + endDate.isoWeek();
+        }
 
         date = new Date(date);
         endDate = new Date(endDate);
