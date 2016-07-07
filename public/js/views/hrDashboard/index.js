@@ -817,21 +817,21 @@ define([
 
                     if (data[i] >= 2250) {
                         globalSalary['>=$2250'].push(data[i]);
-                    } else if (data[i] < 2250 && data[i] > 2000) {
+                    } else if (data[i] < 2250 && data[i] >= 2000) {
                         globalSalary['$2250-2000'].push(data[i]);
-                    } else if (data[i] < 2000 && data[i] > 1750) {
+                    } else if (data[i] < 2000 && data[i] >= 1750) {
                         globalSalary['$2000-1750'].push(data[i]);
-                    } else if (data[i] < 1750 && data[i] > 1500) {
+                    } else if (data[i] < 1750 && data[i] >= 1500) {
                         globalSalary['$1750-1500'].push(data[i]);
-                    } else if (data[i] < 1500 && data[i] > 1250) {
+                    } else if (data[i] < 1500 && data[i] >= 1250) {
                         globalSalary['$1250-1500'].push(data[i]);
-                    } else if (data[i] < 1250 && data[i] > 1000) {
+                    } else if (data[i] < 1250 && data[i] >= 1000) {
                         globalSalary['$1000-1250'].push(data[i]);
-                    } else if (data[i] < 1000 && data[i] > 750) {
+                    } else if (data[i] < 1000 && data[i] >= 750) {
                         globalSalary['$750-1000'].push(data[i]);
-                    } else if (data[i] < 750 && data[i] > 500) {
+                    } else if (data[i] < 750 && data[i] >= 500) {
                         globalSalary['$500-750'].push(data[i]);
-                    } else if (data[i] < 500 && data[i] > 250) {
+                    } else if (data[i] < 500 && data[i] >= 250) {
                         globalSalary['$250-500'].push(data[i]);
                     } else {
                         globalSalary['<$250'].push(data[i]);
