@@ -31,7 +31,7 @@ mainDb.on('error', function (err) {
 });
 mainDb.once('open', function callback() {
     var mainDBSchema;
-    var port = parseInt(process.env.PORT, 10) || 8089;
+    var port = parseInt(process.env.PORT, 10) || 8090;
     var instance = parseInt(process.env.NODE_APP_INSTANCE, 10) || 0;
     var main;
 
