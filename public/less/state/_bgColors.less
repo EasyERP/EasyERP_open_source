@@ -1,0 +1,55 @@
+.bg {
+  &Red {
+    background-color: #eb5a46 !important;
+  }
+  &Pink {
+    background-color: #ff80ce !important;
+  }
+  &Orange {
+    background-color: #ffab4a !important;
+  }
+  &Yellow {
+    background-color: #f2d600 !important;
+  }
+  &GreenDark {
+    background-color: #61bd4f !important;
+  }
+  &GreenLight {
+    background-color: #51e898 !important;
+  }
+  &BlueLight {
+    background-color: #00c2e0 !important;
+  }
+  &BlueDark {
+    background-color: #0079bf !important;
+  }
+  &Purple {
+    background-color: #c377e0 !important;
+  }
+  &Black {
+    background-color: #4d4d4d !important;
+  }
+  &Grey {
+    background-color: #b6bbbf !important;
+  }
+
+  &Hover {
+    .bg {
+      &Red,
+      &Pink,
+      &Orange,
+      &Yellow,
+      &GreenDark,
+      &GreenLight,
+      &BlueLight,
+      &BlueDark,
+      &Purple,
+      &Black,
+      &Grey {
+        &:hover {
+          opacity: 0.75 !important;
+        }
+      }
+    }
+  }
+}
