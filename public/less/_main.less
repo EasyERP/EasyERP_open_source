@@ -14,8 +14,10 @@
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
-@body-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-@lucida-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+//@body-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+//@lucida-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+@body-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+@lucida-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 @icon-font: Icons;
 @title-font: Title;
 
@@ -793,12 +795,12 @@ input::-ms-clear {
 .mainmenu(@defaultColor: #333,@activeColor: @bg-main-menu-selected, @height: 30px, @border-color: @border-color-main) {
   display: block;
   float: none;
-  .position(relative);
+  .position(fixed);
   width: 100%;
   background: @bg-main;
   height: @height;
   .noPaddingMargin;
-  border-bottom: @thin-border @border-color;
+  z-index: 1000;
   nav {
     .left;
     background: @bg-main-menu;
@@ -2565,7 +2567,7 @@ input, textarea, select {
 //}
 
 a {
-  color: @submenu-text-color;
+  color: @mainText-color;
   text-decoration: none;
 
   &:hover {
@@ -2897,7 +2899,7 @@ dl {
 }
 
 #wrapper {
-  .fullsize;
+  .clearfix;
   min-width: 100%;
   height: 100vh;
   position: absolute;
@@ -3352,55 +3354,6 @@ button.red, a.red {
   z-index: 1000;
 }
 
-#loginPanel {
-  .position(absolute, auto, 0, 0, auto);
-
-  .dropdown-button {
-    text-indent: 5px;
-    cursor: pointer;
-    #loginSelect {
-      display: none;
-      position: relative;
-      z-index: 999;
-      border: 1px solid @border-color-main;
-      background-color: @bg-main;
-      li {
-        height: 20px;
-        line-height: 20px;
-
-        a {
-          color: @login-text;
-        }
-      }
-    }
-
-    width: 200px;
-    float: left;
-    height: auto;
-    padding: 0;
-
-    img {
-      float: left;
-      margin: 2px 5px 2px 2px;
-      .border-radius;
-    }
-
-    span {
-      display: block;
-      line-height: 30px;
-      color: @login-text;
-      &:hover {
-        color: #fff;
-      }
-    }
-
-    &:hover {
-      background: @bg-main-menu-selected;
-      color: #fff;
-    }
-  }
-}
-
 .ui-widget-overlay {
   background-color: @dialog-overlay-bg;
   opacity: .3;
@@ -3841,7 +3794,7 @@ table#workflows {
   .mainmenu;
 }
 
-#submenu-holder {
+.side_menu {
   .submenu;
 }
 
@@ -3869,17 +3822,16 @@ table#workflows {
   a {
     float: left;
     display: block;
-    //width: 18px;
-    //height: 18px;
+
     overflow: hidden;
     margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
-    color: @creatBtn-color;
-    line-height: 29px; //it was 18px
+    color: @top-font-color;
+    line-height: 40px; //it was 18px
 
     &:hover {
-      color: @creatBtn-color + #333;
+      color: @top-font-color + #333;
     }
   }
   .fa {
@@ -5027,7 +4979,7 @@ textarea#editInput {
     }
 
     td span {
-      height: 20px;
+      height: 21px;
       padding: 0 7px;
       line-height: 20px;
       display: block;
@@ -6383,7 +6335,7 @@ textarea#editInput {
   float: right;
   width: 35%;
   position: relative;
-  margin-top: -27px;
+  margin-top: -35px;
   margin-right: 90px;
 
   .btn {

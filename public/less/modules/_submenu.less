@@ -1,40 +1,283 @@
-.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
+.submenu(@defaultColor: @bg-submenu, @height: 35px) {
   display: block;
-  height: @height;
+  position: fixed;
+  z-index: 100;
   width: auto;
+  height: 100%;
+  background-color: @defaultColor;
+  box-sizing: border-box;
+  padding-top: 101px;
+  left: 0;
+  top: 0;
 
   nav {
-     ul {
-       .clearfix;
-        li {
+    width: 200px;
+    ul {
+      .clearfix;
+      li {
+        position: relative;
         list-style: none;
-        color: @bg;
         line-height: @height;
-        float: left;
+        height: @height;
         display: block;
-        width: 120px;
-        text-align: center;
+        width: 100%;
         background: @defaultColor;
-        a {
-          color: @bg;
-          font-size: 13px;
-          line-height: @height;
-          display: block;
-          .fullsize;
-          &:hover {
-            text-decoration: underline;
-          }
-        }
+        text-align: center;
+      }
+    }
 
-        &.selected {
-          position: relative;
-          height: @height;
-          line-height: @height;
-          a {
-            text-decoration: underline;
+    .root {
+      text-align: left;
+      border-bottom: 1px solid @submenu-border;
+
+       ul {
+        display: none;
+        height: auto;
+
+        li {
+          .sub_item {
+            display: block;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 300;
+            line-height: @height;
+            color: @submenu-text-color;
+          }
+
+          &:hover, &.selected {
+            background-color: @submenu-selected;
+          }
+
+          &:first-child {
+            display: none;
           }
         }
       }
+
+      .icons {
+        padding: 0 11px;
+        display: inline-block;
+        font: normal normal normal 14px simple-line-icons;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transform: translate(0, 0);
+        font-style: normal;
+        font-variant: normal;
+        text-transform: none;
+      }
+
+      > a, .icons {
+        color: @submenu-text-color;
+        font-size: 16px;
+        line-height: @height;
+        display: block;
+        float: left;
+        text-decoration: none;
+        text-shadow: none;
+        font-weight: 300;
+      }
+
+      .icon {
+        &-Sales {
+          &:before {
+            content: "\e043";
+          }
+        }
+        &-HR {
+          &:before {
+            content: "\e001";
+          }
+        }
+        &-Project {
+          &:before {
+            content: "\e02d";
+          }
+        }
+        &-Settings {
+          &:before {
+            content: "\e09a";
+          }
+        }
+        &-Accounting {
+          &:before {
+            content: "\e04b";
+          }
+        }
+        &-Expenses {
+          &:before {
+            content: "\e077";
+          }
+        }
+        &-Payroll {
+          &:before {
+            content: "\e025";
+          }
+        }
+      }
+
+      &:hover, &.opened {
+        cursor: pointer;
+        height: @height;
+        background-color: @submenu-hover;
+      }
+
+      &.active {
+        background-color: @submenu-opened;
+        a, .icons {
+          color: @submenu-active-text-color;
+        }
+        &:before {
+          color: @submenu-active-text-color;
+        }
+        &.opened {
+          &:before {
+            transform: rotate(-90deg);
+            color: @submenu-active-text-color;
+          }
+        }
+      }
+
+      &:before {
+        float: right;
+        width: 20px;
+        text-align: center;
+        display: inline;
+        font-size: 16px;
+        font-family: FontAwesome;
+        height: auto;
+        content: "\f104";
+        font-weight: 300;
+        text-shadow: none;
+        position: absolute;
+        top: 0;
+        right: 14px;
+        line-height: 35px;
+        color: @submenu-arrow;
+        transition: all 0.3s;
+      }
+
+      &.opened {
+        height: auto;
+        ul {
+          display: block;
+        }
+        &:before {
+          transform: rotate(-90deg);
+        }
+      }
+    }
+  }
+
+  .logo {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+
+    a {
+      font-size: 35px;
+      text-decoration: none;
+      color: @submenu-opened;
+
+    }
+  }
+
+  .sidebar_toggler {
+    position: absolute;
+    top: 10px;
+    left: 100%;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    background-color: @bg-submenu;
+    border-left: 1px solid @submenu-border;
+    &:before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-75%, -50%);
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 6px 5px 0;
+      border-color: transparent @submenu-active-text-color transparent transparent;
+    }
+  }
+
+  .login_panel {
+    .position(absolute, 0, 0, auto, auto);
+    width: 100%;
+
+    .dropdown-button {
+      text-indent: 5px;
+      cursor: pointer;
+      padding: 5px;
+      box-sizing: border-box;
+      max-width: 200px;
+      width: 100%;
+      float: left;
+      height: auto;
+
+      &:hover {
+        background: @bg-main-menu-selected;
+        color: #fff;
+      }
+    }
+
+    .login_list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+
+      li {
+        text-align: center;
+        color: @submenu-text-color;
+        background: @defaultColor;
+        &:hover {
+          background-color: @submenu-selected;
+        }
+      }
+
+      a {
+        display: block;
+        text-decoration: none;
+        font-size: 14px;
+        line-height: @height;
+        color: @submenu-text-color;
+      }
+      &.opened {
+        display: block;
+      }
+    }
+
+    .user_name {
+      display: block;
+      line-height: 30px;
+      color: @login-text;
+      font-size: 14px;
+      font-weight: 300;
+      &:hover {
+        color: @login-hover-text;
+      }
+    }
+
+    .iconEmployee {
+      .border-radius;
+      float: left;
+      margin: 2px 5px 2px 2px;
+      width: 26px;
+      height: 26px;
     }
   }
 }

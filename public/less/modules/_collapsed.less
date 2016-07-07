@@ -1,0 +1,127 @@
+.collapsed {
+
+  .side_menu {
+    width: 40px !important;
+    margin-right: -100%;
+
+    .sidebar_toggler {
+      &:before {
+        transform: rotate(180deg) translate(75%, 50%);
+      }
+    }
+
+    .login_panel {
+      .user_name {
+        display: none !important;
+      }
+      .dropdown-button {
+        .login_list {
+          top: 15%;
+          left: 100%;
+          margin-left: 1px;
+          width: 150px;
+          li {
+            &:first-child {
+              margin-left: -1px;
+              padding-right: 1px;
+            }
+          }
+          &.opened {
+            display: none;
+            &:hover {
+              display: block;
+            }
+          }
+        }
+        &:hover {
+          .login_list {
+            display: block;
+          }
+        }
+      }
+    }
+
+    .logo {
+      display: none;
+    }
+
+    nav {
+      width: auto !important;
+      >ul {
+        height: auto;
+      }
+    }
+
+    .root {
+      position: relative;
+      ul {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        width: 150px;
+        margin-left: 1px;
+        li {
+          &:first-child {
+            display: block;
+            background-color: @submenu-hover;
+          }
+        }
+      }
+      >a {
+        display: none !important;
+      }
+
+      &:before {
+        display: none;
+      }
+
+      &:hover {
+        >ul {
+          display: block;
+          li {
+            &:first-child {
+              margin-left: -1px;
+              padding-right: 1px;
+            }
+          }
+        }
+      }
+
+      &.opened {
+        height: 35px !important;
+        >ul {
+          display: none;
+        }
+        &:hover {
+          >ul {
+            display: block;
+
+          }
+        }
+      }
+
+      &.active {
+        >ul {
+          li {
+            &:first-child {
+              background-color: @submenu-opened;
+              a {
+                color: @submenu-active-text-color;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .content_wrapper {
+    .content-holder, {
+      margin-left: 45px;
+    }
+    .top-bar {
+      margin-left: 65px;
+    }
+  }
+}
