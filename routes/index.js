@@ -4,6 +4,7 @@ module.exports = function (app, mainDb) {
     'use strict';
 
     // var newrelic = require('newrelic');
+    
     var event = require('../helpers/eventstHandler')(app, mainDb);
     var RESPONSES = require('../constants/responses');
     var CONSTANTS = require('../constants/mainConstants');
