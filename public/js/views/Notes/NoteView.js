@@ -9,6 +9,8 @@ define([
 ], function (Backbone, $, _, NoteTemplate, AttachView, moment) {
     var NoteView = Backbone.View.extend({
 
+        template: _.template(NoteTemplate),
+        
         initialize: function (options) {
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
@@ -171,8 +173,8 @@ define([
                             }
                         });
                     }
-                    this.$el.find('#noteArea').val('');
-                    this.$el.find('#noteTitleArea').val('');
+                    /*this.$el.find('#noteArea').val('');
+                    this.$el.find('#noteTitleArea').val('');*/
                 } else {
                     return false;
                 }
@@ -182,8 +184,6 @@ define([
         showTitle: function (e) {
             $(e.target).hide().parents('.addNote').find('.title-wrapper').show().find('input').focus();
         },
-
-        template: _.template(NoteTemplate),
 
         render: function () {
             var notDiv;

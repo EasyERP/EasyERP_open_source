@@ -28,8 +28,9 @@ define([
         },
 
         makeRender: function (options) {
-            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
             var self = this;
+
+            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
 
             this.render = _.wrap(this.render, function (render) {
                 self.beforeRender(options);
@@ -39,8 +40,8 @@ define([
                 return self;
             });
         },
-        
-        beforeRender: function(options) {
+
+        beforeRender: function (options) {
             if (this.viewType === 'thumbnails') {
                 this.$el.html('');
                 this.$el
@@ -426,9 +427,9 @@ define([
 
             this.filterView.showFilterIcons(this.filter);
             /*_.debounce(
-                function () {
-                    this.trigger('filter', App.filtersObject.filter);
-                }, 10);*/
+             function () {
+             this.trigger('filter', App.filtersObject.filter);
+             }, 10);*/
 
             $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
@@ -653,7 +654,10 @@ define([
             var CreateView = this.CreateView || Backbone.View.extend({});
             var startData = {};
             var cid;
-            var model = this.CurrentModel ? new this.CurrentModel() : {};
+            var model;
+
+            this.CurrentModel = this.CurrentModel || Backbone.Model.extend();
+            model = new this.CurrentModel();
 
             cid = model.cid;
 
@@ -958,25 +962,31 @@ define([
 
         renderFilter: function (baseFilter) {
             var self = this;
+            var $searchContainer = self.$el.find('#searchContainer');
 
-            self.filterView = new self.FilterView({
-                contentType: self.contentType
-            });
+            $searchContainer = $searchContainer.length ? $searchContainer : $('#searchContainer');
 
-            self.filterView.bind('filter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage(filter);
-            });
-            self.filterView.bind('defaultFilter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage();
-            });
+            if ($searchContainer.length) {
+                self.filterView = new self.FilterView({
+                    el         : $searchContainer,
+                    contentType: self.contentType
+                });
 
-            self.filterView.render();
+                self.filterView.bind('filter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
+                    self.showFilteredPage(filter);
+                });
+                self.filterView.bind('defaultFilter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
+                    self.showFilteredPage();
+                });
+
+                self.filterView.render();
+            }
         }
     });
 

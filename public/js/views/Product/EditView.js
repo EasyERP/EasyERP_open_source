@@ -3,26 +3,27 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Product/EditTemplate.html',
-    'views/Assignees/AssigneesView',
+    'views/Notes/AttachView',
+    'views/dialogViewBase',
     'common',
     'custom',
     'dataService',
     'populate',
-    'views/Notes/AttachView',
     'constants'
-], function (Backbone, $, _, EditTemplate, AssigneesView, common, Custom, dataService, populate, attachView, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, AttachView, ParentView, common, Custom, dataService, populate, CONSTANTS) {
 
-    var EditView = Backbone.View.extend({
+    var EditView = ParentView.extend({
+        el         : '#content-holder',
         contentType: 'Product',
         imageSrc   : '',
         template   : _.template(EditTemplate),
+        responseObj: {},
 
         initialize: function (options) {
-            _.bindAll(this, 'render', 'saveItem');
-            _.bindAll(this, 'render', 'deleteItem');
-            this.currentModel = (options.model) ? options.model : options.collection.getElement();
-            this.currentModel.urlRoot = '/Product';
-            this.responseObj = {};
+            _.bindAll(this, 'render', 'saveItem', 'deleteItem');
+            
+            this.currentModel = options.model || options.collection.getElement();
+            
             this.render();
         },
 
@@ -251,11 +252,13 @@ define([
 
         render: function () {
             var self = this;
-            var model;
-            var notDiv;
+            var model = this.currentModel.toJSON();
             var formString = this.template({
-                model: this.currentModel.toJSON()
+                model: model
             });
+            var $thisEl;
+            var notDiv;
+
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 autoOpen     : true,
@@ -284,43 +287,24 @@ define([
                 }
             });
 
-            model = this.currentModel.toJSON();
-            this.$el.find('#bcTarget').barcode(model.info.barcode, 'code128');
+            $thisEl = this.$el;
+            $thisEl.find('#bcTarget').barcode(model.info.barcode, 'code128');
 
-            notDiv = this.$el.find('.attach-container');
-            this.attachView = new attachView({
-                model   : this.currentModel,
-                url     : '/product/uploadProductFiles',
-                isCreate: true
-            });
-            notDiv.append(this.attachView.render().el);
-
-            notDiv = this.$el.find('.assignees-container');
+            notDiv = $thisEl.find('.attach-container');
             notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
+                new AttachView({
+                    model      : this.currentModel,
+                    contentType: self.contentType
                 }).render().el
             );
-            populate.get('#productType', '/product/getProductsTypeForDd', {}, 'name', this);
+
+            this.renderAssignees(this.currentModel);
+            populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this);
             populate.get('#productCategory', '/category', {}, 'fullName', this);
             common.canvasDraw({model: this.model.toJSON()}, this);
 
             this.delegateEvents(this.events);
-
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
-                    });
-
-                }
-            }
+            
             return this;
         }
 

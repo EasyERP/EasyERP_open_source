@@ -432,7 +432,6 @@ input::-ms-clear {
   &.employee {
     width: 100%;
     max-width: 100%;
-
   }
   .compactList {
     li {
@@ -461,7 +460,6 @@ input::-ms-clear {
     &.withMargin {
       margin-bottom: 0;
     }
-
     width: 100%;
     border-bottom: @thin-border @border-color;
 
@@ -483,6 +481,19 @@ input::-ms-clear {
         .text-overflow;
         color: @captionColor;
       }
+    }
+
+    .area_holder {
+      position: relative;
+      
+      .attach_file {
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        font-size: 18px;
+        color: @mainText-color;
+      }
+
     }
   }
 
@@ -724,7 +735,7 @@ input::-ms-clear {
 
   textarea {
     width: 99%;
-    min-height: 160px;
+    min-height: 60px;
     resize: none;
   }
   .job-create-info {
@@ -1791,7 +1802,7 @@ input::-ms-clear {
 
   textarea {
     .noPaddingMargin;
-    width: 95%;
+    width: 100%;
     resize: none;
     &#description {
       margin-top: 0 !important;
@@ -2556,7 +2567,7 @@ body {
   font-family: @body-font;
   font-size: 12px;
   height: 100%;
-  min-width: 1349px;
+  //min-width: 1349px;//this return bug in login view
 }
 
 dl {
@@ -2701,10 +2712,10 @@ dl {
     .area_holder {
       position: relative;
       .attach_file {
-        display: none;
         position: absolute;
         bottom: 5px;
         right: 10px;
+        font-size: 18px;
       }
     }
 
@@ -2798,11 +2809,6 @@ dl {
         line-height: 30px;
       }
 
-      .area_holder {
-        .attach_file {
-          display: block;
-        }
-      }
     }
   }
 
@@ -3895,9 +3901,9 @@ table#workflows {
 }
 
 /*----------------------------- Login Form --------------------------------*/
-#loginForm {
-  .loginForm;
-}
+//#loginForm {
+//  .loginForm;
+//}
 
 /*----------------------------- Tabs ------------------------------------*/
 ul.dialog-tabs {
@@ -4647,9 +4653,12 @@ h3.dashboard {
     height: 235px;
     margin-top: 5px;
   }
+
   .opp-internal-create {
-    height: 235px;
+    height: 60px;
     margin-top: 5px;
+    border-bottom-color: transparent;
+
   }
 
   .startDate, .endDate {

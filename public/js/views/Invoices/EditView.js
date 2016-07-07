@@ -358,7 +358,7 @@ define([
                 },
 
                 whoCanRW: whoCanRW,
-                workflow: workflow
+                workflow: workflow._id || null
 
             };
 

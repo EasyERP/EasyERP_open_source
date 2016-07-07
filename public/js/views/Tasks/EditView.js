@@ -63,6 +63,7 @@
             filter = {
                 project: {
                     key  : 'project._id',
+                    type : 'ObjectId',
                     value: [project]
                 }
             };
@@ -336,7 +337,7 @@
             notDiv = this.$el.find('#divForNote');
             notDiv.append(
                 new NoteView({
-                    model: this.currentModel,
+                    model      : this.currentModel,
                     contentType: 'Tasks'
                 }).render().el);
 

@@ -169,7 +169,7 @@
             array: ['name', 'department', 'jobPosition']
         },
 
-        /*JobPositions: {
+        /* JobPositions: {
          name: {
          displayName: 'Name',
          backend    : 'name'
@@ -184,7 +184,7 @@
          displayName: 'Department',
          backend    : 'department'
          }
-         },*/
+         }, */
 
         salesInvoices: {
             forSales: {
