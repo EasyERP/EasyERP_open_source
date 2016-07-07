@@ -4012,7 +4012,7 @@ var Module = function (models, event) {
             var getOpening = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                  : {$lt: matchObject.$gte},
+                        date                  : {$lte: matchObject.$gte},
                         debit                 : {$gt: 0},
                         'sourceDocument._id'  : {$in: jobs},
                         'sourceDocument.model': 'wTrack'
@@ -4301,10 +4301,10 @@ var Module = function (models, event) {
                     });
 
                     newElement._id = job;
-                    newElement.name = opening ? opening.name : (inwards ? inwards.name : '');
+                    newElement.name = opening ? opening.name : (inwards ? inwards.name : outwards ? outwards.name :'');
 
-                    project = opening ? opening.project : (inwards ? inwards.project : {});
-                    newElement.salesmanager = opening ? opening.salesmanager : (inwards ? inwards.salesmanager : '');
+                    project = opening ? opening.project : (inwards ? inwards.project : outwards ? outwards.name : {});
+                    newElement.salesmanager = opening ? opening.salesmanager : (inwards ? inwards.salesmanager : outwards ? outwards.salesmanager :'');
 
                     newElement.project = project ? project._id : null;
                     newElement.projectName = project ? project.name : '-----';
@@ -4316,7 +4316,7 @@ var Module = function (models, event) {
 
                     if (newElement.name && !(outwards && outwards.date < startDate)) {
                         resultArray.push(newElement);
-                    }
+                    } else console.log(outwards ? outwards.date : newElement.name, startDate);
 
                 });
 
