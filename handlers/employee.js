@@ -857,9 +857,11 @@ var Employee = function (event, models) {
                 }
 
                 transferKey = result.transferKey;
-                employee = result.employee;
 
-                TransferModel.remove({employee: employee, transferKey: transferKey}, cb);
+                if (transferKey) {
+                    employee = result.employee;
+                    TransferModel.remove({employee: employee, transferKey: transferKey}, cb);
+                }
             });
 
         }, function (err) {

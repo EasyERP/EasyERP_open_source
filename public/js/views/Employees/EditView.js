@@ -303,7 +303,6 @@ define([
             var $tr = $target.parent('tr');
             var modelId = $tr.attr('id');
 
-            var trNum = $tr.attr('data-id');
             var minDate = new Date('1995-01-01');
             var maxDate = null;
             var model = this.editCollection.get(modelId);
@@ -324,7 +323,7 @@ define([
 
             $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '" ' + 'readonly' + '>');
 
-            if (parseInt(trNum, 10) > 0) {
+            if (($tr.prev()).length) {
 
                 minDate = new Date($tr.prev().find('td.date').text());
             }
@@ -744,9 +743,9 @@ define([
 
                         modelChanged = self.editCollection.get(id);
                         modelChanged.changed = self.changedModels[id];
-                        modelChanged.changed.transferKey = new Date().getTime();
 
                         if (self.changedModels[id].transfered) {
+                            modelChanged.changed.transferKey = new Date().getTime();
                             transferNewModel = new TransferModel(modelChanged.attributes);
                             keys = Object.keys(modelChanged.attributes);
                             for (i = keys.length - 1; i >= 0; i--) {
