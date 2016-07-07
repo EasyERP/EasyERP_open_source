@@ -1,7 +1,7 @@
 <div class="tagsList">
     <input style="width: 90%" id="selectInput" placeholder="Search" autofocus/>
 
-    <ul data-page="<%=currentPage%>">
+    <ul >
         <% collection.forEach(function(item){ %>
         <% var choosedTag = _.findWhere(model.tags, {_id : item._id}) %>
 
@@ -14,14 +14,9 @@
         </li>
         <% }) %>
 
-        <% if (dataLength>elementVisible){%>
-        <li class="miniStylePagination"><a class="prev<%=currentPage==1?' disabled':''%>" href="javascript:;">
-            &lt;Prev</a><span class="counter"><%=(start+1)%>-<%=end%> of <%=dataLength%></span><a
-                class="next<%=(currentPage==allPages?' disabled':'')%>" href="javascript:;">Next&gt;</a></li>
-        <%}%>
     </ul>
 
-    <a href="javascript:;" class="newTag">Create New Tag</a>
+    <a href="javascript:;" id="newTag">Create New Tag</a>
 
 
 </div>

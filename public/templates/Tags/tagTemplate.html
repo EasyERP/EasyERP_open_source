@@ -1,6 +1,6 @@
 <div class="tagsRow">
 
-    <% collection.forEach(function(elem,index){ %>
+    <%  tags.forEach(function(elem,index){ %>
             <span data-id="<%= elem._id%>" class="<%= elem.color%> editTags"><%=elem.name %></span>
     <% }) %>
     <a href="javascript:;" class="btnAdd editTags" title="Create" id="top-bar-createBtn">Add</a>

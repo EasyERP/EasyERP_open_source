@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Tags/createTag.html',
+    'text!templates/Tags/CreateTag.html',
     'views/selectView/selectView',
     'models/paymentTerm',
     'populate',

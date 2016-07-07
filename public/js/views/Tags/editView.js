@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Tags/editTemplate.html',
+    'text!templates/Tags/EditTag.html',
     'views/selectView/selectView',
     'populate',
     'constants'
@@ -91,6 +91,7 @@ define([
                 ]
 
             });
+
 
             populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 

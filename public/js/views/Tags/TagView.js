@@ -24,7 +24,7 @@ define([
         editTags: function (e) {
             e.preventDefault();
 
-            new TagListView();
+            new TagListView({model : this.model, contentType :  this.contentType});
         },
 
         removeTag: function (e) {
