@@ -655,7 +655,7 @@ var Module = function (models) {
                 /*filterValue = caseFilterEmployee(filter);
                  if (filterValue.length) {*/
                 // matchObj.$and.push({$and: caseFilterEmployee(filter)});
-                
+
                 delete filter.startDate;
                 delete filter.endDate;
 
@@ -813,13 +813,17 @@ var Module = function (models) {
         var endDate = moment(date).endOf('month');
         var employeesIds = [];
         var employeeQueryForEmployeeByDep;
-        var startDateKey = date.year() * 100 + date.isoWeek();
-        var endDateKey = endDate.year() * 100 + endDate.isoWeek();
+        var startDateKey = date.isoWeekYear() * 100 + date.isoWeek();
+        var endDateKey = endDate.isoWeekYear() * 100 + endDate.isoWeek();
         var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
             hour  : 15,
             minute: 1,
             second: 0
         }));
+
+        if (endDateKey < startDateKey){
+            endDateKey = (endDate.year() + 1) * 100 + endDate.isoWeek();
+        }
 
         date = new Date(date);
         endDate = new Date(endDate);
@@ -885,7 +889,6 @@ var Module = function (models) {
             }, {
                 $project: {
                     isEmployee  : 1,
-                    department  : 1,
                     fire        : 1,
                     hire        : 1,
                     lastFire    : 1,
@@ -906,8 +909,7 @@ var Module = function (models) {
                 $match: employeeQueryForEmployeeByDep
             }, {
                 $project: {
-                    department: 1,
-                    transfer  : {
+                    transfer: {
                         $filter: {
                             input: '$transfer',
                             as   : 'item',
@@ -920,14 +922,12 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    department  : 1,
                     transferDate: {$max: '$transfer.date'},
                     transfer    : 1
                 }
             }, {
                 $project: {
-                    department: 1,
-                    salary    : {
+                    salary: {
                         $filter: {
                             input: '$transfer',
                             as   : 'item',
@@ -940,13 +940,12 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    department          : 1,
                     salary              : {$max: '$salary.salary'},
                     payrollStructureType: {$arrayElemAt: ['$salary', 0]}
                 }
             }, {
                 $project: {
-                    department          : 1,
+                    department          : '$payrollStructureType.department',
                     salary              : 1,
                     payrollStructureType: '$payrollStructureType.payrollStructureType'
                 }
@@ -1894,7 +1893,13 @@ var Module = function (models) {
         req.body.year = year;
 
         function removeByDataKey(wfCb) {
-            Payroll.remove({dataKey: dataKey}, wfCb);
+            Payroll.remove({dataKey: dataKey}, function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                wfCb(null, result);
+            });
         }
 
         function createIdleByMonth(removed, wfCb) {
@@ -1912,13 +1917,38 @@ var Module = function (models) {
                 return next(err);
             }
 
-            res.status(200).send({success: true});
+            if (typeof res.status === 'function') {
+                res.status(200).send({success: true});
+            } else {
+                res();
+            }
+
         });
 
     }
 
     this.recount = function (req, res, next) {
         recount(req, res, next);
+    };
+
+    this.recountAll = function (req, res, next) {
+        var data = req.body.dataArray;
+
+        async.each(data, function (dataKey, cb) {
+            req.body = {};
+            req.body.dataKey = dataKey;
+
+            setTimeout(function () {
+                recount(req, cb, cb);
+            }, 10);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+
     };
 
     this.generate = function (req, res, next) {

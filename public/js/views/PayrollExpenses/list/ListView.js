@@ -64,6 +64,26 @@ define([
             this.$el.find('.newSelectList').remove();
         },
 
+        recountAll: function () {
+            var self = this;
+            var checkboxes = this.$el.find('.checkbox:checked');
+            var dataArray = [];
+           
+            App.startPreload();
+
+            checkboxes.each(function () {
+                dataArray.push($(this).attr('data-id'));
+            });
+
+            dataService.postData('/payroll/recountAll', {dataArray: dataArray}, function () {
+                App.stopPreload();
+                
+                Backbone.history.fragment = '';
+                Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+            });
+
+        },
+
         dataKeyCbCheck: function (e) {
             var $target = $(e.target);
             var id = $target.attr('id');
@@ -74,10 +94,6 @@ define([
 
             e.stopPropagation();
 
-            if (this.changesCount !== 0) {
-                return false;
-            }
-
             if (id && id === 'checkAll') {
                 status = $target.prop('checked');
                 $allCheckBoxes = $curEl.find('.totalRowCB').not($target);
@@ -85,6 +101,16 @@ define([
             }
 
             $checkedCB = this.$el.find('.totalRowCB:checked');
+
+            if (this.changesCount !== 0) {
+                return false;
+            }
+
+            if ($checkedCB.length === 1) {
+                $('#top-bar-recountAll').show();
+            } else {
+                $('#top-bar-recountAll').hide();
+            }
 
             if ($checkedCB.length) {
                 this.showHideSaveCancelBtns({delete: true});
@@ -321,6 +347,7 @@ define([
 
             $('#top-bar-deleteBtn').hide();
             $('#top-bar-createBtn').hide();
+            $('#top-bar-recountAll').hide();
             $('#topBarPaymentGenerate').hide();
 
             $currentEl.find('.datePicker input').datepicker({

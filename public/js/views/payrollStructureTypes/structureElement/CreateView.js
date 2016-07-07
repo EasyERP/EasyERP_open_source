@@ -201,6 +201,7 @@ define([
 
                     if (self.updateAfterCreate) {
                         self.eventChannel.trigger('updatePayrollDeductionsType', data, model);
+                        self.eventChannel.trigger('updatePayrollEarningsType', data, model);
                     }
                 },
 

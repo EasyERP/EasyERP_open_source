@@ -108,11 +108,11 @@ define([
                         App.filtersObject.savedFilters = response.savedFilters;
                     }
                     /*else {
-                                           App.render({
-                                               type   : 'error',
-                                               message: 'can\'t fetch currentUser'
-                                           });
-                                       }*/
+                     App.render({
+                     type   : 'error',
+                     message: 'can\'t fetch currentUser'
+                     });
+                     }*/
                 });
             }
         },
@@ -1187,7 +1187,6 @@ define([
                 }
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
-
 
                 if (!filter) {
 

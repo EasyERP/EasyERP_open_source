@@ -46,10 +46,9 @@ define([
 
         events: {
             // 'click li'                                         : 'goToEditDialog',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .selected'                                  : 'showNewSelect',
-            'click .fa-plus'                                   : 'create',
-            'click .fa-trash-o'                                : 'remove'
+            'click .selected'  : 'showNewSelect',
+            'click .fa-plus'   : 'create',
+            'click .fa-trash-o': 'remove'
         },
 
         newStructureComponent: function (component, modelComponent) {
@@ -134,7 +133,7 @@ define([
 
             self.renderComponents();
         },
-        
+
         create: function (e) {
             var self = this;
             var type = $(e.target).attr('data-id');
