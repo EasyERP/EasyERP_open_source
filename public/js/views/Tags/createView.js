@@ -25,23 +25,15 @@ define([
         },
 
         events: {
-            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click .colorBox'                                  : 'chooseNewColor',
             click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
-        chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text());
-
-            this.hideNewSelect();
+        chooseNewColor: function (e) {
+            var $target = $(e.target);
+            this.$el.find('.colorBox').removeClass('checked');
+            $target.addClass('checked');
         },
 
         saveItem: function () {
@@ -49,23 +41,19 @@ define([
             var thisEl = this.$el;
 
             var name = thisEl.find('#paymentTermName').val();
+            var color = thisEl.find('.checked').attr('data-color');
 
             var data = {
-                name: name
+                name: name,
+                color : color
             };
 
             this.currentModel.save(data, {
                 wait   : true,
                 success: function (res) {
-                    var url = window.location.hash;
 
-                    if (url === '#easyErp/Accounts') {
-                        self.hideDialog();
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-                    } else {
-                        self.hideDialog();
-                    }
+                    self.hideDialog();
+
                 },
 
                 error: function (model, xhr) {
@@ -109,7 +97,7 @@ define([
 
             });
 
-            populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            this.delegateEvents(this.events);
 
             return this;
         }
