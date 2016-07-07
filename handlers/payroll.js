@@ -655,7 +655,7 @@ var Module = function (models) {
                 /*filterValue = caseFilterEmployee(filter);
                  if (filterValue.length) {*/
                 // matchObj.$and.push({$and: caseFilterEmployee(filter)});
-                
+
                 delete filter.startDate;
                 delete filter.endDate;
 
@@ -905,7 +905,7 @@ var Module = function (models) {
                 $match: employeeQueryForEmployeeByDep
             }, {
                 $project: {
-                    transfer  : {
+                    transfer: {
                         $filter: {
                             input: '$transfer',
                             as   : 'item',
@@ -923,7 +923,7 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    salary    : {
+                    salary: {
                         $filter: {
                             input: '$transfer',
                             as   : 'item',
@@ -1889,7 +1889,13 @@ var Module = function (models) {
         req.body.year = year;
 
         function removeByDataKey(wfCb) {
-            Payroll.remove({dataKey: dataKey}, wfCb);
+            Payroll.remove({dataKey: dataKey}, function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                wfCb(null, result);
+            });
         }
 
         function createIdleByMonth(removed, wfCb) {
@@ -1907,13 +1913,38 @@ var Module = function (models) {
                 return next(err);
             }
 
-            res.status(200).send({success: true});
+            if (typeof res.status === 'function') {
+                res.status(200).send({success: true});
+            } else {
+                res();
+            }
+
         });
 
     }
 
     this.recount = function (req, res, next) {
         recount(req, res, next);
+    };
+
+    this.recountAll = function (req, res, next) {
+        var data = req.body.dataArray;
+
+        async.each(data, function (dataKey, cb) {
+            req.body = {};
+            req.body.dataKey = dataKey;
+
+            setTimeout(function () {
+                recount(req, cb, cb);
+            }, 10);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+
     };
 
     this.generate = function (req, res, next) {

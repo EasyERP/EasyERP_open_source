@@ -1183,6 +1183,8 @@ define([
                 }
             });
 
+            $('#top-bar-recountAll').hide();
+
             setTimeout(function () {
                 self.editCollection = new editCollection(self.collection.models);
 

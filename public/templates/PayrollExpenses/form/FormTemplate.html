@@ -10,7 +10,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th><a id="expandAll">#</a></th>
+            <th  class="centerCell"><a id="expandAll">#</a></th>
             <th class="notForm centerCell"><input type="checkbox" class="checkAll"/></th>
             <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -41,7 +41,7 @@
                         <% collection.forEach(function(model, index){ %>
 
                         <tr data-id="<%=model._id%>" class="mainTr">
-                            <td data-content="number"><%=index+1%></td>
+                            <td data-content="number" class="centerCell"><%=index+1%></td>
                             <td class="notForm centerCell"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
                             <td class="" data-id="<%=model.employee._id%>" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
                             <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
