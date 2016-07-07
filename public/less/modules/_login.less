@@ -512,6 +512,19 @@ input {
     margin: 0 10px 10px 0;
     border-radius: 3px;
     padding: 3px 6px;
+
+    &.checked {
+      position: relative;
+      &:after {
+        content: "\f00c";
+        position: absolute;
+        left: 9px;
+        top: 6px;
+        font-family: FontAwesome;
+        font-size: 16px;
+        color: #fff;
+      }
+    }
   }
 }
 .selectBlockTitle {
