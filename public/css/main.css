@@ -1706,7 +1706,7 @@ body {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.3);
 }
-* {
+.loginWrapper * {
   box-sizing: border-box;
 }
 a {
@@ -2947,6 +2947,17 @@ textarea {
 }
 span.error {
   color: #e55253 !important;
+}
+.kanban .item.errorContent {
+  border: none !important;
+  background-color: #f78c8c !important;
+}
+.kanban .item.errorContent .opportunity-header h4,
+.kanban .item.errorContent .opportunity-header h3 {
+  color: #fff;
+}
+.kanban .item.errorContent .opportunity-content p {
+  color: #fff;
 }
 .red {
   color: #ff0000;
@@ -8396,6 +8407,7 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 .dialog-tabs-items {
   margin-bottom: -29px;
+  padding-top: 10px;
 }
 .dialog-tabs-items .dialog-tabs-item,
 .dialog-tabs-items .chart-tabs-item {

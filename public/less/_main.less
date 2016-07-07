@@ -242,6 +242,28 @@ span.error {
   color: @unpaid-wtrack !important;
 }
 
+.kanban {
+  .item {
+    &.errorContent {
+      border: none !important;
+      background-color: #f78c8c !important;
+
+      .opportunity {
+        &-header {
+          h4, h3 {
+            color: #fff;
+          }
+        }
+        &-content {
+          p {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
 .red {
   color: #ff0000;
 }
@@ -485,7 +507,7 @@ input::-ms-clear {
 
     .area_holder {
       position: relative;
-      
+
       .attach_file {
         position: absolute;
         bottom: 5px;
@@ -4050,6 +4072,7 @@ ul.dialog-tabs {
 
 .dialog-tabs-items {
   .tabs-items;
+  padding-top: 10px;
 }
 
 ul.chart-tabs {
