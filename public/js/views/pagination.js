@@ -73,7 +73,9 @@ define([
             }
 
             if (this.contentType === 'Products') {
-                this.$el.find('.product').draggable({});
+                this.$el.find('.product').draggable({
+                    revert: true
+                });
             }
 
             createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
