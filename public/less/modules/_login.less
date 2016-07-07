@@ -234,6 +234,7 @@ input {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  box-sizing: border-box;
   border-radius: 0;
 
   outline: 0!important;
@@ -242,18 +243,6 @@ input {
   &:hover {
     -webkit-transition: all .3s;
     transition: all .3s;
-  }
-
-  &.green {
-    color: #FFF;
-    background-color: #32c5d2;
-    border-color: #32c5d2;
-
-    &:hover {
-      background-color: #26a1ab;
-      border-color: #2499a3;
-      text-decoration: none;
-    }
   }
 
   &.blue {
@@ -270,6 +259,7 @@ input {
   &Rounded {
     background-color: #fff;
     color: #000;
+    border-color: #000;
 
     &.green {
       background-color: #fff;
@@ -282,17 +272,15 @@ input {
         color: #fff;
       }
     }
-
-    &.blue {
+    &.red {
       background-color: #fff;
-      border-color: #3e88b9;
-      color: #3e88b9;
+      border-color: #f44336;
+      color: #f44336;
 
       &:hover {
-        background-color: #3e88b9;
-        border-color: #3e88b9;
+        background-color: #b73329;
+        border-color: #b73329;
         color: #fff;
-        text-decoration: none;
       }
     }
   }
@@ -482,5 +470,84 @@ input {
       right: auto;
       left: 20px;
     }
+  }
+}
+
+.color {
+  &Card {
+    &Wrap {
+      width: 280px;
+      padding:0 10px 10px;
+      background-color: #fff;
+      border-radius: 3px;
+      border: 1px solid #d6dadc;
+      box-shadow: 0 1px 6px rgba(0,0,0,.15);
+      overflow: hidden;
+    }
+    &Title {
+      box-sizing: border-box;
+      color: #8c8c8c;
+      display: block;
+      text-align: center;
+      line-height: 36px;
+      border-bottom: 1px solid #d6dadc;
+      .backBtn {
+
+      }
+      .closeBtn {
+
+      }
+    }
+  }
+  &SelectBlock {
+    overflow: hidden;
+  }
+  &Input {
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #e2e4e6;
+    border: 1px solid #cdd2d4;
+    border-radius: 3px;
+    display: block;
+    min-height: 34px;
+    padding: 7px;
+  }
+  &Box {
+    height: 30px;
+    width: 34px;
+    float: left;
+    margin: 0 10px 10px 0;
+    border-radius: 3px;
+    padding: 3px 6px;
+  }
+}
+.selectBlockTitle {
+  width: 100%;
+  padding: 10px 0 5px;
+}
+.inputBlock {
+  width: 100%;
+
+}
+.actionBlock {
+
+}
+.card {
+  &Title {
+
+  }
+}
+.closeBtn {
+
+}
+.backBtn {
+
+}
+.btn {
+  &green {
+
+  }
+  &red {
+
   }
 }
