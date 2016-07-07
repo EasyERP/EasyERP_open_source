@@ -220,7 +220,6 @@ define([
                         }
                     };
                     var changed;
-                    var categoryUrl;
 
                     currentModel.set({
                         accounting: update
@@ -232,8 +231,8 @@ define([
                         patch  : true,
                         wait   : true,
                         success: function () {
-                            self.renderFilteredContent();
-                        },
+                            self.renderFilteredContent(categoryId);
+                        }
                     });
 
                     $(this).addClass('selected');
