@@ -43,13 +43,13 @@
             <%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : "Select"%>
         </a>
     </td>
-    <!--<td>-->
-        <!--<a id="payrollStructureTypeDd" class="current-selected" data-content="payrollStructureType"-->
-           <!--data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>"-->
-           <!--href="javascript:;">-->
-            <!--<%=transfer.payrollStructureType ? transfer.payrollStructureType.name : "Select"%>-->
-        <!--</a>-->
-    <!--</td>-->
+    <td>
+        <a id="payrollStructureTypeDd" class="current-selected" data-content="payrollStructureType"
+           data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>"
+           href="javascript:;">
+            <%=transfer.payrollStructureType ? transfer.payrollStructureType.name : "Select"%>
+        </a>
+    </td>
     <td>
         <a id="scheduledPayDd" class="current-selected" data-content="scheduledPay"
            data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>"
