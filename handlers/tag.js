@@ -9,7 +9,7 @@ var Module = function (models) {
 
         Tag
             .find()
-            .sort({text: 1})
+            .sort({name: 1})
             .lean()
             .exec(function (err, terms) {
                 if (err) {
@@ -25,7 +25,7 @@ var Module = function (models) {
 
         Tag
             .find()
-            .sort({text: 1})
+            .sort({name: 1})
             .exec(function (err, methods) {
                 if (err) {
                     return next(err);
