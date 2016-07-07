@@ -2,8 +2,7 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!' +
-    '',
+    'text!templates/Applications/EditTemplate.html',
     'views/selectView/selectView',
     'views/Notes/NoteView',
     'views/dialogViewBase',
