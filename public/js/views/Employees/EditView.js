@@ -192,7 +192,6 @@ define([
         },
 
         addNewRow: function (e, contractEndReason) {
-            var $target = $(e.target);
             var $thisEl = this.$el;
             var table = $thisEl.find('#hireFireTable');
             var lastTr = table.find('tr').last();
@@ -277,7 +276,7 @@ define([
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
 
-            $target.parent().hide();
+            $('#update').hide();
         },
 
         renderRemoveBtn: function () {
@@ -294,11 +293,6 @@ define([
             if (status !== 'hired' && status !== 'fired') {
                 lastTr.find('td').first().html(removeBtn);
             }
-            //
-            // lastTr.find('a').addClass('current-selected');
-            // lastTr.find('[data-content="date"]').addClass('editable');
-            // lastTr.find('[data-content="salary"]').addClass('editable');
-            // lastTr.find('[data-content="info"]').addClass('editable');
         },
 
         editJob: function (e) {
@@ -336,7 +330,7 @@ define([
             }
 
             if ($tr.next()) {
-                maxDate = $tr.next().find('td.date').text();
+                maxDate = new Date($tr.next().find('td.date').text());
             }
 
             $target.find('.editing').datepicker({
@@ -750,9 +744,9 @@ define([
 
                         modelChanged = self.editCollection.get(id);
                         modelChanged.changed = self.changedModels[id];
+                        modelChanged.changed.transferKey = new Date().getTime();
 
                         if (self.changedModels[id].transfered) {
-                            modelChanged.changed.transferKey = new Date().getTime();
                             transferNewModel = new TransferModel(modelChanged.attributes);
                             keys = Object.keys(modelChanged.attributes);
                             for (i = keys.length - 1; i >= 0; i--) {
