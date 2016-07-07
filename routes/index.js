@@ -67,6 +67,7 @@ module.exports = function (app, mainDb) {
     var degreesRouter = require('./degrees')(models);
     var profilesRouter = require('./profiles')(models);
     var tasksRouter = require('./tasks')(models, event);
+    var tagRouter = require('./tags')(models, event);
     var journalEntriesRouter = require('./journalEntries')(models, event);
 
     var logger = require('../helpers/logger');
@@ -158,6 +159,7 @@ module.exports = function (app, mainDb) {
     app.use('/degrees', degreesRouter);
     app.use('/profiles', profilesRouter);
     app.use('/tasks', tasksRouter);
+    app.use('/tags', tagRouter);
     app.use('/users', userRouter);
 
     app.get('/getDBS', function (req, res) {

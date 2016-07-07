@@ -110,6 +110,7 @@ module.exports = (function () {
         tempCompanyField: {type: String, default: ''},
         company         : {type: ObjectId, ref: 'Customers', default: null},
         customer        : {type: ObjectId, ref: 'Customers', default: null},
+        tags            : {type: ObjectId, ref: 'tags', default: null},
 
         address: {
             street : {type: String, default: ''},
