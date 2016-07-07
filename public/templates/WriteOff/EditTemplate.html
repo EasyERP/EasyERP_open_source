@@ -5,36 +5,20 @@
                 <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
-                    <!--<li class="right">
-                        <%if(isFinancial && !model.approved){%>
-                        <button class="btn approve">
-                            <span>Approve</span>
-                        </button>
-                        <%}%>
-                    </li>-->
                 </ul>
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
                         <div class="half-block left">
                             <dl class="opp-info">
-                                <dt><label for="supplier">Supplier</label></dt>
-                                <dd>
-                                    <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
-                                       href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first
-                                        + ' ' + model.supplier.name.last:"Select"%></span>
-                                </dd>
-
                                 <dt><label for="projectDd">Project</label></dt>
                                 <dd>
                                     <span id="projectDd"><%= model.project ?  model.project.name : '' %></span>
                                 </dd>
-                                <dt><label for="supplier_invoice_num">Write Off Number</label></dt>
+                                <dt><label for="writeOffWay">Journal</label></dt>
                                 <dd>
-                                    <span id="supplier_invoice_num"><%=model.name%></span>
+                                    <span id="writeOffWay" href="javascript:;"><%= model.journal.name %></span>
                                 </dd>
-
-
                             </dl>
                         </div>
                         <div class="half-block left">
@@ -47,26 +31,11 @@
                                            placeholder="Invoice Date" readonly/>
                                 </dd>
 
-
-                                <!--<dt><label for="due_date">Due Date</label></dt>
+                                <dt><label for="supplier_invoice_num">WriteOff Number</label></dt>
                                 <dd>
-                                    <input type="text" class="date <% if (!model.dueDate) {%>  errorContent"
-
-                                    <% } else { %>
-                                    "
-                                    <% } %>
-                                    id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32"
-                                    placeholder="Due Date" readonly />
-                                </dd>-->
-
-                                <dt><label for="currencyDd">Currency</label></dt>
-                                <dd>
-                                    <span id="currencyDd" class="<%= model.approved ? ''  :'current-selected' %>" data-id="<%= model.currency._id._id %>" href="javascript:;"><%= model.currency._id.name %></span>
+                                    <span id="supplier_invoice_num"><%=model.name%></span>
                                 </dd>
-                                <dt><label for="writeOffWay">Journal</label></dt>
-                                <dd>
-                                    <span id="writeOffWay" href="javascript:;"><%= model.journal.name %></span>
-                                </dd>
+
                             </dl>
                         </div>
                         <div class="clearfix"></div>

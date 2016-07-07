@@ -5,6 +5,7 @@ var CONSTANTS = require('../constants/mainConstants');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
+var objectId = mongoose.Types.ObjectId;
 var fs = require('fs');
 
 var WriteOffObj = function (models, event) {
@@ -13,11 +14,15 @@ var WriteOffObj = function (models, event) {
     var async = require('async');
 
     var WriteOffSchema = mongoose.Schemas.writeOff;
+    var ProformaSchema = mongoose.Schemas.Proforma;
+    var OrderSchema = mongoose.Schemas.Quotation;
+    var InvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var JobsSchema = mongoose.Schemas.jobs;
 
     var workflowHandler = new WorkflowHandler(models);
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models, event);
+    var _ = require('../node_modules/underscore');
 
     oxr.set({app_id: process.env.OXR_APP_ID});
 
@@ -28,8 +33,13 @@ var WriteOffObj = function (models, event) {
         var request;
         var date = moment().format('YYYY-MM-DD');
         var data = req.body;
+        var products = data.products;
         var parallelTasks;
         var waterFallTasks;
+        var jobs = products.map(function(elem){
+            return elem.jobs;
+        });
+        jobs = jobs.objectID();
 
         function getRates(callback) {
             oxr.historical(date, function () {
@@ -38,6 +48,65 @@ var WriteOffObj = function (models, event) {
                 callback();
             });
         }
+
+        function getJobCosts (parallelTasks, callback){
+
+
+            JobsModel
+                .aggregate([{
+                    $match: {
+                        _id : {$in : jobs}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'journalentries',
+                        localField  : '_id',
+                        foreignField: 'sourceDocument._id',
+                        as          : 'journalentries'
+                    }
+                }, {
+                    $project: {
+                        journalentries: {
+                            $filter: {
+                                input: '$journalentries',
+                                as   : 'je',
+                                cond : {
+                                    $and : [{$eq : ['$$je.credit', 0]}, {$or: [{
+                                        $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
+                                    }, {
+                                        $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
+                                    }, {
+                                        $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
+                                    }]}]
+
+                                }
+                            }
+                        }
+                    }
+                }, {
+                    $unwind: {
+                        path                      : '$journalentries',
+                        preserveNullAndEmptyArrays: true
+                                    }}, {
+                    $group: {
+                        _id      : null,
+                        costTotal: {$sum: '$journalentries.debit'},
+                        jobs     : {
+                            $addToSet: {
+                                _id : '$_id',
+                                cost: {$sum: '$journalentries.debit'}
+                            }
+                        }
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    callback(null, result[0]);
+                });
+        };
+
 
         function fetchFirstWorkflow(callback) {
             request = {
@@ -54,34 +123,39 @@ var WriteOffObj = function (models, event) {
             async.parallel(parallelTasks, callback);
         }
 
-        function createWriteOff(parallelResponse, callback) {
-            var workflow;
-            var err;
+        function createWriteOff(jobCosts, callback) {
             var writeOff;
-            var products;
-            var saveObject = {
-                currency   : data.currency,
+            var saveObject;
+
+            data.products.forEach(function (elem) {
+                jobCosts.jobs.forEach(function (job) {
+                    if (elem.jobs === job._id.toJSON()) {
+                        elem.unitPrice = job.cost;
+                        elem.subTotal = job.cost;
+                    }
+                });
+
+            });
+
+            saveObject = {
+                currency   : {
+                    _id : CONSTANTS.CURRENCY_USD
+                },
                 dueDate    : data.dueDate,
                 forSales   : data.forSales,
                 groups     : data.groups,
                 invoiceDate: data.invoiceDate,
                 project    : data.project,
-                paymentInfo: data.paymentInfo,
+                paymentInfo: {
+                    total : jobCosts.costTotal,
+                    balance : 0,
+                    unTaxed :jobCosts.costTotal
+                },
                 products   : data.products,
-                supplier   : data.supplier,
-                name       : data.supplierInvoiceNumber,
                 whoCanRW   : data.whoCanRW,
                 journal    : data.journal
             };
 
-            if (parallelResponse && parallelResponse.length) {
-                workflow = parallelResponse[0];
-            } else {
-                err = new Error(RESPONSES.BAD_REQUEST);
-                err.status = 400;
-
-                return callback(err);
-            }
 
             if (req.session.uId) {
 
@@ -94,10 +168,9 @@ var WriteOffObj = function (models, event) {
                 };
             }
 
-            saveObject.workflow = workflow._id;
-            saveObject.paymentInfo.balance = data.paymentInfo.total;
+            saveObject.paymentInfo.balance = 0;
 
-            saveObject.currency.rate = oxr.rates[data.currency.name];
+            saveObject.currency.rate = oxr.rates[oxr.base];
 
             writeOff = new WriteOff(saveObject);
 
@@ -106,9 +179,17 @@ var WriteOffObj = function (models, event) {
                     return callback(err);
                 }
 
-                products = result.products;
+                JobsModel.update({_id: {$in: jobs}}, {
+                    $set: {invoice: result._id}
 
-                callback(null, result);
+                }, {multi: true}, function (err, res) {
+                    if (err) {
+                        callback(err);
+                    }
+                    callback(null, result);
+                });
+
+
             });
         }
 
@@ -136,24 +217,21 @@ var WriteOffObj = function (models, event) {
         }
 
         function updateJobs(writeOff, callback) {
-            var products = writeOff.products;
+            var products = data.products;
             var project;
 
             if (products) {
                 async.each(products, function (result, cb) {
-                    var jobs = result.jobs;
+                    var jobs = objectId(result.jobs);
                     var editedBy = {
                         user: req.session.uId,
                         date: new Date()
                     };
                     JobsModel.findByIdAndUpdate(jobs, {
-                        $set: {
-                            invoice : writeOff._id,
-                            type    : 'Cancelled',
+                            type    : 'WriteOff',
                             workflow: CONSTANTS.JOBSFINISHED,
                             editedBy: editedBy
-                        }
-                    }, {new: true}, function (err, job) {
+                        }, {new: true}, function (err, job) {
                         if (err) {
                             return cb(err);
                         }
@@ -162,23 +240,125 @@ var WriteOffObj = function (models, event) {
                         _journalEntryHandler.createCostsForJob({
                             req     : req,
                             jobId   : jobs,
-                            workflow: CONSTANTS.JOBSFINISHED
+                            workflow: CONSTANTS.JOBSFINISHED,
+                            callback: cb
                         });
 
-                        cb();
+
                     });
 
                 }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project, dbName: dbIndex});
-                    }
-                    callback();
+
+                    callback(null, writeOff);
                 });
             }
-        };
+        }
+
+       /* function removeDocsByJob(writeOff, callback) {
+            var products = writeOff.products;
+            var project;
+            var jobsForUpdate = [];
+            var Invoice = models.get(dbIndex, 'wTrackInvoice', InvoiceSchema);
+            var Order = models.get(dbIndex, 'Quotation', OrderSchema);
+            var Proforma = models.get(dbIndex, 'Proforma', ProformaSchema);
+
+            if (products) {
+                async.each(products, function (result, cb) {
+                    var jobs = result.jobs;
+                    var parallelTasks;
+
+                    var editedBy = {
+                        user: req.session.uId,
+                        date: new Date()
+                    };
+
+                    function removeInvoices(parallelCb) {
+                        Invoice.find({'products.jobs': jobs, _type : {$ne : 'writeOff'}}, function (err, results) {
+                            if (err) {
+                                parallelCb(err);
+                            }
+                            async.each(results, function (file, eachCb) {
+                                if (file.products) {
+                                    file.products.forEach(function (elem) {
+                                        if (elem.jobs.toString() !== jobs.toString()) {
+                                            jobsForUpdate.push(elem.jobs);
+                                        }
+                                    });
+                                    Invoice.findByIdAndRemove(file._id, function (err, res) {
+                                        if (err) {
+                                            eachCb(err);
+                                        }
+                                        eachCb();
+                                    });
+                                }
+                            }, parallelCb);
+
+                        });
+                    }
+
+                    function removeOrders(parallelCb) {
+                        Order.find({'products.jobs': jobs}, function (err, results) {
+                            if (err) {
+                                parallelCb(err);
+                            }
+                            async.each(results, function (file, eachCb) {
+                                if (file.products) {
+                                    file.products.forEach(function (elem) {
+                                        if (elem.jobs.toString() !== jobs.toString()) {
+                                            jobsForUpdate.push(elem.jobs);
+                                        }
+                                    });
+                                    Order.findByIdAndRemove(file._id, function (err, res) {
+                                        if (err) {
+                                            eachCb(err);
+                                        }
+                                        eachCb();
+                                    });
+                                }
+                            }, parallelCb);
+
+                        });
+                    }
+
+                    parallelTasks = [removeInvoices, removeOrders];
+
+                    async.parallel(parallelTasks, function () {
+
+                        if (jobsForUpdate.length) {
+                            jobsForUpdate = _.uniq(jobsForUpdate);
+                            async.each(jobsForUpdate, function (elem, eachCb) {
+                                JobsModel.findByIdAndUpdate(elem, {
+                                    $set: {
+                                        invoice : null,
+                                        type    : 'Not Quoted',
+                                        workflow: CONSTANTS.JOBSINPROGRESS,
+                                        editedBy: editedBy
+                                    }
+                                }, {new: true}, function (err, job) {
+                                    if (err) {
+                                        return eachCb(err);
+                                    }
+
+                                    _journalEntryHandler.removeByDocId(elem, dbIndex, function () {
+
+                                    });
+                                    eachCb();
+                                });
+                            }, cb);
+                        } else {
+                            cb();
+                        }
+                    });
+
+                }, function () {
+
+                    callback(null, writeOff);
+                });
+            }
+        }*/
 
         parallelTasks = [fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createWriteOff, createJournalEntry, updateJobs];
+        waterFallTasks = [parallel, updateJobs, getJobCosts, createWriteOff, createJournalEntry/*,  removeDocsByJob*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {

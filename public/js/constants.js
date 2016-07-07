@@ -66,6 +66,7 @@ define([], function () {
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
             CREATE_QUOTATION        : 'Supplier and project fields can not be empty!',
+            CREATE_WRITEOFF         : 'Project field can not be empty!',
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },

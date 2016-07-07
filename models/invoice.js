@@ -162,6 +162,28 @@ module.exports = (function () {
         });
     });
 
+    writeOffSchema.pre('save', function (next) {
+        var invoice = this;
+        var db = invoice.db.db;
+
+        db.collection('settings').findOneAndUpdate({
+            dbName: db.databaseName,
+            name  : 'WriteOff'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
+            invoice.name = 'WO' + rate.value.seq;
+
+            next();
+        });
+    });
+
     jobsInvoiceSchema.set('toJSON', {getters: true});
     expensesInvoiceSchema.set('toJSON', {getters: true});
     dividendInvoiceSchema.set('toJSON', {getters: true});

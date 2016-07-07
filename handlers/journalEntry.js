@@ -2329,7 +2329,8 @@ var Module = function (models, event) {
         var jobsArray = options.jobId;
         var newReq = req;
 
-        var cb = function () {
+
+        var cb = options.callback || function () {
             return false;
         };
 
@@ -2781,10 +2782,6 @@ var Module = function (models, event) {
                             }
                         }
 
-                        if (employee.toString() === '564dac3e9b85f8b16b574fea') {
-                            console.dir(weeklyScheduler);
-                        }
-
                         if (!Object.keys(weeklyScheduler).length) {
                             weeklyScheduler = {
                                 1         : 8,
@@ -3018,6 +3015,7 @@ var Module = function (models, event) {
                     message: 'Please, refresh browser, costs were calculated.',
                     dbName : dbName
                 });
+
             }
 
             Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
@@ -3028,6 +3026,10 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
+                if (cb && typeof(cb) === 'function'){
+                    cb();
+                }
+
 
             });
         });
@@ -5499,7 +5501,7 @@ var Module = function (models, event) {
                     $match: matchObject
                 }, {
                     $match: {
-                        'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice']},
+                        'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice', 'writeOff']},
                         debit                 : {$gt: 0}
                     }
                 }, {

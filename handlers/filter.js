@@ -2153,57 +2153,53 @@ var Filters = function (models) {
 
     this.getWriteOffFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
-        var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
-        var ExpensesInvoice = models.get(lastDB, 'expensesInvoice', ExpensesInvoiceSchema);
-        var query = {
-            forSales: false
-        };
+        var WriteOffSchema = mongoose.Schemas.writeOff;
+        var WriteOff = models.get(lastDB, 'writeOff', WriteOffSchema);
+
         var pipeLine;
         var aggregation;
 
         pipeLine = [{
-            $match: query
+            $match: {_type: 'writeOff'}
         }, {
             $lookup: {
-                from        : 'workflows',
-                localField  : 'workflow',
+                from        : 'journals',
+                localField  : 'journal',
                 foreignField: '_id',
-                as          : 'workflow'
+                as          : 'journal'
             }
         }, {
             $lookup: {
-                from        : 'Customers',
-                localField  : 'supplier',
+                from        : 'Project',
+                localField  : 'project',
                 foreignField: '_id',
-                as          : 'supplier'
+                as          : 'project'
             }
         }, {
             $project: {
-                workflow: {$arrayElemAt: ['$workflow', 0]},
-                supplier: {$arrayElemAt: ['$supplier', 0]}
+                project: {$arrayElemAt: ['$project', 0]},
+                journal: {$arrayElemAt: ['$journal', 0]}
             }
         }, {
             $group: {
-                _id     : null,
-                workflow: {
+                _id    : null,
+                journal: {
                     $addToSet: {
-                        _id : '$workflow._id',
-                        name: '$workflow.name'
+                        _id : '$journal._id',
+                        name: '$journal.name'
                     }
                 },
 
-                supplier: {
+                project: {
                     $addToSet: {
-                        _id : '$supplier._id',
-                        name: {
-                            $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
-                        }
+                        _id : '$project._id',
+                        name: '$project.name'
                     }
                 }
             }
         }];
 
-        aggregation = ExpensesInvoice.aggregate(pipeLine);
+        aggregation = WriteOff.aggregate(pipeLine);
 
         aggregation.options = {
             allowDiskUse: true

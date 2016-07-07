@@ -7,11 +7,9 @@ define([
     'models/InvoiceModel',
     'populate',
     'views/Product/InvoiceOrder/ProductItems',
-    'views/Assignees/AssigneesView',
     'constants',
-    'dataService',
     'helpers'
-], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, ProductItemView, AssigneesView, CONSTANTS, dataService, helpers) {
+], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, ProductItemView, CONSTANTS, helpers) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -36,10 +34,6 @@ define([
             var type = $target.attr('data-level');
             var aEl;
 
-            var element = _.find(this.responseObj['#project'], function (el) {
-                return el._id === id;
-            });
-
             var currencyElement = $target.parents('dd').find('.current-selected');
             var oldCurrency = currencyElement.attr('data-id');
             var newCurrency = $target.attr('id');
@@ -50,10 +44,6 @@ define([
             array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
             if (type) {    // added condition for project with no data-level empty
-
-                this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);
-                this.$el.find('#supplierDd').attr('data-id', element.customer._id);
-
                 aEl = $('.current-selected.jobs');
                 aEl.text('Select');
                 aEl.attr('data-id', 'jobs');
@@ -85,31 +75,10 @@ define([
             var taxes;
             var amount;
             var jobs;
-
-            var forSales = this.forSales || false;
-
-            var supplier = $currentEl.find('#supplierDd').attr('data-id');
             var project = $currentEl.find('#projectDd').attr('data-id');
-           /* var salesPersonId = $currentEl.find('#salesPerson').data('id') ? this.$('#salesPerson').data('id') : null;*/
-           /* var paymentTermId = $currentEl.find('#payment_terms').data('id') ? this.$('#payment_terms').data('id') : null;*/
             var invoiceDate = $currentEl.find('#invoice_date').val();
-           /* var dueDate = $currentEl.find('#due_date').val();*/
             var i;
-            var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
-            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
-            var balance = parseFloat($currentEl.find('#balance').text()) * 100;
             var journal = $currentEl.find('#writeOffWay').attr('data-id');
-
-            var payments = {
-                total  : total,
-                unTaxed: unTaxed,
-                balance: balance
-            };
-
-            var currency = {
-                _id : $currentEl.find('#currencyDd').attr('data-id'),
-                name: $.trim($currentEl.find('#currencyDd').text())
-            };
 
             var usersId = [];
             var groupsId = [];
@@ -123,17 +92,8 @@ define([
                     productId = targetEl.data('id');
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
+                        price = $.trim(targetEl.find('[data-name="price"] input').val());
                         jobs = targetEl.find('.current-selected.jobs').attr('data-id');
-                        taxes = targetEl.find('.taxes').text();
-                        amount = targetEl.find('.amount').text();
-
-                        if (price === '') {
-                            return App.render({
-                                type   : 'error',
-                                message: 'Unit price can\'t be empty'
-                            });
-                        }
 
                         if (jobs === 'jobs') {
                             return App.render({
@@ -143,12 +103,9 @@ define([
                         }
 
                         products.push({
-                            product    : productId,
-                            jobs       : jobs,
-                            unitPrice  : price,
-                            quantity   : quantity,
-                            taxes      : taxes,
-                            subTotal   : amount
+                            product : productId,
+                            jobs    : jobs,
+                            quantity: quantity
                         });
                     }
                 }
@@ -168,36 +125,24 @@ define([
             data = {
                 forSales: false,
 
-                supplier             : supplier,
-                fiscalPosition       : null,
-                sourceDocument       : null, // $.trim($('#source_document').val()),
-                supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
-             /*   paymentReference     : $.trim($('#payment_reference').val()),*/
-                invoiceDate          : helpers.setTimeToDate(invoiceDate),
-               /* dueDate              : dueDate,*/
-                account              : null,
-                journal              : journal,
-                project              : project,
-/*
-                salesPerson : salesPersonId,
-                paymentTerms: paymentTermId,*/
-
-                products   : products,
-                paymentInfo: payments,
-                currency   : currency,
-
-                groups: {
+                fiscalPosition: null,
+                sourceDocument: null,
+                invoiceDate   : helpers.setTimeToDate(invoiceDate),
+                account       : null,
+                journal       : journal,
+                project       : project,
+                products      : products,
+                paymentInfo   : null,
+                groups        : {
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
                 },
-
-                whoCanRW: whoCanRW,
-                workflow: this.defaultWorkflow
+                whoCanRW      : whoCanRW
 
             };
 
-            if (supplier) {
+            if (project) {
                 model = new InvoiceModel();
                 model.urlRoot = function () {
                     return 'writeOff';
@@ -223,7 +168,7 @@ define([
             } else {
                 App.render({
                     type   : 'error',
-                    message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    message: CONSTANTS.RESPONSES.CREATE_WRITEOFF
                 });
             }
 
@@ -265,10 +210,9 @@ define([
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
             invoiceItemContainer.append(
-                new ProductItemView({canBeSold: true, service: true, notPayed : true}).render().el
+                new ProductItemView({canBeSold: true, service: true, notPayed: true, writeOff: true}).render().el
             );
 
-            populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
             populate.get('#writeOffWay', CONSTANTS.URLS.WRITE_OFF_WAY, {}, 'name', this, true);
             populate.get2name('#supplier', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
@@ -280,21 +224,11 @@ define([
                 }
             });
 
-            dataService.getData('/projects/getForWtrack', null, function (projects) {
-                self.responseObj['#project'] = projects.data;
-            });
-
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
             }).datepicker('setDate', new Date());
-
-           /* this.$el.find('#due_date').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true
-            });*/
 
             this.delegateEvents(this.events);
 

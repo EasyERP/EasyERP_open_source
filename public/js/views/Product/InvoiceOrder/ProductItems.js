@@ -84,6 +84,9 @@ define([
             if (options && options.balanceVisible) {
                 this.visible = options.balanceVisible;
             }
+            if (options.writeOff) {
+                this.writeOff = options.writeOff;
+            }
 
             this.forSales = options.service;
             this.notPayed = options.notPayed;
@@ -250,14 +253,16 @@ define([
                         forSales     : self.forSales,
                         products     : products,
                         currencyClass: helpers.currencyClass,
-                        currency     : currency
+                        currency     : currency,
+                        writeOff     : self.writeOff
                     }));
                 }
                 $($trEll[$trEll.length - 1]).after(templ({
                     forSales     : self.forSales,
                     products     : products,
                     currencyClass: helpers.currencyClass,
-                    currency     : currency
+                    currency     : currency,
+                    writeOff     : self.writeOff
                 }));
             }
 
@@ -685,14 +690,17 @@ define([
                     }));
                 }
             } else {
-                this.$el.html(this.template({forSales: self.forSales}));
-                totalAmountContainer = $thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {
-                    model           : null,
-                    balanceVisible  : this.visible,
-                    currencySplitter: helpers.currencySplitter,
-                    currencyClass   : helpers.currencyClass
-                }));
+                this.$el.html(this.template({forSales: self.forSales,
+                    writeOff : self.writeOff}));
+                if (!this.writeOff){
+                    totalAmountContainer = $thisEl.find('#totalAmountContainer');
+                    totalAmountContainer.append(_.template(totalAmount, {
+                        model           : null,
+                        balanceVisible  : this.visible,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
+                    }));
+                }
             }
 
             return this;

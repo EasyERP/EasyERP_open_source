@@ -240,17 +240,15 @@
                 type   : 'boolean'
             },
 
-           /* supplier: {
-                displayName: 'Supplier',
-                backend    : 'supplier._id'
+            project: {
+                displayName: 'Project',
+                backend    : 'project._id'
             },
-
-            workflow: {
-                displayName: 'Status',
-                backend    : 'workflow._id'
-            },*/
-
-            array: []
+            journal: {
+                displayName: 'Journal',
+                backend    : 'journal._id'
+            },
+            array: ['project', 'journal']
         },
 
         DividendInvoice: {

@@ -1008,6 +1008,13 @@ var Module = function (models, event) {
                     }
                 }, {
                     $lookup: {
+                        from        : 'journals',
+                        localField  : 'journal',
+                        foreignField: '_id',
+                        as          : 'journal'
+                    }
+                }, {
+                    $lookup: {
                         from        : 'workflows',
                         localField  : 'workflow',
                         foreignField: '_id',
@@ -1025,6 +1032,7 @@ var Module = function (models, event) {
                         workflow: {$arrayElemAt: ['$workflow', 0]},
                         supplier: {$arrayElemAt: ['$supplier', 0]},
                         project : {$arrayElemAt: ['$project', 0]},
+                        journal : {$arrayElemAt: ['$journal', 0]},
 
                         salesManagers: {
                             $filter: {
@@ -1058,6 +1066,8 @@ var Module = function (models, event) {
                         'supplier.name'  : '$supplier.name',
                         'project._id'    : '$project._id',
                         'project.name'   : '$project.name',
+                        'journal.name'   : '$journal.name',
+                        'journal._id'    : '$journal._id',
                         expense          : 1,
                         forSales         : 1,
                         currency         : 1,
@@ -1097,6 +1107,7 @@ var Module = function (models, event) {
                         approved   : 1,
                         _type      : 1,
                         removable  : 1,
+                        journal    : 1,
                         paid       : 1,
                         editedBy   : 1
                     }
@@ -1121,6 +1132,7 @@ var Module = function (models, event) {
                         expense           : '$root.expense',
                         // forSales          : '$root.forSales',
                         currency          : '$root.currency',
+                        journal          : '$root.journal',
                         paymentInfo       : '$root.paymentInfo',
                         invoiceDate       : '$root.invoiceDate',
                         name              : '$root.name',
@@ -1505,6 +1517,16 @@ var Module = function (models, event) {
             function jobsUpdateAndWTracks(parallelCb) {
                 var setData = {};
                 var array;
+                var updateObject = {
+                    type    : 'Ordered',
+                    invoice : null,
+                    workflow: CONSTANTS.JOBSINPROGRESS,
+                    editedBy: editedBy
+                };
+                if (result && result._type === 'writeOff') {
+                    updateObject.type = 'Not Quoted';
+                }
+
 
                 async.each(jobs, function (id, cb) {
                     setData.editedBy = {
@@ -1512,12 +1534,7 @@ var Module = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    JobsModel.findByIdAndUpdate(id, {
-                        type    : 'Ordered',
-                        invoice : null,
-                        workflow: CONSTANTS.JOBSINPROGRESS,
-                        editedBy: editedBy
-                    }, {new: true}, function (err, result) {
+                    JobsModel.findByIdAndUpdate(id, updateObject, {new: true}, function (err, result) {
                         if (err) {
                             return console.log(err);
                         }
@@ -1561,6 +1578,8 @@ var Module = function (models, event) {
 
             if (result && result._type !== 'expensesInvoice') {
                 parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
+            } else if (result && result._type === 'writeOff') {
+                parallelTasks = [jobsUpdateAndWTracks, journalEntryRemove, folderRemove];
             } else {
                 parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, folderRemove];
             }
