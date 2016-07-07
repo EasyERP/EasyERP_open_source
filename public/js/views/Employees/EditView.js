@@ -167,6 +167,8 @@ define([
 
             this.$el.find('.withEndContract').show();
 
+            this.$el.find('#update').show();
+
             this.renderRemoveBtn();
 
             this.editCollection.remove(this.editCollection.get(transferId));
@@ -190,6 +192,7 @@ define([
         },
 
         addNewRow: function (e, contractEndReason) {
+            var $target = $(e.target);
             var $thisEl = this.$el;
             var table = $thisEl.find('#hireFireTable');
             var lastTr = table.find('tr').last();
@@ -211,7 +214,7 @@ define([
             var employeeId;
             var transfer;
             var model;
-            // var payrollStructureType;
+            var payrollStructureType;
             var scheduledPay;
 
             lastTr.find('a').removeClass('current-selected');
@@ -247,7 +250,7 @@ define([
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
-            // payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+            payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
             scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
             department = $tr.find('#departmentsDd').attr('data-id');
             jobType = $.trim($tr.find('#jobTypeDd').text());
@@ -256,23 +259,25 @@ define([
             employeeId = this.currentModel.get('_id');
 
             transfer = {
-                employee       : employeeId,
-                status         : event,
-                date           : date,
-                department     : department,
-                jobPosition    : jobPosition,
-                manager        : manager,
-                jobType        : jobType,
-                salary         : salary,
-                info           : info,
-                weeklyScheduler: weeklyScheduler,
-                // payrollStructureType: null,     // toDo payrollStructureType
+                employee            : employeeId,
+                status              : event,
+                date                : date,
+                department          : department,
+                jobPosition         : jobPosition,
+                manager             : manager,
+                jobType             : jobType,
+                salary              : salary,
+                info                : info,
+                weeklyScheduler     : weeklyScheduler,
+                payrollStructureType: payrollStructureType,
                 scheduledPay        : scheduledPay
             };
             model = new TransferModel(transfer);
             newTr.attr('id', model.cid);
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
+
+            $target.parent().hide();
         },
 
         renderRemoveBtn: function () {
@@ -444,7 +449,10 @@ define([
 
             e.stopPropagation();
 
-            if (id === 'jobPositionDd' || id === 'departmentsDd' || id === 'projectManagerDD' || id === 'jobTypeDd' || id === 'hireFireDd' || id == 'scheduledPayDd') {
+            if (id === 'jobPositionDd' || id === 'departmentsDd' ||
+                id === 'projectManagerDD' || id === 'jobTypeDd' ||
+                id === 'hireFireDd' || id === 'scheduledPayDd' ||
+                id === 'payrollStructureTypeDd') {
 
                 this.setEditable($element);
 
@@ -928,7 +936,7 @@ define([
             populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, false, false);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
-            // populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
+            populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this);
             populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
