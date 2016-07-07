@@ -2359,7 +2359,7 @@ var Module = function (models, event) {
         var jobIds = body.jobs;
         var reconcileSalaryEntries;
         var reconcileInvoiceEntries;
-        var timeToSet = {hour: 15, minute: 1, second: 0};
+        var timeToSet = {hour: 15, minute: 1, second: 0, millisecond: 0};
         var parallelTasks;
         var resultArray = [];
         var parallelFunction;

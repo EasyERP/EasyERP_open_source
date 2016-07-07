@@ -816,14 +816,15 @@ var Module = function (models) {
         var startDateKey = date.isoWeekYear() * 100 + date.isoWeek();
         var endDateKey = endDate.isoWeekYear() * 100 + endDate.isoWeek();
         var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
-            hour  : 15,
-            minute: 1,
-            second: 0
+            hour       : 15,
+            minute     : 1,
+            second     : 0,
+            millisecond: 0
         }));
 
-        if (endDateKey < startDateKey){
-            endDateKey = (endDate.year() + 1) * 100 + endDate.isoWeek();
-        }
+        /* if (endDateKey < startDateKey){
+         endDateKey = (endDate.year() + 1) * 100 + endDate.isoWeek();
+         }*/
 
         date = new Date(date);
         endDate = new Date(endDate);
@@ -918,12 +919,16 @@ var Module = function (models) {
                                 $lte: ['$$item.date', endDate]
                             }
                         }
-                    }
+                    },
+                    fire    : 1,
+                    hire    : '$transfer'
                 }
             }, {
                 $project: {
                     transferDate: {$max: '$transfer.date'},
-                    transfer    : 1
+                    transfer    : 1,
+                    fire        : 1,
+                    hire        : 1
                 }
             }, {
                 $project: {
@@ -936,18 +941,24 @@ var Module = function (models) {
                                 $eq: ['$$item.date', '$transferDate']
                             }
                         }
-                    }
+                    },
+                    fire  : 1,
+                    hire  : 1
                 }
             }, {
                 $project: {
                     salary              : {$max: '$salary.salary'},
-                    payrollStructureType: {$arrayElemAt: ['$salary', 0]}
+                    payrollStructureType: {$arrayElemAt: ['$salary', 0]},
+                    fire                : 1,
+                    hire                : 1
                 }
             }, {
                 $project: {
                     department          : '$payrollStructureType.department',
                     salary              : 1,
-                    payrollStructureType: '$payrollStructureType.payrollStructureType'
+                    payrollStructureType: '$payrollStructureType.payrollStructureType',
+                    fire                : 1,
+                    hire                : 1
                 }
             }, {
                 $lookup: {
@@ -960,6 +971,8 @@ var Module = function (models) {
                 $project: {
                     department          : 1,
                     salary              : 1,
+                    fire                : 1,
+                    hire                : 1,
                     payrollStructureType: {$arrayElemAt: ['$payrollStructureType', 0]}
                 }
             }], function (err, result) {
@@ -977,6 +990,12 @@ var Module = function (models) {
                 var employee = empObject._id;
                 var department = empObject.department;
                 var salary = empObject.salary;
+                var hire = empObject.hire;
+                var fire = empObject.fire;
+                var dateToCreate = endDate;
+                var hireKey = moment(new Date(hire[0].date)).year() * 100 + moment(new Date(hire[0].date)).month() + 1;
+                var fireKey = fire[0] ? moment(new Date(fire[0])).year() * 100 + moment(new Date(fire[0])).month() + 1 : Infinity;
+                var localKey = moment(dateToCreate).year() * 100 + moment(dateToCreate).month() + 1;
                 var payrollStructureType = empObject.payrollStructureType || {};
                 var earnings = payrollStructureType.earnings || [];
                 var deductions = payrollStructureType.deductions || [];
@@ -988,6 +1007,26 @@ var Module = function (models) {
                 var bodySalary;
                 var journal = CONSTANTS.ADMIN_SALARY_JOURNAL;
                 var createJE = false;
+                var daysInMonth;
+                var payForDay;
+                var removeJournalEntries;
+                var createJournalEntries;
+
+                if (hireKey === localKey) {
+                    daysInMonth = moment(dateToCreate).endOf('month').date();
+                    payForDay = salary / daysInMonth;
+
+                    salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date() + 1);
+                }
+
+                if (fireKey === localKey) {
+                    daysInMonth = moment(dateToCreate).endOf('month').date();
+                    payForDay = salary / daysInMonth;
+
+                    salary = payForDay * moment(new Date(fire[0])).date();
+                } else if (fireKey < localKey) {
+                    salary = 0;
+                }
 
                 payrollBody.employee = employee;
                 payrollBody.month = month;
@@ -1290,15 +1329,28 @@ var Module = function (models) {
 
                         newPayrollModel = new Payroll(payrollBody);
 
+                        removeJournalEntries = function (cb) {
+                            var query = {
+                                'sourceDocument._id': bodySalary.sourceDocument._id,
+                                date                : new Date(bodySalary.date),
+                                journal             : bodySalary.journal
+                            };
+
+                            journalEntry.removeByDocId(query, req.session.lastDb, cb)
+                        };
+
+                        createJournalEntries = function (result, cb) {
+                            journalEntry.createReconciled(bodySalary, req.session.lastDb, cb, req.session.uId);
+                        };
+
                         newPayrollModel.save(function (err, result) {
                             if (err) {
                                 return asyncCb(err);
                             }
 
                             if (createJE) {
-                                journalEntry.createReconciled(bodySalary, req.session.lastDb, function () {
-
-                                }, req.session.uId);
+                                async.waterfall([removeJournalEntries, createJournalEntries], function (err, result) {
+                                });
                             }
 
                             asyncCb();
