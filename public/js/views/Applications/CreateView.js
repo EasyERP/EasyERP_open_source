@@ -161,7 +161,7 @@ define([
 
             var homeAddress = {};
 
-            var dateBirthSt = helpers.setTimeToDate($.trim($thisEl.find('#dateBirth').val()));
+            var dateBirthSt = $thisEl.find('#dateBirth').val() ? helpers.setTimeToDate($.trim($thisEl.find('#dateBirth').val())) : null;
 
             var sourceId = $thisEl.find('#sourceDd').attr('data-id');
 

@@ -72,7 +72,7 @@
             Validation.checkNameField(errors, true, attrs.name.first, 'First name');
             Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
             Validation.checkEmailField(errors, false, attrs.personalEmail, 'Email');
-            Validation.validDate(errors, true, attrs.dateBirth, 'Date of Birth');
+            Validation.checkDateField(errors, true, attrs.dateBirth, 'Date of Birth');
             if (attrs.department) {
                 Validation.checkGroupsNameField(errors, true, attrs.department._id || attrs.department, 'Department');
             }
