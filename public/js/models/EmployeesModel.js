@@ -59,7 +59,7 @@
                 }
                 if (response.transfer) {
                     response.transfer = _.map(response.transfer, function (transfer) {
-                        transfer.date = moment(transfer.date).format('DD MMM, YYYY, H:mm:ss');
+                        transfer.date = moment(transfer.date).format('DD MMM, YYYY');
                         return transfer;
                     });
                 }

@@ -192,7 +192,6 @@ define([
         },
 
         addNewRow: function (e, contractEndReason) {
-            var $target = $(e.target);
             var $thisEl = this.$el;
             var table = $thisEl.find('#hireFireTable');
             var lastTr = table.find('tr').last();
@@ -216,6 +215,10 @@ define([
             var model;
             var payrollStructureType;
             var scheduledPay;
+
+            if (e) {
+                e.stopPropagation();
+            }
 
             lastTr.find('a').removeClass('current-selected');
             lastTr.find('[data-content="date"]').removeClass('editable');
@@ -277,7 +280,7 @@ define([
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
 
-            $target.parent().hide();
+            $('#update').hide();
         },
 
         renderRemoveBtn: function () {
@@ -294,11 +297,6 @@ define([
             if (status !== 'hired' && status !== 'fired') {
                 lastTr.find('td').first().html(removeBtn);
             }
-            //
-            // lastTr.find('a').addClass('current-selected');
-            // lastTr.find('[data-content="date"]').addClass('editable');
-            // lastTr.find('[data-content="salary"]').addClass('editable');
-            // lastTr.find('[data-content="info"]').addClass('editable');
         },
 
         editJob: function (e) {
@@ -309,7 +307,6 @@ define([
             var $tr = $target.parent('tr');
             var modelId = $tr.attr('id');
 
-            var trNum = $tr.attr('data-id');
             var minDate = new Date('1995-01-01');
             var maxDate = null;
             var model = this.editCollection.get(modelId);
@@ -330,13 +327,12 @@ define([
 
             $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '" ' + 'readonly' + '>');
 
-            if (parseInt(trNum, 10) > 0) {
-
+            if (($tr.prev()).length) {
                 minDate = new Date($tr.prev().find('td.date').text());
             }
 
             if ($tr.next()) {
-                maxDate = $tr.next().find('td.date').text();
+                maxDate = new Date($tr.next().find('td.date').text());
             }
 
             $target.find('.editing').datepicker({
