@@ -1186,7 +1186,7 @@ var Employee = function (event, models) {
             event.emit('recalculate', req, null, next);
             event.emit('recollectVacationDash', {dbName: dbName});
 
-            res.status(200).send({success: 'Employees removed'});
+            res.status(200).send({success: 'Employee removed'});
         });
     };
 
