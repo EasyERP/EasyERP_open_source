@@ -267,7 +267,8 @@ var User = function (event, models) {
         var data = req.body;
         var UserModel = models.get(data.dbId, 'Users', userSchema);
         var login = data.login || data.email;
-        var ip = req.ip;
+        // var ip = req.ip;
+        var ip = req.headers ? req.headers['x-real-ip'] : '127.0.0.1';
         var geo = geoip.lookup(ip);
         var err;
         var queryObject;
