@@ -15,6 +15,7 @@ var Module = function (models, event) {
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var OrderSchema = mongoose.Schemas.Quotation;
     var ProformaSchema = mongoose.Schemas.Proforma;
+    var WriteOffSchema = mongoose.Schemas.writeOff;
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
     var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
     var DepartmentSchema = mongoose.Schemas.Department;
@@ -586,7 +587,7 @@ var Module = function (models, event) {
                 fx.rates = oxr.rates;
                 fx.base = oxr.base;
 
-                if (data.currency && data.currency.name){
+                if (data.currency && data.currency.name) {
                     data.currency.rate = oxr.rates[data.currency.name];
                 }
 
@@ -800,69 +801,69 @@ var Module = function (models, event) {
     /*TODO remove after filters check*/
 
     /*function ConvertType(element, type) {
-        if (type === 'boolean') {
-            if (element === 'true') {
-                element = true;
-            } else if (element === 'false') {
-                element = false;
-            }
-        }
+     if (type === 'boolean') {
+     if (element === 'true') {
+     element = true;
+     } else if (element === 'false') {
+     element = false;
+     }
+     }
 
-        return element;
-    }*/
+     return element;
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var keys = Object.keys(filter);
-        var i;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var keys = Object.keys(filter);
+     var i;
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            filterName = keys[i];
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (i = keys.length - 1; i >= 0; i--) {
+     filterName = keys[i];
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'project':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'salesPerson':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'supplier':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'workflow':
-                    if (condition) {
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                case 'forSales':
-                    if (condition) {
-                        condition = ConvertType(condition[0], 'boolean');
-                        filtrElement[key] = condition;
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                // skip default;
-            }
-        }
+     switch (filterName) {
+     case 'project':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'salesPerson':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'supplier':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'workflow':
+     if (condition) {
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     }
+     break;
+     case 'forSales':
+     if (condition) {
+     condition = ConvertType(condition[0], 'boolean');
+     filtrElement[key] = condition;
+     resArray.push(filtrElement);
+     }
+     break;
+     // skip default;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
@@ -888,6 +889,8 @@ var Module = function (models, event) {
             moduleId = 95;
         } else if (contentType === 'ExpensesInvoice') {
             moduleId = 97;
+        } else if (contentType === 'WriteOff') {
+            moduleId = 105;
         } else if (contentType === 'DividendInvoice') {
             moduleId = 100;
         } else {
@@ -900,6 +903,8 @@ var Module = function (models, event) {
             Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
         } else if (contentType === 'DividendInvoice') {
             Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
+        } else if (contentType === 'WriteOff') {
+            Invoice = models.get(db, 'writeOff', WriteOffSchema);
         } else if (contentType === 'Invoices') {
             Invoice = models.get(db, 'Invoice', InvoiceSchema);
 
@@ -964,7 +969,6 @@ var Module = function (models, event) {
             };
 
             optionsObject.$and = [];
-
             if (filter && typeof filter === 'object') {
                 // optionsObject.$and = caseFilter(filter);
                 optionsObject.$and.push(filterMapper.mapFilter(filter, contentType));
@@ -981,6 +985,8 @@ var Module = function (models, event) {
                 optionsObject.$and.push({_type: 'dividendInvoice'});
             } else if (contentType === 'Invoices') {
                 optionsObject.$and.push({_type: 'Invoice'});
+            } else if (contentType === 'WriteOff') {
+                optionsObject.$and.push({_type: 'writeOff'});
             } else {
                 optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
             }
@@ -1002,6 +1008,13 @@ var Module = function (models, event) {
                     }
                 }, {
                     $lookup: {
+                        from        : 'journals',
+                        localField  : 'journal',
+                        foreignField: '_id',
+                        as          : 'journal'
+                    }
+                }, {
+                    $lookup: {
                         from        : 'workflows',
                         localField  : 'workflow',
                         foreignField: '_id',
@@ -1019,6 +1032,7 @@ var Module = function (models, event) {
                         workflow: {$arrayElemAt: ['$workflow', 0]},
                         supplier: {$arrayElemAt: ['$supplier', 0]},
                         project : {$arrayElemAt: ['$project', 0]},
+                        journal : {$arrayElemAt: ['$journal', 0]},
 
                         salesManagers: {
                             $filter: {
@@ -1052,6 +1066,8 @@ var Module = function (models, event) {
                         'supplier.name'  : '$supplier.name',
                         'project._id'    : '$project._id',
                         'project.name'   : '$project.name',
+                        'journal.name'   : '$journal.name',
+                        'journal._id'    : '$journal._id',
                         expense          : 1,
                         forSales         : 1,
                         currency         : 1,
@@ -1091,6 +1107,7 @@ var Module = function (models, event) {
                         approved   : 1,
                         _type      : 1,
                         removable  : 1,
+                        journal    : 1,
                         paid       : 1,
                         editedBy   : 1
                     }
@@ -1111,10 +1128,11 @@ var Module = function (models, event) {
                         'salesPerson._id' : '$root.salesPerson._id',
                         workflow          : '$root.workflow',
                         supplier          : '$root.supplier',
-                        // project           : '$root.project',
+                        project           : '$root.project',
                         expense           : '$root.expense',
                         // forSales          : '$root.forSales',
                         currency          : '$root.currency',
+                        journal          : '$root.journal',
                         paymentInfo       : '$root.paymentInfo',
                         invoiceDate       : '$root.invoiceDate',
                         name              : '$root.name',
@@ -1137,7 +1155,8 @@ var Module = function (models, event) {
                 ], function (err, result) {
                     waterfallCallback(null, result);
                 });
-        };
+        }
+        ;
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
@@ -1181,6 +1200,8 @@ var Module = function (models, event) {
             Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
         } else if (forSales) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else if (contentType === 'WriteOff') {
+            Invoice = models.get(req.session.lastDb, 'writeOff', WriteOffSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
@@ -1249,10 +1270,12 @@ var Module = function (models, event) {
             };
 
             query = Invoice.findOne(optionsObject);
-
-            query.populate('products.product')
-                .populate('products.jobs')
+            query
+                .populate('products.jobs', '_id name')
+                .populate('products.product', '_id name')
+                .populate('project', '_id name paymentMethod paymentTerms')
                 .populate('currency._id')
+                .populate('journal', '_id name')
                 .populate('payments', '_id name date paymentRef paidAmount')
                 .populate('department', '_id name')
                 .populate('paymentTerms', '_id name')
@@ -1263,10 +1286,9 @@ var Module = function (models, event) {
                 .populate('groups.owner', '_id login')
                 .populate('sourceDocument', '_id name')
                 .populate('workflow', '_id name status')
-                .populate('project', '_id name paymentMethod paymentTerms')
                 .populate('supplier', '_id name fullName');
 
-            query.lean().exec(waterfallCallback);
+            query.exec(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -1495,6 +1517,16 @@ var Module = function (models, event) {
             function jobsUpdateAndWTracks(parallelCb) {
                 var setData = {};
                 var array;
+                var updateObject = {
+                    type    : 'Ordered',
+                    invoice : null,
+                    workflow: CONSTANTS.JOBSINPROGRESS,
+                    editedBy: editedBy
+                };
+                if (result && result._type === 'writeOff') {
+                    updateObject.type = 'Not Quoted';
+                }
+
 
                 async.each(jobs, function (id, cb) {
                     setData.editedBy = {
@@ -1502,12 +1534,7 @@ var Module = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    JobsModel.findByIdAndUpdate(id, {
-                        type    : 'Ordered',
-                        invoice : null,
-                        workflow: CONSTANTS.JOBSINPROGRESS,
-                        editedBy: editedBy
-                    }, {new: true}, function (err, result) {
+                    JobsModel.findByIdAndUpdate(id, updateObject, {new: true}, function (err, result) {
                         if (err) {
                             return console.log(err);
                         }
@@ -1551,6 +1578,8 @@ var Module = function (models, event) {
 
             if (result && result._type !== 'expensesInvoice') {
                 parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
+            } else if (result && result._type === 'writeOff') {
+                parallelTasks = [jobsUpdateAndWTracks, journalEntryRemove, folderRemove];
             } else {
                 parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, folderRemove];
             }

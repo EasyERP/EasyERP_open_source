@@ -1,0 +1,67 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs" data-class="mainTabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="projectDd">Project</label></dt>
+                                <dd>
+                                    <span id="projectDd"><%= model.project ?  model.project.name : '' %></span>
+                                </dd>
+                                <dt><label for="writeOffWay">Journal</label></dt>
+                                <dd>
+                                    <span id="writeOffWay" href="javascript:;"><%= model.journal.name %></span>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+
+                                <dt><label for="invoice_date">WriteOff Date</label></dt>
+                                <dd>
+                                    <input type="text" class="date" id="invoice_date"
+                                           value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32"
+                                           placeholder="Invoice Date" readonly/>
+                                </dd>
+
+                                <dt><label for="supplier_invoice_num">WriteOff Number</label></dt>
+                                <dd>
+                                    <span id="supplier_invoice_num"><%=model.name%></span>
+                                </dd>
+
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Invoice</a></li>
+                            <li><a href="javascript:;">Attachments</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div id="productItemsHolder">
+
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div id="attach-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item mainTabs">
+                        <div class="assignees-container"></div>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </form>
+</div>
