@@ -2082,11 +2082,10 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .colorCardWrap {
   width: 280px;
-  padding: 0 10px 10px;
+  padding: 0 10px;
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #d6dadc;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
   overflow: hidden;
 }
 .colorCardTitle {
@@ -11509,5 +11508,51 @@ textarea#editInput {
 .bgHover .bgPurple:hover,
 .bgHover .bgBlack:hover,
 .bgHover .bgGrey:hover {
+  opacity: 0.75 !important;
+}
+[data-color="red"] {
+  background-color: #eb5a46 !important;
+}
+[data-color="pink"] {
+  background-color: #ff80ce !important;
+}
+[data-color="orange"] {
+  background-color: #ffab4a !important;
+}
+[data-color="yellow"] {
+  background-color: #f2d600 !important;
+}
+[data-color="greenDark"] {
+  background-color: #61bd4f !important;
+}
+[data-color="greenLight"] {
+  background-color: #51e898 !important;
+}
+[data-color="blueLight"] {
+  background-color: #00c2e0 !important;
+}
+[data-color="blueDark"] {
+  background-color: #0079bf !important;
+}
+[data-color="purple"] {
+  background-color: #c377e0 !important;
+}
+[data-color="black"] {
+  background-color: #4d4d4d !important;
+}
+[data-color="grey"] {
+  background-color: #b6bbbf !important;
+}
+[data-color="red"],
+[data-color="pink"],
+[data-color="orange"],
+[data-color="yellow"],
+[data-color="greenDark"],
+[data-color="greenLight"],
+[data-color="blueLight"],
+[data-color="blueDark"],
+[data-color="purple"],
+[data-color="black"],
+[data-color="grey"] {
   opacity: 0.75 !important;
 }
