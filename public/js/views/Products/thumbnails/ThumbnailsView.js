@@ -23,6 +23,7 @@
 
             this.EditView = EditView;
             this.CreateView = CreateView;
+            this.eventChannel = options.eventChannel;
 
             //_.bind(this.collection.showMoreAlphabet, this.collection);
 
@@ -45,6 +46,12 @@
                 return item._id;
             });
             common.getImages(ids, '/products/getProductsImages');
+        },
+
+        createItem: function () {
+            new CreateView({
+                eventChannel: this.eventChannel
+            });
         },
 
         render: function () {

@@ -26,8 +26,13 @@ define([
         },
 
         initialize: function (options) {
+            var eventChannel = {};
+
+            _.extend(eventChannel, Backbone.Events);
+
             this.startTime = options.startTime;
             this.collection = options.collection;
+            this.eventChannel = eventChannel;
             this.collection.bind('reset', _.bind(this.render, this));
             this.startNumber = 0;
             this.filter = options.filter;
@@ -45,6 +50,7 @@ define([
             this.render();
 
             this.productCollection.bind('reset', _.bind(this.renderThumbnails, this));
+            this.listenTo(eventChannel, 'itemCreated', this.renderFilteredContent);
         },
 
         addProduct: function (e) {
@@ -66,14 +72,33 @@ define([
 
         },
 
+        renderFilteredContent: function (categoryId) {
+            var self = this;
+            var categoryUrl = '/category/posterity/' + categoryId;
+
+            dataService.getData(categoryUrl, {}, function (ids) {
+
+                if (!App.filtersObject.filter) {
+                    App.filtersObject.filter = {};
+                }
+
+                App.filtersObject.filter.productCategory = {
+                    key  : 'accounting.category._id',
+                    value: ids,
+                    type : this.filterType || null
+                };
+
+                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
+
+            }, this);
+        },
+
         selectCategory: function (e) {
             var $targetEl = $(e.target);
             var $thisEl = this.$el;
             var $groupList = $thisEl.find('.groupList');
             var $currentLi;
             var id;
-            var categoryUrl;
-            var self = this;
 
             $groupList.find('.selected').removeClass('selected');
             $targetEl.closest('li').addClass('selected');
@@ -81,21 +106,7 @@ define([
             $currentLi = $targetEl.closest('li');
             id = $currentLi.attr('data-id');
 
-            categoryUrl = '/category/posterity/' + id;
-            dataService.getData(categoryUrl, {}, function (ids) {
-                App.filtersObject = {
-                    filter: {
-                        productCategory: {
-                            key  : 'accounting.category._id',
-                            value: ids,
-                            type : this.filterType || null
-                        }
-                    }
-                };
-
-                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
-
-            }, this);
+            this.renderFilteredContent(id);
         },
 
         createItem: function () {
@@ -221,21 +232,7 @@ define([
                         patch  : true,
                         wait   : true,
                         success: function () {
-                            categoryUrl = '/category/posterity/' + categoryId;
-                            dataService.getData(categoryUrl, {}, function (ids) {
-                                App.filtersObject = {
-                                    filter: {
-                                        productCategory: {
-                                            key  : 'accounting.category._id',
-                                            value: ids,
-                                            type : this.filterType || null
-                                        }
-                                    }
-                                };
-
-                                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
-
-                            }, this);
+                            self.renderFilteredContent();
                         },
                     });
 
@@ -258,10 +255,11 @@ define([
         renderThumbnails: function () {
 
             this.thumbnailsView = new ThumbnailsView({
-                collection: this.productCollection,
-                startTime : new Date(),
-                filter    : this.filter,
-                el        : '#thumbnailContent'
+                collection  : this.productCollection,
+                startTime   : new Date(),
+                filter      : this.filter,
+                el          : '#thumbnailContent',
+                eventChannel: this.eventChannel
             });
 
             this.productCollection.unbind('reset');

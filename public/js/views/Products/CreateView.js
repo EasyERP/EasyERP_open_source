@@ -20,6 +20,7 @@ define([
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
+            this.eventChannel = options.eventChannel;
             _.bindAll(this, 'saveItem');
 
             if (options && options.contentType) {
@@ -73,10 +74,7 @@ define([
             var usersId = [];
             var groupsId = [];
             var valid;
-
-
             var whoCanRW = $currEl.find("[name='whoCanRW']:checked").val();
-
             var canBeSold = $currEl.find('#sold').prop('checked');
             var canBeExpensed = $currEl.find('#expensed').prop('checked');
             var eventSubscription = $currEl.find('#subscription').prop('checked');
@@ -86,9 +84,12 @@ define([
             var isActive = $currEl.find('#active').prop('checked');
             var productType = $currEl.find('#productType').attr('data-id');
             var $categoryEl = $currEl.find('#productCategory');
+            var categoryId =  $categoryEl.attr('data-id');
+            var categoryName = $categoryEl.text();
+
             var category = {
-                _id : $categoryEl.attr('data-id'),
-                name: $categoryEl.text()
+                _id : categoryId,
+                name: categoryName
             };
 
             $currEl.find('#createBtnDialog').attr('disabled', 'disabled');
@@ -141,6 +142,7 @@ define([
 
                 success: function (model, response) {
                     self.attachView.sendToServer(null, model.changed);
+                    self.eventChannel.trigger('itemCreated', categoryId);
                 },
 
                 error: function (model, xhr) {
