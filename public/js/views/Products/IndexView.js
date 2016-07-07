@@ -10,7 +10,7 @@ define([
     'views/Products/thumbnails/ThumbnailsView',
     'helpers/eventsBinder',
     'dataService'
-], function (Backbone, $, _, ContentTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService) {
+], function (Backbone, $, _, ContentTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder) {
     var ProductsView = Backbone.View.extend({
         el                : '#content-holder',
         thumbnailsView    : null,
@@ -21,7 +21,8 @@ define([
             'click .expand'        : 'expandHideItem',
             'click .item > span'   : 'selectCategory',
             'click .editCategory'  : 'editItem',
-            'click .deleteCategory': 'deleteItem'
+            'click .deleteCategory': 'deleteItem',
+            'click .addProduct'    : 'addProduct'
         },
 
         initialize: function (options) {
@@ -44,7 +45,12 @@ define([
 
             this.render();
 
-            this.productCollection.bind('reset', _.bind(this.render, this));
+            this.productCollection.bind('reset', _.bind(this.renderThumbnails, this));
+        },
+
+        addProduct: function (e) {
+            e.preventDefault();
+            this.thumbnailsView.createItem(e);
         },
 
         expandHideItem: function (e) {
@@ -69,6 +75,7 @@ define([
             var $currentLi;
             var id;
 
+            this.thumbnailsView.$el.find('.thumbnailwithavatar').remove();
             $groupList.find('.selected').removeClass('selected');
             $targetEl.closest('li').addClass('selected');
 
@@ -149,16 +156,6 @@ define([
             return false;
         },
 
-        groupMove: function () {
-            $('.groupList li').each(function () {
-                if ($(this).find('li').length > 0) {
-                    $(this).attr('class', 'parent');
-                } else {
-                    $(this).attr('class', 'child');
-                }
-            });
-        },
-
         renderItem: function (product, index, className, selected) {
             return '<li style="display: inline-block; height: 30px; width: 150px; border: 1px solid black; margin: 10px;" class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
         },
@@ -215,6 +212,8 @@ define([
                         patch  : true,
                         wait   : true,
                         success: function () {
+                            self.thumbnailsView.$el.find('.thumbnailwithavatar').remove();
+
                             self.productCollection.getPage(1, {
                                 categoryId : categoryId,
                                 contentType: 'Products',
@@ -224,15 +223,18 @@ define([
                         }
                     });
 
-
+                    $(this).addClass('selected');
                 },
 
                 over: function (event, ui) {
+                    // remove $.css
                     $(this).css('background-color', 'gray');
+                    $(this).addClass('selected');
                 },
 
                 out: function () {
                     $(this).css('background-color', '#fff');
+                    $(this).addClass('selected');
                 }
             });
         },
@@ -243,7 +245,7 @@ define([
                 collection: this.productCollection,
                 startTime : new Date(),
                 filter    : this.filter,
-                el        : '#productContent'
+                el        : '#thumbnailContent'
             });
 
             this.productCollection.unbind('reset');
@@ -259,11 +261,8 @@ define([
 
         render: function () {
             var products = this.collection.toJSON();
-
             this.$el.html(_.template(ContentTemplate));
             this.renderFoldersTree(products);
-            this.renderThumbnails();
-
         }
     });
 

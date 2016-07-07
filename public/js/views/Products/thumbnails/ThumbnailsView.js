@@ -49,7 +49,6 @@
 
         render: function () {
             var $currentEl = this.$el;
-            $currentEl.find('#thumbnailContent').append('<div id="searchContainer"></div><div class="addProduct">+</div>')
             $currentEl
                 .find('#thumbnailContent')
                 .append(this.template({collection: this.collection.toJSON()}));
