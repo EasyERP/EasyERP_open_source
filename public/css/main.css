@@ -1706,7 +1706,7 @@ body {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.3);
 }
-* {
+.loginContent * {
   box-sizing: border-box;
 }
 a {
@@ -1797,6 +1797,10 @@ h2.green {
   -webkit-transform: none;
   transform: none;
 }
+.loginWrapBase {
+  height: 100%;
+  overflow: hidden;
+}
 .loginTitle {
   color: #4e5a64;
   font-size: 30px;
@@ -1824,7 +1828,7 @@ h2.green {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 .loginForgot {
   color: #a4aab2;
@@ -1842,6 +1846,7 @@ input:not([type="checkbox"]).inputField {
   padding: 10px 0;
   border: 0;
   border-bottom: 1px solid #a0a9b4;
+  border-radius: 0!important;
   color: #868e97;
   font-size: 14px;
   margin-bottom: 30px;
@@ -1858,6 +1863,7 @@ input:not([type="checkbox"]).inputBordered {
   display: block;
   background-color: #fff;
   border: 1px solid #c2cad8;
+  border-radius: 0!important;
   -webkit-transition: border-color ease-in-out 0.15s;
   transition: border-color ease-in-out 0.15s;
   outline: 0!important;
@@ -1922,7 +1928,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .btn.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 .btn.blue:hover {
   background-color: #4d5a75;
@@ -2050,7 +2056,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   .sliderWrap,
   .sliderContainer,
   .loginContent {
-    height: 50vh;
+    height: 50%;
   }
 }
 @media (max-width: 767px) {
@@ -2078,6 +2084,18 @@ input:not([type="checkbox"]).inputBordered:focus {
   }
   .formActions {
     white-space: nowrap;
+  }
+}
+@media only screen and (max-device-width: 667px) {
+  .sliderWrap {
+    display: none;
+  }
+  .loginContent {
+    height: 100%;
+  }
+  .loginCopyright {
+    position: static;
+    margin: 20px 0;
   }
 }
 @media (max-width: 410px) {
@@ -2948,6 +2966,17 @@ textarea {
 span.error {
   color: #e55253 !important;
 }
+.kanban .item.errorContent {
+  border: none !important;
+  background-color: #f78c8c !important;
+}
+.kanban .item.errorContent .opportunity-header h4,
+.kanban .item.errorContent .opportunity-header h3 {
+  color: #fff;
+}
+.kanban .item.errorContent .opportunity-content p {
+  color: #fff;
+}
 .red {
   color: #ff0000;
 }
@@ -3186,11 +3215,10 @@ input::-ms-clear {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 14px;
+  width: 17px;
   height: 17px;
   border-radius: 17px;
   border: 1px solid #7f7f80;
-  padding-left: 3px;
   font-family: Icons;
   line-height: 19px;
   margin: 0 2px 0 4px;
@@ -5130,7 +5158,6 @@ dl dd span.ui-spinner {
   margin-top: 6px;
   background-color: inherit;
   padding: 5px 0 10px 0;
-  margin-bottom: 5px;
 }
 .noteWrapper .addNote label {
   font: normal 12px arial;
@@ -5245,7 +5272,7 @@ dl dd span.ui-spinner {
 .noteWrapper #noteBody .noteContainer {
   padding: 10px;
   border: 1px solid #7f7f80;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 .noteWrapper #noteBody .noteContainer .name {
   margin-right: 15px;
@@ -5853,7 +5880,7 @@ button.green:hover {
 button.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 button.blue:hover {
   background-color: #4d5a75;
@@ -5958,7 +5985,7 @@ button.red.blue,
 a.red.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 button.red.blue:hover,
 a.red.blue:hover {
@@ -8315,7 +8342,7 @@ ul.dialog-tabs .withEndContract .endContractReasonList.blue,
 ul.dialog-tabs .withEndContract .arrow.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList.blue:hover,
 ul.dialog-tabs .withEndContract .arrow.blue:hover {
@@ -8396,6 +8423,7 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 .dialog-tabs-items {
   margin-bottom: -29px;
+  padding-top: 10px;
 }
 .dialog-tabs-items .dialog-tabs-item,
 .dialog-tabs-items .chart-tabs-item {
@@ -8528,7 +8556,7 @@ ul.chart-tabs .withEndContract .endContractReasonList.blue,
 ul.chart-tabs .withEndContract .arrow.blue {
   color: #FFF;
   background-color: #3e88b9;
-  border-color: #4d5a75;
+  border-color: #3e88b9;
 }
 ul.chart-tabs .withEndContract .endContractReasonList.blue:hover,
 ul.chart-tabs .withEndContract .arrow.blue:hover {
@@ -11470,4 +11498,7 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
+}
+.bgRed {
+  background-color: #eb5a46!important;
 }

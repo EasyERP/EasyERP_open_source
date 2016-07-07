@@ -7,7 +7,7 @@
         <div class="loginContainer">
             <div class="row bsReset">
                 <div class="loginWrapper row">
-                    <div class="col s-6">
+                    <div class="col s-6 m-6 l-6">
                         <h1 id="titleForm" class="loginTitle float-left">Login to account</h1>
                         <%
                         currentDb = currentDb || 'production';
@@ -16,7 +16,7 @@
                         var firstDb = dbNames[0];
                         %>
                     </div>
-                    <div class="col s-6 float-right">
+                    <div class="col s-6 m-6 l-6 float-right">
                         <div class="selectDd">
                             <span id="selectedDb" class="selectedDb" data-id="<%= validDb ? currentDb : firstDb %>"><%= validDb ? currentDb + ' (' + dbs[currentDb].url + ')' : firstDb +' (' + dbs[firstDb].url + ')'%></span>
                             <ul id="dbs" class="float-right">
