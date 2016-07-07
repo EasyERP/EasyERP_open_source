@@ -3,7 +3,7 @@ module.exports = (function () {
 
     var tagsSchema = mongoose.Schema({
         name : String,
-        color: {type: String, default: '#4d5a75'},
+        color: String,
         type : String
     }, {collection: 'tags'});
 
