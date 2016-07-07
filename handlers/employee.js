@@ -1499,6 +1499,8 @@ var Employee = function (event, models) {
             return next(err);
         }
 
+
+
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
             if (err) {
                 return next(err);
