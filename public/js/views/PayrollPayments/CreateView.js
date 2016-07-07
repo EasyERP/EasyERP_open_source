@@ -428,7 +428,9 @@ define([
                 changeYear : true,
                 minDate    : self.date
             });
-            this.dateOfPayment.datepicker('setDate', date.toString());
+            this.dateOfPayment.datepicker({
+                defaultDate: (new Date(date))
+            });
             this.$el.find('#deleteBtn').hide();
             this.delegateEvents(this.events);
 

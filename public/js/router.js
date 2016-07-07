@@ -1017,7 +1017,7 @@ define([
                 }
 
                 if (contentType === 'PayrollExpenses') {
-                    contentFormModelUrl = "collections/PayrollExpenses/monthCollection";
+                    contentFormModelUrl = "collections/PayrollExpenses/oneMonthCollection";
                     contentFormViewUrl = "views/" + contentType + "/form/FormView";
                     topBarViewUrl = "views/" + contentType + "/TopBarView";
                 } else if (contentType !== 'ownCompanies') {
