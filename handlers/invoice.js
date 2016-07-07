@@ -919,11 +919,14 @@ var Module = function (models, event) {
         }
 
         if (req.query.sort) {
-            for(var key in req.query.sort){
+            keys = Object.keys(req.query.sort);
+
+            keys.forEach(function (key) {
                 req.query.sort[key] = parseInt(req.query.sort[key], 10);
-            }
+            });
 
             sort = req.query.sort;
+
         } else {
             sort = {'editedBy.date': -1};
         }
@@ -1129,7 +1132,7 @@ var Module = function (models, event) {
                         editedBy          : '$root.editedBy',
                         total             : 1
                     }
-                },{
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
