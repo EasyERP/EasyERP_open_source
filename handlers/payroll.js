@@ -885,7 +885,6 @@ var Module = function (models) {
             }, {
                 $project: {
                     isEmployee  : 1,
-                    department  : 1,
                     fire        : 1,
                     hire        : 1,
                     lastFire    : 1,
@@ -906,7 +905,6 @@ var Module = function (models) {
                 $match: employeeQueryForEmployeeByDep
             }, {
                 $project: {
-                    department: 1,
                     transfer  : {
                         $filter: {
                             input: '$transfer',
@@ -920,13 +918,11 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    department  : 1,
                     transferDate: {$max: '$transfer.date'},
                     transfer    : 1
                 }
             }, {
                 $project: {
-                    department: 1,
                     salary    : {
                         $filter: {
                             input: '$transfer',
@@ -940,13 +936,12 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    department          : 1,
                     salary              : {$max: '$salary.salary'},
                     payrollStructureType: {$arrayElemAt: ['$salary', 0]}
                 }
             }, {
                 $project: {
-                    department          : 1,
+                    department          : '$payrollStructureType.department',
                     salary              : 1,
                     payrollStructureType: '$payrollStructureType.payrollStructureType'
                 }
