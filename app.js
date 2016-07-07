@@ -1,6 +1,6 @@
 module.exports = function (mainDb, dbsNames) {
     'use strict';
-   
+
     var http = require('http');
     var path = require('path');
     var express = require('express');
@@ -40,7 +40,7 @@ module.exports = function (mainDb, dbsNames) {
 
         next();
     };
-    
+
     app.set('dbsObject', dbsObject);
     app.set('dbsNames', dbsNames);
     app.engine('html', consolidate.swig);
@@ -55,11 +55,16 @@ module.exports = function (mainDb, dbsNames) {
 
     app.use(session({
         name             : 'crm',
-        key              : "CRMkey",
+        key              : 'CRMkey',
         secret           : '1q2w3e4r5tdhgkdfhgejflkejgkdlgh8j0jge4547hh',
         resave           : false,
-        saveUninitialized: false,
-        store            : new MemoryStore(sessionConfig)
+        rolling          : true,
+        saveUninitialized: true,
+        store            : new MemoryStore(sessionConfig),
+
+        cookie: {
+            maxAge: 31 * 24 * 60 * 60 * 1000 // One month
+        }
     }));
 
     app.use(allowCrossDomain);
@@ -67,7 +72,7 @@ module.exports = function (mainDb, dbsNames) {
 
     httpServer = http.createServer(app);
     io = require('./helpers/socket')(httpServer);
-    
+
     app.set('io', io);
 
     require('./routes/index')(app, mainDb);

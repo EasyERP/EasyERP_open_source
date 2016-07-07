@@ -177,7 +177,7 @@ module.exports = (function () {
         },
 
         attachments: {type: Array, default: []},
-        notes : {type: Array, default: []},
+        notes      : {type: Array, default: []},
 
         contractEnd: {
             reason: {type: String, default: ''},

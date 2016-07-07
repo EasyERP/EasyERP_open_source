@@ -210,7 +210,7 @@ var Products = function (models) {
 
         var Product;
         var query = req.query;
-        var optionsObject = {};
+        var optionsObject = {$and: []};
         var sort = {};
         var accessRollSearcher;
         var contentSearcher;
@@ -232,7 +232,7 @@ var Products = function (models) {
         }
 
         if (query.filter && typeof query.filter === 'object') {
-            optionsObject.$and = filterMapper.mapFilter(query.filter, query.contentType); // caseFilter(query.filter);
+            optionsObject.$and.push(filterMapper.mapFilter(query.filter, query.contentType)); // caseFilter(query.filter);
         }
 
         accessRollSearcher = function (cb) {
@@ -241,7 +241,7 @@ var Products = function (models) {
 
         contentSearcher = function (productsIds, waterfallCallback) {
 
-            optionsObject._id = {$in: productsIds};
+            optionsObject.$and.push({_id: {$in: productsIds}});
 
             getTotal = function (pCb) {
 
@@ -402,6 +402,7 @@ var Products = function (models) {
         var ProductTypesSchema = mongoose.Schemas.productTypes;
         var query;
         var res = {};
+
         res.data = [];
 
         query = models.get(req.session.lastDb, 'productTypes', ProductTypesSchema).find();
@@ -459,7 +460,7 @@ var Products = function (models) {
 
         var contentSearcher;
         var waterfallTasks;
-        
+
         var filterMapper = new FilterMapper();
 
         result.showMore = false;

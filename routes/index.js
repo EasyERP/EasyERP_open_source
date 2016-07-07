@@ -6,6 +6,7 @@ module.exports = function (app, mainDb) {
     // var newrelic = require('newrelic');
     var event = require('../helpers/eventstHandler')(app, mainDb);
     var RESPONSES = require('../constants/responses');
+    var CONSTANTS = require('../constants/mainConstants');
     var fs = require('fs');
     var dbsNames = app.get('dbsNames');
     var dbsObject = mainDb.dbsObject;
@@ -73,8 +74,25 @@ module.exports = function (app, mainDb) {
     var ModulesHandler = require('../handlers/modules');
     var modulesHandler = new ModulesHandler(models);
 
+    var sessionValidator = function (req, res, next) {
+        var session = req.session;
+        var month = 2678400000;
+
+        if (session) {
+            if (session.rememberMe) {
+                session.cookie.maxAge = month;
+            } else {
+                session.cookie.maxAge = CONSTANTS.SESSION_TTL;
+            }
+        }
+
+        next();
+    };
+
     require('../helpers/arrayExtender');
 
+    app.use(sessionValidator);
+    
     app.set('logger', logger);
 
     // requestHandler = require('../requestHandler.js')(app, event, mainDb);
@@ -84,7 +102,7 @@ module.exports = function (app, mainDb) {
     });
 
     app.use('/filter', filterRouter);
-    app.use('/product', productRouter);
+    app.use('/products', productRouter);
     app.use('/orders', orderRouter);
     app.use('/invoices', invoiceRouter);
     app.use('/proforma', proformaRouter);

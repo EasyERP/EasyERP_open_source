@@ -2287,8 +2287,8 @@ var Filters = function (models) {
 
         function getSalesManagers(pCb) {
             ProjectMember.aggregate([{
-                $match : {
-                    projectPositionId : objectId(CONSTANTS.SALESMANAGER)
+                $match: {
+                    projectPositionId: objectId(CONSTANTS.SALESMANAGER)
                 }
             }, {
                 $lookup: {
@@ -2302,16 +2302,16 @@ var Filters = function (models) {
                     salesManagers: {$arrayElemAt: ['$salesManagers', 0]}
                 }
             }, {
-                $project : {
-                    'salesManagers._id'  : 1,
-                    'salesManagers.name' : {
+                $project: {
+                    'salesManagers._id' : 1,
+                    'salesManagers.name': {
                         $concat: ['$salesManagers.name.first', ' ', '$salesManagers.name.last']
                     }
                 }
 
             }, {
                 $group: {
-                    _id         : '$salesManagers._id',
+                    _id : '$salesManagers._id',
                     name: {
                         $first: '$salesManagers.name'
                     }
@@ -2338,12 +2338,12 @@ var Filters = function (models) {
 
         }
 
-        function getProjectTypes (pCb) {
+        function getProjectTypes(pCb) {
             Project.aggregate([
                 {
                     $group: {
                         _id : '$projecttype',
-                        name : {
+                        name: {
                             $first: '$projecttype'
                         }
                     }
@@ -2361,7 +2361,7 @@ var Filters = function (models) {
             });
         }
 
-        function getEmployees (pCb){
+        function getEmployees(pCb) {
             pipeLine = [{
                 $match: query
             }, {
@@ -2404,7 +2404,7 @@ var Filters = function (models) {
             };
 
             aggregation.exec(function (err, result) {
-                    if (err) {
+                if (err) {
                     return next(err);
                 }
 
@@ -3241,7 +3241,7 @@ var Filters = function (models) {
         var query = {
             'sourceDocument.model': 'wTrack',
             debit                 : {$gt: 0}
-        }
+        };
 
         var pipeLine = [{
             $match: query
@@ -3317,12 +3317,13 @@ var Filters = function (models) {
                     }
                 },
 
-                type        : {
+                type: {
                     $addToSet: {
                         _id : '$type',
                         name: '$type'
                     }
                 },
+
                 salesManager: {
                     $addToSet: {
                         _id : '$salesManager._id',
