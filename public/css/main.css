@@ -2118,7 +2118,7 @@ body {
 }
 .pagination .nextPrev #pageList li {
   display: block;
-  width: 18px;
+  width: 24px;
   height: 20px;
   line-height: 20px;
   text-align: center;
@@ -2129,6 +2129,33 @@ body {
   background-color: #3e88b9;
   color: white;
   text-decoration: none;
+}
+.nextPrev button {
+  position: relative;
+}
+.nextPrev button.fa-angle-double-right:before,
+.nextPrev button.fa-angle-double-left:before,
+.nextPrev button.fa-angle-left:before,
+.nextPrev button.fa-angle-right:before,
+.nextPrev button.fa-angle-up:before {
+  position: absolute;
+  top: -6px;
+}
+.nextPrev button.fa-angle-double-left:before,
+.nextPrev button.fa-angle-left:before {
+  left: 9px;
+}
+.nextPrev button.fa-angle-right:before {
+  left: 10px;
+}
+.nextPrev button.fa-angle-double-right:before {
+  left: 11px;
+}
+.nextPrev button.fa-angle-up {
+  position: relative;
+}
+.nextPrev button.fa-angle-up:before {
+  left: 7px;
 }
 .week_list {
   zoom: 1;
@@ -2594,7 +2621,7 @@ h2.green {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
 }
 .loginForgot {
   color: #a4aab2;
@@ -6195,6 +6222,7 @@ dl dd span.ui-spinner {
 #wrapper {
   zoom: 1;
   min-width: 100%;
+  height: 100%;
   height: 100vh;
   position: absolute;
   clear: both;
@@ -7649,7 +7677,7 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   background: #364150;
-  text-align: center;
+  text-align: left;
 }
 .side_menu nav .root {
   text-align: left;
@@ -7661,6 +7689,7 @@ table#workflows tr td.edit-status {
 }
 .side_menu nav .root ul li .sub_item {
   display: block;
+  padding-left: 39px;
   text-decoration: none;
   font-size: 14px;
   font-weight: 300;
@@ -7835,7 +7864,7 @@ table#workflows tr td.edit-status {
   z-index: 999;
 }
 .side_menu .login_panel .login_list li {
-  text-align: center;
+  text-align: left;
   color: #b4bcc8;
   background: #364150;
 }
@@ -7844,6 +7873,7 @@ table#workflows tr td.edit-status {
 }
 .side_menu .login_panel .login_list a {
   display: block;
+  padding-left: 39px;
   text-decoration: none;
   font-size: 14px;
   line-height: 35px;
