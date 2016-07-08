@@ -301,9 +301,6 @@
                                     kanbanHolder.find('.tags').append('<span class="left" data-color="' + elem.color + '">' + elem.name + '</span>')
                                 });
                             }
-
-
-
                             kanbanHolder.find('.opportunity-content p.right').text(nextAction.date);
 
                             if (customerId) {

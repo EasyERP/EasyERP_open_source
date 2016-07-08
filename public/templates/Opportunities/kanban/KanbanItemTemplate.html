@@ -39,8 +39,7 @@
     <div class="tags">
         <%if (model.tags ){%>
         <%model.tags.forEach(function(elem ){%>
-
-        <span class="left" data-color="<%=elem.color%>"><%=elem.name%> </span>
+        <span class="left" data-id="<%=elem._id%>" data-color="<%=elem.color%>"><%=elem.name%> </span>
         <%})%>
         <%}%>
     </div>
