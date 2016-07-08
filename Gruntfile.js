@@ -54,7 +54,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-postcss');
-    grunt.loadNpmTasks('grunt-contrib-watch'); // delete from develop branch
+    grunt.loadNpmTasks('grunt-contrib-watch'); // only for css/flexbox branch
 
     //grunt.registerTask('default', ['jsdoc']);
     grunt.registerTask('default', ['karma']);
