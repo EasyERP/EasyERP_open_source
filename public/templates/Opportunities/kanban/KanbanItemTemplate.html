@@ -1,5 +1,15 @@
 <div class="inner" id="<%=model._id%>" data-id="<%=model._id%>" data-sequence="<%=model.sequence%>">
+
     <div class="opportunity-header">
+        <div class="tags">
+            <%if (model.tags ){%>
+            <%model.tags.forEach(function(elem ){%>
+
+            <span class="left" data-color="<%=elem.color%>" style="text-align:left;"> </span>
+            <%})%>
+            <%}%>
+        </div>
+
         <h4 class="bold left blue" style="max-width:56%"><%=model.name%></h4>
 
         <%if(model.expectedRevenue.value !== 0){%>
@@ -13,13 +23,9 @@
     </div>
     <div class="opportunity-content">
         <div class="half-block left">
-            <%if (model.tags ){%>
-            <%model.tags.forEach(function(elem ){%>
 
-            <span class="left" data-color="<%=elem.color%>" style="text-align:left;"> </span>
-            <%})%>
-            <%}%>
-            <p class="left"><%=(model.customer) && (model.customer.name)  ? model.customer.name.first + ' ' + model.customer.name.last : ''%></p>
+            <p class="left"><%=(model.customer) && (model.customer.name) ? model.customer.name.first + ' ' +
+                model.customer.name.last : ''%></p>
 
             <p class="left"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
                 ''%></p>
