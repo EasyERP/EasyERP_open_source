@@ -2497,7 +2497,9 @@ var Module = function (models, event) {
                     salesPerson    : 1,
                     nextAction     : 1,
                     workflow       : 1,
-                    projectType    : 1
+                    projectType    : 1,
+                    attachments    : 1,
+                    notes          : 1
                 })
                 .populate('customer', 'name')
                 .populate('salesPerson', 'name')
