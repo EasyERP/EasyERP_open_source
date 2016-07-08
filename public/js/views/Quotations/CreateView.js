@@ -150,63 +150,62 @@ define([
 
             });
 
-            if (selectedLength) {
-                for (i = selectedLength - 1; i >= 0; i--) {
-                    targetEl = $(selectedProducts[i]);
-                    productId = targetEl.data('id');
-
-                    if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
-
-                        if (isNaN(price) || price <= 0) {
-                            return App.render({
-                                type   : 'error',
-                                message: 'Please, enter Unit Price!'
-                            });
-                        }
-                        // scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
-                        description = targetEl.find('[data-name="productDescr"]').text();
-                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
-                        subTotal = parseFloat(subTotal) * 100;
-                        jobs = targetEl.find('.current-selected.jobs').attr('data-id');
-
-                        if (price === '') {
-                            return App.render({
-                                type   : 'error',
-                                message: 'Unit price can\'t be empty'
-                            });
-                        }
-
-                        if (jobs === 'jobs' && this.forSales) {
-                            return App.render({
-                                type   : 'notify',
-                                message: "Job field can't be empty. Please, choose or create one."
-                            });
-                        }
-
-                        products.push({
-                            product    : productId,
-                            unitPrice  : price,
-                            quantity   : quantity,
-                            /* scheduledDate: scheduledDate,*/
-                            taxes      : taxes,
-                            description: description,
-                            subTotal   : subTotal,
-                            jobs       : jobs
-                        });
-                    } else {
-                        return App.render({
-                            type   : 'notify',
-                            message: "Products can't be empty."
-                        });
-                    }
-                }
-            } else { // added in case of no rows
+            if (!selectedLength) {
                 return App.render({
                     type   : 'notify',
                     message: "Products can't be empty."
+                });
+            }
+
+            for (i = selectedLength - 1; i >= 0; i--) {
+                targetEl = $(selectedProducts[i]);
+                productId = targetEl.data('id');
+
+                if (!productId) {
+                    return App.render({
+                        type   : 'notify',
+                        message: "Products can't be empty."
+                    });
+                }
+
+                quantity = targetEl.find('[data-name="quantity"]').text();
+                price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+
+                if (isNaN(price) || price <= 0) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Please, enter Unit Price!'
+                    });
+                }
+                // scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                description = targetEl.find('[data-name="productDescr"]').text();
+                subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                subTotal = parseFloat(subTotal) * 100;
+                jobs = targetEl.find('.current-selected.jobs').attr('data-id');
+
+                if (price === '') {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Unit price can\'t be empty'
+                    });
+                }
+
+                if (jobs === 'jobs' && this.forSales) {
+                    return App.render({
+                        type   : 'notify',
+                        message: "Job field can't be empty. Please, choose or create one."
+                    });
+                }
+
+                products.push({
+                    product    : productId,
+                    unitPrice  : price,
+                    quantity   : quantity,
+                    taxes      : taxes,
+                    description: description,
+                    subTotal   : subTotal,
+                    jobs       : jobs
                 });
             }
 
@@ -275,13 +274,14 @@ define([
             var productItemContainer;
 
             productItemContainer = this.$el.find('#productItemsHolder');
+            
             if (this.forSales) {
                 productItemContainer.append(
                     new ProductItemView({canBeSold: true, service: true}).render().el
                 );
             } else {
                 productItemContainer.append(
-                    new ProductItemView({canBeSold: this.forSales}).render().el
+                    new ProductItemView({canBeSold: false}).render().el
                 );
             }
         },
@@ -331,7 +331,6 @@ define([
             if (this.forSales) {
                 this.$el.find('#supplierDd').removeClass('current-selected');
                 populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
-                // populate.get2name('#supplierDd', '/supplier', {}, this, false, true);
             } else {
                 populate.get2name('#supplierDd', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             }
