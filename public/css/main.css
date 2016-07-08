@@ -6411,6 +6411,9 @@ a.red:hover {
   width: 60px;
 }
 /*----------------------------- Attachmetns ------------------------------*/
+.attachContainer {
+  margin-top: 10px;
+}
 .attachContainer li {
   border-bottom: dashed 1px #c8c8d3;
   line-height: 24px;
@@ -7650,6 +7653,12 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-widget-content a {
   color: #3e88b9;
+}
+.ui-dialog .ui-widget-content a.editTags {
+  color: #000;
+}
+.ui-dialog .ui-widget-content a.editTags:hover {
+  text-decoration: none;
 }
 .ui-dialog .avatar {
   display: block;

@@ -1772,6 +1772,12 @@ input::-ms-clear {
     border: none;
     a {
       color: @tilte-color;
+      &.editTags {
+        color: #000;
+        &:hover {
+          text-decoration: none;
+        }
+      }
     }
   }
 
@@ -3453,6 +3459,8 @@ button.red, a.red {
 
 /*----------------------------- Attachmetns ------------------------------*/
 .attachContainer {
+  margin-top: 10px;
+
   li {
     border-bottom: dashed 1px @lightgrey;
     line-height: 24px;
