@@ -204,18 +204,6 @@ module.exports = function (app, mainDb) {
         res.redirect('/#login');
     });
 
-    app.get('/:id', function (req, res, next) {
-        var id = req.params.id;
-
-        id = parseInt(id, 10);
-
-        if (isNaN(id)) {
-            return next();
-        }
-        
-        modulesHandler.redirectTo(req, res, next);
-    });
-
     function notFound(req, res, next) {
         res.status(404);
 
