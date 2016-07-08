@@ -264,7 +264,6 @@ define([
             });
             var $thisEl;
             var notDiv;
-            var categoryId = model.accounting.category._id;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
