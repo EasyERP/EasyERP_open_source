@@ -153,12 +153,12 @@ define([
                 position     : {
                     at: "top+35%"
                 },
-                dialogClass  : 'tag-list-dialog',
+                dialogClass  : 'tag-list-dialog ',
                 title        : 'Tag List',
                 width        : '300px',
                 buttons      : [
                     {
-                        text : 'OK',
+                        class   : 'exitButton',
                         click: function () {
                             self.hideDialog();
                         }

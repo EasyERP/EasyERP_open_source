@@ -2500,7 +2500,7 @@ var Module = function (models, event) {
                 })
                 .populate('customer', 'name')
                 .populate('salesPerson', 'name')
-                .populate('tags', 'color')
+                .populate('tags', 'color name')
                 .populate('workflow', '_id')
                 .sort({sequence: -1})
                 .limit(req.session.kanbanSettings.opportunities.countPerPage);

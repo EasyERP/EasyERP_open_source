@@ -1,14 +1,7 @@
 <div class="inner" id="<%=model._id%>" data-id="<%=model._id%>" data-sequence="<%=model.sequence%>">
 
     <div class="opportunity-header">
-        <div class="tags">
-            <%if (model.tags ){%>
-            <%model.tags.forEach(function(elem ){%>
 
-            <span class="left" data-color="<%=elem.color%>" style="text-align:left;"> </span>
-            <%})%>
-            <%}%>
-        </div>
 
         <h4 class="bold left blue" style="max-width:56%"><%=model.name%></h4>
 
@@ -41,5 +34,14 @@
             <p class="right" style="text-align:right;"> <%=model.nextAction?model.nextAction.date:''%></p>
         </div>
         <div class="clearfix"></div>
+    </div>
+
+    <div class="tags">
+        <%if (model.tags ){%>
+        <%model.tags.forEach(function(elem ){%>
+
+        <span class="left" data-color="<%=elem.color%>"><%=elem.name%> </span>
+        <%})%>
+        <%}%>
     </div>
 </div>

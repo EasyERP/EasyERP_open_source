@@ -549,6 +549,7 @@ input {
         float: left;
         height: 30px;
         width: 235px;
+        color: #fff;
         line-height: 30px;
         padding-left: 5px;
         -webkit-flex-grow: 1;
@@ -633,6 +634,7 @@ input {
       text-overflow: ellipsis;
       text-shadow: 1px 1px 0 rgba(0, 0, 0, .4);
       white-space: nowrap;
+      cursor: pointer;
     }
     span.left {
       color: #000;
@@ -650,12 +652,12 @@ input {
   }
 
   &Title {
-    margin: 7px 0 5px;
+    margin-bottom: 5px;
     border-bottom: 1px solid #8c8c8c;
     line-height: 30px;
     color: #8c8c8c;
     text-align: center;
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 .createNewTag {
@@ -669,4 +671,84 @@ input {
   &:hover {
     background-color: #f4f4f4;
   }
+}
+.kanban {
+  .item {
+    .tags {
+      margin-top: 10px;
+      width: 100%;
+      overflow: hidden;
+
+      span {
+        box-sizing: border-box;
+        display: block;
+        float: left;
+        height: 18px;
+        line-height: 18px;
+        margin: 0 4px 4px 0;
+        min-width: 40px;
+        max-width: 100%;
+        width: auto;
+        border-radius: 3px;
+        color: #fff;
+        padding: 0 10px;
+        text-align: center;
+        font-size: 11px;
+        text-overflow: ellipsis;
+        text-shadow: 1px 1px 0 rgba(0, 0, 0, .6);
+        white-space: nowrap;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.tag-list-dialog {
+  .ui-dialog-buttonpane {
+    padding: 0!important;
+    height: 0!important;
+    overflow: visible;
+
+    .ui-dialog-buttonset {
+      button {
+        &.exitButton {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          height: 15px;
+          width: 15px;
+          padding: 0!important;
+          margin: 0!important;
+          border: none;
+          line-height: normal!important;
+          &:after, &:before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            height: 15px;
+            width: 2px;
+            background-color: #8c8c8c;
+          }
+          &:before {
+            transform: rotate(-45deg);
+          }
+          &:after {
+            transform: rotate(45deg);
+          }
+          &:hover {
+            background-color: transparent;
+          }
+
+          .ui-button-text {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+.ui-dialog.tag-list-dialog .ui-dialog-buttonpane {
+  margin-top: 0!important;
+  border: none;
 }
