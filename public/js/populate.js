@@ -62,7 +62,7 @@ define([
             });
         };
 
-        var getParrentCategory = function (id, url, data, content, isCreate, canBeEmpty) {
+        var getParrentCategory = function (id, url, data, content, isCreate, canBeEmpty, parrrentContentId) {
             dataService.getData(url, data, function (response) {
                 content.responseObj[id] = [];
                 if (canBeEmpty) {
@@ -80,6 +80,8 @@ define([
                 if (isCreate) {
                     $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
                 }
+
+
             });
         };
 
@@ -181,6 +183,37 @@ define([
                     });
                     $(id).text(current[0].name.first).attr("data-id", current[0]._id);
                 }
+            });
+        };
+
+        var getProductsInfo = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId, defaultId) {
+            dataService.getData(url, data, function (response) {
+                content.responseObj[id] = [];
+
+                if (canBeEmpty) {
+                    content.responseObj[id].push({_id: "", name: "Select"});
+                }
+
+                content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
+                    return {
+                        _id     : item._id,
+                        name    : item.name,
+                        level   : item.nestingLevel,
+                        parent  : item.parent,
+                        fullName: item.fullName
+                    };
+                }));
+
+
+                //$(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+
+                if (parrrentContentId) {
+                    var current = _.filter(response.data, function (item) {
+                        return item._id == parrrentContentId;
+                    });
+                    //$(id).text(current[0].[]).attr("data-id", current[0]._id);
+                }
+
             });
         };
 
@@ -500,5 +533,6 @@ define([
             showProductsSelect    : showProductsSelect,
             fetchWorkflow         : fetchWorkflow,
             getParrentCategoryById: getParrentCategoryById
+//            getProductsInfo       : getProductsInfo
         };
     });

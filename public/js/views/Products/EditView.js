@@ -264,6 +264,7 @@ define([
             });
             var $thisEl;
             var notDiv;
+            var categoryId = model.accounting.category._id;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -305,8 +306,11 @@ define([
             );
 
             this.renderAssignees(this.currentModel);
-            populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this);
-            populate.get('#productCategory', '/category', {}, 'fullName', this);
+
+            populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this, true, true);
+
+            populate.getParrentCategory('#parentCategory', '/category', {}, this);
+
             common.canvasDraw({model: this.model.toJSON()}, this);
 
             this.delegateEvents(this.events);

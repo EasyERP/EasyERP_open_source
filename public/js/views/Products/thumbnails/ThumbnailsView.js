@@ -36,9 +36,9 @@
         },
 
         events: {
-            'click #showMore'           : 'showMore',
-            'click .thumbnailwithavatar': 'gotoEditForm',
-            'click .addProduct'         : 'createItem'
+            'click #showMore'        : 'showMore',
+            'click .thumbnailElement': 'gotoEditForm',
+            'click .addProduct'      : 'createItem'
         },
 
         asyncLoadImgs: function (collection) {

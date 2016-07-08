@@ -158,7 +158,7 @@ define([
                     },
                     wait   : true,
                     success: function () {
-                        self.render();
+                        Backbone.history.navigate('easyErp/Products', {trigger: true})
                     },
 
                     error: function (model, err) {
