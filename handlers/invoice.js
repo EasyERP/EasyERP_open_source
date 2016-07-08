@@ -880,6 +880,8 @@ var Module = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var keys;
+        var keysLength;
+        var i;
         var filterMapper = new FilterMapper();
 
         if (contentType === 'salesProforma') {
@@ -920,10 +922,11 @@ var Module = function (models, event) {
 
         if (req.query.sort) {
             keys = Object.keys(req.query.sort);
+            keysLength = keys.length;
 
-            keys.forEach(function (key) {
-                req.query.sort[key] = parseInt(req.query.sort[key], 10);
-            });
+            for (i = 0; i < keysLength; i++) {
+                req.query.sort[keys[i]] = parseInt(req.query.sort[keys[i]], 10);
+            }
 
             sort = req.query.sort;
 
