@@ -64,7 +64,9 @@ module.exports = {
         '565eb53a6aa50532e5df0bcd',
         '565eb53a6aa50532e5df0bcc',
         '565eb53a6aa50532e5df0bcb',
-        '565eb53a6aa50532e5df0bca'
+        '565eb53a6aa50532e5df0bca',
+        '577f983b5dc67c373fced537', // Privat EUR
+        'd577f98244b90ec163f270f1b' , // Provat USD
     ],
 
     FINISHED_GOODS : '565eb53a6aa50532e5df0bd9',

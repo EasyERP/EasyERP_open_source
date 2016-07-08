@@ -61,85 +61,85 @@ var Module = function (models, event) {
     }
 
     /*function ConvertType(array, type) {
-        var i;
+     var i;
 
-        if (type === 'integer') {
-            for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i], 10);
-            }
-        } else if (type === 'boolean') {
-            for (i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }*/
+     if (type === 'integer') {
+     for (i = array.length - 1; i >= 0; i--) {
+     array[i] = parseInt(array[i], 10);
+     }
+     } else if (type === 'boolean') {
+     for (i = array.length - 1; i >= 0; i--) {
+     if (array[i] === 'true') {
+     array[i] = true;
+     } else if (array[i] === 'false') {
+     array[i] = false;
+     } else {
+     array[i] = null;
+     }
+     }
+     }
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var i;
-        var filterKeys = Object.keys(filter);
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var i;
+     var filterKeys = Object.keys(filter);
 
-        for (i = filterKeys.length - 1; i >= 0; i--) {
-            filterName = filterKeys[i];
-            condition = filter[filterName].value ? filter[filterName].value : [];
-            key = filter[filterName].key;
+     for (i = filterKeys.length - 1; i >= 0; i--) {
+     filterName = filterKeys[i];
+     condition = filter[filterName].value ? filter[filterName].value : [];
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'assigned':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentMethod':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSale':
-                    condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = condition;
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentRef':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'year':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'month':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                // skip default;
-            }
-        }
+     switch (filterName) {
+     case 'assigned':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'name':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'supplier':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'paymentMethod':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'workflow':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'forSale':
+     condition = ConvertType(condition, 'boolean');
+     filtrElement[key] = condition;
+     resArray.push(filtrElement);
+     break;
+     case 'paymentRef':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'year':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'month':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     // skip default;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     function getPaymentFilter(req, res, next, options) {
         var moduleId = returnModuleId(req);
@@ -304,6 +304,13 @@ var Module = function (models, event) {
                 }
             }, {
                 $lookup: {
+                    from        : 'journals',
+                    localField  : 'journal',
+                    foreignField: '_id',
+                    as          : 'journal'
+                }
+            }, {
+                $lookup: {
                     from        : 'currency',
                     localField  : 'currency._id',
                     foreignField: '_id',
@@ -314,6 +321,7 @@ var Module = function (models, event) {
                     supplier        : {$arrayElemAt: ['$supplier', 0]},
                     invoice         : {$arrayElemAt: ['$invoice', 0]},
                     paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
+                    journal         : {$arrayElemAt: ['$journal', 0]},
                     'currency.obj'  : {$arrayElemAt: ['$currency.obj', 0]},
                     'currency.rate' : 1,
                     forSale         : 1,
@@ -348,6 +356,8 @@ var Module = function (models, event) {
                 $project: {
                     'supplier.name'   : '$supplier.name',
                     'supplier._id'    : '$supplier._id',
+                    'journal.name'    : '$journal.name',
+                    'journal._id'     : '$journal._id',
                     'currency.name'   : '$currency.obj.name',
                     'currency._id'    : '$currency.obj._id',
                     'currency.rate'   : 1,
@@ -381,6 +391,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     supplier               : 1,
+                    journal                : 1,
                     'currency.name'        : 1,
                     'currency._id'         : 1,
                     'currency.rate'        : 1,
@@ -413,6 +424,7 @@ var Module = function (models, event) {
                 $project: {
                     assigned          : {$arrayElemAt: ['$salesmanagers', 0]},
                     supplier          : 1,
+                    journal           : 1,
                     'currency.name'   : 1,
                     'currency._id'    : 1,
                     'currency.rate'   : 1,
@@ -439,6 +451,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     supplier          : 1,
+                    journal           : 1,
                     'currency.name'   : 1,
                     'currency._id'    : 1,
                     'currency.rate'   : 1,
@@ -481,6 +494,7 @@ var Module = function (models, event) {
                 $project: {
                     _id             : '$root._id',
                     supplier        : '$root.supplier',
+                    journal         : '$root.journal',
                     currency        : '$root.currency',
                     invoice         : '$root.invoice',
                     assigned        : '$root.assigned',
@@ -548,6 +562,7 @@ var Module = function (models, event) {
         query
             .populate('supplier', '_id name fullName')
             .populate('paymentMethod', '_id name')
+            .populate('journal', '_id name')
             .populate('currency', '_id name');
 
         query.exec(function (err, payment) {
@@ -1908,7 +1923,10 @@ var Module = function (models, event) {
                                                 }
 
                                                 if (project) {
-                                                    event.emit('fetchInvoiceCollection', {project: project, dbName: db});
+                                                    event.emit('fetchInvoiceCollection', {
+                                                        project: project,
+                                                        dbName : db
+                                                    });
                                                 }
 
                                             });
