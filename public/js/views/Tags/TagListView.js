@@ -125,10 +125,12 @@ define([
             var selectedElements = this.$el.find('.selected').map(function(){
                 return $( this ).attr('data-id');
             }).get();
+            var collection =  this.collection.toJSON();
+            var selectedItems = collection.filter(function (elem){
+                return (selectedElements.indexOf(elem._id) !== -1);
+            });
 
-            this.model.set({tags : this.collection.filter(function (elem){
-                return (selectedElements.indexOf(elem.id) !== -1);
-            })});
+            this.model.set({tags : selectedItems});
             $('.tag-list-dialog').remove();
         },
 
