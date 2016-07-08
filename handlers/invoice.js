@@ -880,7 +880,9 @@ var Module = function (models, event) {
         var paginationObject = pageHelper(query);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
-        var key;
+        var keys;
+        var keysLength;
+        var i;
         var filterMapper = new FilterMapper();
 
         if (contentType === 'salesProforma') {
@@ -924,9 +926,15 @@ var Module = function (models, event) {
         }
 
         if (req.query.sort) {
-            key = Object.keys(req.query.sort)[0];
-            req.query.sort[key] = parseInt(req.query.sort[key], 10);
+            keys = Object.keys(req.query.sort);
+            keysLength = keys.length;
+
             sort = req.query.sort;
+
+            for (i = 0; i < keysLength; i++) {
+                sort[keys[i]] = parseInt(sort[keys[i]], 10);
+            }
+
         } else {
             sort = {'editedBy.date': -1};
         }
