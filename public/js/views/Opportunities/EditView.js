@@ -173,6 +173,9 @@
 
                 address[el.attr('name')] = el.val();
             });
+            var tags = this.currentModel.get('tags').map(function (elem){
+                return elem._id;
+            });
 
             this.$el.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -205,7 +208,8 @@
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
-                }
+                },
+                tags : tags
             };
 
             if (expectedRevenueValue !== (this.currentModel.get('expectedRevenue')).value.toString()) {

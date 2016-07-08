@@ -13,6 +13,12 @@
     </div>
     <div class="opportunity-content">
         <div class="half-block left">
+            <%if (model.tags ){%>
+            <%model.tags.forEach(function(elem ){%>
+
+            <span class="left" data-color="<%=elem.color%>" style="text-align:left;"> </span>
+            <%})%>
+            <%}%>
             <p class="left"><%=(model.customer) && (model.customer.name)  ? model.customer.name.first + ' ' + model.customer.name.last : ''%></p>
 
             <p class="left"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
