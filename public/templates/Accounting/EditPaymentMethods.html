@@ -26,8 +26,14 @@
             <dd>
                 <input id="account" value="<%=model.account%>">
             </dd>
+            <dt><label for="chartAccount">Chart of Account</label></dt>
+            <dd>
+                <a href="javascript:;" class="current-selected" id="chartAccount" data-id="<%=model.chartAccount ? model.chartAccount._id : null%>"><%=model.chartAccount ? model.chartAccount.name : 'Select'%></a>
+            </dd>
         </dl>
     </div>
+
+
 
     <div class="clearfix"></div>
 </div>

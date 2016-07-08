@@ -115,6 +115,7 @@ define([], function () {
             APPLICATIONS               : '/applications/',
             EMPLOYEES                  : '/employees/',
             CHARTOFACCOUNT             : '/ChartOfAccount/',
+            CHARTOFACCOUNT_FORDD       : '/ChartOfAccount/getForDd',
             COMPANIES                  : '/companies/',
             DEGREES                    : '/Degrees/',
             DEPARTMENTS                : '/departments/',

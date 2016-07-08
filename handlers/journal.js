@@ -82,6 +82,33 @@ var Module = function (models) {
             });
     };
 
+    this.getByAccount = function (req, res, next) {
+        var body = req.query;
+        var Model = models.get(req.session.lastDb, 'journal', journalSchema);
+        var transaction = body.transaction;
+        var debitAccount = body.debitAccount;
+        var creditAccount = body.creditAccount;
+        var query = {};
+
+        query.transaction = transaction;
+
+        if (debitAccount) {
+            query.debitAccount = debitAccount;
+        }
+
+        if (creditAccount) {
+            query.creditAccount = creditAccount;
+        }
+
+        Model.find(query, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result || []});
+        })
+    };
+
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId;

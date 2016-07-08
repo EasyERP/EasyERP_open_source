@@ -10,10 +10,10 @@
     var View = Backbone.View.extend({
 
         events: {
-            keydown                                            : 'keyDownHandler',
-            click                                              : 'hideNewSelect',
-            'click .dialog-tabs a'                             : 'changeTab',
-            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            keydown                                                          : 'keyDownHandler',
+            click                                                            : 'hideNewSelect',
+            'click .dialog-tabs a'                                           : 'changeTab',
+            'click .current-selected:not(.jobs)'                             : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination, .endContract)': 'chooseOption'
         },
 
@@ -88,8 +88,8 @@
                     this.hideDialog();
                     break;
                 /* case 13:
-                    this.validateForm(e);
-                    break;*/
+                 this.validateForm(e);
+                 break;*/
                 default:
                     break;
             }
