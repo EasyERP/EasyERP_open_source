@@ -177,7 +177,7 @@ define([
         },
 
         renderItem: function (product, index, className, selected) {
-            return '<li style="display: inline-block; height: 30px; width: 150px; aling: center; line-height: 30px;" class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
+            return '<li class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
         },
 
         renderFoldersTree: function (products) {
@@ -293,7 +293,7 @@ define([
                 collection  : this.productCollection,
                 startTime   : new Date(),
                 filter      : this.filter,
-                el          : '#thumbnailContent',
+                el          : '#productsHolder',
                 eventChannel: this.eventChannel
             });
 
