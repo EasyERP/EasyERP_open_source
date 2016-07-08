@@ -478,6 +478,8 @@ var Employee = function (event, models) {
 
     this.create = function (req, res, next) {
         var dbName = req.session.lastDb;
+        var UsersSchema = mongoose.Schemas.User;
+        var UsersModel = models.get(dbName, 'Users', UsersSchema);
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
         var employee;
         var body = req.body;
@@ -535,6 +537,14 @@ var Employee = function (event, models) {
                 employee.save(function (error, result) {
                     if (error) {
                         return next(error);
+                    }
+
+                    if (body.relatedUser) {
+                        UsersModel.findByIdAndUpdate(body.relatedUser, {$set: {relatedEmployee: result._id}}, function (error) {
+                            if (error) {
+                                return next(error);
+                            }
+                        });
                     }
 
                     res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
@@ -984,7 +994,6 @@ var Employee = function (event, models) {
     this.updateOnlySelectedFields = function (req, res, next) {
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
-        var remove = req.headers.remove;
         var _id = req.params.id;
         var profileId = req.session.profileId;
         var UsersSchema = mongoose.Schemas.User;
@@ -994,6 +1003,8 @@ var Employee = function (event, models) {
         var fileName = data.fileName;
         var query = {};
         var obj;
+
+        var remove = req.headers.remove;
 
         data.editedBy = {
             user: req.session.uId,
@@ -1045,7 +1056,15 @@ var Employee = function (event, models) {
                             return next(err);
                         }
 
-                        res.status(200).send({success: 'Employees updated'});
+                        if (data.relatedUser) {
+                            UsersModel.findByIdAndUpdate(data.relatedUser, {$set: {relatedEmployee: _id}}, function (error) {
+                                if (error) {
+                                    return next(error);
+                                }
+
+                                res.status(200).send({success: 'Employees updated'});
+                            });
+                        }
                     });
                 });
             }
@@ -1120,6 +1139,14 @@ var Employee = function (event, models) {
 
                         if (err) {
                             return next(err);
+                        }
+
+                        if (data.relatedUser) {
+                            UsersModel.findByIdAndUpdate(data.relatedUser, {$set: {relatedEmployee: _id}}, function (error) {
+                                if (error) {
+                                    return next(error);
+                                }
+                            });
                         }
 
                         if (data.dateBirth || data.hired) {

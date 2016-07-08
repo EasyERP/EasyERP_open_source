@@ -63,9 +63,8 @@ define([
 
             $target = $(this.e.target);
 
-            this.attr = $target.attr('id');
-
-            data = this.responseObj['#' + this.attr];
+            this.attr = $target.attr('id') || $target.attr('class');
+            data = this.responseObj['#' + this.attr] || this.responseObj['.' + this.attr];
 
             if (!data || !data.length) {
                 this.attr = $target.attr('data-content') || $target.parent().attr('data-content');

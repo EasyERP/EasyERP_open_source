@@ -46,50 +46,50 @@ module.exports = function (models, event) {
     }
 
     /*function caseFilter(filter) {
-        var condition = [];
-        var keys = Object.keys(filter);
-        var key;
-        var i;
+     var condition = [];
+     var keys = Object.keys(filter);
+     var key;
+     var i;
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            key = keys[i]; // added correct fields for Tasks and one new field Summary
+     for (i = keys.length - 1; i >= 0; i--) {
+     key = keys[i]; // added correct fields for Tasks and one new field Summary
 
-            switch (key) {
-                case 'workflow':
-                    condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
-                    break;
-                case 'project':
-                    condition.push({'project._id': {$in: filter.project.value.objectID()}});
-                    break;
-                case 'customer':
-                    condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
-                    break;
-                case 'projectManager':
-                    if (filter.projectmanager && filter.projectmanager.value) {
-                        condition.push({'projectManager._id': {$in: filter.projectManager.value.objectID()}});
-                    }
-                    break;
-                case 'salesManager':
-                    condition.push({'salesManager._id': {$in: filter.salesManager.value.objectID()}});
-                    break;
-                case 'name':
-                    condition.push({_id: {$in: filter.name.value.objectID()}});
-                    break;
-                case 'summary':
-                    condition.push({_id: {$in: filter.summary.value.objectID()}});
-                    break;
-                case 'type':
-                    condition.push({type: {$in: filter.type.value}});
-                    break;
-                case 'assignedTo':
-                    condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
-                    break;
-                // skip default case
-            }
-        }
+     switch (key) {
+     case 'workflow':
+     condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
+     break;
+     case 'project':
+     condition.push({'project._id': {$in: filter.project.value.objectID()}});
+     break;
+     case 'customer':
+     condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
+     break;
+     case 'projectManager':
+     if (filter.projectmanager && filter.projectmanager.value) {
+     condition.push({'projectManager._id': {$in: filter.projectManager.value.objectID()}});
+     }
+     break;
+     case 'salesManager':
+     condition.push({'salesManager._id': {$in: filter.salesManager.value.objectID()}});
+     break;
+     case 'name':
+     condition.push({_id: {$in: filter.name.value.objectID()}});
+     break;
+     case 'summary':
+     condition.push({_id: {$in: filter.summary.value.objectID()}});
+     break;
+     case 'type':
+     condition.push({type: {$in: filter.type.value}});
+     break;
+     case 'assignedTo':
+     condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
+     break;
+     // skip default case
+     }
+     }
 
-        return condition;
-    }*/
+     return condition;
+     }*/
 
     this.create = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -233,6 +233,7 @@ module.exports = function (models, event) {
                 task           : 1,
                 customer       : {$arrayElemAt: ['$customer', 0]},
                 health         : 1,
+                projecttype    : 1,
                 'editedBy.date': 1,
                 salesManagers  : {
                     $filter: {
@@ -257,6 +258,7 @@ module.exports = function (models, event) {
                 salesManager   : {$arrayElemAt: ['$salesManagers', 0]},
                 customer       : 1,
                 health         : 1,
+                projecttype    : 1,
                 'editedBy.date': 1
             }
         }, {
@@ -275,6 +277,7 @@ module.exports = function (models, event) {
                 salesManager   : {$arrayElemAt: ['$salesManager', 0]},
                 customer       : 1,
                 health         : 1,
+                projecttype    : 1,
                 'editedBy.date': 1
             }
         }];
@@ -298,6 +301,7 @@ module.exports = function (models, event) {
                 EndDate      : 1,
                 TargetEndDate: 1,
                 health       : 1,
+                projecttype  : 1,
 
                 salesManagers: {
                     $filter: {
@@ -329,7 +333,8 @@ module.exports = function (models, event) {
                 workflow        : 1,
                 salesManager    : {$arrayElemAt: ['$salesManagers', 0]},
                 customer        : 1,
-                health          : 1
+                health          : 1,
+                projecttype     : 1
             }
         }, {
             $lookup: {
@@ -352,14 +357,16 @@ module.exports = function (models, event) {
                 TargetEndDate: 1,
                 salesManager : {$arrayElemAt: ['$salesManager', 0]},
                 customer     : 1,
-                health       : 1
+                health       : 1,
+                projecttype  : 1
             }
         }];
 
         var projectionOptions = {
-            name  : 1,
-            task  : 1,
-            health: 1,
+            name       : 1,
+            task       : 1,
+            health     : 1,
+            projecttype: 1,
 
             workflow: {
                 name: '$workflow.name'
@@ -381,6 +388,7 @@ module.exports = function (models, event) {
             salesManager: '$root.salesManager',
             customer    : '$root.customer',
             health      : '$root.health',
+            projecttype : '$root.projecttype',
             editedBy    : '$root.editedBy',
             total       : 1
         };
