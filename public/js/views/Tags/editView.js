@@ -92,7 +92,7 @@ define([
                 autoOpen     : true,
                 resizable    : true,
                 position     : {
-                    at: "top+35%"
+                    at: "top+38%"
                 },
                 dialogClass  : 'edit-tag-dialog',
                 title        : 'Edit Tag',

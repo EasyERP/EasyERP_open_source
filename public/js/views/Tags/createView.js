@@ -41,6 +41,12 @@ define([
                 name : name,
                 color: color
             };
+            if (!name){
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, choose color!'
+                });
+            }
 
             this.currentModel.save(data, {
                 wait   : true,
@@ -71,7 +77,7 @@ define([
                 autoOpen     : true,
                 resizable    : true,
                 position     : {
-                    at: "top+35%"
+                    at: "top+38%"
                 },
                 dialogClass  : 'create-dialog',
                 title        : 'Create Tag',
