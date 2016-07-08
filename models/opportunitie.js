@@ -181,6 +181,7 @@ module.exports = (function () {
         convertedDate: {type: Date, default: Date.now},
         notes        : {type: Array, default: []},
         attachments  : {type: Array, default: []},
+        projectType  : {type: String, default: 'fixed'},
 
         social: {
             FB: {type: String, default: ''},

@@ -1249,19 +1249,28 @@ var Module = function (models, event) {
                     journalentries: 1,
                     type          : 1,
                     name          : 1,
-                    invoice       : {
+                    invoice       : {$cond :[ {$eq : ['$invoice._type', 'writeOff']}, null,{
                         _id : '$invoice._id',
                         name: '$invoice.name'
-                    },
+                    }]},
 
                     quotation: {
                         _id : '$quotation._id',
                         name: '$quotation.name'
                     },
 
-                    jobPrice: {
+                    jobPriceQuotation: {
                         $filter: {
                             input: '$quotation.products',
+                            as   : 'products',
+                            cond : {
+                                $eq: ['$$products.jobs', '$_id']
+                            }
+                        }
+                    },
+                    jobPriceInvoice: {
+                        $filter: {
+                            input: '$invoice.products',
                             as   : 'products',
                             cond : {
                                 $eq: ['$$products.jobs', '$_id']
@@ -1282,7 +1291,7 @@ var Module = function (models, event) {
                     invoice       : 1,
                     quotation     : 1,
                     workflow      : 1,
-                    jobPrice      : {$arrayElemAt: ['$jobPrice', 0]}
+                    jobPrice      : {$cond : [{$eq : ['$jobPriceInvoice', null  ]}, {$arrayElemAt: ['$jobPriceQuotation', 0]}, {$arrayElemAt: ['$jobPriceInvoice', 0]}]}
                 }
             }, {
                 $unwind: {
@@ -1569,6 +1578,7 @@ var Module = function (models, event) {
 
     this.getForDD = function (req, res, next) {
         var pId = req.query.projectId;
+        var notPayed = req.query.notPayed;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var all = req.query.all;
         var queryObj;
@@ -1581,6 +1591,9 @@ var Module = function (models, event) {
 
         if (all) {
             queryObj = {project: objectId(pId)};
+        }
+        if (notPayed) {
+            queryObj = {workflow: {$ne: objectId('56337c675d49d8d6537832ea')}, project: objectId(pId)};
         }
 
         query.find(queryObj, {

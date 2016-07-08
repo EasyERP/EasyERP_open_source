@@ -124,7 +124,8 @@
                 wName : 'application',
                 name  : 'Initial Qualification',
                 status: 'New'
-            }
+            },
+            notes         : []
         },
 
         urlRoot: function () {

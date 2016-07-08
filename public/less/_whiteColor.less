@@ -10,10 +10,17 @@
 @grey-5: #d7d7d7;
 @grey-6: #bdd0fb;
 @grey-7: #2c3e50;
+@grey-8: #364150;
+@grey-9: #2C3542;
+@grey-10: #b4bcc8;
+@grey-11: #3d4957;
+@grey-12: #666666;
+@grey-13: #606C7D;
 
 @green-1: #008000;
 
 @blue-1: #3e88b9;
+@blue-2: #7eadcc;
 
 @red-1: #E55253;
 
@@ -28,6 +35,9 @@
 @overiewText-color: @fontColor-2;
 @mainBlack-color: #DBDBDB;
 
+/*== Top Bar =======================*/
+@top-font-color: @grey-12;
+
 /*== Lights =========================*/
 @green-lights-color: @green-1;
 @yellow-lights-color: #FFA500;
@@ -36,29 +46,32 @@
 @border-color-main: #7f7f80;
 @border-color: @border-color-main;
 @border-color-selected: @bg-main-menu-selected;
-//lighten(@border-color-main, 30%);
 
 /*==Main menu==========================*/
-
 @bg-main: @white;
 @bg-main-menu: @grey-2;
 @main-menu-text: @white;
 @bg-main-menu-selected: @tilte-color;
-//@bg-main-menu-selected: #b4b4b5;
 @span-color: @bg-main-menu-selected;
 @grey: @normal-submenu-text;
 
 /*== login panel ====================*/
-@login-text: @fontColor-2;
+@login-text: @grey-10;
+@login-hover-text: @white;
 
 /*==Sub MENU, Top-bar =========================*/
-
-@bg-submenu: @bg-main;
-@submenu-text-color: @mainText-color;
+@bg-submenu: @grey-8;
+@submenu-text-color: @grey-10;
+@submenu-active-text-color: @white;
+@submenu-arrow: @grey-13;
+@submenu-opened: @blue-2;
 @normal-submenu-text: @grey-2;
 @current-submenu-text: @tilte-color;
 @non-active-submenu-text: desaturate(@normal-submenu-text, 19%);
 @creatBtn-color: @mainText-color;
+@submenu-selected: lighten(@bg-submenu, 5%);
+@submenu-hover: @grey-9;
+@submenu-border: @grey-11;
 
 /*== Filters ======================*/
 

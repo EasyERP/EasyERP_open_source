@@ -18,7 +18,6 @@
 
         initialize: function (options) {
             $(document).off('click');
-
             this.startTime = options.startTime;
             this.collection = options.collection || Backbone.Collection.extend();
             this.responseObj = {};

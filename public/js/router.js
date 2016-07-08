@@ -700,9 +700,9 @@ define([
                 var topBarViewUrl = "views/myProfile/TopBarView";
                 var self = context;
                 if (context.mainView === null) {
-                    context.main("Persons");
+                    context.main("myProfile");
                 } else {
-                    context.mainView.updateMenu("Persons");
+                    context.mainView.updateMenu("myProfile");
                 }
 
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {

@@ -14,6 +14,7 @@ module.exports = function (models, event) {
 
     router.get('/', _journalHandler.getForView);
     router.get('/getForDd', _journalHandler.getForDd);
+    router.get('/writeOff', _journalHandler.getWriteOff);
 
     router.post('/', _journalHandler.create);
     router.patch('/', _journalHandler.putchBulk);

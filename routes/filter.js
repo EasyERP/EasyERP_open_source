@@ -29,6 +29,7 @@ module.exports = function (models) {
     router.get('/salaryReport', handler.getSalaryReportFilters);
     router.get('/wTrack', handler.getWtrackFilters);
     router.get('/ExpensesInvoice', handler.getExpensesInvoiceFilters);
+    router.get('/WriteOff', handler.getWriteOffFilters);
     router.get('/DividendInvoice', handler.getDividendInvoiceFilters);
     router.get('/DashVacation', handler.getDashVacationFilters);
     router.get('/ExpensesPayments', handler.getExpensesPaymentsFilters);

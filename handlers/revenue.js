@@ -2611,10 +2611,19 @@ var wTrack = function (models) {
     this.totalInvoiceBySales = function (req, res, next) {
         var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
-        var matchObject = {
+
+        var matchObject =  {
             _type   : 'wTrackInvoice',
             forSales: true
         };
+        var startDate;
+        var endDate;
+
+        if(query.startDate && query.endDate){
+            startDate = new Date(moment(new Date(query.startDate)).startOf('day'));
+            endDate = new Date(moment(new Date(query.endDate)).endOf('day'));
+            matchObject.invoiceDate = {$lte: endDate, $gte: startDate};
+        }
 
         Invoice.aggregate([{
             $match: matchObject

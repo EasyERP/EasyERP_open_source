@@ -125,7 +125,7 @@ define([
             changedAttr = this.changedModels[modelId];
 
             if (attr === 'transaction') {
-                changedAttr.transaction = target.text();
+                changedAttr.transaction = $.trim(target.text());
             } else if (attr === 'debitAccount') {
                 changedAttr.debitAccount = element._id;
             } else if (attr === 'creditAccount') {
@@ -184,6 +184,9 @@ define([
             }, {
                 _id : 'Accrual',
                 name: 'Accrual'
+            },{
+                _id : 'WriteOff',
+                name: 'WriteOff'
             }];
 
             setTimeout(function () {

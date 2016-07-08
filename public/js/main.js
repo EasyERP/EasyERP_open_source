@@ -9,6 +9,8 @@ var App = App || {
     };
 
 require.config({
+    // baseUrl: '../public',
+    
     paths: {
         async        : './libs/async/lib/async',
         jQuery       : './libs/jquery-2.1.0.min.map',
@@ -28,6 +30,7 @@ require.config({
         constantsDir : './constants',
         dateFormat   : './libs/date.format',
         d3           : './libs/d3.v3.min',
+        topojson     : './libs/topojson.v0.min/index',
         jqueryBarcode: './libs/jquery-barcode.min',
         moment       : './libs/moment/moment',
         socketio     : '/socket.io/socket.io.js',
@@ -49,11 +52,14 @@ require.config({
         spinJs     : ['jQuery'],
         backstratch: ['jQuery'],
         Backbone   : ['Underscore', 'jQuery'],
-        app        : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch'],
+        app        : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
         d3         : {
             exports: 'd3'
         },
-
+        topojson: {
+            deps: ['d3'],
+            exports: 'topojson'
+        },
         dateFormat: {
             exports: 'dateFormat'
         }

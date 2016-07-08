@@ -4,6 +4,7 @@ module.exports = function (app, mainDb) {
     'use strict';
 
     // var newrelic = require('newrelic');
+    
     var event = require('../helpers/eventstHandler')(app, mainDb);
     var RESPONSES = require('../constants/responses');
     var CONSTANTS = require('../constants/mainConstants');
@@ -68,6 +69,7 @@ module.exports = function (app, mainDb) {
     var profilesRouter = require('./profiles')(models);
     var tasksRouter = require('./tasks')(models, event);
     var journalEntriesRouter = require('./journalEntries')(models, event);
+    var writeOffRouter = require('./writeOff')(models, event);
 
     var logger = require('../helpers/logger');
     var async = require('async');
@@ -159,6 +161,7 @@ module.exports = function (app, mainDb) {
     app.use('/profiles', profilesRouter);
     app.use('/tasks', tasksRouter);
     app.use('/users', userRouter);
+    app.use('/writeOff', writeOffRouter);
 
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

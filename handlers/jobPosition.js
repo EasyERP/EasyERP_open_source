@@ -144,13 +144,6 @@ var Module = function (models) {
         var keysSort;
         var key;
 
-        function compareSort(personA, personB) {
-            if (sort[i] === '1') {
-                return personA[i] - personB[i];
-            }
-            return personB[i] - personA[i];
-        }
-
         getCount = function (pCb) {
             JobPosition
                 .find({})
@@ -196,6 +189,13 @@ var Module = function (models) {
                         if (err) {
                             return pCb(err);
                         }
+                        function compareSort(personA, personB) {
+                            if (sort[key] === '1') {
+                                return personA[key] - personB[key];
+                            }
+                            return personB[key] - personA[key];
+                        }
+
 
                         keysSort = Object.keys(sort);
 

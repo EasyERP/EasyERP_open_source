@@ -118,7 +118,6 @@ define([
             'keydown input.editing '                                                               : 'keyDown',
             click                                                                                  : 'hideSelect',
             keydown                                                                                : 'keydownHandler',
-            'click a.quotation'                                                                    : 'viewQuotation',
             'click a.invoice'                                                                      : 'viewInvoice',
             'click a.proforma'                                                                     : 'viewProforma',
             'click .report'                                                                        : 'showReport'
@@ -148,6 +147,37 @@ define([
             this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiceProforma);
             this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
             this.listenTo(eventChannel, 'generatedTcards', this.getWTrack);
+        },
+
+        editRow: function (e) {
+            var el = $(e.target);
+            var tr = $(e.target).closest('tr');
+            var tempContainer;
+            var editedElement;
+            var editedCol;
+            var editedElementValue;
+            var insertedInput;
+
+            if (el.prop('tagName') !== 'INPUT') {
+                editedElement = $('#projectTeam').find('.editing');
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementValue = editedElement.val();
+
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
+            }
+
+            tempContainer = el.text();
+            el.html('<input class="editing" type="text" maxlength="32" value="' + tempContainer + '">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
+
+            insertedInput = el.find('input');
+            insertedInput.focus();
+            insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+            return false;
         },
 
         viewQuotation: function (e) {
@@ -1480,7 +1510,7 @@ define([
             App.startPreload();
 
             notesEl = new NoteView({
-                model: this.formModel,
+                model      : this.formModel,
                 contentType: self.contentType
             }).render().el;
 

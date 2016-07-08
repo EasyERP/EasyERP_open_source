@@ -16,7 +16,7 @@ module.exports = function (event, models) {
 
     router.get('/', accessStackMiddleware, handler.getByViewTpe);
     router.get('/getForProjectDetails', accessStackMiddleware, handler.getForProjectDetails);
-    router.get('/getForDD', accessStackMiddleware, handler.getForDD);
+    router.get('/getForDD', handler.getForDD);
     router.get('/bySales', accessStackMiddleware, handler.getBySales);
     router.get('/byDepartment', accessStackMiddleware, handler.byDepartment);
     router.get('/exportToXlsx', accessStackMiddleware, handler.exportToXlsx);
@@ -27,7 +27,7 @@ module.exports = function (event, models) {
     router.get('/getEmployeesImages', accessStackMiddleware, handler.getEmployeesImages);
     router.get('/nationality', accessStackMiddleware, handler.getNationality);
     router.get('/languages', accessStackMiddleware, handler.getLanguages);
-    router.get('/sources', accessStackMiddleware, handler.getSources);
+    router.get('/sources', handler.getSources);
     /* router.get('/getByMonth', accessStackMiddleware, handler.getSalaryByMonth);*/
 
     router.get('/birthdays', accessStackMiddleware, handler.getBirthdays);

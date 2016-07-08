@@ -82,6 +82,21 @@ var Module = function (models) {
             });
     };
 
+    this.getWriteOff = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journal', journalSchema);
+
+        Model
+            .find({transaction : 'WriteOff'}, {_id: 1, name: 1})
+            .sort({name: 1})
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: result});
+            });
+    };
+
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId;

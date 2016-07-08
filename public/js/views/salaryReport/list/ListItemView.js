@@ -40,7 +40,7 @@ define([
                 row = $(element).closest('tr');
                 rowTd = row.find('[data-id="' + idTotal + '"]');
 
-                rowTdVal += parseFloat(rowTd.html()) || 0;
+                rowTdVal += parseFloat(helpers.spaceReplacer(rowTd.html())) || 0;
             });
 
             totalTd.text('');
