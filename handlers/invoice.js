@@ -924,11 +924,11 @@ var Module = function (models, event) {
             keys = Object.keys(req.query.sort);
             keysLength = keys.length;
 
-            for (i = 0; i < keysLength; i++) {
-                req.query.sort[keys[i]] = parseInt(req.query.sort[keys[i]], 10);
-            }
-
             sort = req.query.sort;
+
+            for (i = 0; i < keysLength; i++) {
+                sort[keys[i]] = parseInt(sort[keys[i]], 10);
+            }
 
         } else {
             sort = {'editedBy.date': -1};
