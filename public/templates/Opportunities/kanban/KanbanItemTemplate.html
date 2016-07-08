@@ -24,25 +24,25 @@
             <p class="left" style="text-align:left;"><%=model.nextAction?model.nextAction.desc:''%> </p>
             <%}%>
 
-            <p class="left">Project Type</p>
+            <!--<p class="left">Project Type</p>-->
 
-            <p class="left <%=model.notes.length ? '' : 'hidden' %>"><i class="fa fa-comment-o" aria-hidden="true"></i>
+            <span class="left <%=model.notes.length ? '' : 'hidden' %>"><i class="fa fa-comment-o" aria-hidden="true"></i>
                 <span> <%= model.notes.length %></span>
-            </p>
+            </span>
+            <span class="left <%=model.attachments.length ? '' : 'hidden' %>">
+                <i class="fa fa-paperclip" aria-hidden="true"></i>
+                <span> <%= model.attachments.length %> </span>
+            </span>
         </div>
         <div class="half-block right">
             <%if (model.nextAction&&model.nextAction.desc){%>
             <%}%>
             <p class="right" style="text-align:right;"> <%=model.nextAction?model.nextAction.date:''%></p>
 
-            <p class="right"><a data-id="<%=model.projectType?model.projectType:''%>"
+            <!--<p class="right"><a data-id="<%=model.projectType?model.projectType:''%>"
                                 class="current-selected" href="javascript:;"><%=model.projectType?
                 model.projectType:'Select'%></a></p>
-            <p class="right <%=model.attachments.length ? '' : 'hidden' %>">
-                <i class="fa fa-paperclip" aria-hidden="true"></i>
-                <span> <%= model.attachments.length %> </span>
-            </p>
-        </div>
+        </div>-->
 
         <div class="clearfix"></div>
     </div>
