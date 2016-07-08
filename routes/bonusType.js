@@ -225,12 +225,12 @@ module.exports = function (models) {
      *
      * @apiParamExample {json} Request-Example:
      {
-   "contentType": "bonusType",
-   "ids": [
-     "55b92ad521e4b7c40f000604",
-     "55b92ad521e4b7c40f000605"
-   ]
- }
+       "contentType": "bonusType",
+       "ids": [
+         "55b92ad521e4b7c40f000604",
+         "55b92ad521e4b7c40f000605"
+       ]
+     }
      *
      * @apiSuccess {Object} Status Stutus and number of deleted bonus types
      * @apiSuccessExample Success-Response:

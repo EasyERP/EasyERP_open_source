@@ -60,7 +60,7 @@ module.exports = function (models) {
                  "type": "Current Assets",
                  "name": "101200 Account Receivable",
                  "account": "Account Receivable"
-             }
+             },
              ...
          ]
      }
@@ -110,7 +110,8 @@ module.exports = function (models) {
             "type": "Current Assets",
             "name": "101200 Account Receivable",
             "account": "Account Receivable"
-        }
+        },
+        ...
         ]
      }
      */
@@ -178,7 +179,58 @@ module.exports = function (models) {
      */
     router.patch('/', accessStackMiddleware, handler.putchBulk);
 
+    /**
+     *@api {delete} /chartOfAccount/ Request for deleting Chart Of Account
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteChartOfAccount
+     * @apiGroup Chart Of Account
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+      "contentType": "ChartOfAccount",
+      "ids": [
+        "565eb53a6aa50532e5df0bc8"
+      ]
+    }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *      "ok":1,
+     *      "n":1
+     *     }
+     */
     router.delete('/:id', accessStackMiddleware, handler.remove);
+
+    /**
+     *@api {delete} /chartOfAccount/ Request for deleting a few Charts Of Account
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteFewChartsOfAccount
+     * @apiGroup Chart Of Account
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+      "contentType": "ChartOfAccount",
+      "ids": [
+        "565eb53a6aa50532e5df0bc9",
+        "565eb53a6aa50532e5df0bca",
+        "565eb53a6aa50532e5df0bcb",
+        "565eb53a6aa50532e5df0bcc",
+        "565eb53a6aa50532e5df0bcd"
+      ]
+    }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *      "ok":1,
+     *      "n":5
+     *     }
+     */
     router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;

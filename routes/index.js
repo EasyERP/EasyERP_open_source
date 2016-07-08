@@ -51,6 +51,7 @@ module.exports = function (app, mainDb) {
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    
     var personsRouter = require('./person')(models, event);
     var capacityRouter = require('./capacity')(models);
     var payRollRouter = require('./payroll')(models);

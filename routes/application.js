@@ -494,7 +494,9 @@ module.exports = function (event, models) {
      * @apiSuccess (200) {Object} Status Deleted Employee
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-     * {"success":"Employees removed"}
+     * {
+      "success": "customer removed"
+    }
      */
     router.delete('/:id', accessStackMiddleWare, handler.remove);
     router.delete('/', accessStackMiddleWare, handler.bulkRemove);
