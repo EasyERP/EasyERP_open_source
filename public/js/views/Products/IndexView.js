@@ -104,7 +104,7 @@ define([
             var id;
 
             $groupList.find('.selected').removeClass('selected');
-            $targetEl.addClass('selected');
+            $targetEl.closest('.content').addClass('selected');
 
             $currentLi = $targetEl.closest('li');
             id = $currentLi.attr('data-id');
@@ -278,17 +278,6 @@ define([
 
                         $(this).addClass('selected');
                     }
-                },
-
-                over: function () {
-                    // remove $.css
-                    $(this).css('background-color', 'gray');
-                    $(this).addClass('selected');
-                },
-
-                out: function () {
-                    $(this).css('background-color', '#fff');
-                    $(this).addClass('selected');
                 }
             });
         },
