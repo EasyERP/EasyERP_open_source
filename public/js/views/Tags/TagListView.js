@@ -150,6 +150,9 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
+                position     : {
+                    at: "top+35%"
+                },
                 dialogClass  : 'tag-list-dialog',
                 title        : 'Tag List',
                 width        : '300px',

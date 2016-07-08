@@ -91,6 +91,9 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
+                position     : {
+                    at: "top+35%"
+                },
                 dialogClass  : 'edit-tag-dialog',
                 title        : 'Edit Tag',
                 width        : '300px',
