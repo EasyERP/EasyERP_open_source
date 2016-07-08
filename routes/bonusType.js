@@ -168,9 +168,78 @@ module.exports = function (models) {
 }
      */
     router.post('/', handler.create);
+
+    /**
+     *@api {patch} /bonusType/ Request for partly updating Bonus Type
+     *
+     * @apiVersion 0.0.1
+     * @apiName updateBonusType
+     * @apiGroup BonusType
+     *
+     * @apiParamExample {json} Request-Example:
+     * [
+     {
+       "name": "Sales/Head 9%",
+       "_id": "55b92ad521e4b7c40f000602"
+     }
+     ]
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     {"success":"updated"}
+     */
     router.patch('/', handler.patchM);
 
+    /**
+     *@api {delete} /bonusType/ Request for deleting one Bonus Type
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteOneBonusType
+     * @apiGroup BonusType
+     *
+     * @apiParamExample {json} Request-Example:
+     {
+  "contentType": "bonusType",
+  "ids": [
+    "55b92ad521e4b7c40f000602"
+  ]
+}
+     *
+     * @apiSuccess {Object} Status Stutus and number of deleted bonus types
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     {
+         "ok":1,
+         "n":1
+     }
+     */
     router.delete('/:_id', handler.remove);
+
+    /**
+     *@api {delete} /bonusType/ Request for deleting selected Bonus Types
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteSelectedBonusTypes
+     * @apiGroup BonusType
+     *
+     * @apiParamExample {json} Request-Example:
+     {
+   "contentType": "bonusType",
+   "ids": [
+     "55b92ad521e4b7c40f000604",
+     "55b92ad521e4b7c40f000605"
+   ]
+ }
+     *
+     * @apiSuccess {Object} Status Stutus and number of deleted bonus types
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     {
+         "ok":1,
+         "n":2
+     }
+     */
     router.delete('/', handler.bulkRemove);
 
     return router;
