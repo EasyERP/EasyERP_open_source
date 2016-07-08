@@ -27,7 +27,7 @@
             <p class="left">Project Type</p>
 
             <p class="left <%=model.notes.length ? '' : 'hidden' %>"><i class="fa fa-comment-o" aria-hidden="true"></i>
-                <span> <%= model.notes.length ? model.notes.length : '' %></span>
+                <span> <%= model.notes.length %></span>
             </p>
         </div>
         <div class="half-block right">
@@ -40,7 +40,7 @@
                 model.projectType:'Select'%></a></p>
             <p class="right <%=model.attachments.length ? '' : 'hidden' %>">
                 <i class="fa fa-paperclip" aria-hidden="true"></i>
-                <span> <%= model.attachments.length ? model.attachments.length : '' %> </span>
+                <span> <%= model.attachments.length %> </span>
             </p>
         </div>
 
