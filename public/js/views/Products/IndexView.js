@@ -9,8 +9,9 @@ define([
     'collections/Products/filterCollection',
     'views/Products/thumbnails/ThumbnailsView',
     'helpers/eventsBinder',
-    'dataService'
-], function (Backbone, $, _, ContentTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService) {
+    'dataService',
+    'constants'
+], function (Backbone, $, _, ContentTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
     var ProductsView = Backbone.View.extend({
         el                : '#content-holder',
         thumbnailsView    : null,
@@ -210,7 +211,6 @@ define([
                     var $droppable = $(this);
                     var $draggable = ui.draggable;
                     var productId = $draggable.attr('id');
-                    var currentModel = self.productCollection.get(productId);
                     var categoryId = $droppable.data('id');
                     var categoryName = $droppable.data('name');
                     var update = {
@@ -220,22 +220,58 @@ define([
                         }
                     };
                     var changed;
+                    var currentModel = self.productCollection.get(productId);
 
-                    currentModel.set({
-                        accounting: update
-                    });
 
-                    changed = currentModel.changed;
+                    if (!currentModel) {
+                        currentModel = new CurrentModel({validate: false});
 
-                    currentModel.save(changed, {
-                        patch  : true,
-                        wait   : true,
-                        success: function () {
-                            self.renderFilteredContent(categoryId);
-                        }
-                    });
+                        currentModel.urlRoot = CONSTANTS.URLS.PRODUCT;
 
-                    $(this).addClass('selected');
+                        currentModel.fetch({
+                            data   : {id: productId, viewType: 'form'},
+                            success: function (response) {
+                                currentModel.set({
+                                    accounting: update
+                                });
+
+                                changed = currentModel.changed;
+
+                                currentModel.save(changed, {
+                                    patch  : true,
+                                    wait   : true,
+                                    success: function () {
+                                        self.renderFilteredContent(categoryId);
+                                    }
+                                });
+
+                                $(this).addClass('selected');
+                            },
+
+                            error: function () {
+                                App.render({
+                                    type   : 'error',
+                                    message: 'Please refresh browser'
+                                });
+                            }
+                        });
+                    } else {
+                        currentModel.set({
+                            accounting: update
+                        });
+
+                        changed = currentModel.changed;
+
+                        currentModel.save(changed, {
+                            patch  : true,
+                            wait   : true,
+                            success: function () {
+                                self.renderFilteredContent(categoryId);
+                            }
+                        });
+
+                        $(this).addClass('selected');
+                    }
                 },
 
                 over: function (event, ui) {

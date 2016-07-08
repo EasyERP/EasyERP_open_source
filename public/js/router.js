@@ -54,7 +54,8 @@ define([
                 $('.list2 tbody').find('[data-id="false"]').remove();
             }
         });
-    }
+    };
+
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
