@@ -53,7 +53,10 @@ module.exports = function (mainDb, dbsNames) {
     app.use(bodyParser.json({strict: false, inflate: false, limit: 1024 * 1024 * 200}));
     app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
     app.use(cookieParser("CRMkey"));
-    app.use(express.static(path.join(__dirname, 'public')));
+
+    if (process.env.NODE_ENV !== 'production') {
+        app.use(express.static(path.join(__dirname, 'public')));
+    }
 
 
     app.use(session({
