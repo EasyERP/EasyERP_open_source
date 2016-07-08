@@ -12,11 +12,13 @@
     'models/OpportunitiesModel',
     'dataService',
     'views/Filter/filterView',
+    'views/selectView/selectView',
     'collections/Opportunities/filterCollection',
     'constants',
     'helpers',
     'views/pagination',
-    'custom'
+    'custom',
+    'populate'
 ], function (Backbone,
              _,
              $,
@@ -30,11 +32,14 @@
              CurrentModel,
              dataService,
              FilterView,
+             selectView,
              ContentCollection,
              CONSTANTS,
              helpers,
              Pagination,
-             custom) {
+             custom,
+             populate
+) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Pagination.extend({
         el               : '#content-holder',
@@ -44,11 +49,13 @@
         viewType         : 'kanban',
 
         events: {
-            'dblclick .item'             : 'gotoEditForm',
-            'click .item'                : 'selectItem',
-            'click .column.fold'         : 'foldUnfoldKanban',
-            'click .fold-unfold'         : 'foldUnfoldKanban',
-            'click .choseDateRange .item': 'fetchFilteredOpportunities'
+            'dblclick .item'                                                  : 'gotoEditForm',
+            'click .item'                                                     : 'selectItem',
+            'click .column.fold'                                              : 'foldUnfoldKanban',
+            'click .fold-unfold'                                              : 'foldUnfoldKanban',
+            'click .choseDateRange .item'                                     : 'fetchFilteredOpportunities',
+            'click .current-selected:not(.disabled)'                          : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination):not(.disabled)': 'chooseOption'
         },
 
         columnTotalLength: null,
@@ -63,10 +70,55 @@
 
             this.render();
 
+            this.responseObj = {};
+
             this.filterView.trigger('filter', App.filtersObject.filter);
 
             // this.asyncFetc(options.workflowCollection.toJSON());
             // this.getCollectionLengthByWorkflows(this);
+        },
+
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
+        },
+
+        chooseOption: function (e) {
+            var id;
+            var data;
+            var $target = $(e.target);
+
+            $('.newSelectList').hide();
+
+            id = $target.parents('.item').attr('id');
+            data = {projectType: $target.text()};
+
+            $target.parents('.item').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+
+            dataService.patchData('/opportunities/' + id, data, function (err) {
+                if (err) {
+                    return console.log(err);
+                }
+
+            });
         },
 
         updateFoldWorkflow: function () {
@@ -668,6 +720,8 @@
             } else {
                 this.renderFilter(this.baseFilter);
             }
+
+            populate.get('.current-selected', CONSTANTS.URLS.PROJECT_TYPE, {}, 'name', this, false, true);
 
             return this;
         }
