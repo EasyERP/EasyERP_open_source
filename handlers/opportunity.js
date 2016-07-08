@@ -417,7 +417,6 @@ var Module = function (models, event) {
 
         data.toBeConvert = req.headers.toBeConvert;
 
-
         if (data.workflowForList || data.workflowForKanban) {
             data = {
                 $set: {
@@ -492,7 +491,6 @@ var Module = function (models, event) {
             date: new Date().toISOString()
         };
 
-
         if (data.notes && data.notes.length !== 0) {
             obj = data.notes[data.notes.length - 1];
 
@@ -547,7 +545,6 @@ var Module = function (models, event) {
         } else {
             query = (data.jobkey) ? {$and: [{name: data.name}, {jobkey: data.jobkey}]} : {name: data.name};
             Opportunity.find(query, function (err) {
-
 
                 if (err) {
                     return next(err);
@@ -1883,7 +1880,11 @@ var Module = function (models, event) {
                             }
                         }
 
-                        res.status(200).send({success: 'Opportunities updated success', result: result, notes: data.notes});
+                        res.status(200).send({
+                            success: 'Opportunities updated success',
+                            result : result,
+                            notes  : data.notes
+                        });
                     });
                 });
             });
@@ -1905,36 +1906,36 @@ var Module = function (models, event) {
     };
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var i;
-        var keys = Object.keys(filter);
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var i;
+     var keys = Object.keys(filter);
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            filterName = keys[i];
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (i = keys.length - 1; i >= 0; i--) {
+     filterName = keys[i];
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'contactName':
-                    filtrElement.contactName = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement.workflow = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'source':
-                    filtrElement.source = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
-        return resArray;
-    }*/
+     switch (filterName) {
+     case 'contactName':
+     filtrElement.contactName = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'workflow':
+     filtrElement.workflow = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'source':
+     filtrElement.source = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     }
+     }
+     return resArray;
+     }*/
 
     /**
      * Properties in __Opportunities__ are same as in __Leads__.
@@ -2087,61 +2088,61 @@ var Module = function (models, event) {
      */
 
     /*function caseFilterOpp(data) {
-        var filter = {};
-        var tempObj = {};
-        var query = {};
-        var ids;
-        var keys = Object.keys(data);
-        var key;
-        var i;
+     var filter = {};
+     var tempObj = {};
+     var query = {};
+     var ids;
+     var keys = Object.keys(data);
+     var key;
+     var i;
 
-        query.$or = [];
-        filter.$and = [];
+     query.$or = [];
+     filter.$and = [];
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            key = keys[i];
-            ids = [];
+     for (i = keys.length - 1; i >= 0; i--) {
+     key = keys[i];
+     ids = [];
 
-            if ((key !== 'workflowId') && (key !== 'viewType')) {
+     if ((key !== 'workflowId') && (key !== 'viewType')) {
 
-                if (key === 'contactName') {
+     if (key === 'contactName') {
 
-                    tempObj.contactName = {$in: data[key].value};
+     tempObj.contactName = {$in: data[key].value};
 
-                } else if (key === 'source') {
+     } else if (key === 'source') {
 
-                    tempObj.source = {$in: data[key].value};
+     tempObj.source = {$in: data[key].value};
 
-                } else {
+     } else {
 
-                    data[key].value.forEach(function (id) {
-                        if (id !== 'Empty') {
-                            ids.push(objectId(id));
-                        } else {
-                            tempObj[data[key].key] = {$exists: false};
-                            query.$or.push(tempObj);
-                            tempObj = {};
-                        }
-                    });
+     data[key].value.forEach(function (id) {
+     if (id !== 'Empty') {
+     ids.push(objectId(id));
+     } else {
+     tempObj[data[key].key] = {$exists: false};
+     query.$or.push(tempObj);
+     tempObj = {};
+     }
+     });
 
-                    tempObj[data[key].key] = {$in: ids};
-                }
+     tempObj[data[key].key] = {$in: ids};
+     }
 
-                query.$or.push(tempObj);
-                tempObj = {};
-            }
+     query.$or.push(tempObj);
+     tempObj = {};
+     }
 
-            if (query.$or.length) {
-                filter.$and.push(query);
+     if (query.$or.length) {
+     filter.$and.push(query);
 
-                query = {};
-                query.$or = [];
-            }
+     query = {};
+     query.$or = [];
+     }
 
-        }
+     }
 
-        return filter;
-    }*/
+     return filter;
+     }*/
 
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
@@ -2462,7 +2463,7 @@ var Module = function (models, event) {
 
         if (data && filter) {
             /*or.push(filterMapper.mapFilter(filter, 'Opportunities'));
-            optionsObject.$and.push(filterObj);*/
+             optionsObject.$and.push(filterObj);*/
 
             optionsObject.$and.push(filterMapper.mapFilter(filter, 'Opportunities'));
 
@@ -2470,8 +2471,8 @@ var Module = function (models, event) {
         }
 
         /*if (!or.length) {
-            delete filterObj.$or;
-        }*/
+         delete filterObj.$or;
+         }*/
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Opportunities, cb);
@@ -2495,7 +2496,8 @@ var Module = function (models, event) {
                     customer       : 1,
                     salesPerson    : 1,
                     nextAction     : 1,
-                    workflow       : 1
+                    workflow       : 1,
+                    projectType    : 1
                 })
                 .populate('customer', 'name')
                 .populate('salesPerson', 'name')
@@ -2624,7 +2626,6 @@ var Module = function (models, event) {
         var waterfallTasks;
         var accessRollSearcher;
 
-
         var optionsObject = {};
         var data = req.query;
         var query;
@@ -2647,7 +2648,7 @@ var Module = function (models, event) {
             if (optionsObject.$and.length) {
                 queryObject.$and.push(optionsObject);
             }
-            
+
             queryObject.$and.push({workflow: data.workflowId});
             queryObject.$and.push({creationDate: {$gte: date}});
 
@@ -2659,7 +2660,8 @@ var Module = function (models, event) {
                     customer       : 1,
                     salesPerson    : 1,
                     nextAction     : 1,
-                    workflow       : 1
+                    workflow       : 1,
+                    projectType    : 1
                 })
                 .populate('customer', 'name')
                 .populate('salesPerson', 'name')
