@@ -2495,10 +2495,12 @@ var Module = function (models, event) {
                     customer       : 1,
                     salesPerson    : 1,
                     nextAction     : 1,
-                    workflow       : 1
+                    workflow       : 1,
+                    tags           : 1
                 })
                 .populate('customer', 'name')
                 .populate('salesPerson', 'name')
+                .populate('tags', 'color')
                 .populate('workflow', '_id')
                 .sort({sequence: -1})
                 .limit(req.session.kanbanSettings.opportunities.countPerPage);
