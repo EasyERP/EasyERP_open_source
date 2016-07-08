@@ -3,8 +3,9 @@ module.exports = function (mainDb, dbsNames) {
 
     var http = require('http');
     var path = require('path');
+    var debug = require('debug')('compression');
     var express = require('express');
-    var compression = require('compression');
+    // var compression = require('compression');
     var session = require('express-session');
     var logger = require('morgan');
     var cookieParser = require('cookie-parser');
@@ -47,7 +48,7 @@ module.exports = function (mainDb, dbsNames) {
     app.engine('html', consolidate.swig);
     app.set('view engine', 'html');
     app.set('views', __dirname + '/views');
-    app.use(compression());
+    // app.use(compression());
     app.use(logger('dev'));
     app.use(bodyParser.json({strict: false, inflate: false, limit: 1024 * 1024 * 200}));
     app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));

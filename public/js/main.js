@@ -9,6 +9,8 @@ var App = App || {
     };
 
 require.config({
+    // baseUrl: '../public',
+    
     paths: {
         async        : './libs/async/lib/async',
         jQuery       : './libs/jquery-2.1.0.min.map',
