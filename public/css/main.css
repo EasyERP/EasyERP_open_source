@@ -2135,7 +2135,51 @@ input:not([type="checkbox"]).inputBordered:focus {
   overflow: auto;
 }
 .tagsListWrap li {
-  padding: 10px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.tagsListWrap li span:not(.editTag) {
+  position: relative;
+  float: left;
+  height: 30px;
+  width: 235px;
+  line-height: 30px;
+  padding-left: 5px;
+}
+.tagsListWrap li span:not(.editTag).selected:after {
+  content: "\f00c";
+  position: absolute;
+  right: 8px;
+  top: 0;
+  font-family: FontAwesome;
+  font-size: 14px;
+  color: #fff;
+}
+.tagsListWrap li span.editTag {
+  float: right;
+  height: 30px;
+  width: 30px;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+}
+.tagsListWrap li span.editTag:after {
+  content: "\f040";
+  font-family: FontAwesome;
+}
+.tagsListWrap li span.editTag:hover {
+  background-color: #f4f4f4;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+}
+.createNewTag {
+  line-height: 25px;
+}
+.ui-dialog input.searchTagInput {
+  width: 235px;
+  height: 30px;
+  line-height: 30px;
+  padding-left: 5px;
 }
 .selectBlockTitle {
   width: 100%;
