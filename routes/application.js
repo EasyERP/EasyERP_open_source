@@ -170,7 +170,7 @@ module.exports = function (event, models) {
 }
      * @apiSuccess {Object} NewApplication Just created new application
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/1.1 201 Created
      {
   "success": "A new Employees create success",
   "result": {

@@ -155,7 +155,7 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} NewBonusType Just created bonus type
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/1.1 201 Created
      *{
   "success": {
     "__v": 0,
