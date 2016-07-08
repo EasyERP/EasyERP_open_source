@@ -173,7 +173,8 @@
 
                 address[el.attr('name')] = el.val();
             });
-            var tags = this.currentModel.get('tags').map(function (elem){
+            var objectTags = this.currentModel.get('tags');
+            var tags = objectTags.map(function (elem){
                 return elem._id;
             });
 
@@ -208,8 +209,7 @@
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
-                },
-                tags : tags
+                }
             };
 
             if (expectedRevenueValue !== (this.currentModel.get('expectedRevenue')).value.toString()) {
@@ -238,6 +238,7 @@
             }
 
             this.currentModel.set(data);
+            this.currentModel.changed.tags = tags;
             this.currentModel.save(this.currentModel.changed, {
                 headers: {
                     mid: mid
@@ -293,6 +294,15 @@
                                 expectedRevenueHolder.text('');
                                 expectedRevenueHolder.removeClass('dollar');
                             }
+
+                            kanbanHolder.find('.tags').empty();
+                            if (objectTags.length) {
+                                objectTags.forEach(function (elem) {
+                                    kanbanHolder.find('.tags').append('<span class="left" data-color="' + elem.color + '">' + elem.name + '</span>')
+                                });
+                            }
+
+
 
                             kanbanHolder.find('.opportunity-content p.right').text(nextAction.date);
 
