@@ -2130,6 +2130,13 @@ input:not([type="checkbox"]).inputBordered:focus {
   font-size: 16px;
   color: #fff;
 }
+.tagsListWrap {
+  max-height: 750px;
+  overflow: auto;
+}
+.tagsListWrap li {
+  padding: 10px;
+}
 .selectBlockTitle {
   width: 100%;
   padding: 10px 0 5px;
