@@ -722,10 +722,10 @@ var Module = function (models) {
                         department: 1,
                         transfer  : 1,
                         name      : 1,
-                        month     : {$month: '$transfer.date'},
+                        month     : {$add: [{$month: '$transfer.date'}, 1]},
                         year      : 1,
                         lastFire  : 1,
-                        hireDate  : {$add: [{$multiply: [{$year: '$transfer.date'}, 100]}, {$month: '$transfer.date'}]}
+                        hireDate  : {$add: [{$multiply: [{$year: '$transfer.date'}, 100]}, {$month: '$transfer.date'}, 1]}
                     }
                 }, {
                     $group: {
