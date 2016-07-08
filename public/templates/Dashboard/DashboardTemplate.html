@@ -6,7 +6,10 @@
     <li><a href="javascript:;" class="">Opportunity Aging</a></li>
     <li><a href="javascript:;" class="">Opportunities</a></li>
     <li><a href="javascript:;" class="">Won/Lost</a></li>
+    <li><a href="javascript:;" class="">Sales by country</a></li>
 </ul>
+
+
 <div class="chart-tabs-items">
     <div class="chart-tabs-item active">
         <div class="clearfix"></div>
@@ -293,6 +296,50 @@
         </div>
 
         <svg class="winAndLostOpportunitiesChart"></svg>
+    </div>
+    <div class="chart-tabs-item">
+
+        <h3>Sales by country</h3>
+        <div class="vocationFilter">
+            <ul class="dateFilter">
+                <li class="dateRange">
+                    <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
+                    <i class="fa fa-caret-down"></i>
+                </li>
+                <li>
+                    <ul class="frameDetail hidden">
+                        <li id="thisMonth" class="filterValues checked">This Month</li>
+                        <li id="thisYear" class="filterValues checked">This Financial Year</li>
+                        <li id="lastMonth" class="filterValues checked">Last Month</li>
+                        <li id="lastQuarter" class="filterValues checked">Last Quarter</li>
+                        <li id="lastYear" class="filterValues checked">Last Financial Year</li>
+                        <li id="custom" class="filterValues checked">Custom Dates</li>
+                        <li class="customTime hidden">
+                    <span>
+                        <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>
+                        <label for="endDate">To </label><input readonly type="text" id="endDate">
+                    </span>
+                        </li>
+                        <li class="buttons">
+                            <button id="updateDate" class="btn">
+                                <span>Update</span>
+                            </button>
+                            <button id="cancelBtn" class="btn">
+                                <span>Cancel</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+        <div>
+            <div class="treemap_sales" style="margin-left: 130px"></div>
+            <div style="margin-left: 870px">
+                <svg class="salesByCountryChart"></svg>
+            </div>
+            <svg class="salesByCountryBarChart"></svg>
+        </div>
     </div>
 </div>
 <div class="clearfix"></div>

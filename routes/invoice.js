@@ -29,6 +29,7 @@ module.exports = function (models, event) {
     });
 
     router.get('/getFilterValues', handler.getFilterValues);
+    router.get('/getSalesByCountry', handler.getSalesByCountry);
     router.get('/generateName', handler.generateName);
     router.get('/stats', handler.getStats);
     router.get('/stats/project', handler.getStatsForProject);

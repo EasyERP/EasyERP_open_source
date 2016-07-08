@@ -116,13 +116,10 @@ define([
 
             startTime.text(startDate);
             endTime.text(endDate);
-
-            Custom.cacheToApp('trialBalanceDateRange', {
-                startDate: startDate,
-                endDate  : endDate
-            });
-
-            this.trigger('changeDateRange');
+            
+            this.startDate =  startDate;
+            this.endDate = endDate;
+            this.trigger('renderSalesByCountry');
             this.toggleDateRange();
         },
 

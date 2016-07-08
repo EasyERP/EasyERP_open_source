@@ -125,6 +125,59 @@ var Module = function (models, event) {
         });
     };
 
+    this.getSalesByCountry = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var query = req.query;
+        var startDate = query.startDay;
+        var endDate = query.endDay;
+
+        startDate = new Date(moment(new Date(startDate)).startOf('day'));
+        endDate = new Date(moment(new Date(endDate)).endOf('day'));
+
+        Invoice.aggregate([{
+            $match: {
+                forSales   : true,
+                _type      : 'wTrackInvoice',
+                invoiceDate: {$lte: endDate, $gte: startDate}
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'supplier',
+                foreignField: '_id',
+                as          : 'supplier'
+            }
+        }, {
+            $lookup: {
+                from        : 'journalentries',
+                localField  : '_id',
+                foreignField: 'sourceDocument._id',
+                as          : 'journalEntries'
+            }
+        }, {
+            $match: {
+                journalEntries: {$exists: true, $not: {$size: 0}}
+            }
+        }, {
+            $project: {
+                supplier: {$arrayElemAt: ['$supplier', 0]},
+                pays    : {$sum: '$journalEntries.debit'}
+            }
+        }, {
+            $group: {
+                _id : '$supplier.address.country',
+                pays: {$sum: '$pays'}
+
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+    };
+
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
         var forSales = req.body.forSales;
