@@ -6,13 +6,13 @@ define([
     'text!templates/Tags/TagsContentTemplate.html',
     'collections/Tags/TagsCollection',
     'views/Tags/createView',
-    'views/Tags/editView',
-    'moment'
+    'views/Tags/editView'
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, TagsCollection, CreateView, EditView) {
+    'use strict';
 
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, TagsCollection, CreateView, EditView, moment) {
     var NoteView = Backbone.View.extend({
 
-        template: _.template(TagListTemplate),
+        template       : _.template(TagListTemplate),
         contentTemplate: _.template(TagsContentTemplate),
 
         initialize: function (options) {
@@ -22,6 +22,7 @@ define([
             function resetCollection() {
                 self.renderContent(self.e);
             }
+
             this.contentType = options.contentType;
             this.collection = new TagsCollection();
             this.filteredCollection = new TagsCollection();
@@ -49,11 +50,10 @@ define([
 
         },
 
-        changeFilter : function (){
+        changeFilter: function () {
             this.searchInput.val('');
             return this.filteredCollection.reset(this.collection.toJSON());
         },
-
 
         filterCollection: function (value) {
             var resultCollection;
@@ -69,7 +69,7 @@ define([
         },
 
         events: {
-            'click'                                                            : "click",
+            'click'                                                           : "click",
             'click .newSelectList li.miniStylePagination'                     : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
@@ -78,17 +78,16 @@ define([
             'click li'                                                        : 'changeSelected'
         },
 
-        changeSelected : function (e){
+        changeSelected: function (e) {
             var $target = $(e.target);
             $target.toggleClass('selected');
         },
 
-
         renderContent: function () {
             var contentHolder = this.$el.find('#tagsList');
-            contentHolder.html(this.contentTemplate( {
+            contentHolder.html(this.contentTemplate({
                 collection: this.filteredCollection.toJSON(),
-                model : this.model.toJSON()
+                model     : this.model.toJSON()
             }));
         },
 
@@ -103,7 +102,7 @@ define([
         createTag: function (e) {
             e.preventDefault();
             $('.tag-list-dialog').hide();
-            return new CreateView({collection : this.collection});
+            return new CreateView({collection: this.collection});
         },
 
         editTag: function (e) {
@@ -116,21 +115,21 @@ define([
             e.preventDefault();
 
             if (model) {
-                return new EditView({model: model, collection : this.collection});
+                return new EditView({model: model, collection: this.collection});
             }
         },
 
         hideDialog: function () {
             var selectedElements = this.$el.find('.selected').closest('li');
-            var tags = selectedElements.map(function(){
+            var tags = selectedElements.map(function () {
                 return $(this).attr('data-id');
             }).get();
-            var collection =  this.collection.toJSON();
-            var selectedItems = collection.filter(function (elem){
+            var collection = this.collection.toJSON();
+            var selectedItems = collection.filter(function (elem) {
                 return (tags.indexOf(elem._id) !== -1);
             });
 
-            this.model.set({tags : selectedItems});
+            this.model.set({tags: selectedItems});
             $('.tag-list-dialog').remove();
         },
 
@@ -146,7 +145,6 @@ define([
                 model     : modelObj,
                 collection: this.collection.toJSON()
             });
-
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,

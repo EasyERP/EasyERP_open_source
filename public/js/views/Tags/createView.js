@@ -14,22 +14,18 @@ define([
         template: _.template(template),
 
         initialize: function (options) {
-
             _.bindAll(this, 'render', 'saveItem');
-
             this.currentModel = new Model();
-
-            this.responseObj = {};
-
             this.render(options);
         },
 
         events: {
-            'click .colorBox'                                  : 'chooseNewColor'
+            'click .colorBox': 'chooseNewColor'
         },
 
         chooseNewColor: function (e) {
             var $target = $(e.target);
+
             this.$el.find('.colorBox').removeClass('checked');
             $target.addClass('checked');
         },
@@ -42,8 +38,8 @@ define([
             var color = thisEl.find('.checked').attr('data-color');
 
             var data = {
-                name: name,
-                color : color
+                name : name,
+                color: color
             };
 
             this.currentModel.save(data, {
@@ -51,8 +47,6 @@ define([
                 success: function (res, model) {
                     self.collection.add(model);
                     self.hideDialog();
-
-
                 },
 
                 error: function (model, xhr) {

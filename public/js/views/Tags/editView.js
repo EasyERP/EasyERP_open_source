@@ -13,23 +13,13 @@ define([
         template: _.template(EditTemplate),
 
         initialize: function (options) {
-
             _.bindAll(this, 'render', 'saveItem');
             this.collection = options.collection;
-
-            /*if (options.model) {
-                this.currentModel = options.model;
-            } else {
-                this.currentModel = this.collection.getElement();
-            }*/
-
-            this.responseObj = {};
-
             this.render(options);
         },
 
         events: {
-            'click .colorBox'                                  : 'chooseNewColor'
+            'click .colorBox': 'chooseNewColor'
         },
 
         chooseNewColor: function (e) {
@@ -39,7 +29,6 @@ define([
         },
 
         saveItem: function () {
-
             var self = this;
             var thisEl = this.$el;
 
@@ -47,15 +36,13 @@ define([
             var color = thisEl.find('.checked').attr('data-color');
 
             var data = {
-                name: name,
-                color : color
+                name : name,
+                color: color
             };
-           /* this.currentModel.set(data);*/
-            this.model.save(data, {
-                success: function (res, model) {
-                    self.hideDialog();
-                 /*   self.currentModel.set(data);*/
 
+            this.model.save(data, {
+                success: function () {
+                    self.hideDialog();
                 },
 
                 error: function (model, xhr) {
@@ -76,8 +63,8 @@ define([
             if (answer === true) {
 
                 this.model.destroy({
-                    wait : true,
-                    success: function (model) {
+                    wait   : true,
+                    success: function () {
                         self.hideDialog();
                     },
 
