@@ -53,7 +53,6 @@ define([
            /* this.currentModel.set(data);*/
             this.model.save(data, {
                 success: function (res, model) {
-
                     self.hideDialog();
                  /*   self.currentModel.set(data);*/
 
@@ -66,6 +65,7 @@ define([
         },
 
         hideDialog: function () {
+            $('.tag-list-dialog').show();
             $('.edit-tag-dialog').remove();
         },
 
@@ -78,8 +78,6 @@ define([
                 this.model.destroy({
                     wait : true,
                     success: function (model) {
-                        self.hideDialog();
-                     /*   self.collection.remove(model);*/
                         self.hideDialog();
                     },
 

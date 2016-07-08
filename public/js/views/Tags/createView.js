@@ -62,6 +62,7 @@ define([
         },
 
         hideDialog: function () {
+            $('.tag-list-dialog').show();
             $('.create-dialog').remove();
         },
 
