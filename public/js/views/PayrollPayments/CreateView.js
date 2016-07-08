@@ -29,12 +29,12 @@ define([
         },
 
         events: {
-            'click .checkbox'                  : 'checked',
-            'click td.editable, #dateOfPayment': 'editRow',
-            'change .autoCalc'                 : 'autoCalc',
-            'change .editable'                 : 'setEditable',
-            'keydown input.editing'            : 'keyDown',
-            'click #deleteBtn'                 : 'deleteItems'
+            'click .checkbox'      : 'checked',
+            'click td.editable'    : 'editRow',
+            'change .autoCalc'     : 'autoCalc',
+            'change .editable'     : 'setEditable',
+            'keydown input.editing': 'keyDown'
+            //'click #deleteBtn'     : 'deleteItems'
         },
 
         savedNewModel: function () {
@@ -78,15 +78,7 @@ define([
                 insertedInput.focus();
                 insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
-                return false;
             }
-
-            this.$el.find('#dateOfPayment').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true
-            });
-
 
             return false;
         },
@@ -160,7 +152,7 @@ define([
 
                 pay = pay ? parseFloat(pay) : 0;
                 calc = calc ? parseFloat(calc) : 0;
-                newValue = parseFloat(input.val());
+                newValue = parseFloat(helpers.spaceReplacer(input.val()));
 
                 if (payTD.text()) {
                     pay = pay;
@@ -185,7 +177,7 @@ define([
 
                 if (subValues !== 0) {
 
-                    value = pay - calc;
+                    value = calc - pay;
 
                     payTD.attr('data-cash', pay);
                     payTD.text(pay);
@@ -195,7 +187,7 @@ define([
 
                     changedAttr = this.changedModels[editedElementRowId];
 
-                    changedAttr.differenceAmount = pay - calc;
+                    changedAttr.differenceAmount = calc - pay;
 
                 }
             }
@@ -339,7 +331,7 @@ define([
             }
         },
 
-        deleteItems: function (e) {
+       /* deleteItems: function (e) {
             var that = this;
             var answer = confirm('Really DELETE items ?!');
             var value;
@@ -358,7 +350,7 @@ define([
                 });
             }
 
-        },
+        },*/
 
         deleteItem: function (tr, id) {
             var self = this;
@@ -414,7 +406,7 @@ define([
             var formString;
 
             options.currencySplitter = helpers.currencySplitter;
-            options.date = moment(new Date(date)).format('DD MMM, YYYY');
+            date = moment(new Date(date)).format('DD MMM, YYYY');
             formString = this.template(options);
 
             this.$el = $(formString).dialog({
@@ -442,14 +434,15 @@ define([
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
-            //this.dateOfPayment = this.$el.find('#dateOfPayment');
-            //this.dateOfPayment.datepicker({
-            //    dateFormat : 'd M, yy',
-            //    changeMonth: true,
-            //    changeYear : true,
-            //    minDate    : self.date
-            //});
-            //this.dateOfPayment.datepicker('setDate', date.toString());
+            this.$el.find('#dateOfPayment').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                minDate    : new Date(self.date),
+                onSelect   : function () {
+                    // set date to model
+                }
+            }).datepicker('setDate', date);
 
             this.$el.find('#deleteBtn').hide();
             this.delegateEvents(this.events);
