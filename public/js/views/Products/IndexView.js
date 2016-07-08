@@ -20,11 +20,11 @@ define([
         itemTemplate     : _.template(ItemTemplate),
 
         events: {
-            'click .expand'        : 'expandHideItem',
-            'click .item > span'   : 'selectCategory',
-            'click .editCategory'  : 'editItem',
-            'click .deleteCategory': 'deleteItem',
-            'click .addProduct'    : 'addProduct'
+            'click .expand'         : 'expandHideItem',
+            'click .item > .content': 'selectCategory',
+            'click .editCategory'   : 'editItem',
+            'click .deleteCategory' : 'deleteItem',
+            'click .addProduct'     : 'addProduct'
         },
 
         initialize: function (options) {
@@ -96,6 +96,7 @@ define([
         },
 
         selectCategory: function (e) {
+            e.stopPropagation();
             var $targetEl = $(e.target);
             var $thisEl = this.$el;
             var $groupList = $thisEl.find('.groupList');
@@ -103,7 +104,7 @@ define([
             var id;
 
             $groupList.find('.selected').removeClass('selected');
-            $targetEl.closest('li').addClass('selected');
+            $targetEl.addClass('selected');
 
             $currentLi = $targetEl.closest('li');
             id = $currentLi.attr('data-id');
@@ -147,7 +148,6 @@ define([
             var $targetEl = $(e.target);
             var myModel = this.collection.get($targetEl.closest('li').data('id'));
             var mid = 39;
-            var self = this;
             var answer = confirm('Really DELETE items ?!');
 
             e.preventDefault();
@@ -159,7 +159,7 @@ define([
                     },
                     wait   : true,
                     success: function () {
-                        Backbone.history.navigate('easyErp/Products', {trigger: true})
+                        Backbone.history.navigate('easyErp/Products', {trigger: true});
                     },
 
                     error: function (model, err) {
@@ -178,15 +178,11 @@ define([
         },
 
         renderItem: function (product, className, selected) {
-
             return this.itemTemplate({
                 className: className,
                 selected : selected,
                 product  : product
-
             });
-
-            //return '<li class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
         },
 
         renderFoldersTree: function (products) {
@@ -202,7 +198,7 @@ define([
                     par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
 
                     if (!par.find('.expand').length) {
-                        par.append('<a class="expand" href="javascript:;" style="display: inline-block; float: left">-</a>')
+                        par.append('<a class="expand" href="javascript:;" style="display: inline-block; float: left">-</a>');
                     }
 
                     if (par.find('ul').length === 0) {
@@ -214,9 +210,10 @@ define([
 
             });
 
-            $('.groupList .item').droppable({
-                accept: '.product',
-                drop  : function (event, ui) {
+            $('.groupList .item > .content').droppable({
+                accept   : '.product',
+                tolerance: 'pointer',
+                drop     : function (event, ui) {
                     var $droppable = $(this);
                     var $draggable = ui.draggable;
                     var productId = $draggable.attr('id');
@@ -283,7 +280,7 @@ define([
                     }
                 },
 
-                over: function (event, ui) {
+                over: function () {
                     // remove $.css
                     $(this).css('background-color', 'gray');
                     $(this).addClass('selected');
