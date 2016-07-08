@@ -491,7 +491,7 @@ module.exports = function (event, models) {
      *
      * @apiParam {String} id Employee unique ID.
      *
-     * @apiSuccess (200) {Object} Deleted Employee
+     * @apiSuccess (200) {Object} Status Deleted Employee
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      * {"success":"Employees removed"}
