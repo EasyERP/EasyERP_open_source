@@ -64,7 +64,8 @@ module.exports = (function () {
         invoiced   : {type: Boolean, default: false},
         removable  : {type: Boolean, default: true},
         approved   : {type: Boolean, default: false},
-        emailed    : {type: Boolean, default: false}
+        emailed    : {type: Boolean, default: false},
+        project : {type: ObjectId, ref: 'Project', default: null}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
@@ -79,8 +80,22 @@ module.exports = (function () {
             taxes      : {type: Number, default: 0},
             subTotal   : Number
         }],
-
         project: {type: ObjectId, ref: 'Project', default: null}
+    });
+
+    var writeOffSchema = baseSchema.extend({
+        products: [{
+            _id        : false,
+            quantity   : {type: Number, default: 1},
+            unitPrice  : Number,
+            product    : productForJobs,
+            description: {type: String, default: ''},
+            jobs       : {type: ObjectId, ref: 'jobs', default: null},
+            taxes      : {type: Number, default: 0},
+            subTotal   : Number
+
+        }],
+        project : {type: ObjectId, ref: 'Project', default: null}
     });
 
     var proformaSchema = jobsInvoiceSchema.extend({});
@@ -147,12 +162,34 @@ module.exports = (function () {
         });
     });
 
+    writeOffSchema.pre('save', function (next) {
+        var invoice = this;
+        var db = invoice.db.db;
+
+        db.collection('settings').findOneAndUpdate({
+            dbName: db.databaseName,
+            name  : 'WriteOff'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
+            invoice.name = 'WO' + rate.value.seq;
+
+            next();
+        });
+    });
+
     jobsInvoiceSchema.set('toJSON', {getters: true});
     expensesInvoiceSchema.set('toJSON', {getters: true});
     dividendInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
-    proformaSchema.set('toJSON', {getters: true});
+    writeOffSchema.set('toJSON', {getters: true});
 
     mongoose.model('wTrackInvoice', jobsInvoiceSchema);
     mongoose.model('payRollInvoice', payRollInvoiceSchema);
@@ -160,6 +197,7 @@ module.exports = (function () {
     mongoose.model('expensesInvoice', expensesInvoiceSchema);
     mongoose.model('dividendInvoice', dividendInvoiceSchema);
     mongoose.model('Proforma', proformaSchema);
+    mongoose.model('writeOff', writeOffSchema);
 
     function setName(next) {
         var proforma = this;
@@ -198,4 +236,5 @@ module.exports = (function () {
     mongoose.Schemas.expensesInvoice = expensesInvoiceSchema;
     mongoose.Schemas.dividendInvoice = dividendInvoiceSchema;
     mongoose.Schemas.Proforma = proformaSchema;
+    mongoose.Schemas.writeOff = writeOffSchema;
 })();

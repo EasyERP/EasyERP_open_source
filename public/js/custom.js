@@ -135,6 +135,7 @@ define([
                     case CONTENT_TYPES.USERS:
                     case CONTENT_TYPES.JOBPOSITIONS:
                     case CONTENT_TYPES.DEGREES:
+                    case CONTENT_TYPES.WRITEOFF:
                     case CONTENT_TYPES.SOURCEOFAPPLICANTS:
                     case CONTENT_TYPES.LEADS:
                     case CONTENT_TYPES.BIRTHDAYS:
@@ -200,6 +201,7 @@ define([
                     case CONTENT_TYPES.DEGREES:
                     case CONTENT_TYPES.SOURCEOFAPPLICANTS:
                     case CONTENT_TYPES.LEADS:
+                    case CONTENT_TYPES.WRITEOFF:
                     case CONTENT_TYPES.BIRTHDAYS:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:

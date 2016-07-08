@@ -18,6 +18,7 @@ define([], function () {
         QUOTATIONS        : 'Quotations',
         DASHBOARD         : 'Dashboard',
         DEGREES           : 'Degrees',
+        WRITEOFF          : 'WriteOff',
         SOURCEOFAPPLICANTS: 'SourceOfApplicants',
         LEADSWORKFLOW     : 'LeadsWorkflow',
         MYPROFILE         : 'myProfile',
@@ -65,6 +66,7 @@ define([], function () {
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
             CREATE_QUOTATION        : 'Supplier and project fields can not be empty!',
+            CREATE_WRITEOFF         : 'Project field can not be empty!',
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
@@ -179,7 +181,9 @@ define([], function () {
             SUPPLIER                  : '/supplier',
             WORKFLOWS_FETCH           : '/workflows/fetch',
             PAYMENT_AMOUNT_LEFT       : '/payment/amountLeftCalc',
-            SALARY_REPORT             : '/salaryReport/'
+            SALARY_REPORT             : '/salaryReport/',
+            WRITE_OFF                 : '/writeOff/',
+            WRITE_OFF_WAY             : '/journals/writeOff'
         },
 
         MID: {

@@ -2,12 +2,16 @@
 @input-placeholder: #a0a9b4;
 @input-border: @input-placeholder;
 
-*{
-  box-sizing: border-box;
+.loginContent {
+  *{
+    box-sizing: border-box;
+  }
 }
+
 a{
   text-decoration: none;
 }
+
 h2 {
   &.green {
     color: #32c5d2;
@@ -20,14 +24,12 @@ h2 {
 :-moz-placeholder {
   color: @input-placeholder;
 }
-
 ::-moz-placeholder {
   color: @input-placeholder;
 }
 :-ms-input-placeholder {
   color: @input-placeholder;
 }
-
 
 .loginWrap {
   margin-top: 100px;
@@ -115,6 +117,11 @@ h2 {
 
 .login {
 
+  &WrapBase {
+    height: 100%;
+    overflow: hidden;
+  }
+
   &Title {
     color: #4e5a64;
     font-size: 30px;
@@ -171,6 +178,7 @@ input {
       padding: 10px 0;
       border: 0;
       border-bottom: 1px solid #a0a9b4;
+      border-radius: 0!important;
       color: #868e97;
       font-size: 14px;
       margin-bottom: 30px;
@@ -189,6 +197,7 @@ input {
       display: block;
       background-color: #fff;
       border: 1px solid #c2cad8;
+      border-radius: 0!important;
       -webkit-transition: border-color ease-in-out .15s;
       transition: border-color ease-in-out .15s;
       outline: 0!important;
@@ -259,7 +268,7 @@ input {
   &.blue {
     color: #FFF;
     background-color: #3e88b9;
-    border-color: #4d5a75;
+    border-color: #3e88b9;
     &:hover {
       background-color: #4d5a75;
       border-color: #4d5a75;
@@ -424,7 +433,7 @@ input {
   .sliderWrap,
   .sliderContainer,
   .loginContent {
-    height: 50vh;
+    height: 50%;
   }
 }
 
@@ -468,6 +477,22 @@ input {
 
   .formActions {
     white-space: nowrap;
+  }
+}
+
+//iphone6
+@media only screen and (max-device-width : 667px) {
+  .sliderWrap {
+    display: none;
+  }
+  .login {
+    &Content {
+      height: 100%;
+    }
+    &Copyright {
+      position: static;
+      margin: 20px 0;
+    }
   }
 }
 

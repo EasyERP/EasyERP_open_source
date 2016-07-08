@@ -2151,6 +2151,71 @@ var Filters = function (models) {
         });
     };
 
+    this.getWriteOffFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var WriteOffSchema = mongoose.Schemas.writeOff;
+        var WriteOff = models.get(lastDB, 'writeOff', WriteOffSchema);
+
+        var pipeLine;
+        var aggregation;
+
+        pipeLine = [{
+            $match: {_type: 'writeOff'}
+        }, {
+            $lookup: {
+                from        : 'journals',
+                localField  : 'journal',
+                foreignField: '_id',
+                as          : 'journal'
+            }
+        }, {
+            $lookup: {
+                from        : 'Project',
+                localField  : 'project',
+                foreignField: '_id',
+                as          : 'project'
+            }
+        }, {
+            $project: {
+                project: {$arrayElemAt: ['$project', 0]},
+                journal: {$arrayElemAt: ['$journal', 0]}
+            }
+        }, {
+            $group: {
+                _id    : null,
+                journal: {
+                    $addToSet: {
+                        _id : '$journal._id',
+                        name: '$journal.name'
+                    }
+                },
+
+                project: {
+                    $addToSet: {
+                        _id : '$project._id',
+                        name: '$project.name'
+                    }
+                }
+            }
+        }];
+
+        aggregation = WriteOff.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getDividendInvoiceFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;

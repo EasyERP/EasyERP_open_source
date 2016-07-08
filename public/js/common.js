@@ -511,8 +511,35 @@
             callback(response.data);
         });
     };
-    var totalInvoiceBySales = function (callback) {
-        dataService.getData('revenue/totalInvoiceBySales', {}, function (response) {
+    var getSalesByCountry = function(filter, callback){
+        dataService.getData('/invoices/getSalesByCountry', {
+            startDay: filter.startDay,
+            endDay: filter.endDay
+        }, function (response) {
+            callback(response.data);
+        });
+    };
+    var getSalary = function(filter, callback){
+        dataService.getData('/employee/getSalaryForChart', {
+            year: filter.year,
+            month: filter.month
+        }, function (response) {
+            callback(response.data);
+        });
+    };
+    var getSalaryByDepartment = function(filter, callback){
+        dataService.getData('employee/getSalaryByDepartment', {
+            year: filter.year,
+            month: filter.month
+        }, function (response) {
+            callback(response.data);
+        });
+    };
+    var totalInvoiceBySales = function (filter, callback) {
+        dataService.getData('revenue/totalInvoiceBySales', {
+            startDate: filter.startDay,
+            endDate: filter.endDay
+        }, function (response) {
             callback(response.data);
         });
 
@@ -1202,6 +1229,9 @@
         getVacationForChart               : getVacationForChart,
         getEmployeesCount                 : getEmployeesCount,
         byDepartmentForChart              : byDepartmentForChart,
-        totalInvoiceBySales               : totalInvoiceBySales
+        totalInvoiceBySales               : totalInvoiceBySales,
+        getSalesByCountry                 : getSalesByCountry,
+        getSalary                         : getSalary,
+        getSalaryByDepartment             : getSalaryByDepartment
     }
 });

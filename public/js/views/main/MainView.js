@@ -5,10 +5,9 @@ define([
     'text!templates/main/MainTemplate.html',
     'views/menu/LeftMenuView',
     'collections/menu/MenuItems',
-    'views/menu/TopMenuView',
     'dataService',
     'constants'
-], function (Backbone, _, $, MainTemplate, LeftMenuView, MenuItemsCollection, TopMenuView, dataService, CONSTANTS) {
+], function (Backbone, _, $, MainTemplate, LeftMenuView, MenuItemsCollection, dataService, CONSTANTS) {
     'use strict';
     var MainView = Backbone.View.extend({
         el: '#wrapper',
@@ -21,66 +20,65 @@ define([
         },
 
         events: {
-            'click #loginPanel': 'showSelect',
-            click              : 'hideProp'
+            'click .sidebar_toggler': 'expandCollapse'
         },
 
-        hideProp: function (e) {
-            var select;
-
-            if ($(e.target).closest('#loginPanel').length === 0) {
-                select = this.$el.find('#loginSelect');
-                select.hide();
-                select.prop('hidden', true);
-            }
+        expandCollapse: function () {
+            $('body').toggleClass('collapsed');
         },
+
 
         createMenuViews: function () {
-            var currentRoot = null;
-            var currentChildren = null;
-            var currentRootId;
+            var modules = this.collection.toJSON();
 
             if (this.contentType) {
-                currentChildren = this.collection.where({href: this.contentType});
-                currentRootId = currentChildren[0] ? currentChildren[0].get('parrent') : null;
-                currentRoot = this.collection.where({_id: currentRootId});
+                this.currentModule = this.contentType;
+
+                for (var i = modules.length; i--;) {
+                    for (var j = modules[i].subModules.length; j--;) {
+                        if (modules[i].subModules[j].href === this.contentType) {
+                            this.currentRoot = modules[i].href;
+                            break;
+                        }
+                    }
+                    if (this.currentRoot) {
+                        break;
+                    }
+                }
+            } else {
+                this.currentRoot = modules[0].href;
+                this.currentModule = modules[0].subModules[0].href;
+
+                Backbone.history.navigate('easyErp/' + this.currentModule, {trigger: true});
             }
 
             this.leftMenu = new LeftMenuView({
-                collection     : this.collection,
-                currentChildren: currentChildren,
-                currentRoot    : currentRoot
+                collection   : this.collection,
+                currentRoot  : this.currentRoot,
+                currentModule: this.currentModule
             });
-
-            this.topMenu = new TopMenuView({
-                collection : this.collection.getRootElements(),
-                currentRoot: currentRoot,
-                leftMenu   : this.leftMenu
-            });
-
-            this.topMenu.bind('changeSelection', this.leftMenu.setCurrentSection, {leftMenu: this.leftMenu});
-            this.topMenu.bind('mouseOver', this.leftMenu.mouseOver, {leftMenu: this.leftMenu});
         },
 
         updateMenu: function (contentType) {
-            var currentChildren = this.collection.where({href: contentType});
-            var currentRootId = currentChildren[0] ? currentChildren[0].get('parrent') : null;
-            var currentRoot = this.collection.where({_id: currentRootId});
+            var modules = this.collection.toJSON();
+            var rootIndex;
+            var childIndex;
 
-            this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
-            this.topMenu.updateTopMenu(currentRoot);
-        },
+            for (var i = modules.length; i--;) {
+                for (var j = modules[i].subModules.length; j--;) {
+                    if (modules[i].subModules[j].href === contentType) {
+                        rootIndex = i;
+                        childIndex = j;
+                        break;
+                    }
+                }
 
-        showSelect: function (e) {
-            var select = this.$el.find('#loginSelect');
-
-            if (select.prop('hidden')) {
-                select.show();
-                select.prop('hidden', false);
-            } else {
-                select.hide();
-                select.prop('hidden', true);
+                if (rootIndex) {
+                    break;
+                }
             }
+
+            this.leftMenu.selectMenuItem(rootIndex, childIndex);
         },
 
         render: function () {

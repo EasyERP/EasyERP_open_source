@@ -1,0 +1,58 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs" data-class="mainTabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="half-block left">
+                            <dl class="opp-info">
+
+                                <dt><label for="projectDd">Project</label></dt>
+                                <dd>
+                                    <a id="projectDd" class="current-selected" href="javascript:;">Select</a>
+                                </dd>
+
+                                <dt><label for="writeOffWay">Journal</label></dt>
+                                <dd>
+                                    <a id="writeOffWay"  class="current-selected"  href="javascript:;">Select</a>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+
+                                <dt><label for="invoice_date">WriteOff Date</label></dt>
+                                <dd>
+                                    <input class="extrainfo" type="text" name="invoiceDate" id="invoice_date" value=""
+                                           readonly="" placeholder="Invoice Date">
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Product</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div id="productItemsHolder">
+
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item mainTabs">
+                        <div class="assignees-container"></div>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </form>
+</div>

@@ -91,7 +91,7 @@ define([
             };*/
 
             this.filter.date = {
-                value: [this.startDate, this.endDate]
+                value: [stDate, enDate]
             };
 
             searchObject = {

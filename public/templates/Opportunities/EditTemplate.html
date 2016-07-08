@@ -12,7 +12,7 @@
                 <div class="dialog-tabs-items">
                     <div class="dialog-tabs-item active">
                         <dl class="subject-info">
-                            <dt><label for="name">Subject </label></dt>
+                            <!--<dt><label for="name">Subject </label></dt>-->
                             <dd><input type="text" class="title-input" id="name" value="<%=model.name%>" placeholder="Subject" required maxlength="48"/></dd>
                         </dl>
                         <!-- class="half-block left withPaddingLeft">
@@ -51,17 +51,6 @@
                                 <!--<dd><input type="text" id="expectedClosing" class="date"-->
                                            <!--value="<%=model.expectedClosing%>" maxlength="32" placeholder="Date"-->
                                            <!--readonly/></dd>-->
-                                <dt><label for="priorityDd">Priority </label></dt>
-                                <dd>
-                                    <a id="priorityDd" data-id="<%=(model.priority)?model.priority:''%>"
-                                       class="current-selected" href="javascript:;"><%=(model.priority)?(model.priority):"Select"%></a>
-                                </dd>
-                                <dt><label for="sourceDd">Source</label></dt>
-                                <dd>
-                                    <a id="sourceDd" data-id="<%=(model.source)?model.source:''%>"
-                                       class="current-selected" href="javascript:;"><%=(model.source)?(model.source):"Select"%></a>
-                                </dd>
-
                             </dl>
                         </div>
                         <div class="clearfix"></div>
@@ -80,20 +69,33 @@
                                 </dd>
                                 <dt><label for="city">City</label></dt>
                                 <dd><input type="text" id="city" class="address" name="city"
-                                           value="<%=model.address.city%>" placeholder="City" maxlength="32"/></dd>
+                                           value="<%=model.address.city%>" placeholder="City" maxlength="32"/>
+                                </dd>
                                 <dt><label for="state">State</label></dt>
                                 <dd><input type="text" id="state" class="address" name="state"
-                                           value="<%=model.address.state%>" placeholder="State" maxlength="32"/></dd>
+                                           value="<%=model.address.state%>" placeholder="State" maxlength="32"/>
+                                </dd>
+                                <dt><label for="zip">Zip</label></dt>
+                                <dd><input type="text" id="zip" class="address" name="zip"
+                                           value="<%=model.address.zip%>" placeholder="Zip" maxlength="32"/>
+                                </dd>
+                                <dt><label for="country">Country</label></dt>
+                                <dd><input type="text" id="country" class="address" name="country"
+                                           value="<%=model.address.country%>" placeholder="Country" maxlength="32"/>
+                                </dd>
                             </dl>
                         </div>
                         <div class="half-block left">
                             <dl class="opprtunitie-lead-info">
-                                <dt><label for="zip">Zip</label></dt>
-                                <dd><input type="text" id="zip" class="address" name="zip"
-                                           value="<%=model.address.zip%>" placeholder="Zip" maxlength="32"/></dd>
-                                <dt><label for="country">Country</label></dt>
-                                <dd><input type="text" id="country" class="address" name="country"
-                                           value="<%=model.address.country%>" placeholder="Country" maxlength="32"/>
+                                <dt><label for="priorityDd">Priority </label></dt>
+                                <dd>
+                                    <a id="priorityDd" data-id="<%=(model.priority)?model.priority:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.priority)?(model.priority):"Select"%></a>
+                                </dd>
+                                <dt><label for="sourceDd">Source</label></dt>
+                                <dd>
+                                    <a id="sourceDd" data-id="<%=(model.source)?model.source:''%>"
+                                       class="current-selected" href="javascript:;"><%=(model.source)?(model.source):"Select"%></a>
                                 </dd>
                             </dl>
                         </div>
