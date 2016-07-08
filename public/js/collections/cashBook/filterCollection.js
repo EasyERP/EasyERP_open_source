@@ -5,10 +5,10 @@ define([
     'custom',
     'moment'
 ], function (Backbone, journalEntryModel, Custom, moment) {
-    var gLReportCollection = Backbone.Collection.extend({
+    var ReportCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
-        url         : 'journalEntries/getBalanceSheet',
+        url         : 'journalEntries/getCashBook',
         contentType : null,
         page        : null,
         numberToShow: null,
@@ -17,7 +17,7 @@ define([
         initialize: function (options) {
             options = options || {};
             this.startTime = new Date();
-            this.filter = options.filter || Custom.retriveFromCash('balanceSheet.filter');
+            this.filter = options.filter || Custom.retriveFromCash('cashBook.filter');
             var startDate = moment(new Date());
             var endDate = moment(new Date());
 
@@ -26,7 +26,7 @@ define([
             endDate.month(startDate.month());
             endDate.endOf('month');
 
-            var dateRange = Custom.retriveFromCash('balanceSheetDateRange') || {};
+            var dateRange = Custom.retriveFromCash('cashBookDateRange') || {};
             this.startDate = dateRange.startDate;
             this.endDate = dateRange.endDate;
 
@@ -37,7 +37,7 @@ define([
             options.endDate = this.endDate;
             options.filter = this.filter;
 
-            Custom.cacheToApp('balanceSheetDateRange', {
+            Custom.cacheToApp('cashBookDateRange', {
                 startDate: this.startDate,
                 endDate  : this.endDate
             });
@@ -77,6 +77,6 @@ define([
         }
     });
 
-    return gLReportCollection;
+    return ReportCollection;
 });
 

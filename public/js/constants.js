@@ -61,6 +61,8 @@ define([], function () {
         DIVIDENDINVOICE   : 'DividendInvoice',
         DIVIDENDPAYMENTS  : 'DividendPayments',
         SETTINGSEMPLOYEE  : 'settingsEmployee',
+        CASHBOOK          : 'cashBook',
+        CASHTRANSFER      : 'cashTransfer',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -113,6 +115,7 @@ define([], function () {
             USERS                      : '/users/',
             USERS_FOR_DD               : '/users/forDd',
             APPLICATIONS               : '/applications/',
+            CASH_TRANSFER              : 'cashTransfer/',
             EMPLOYEES                  : '/employees/',
             CHARTOFACCOUNT             : '/ChartOfAccount/',
             CHARTOFACCOUNT_FORDD       : '/ChartOfAccount/getForDd',
