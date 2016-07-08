@@ -102,7 +102,7 @@ define([
 
         createTag: function (e) {
             e.preventDefault();
-
+            $('.tag-list-dialog').hide();
             return new CreateView({collection : this.collection});
         },
 
@@ -110,6 +110,8 @@ define([
             var li = $(e.target).closest('li');
             var id = li.attr('data-id');
             var model = this.collection.get(id);
+
+            $('.tag-list-dialog').hide();
 
             e.preventDefault();
 
@@ -119,6 +121,14 @@ define([
         },
 
         hideDialog: function () {
+
+            var selectedElements = this.$el.find('.selected').map(function(){
+                return $( this ).attr('data-id');
+            }).get();
+
+            this.model.set({tags : this.collection.filter(function (elem){
+                return (selectedElements.indexOf(elem.id) !== -1);
+            })});
             $('.tag-list-dialog').remove();
         },
 

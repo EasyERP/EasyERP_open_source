@@ -46,6 +46,7 @@
 
             _.bindAll(this, 'render', 'saveItem', 'deleteItem');
             this.currentModel = options.model;
+            this.currentModel.on('change:tags', this.renderTags, this);
             this.currentModel.urlRoot = CONSTANTS.URLS.OPPORTUNITIES;
             this.responseObj = {};
             this.elementId = options.elementId || null;
@@ -406,6 +407,18 @@
             }
         },
 
+        renderTags : function (){
+            var notDiv = this.$el.find('.tags-container');
+            notDiv.empty();
+
+            notDiv.append(
+                new TagView({
+                    model      : this.currentModel,
+                    contentType: 'Opportunities'
+                }).render().el
+            );
+        },
+
         renderHistory: function () {
             var self = this;
             var historyString;
@@ -447,14 +460,7 @@
                 }
             });
 
-            notDiv = this.$el.find('.tags-container');
-
-            notDiv.append(
-                new TagView({
-                    model      : this.currentModel,
-                    contentType: 'Opportunities'
-                }).render().el
-            );
+            this.renderTags();
 
             notDiv = this.$el.find('.attach-container');
 
