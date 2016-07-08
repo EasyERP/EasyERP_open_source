@@ -27,7 +27,7 @@ define([
             this.filteredCollection = new TagsCollection();
             this.filteredCollection.unbind();
             this.filteredCollection.bind('reset', resetCollection);
-            this.collection.on('sync add destroy', this.changeFilter, this);
+            this.collection.on('change add destroy', this.changeFilter, this);
 
             this.inputEvent = _.debounce(
                 function (e) {
@@ -121,13 +121,13 @@ define([
         },
 
         hideDialog: function () {
-
-            var selectedElements = this.$el.find('.selected').map(function(){
-                return $( this ).attr('data-id');
+            var selectedElements = this.$el.find('.selected').closest('li');
+            var tags = selectedElements.map(function(){
+                return $(this).attr('data-id');
             }).get();
             var collection =  this.collection.toJSON();
             var selectedItems = collection.filter(function (elem){
-                return (selectedElements.indexOf(elem._id) !== -1);
+                return (tags.indexOf(elem._id) !== -1);
             });
 
             this.model.set({tags : selectedItems});
@@ -165,8 +165,6 @@ define([
                 ]
 
             });
-
-            this.renderContent();
 
             this.searchInput = this.$el.find('#selectInput');
 

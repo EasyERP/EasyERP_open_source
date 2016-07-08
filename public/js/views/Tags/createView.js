@@ -78,7 +78,7 @@ define([
                 resizable    : true,
                 dialogClass  : 'create-dialog',
                 title        : 'Create Tag',
-                width        : '250px',
+                width        : '300px',
                 buttons      : [
                     {
                         text : 'Save',

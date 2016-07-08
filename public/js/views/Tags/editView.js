@@ -106,7 +106,7 @@ define([
                 resizable    : true,
                 dialogClass  : 'edit-tag-dialog',
                 title        : 'Edit Tag',
-                width        : '250px',
+                width        : '300px',
                 buttons      : [
                     {
                         text : 'Save',
