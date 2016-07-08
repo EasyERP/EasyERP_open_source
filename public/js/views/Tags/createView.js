@@ -70,6 +70,9 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
+                position     : {
+                    at: "top+35%"
+                },
                 dialogClass  : 'create-dialog',
                 title        : 'Create Tag',
                 width        : '300px',
