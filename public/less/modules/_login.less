@@ -530,12 +530,18 @@ input {
 }
 
 .tagsListWrap {
-  max-height: 750px;
+  margin-top: 10px;
+  max-height: 450px;
   overflow: auto;
 
   li {
     margin-top: 5px;
     overflow: hidden;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
 
     span {
       &:not(.editTag) {
@@ -545,6 +551,8 @@ input {
         width: 235px;
         line-height: 30px;
         padding-left: 5px;
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
 
         &.selected {
           &:after {
@@ -593,7 +601,6 @@ input {
     }
   }
 }
-
 .selectBlockTitle {
   width: 100%;
   padding: 10px 0 5px;
@@ -607,3 +614,59 @@ input {
 }
 
 
+.tags {
+  &Row {
+    > span {
+      box-sizing: border-box;
+      display: block;
+      float: left;
+      height: 22px;
+      line-height: 22px;
+      margin: 0 4px 4px 0;
+      min-width: 40px;
+      max-width: 100%;
+      width: auto;
+      border-radius: 3px;
+      color: #fff;
+      padding: 0 10px;
+      text-align: center;
+      text-overflow: ellipsis;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, .4);
+      white-space: nowrap;
+    }
+    span.left {
+      color: #000;
+      text-shadow: none;
+    }
+    .fa-plus {
+      line-height: 22px;
+      width: 22px;
+      margin-left: 5px;
+      text-align: center;
+      &:hover {
+        background-color: #f4f4f4;
+      }
+    }
+  }
+
+  &Title {
+    margin: 7px 0 5px;
+    border-bottom: 1px solid #8c8c8c;
+    line-height: 30px;
+    color: #8c8c8c;
+    text-align: center;
+    font-size: 12px;
+  }
+}
+.createNewTag {
+  display: block;
+  width: 235px;
+  line-height: 30px;
+  margin-top: 5px;
+  padding-left: 5px;
+  color: #8c8c8c!important;
+
+  &:hover {
+    background-color: #f4f4f4;
+  }
+}

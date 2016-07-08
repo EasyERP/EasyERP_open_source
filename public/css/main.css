@@ -2131,12 +2131,18 @@ input:not([type="checkbox"]).inputBordered:focus {
   color: #fff;
 }
 .tagsListWrap {
-  max-height: 750px;
+  margin-top: 10px;
+  max-height: 450px;
   overflow: auto;
 }
 .tagsListWrap li {
   margin-top: 5px;
   overflow: hidden;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
 }
 .tagsListWrap li span:not(.editTag) {
   position: relative;
@@ -2145,6 +2151,8 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: 235px;
   line-height: 30px;
   padding-left: 5px;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 .tagsListWrap li span:not(.editTag).selected:after {
   content: "\f00c";
@@ -2190,6 +2198,56 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .inputBlock > label {
   line-height: 25px;
+}
+.tagsRow > span {
+  box-sizing: border-box;
+  display: block;
+  float: left;
+  height: 22px;
+  line-height: 22px;
+  margin: 0 4px 4px 0;
+  min-width: 40px;
+  max-width: 100%;
+  width: auto;
+  border-radius: 3px;
+  color: #fff;
+  padding: 0 10px;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+.tagsRow span.left {
+  color: #000;
+  text-shadow: none;
+}
+.tagsRow .fa-plus {
+  line-height: 22px;
+  width: 22px;
+  margin-left: 5px;
+  text-align: center;
+}
+.tagsRow .fa-plus:hover {
+  background-color: #f4f4f4;
+}
+.tagsTitle {
+  margin: 7px 0 5px;
+  border-bottom: 1px solid #8c8c8c;
+  line-height: 30px;
+  color: #8c8c8c;
+  text-align: center;
+  font-size: 12px;
+}
+.createNewTag {
+  display: block;
+  width: 235px;
+  line-height: 30px;
+  margin-top: 5px;
+  padding-left: 5px;
+  color: #8c8c8c!important;
+}
+.createNewTag:hover {
+  background-color: #f4f4f4;
 }
 .btn {
   border: 1px solid #7f7f80;
