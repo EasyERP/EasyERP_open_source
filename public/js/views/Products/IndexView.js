@@ -3,6 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Product/ContentTemplate.html',
+    'text!templates/Product/TreeItemTemplate.html',
     'models/Category',
     'views/Products/category/CreateView',
     'views/Products/category/EditView',
@@ -11,12 +12,12 @@ define([
     'helpers/eventsBinder',
     'dataService',
     'constants'
-], function (Backbone, $, _, ContentTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
+], function (Backbone, $, _, ContentTemplate, ItemTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
     var ProductsView = Backbone.View.extend({
-        el                : '#content-holder',
-        thumbnailsView    : null,
-        productCollection : null,
-        selectedCategoryId: null,
+        el               : '#content-holder',
+        thumbnailsView   : null,
+        productCollection: null,
+        itemTemplate     : _.template(ItemTemplate),
 
         events: {
             'click .expand'        : 'expandHideItem',
@@ -176,8 +177,16 @@ define([
             return false;
         },
 
-        renderItem: function (product, index, className, selected) {
-            return '<li class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
+        renderItem: function (product, className, selected) {
+
+            return this.itemTemplate({
+                className: className,
+                selected : selected,
+                product  : product
+
+            });
+
+            //return '<li class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
         },
 
         renderFoldersTree: function (products) {
@@ -188,7 +197,7 @@ define([
             products.forEach(function (product, i) {
 
                 if (!product.parent) {
-                    $thisEl.find('.groupList').append(self.renderItem(product, i + 1, 'child', 'selected'));
+                    $thisEl.find('.groupList').append(self.renderItem(product, 'child', 'selected'));
                 } else {
                     par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
 
@@ -200,7 +209,7 @@ define([
                         par.append('<ul style="margin-left:20px"></ul>');
                     }
 
-                    par.find('ul').first().append(self.renderItem(product, i + 1, 'child'));
+                    par.find('ul').first().append(self.renderItem(product, 'child', ''));
                 }
 
             });
