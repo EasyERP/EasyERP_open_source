@@ -7,6 +7,7 @@ define([
 
     var TopBarView = BaseView.extend({
         el      : '#top-bar',
+        contentType  : 'Birthdays',
         template: _.template(ContentTopBarTemplate)
     });
     return TopBarView;

@@ -60,6 +60,7 @@ define([
 
         renderDepartmentsTree: function () {
             common.byDepartmentForChart(function (data) {
+                console.log(data);
                 var margin = {top: 10, right: 120, bottom: 20, left: 120};
                 var width = 800 - margin.right - margin.left;
                 var height = 1000 - margin.top - margin.bottom;
@@ -387,7 +388,10 @@ define([
 
         renderTreemap: function () {
 
-            common.totalInvoiceBySales(function (data) {
+            common.totalInvoiceBySales({
+                startDay: '',
+                endDay: ''
+            }, function (data) {
                 var margin = {top: 0, right: 10, bottom: 10, left: 10};
                 var width = 960 - margin.left - margin.right;
                 var height = 500 - margin.top - margin.bottom;
@@ -459,7 +463,7 @@ define([
 
             $('.dashboard-stat').children('.number').empty();
             $('.dashboard-stat').children('.desc').empty();
-
+            
             common.getEmployeesCount({month: self.month, year: self.year}, function (response) {
                 var totalEmployeesCount = response.employeeCount;
                 var hiredCount = response.hiredCount;
@@ -768,6 +772,274 @@ define([
             });
         },
 
+        renderSalaryChart: function () {
+            var padding = 15;
+            var lengthArr = [];
+            var offset = 4;
+            var globalSalary;
+            var dataLength;
+            var $wrapper;
+            var margin;
+            var xScale;
+            var yScale;
+            var height;
+            var xAxis;
+            var yAxis;
+            var width;
+            var chart;
+            var rect;
+            var keys;
+            var max;
+            var j;
+            var i;
+
+            common.getSalary({
+                month: this.month,
+                year : this.year
+            }, function (data) {
+                data = data.data;
+                dataLength = data.length;
+                globalSalary = {
+                    '>=$2250'   : [],
+                    '$2250-2000': [],
+                    '$2000-1750': [],
+                    '$1750-1500': [],
+                    '$1500-1750': [],
+                    '$1250-1500': [],
+                    '$1000-1250': [],
+                    '$750-1000' : [],
+                    '$500-750'  : [],
+                    '$250-500'  : [],
+                    '<$250'     : []
+                };
+
+                for (i = dataLength; i--;) {
+
+                    if (data[i] >= 2250) {
+                        globalSalary['>=$2250'].push(data[i]);
+                    } else if (data[i] < 2250 && data[i] >= 2000) {
+                        globalSalary['$2250-2000'].push(data[i]);
+                    } else if (data[i] < 2000 && data[i] >= 1750) {
+                        globalSalary['$2000-1750'].push(data[i]);
+                    } else if (data[i] < 1750 && data[i] >= 1500) {
+                        globalSalary['$1750-1500'].push(data[i]);
+                    } else if (data[i] < 1500 && data[i] >= 1250) {
+                        globalSalary['$1250-1500'].push(data[i]);
+                    } else if (data[i] < 1250 && data[i] >= 1000) {
+                        globalSalary['$1000-1250'].push(data[i]);
+                    } else if (data[i] < 1000 && data[i] >= 750) {
+                        globalSalary['$750-1000'].push(data[i]);
+                    } else if (data[i] < 750 && data[i] >= 500) {
+                        globalSalary['$500-750'].push(data[i]);
+                    } else if (data[i] < 500 && data[i] >= 250) {
+                        globalSalary['$250-500'].push(data[i]);
+                    } else {
+                        globalSalary['<$250'].push(data[i]);
+                    }
+                }
+
+                $wrapper = $('#wrapper');
+                keys = Object.keys(globalSalary);
+                margin = {top: 20, right: 160, bottom: 30, left: 10};
+                width = ($wrapper.width() - margin.right) / 2;
+                height = keys.length * 30;
+                rect = height / (keys.length);
+
+                for (j = keys.length; j--;) {
+                    lengthArr.push(globalSalary[keys[j]].length)
+                }
+
+                max = Math.ceil(Math.max.apply(null, lengthArr) / 10) * 10;
+
+                xScale = d3.scale.linear()
+                    .domain([0, max])
+                    .range([0, width]);
+
+                yScale = d3.scale.linear()
+                    .domain([0, keys.length])
+                    .range([0, height]);
+
+                xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom');
+
+                yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient('left')
+                    .tickSize(0)
+                    .tickPadding(offset)
+                    .tickFormat(function (d, i) {
+                        return keys[i];
+                    })
+                    .tickValues(d3.range(keys.length));
+
+                chart = d3.select('.salaryChart')
+                    .attr({
+                        'width' : width + margin.left + margin.right,
+                        'height': height + margin.top + margin.bottom,
+                        'style' : 'padding: 150px'
+                    })
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                chart.selectAll('rect')
+                    .data(keys)
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        x     : function () {
+                            return 0;
+                        },
+                        y     : function (d, i) {
+                            return yScale(i);
+                        },
+                        width : function (d) {
+                            return xScale(globalSalary[d].length);
+                        },
+                        height: rect - 2 * offset,
+                        fill  : '#5CD1C8'
+                    });
+
+                chart.append('g')
+                    .attr({
+                        'class'    : 'x axis',
+                        'transform': 'translate(0,' + height + ')'
+                    })
+                    .call(xAxis);
+
+                chart.append('g')
+                    .attr({
+                        'class'    : 'y axis',
+                        'transform': 'translate(' + (-offset) + ',' + (padding - offset) + ')'
+                    })
+                    .call(yAxis);
+
+                chart.selectAll('.x .tick line')
+                    .attr({
+                        'y2'   : function (d) {
+                            return -height
+                        },
+                        'style': 'stroke: #f2f2f2'
+                    });
+            });
+        },
+
+        renderSalaryByDepartmentChart: function () {
+            var padding = 15;
+            var salary = [];
+            var offset = 4;
+            var globalSalary;
+            var dataLength;
+            var $wrapper;
+            var margin;
+            var xScale;
+            var yScale;
+            var height;
+            var xAxis;
+            var yAxis;
+            var width;
+            var chart;
+            var rect;
+            var max;
+            var j;
+            var i;
+            common.getSalaryByDepartment({
+                month: this.month,
+                year : this.year
+            }, function (data) {
+
+                data = data.data;
+
+                for (i = data.length; i--;) {
+                    salary[i] = {
+                        department: data[i]._id[0],
+                        salary    : data[i].salary
+                    };
+                }
+
+                max = Math.ceil(d3.max(salary, function (d) {
+                            return d.salary;
+                        }) / 1000) * 1000;
+
+                $wrapper = $('#wrapper');
+                margin = {top: 20, right: 160, bottom: 30, left: 10};
+                width = ($wrapper.width() - margin.right) / 2;
+                height = salary.length * 30;
+                rect = height / (salary.length);
+
+                xScale = d3.scale.linear()
+                    .domain([0, max])
+                    .range([0, width]);
+
+                yScale = d3.scale.linear()
+                    .domain([0, salary.length])
+                    .range([0, height]);
+
+                xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom');
+
+                yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient('left')
+                    .tickSize(0)
+                    .tickPadding(offset)
+                    .tickFormat(function (d, i) {
+                        return salary[i].department;
+                    })
+                    .tickValues(d3.range(salary.length));
+
+                chart = d3.select('.salaryByDepartmentChart')
+                    .attr({
+                        'width' : width + margin.left + margin.right,
+                        'height': height + margin.top + margin.bottom,
+                        'style' : 'padding: 150px'
+                    })
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                chart.selectAll('rect')
+                    .data(salary)
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        x     : function () {
+                            return 0;
+                        },
+                        y     : function (d, i) {
+                            return yScale(i);
+                        },
+                        width : function (d) {
+                            return xScale(d.salary);
+                        },
+                        height: rect - 2 * offset,
+                        fill  : '#5CD1C8'
+                    });
+
+                chart.append('g')
+                    .attr({
+                        'class'    : 'x axis',
+                        'transform': 'translate(0,' + height + ')'
+                    })
+                    .call(xAxis);
+
+                chart.append('g')
+                    .attr({
+                        'class'    : 'y axis',
+                        'transform': 'translate(' + (-offset) + ',' + (padding - offset) + ')'
+                    })
+                    .call(yAxis);
+
+                chart.selectAll('.x .tick line')
+                    .attr({
+                        'y2'   : function (d) {
+                            return -height
+                        },
+                        'style': 'stroke: #f2f2f2'
+                    });
+            })
+        },
+        
         render: function () {
             var self = this;
             var $currentEl = this.$el;
@@ -832,6 +1104,8 @@ define([
                     self.renderEmployeesDashbord();
                     self.renderHoursDashbord();
                     self.renderVocationDashbord();
+                    self.renderSalaryChart();
+                    self.renderSalaryByDepartmentChart();
                     $(this).val($.datepicker.formatDate('MM yy', new Date(self.year, self.month, 1)));
                 }
             }).focus(function () {
@@ -850,6 +1124,8 @@ define([
             self.renderDepartmentsTree();
             self.renderDepartmentsTreeRadial();
             self.renderTreemap();
+            self.renderSalaryChart();
+            self.renderSalaryByDepartmentChart();
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;

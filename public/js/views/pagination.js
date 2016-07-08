@@ -199,7 +199,7 @@ define([
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
             sortConst = 1;
-            sortBy = target$.data('sort');
+            sortBy = target$.data('sort').split(' ');
             sortObject = {};
 
             if (!sortClass) {
@@ -221,7 +221,9 @@ define([
                 // skip default case
             }
 
-            sortObject[sortBy] = sortConst;
+            sortBy.forEach(function(sortField){
+                sortObject[sortField] = sortConst;
+            });
 
             data = {
                 sort: sortObject
@@ -968,25 +970,31 @@ define([
 
         renderFilter: function (baseFilter) {
             var self = this;
+            var $searchContainer = self.$el.find('#searchContainer');
 
-            self.filterView = new self.FilterView({
-                contentType: self.contentType
-            });
+            $searchContainer = $searchContainer.length ? $searchContainer : $('#searchContainer');
 
-            self.filterView.bind('filter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage(filter);
-            });
-            self.filterView.bind('defaultFilter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage();
-            });
+            if ($searchContainer.length) {
+                self.filterView = new self.FilterView({
+                    el         : $searchContainer,
+                    contentType: self.contentType
+                });
 
-            self.filterView.render();
+                self.filterView.bind('filter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
+                    self.showFilteredPage(filter);
+                });
+                self.filterView.bind('defaultFilter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
+                    self.showFilteredPage();
+                });
+
+                self.filterView.render();
+            }
         }
     });
 

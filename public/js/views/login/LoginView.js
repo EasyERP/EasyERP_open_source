@@ -222,9 +222,7 @@ define([
             $backStratch.backstretch([
                 'images/imgs/front-img-1.jpg',
                 'images/imgs/front-img-2.jpg',
-                'images/imgs/front-img-3.jpg',
-                'images/imgs/front-img-4.jpg',
-                'images/imgs/front-img-5.jpg'
+                'images/imgs/front-img-3.jpg'
             ], {duration: 3000, fade: 750});
 
             return this;

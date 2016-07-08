@@ -46,7 +46,7 @@ define([
                 endDate  : this.endDate
             });*/
 
-            custom.cacheToApp('journalEntry.filter', options.filter);
+            custom.cacheToApp('inventoryReport.filter', options.filter);
 
             function _errHandler(models, xhr) {
                 if (xhr.status === 401) {

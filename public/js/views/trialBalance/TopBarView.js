@@ -55,6 +55,7 @@ define([
             var endDate;
 
             this.$el.find('.customTime').addClass('hidden');
+            this.$el.find('.buttons').addClass('hidden');
 
             this.removeAllChecked();
 
@@ -100,6 +101,7 @@ define([
 
             $target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
+            this.$el.find('.buttons').toggleClass('hidden');
         },
 
         changeDateRange: function (e) {
@@ -114,13 +116,10 @@ define([
 
             startTime.text(startDate);
             endTime.text(endDate);
-
-            Custom.cacheToApp('trialBalanceDateRange', {
-                startDate: startDate,
-                endDate  : endDate
-            });
-
-            this.trigger('changeDateRange');
+            
+            this.startDate =  startDate;
+            this.endDate = endDate;
+            this.trigger('renderSalesByCountry');
             this.toggleDateRange();
         },
 

@@ -1,10 +1,11 @@
 define([
     'Backbone',
+    'jQuery',
     'Underscore',
     'text!templates/Opportunities/kanban/KanbanItemTemplate.html',
     'moment',
     'helpers'
-], function (Backbone, _, KanbanItemTemplate, moment, helpers) {
+], function (Backbone, $, _, KanbanItemTemplate, moment, helpers) {
     'use strict';
 
     var OpportunitiesItemView = Backbone.View.extend({
@@ -21,7 +22,6 @@ define([
         },
 
         render: function () {
-
             this.$el.html(this.template(
                 {
                     model           : this.model.toJSON(),

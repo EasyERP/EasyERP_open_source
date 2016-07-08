@@ -20,7 +20,7 @@
         hasAlphabet : true,
         contentType : 'Employees',
         viewType    : 'thumbnails',
-        letterKey   : 'name.first',
+        letterKey   : 'name.last',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
