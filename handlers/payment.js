@@ -952,10 +952,18 @@ var Module = function (models, event) {
                     as          : 'paymentMethod'
                 }
             }, {
+                $lookup: {
+                    from        : 'journals',
+                    localField  : 'journal',
+                    foreignField: '_id',
+                    as          : 'journal'
+                }
+            }, {
                 $project: {
                     supplier        : {$arrayElemAt: ['$supplier', 0]},
                     invoice         : {$arrayElemAt: ['$invoice', 0]},
                     paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
+                    journal         : {$arrayElemAt: ['$journal', 0]},
                     currency        : 1,
                     differenceAmount: 1,
                     paidAmount      : 1,
@@ -984,6 +992,8 @@ var Module = function (models, event) {
                     currency          : 1,
                     'invoice._id'     : 1,
                     'invoice.name'    : 1,
+                    'journal._id'     : 1,
+                    'journal.name'    : 1,
                     'invoice.workflow': {$arrayElemAt: ['$invoice.workflow', 0]},
 
                     salesmanagers: {
@@ -1005,6 +1015,7 @@ var Module = function (models, event) {
                 $project: {
                     supplier        : 1,
                     currency        : 1,
+                    journal         : 1,
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
                     salesmanagers   : {$arrayElemAt: ['$salesmanagers', 0]},
@@ -1041,6 +1052,7 @@ var Module = function (models, event) {
                 $project: {
                     assigned        : {$arrayElemAt: ['$salesmanagers', 0]},
                     supplier        : 1,
+                    journal         : 1,
                     'currencyModel' : {$arrayElemAt: ['$currency._id', 0]},
                     'currency.rate' : 1,
                     'invoice._id'   : 1,
@@ -1058,6 +1070,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     supplier        : 1,
+                    journal         : 1,
                     'currency.rate' : 1,
                     'currency._id'  : '$currencyModel._id',
                     'currency.name' : '$currencyModel.name',
@@ -1084,6 +1097,7 @@ var Module = function (models, event) {
                 $project: {
                     _id             : '$root._id',
                     supplier        : '$root.supplier',
+                    journal         : '$root.journal',
                     currency        : '$root.currency',
                     invoice         : '$root.invoice',
                     assigned        : '$root.assigned',
