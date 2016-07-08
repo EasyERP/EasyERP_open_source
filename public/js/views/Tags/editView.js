@@ -15,40 +15,48 @@ define([
         initialize: function (options) {
 
             _.bindAll(this, 'render', 'saveItem');
+            this.collection = options.collection;
 
-            if (options.model) {
+            /*if (options.model) {
                 this.currentModel = options.model;
             } else {
-                this.currentModel = options.collection.getElement();
-            }
+                this.currentModel = this.collection.getElement();
+            }*/
 
             this.responseObj = {};
 
             this.render(options);
         },
 
+        events: {
+            'click .colorBox'                                  : 'chooseNewColor'
+        },
+
+        chooseNewColor: function (e) {
+            var $target = $(e.target);
+            this.$el.find('.colorBox').removeClass('checked');
+            $target.addClass('checked');
+        },
+
         saveItem: function () {
+
             var self = this;
             var thisEl = this.$el;
 
-            var name = thisEl.find('#paymentTermName').val();
+            var name = thisEl.find('#tagName').val();
+            var color = thisEl.find('.checked').attr('data-color');
 
             var data = {
-                name: name
+                name: name,
+                color : color
             };
+           /* this.currentModel.set(data);*/
+            this.model.save(data, {
+                success: function (res, model) {
 
-            this.currentModel.save(data, {
-                wait   : true,
-                success: function (res) {
-                    var url = window.location.hash;
+                    self.hideDialog();
+                 /*   self.currentModel.set(data);*/
 
-                    if (url === '#easyErp/Accounts') {
-                        self.hideDialog();
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-                    } else {
-                        self.hideDialog();
-                    }
                 },
 
                 error: function (model, xhr) {
@@ -58,21 +66,48 @@ define([
         },
 
         hideDialog: function () {
-            $('.edit-dialog').remove();
+            $('.edit-tag-dialog').remove();
+        },
+
+        deleteItem: function () {
+            var self = this;
+            var answer = confirm('Really DELETE item ?!');
+
+            if (answer === true) {
+
+                this.model.destroy({
+                    wait : true,
+                    success: function (model) {
+                        self.hideDialog();
+                     /*   self.collection.remove(model);*/
+                        self.hideDialog();
+                    },
+
+                    error: function (model, err) {
+                        if (err.status === 403) {
+                            App.render({
+                                type   : 'error',
+                                message: 'You do not have permission to perform this action'
+                            });
+                        }
+                    }
+                });
+            }
         },
 
         render: function () {
             var self = this;
+            var model = this.model.toJSON();
             var formString = this.template({
-                model: this.currentModel.toJSON()
+                model: model
             });
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Bank Account',
+                dialogClass  : 'edit-tag-dialog',
+                title        : 'Edit Tag',
                 width        : '250px',
                 buttons      : [
                     {
@@ -87,13 +122,20 @@ define([
                         click: function () {
                             self.hideDialog();
                         }
+                    },
+
+                    {
+                        text : 'Remove',
+                        click: function () {
+                            self.deleteItem();
+                        }
                     }
+
                 ]
 
             });
 
-
-            populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            this.$el.find('.colorBox[data-color="' + model.color + '"]').addClass('checked');
 
             return this;
         }

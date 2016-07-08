@@ -4,7 +4,7 @@ define([
     'Underscore',
     'text!templates/Tags/CreateTag.html',
     'views/selectView/selectView',
-    'models/paymentTerm',
+    'models/TagModel',
     'populate',
     'constants'
 ], function (Backbone, $, _, template, SelectView, Model, populate, CONSTANTS) {
@@ -25,9 +25,7 @@ define([
         },
 
         events: {
-            'click .colorBox'                                  : 'chooseNewColor',
-            click                                              : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+            'click .colorBox'                                  : 'chooseNewColor'
         },
 
         chooseNewColor: function (e) {
@@ -40,7 +38,7 @@ define([
             var self = this;
             var thisEl = this.$el;
 
-            var name = thisEl.find('#paymentTermName').val();
+            var name = thisEl.find('#tagName').val();
             var color = thisEl.find('.checked').attr('data-color');
 
             var data = {
@@ -50,9 +48,10 @@ define([
 
             this.currentModel.save(data, {
                 wait   : true,
-                success: function (res) {
-
+                success: function (res, model) {
+                    self.collection.add(model);
                     self.hideDialog();
+
 
                 },
 
@@ -63,7 +62,7 @@ define([
         },
 
         hideDialog: function () {
-            $('.edit-dialog').remove();
+            $('.create-dialog').remove();
         },
 
         render: function () {
@@ -76,8 +75,8 @@ define([
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Bank Account',
+                dialogClass  : 'create-dialog',
+                title        : 'Create Tag',
                 width        : '250px',
                 buttons      : [
                     {

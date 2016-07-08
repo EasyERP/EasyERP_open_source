@@ -1,21 +1,6 @@
-<div class="tagsList">
-    <label for="selectInput">Tags</label>
+<div id="tagsContent">
     <input style="width: 90%" id="selectInput" placeholder="Search" autofocus/>
-
-    <ul >
-        <% collection.forEach(function(item){ %>
-        <% var choosedTag = _.findWhere(model.tags, {_id : item._id}) %>
-
-        <li id="<%= item._id %>" data-color='item.color'>
-            <%= item.name %>
-
-            <% if (choosedTag.length) { %>
-            <span class="selected"></span>
-            <% } %>
-        </li>
-        <% }) %>
-
-    </ul>
+    <div id="tagsList"></div>
 
     <a href="javascript:;" id="newTag">Create New Tag</a>
 

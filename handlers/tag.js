@@ -40,7 +40,7 @@ var Module = function (models) {
         var body = req.body;
         var id = req.params.id;
 
-        Tag.findByIdAndUpdate(id, body, function (err, method) {
+        Tag.findByIdAndUpdate(id, body, {new: true}, function (err, method) {
             if (err) {
                 return next(err);
             }

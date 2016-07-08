@@ -1,5 +1,5 @@
 define(['Backbone',
-    'models/tag'
+    'models/TagModel'
 ], function (Backbone, PaymentModel) {
     'use strict';
 
