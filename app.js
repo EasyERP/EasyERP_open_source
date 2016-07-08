@@ -3,7 +3,6 @@ module.exports = function (mainDb, dbsNames) {
 
     var http = require('http');
     var path = require('path');
-    var debug = require('debug')('compression');
     var express = require('express');
     // var compression = require('compression');
     var session = require('express-session');
