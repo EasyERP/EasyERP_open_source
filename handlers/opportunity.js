@@ -2560,7 +2560,7 @@ var Module = function (models, event) {
             .populate('company', 'name')
             .populate('customer', 'name')
             .populate('salesPerson', 'name')
-            .populate('workflow', 'name')
+            .populate('workflow', 'name sequence')
             .populate('groups.users')
             .populate('groups.group')
             .populate('createdBy.user', 'login')

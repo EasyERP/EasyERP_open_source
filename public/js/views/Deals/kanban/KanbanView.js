@@ -280,7 +280,8 @@
             var id = $(e.target).closest('.inner').attr('data-id');
 
             e.preventDefault();
-            Backbone.history.navigate('#easyErp/Deals/form/' + id, {trigger: true});
+            App.ownContentType = true;
+            window.location.hash = '#easyErp/Deals/form/' + id;
         },
 
         fetchFilteredOpportunities: function (e) {
