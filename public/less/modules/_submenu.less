@@ -30,6 +30,9 @@
     > ul {
       > li {
         border-top: 1px solid #3d4957;
+        &:first-child {
+          border-top: none;
+        }
       }
     }
 
@@ -150,6 +153,18 @@
         &:before {
           color: @submenu-active-text-color;
         }
+        &:after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 8px;
+          background: 0 0;
+          width: 0;
+          height: 0;
+          border-top: 12px solid transparent;
+          border-bottom: 12px solid transparent;
+          border-right: 12px solid #fff;
+        }
         &.opened {
           &:before {
             transform: rotate(-90deg);
@@ -160,11 +175,11 @@
 
       &:before {
         float: right;
-        width: 20px;
+        width: 30px;
         text-align: center;
         display: inline;
         font-size: 16px;
-        font-family: FontAwesome;
+        font-family: 'FontAwesome';
         height: auto;
         content: "\f104";
         font-weight: 300;
@@ -172,7 +187,7 @@
         position: absolute;
         top: 0;
         right: 14px;
-        line-height: 35px;
+        line-height: 40px;
         color: @submenu-arrow;
         transition: all 0.3s;
       }

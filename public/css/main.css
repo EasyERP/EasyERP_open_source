@@ -1934,7 +1934,7 @@ body {
   border-right: 0;
   border-bottom: 0;
   float: left;
-  margin: 5px 12px 2px 5px;
+  margin: 0 12px 0 5px;
 }
 .btn-list li {
   border-right: 1px solid #7f7f80;
@@ -2771,6 +2771,17 @@ input:not([type="checkbox"]).inputBordered:focus {
   color: #fff;
   text-decoration: none;
 }
+.btnRounded.black {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+}
+.btnRounded.black:hover {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+  text-decoration: none;
+}
 .formGroup {
   margin-bottom: 25px;
 }
@@ -2938,18 +2949,19 @@ input:not([type="checkbox"]).inputBordered:focus {
   float: left;
   display: block;
   width: 235px;
-  height: 50px;
+  height: 40px;
   padding-left: 39px;
   padding-right: 20px;
   box-sizing: border-box;
 }
 .topbarHolder .topbarLogo .mainLogo {
-  font-size: 18px;
-  line-height: 50px;
+  font-size: 22px;
+  line-height: 40px;
+  font-family: 'Open Sans Light';
 }
 .topbarHolder .sidebarToggler {
   position: relative;
-  top: 15px;
+  top: 12px;
   height: 17px;
   width: 19px;
   float: right;
@@ -3031,7 +3043,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   border: 1px solid #eee;
 }
 .topbarHolder .loginPanel .loginList a:hover {
-  background-color: #555;
+  background-color: #f6f6f6;
 }
 .topbarHolder .loginPanel .loginList:before {
   position: absolute;
@@ -4042,9 +4054,6 @@ textarea {
 }
 .uah:before {
   content: '₴';
-}
-.errorContent {
-  border: 1px solid red !important;
 }
 span.error {
   color: #e55253 !important;
@@ -7000,6 +7009,17 @@ buttonRounded.blue:hover {
   color: #fff;
   text-decoration: none;
 }
+buttonRounded.black {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+}
+buttonRounded.black:hover {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+  text-decoration: none;
+}
 button span,
 button a {
   padding: 0 !important;
@@ -7109,6 +7129,19 @@ a.redRounded.blue:hover {
   background-color: #3e88b9;
   border-color: #3e88b9;
   color: #fff;
+  text-decoration: none;
+}
+button.redRounded.black,
+a.redRounded.black {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+}
+button.redRounded.black:hover,
+a.redRounded.black:hover {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
   text-decoration: none;
 }
 button.red span,
@@ -7858,6 +7891,9 @@ table#workflows tr td.edit-status {
 .sideMenu nav > ul > li {
   border-top: 1px solid #3d4957;
 }
+.sideMenu nav > ul > li:first-child {
+  border-top: none;
+}
 .sideMenu nav .root {
   text-align: left;
 }
@@ -7952,17 +7988,29 @@ table#workflows tr td.edit-status {
 .sideMenu nav .root.active:before {
   color: #ffffff;
 }
+.sideMenu nav .root.active:after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 8px;
+  background: 0 0;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 12px solid #fff;
+}
 .sideMenu nav .root.active.opened:before {
   transform: rotate(-90deg);
   color: #ffffff;
 }
 .sideMenu nav .root:before {
   float: right;
-  width: 20px;
+  width: 30px;
   text-align: center;
   display: inline;
   font-size: 16px;
-  font-family: FontAwesome;
+  font-family: 'FontAwesome';
   height: auto;
   content: "\f104";
   font-weight: 300;
@@ -7970,7 +8018,7 @@ table#workflows tr td.edit-status {
   position: absolute;
   top: 0;
   right: 14px;
-  line-height: 35px;
+  line-height: 40px;
   color: #606c7d;
   transition: all 0.3s;
 }
@@ -8092,11 +8140,11 @@ table#workflows tr td.edit-status {
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
   display: block;
-  height: 30px;
+  height: 28px;
   clear: both;
 }
 #top-bar h3 {
-  margin: 6px 0 0 0;
+  line-height: 28px;
   padding: 0 10px;
   color: #666666 !important;
   font-family: Title;
@@ -8159,12 +8207,12 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar {
   display: block;
-  height: 30px;
+  height: 28px;
   clear: both;
   margin-left: 0;
 }
 .projectInfoTopBar h3 {
-  margin: 6px 0 0 0;
+  line-height: 28px;
   padding: 0 10px;
   color: #666666 !important;
   font-family: Title;
@@ -8238,7 +8286,7 @@ table#workflows tr td.edit-status {
   cursor: pointer;
   vertical-align: baseline;
   color: #666666;
-  line-height: 40px;
+  line-height: 30px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
@@ -8249,6 +8297,7 @@ table#workflows tr td.edit-status {
   font-size: 15px;
   text-decoration: none;
   text-align: center;
+  margin-right: 10px;
 }
 .createBtnHolder .fa:before,
 #createBtnHolder .fa:before {
@@ -8281,10 +8330,10 @@ table#workflows tr td.edit-status {
 #createBtnHolder ul li .dateReconcileDate {
   line-height: 29px;
 }
-.createBtnHolder .btn,
-#createBtnHolder .btn {
-  max-height: 26px;
-  line-height: 14px;
+.createBtnHolder .btnRounded,
+#createBtnHolder .btnRounded {
+  height: 26px;
+  line-height: 26px!important;
 }
 /*----------------------------- Login Form --------------------------------*/
 /*----------------------------- Tabs ------------------------------------*/
@@ -8583,6 +8632,9 @@ ul.dialog-tabs li.right button {
   top: 2.5px;
   right: 7px;
   position: absolute;
+}
+.thumbnail .dropDown .icon {
+  font-size: 19px;
 }
 .thumbnail .dropDown a:hover {
   color: #3e88b9;
@@ -9644,6 +9696,19 @@ ul.dialog-tabs .withEndContract .arrowRounded.blue:hover {
   color: #fff;
   text-decoration: none;
 }
+ul.dialog-tabs .withEndContract .endContractReasonListRounded.black,
+ul.dialog-tabs .withEndContract .arrowRounded.black {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListRounded.black:hover,
+ul.dialog-tabs .withEndContract .arrowRounded.black:hover {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+  text-decoration: none;
+}
 ul.dialog-tabs .withEndContract .endContractReasonList span,
 ul.dialog-tabs .withEndContract .arrow span,
 ul.dialog-tabs .withEndContract .endContractReasonList a,
@@ -9858,6 +9923,19 @@ ul.chart-tabs .withEndContract .arrowRounded.blue:hover {
   color: #fff;
   text-decoration: none;
 }
+ul.chart-tabs .withEndContract .endContractReasonListRounded.black,
+ul.chart-tabs .withEndContract .arrowRounded.black {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+}
+ul.chart-tabs .withEndContract .endContractReasonListRounded.black:hover,
+ul.chart-tabs .withEndContract .arrowRounded.black:hover {
+  background-color: #fff;
+  border-color: #000;
+  color: #000;
+  text-decoration: none;
+}
 ul.chart-tabs .withEndContract .endContractReasonList span,
 ul.chart-tabs .withEndContract .arrow span,
 ul.chart-tabs .withEndContract .endContractReasonList a,
@@ -9990,7 +10068,7 @@ ul.chart-tabs .withEndContract .arrow {
 .choseDateRange,
 .choseDateItem,
 .choseDateRangeSource {
-  padding: 5px;
+  padding: 3px 10px;
   border: 1px solid #efefef;
   float: right;
   margin-right: 10px;
@@ -10020,17 +10098,23 @@ ul.chart-tabs .withEndContract .arrow {
 .legend-box {
   border: 1px solid #7f7f80;
   width: 525px;
-  height: 32px;
-  padding: 3px 0 0;
   margin: -39px auto 0;
   color: #000000;
 }
 .legend-box.small {
-  width: 255px;
+  width: 265px;
+}
+.legend-box.small:before,
+.legend-box.small:after {
+  content: '';
+  display: table;
+}
+.legend-box.small:after {
+  clear: both;
 }
 .legend-box div {
   float: left;
-  padding: 5px 10px;
+  padding: 3px 10px;
 }
 .legend-box div .square {
   width: 20px;
@@ -12438,7 +12522,7 @@ textarea#editInput {
   float: right;
   width: 35%;
   position: relative;
-  margin-top: -35px;
+  margin-top: -30px;
   margin-right: 90px;
 }
 #searchContainer .btn {
@@ -12644,7 +12728,7 @@ textarea#editInput {
 }
 .invoiceChart-legend {
   position: absolute;
-  top: 20px;
+  top: -28px;
   left: 0;
   width: 100%;
   text-align: center;
@@ -12657,7 +12741,7 @@ textarea#editInput {
 }
 .invoiceChart-legend .legend-box {
   margin-top: 0;
-  padding: 3px;
+  padding: 0;
 }
 .invoiceChart-legend .legend-box .invoiced .square {
   background-color: #01579b;
@@ -12670,13 +12754,17 @@ textarea#editInput {
 .invoiceChart-legend .choseDateItem {
   border: 1px solid #7f7f80;
 }
-.invoiceChart-legend .choseDateItem button {
+.invoiceChart-legend .choseDateItem span {
   background: #fff;
   color: #4d5a75;
+  padding: 2px 5px;
+  font-size: 12px;
+  line-height: 16px;
 }
-.invoiceChart-legend .choseDateItem button:hover {
+.invoiceChart-legend .choseDateItem span:hover {
   background-color: #66b5d4;
   color: white;
+  cursor: pointer;
 }
 .invoiceChart-legend .choseDateItem .active {
   background-color: #66b5d4;
