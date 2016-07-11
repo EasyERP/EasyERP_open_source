@@ -94,13 +94,30 @@ var Categories = function (models, event) {
             });
     };
 
+    function updateParentsCategory(req, newCategoryId, parentId, callback) {
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var id;
+
+        ProductCategory.findOneAndUpdate({_id: parentId}, {$addToSet: {child: newCategoryId}}, function (err, result) {
+            if (err) {
+                return callback(err);
+            }
+
+            if (!result.parent) {
+                return callback(null);
+            }
+
+            id = result.parent;
+            updateParentsCategory(req, newCategoryId, id, callback);
+
+        });
+    }
+
     this.create = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var body = req.body;
         var parentId = body.parent;
         var category;
-        var getParentAncestors;
-        var saveProductCategory;
 
         if (!Object.keys(body).length) {
             return res.status(400).send();
@@ -113,57 +130,23 @@ var Categories = function (models, event) {
             user: req.session.uId
         };
 
-        getParentAncestors = function (parentId, callback) {
-            var ancestors = [];
+        category = new ProductCategory(body);
 
-            if (!parentId) {
-                return callback(null, ancestors);
-            }
-
-            ProductCategory.findById(parentId, function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-
-                if (result && result.ancestors && result.ancestors.length) {
-                    ancestors = result.ancestors;
-                }
-
-                ancestors.push(parentId);
-
-                callback(null, ancestors);
-            });
-
-        };
-
-        saveProductCategory = function (ancestors, callback) {
-            body.ancestors = ancestors;
-
-            category = new ProductCategory(body);
-
-            category.save(function (err, category) {
-                if (err) {
-                    return callback(err);
-                }
-
-                callback(null, category);
-            });
-        };
-
-
-        async.waterfall([
-            function (wCb) {
-                getParentAncestors(parentId, wCb);
-            },
-            function (ancestors, wCb) {
-                saveProductCategory(ancestors, wCb);
-            }
-        ], function (err, category) {
+        category.save(function (err, category) {
+            var newModelId;
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(category);
+            newModelId = category._id;
+
+            updateParentsCategory(req, newModelId, parentId, function () {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(category);
+            });
         });
     };
 

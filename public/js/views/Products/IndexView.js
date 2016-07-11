@@ -76,9 +76,13 @@ define([
 
         renderFilteredContent: function (categoryId) {
             var self = this;
-            var categoryUrl = '/category/posterity/' + categoryId;
+            var categoryUrl = '/category/' + categoryId;
+            var ids;
 
-            dataService.getData(categoryUrl, {}, function (ids) {
+            dataService.getData(categoryUrl, {}, function (category) {
+
+                ids = category.child;
+                ids.push(categoryId);
 
                 if (!App.filtersObject.filter) {
                     App.filtersObject.filter = {};
@@ -91,17 +95,18 @@ define([
                 };
 
                 self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
-
+                self.thumbnailsView.filterView.showFilterIcons(self.filter);
             }, this);
         },
 
         selectCategory: function (e) {
-            e.stopPropagation();
             var $targetEl = $(e.target);
             var $thisEl = this.$el;
             var $groupList = $thisEl.find('.groupList');
             var $currentLi;
             var id;
+
+            e.stopPropagation();
 
             $groupList.find('.selected').removeClass('selected');
             $targetEl.closest('.content').addClass('selected');
@@ -115,7 +120,7 @@ define([
         createItem: function () {
             var $thisEl = this.$el;
             var $groupList = $thisEl.find('.groupList');
-            var $selectedEl = $groupList.find('.selected').length ? $groupList.find('.selected') : $groupList.find('li').first();
+            var $selectedEl = $groupList.find('.selected').length ? $groupList.find('.selected').closest('li') : $groupList.find('li').first();
             var categoryId = $selectedEl.attr('data-id');
 
             new CreateCategoryView({
@@ -178,10 +183,21 @@ define([
         },
 
         renderItem: function (product, className, selected) {
+            var canDelete = true;
+
+            if(product.child && product.child.length) {
+                canDelete = false;
+            } else {
+                if(product.productsCount) {
+                    canDelete = false;
+                }
+            }
+
             return this.itemTemplate({
                 className: className,
                 selected : selected,
-                product  : product
+                product  : product,
+                canDelete: canDelete
             });
         },
 
@@ -189,11 +205,28 @@ define([
             var self = this;
             var $thisEl = this.$el;
             var par;
+            var selected = '';
+            var selectedMain = '';
+            var currentCategory;
 
-            products.forEach(function (product, i) {
+            if (App.filtersObject.filter && App.filtersObject.filter.productCategory && App.filtersObject.filter.productCategory.value.length) {
+                currentCategory = App.filtersObject.filter.productCategory.value[App.filtersObject.filter.productCategory.value.length - 1];
+            }
+
+            products.forEach(function (product) {
+
+                if (!currentCategory) {
+                    selectedMain = 'selected';
+                } else {
+                    if (currentCategory === product._id) {
+                        selected = 'selected';
+                    } else {
+                        selected = '';
+                    }
+                }
 
                 if (!product.parent) {
-                    $thisEl.find('.groupList').append(self.renderItem(product, 'child', 'selected'));
+                    $thisEl.find('.groupList').append(self.renderItem(product, 'child', selectedMain));
                 } else {
                     par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
 
@@ -205,7 +238,7 @@ define([
                         par.append('<ul style="margin-left:20px"></ul>');
                     }
 
-                    par.find('ul').first().append(self.renderItem(product, 'child', ''));
+                    par.find('ul').first().append(self.renderItem(product, 'child', selected));
                 }
 
             });
@@ -214,7 +247,7 @@ define([
                 accept   : '.product',
                 tolerance: 'pointer',
                 drop     : function (event, ui) {
-                    var $droppable = $(this);
+                    var $droppable = $(this).closest('li');
                     var $draggable = ui.draggable;
                     var productId = $draggable.attr('id');
                     var categoryId = $droppable.data('id');
@@ -278,6 +311,18 @@ define([
 
                         $(this).addClass('selected');
                     }
+                },
+
+                over: function () {
+                    var $droppableEl = $(this);
+                    var $groupList = self.$el;
+
+                    $droppableEl.addClass('selected');
+                    $groupList.find('.selected').removeClass('selected');
+                },
+
+                out: function () {
+                    $(this).removeClass('selected');
                 }
             });
         },
