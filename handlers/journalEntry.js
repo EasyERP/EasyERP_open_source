@@ -5144,6 +5144,27 @@ var Module = function (models, event) {
         });
     };
 
+    this.getCashBook = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var getAssets;
+        var getLiabilities;
+        var getEquities;
+        var query = req.query;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+        var liabilities = CONSTANTS.LIABILITIES.objectID();
+        var equity = CONSTANTS.EQUITY.objectID();
+        var currentAssets = [CONSTANTS.ACCOUNT_RECEIVABLE, CONSTANTS.WORK_IN_PROCESS, CONSTANTS.FINISHED_GOODS];
+        var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
+        var replaceToAssets = false;
+        var resultLiabilities;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        res.status(200).send({assets: [], liabilities: [], equity: []});
+    };
+
     this.getForGL = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = req.query;

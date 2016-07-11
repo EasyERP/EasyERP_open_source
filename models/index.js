@@ -61,4 +61,5 @@ module.exports = (function () {
     require('./payrollComponentType.js');
     require('./historyEntry.js');
     require('./payrollStructureTypes.js');
+    require('./cashTransfer.js');
 })();

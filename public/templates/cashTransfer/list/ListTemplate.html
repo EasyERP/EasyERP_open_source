@@ -1,0 +1,11 @@
+<% collection.forEach(function(item, index){ %>
+<tr data-id="<%=item._id%>">
+    <td class="notForm centerCell"><input type="checkbox" value="<%=item._id%>" class="checkbox listCB"/></td>
+    <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
+    <td><%=item.name%></td>
+    <td><%=item.date%></td>
+    <td><%=item.debiAccount%></td>
+    <td><%=item.creditAccount%></td>
+    <td class="<%=currencyClass(item.currency._id)%>"><%=currencySplitter(item.amount.toFixed(2))%></td>
+</tr>
+<% }) %>
