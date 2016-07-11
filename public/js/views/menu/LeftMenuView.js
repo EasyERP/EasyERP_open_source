@@ -6,7 +6,7 @@ define([
 ], function (Backbone, _, $, LeftMenuTemplate) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
-        el            : '#submenu-holder',
+        el            : '#submenuHolder',
         currentSection: null,
         selectedId    : null,
 

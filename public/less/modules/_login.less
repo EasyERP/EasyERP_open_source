@@ -509,3 +509,94 @@ input {
     }
   }
 }
+
+.mainLogo {
+  color: #fff;
+
+  span {
+    color: #FF3F3F;
+  }
+}
+
+.topbarHolder {
+  height: 50px;
+  background-color: #364150;
+  margin-left: 235px;
+
+  .topbarLogo {
+    float: left;
+    display: block;
+    width: 235px;
+    height: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    .mainLogo {
+
+    }
+  }
+  .sidebarToggler {
+
+  }
+  .loginPanel {
+    position: relative;
+    display: inline-block;
+    float: right;
+    padding: 16px 6px 13px 8px;
+
+    .dropdownButton {
+
+    }
+
+    img {
+      float: left;
+      margin-top: -5px;
+      margin-right: 5px;
+      height: 29px;
+      display: inline-block;
+    }
+    .userName {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 300;
+    }
+    .loginList {
+      box-shadow: 5px 5px rgba(102, 102, 102, .1);
+      left: 0;
+      min-width: 175px;
+      position: absolute;
+      z-index: 1000;
+      display: none;
+      float: left;
+      list-style: none;
+      text-shadow: none;
+      padding: 0;
+      background-color: #fff;
+      margin: 10px 0 0;
+      border: 1px solid #eee;
+
+      &:before {
+        position: absolute;
+        top: -7px;
+        right: 9px;
+        display: inline-block !important;
+        border-right: 7px solid transparent;
+        border-bottom: 7px solid #eee;
+        border-left: 7px solid transparent;
+        border-bottom-color: rgba(0, 0, 0, .2);
+        content: '';
+      }
+
+      > li {
+        > a {
+          padding: 8px 16px;
+          text-decoration: none;
+          display: block;
+          clear: both;
+          line-height: 18px;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}

@@ -778,16 +778,34 @@
   src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'), url("../font/easyERP.woff") format('woff'), url("../font/easyERP.ttf") format('truetype'), url("../font/easyERP.svg#quartzregular") format('svg');
 }
 @font-face {
+  font-family: 'Open Sans ExtraBold';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-extrabold-webfont.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans Bold';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-bold-webfont.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans SemiBold';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-semibold-webfont.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans Regular';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-regular-webfont.woff) format('woff');
+}
+@font-face {
   font-family: 'Open Sans Light';
   font-style: normal;
   font-weight: 300;
-  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/Open-Sans-Light.woff) format('woff');
-}
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans'), local('OpenSans'), url(../font/Open-Sans.woff) format('woff');
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-light-webfont.woff) format('woff');
 }
 html {
   font-family: sans-serif;
@@ -2900,48 +2918,119 @@ input:not([type="checkbox"]).inputBordered:focus {
     left: 20px;
   }
 }
-.collapsed .side_menu {
+.mainLogo {
+  color: #fff;
+}
+.mainLogo span {
+  color: #FF3F3F;
+}
+.topbarHolder {
+  height: 50px;
+  background-color: #364150;
+  margin-left: 235px;
+}
+.topbarHolder .topbarLogo {
+  float: left;
+  display: block;
+  width: 235px;
+  height: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.topbarHolder .loginPanel {
+  position: relative;
+  display: inline-block;
+  float: right;
+  padding: 16px 6px 13px 8px;
+}
+.topbarHolder .loginPanel img {
+  float: left;
+  margin-top: -5px;
+  margin-right: 5px;
+  height: 29px;
+  display: inline-block;
+}
+.topbarHolder .loginPanel .userName {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 300;
+}
+.topbarHolder .loginPanel .loginList {
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+  left: 0;
+  min-width: 175px;
+  position: absolute;
+  z-index: 1000;
+  display: none;
+  float: left;
+  list-style: none;
+  text-shadow: none;
+  padding: 0;
+  background-color: #fff;
+  margin: 10px 0 0;
+  border: 1px solid #eee;
+}
+.topbarHolder .loginPanel .loginList:before {
+  position: absolute;
+  top: -7px;
+  right: 9px;
+  display: inline-block !important;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #eee;
+  border-left: 7px solid transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  content: '';
+}
+.topbarHolder .loginPanel .loginList > li > a {
+  padding: 8px 16px;
+  text-decoration: none;
+  display: block;
+  clear: both;
+  line-height: 18px;
+  white-space: nowrap;
+}
+.collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
 }
-.collapsed .side_menu .sidebar_toggler:before {
+.collapsed .sideMenu .sidebarToggler:before {
   transform: rotate(180deg) translate(75%, 50%);
 }
-.collapsed .side_menu .login_panel .user_name {
+.collapsed .sideMenu .loginPanel .userName {
   display: none !important;
 }
-.collapsed .side_menu .login_panel .dropdown-button .login_list {
+.collapsed .sideMenu .loginPanel .dropdownButton .loginList {
   top: 15%;
   left: 100%;
   margin-left: 1px;
   width: 150px;
 }
-.collapsed .side_menu .login_panel .dropdown-button .login_list li:first-child {
+.collapsed .sideMenu .loginPanel .dropdownButton .loginList li:first-child {
   margin-left: -1px;
   padding-right: 1px;
 }
-.collapsed .side_menu .login_panel .dropdown-button .login_list.opened {
+.collapsed .sideMenu .loginPanel .dropdownButton .loginList.opened {
   display: none;
 }
-.collapsed .side_menu .login_panel .dropdown-button .login_list.opened:hover {
+.collapsed .sideMenu .loginPanel .dropdownButton .loginList.opened:hover {
   display: block;
 }
-.collapsed .side_menu .login_panel .dropdown-button:hover .login_list {
+.collapsed .sideMenu .loginPanel .dropdownButton:hover .login_list {
   display: block;
 }
-.collapsed .side_menu .logo {
+.collapsed .sideMenu .logo {
   display: none;
 }
-.collapsed .side_menu nav {
+.collapsed .sideMenu nav {
   width: auto !important;
 }
-.collapsed .side_menu nav > ul {
+.collapsed .sideMenu nav > ul {
   height: auto;
 }
-.collapsed .side_menu .root {
+.collapsed .sideMenu .root {
   position: relative;
 }
-.collapsed .side_menu .root ul {
+.collapsed .sideMenu .root ul {
   display: none;
   position: absolute;
   top: 0;
@@ -2949,42 +3038,45 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: 150px;
   margin-left: 1px;
 }
-.collapsed .side_menu .root ul li:first-child {
+.collapsed .sideMenu .root ul li:first-child {
   display: block;
   background-color: #2c3542;
 }
-.collapsed .side_menu .root > a {
+.collapsed .sideMenu .root > a {
   display: none !important;
 }
-.collapsed .side_menu .root:before {
+.collapsed .sideMenu .root:before {
   display: none;
 }
-.collapsed .side_menu .root:hover > ul {
+.collapsed .sideMenu .root:hover > ul {
   display: block;
 }
-.collapsed .side_menu .root:hover > ul li:first-child {
+.collapsed .sideMenu .root:hover > ul li:first-child {
   margin-left: -1px;
   padding-right: 1px;
 }
-.collapsed .side_menu .root.opened {
+.collapsed .sideMenu .root.opened {
   height: 35px !important;
 }
-.collapsed .side_menu .root.opened > ul {
+.collapsed .sideMenu .root.opened > ul {
   display: none;
 }
-.collapsed .side_menu .root.opened:hover > ul {
+.collapsed .sideMenu .root.opened:hover > ul {
   display: block;
 }
-.collapsed .side_menu .root.active > ul li:first-child {
+.collapsed .sideMenu .root.active > ul li:first-child {
   background-color: #7eadcc;
 }
-.collapsed .side_menu .root.active > ul li:first-child a {
+.collapsed .sideMenu .root.active > ul li:first-child a {
   color: #ffffff;
 }
 .collapsed .content_wrapper .content-holder {
   margin-left: 45px;
 }
 .collapsed .content_wrapper .top-bar {
+  margin-left: 65px;
+}
+.collapsed .topbarHolder {
   margin-left: 65px;
 }
 .btn {
@@ -3112,7 +3204,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   background-color: transparent;
 }
 .list2 {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   width: 100%;
   table-layout: fixed;
 }
@@ -3335,10 +3427,10 @@ input:not([type="checkbox"]).inputBordered:focus {
 .hireFireTable {
   margin-bottom: 10px;
 }
-.side_menu {
+.sideMenu {
   display: block;
   width: auto;
-  max-width: 200px;
+  max-width: 235px;
   height: 100%;
   float: left;
   margin-right: -100%;
@@ -4662,7 +4754,7 @@ h3 {
   text-overflow: ellipsis;
 }
 body {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans Regular', 'Segoe UI', Helvetica, Verdana, sans-serif;
   font-size: 12px;
   height: 100%;
 }
@@ -4875,7 +4967,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -5024,7 +5116,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -5035,7 +5127,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -5462,7 +5554,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .formLeftColumn .form .mainInfo p {
   height: 20px !important;
@@ -5611,7 +5703,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formLeftColumn .form h2 {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -5622,7 +5714,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -5807,7 +5899,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .formRightColumn .form .mainInfo p {
   height: 20px !important;
@@ -5956,7 +6048,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formRightColumn .form h2 {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -5967,7 +6059,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -7637,7 +7729,7 @@ table#workflows tr td.edit-status {
   display: block;
   letter-spacing: 1.5px;
 }
-.side_menu {
+.sideMenu {
   display: block;
   position: fixed;
   z-index: 100;
@@ -7648,62 +7740,71 @@ table#workflows tr td.edit-status {
   padding-top: 110px;
   left: 0;
   top: 0;
+  font-family: 'Open Sans Light';
 }
-.side_menu nav {
-  width: 200px;
+.sideMenu nav {
+  width: 235px;
 }
-.side_menu nav ul {
+.sideMenu nav ul {
   zoom: 1;
   clear: both;
 }
-.side_menu nav ul:before {
+.sideMenu nav ul:before {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
-.side_menu nav ul:after {
+.sideMenu nav ul:after {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
   clear: both;
 }
-.side_menu nav ul li {
+.sideMenu nav ul li {
   position: relative;
-  list-style: none;
-  line-height: 35px;
-  height: 35px;
   display: block;
+  height: 40px;
   width: 100%;
+  list-style: none;
+  line-height: 40px;
   background: #364150;
   text-align: left;
 }
-.side_menu nav .root {
-  text-align: left;
-  border-bottom: 1px solid #3d4957;
+.sideMenu nav > ul > li {
+  border-top: 1px solid #3d4957;
 }
-.side_menu nav .root ul {
+.sideMenu nav .root {
+  text-align: left;
+}
+.sideMenu nav .root ul {
   display: none;
   height: auto;
+  padding: 8px 0;
+  background-color: #364150;
 }
-.side_menu nav .root ul li .sub_item {
+.sideMenu nav .root ul li {
+  margin-top: 1px!important;
+  height: 31px;
+}
+.sideMenu nav .root ul li .sub_item {
   display: block;
   padding-left: 39px;
   text-decoration: none;
   font-size: 14px;
   font-weight: 300;
-  line-height: 35px;
+  line-height: 31px;
   color: #b4bcc8;
 }
-.side_menu nav .root ul li:hover,
-.side_menu nav .root ul li.selected {
+.sideMenu nav .root ul li:hover,
+.sideMenu nav .root ul li.selected {
   background-color: #404d5f;
 }
-.side_menu nav .root ul li:first-child {
+.sideMenu nav .root ul li:first-child {
   display: none;
 }
-.side_menu nav .root .icons {
+.sideMenu nav .root .icons {
   padding: 0 11px;
   display: inline-block;
   font: normal normal normal 14px simple-line-icons;
@@ -7716,59 +7817,59 @@ table#workflows tr td.edit-status {
   font-variant: normal;
   text-transform: none;
 }
-.side_menu nav .root > a,
-.side_menu nav .root .icons {
+.sideMenu nav .root > a,
+.sideMenu nav .root .icons {
   color: #b4bcc8;
   font-size: 16px;
-  line-height: 35px;
+  line-height: 40px;
   display: block;
   float: left;
   text-decoration: none;
   text-shadow: none;
   font-weight: 300;
 }
-.side_menu nav .root .icon-Sales:before {
+.sideMenu nav .root .icon-Sales:before {
   content: "\e043";
 }
-.side_menu nav .root .icon-HR:before {
+.sideMenu nav .root .icon-HR:before {
   content: "\e001";
 }
-.side_menu nav .root .icon-Project:before {
+.sideMenu nav .root .icon-Project:before {
   content: "\e02d";
 }
-.side_menu nav .root .icon-Settings:before {
+.sideMenu nav .root .icon-Settings:before {
   content: "\e09a";
 }
-.side_menu nav .root .icon-Accounting:before {
+.sideMenu nav .root .icon-Accounting:before {
   content: "\e04b";
 }
-.side_menu nav .root .icon-Expenses:before {
+.sideMenu nav .root .icon-Expenses:before {
   content: "\e077";
 }
-.side_menu nav .root .icon-Payroll:before {
+.sideMenu nav .root .icon-Payroll:before {
   content: "\e025";
 }
-.side_menu nav .root:hover,
-.side_menu nav .root.opened {
+.sideMenu nav .root:hover,
+.sideMenu nav .root.opened {
   cursor: pointer;
-  height: 35px;
+  height: 40px;
   background-color: #2c3542;
 }
-.side_menu nav .root.active {
+.sideMenu nav .root.active {
   background-color: #7eadcc;
 }
-.side_menu nav .root.active a,
-.side_menu nav .root.active .icons {
+.sideMenu nav .root.active a,
+.sideMenu nav .root.active .icons {
   color: #ffffff;
 }
-.side_menu nav .root.active:before {
+.sideMenu nav .root.active:before {
   color: #ffffff;
 }
-.side_menu nav .root.active.opened:before {
+.sideMenu nav .root.active.opened:before {
   transform: rotate(-90deg);
   color: #ffffff;
 }
-.side_menu nav .root:before {
+.sideMenu nav .root:before {
   float: right;
   width: 20px;
   text-align: center;
@@ -7786,16 +7887,16 @@ table#workflows tr td.edit-status {
   color: #606c7d;
   transition: all 0.3s;
 }
-.side_menu nav .root.opened {
+.sideMenu nav .root.opened {
   height: auto;
 }
-.side_menu nav .root.opened ul {
+.sideMenu nav .root.opened ul {
   display: block;
 }
-.side_menu nav .root.opened:before {
+.sideMenu nav .root.opened:before {
   transform: rotate(-90deg);
 }
-.side_menu .logo {
+.sideMenu .logo {
   position: absolute;
   bottom: 15px;
   left: 0;
@@ -7804,12 +7905,12 @@ table#workflows tr td.edit-status {
   width: 100%;
   margin: 0 auto;
 }
-.side_menu .logo a {
+.sideMenu .logo a {
   font-size: 35px;
   text-decoration: none;
   color: #7eadcc;
 }
-.side_menu .sidebar_toggler {
+.sideMenu .sidebar_toggler {
   position: absolute;
   top: 10px;
   left: 100%;
@@ -7821,7 +7922,7 @@ table#workflows tr td.edit-status {
   background-color: #364150;
   border-left: 1px solid #3d4957;
 }
-.side_menu .sidebar_toggler:before {
+.sideMenu .sidebar_toggler:before {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -7833,7 +7934,7 @@ table#workflows tr td.edit-status {
   border-width: 5px 6px 5px 0;
   border-color: transparent #ffffff transparent transparent;
 }
-.side_menu .login_panel {
+.sideMenu .login_panel {
   position: absolute;
   left: 0;
   top: 0;
@@ -7841,7 +7942,7 @@ table#workflows tr td.edit-status {
   bottom: auto;
   width: 100%;
 }
-.side_menu .login_panel .dropdown-button {
+.sideMenu .login_panel .dropdown-button {
   text-indent: 5px;
   cursor: pointer;
   padding: 5px;
@@ -7851,11 +7952,11 @@ table#workflows tr td.edit-status {
   float: left;
   height: auto;
 }
-.side_menu .login_panel .dropdown-button:hover {
+.sideMenu .login_panel .dropdown-button:hover {
   background: #3e88b9;
   color: #fff;
 }
-.side_menu .login_panel .login_list {
+.sideMenu .login_panel .login_list {
   display: none;
   position: absolute;
   top: 100%;
@@ -7863,36 +7964,36 @@ table#workflows tr td.edit-status {
   width: 100%;
   z-index: 999;
 }
-.side_menu .login_panel .login_list li {
+.sideMenu .login_panel .login_list li {
   text-align: left;
   color: #b4bcc8;
   background: #364150;
 }
-.side_menu .login_panel .login_list li:hover {
+.sideMenu .login_panel .login_list li:hover {
   background-color: #404d5f;
 }
-.side_menu .login_panel .login_list a {
+.sideMenu .login_panel .login_list a {
   display: block;
   padding-left: 39px;
   text-decoration: none;
   font-size: 14px;
-  line-height: 35px;
+  line-height: 40px;
   color: #b4bcc8;
 }
-.side_menu .login_panel .login_list.opened {
+.sideMenu .login_panel .login_list.opened {
   display: block;
 }
-.side_menu .login_panel .user_name {
+.sideMenu .login_panel .user_name {
   display: block;
   line-height: 30px;
   color: #b4bcc8;
   font-size: 14px;
   font-weight: 300;
 }
-.side_menu .login_panel .user_name:hover {
+.sideMenu .login_panel .user_name:hover {
   color: #ffffff;
 }
-.side_menu .login_panel .iconEmployee {
+.sideMenu .login_panel .iconEmployee {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
@@ -8187,7 +8288,7 @@ ul.dialog-tabs li.right button {
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   white-space: normal;
 }
 .thumbnailwithavatar h4 span,
@@ -8213,7 +8314,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .thumbnailwithavatar .inner .info p {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000;
   font-size: 12px;
   font-weight: 200 !important;
@@ -8284,7 +8385,7 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .list {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   width: 100%;
 }
 .list td,
@@ -8441,7 +8542,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
 }
 .thumbnail span {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   position: relative;
   color: #4c4c4c;
   font-size: 13px;
@@ -8466,7 +8567,7 @@ ul.dialog-tabs li.right button {
   text-decoration: underline;
 }
 .thumbnail p {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #4c4c4c;
   font-size: 13px;
 }
@@ -8474,7 +8575,7 @@ ul.dialog-tabs li.right button {
   font-weight: normal !important;
 }
 .thumbnail h2 {
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #4c4c4c;
   font-size: 13px;
   margin: 0 0 8px;
@@ -12101,7 +12202,7 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   padding: 5px 25px;
   position: absolute;
   z-index: 10;

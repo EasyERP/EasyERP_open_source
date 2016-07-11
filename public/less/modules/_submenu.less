@@ -1,4 +1,4 @@
-.submenu(@defaultColor: @bg-submenu, @height: 35px) {
+.submenu(@defaultColor: @bg-submenu, @height: 40px) {
   display: block;
   position: fixed;
   z-index: 100;
@@ -9,39 +9,51 @@
   padding-top: 110px;
   left: 0;
   top: 0;
+  font-family: 'Open Sans Light';
 
   nav {
-    width: 200px;
+    width: 235px;
+
     ul {
       .clearfix;
       li {
         position: relative;
+        display: block;
+        height: @height;
+        width: 100%;
         list-style: none;
         line-height: @height;
-        height: @height;
-        display: block;
-        width: 100%;
         background: @defaultColor;
         text-align: left;
+      }
+    }
+    > ul {
+      > li {
+        border-top: 1px solid #3d4957;
       }
     }
 
     .root {
       text-align: left;
-      border-bottom: 1px solid @submenu-border;
+      //border-bottom: 1px solid @submenu-border;
 
-       ul {
+      ul {
         display: none;
         height: auto;
+        padding: 8px 0;
+        background-color: #364150;
 
         li {
+          margin-top: 1px!important;
+          height: 31px;
+
           .sub_item {
             display: block;
             padding-left: 39px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 300;
-            line-height: @height;
+            line-height: 31px;
             color: @submenu-text-color;
           }
 
