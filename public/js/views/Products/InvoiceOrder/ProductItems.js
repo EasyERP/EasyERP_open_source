@@ -372,10 +372,12 @@ define([
             var $target = $(e.target);
             var $parrent = $target.parents('td');
             var $trEl = $target.parents('tr');
-            var $hoursContainer = $trEl.find('[data-name="quantity"] span');
+            var $quantityContainer = $trEl.find('[data-name="quantity"]');
+
+            var $quantity = $quantityContainer.find('span');
             var $parrents = $trEl.find('td');
             var _id = $target.attr('id');
-            var quantity = $hoursContainer.text() || 0;
+            var quantity = $quantity.text() || 0;
             var salePrice = 0;
             var model;
             var taxes;
@@ -386,104 +388,102 @@ define([
             var selectedProduct;
             var jobId;
             var currentJob;
-            var product = $('.productsDd');
+            var product = $trEl.find('.productsDd');
             var price;
             var currency = {};
             var classForParent;
 
-            if (_id !== 'createJob') {
-
-                if ($parrent.hasClass('jobs')) {
-                    _id = product.attr('data-id');
-                    jobId = $target.attr('id');
-
-                    currentJob = _.find(self.responseObj['#jobs'], function (job) {
-                        return job._id === jobId;
-                    });
-
-                    quantity = 1;
-
-                    $parrent.find('.jobs').text($target.text()).attr('data-id', jobId);
-                    $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
-                    // $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
-                    $hoursContainer.text(1); // for quantity = 1
-
-                    model = this.products.get(_id);
-
-                } else {
-                    model = this.products.get(_id);
-
-                    $trEl.attr('data-id', model.id);
-                    $parrent.find('.current-selected').text($target.text()).attr('data-id', _id);
-                }
-
-                selectedProduct = model ? model.toJSON() : null;
-
-                if (currentJob && selectedProduct) {
-                    selectedProduct.info.salePrice = 0;
-
-                    this.taxesRate = 0;
-                }
-
-                if (!this.forSales && selectedProduct) {
-                    $($parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
-                }
-
-                $($parrents[2]).find('.datepicker.notVisible').datepicker({
-                    dateFormat : 'd M, yy',
-                    changeMonth: true,
-                    changeYear : true
-                }).datepicker('setDate', new Date());
-
-                datePicker = $trEl.find('input.datepicker');
-                spanDatePicker = $trEl.find('span.datepicker');
-                $trEl.attr('data-error', null);
-
-                spanDatePicker.text(datePicker.val());
-                datePicker.remove();
-
-                //  $($parrents[2]).attr('class', 'editable');
-                $trEl.find('#editInput').val(salePrice); // changed on def 0
-                /* if (currentJob && currentJob.budget) {
-                 price = currentJob.budget.budgetTotal.revenueSum;
-                 if (price) {
-                 $trEl.find('[data-name="price"]').find('input').val(price);
-                 } else {
-                 $trEl.find('[data-name="price"]').find('input').val('0');
-                 }
-                 }*/
-                /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
-                 $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
-
-                 this.recalculatePriceByJob();
-                 } else {*/
-                if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
-                    $($parrents[2]).addClass('editable');
-                    /* $($parrents[3]).addClass('editable');*/ // in case of taken away Scheduled Date
-                }
-
-                salePrice = selectedProduct.info.salePrice;
-
-                currency._id = $('#currencyDd').attr('data-id');
-                classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
-
-                $($parrents[4]).attr('class', classForParent).find('span').text(salePrice);
-                total = parseFloat(selectedProduct.info.salePrice);
-                taxes = total * this.taxesRate;
-                subtotal = total + taxes;
-                taxes = taxes.toFixed(2);
-                subtotal = subtotal.toFixed(2);
-
-                $($parrents[5]).text(taxes);
-                $($parrents[6]).text(subtotal);
-
-                $('.newSelectList').remove();
-
-                this.calculateTotal(selectedProduct.info.salePrice);
-                /* }*/
-            } else if (_id === 'createJob') {
-                self.generateJob();
+            if (_id === 'createJob') {
+                return self.generateJob();
             }
+
+            if ($parrent.hasClass('jobs')) {
+                _id = product.attr('data-id');
+                jobId = $target.attr('id');
+
+                currentJob = _.find(self.responseObj['#jobs'], function (job) {
+                    return job._id === jobId;
+                });
+
+                quantity = 1;
+
+                $parrent.find('.jobs').text($target.text()).attr('data-id', jobId);
+                $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
+                // $quantity.text(currentJob.budget.budgetTotal.hoursSum);
+                model = this.products.get(_id);
+
+            } else {
+                model = this.products.get(_id);
+
+                $trEl.attr('data-id', model.id);
+                $parrent.find('.current-selected').text($target.text()).attr('data-id', _id);
+            }
+
+            selectedProduct = model ? model.toJSON() : null;
+
+            if (currentJob && selectedProduct) {
+                selectedProduct.info.salePrice = 0;
+
+                this.taxesRate = 0;
+            }
+
+            if (!this.forSales && selectedProduct) {
+                $($parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+            }
+
+            $quantity.text(1);
+            $($parrents[2]).find('.datepicker.notVisible').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true
+            }).datepicker('setDate', new Date());
+
+            datePicker = $trEl.find('input.datepicker');
+            spanDatePicker = $trEl.find('span.datepicker');
+            $trEl.attr('data-error', null);
+
+            spanDatePicker.text(datePicker.val());
+            datePicker.remove();
+
+            //  $($parrents[2]).attr('class', 'editable');
+            $trEl.find('#editInput').val(salePrice); // changed on def 0
+            /* if (currentJob && currentJob.budget) {
+             price = currentJob.budget.budgetTotal.revenueSum;
+             if (price) {
+             $trEl.find('[data-name="price"]').find('input').val(price);
+             } else {
+             $trEl.find('[data-name="price"]').find('input').val('0');
+             }
+             }*/
+            /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
+             $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
+
+             this.recalculatePriceByJob();
+             } else {*/
+            if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
+                $($parrents[2]).addClass('editable');
+                /* $($parrents[3]).addClass('editable');*/ // in case of taken away Scheduled Date
+            }
+
+            salePrice = selectedProduct.info.salePrice;
+
+            currency._id = $('#currencyDd').attr('data-id');
+            classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
+
+            $($parrents[4]).attr('class', classForParent).find('span').text(salePrice);
+            total = parseFloat(selectedProduct.info.salePrice);
+            taxes = total * this.taxesRate;
+            subtotal = total + taxes;
+            taxes = taxes.toFixed(2);
+            subtotal = subtotal.toFixed(2);
+
+            $($parrents[5]).text(taxes);
+            $($parrents[6]).text(subtotal);
+
+            $('.newSelectList').remove();
+
+            this.calculateTotal(selectedProduct.info.salePrice);
+            /* }*/
         },
 
         isNaN: function (val) {

@@ -3,6 +3,7 @@ var Module = function (models) {
     'use strict';
 
     var TagsSchema = mongoose.Schemas.Tags;
+    var OpportunitySchema = mongoose.Schemas.Opportunities;
 
     this.getForDd = function (req, res, next) {
         var Tag = models.get(req.session.lastDb, 'tags', TagsSchema);
@@ -19,6 +20,16 @@ var Module = function (models) {
                 res.status(200).send({data: terms});
             });
     };
+
+    function updateOpportunities (req, id){
+        var Opportunity = models.get(req.session.lastDb, 'tags', OpportunitySchema);
+
+        Opportunity.update({'tags' : id}, {$pull : {tags: id}}, function (err){
+            if (err){
+                console.log(err);
+            }
+        });
+    }
 
     this.getForList = function (req, res, next) {
         var Tag = models.get(req.session.lastDb, 'tags', TagsSchema);
@@ -72,6 +83,8 @@ var Module = function (models) {
             if (err) {
                 return next(err);
             }
+
+            updateOpportunities(req, id);
 
             res.status(200).send(method);
         });
