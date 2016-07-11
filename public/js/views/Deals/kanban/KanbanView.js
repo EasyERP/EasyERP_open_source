@@ -277,32 +277,10 @@
         },
 
         gotoEditForm: function (e) {
-            var id;
-            var model;
+            var id = $(e.target).closest('.inner').attr('data-id');
 
             e.preventDefault();
-
-            id = $(e.target).closest('.inner').data('id');
-            model = new CurrentModel();
-            model.urlRoot = '/Opportunities/';
-
-            model.fetch({
-                data: {
-                    id      : id,
-                    viewType: 'form'
-                },
-
-                success: function (newModel) {
-                    return new EditView({model: newModel});
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
+            Backbone.history.navigate('#easyErp/Deals/form/' + id, {trigger: true});
         },
 
         fetchFilteredOpportunities: function (e) {

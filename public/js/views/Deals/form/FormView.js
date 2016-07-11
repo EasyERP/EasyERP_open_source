@@ -32,7 +32,7 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Opportunities/list', {trigger: true});
+                    Backbone.history.navigate('#easyErp/Deals/kanban', {trigger: true});
                 }
             });
 

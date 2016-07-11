@@ -2524,7 +2524,7 @@ var Module = function (models, event) {
     }
 
     function getById(req, res, next) {
-        var id = req.query.id;
+        var id = req.query.id || req.params.id;
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var query;
 
@@ -2589,6 +2589,11 @@ var Module = function (models, event) {
 
         });
     }
+
+    this.getById = function (req, res, next) {
+        getById(req, res, next);
+    };
+
 
     this.getByViewType = function (req, res, next) {
         var viewType = req.query.viewType;
