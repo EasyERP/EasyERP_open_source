@@ -1,22 +1,44 @@
 var mongoose = require('mongoose');
 
-var cashTransfer = function (models) {
+var cashTransfer = function (models, event) {
     'use strict';
 
     var cashTransferSchema = mongoose.Schemas.cashTransfer;
 
     var async = require('async');
     var pageHelper = require('../helpers/pageHelper');
+    var CONSTANTS = require('../constants/mainConstants');
+
+    var JournalEntryHandler = require('./journalEntry');
+    var _journalEntryHandler = new JournalEntryHandler(models, event);
 
     this.create = function (req, res, next) {
         var cashTransferModel = models.get(req.session.lastDb, 'cashTransfer', cashTransferSchema);
         var body = req.body;
         var cashTransfer = new cashTransferModel(body);
+        var bodyJournalEntry = {};
 
         cashTransfer.save(function (err, result) {
             if (err) {
                 return next(err);
             }
+
+            bodyJournalEntry = {
+                currency: CONSTANTS.CURRENCY_USD,
+                journal : CONSTANTS.SALARY_PAYMENT_JOURNAL,
+                date    : new Date(result.date),
+
+                sourceDocument: {
+                    model: 'cashTransfer',
+                    _id  : result._id
+                },
+
+                amount: result.amount
+            };
+
+            _journalEntryHandler.createReconciled(bodyJournalEntry, req.session.lastDb, function () {
+
+            }, req.session.uId);
 
             res.status(200).send({success: result});
         });
@@ -62,7 +84,7 @@ var cashTransfer = function (models) {
         };
 
         var getData = function (pCb) {
-            cashTransferModel.find().skip(skip).limit(limit).sort(sort).exec(function (err, _res) {
+            cashTransferModel.find().populate('debitAccount', 'name').populate('creditAccount', 'name').skip(skip).limit(limit).sort(sort).exec(function (err, _res) {
                 if (err) {
                     return pCb(err);
                 }

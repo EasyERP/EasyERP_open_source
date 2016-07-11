@@ -69,7 +69,7 @@ module.exports = function (app, mainDb) {
     var tasksRouter = require('./tasks')(models, event);
     var journalEntriesRouter = require('./journalEntries')(models, event);
     var payrollStructureTypesRouter = require('./payrollStructureTypes')(models);
-    var cashTransferRouter = require('./cashTransfer')(models);
+    var cashTransferRouter = require('./cashTransfer')(models, event);
 
     var logger = require('../helpers/logger');
     var async = require('async');

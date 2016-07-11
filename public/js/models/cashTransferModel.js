@@ -1,7 +1,12 @@
 define([
-    'Backbone'
-], function (Backbone) {
-    var BonusModel = Backbone.Model.extend({});
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    var BonusModel = Backbone.Model.extend({
+        urlRoot: function () {
+            return CONSTANTS.URLS.CASH_TRANSFER;
+        }
+    });
 
     return BonusModel;
 });

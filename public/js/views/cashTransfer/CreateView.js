@@ -26,22 +26,47 @@ define([
         },
 
         saveItem: function () {
-            var data = {};
+            var data;
             var self = this;
+            var debitAccount = this.$el.find('#debitAccount').attr('data-id');
+            var creditAccount = this.$el.find('#creditAccount').attr('data-id');
+            var amount = parseFloat(this.$el.find('#amount').val()) * 100;
+            var date = this.$el.find('#date').val();
+
+            var debitAcc = _.find(this.responseObj['#debitAccount'], function (el) {
+                return debitAccount === el._id;
+            });
+
+            var creditAcc = _.find(this.responseObj['#creditAccount'], function (el) {
+                return debitAccount === el._id;
+            });
+
+            data = {
+                debitAccount : debitAcc.chartAccount._id || null,
+                creditAccount: creditAcc.chartAccount._id || null,
+                amount       : amount,
+                date         : helpers.setTimeToDate(date)
+            };
 
             this.model.save(data, {
-                headers: {
-                    mid: mid
-                },
-                wait   : true,
-                success: function (model) {
+                success: function () {
+                    var url = window.location.hash;
 
+                    Backbone.history.fragment = '';
+
+                    Backbone.history.navigate(url, {trigger: true});
                 },
 
                 error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
+        },
+
+        chooseOption: function (e) {
+            var $target = $(e.target);
+
+            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
         },
 
         render: function () {
@@ -68,9 +93,21 @@ define([
                 }
             });
 
-            populate.get('#departmentDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
-
             this.delegateEvents(this.events);
+
+            this.$el.find('#date').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                minDate    : new Date(),
+                onSelect   : function () {
+                    // set date to model
+                }
+            }).datepicker('setDate', new Date());
+
+            populate.get('#debitAccount', CONSTANTS.URLS.PAYMENT_METHOD_DD, {}, 'name', this);
+            populate.get('#creditAccount', CONSTANTS.URLS.PAYMENT_METHOD_DD, {}, 'name', this);
+
             return this;
         }
     });

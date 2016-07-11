@@ -2,8 +2,9 @@ define([
     'Backbone',
     'Underscore',
     'text!templates/cashTransfer/list/ListTemplate.html',
-    'helpers'
-], function (Backbone, _, cashTransferTemplate, helpers) {
+    'helpers',
+    'common'
+], function (Backbone, _, cashTransferTemplate, helpers, common) {
     'use strict';
     var ListItemView = Backbone.View.extend({
         el: '#listTable',
@@ -15,11 +16,11 @@ define([
 
         render: function () {
             this.$el.append(_.template(cashTransferTemplate, {
-                collection      : this.collection.toJSON(),
-                startNumber     : this.startNumber,
-                currencySplitter: helpers.currencySplitter,
-                currencyClass   : helpers.currencyClass
-
+                collection         : this.collection.toJSON(),
+                startNumber        : this.startNumber,
+                currencySplitter   : helpers.currencySplitter,
+                currencyClass      : helpers.currencyClass,
+                utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
         }
     });
