@@ -46,7 +46,7 @@ define([
                     var tags = $('.tags [data-id="' + model._id + '"]')
                     tags.each(function(){
                         $(this).attr('data-color', model.color).text(model.name);
-                    })
+                    });
                 },
 
                 error: function (model, xhr) {
@@ -68,8 +68,12 @@ define([
 
                 this.model.destroy({
                     wait   : true,
-                    success: function () {
+                    success: function (res, model) {
                         self.hideDialog();
+                        var tags = $('[data-id="' + model._id + '"]');
+                        tags.each(function(){
+                            $(this).remove();
+                        });
                     },
 
                     error: function (model, err) {

@@ -298,7 +298,7 @@
                             kanbanHolder.find('.tags').empty();
                             if (objectTags.length) {
                                 objectTags.forEach(function (elem) {
-                                    kanbanHolder.find('.tags').append('<span class="left" data-color="' + elem.color + '">' + elem.name + '</span>')
+                                    kanbanHolder.find('.tags').append('<span class="left" data-id="' + elem._id + '" data-color="' + elem.color + '">' + elem.name + '</span>')
                                 });
                             }
                             kanbanHolder.find('.opportunity-content p.right').text(nextAction.date);
