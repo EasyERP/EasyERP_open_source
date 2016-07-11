@@ -64,7 +64,6 @@ define([
                     this.setChangedValueToModel();
                 }
                 this.payRollId = payRollId;
-                this.setChangedValueToModel();
             }
 
             if (!isInput) {
@@ -175,7 +174,8 @@ define([
         },
 
         autoCalc: function (e) {
-            // e.preventDefault();
+            e.preventDefault();
+            e.stopPropagation();
             var el = $(e.target);
             var td = $(el.closest('td'));
             var tr = el.closest('tr');
@@ -186,8 +186,8 @@ define([
             var total;
             var newTotal;
             var totalEl = this.$el.find('#total');
-            var payOld = (editModel.changed && editModel.changed.paidAmount) ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
-            var diffOld = (editModel.changed && editModel.changed.differenceAmount) ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
+            //var payOld = (editModel.changed && editModel.changed.paidAmount) ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
+            //var diffOld = (editModel.changed && editModel.changed.differenceAmount) ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
             var diffOnCash = tr.find('.differenceAmount[data-content="onCash"]');
             var value;
             var tdForUpdate;
@@ -237,10 +237,10 @@ define([
 
                 total = parseFloat(totalEl.attr('data-cash'));
 
-                newTotal = total - payOld + newValue - diffOld;
-
-                totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
-                totalEl.attr('data-cash', newTotal);
+                //newTotal = total - payOld + newValue - diffOld;
+                //
+                //totalEl.text(helpers.currencySplitter(newTotal.toFixed(2)));
+                //totalEl.attr('data-cash', newTotal);
 
                 if (subValues !== 0) {
 
