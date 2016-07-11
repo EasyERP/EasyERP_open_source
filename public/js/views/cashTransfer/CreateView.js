@@ -31,7 +31,7 @@ define([
             var self = this;
             var debitAccount = this.$el.find('#debitAccount').attr('data-id');
             var creditAccount = this.$el.find('#creditAccount').attr('data-id');
-            var amount = parseFloat(this.$el.find('#amount').val()) * 100;
+            var amount = parseFloat(helpers.spaceReplacer(this.$el.find('#amount').val())) * 100;
             var date = this.$el.find('#date').val();
             var currency = this.$el.find('#currency').text();
             var currencyTo;
@@ -44,7 +44,21 @@ define([
                 return creditAccount === el._id;
             });
 
-            currencyTo = creditAcc.currency;
+            currencyTo = creditAcc ? creditAcc.currency : null;
+
+            if (amount > self.maxAmount) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, change amount less than balance.'
+                });
+            }
+
+            if (!debitAccount || !creditAccount || !amount) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Fill all fields, please.'
+                });
+            }
 
             data = {
                 debitAccount : debitAcc.chartAccount ? debitAcc.chartAccount._id : null,
@@ -102,23 +116,26 @@ define([
                     return targetId === el._id;
                 });
 
-                currency = debitAcc.currency || 'USD';
+                currency = debitAcc ? debitAcc.currency : 'USD';
 
                 this.$el.find('#currency').text(currency);
 
-                dataService.getData('/journalEntries/getBalanceForAccount', {account: debitAcc.chartAccount ? debitAcc.chartAccount._id : null, date: date}, function (resp){
+                dataService.getData('/journalEntries/getBalanceForAccount', {
+                    account: debitAcc.chartAccount ? debitAcc.chartAccount._id : null,
+                    date   : date
+                }, function (resp) {
                     self.$el.find('#amount').text(0);
 
-                    if (resp.error){
+                    if (resp.error) {
                         return App.render({
-                            type: 'error',
-                            message: "Some error"
+                            type   : 'error',
+                            message: 'Some error'
                         });
                     }
 
-                    if (!resp.maxAmount){
+                    if (!resp.maxAmount) {
                         return App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "You don't have enough money on this account. Please change account or try another date."
                         });
                     }
@@ -174,22 +191,25 @@ define([
                         return debitId === el._id;
                     });
 
-                    if (debitAcc){
+                    if (debitAcc) {
                         currency = debitAcc.currency || 'USD';
 
-                        dataService.getData('/journalEntries/getBalanceForAccount', {account: debitAcc.chartAccount ? debitAcc.chartAccount._id : null, date: date}, function (resp){
+                        dataService.getData('/journalEntries/getBalanceForAccount', {
+                            account: debitAcc.chartAccount ? debitAcc.chartAccount._id : null,
+                            date   : date
+                        }, function (resp) {
                             self.$el.find('#amount').text(0);
 
-                            if (resp.error){
+                            if (resp.error) {
                                 return App.render({
-                                    type: 'error',
-                                    message: "Some error"
+                                    type   : 'error',
+                                    message: 'Some error'
                                 });
                             }
 
-                            if (!resp.maxAmount){
+                            if (!resp.maxAmount) {
                                 return App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You don't have enough money on this account. Please change account or try another date."
                                 });
                             }
