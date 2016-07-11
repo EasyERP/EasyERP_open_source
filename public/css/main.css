@@ -3109,10 +3109,19 @@ input:not([type="checkbox"]).inputBordered:focus {
   left: 100%;
   width: 150px;
   margin-left: 1px;
+  padding: 0;
+}
+.collapsed .sideMenu .root ul li {
+  height: 40px;
 }
 .collapsed .sideMenu .root ul li:first-child {
   display: block;
+  margin-top: 0!important;
   background-color: #2c3542;
+}
+.collapsed .sideMenu .root ul li .sub_item {
+  padding-left: 20px;
+  line-height: 40px;
 }
 .collapsed .sideMenu .root > a {
   display: none !important;

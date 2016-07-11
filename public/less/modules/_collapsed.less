@@ -54,6 +54,7 @@
 
     .root {
       position: relative;
+
       ul {
         display: none;
         position: absolute;
@@ -61,10 +62,19 @@
         left: 100%;
         width: 150px;
         margin-left: 1px;
+        padding: 0;
+
         li {
+          height: 40px;
+
           &:first-child {
             display: block;
+            margin-top: 0!important;
             background-color: @submenu-hover;
+          }
+          .sub_item {
+            padding-left: 20px;
+            line-height: 40px;
           }
         }
       }
