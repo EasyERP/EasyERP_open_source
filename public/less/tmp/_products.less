@@ -14,8 +14,64 @@
       position: relative;
     }
 
-    ul ul {
-      margin: 0 0 0 20px;
+    ul {
+      .content {
+        padding-left: 24px;
+      }
+
+      .expand {
+        left: 4px;
+      }
+
+      ul {
+        .content {
+          padding-left: 44px;
+        }
+
+        .expand {
+          left: 24px;
+        }
+
+        ul {
+          .content {
+            padding-left: 64px;
+          }
+
+          .expand {
+            left: 44px;
+          }
+
+          ul {
+            .content {
+              padding-left: 74px;
+            }
+
+            .expand {
+              left: 64px;
+            }
+
+            ul {
+              .content {
+                padding-left: 104px;
+              }
+
+              .expand {
+                left: 84px;
+              }
+
+              ul {
+                .content {
+                  padding-left: 124px;
+                }
+
+                .expand {
+                  left: 104px;
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     .action-btn {
