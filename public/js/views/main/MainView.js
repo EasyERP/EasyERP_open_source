@@ -25,7 +25,7 @@ define([
         },
 
         expandCollapse: function () {
-            $('body').toggleClass('collapsed');
+            $('#wrapper').toggleClass('collapsed');
         },
 
         openLogin: function (e) {
