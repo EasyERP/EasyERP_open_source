@@ -243,7 +243,7 @@ define([
 
             });
 
-            $('.groupList .item > .content').droppable({
+            $('.groupList .item .content').droppable({
                 accept   : '.product',
                 tolerance: 'pointer',
                 drop     : function (event, ui) {
@@ -317,8 +317,8 @@ define([
                     var $droppableEl = $(this);
                     var $groupList = self.$el;
 
-                    $droppableEl.addClass('selected');
                     $groupList.find('.selected').removeClass('selected');
+                    $droppableEl.addClass('selected');
                 },
 
                 out: function () {

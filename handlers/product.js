@@ -35,7 +35,7 @@ var Products = function (models) {
         var currentCategory;
         var newCategory;
 
-        Product.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, product) {
+        Product.findByIdAndUpdate(id, {$set: data}, function (err, product) {
             if (err) {
                 return next(err);
             }
@@ -47,10 +47,10 @@ var Products = function (models) {
 
                 async.parallel([
                     function (parCb) {
-                        ProductCategory.findOneAndUpdate({_id: currentCategory}, {$inc: {productsCount: -1}}, parCb);
+                        ProductCategory.update({_id: currentCategory}, {$inc: {productsCount: -1}}, parCb);
                     },
                     function (parCb) {
-                        ProductCategory.findOneAndUpdate({_id: newCategory}, {$inc: {productsCount: 1}}, parCb);
+                        ProductCategory.update({_id: newCategory}, {$inc: {productsCount: 1}}, parCb);
                     }
                 ], function (err, cb) {
                     if (err) {
