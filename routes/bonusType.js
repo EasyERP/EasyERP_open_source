@@ -16,7 +16,7 @@ module.exports = function (models) {
      *@api {get} /bonusType/ Request Bonus Types
      *
      * @apiVersion 0.0.1
-     * @apiName getbonusTypes
+     * @apiName getBonusTypes
      * @apiGroup BonusType
      *
      * @apiParam (?Field=value) {String} viewType="list" Type of View
@@ -136,6 +136,39 @@ module.exports = function (models) {
      }
      */
     router.get('/', handler.getList);
+
+    /**
+     *@api {get} /bonusType/getForDD/ Request Bonus Types for dropDown
+     *
+     * @apiVersion 0.0.1
+     * @apiName getBonusTypesForDropDown
+     * @apiGroup BonusType
+     *
+     * @apiSuccess {Object} BonusTypes Bunus Types for dropDown
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 304 Not Modified
+     {
+       "data": [
+         {
+           "_id": "55b92ad521e4b7c40f00060b",
+           "name": "PM Base/Junior"
+         },
+         {
+           "_id": "55b92ad521e4b7c40f00060a",
+           "name": "PM Junior/Usual 1.5%"
+         },
+         {
+           "_id": "55b92ad521e4b7c40f000609",
+           "name": "Sales/Head 10%"
+         },
+         {
+           "_id": "55b92ad521e4b7c40f000602",
+           "name": "Sales/Head 8%"
+         },
+         ...
+       ]
+     }
+     */
     router.get('/getForDD', handler.getForDD);
 
     /**

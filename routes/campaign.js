@@ -7,7 +7,7 @@ module.exports = function (models) {
     var handler = new Handler(models);
 
 /**
- *@api {get} /Campaigns/ Request Campaigns
+ *@api {get} /Campaigns/ Request Campaigns for dropDown
  *
  * @apiVersion 0.0.1
  * @apiName getCampaigns

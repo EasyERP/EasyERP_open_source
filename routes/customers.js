@@ -628,6 +628,31 @@ module.exports = function (models, event) {
             }
      */
     router.delete('/:id', accessStackMiddleware, handler.remove);
+
+    /**
+     *@api {delete} /companies/ Request for deleting a few Companies
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteFewCompanies
+     * @apiGroup Customers
+     *
+     * @apiParamExample {json} Request-Example:
+     *{
+      "contentType": "Companies",
+      "ids": [
+        "577fc8695651db3a56865d9c",
+        "577fc84b5651db3a56865d9b"
+      ]
+    }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *    {
+     *      "ok":1,
+     *      "n":2
+     *    }
+     */
     router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;

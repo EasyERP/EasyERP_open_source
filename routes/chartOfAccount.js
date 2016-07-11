@@ -68,13 +68,13 @@ module.exports = function (models) {
     router.get('/', accessStackMiddleware, handler.getForView);
 
     /**
-     *@api {get} /chartOfAccount/getForDd/ Request Chart Of Account for dropDawn
+     *@api {get} /chartOfAccount/getForDd/ Request Chart Of Account for dropDown
      *
      * @apiVersion 0.0.1
      * @apiName getChartOfAccountForDd
      * @apiGroup Chart Of Account
      *
-     * @apiSuccess {Object} ChartOfAccountForDd Chart Of Account for dropDawn
+     * @apiSuccess {Object} ChartOfAccountForDd Chart Of Account for dropDown
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      {

@@ -7,7 +7,7 @@ module.exports = function (models) {
     var handler = new CurrencyHandler(models);
 
     /**
-     *@api {get} /currency/getForDd/ Request for getting currency for dropDawn
+     *@api {get} /currency/getForDd/ Request for getting currency for dropDown
      *
      * @apiVersion 0.0.1
      * @apiName getCurrenciesForDd

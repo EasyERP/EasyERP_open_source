@@ -55,7 +55,6 @@ module.exports = function (event, models) {
 "fold": false
 }
      */
-
     router.get('/', accessStackMiddleWare, handler.getByViewTpe);
 
     /**
@@ -499,6 +498,28 @@ module.exports = function (event, models) {
     }
      */
     router.delete('/:id', accessStackMiddleWare, handler.remove);
+
+    /**
+     *@api {delete} /applications/ Request for deleting a few Applications
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteFewApplications
+     * @apiGroup Applications
+     *
+     * @apiParamExample {json} Request-Example:
+     *{
+      "contentType": "Applications",
+      "ids": [
+        "55b92ad221e4b7c40f00004b",
+        "56b9d3eb8f23c5696159cd0b"
+      ]
+    }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *    {"success":true}
+     */
     router.delete('/', accessStackMiddleWare, handler.bulkRemove);
 
     return router;
