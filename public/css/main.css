@@ -2621,7 +2621,7 @@ h2.green {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 .loginForgot {
   color: #a4aab2;
