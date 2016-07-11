@@ -202,11 +202,11 @@ define([
                     par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
 
                     if (!par.find('.expand').length) {
-                        par.append('<a class="expand" href="javascript:;" style="display: inline-block; float: left">-</a>')
+                        par.append('<a class="expand" href="javascript:;">-</a>')
                     }
 
                     if (par.find('ul').length === 0) {
-                        par.append('<ul style="margin-left:20px"></ul>');
+                        par.append('<ul></ul>');
                     }
 
                     par.find('ul').first().append(self.renderItem(product, 'child', ''));
