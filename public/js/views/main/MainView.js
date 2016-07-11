@@ -20,11 +20,17 @@ define([
         },
 
         events: {
-            'click .sidebar_toggler': 'expandCollapse'
+            'click .sidebar_toggler': 'expandCollapse',
+            'click .loginPanel': 'openLogin'
         },
 
         expandCollapse: function () {
             $('body').toggleClass('collapsed');
+        },
+
+
+        openLogin: function (e) {
+            $(e.target).closest('.loginPanel').find('ul').toggleClass('opened');
         },
 
 

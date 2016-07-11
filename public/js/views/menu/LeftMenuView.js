@@ -27,19 +27,9 @@ define([
 
         events: {
             'click .root'      : 'openRoot',
-            'click #loginPanel': 'openLogin'
-        },
-
-        openLogin: function (e) {
-            var $activeRoot = this.$el.find('.opened');
-
-            $(e.target).parent().find('#loginSelect').toggleClass('opened');
-            $activeRoot.find('ul').animate({height: 0}, 200, function () {
-                $activeRoot.removeClass('opened');
-            });
-
 
         },
+
 
         openRoot: function (e) {
             var $activeRoot = this.$el.find('.opened');
