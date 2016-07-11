@@ -228,12 +228,21 @@ var cashTransfer = function (models, event) {
         var body = req.body || {ids: []};
         var ids = body.ids;
 
-        cashTransferModel.remove({_id: {$in: ids}}, function (err, removed) {
-            if (err) {
+        async.each(ids, function(id, cb){
+            cashTransferModel.remove({_id: id}, function (err, removed) {
+                if (err) {
+                    return cb(err);
+                }
+
+                _journalEntryHandler.removeByDocId(id, req.session.lastDb, cb);
+
+            });
+        }, function (err, result){
+            if (err){
                 return next(err);
             }
 
-            res.status(200).send(removed);
+            res.status(200).send(result);
         });
     };
 
