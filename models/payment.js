@@ -74,7 +74,7 @@ module.exports = (function () {
 
         supplier: [{
             _id             : {type: ObjectId, ref: 'Employees', default: null},
-            fullName        : String,
+            name            : {type: Object, default: null},
             paidAmount      : Number,
             differenceAmount: {type: Number, default: 0, set: setPrice}
         }],

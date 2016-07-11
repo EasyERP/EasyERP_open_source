@@ -713,6 +713,7 @@ var Module = function (models, event) {
 
                 supplierObject.paidAmount = _payment.paidAmount;
                 supplierObject.differenceAmount = _payment.differenceAmount;
+                supplierObject.name = _payment.supplier.name;
 
                 totalAmount += _payment.paidAmount;
                 suppliers.push(supplierObject);
@@ -720,7 +721,7 @@ var Module = function (models, event) {
 
                 return true;
             });
-
+            resultObject.currency = body[0].currency;
             resultObject.suppliers = suppliers;
             resultObject.products = products;
             resultObject.totalAmount = totalAmount;
@@ -729,7 +730,10 @@ var Module = function (models, event) {
         };
 
         createInvoice = function (params, cb) {
-            var invoice = new Invoice({products: params.products});
+            var invoice = new Invoice({
+                products: params.products,
+                currency: {_id: objectId(params.currency)}
+            });
 
             invoice.save(function (err, result) {
                 if (err) {
@@ -749,6 +753,7 @@ var Module = function (models, event) {
 
             paymentObject.supplier = params.suppliers;
             paymentObject.paidAmount = params.totalAmount;
+            paymentObject.currency = params.invoice.get('currency');
 
             payment = new Payment(paymentObject);
             payment.save(function (err, result) {
