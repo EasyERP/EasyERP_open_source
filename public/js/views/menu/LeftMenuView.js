@@ -26,7 +26,7 @@ define([
         },
 
         events: {
-            'click .root'      : 'openRoot',
+            'click .root'      : 'openRoot'
 
         },
 

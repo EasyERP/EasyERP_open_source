@@ -20,7 +20,7 @@ define([
         },
 
         events: {
-            'click .sidebar_toggler': 'expandCollapse',
+            'click .sidebarToggler': 'expandCollapse',
             'click .loginPanel': 'openLogin'
         },
 
@@ -30,7 +30,7 @@ define([
 
 
         openLogin: function (e) {
-            $(e.target).closest('.loginPanel').find('ul').toggleClass('opened');
+            $(e.target).closest('.loginPanel').find('ul').toggleClass('open');
         },
 
 
