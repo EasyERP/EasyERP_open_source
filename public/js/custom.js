@@ -502,12 +502,10 @@ define([
         var defSavedFilterValues = defSavedFilter ? defSavedFilter.filters : null;
 
         if (defSavedFilterValues) {
-            App.filtersObject.curDefSavedFilter = defSavedFilter;
-
             App.storage.save(contentType + '.savedFilter', defSavedFilter.name);
         }
 
-        return defSavedFilterValues;
+        return defSavedFilterValues ? _.extend({}, defSavedFilterValues) : null;
     };
 
     var getSavedFilterForCT = function (contentType) {
@@ -518,7 +516,7 @@ define([
         var savedFilter = _.findWhere(savedFilters, {name: savedFilterName});
         var savedFilterValues = savedFilter ? savedFilter.filters : null;
 
-        return savedFilterValues;
+        return savedFilterValues ? _.extend({}, savedFilterValues) : null;
     };
 
     App.storage = new Store();
