@@ -111,7 +111,7 @@ module.exports = function (models, event) {
      * @apiName getCustomersImages
      * @apiGroup Customers
      *
-     * @apiParam (?Field=value) {String} ids%5B%5D Unique Id of Customer
+     * @apiParam (?Field=value) {String} ids Unique Id of Customer
      *
      * @apiSuccess {Object} CustomersImages
      * @apiSuccessExample Success-Response:
