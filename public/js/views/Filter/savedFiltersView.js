@@ -56,7 +56,7 @@ define([
                         success : function () {
                             $selectedLi.remove();
                             self.savedFilters = _.without(self.savedFilters, currentFilter);
-                            App.filtersObject.savedFilters[self.contentType] = self.savedFilters;
+                            App.filtersObject.savedFilters[self.contentType][0].filter = self.savedFilters;
                             self.trigger('savedFilterDeleted', currentFilter.name);
                         },
                         error   : function (model, xhr) {
@@ -253,6 +253,9 @@ define([
                                     name     : filterObj.name
                                 }
                             );
+
+                            App.filtersObject.savedFilters[self.contentType][0].filter = self.savedFilters;
+
                             $byDefEl.attr('checked', false);
                             $filterNameEl.val('');
                             self.renderSavedFiltersElements();

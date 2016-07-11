@@ -106,7 +106,8 @@ define([
             create   : function (event, ui) {
                 var win = $(window);
                 var dialog = $(event.target).parent('.ui-dialog');
-                var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
+                //var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2; //8.7.16(Pogorilyak)
+                var top =  (win.height() - dialog.height() ) / 2;
                 var left = (win.width() - dialog.width()) / 2;
 
                 dialog.css({

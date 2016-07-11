@@ -1,7 +1,9 @@
 <div class="forInfo-half-block left tableResponsive">
     <table class="list tableProjects">
-        <colgroup span="11">
+        <colgroup span="13">
             <col span="1" width="3%">
+            <col span="1">
+            <col span="1">
             <col span="1">
             <col span="1">
             <col span="1">
@@ -35,6 +37,8 @@
             <th></th>
             <th>Sprint</th>
             <th>Status</th>
+            <th>Start Date</th>
+            <th>End Date</th>
             <th>Type</th>
             <th>Quot/Order</th>
             <th>Invoice</th>
@@ -59,6 +63,8 @@
                 <td class="editableJobs" id="jobsName"><%=element.name%></td>
                 <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
                 </td>
+                <td><%= element.tCardMinDate ? element.tCardMinDate : '' %></td>
+                <td><%= element.tCardMaxDate ? element.tCardMaxDate : '' %></td>
                 <td class="selects"><a data-id="<%=element.type%>" id="type"><%=element.type%></a>
                     <!--<ul class="newSelectList" style="display: none;">-->
                     <!--<li>Ordered</li>-->
