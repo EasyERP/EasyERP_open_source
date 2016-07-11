@@ -1,4 +1,770 @@
 @font-face {
+  font-family: 'simple-line-icons';
+  src: url('../fonts/Simple-Line-Icons.eot?v=2.3.2');
+  src: url('../fonts/Simple-Line-Icons.eot?v=2.3.2#iefix') format('embedded-opentype'), url('../fonts/Simple-Line-Icons.woff2?v=2.3.2') format('woff2'), url('../fonts/Simple-Line-Icons.ttf?v=2.3.2') format('truetype'), url('../fonts/Simple-Line-Icons.woff?v=2.3.2') format('woff'), url('../fonts/Simple-Line-Icons.svg?v=2.3.2#simple-line-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/*
+ Use the following CSS code if you want to have a class per icon.
+ Instead of a list of all class selectors, you can use the generic [class*="icon-"] selector, but it's slower:
+*/
+.icon-user,
+.icon-people,
+.icon-user-female,
+.icon-user-follow,
+.icon-user-following,
+.icon-user-unfollow,
+.icon-login,
+.icon-logout,
+.icon-emotsmile,
+.icon-phone,
+.icon-call-end,
+.icon-call-in,
+.icon-call-out,
+.icon-map,
+.icon-location-pin,
+.icon-direction,
+.icon-directions,
+.icon-compass,
+.icon-layers,
+.icon-menu,
+.icon-list,
+.icon-options-vertical,
+.icon-options,
+.icon-arrow-down,
+.icon-arrow-left,
+.icon-arrow-right,
+.icon-arrow-up,
+.icon-arrow-up-circle,
+.icon-arrow-left-circle,
+.icon-arrow-right-circle,
+.icon-arrow-down-circle,
+.icon-check,
+.icon-clock,
+.icon-plus,
+.icon-minus,
+.icon-close,
+.icon-exclamation,
+.icon-organization,
+.icon-trophy,
+.icon-screen-smartphone,
+.icon-screen-desktop,
+.icon-plane,
+.icon-notebook,
+.icon-mustache,
+.icon-mouse,
+.icon-magnet,
+.icon-energy,
+.icon-disc,
+.icon-cursor,
+.icon-cursor-move,
+.icon-crop,
+.icon-chemistry,
+.icon-speedometer,
+.icon-shield,
+.icon-screen-tablet,
+.icon-magic-wand,
+.icon-hourglass,
+.icon-graduation,
+.icon-ghost,
+.icon-game-controller,
+.icon-fire,
+.icon-eyeglass,
+.icon-envelope-open,
+.icon-envelope-letter,
+.icon-bell,
+.icon-badge,
+.icon-anchor,
+.icon-wallet,
+.icon-vector,
+.icon-speech,
+.icon-puzzle,
+.icon-printer,
+.icon-present,
+.icon-playlist,
+.icon-pin,
+.icon-picture,
+.icon-handbag,
+.icon-globe-alt,
+.icon-globe,
+.icon-folder-alt,
+.icon-folder,
+.icon-film,
+.icon-feed,
+.icon-drop,
+.icon-drawer,
+.icon-docs,
+.icon-doc,
+.icon-diamond,
+.icon-cup,
+.icon-calculator,
+.icon-bubbles,
+.icon-briefcase,
+.icon-book-open,
+.icon-basket-loaded,
+.icon-basket,
+.icon-bag,
+.icon-action-undo,
+.icon-action-redo,
+.icon-wrench,
+.icon-umbrella,
+.icon-trash,
+.icon-tag,
+.icon-support,
+.icon-frame,
+.icon-size-fullscreen,
+.icon-size-actual,
+.icon-shuffle,
+.icon-share-alt,
+.icon-share,
+.icon-rocket,
+.icon-question,
+.icon-pie-chart,
+.icon-pencil,
+.icon-note,
+.icon-loop,
+.icon-home,
+.icon-grid,
+.icon-graph,
+.icon-microphone,
+.icon-music-tone-alt,
+.icon-music-tone,
+.icon-earphones-alt,
+.icon-earphones,
+.icon-equalizer,
+.icon-like,
+.icon-dislike,
+.icon-control-start,
+.icon-control-rewind,
+.icon-control-play,
+.icon-control-pause,
+.icon-control-forward,
+.icon-control-end,
+.icon-volume-1,
+.icon-volume-2,
+.icon-volume-off,
+.icon-calendar,
+.icon-bulb,
+.icon-chart,
+.icon-ban,
+.icon-bubble,
+.icon-camrecorder,
+.icon-camera,
+.icon-cloud-download,
+.icon-cloud-upload,
+.icon-envelope,
+.icon-eye,
+.icon-flag,
+.icon-heart,
+.icon-info,
+.icon-key,
+.icon-link,
+.icon-lock,
+.icon-lock-open,
+.icon-magnifier,
+.icon-magnifier-add,
+.icon-magnifier-remove,
+.icon-paper-clip,
+.icon-paper-plane,
+.icon-power,
+.icon-refresh,
+.icon-reload,
+.icon-settings,
+.icon-star,
+.icon-symbol-female,
+.icon-symbol-male,
+.icon-target,
+.icon-credit-card,
+.icon-paypal,
+.icon-social-tumblr,
+.icon-social-twitter,
+.icon-social-facebook,
+.icon-social-instagram,
+.icon-social-linkedin,
+.icon-social-pinterest,
+.icon-social-github,
+.icon-social-google,
+.icon-social-reddit,
+.icon-social-skype,
+.icon-social-dribbble,
+.icon-social-behance,
+.icon-social-foursqare,
+.icon-social-soundcloud,
+.icon-social-spotify,
+.icon-social-stumbleupon,
+.icon-social-youtube,
+.icon-social-dropbox {
+  font-family: 'simple-line-icons';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-user:before {
+  content: "\e005";
+}
+.icon-people:before {
+  content: "\e001";
+}
+.icon-user-female:before {
+  content: "\e000";
+}
+.icon-user-follow:before {
+  content: "\e002";
+}
+.icon-user-following:before {
+  content: "\e003";
+}
+.icon-user-unfollow:before {
+  content: "\e004";
+}
+.icon-login:before {
+  content: "\e066";
+}
+.icon-logout:before {
+  content: "\e065";
+}
+.icon-emotsmile:before {
+  content: "\e021";
+}
+.icon-phone:before {
+  content: "\e600";
+}
+.icon-call-end:before {
+  content: "\e048";
+}
+.icon-call-in:before {
+  content: "\e047";
+}
+.icon-call-out:before {
+  content: "\e046";
+}
+.icon-map:before {
+  content: "\e033";
+}
+.icon-location-pin:before {
+  content: "\e096";
+}
+.icon-direction:before {
+  content: "\e042";
+}
+.icon-directions:before {
+  content: "\e041";
+}
+.icon-compass:before {
+  content: "\e045";
+}
+.icon-layers:before {
+  content: "\e034";
+}
+.icon-menu:before {
+  content: "\e601";
+}
+.icon-list:before {
+  content: "\e067";
+}
+.icon-options-vertical:before {
+  content: "\e602";
+}
+.icon-options:before {
+  content: "\e603";
+}
+.icon-arrow-down:before {
+  content: "\e604";
+}
+.icon-arrow-left:before {
+  content: "\e605";
+}
+.icon-arrow-right:before {
+  content: "\e606";
+}
+.icon-arrow-up:before {
+  content: "\e607";
+}
+.icon-arrow-up-circle:before {
+  content: "\e078";
+}
+.icon-arrow-left-circle:before {
+  content: "\e07a";
+}
+.icon-arrow-right-circle:before {
+  content: "\e079";
+}
+.icon-arrow-down-circle:before {
+  content: "\e07b";
+}
+.icon-check:before {
+  content: "\e080";
+}
+.icon-clock:before {
+  content: "\e081";
+}
+.icon-plus:before {
+  content: "\e095";
+}
+.icon-minus:before {
+  content: "\e615";
+}
+.icon-close:before {
+  content: "\e082";
+}
+.icon-exclamation:before {
+  content: "\e617";
+}
+.icon-organization:before {
+  content: "\e616";
+}
+.icon-trophy:before {
+  content: "\e006";
+}
+.icon-screen-smartphone:before {
+  content: "\e010";
+}
+.icon-screen-desktop:before {
+  content: "\e011";
+}
+.icon-plane:before {
+  content: "\e012";
+}
+.icon-notebook:before {
+  content: "\e013";
+}
+.icon-mustache:before {
+  content: "\e014";
+}
+.icon-mouse:before {
+  content: "\e015";
+}
+.icon-magnet:before {
+  content: "\e016";
+}
+.icon-energy:before {
+  content: "\e020";
+}
+.icon-disc:before {
+  content: "\e022";
+}
+.icon-cursor:before {
+  content: "\e06e";
+}
+.icon-cursor-move:before {
+  content: "\e023";
+}
+.icon-crop:before {
+  content: "\e024";
+}
+.icon-chemistry:before {
+  content: "\e026";
+}
+.icon-speedometer:before {
+  content: "\e007";
+}
+.icon-shield:before {
+  content: "\e00e";
+}
+.icon-screen-tablet:before {
+  content: "\e00f";
+}
+.icon-magic-wand:before {
+  content: "\e017";
+}
+.icon-hourglass:before {
+  content: "\e018";
+}
+.icon-graduation:before {
+  content: "\e019";
+}
+.icon-ghost:before {
+  content: "\e01a";
+}
+.icon-game-controller:before {
+  content: "\e01b";
+}
+.icon-fire:before {
+  content: "\e01c";
+}
+.icon-eyeglass:before {
+  content: "\e01d";
+}
+.icon-envelope-open:before {
+  content: "\e01e";
+}
+.icon-envelope-letter:before {
+  content: "\e01f";
+}
+.icon-bell:before {
+  content: "\e027";
+}
+.icon-badge:before {
+  content: "\e028";
+}
+.icon-anchor:before {
+  content: "\e029";
+}
+.icon-wallet:before {
+  content: "\e02a";
+}
+.icon-vector:before {
+  content: "\e02b";
+}
+.icon-speech:before {
+  content: "\e02c";
+}
+.icon-puzzle:before {
+  content: "\e02d";
+}
+.icon-printer:before {
+  content: "\e02e";
+}
+.icon-present:before {
+  content: "\e02f";
+}
+.icon-playlist:before {
+  content: "\e030";
+}
+.icon-pin:before {
+  content: "\e031";
+}
+.icon-picture:before {
+  content: "\e032";
+}
+.icon-handbag:before {
+  content: "\e035";
+}
+.icon-globe-alt:before {
+  content: "\e036";
+}
+.icon-globe:before {
+  content: "\e037";
+}
+.icon-folder-alt:before {
+  content: "\e039";
+}
+.icon-folder:before {
+  content: "\e089";
+}
+.icon-film:before {
+  content: "\e03a";
+}
+.icon-feed:before {
+  content: "\e03b";
+}
+.icon-drop:before {
+  content: "\e03e";
+}
+.icon-drawer:before {
+  content: "\e03f";
+}
+.icon-docs:before {
+  content: "\e040";
+}
+.icon-doc:before {
+  content: "\e085";
+}
+.icon-diamond:before {
+  content: "\e043";
+}
+.icon-cup:before {
+  content: "\e044";
+}
+.icon-calculator:before {
+  content: "\e049";
+}
+.icon-bubbles:before {
+  content: "\e04a";
+}
+.icon-briefcase:before {
+  content: "\e04b";
+}
+.icon-book-open:before {
+  content: "\e04c";
+}
+.icon-basket-loaded:before {
+  content: "\e04d";
+}
+.icon-basket:before {
+  content: "\e04e";
+}
+.icon-bag:before {
+  content: "\e04f";
+}
+.icon-action-undo:before {
+  content: "\e050";
+}
+.icon-action-redo:before {
+  content: "\e051";
+}
+.icon-wrench:before {
+  content: "\e052";
+}
+.icon-umbrella:before {
+  content: "\e053";
+}
+.icon-trash:before {
+  content: "\e054";
+}
+.icon-tag:before {
+  content: "\e055";
+}
+.icon-support:before {
+  content: "\e056";
+}
+.icon-frame:before {
+  content: "\e038";
+}
+.icon-size-fullscreen:before {
+  content: "\e057";
+}
+.icon-size-actual:before {
+  content: "\e058";
+}
+.icon-shuffle:before {
+  content: "\e059";
+}
+.icon-share-alt:before {
+  content: "\e05a";
+}
+.icon-share:before {
+  content: "\e05b";
+}
+.icon-rocket:before {
+  content: "\e05c";
+}
+.icon-question:before {
+  content: "\e05d";
+}
+.icon-pie-chart:before {
+  content: "\e05e";
+}
+.icon-pencil:before {
+  content: "\e05f";
+}
+.icon-note:before {
+  content: "\e060";
+}
+.icon-loop:before {
+  content: "\e064";
+}
+.icon-home:before {
+  content: "\e069";
+}
+.icon-grid:before {
+  content: "\e06a";
+}
+.icon-graph:before {
+  content: "\e06b";
+}
+.icon-microphone:before {
+  content: "\e063";
+}
+.icon-music-tone-alt:before {
+  content: "\e061";
+}
+.icon-music-tone:before {
+  content: "\e062";
+}
+.icon-earphones-alt:before {
+  content: "\e03c";
+}
+.icon-earphones:before {
+  content: "\e03d";
+}
+.icon-equalizer:before {
+  content: "\e06c";
+}
+.icon-like:before {
+  content: "\e068";
+}
+.icon-dislike:before {
+  content: "\e06d";
+}
+.icon-control-start:before {
+  content: "\e06f";
+}
+.icon-control-rewind:before {
+  content: "\e070";
+}
+.icon-control-play:before {
+  content: "\e071";
+}
+.icon-control-pause:before {
+  content: "\e072";
+}
+.icon-control-forward:before {
+  content: "\e073";
+}
+.icon-control-end:before {
+  content: "\e074";
+}
+.icon-volume-1:before {
+  content: "\e09f";
+}
+.icon-volume-2:before {
+  content: "\e0a0";
+}
+.icon-volume-off:before {
+  content: "\e0a1";
+}
+.icon-calendar:before {
+  content: "\e075";
+}
+.icon-bulb:before {
+  content: "\e076";
+}
+.icon-chart:before {
+  content: "\e077";
+}
+.icon-ban:before {
+  content: "\e07c";
+}
+.icon-bubble:before {
+  content: "\e07d";
+}
+.icon-camrecorder:before {
+  content: "\e07e";
+}
+.icon-camera:before {
+  content: "\e07f";
+}
+.icon-cloud-download:before {
+  content: "\e083";
+}
+.icon-cloud-upload:before {
+  content: "\e084";
+}
+.icon-envelope:before {
+  content: "\e086";
+}
+.icon-eye:before {
+  content: "\e087";
+}
+.icon-flag:before {
+  content: "\e088";
+}
+.icon-heart:before {
+  content: "\e08a";
+}
+.icon-info:before {
+  content: "\e08b";
+}
+.icon-key:before {
+  content: "\e08c";
+}
+.icon-link:before {
+  content: "\e08d";
+}
+.icon-lock:before {
+  content: "\e08e";
+}
+.icon-lock-open:before {
+  content: "\e08f";
+}
+.icon-magnifier:before {
+  content: "\e090";
+}
+.icon-magnifier-add:before {
+  content: "\e091";
+}
+.icon-magnifier-remove:before {
+  content: "\e092";
+}
+.icon-paper-clip:before {
+  content: "\e093";
+}
+.icon-paper-plane:before {
+  content: "\e094";
+}
+.icon-power:before {
+  content: "\e097";
+}
+.icon-refresh:before {
+  content: "\e098";
+}
+.icon-reload:before {
+  content: "\e099";
+}
+.icon-settings:before {
+  content: "\e09a";
+}
+.icon-star:before {
+  content: "\e09b";
+}
+.icon-symbol-female:before {
+  content: "\e09c";
+}
+.icon-symbol-male:before {
+  content: "\e09d";
+}
+.icon-target:before {
+  content: "\e09e";
+}
+.icon-credit-card:before {
+  content: "\e025";
+}
+.icon-paypal:before {
+  content: "\e608";
+}
+.icon-social-tumblr:before {
+  content: "\e00a";
+}
+.icon-social-twitter:before {
+  content: "\e009";
+}
+.icon-social-facebook:before {
+  content: "\e00b";
+}
+.icon-social-instagram:before {
+  content: "\e609";
+}
+.icon-social-linkedin:before {
+  content: "\e60a";
+}
+.icon-social-pinterest:before {
+  content: "\e60b";
+}
+.icon-social-github:before {
+  content: "\e60c";
+}
+.icon-social-google:before {
+  content: "\e60d";
+}
+.icon-social-reddit:before {
+  content: "\e60e";
+}
+.icon-social-skype:before {
+  content: "\e60f";
+}
+.icon-social-dribbble:before {
+  content: "\e00d";
+}
+.icon-social-behance:before {
+  content: "\e610";
+}
+.icon-social-foursqare:before {
+  content: "\e611";
+}
+.icon-social-soundcloud:before {
+  content: "\e612";
+}
+.icon-social-spotify:before {
+  content: "\e613";
+}
+.icon-social-stumbleupon:before {
+  content: "\e614";
+}
+.icon-social-youtube:before {
+  content: "\e008";
+}
+.icon-social-dropbox:before {
+  content: "\e00c";
+}
+@font-face {
   font-family: 'Segoe UI';
   src: url("../font/segoeui.woff") format('woff');
 }
@@ -1352,7 +2118,7 @@ body {
 }
 .pagination .nextPrev #pageList li {
   display: block;
-  width: 18px;
+  width: 24px;
   height: 20px;
   line-height: 20px;
   text-align: center;
@@ -1363,6 +2129,33 @@ body {
   background-color: #3e88b9;
   color: white;
   text-decoration: none;
+}
+.nextPrev button {
+  position: relative;
+}
+.nextPrev button.fa-angle-double-right:before,
+.nextPrev button.fa-angle-double-left:before,
+.nextPrev button.fa-angle-left:before,
+.nextPrev button.fa-angle-right:before,
+.nextPrev button.fa-angle-up:before {
+  position: absolute;
+  top: -6px;
+}
+.nextPrev button.fa-angle-double-left:before,
+.nextPrev button.fa-angle-left:before {
+  left: 9px;
+}
+.nextPrev button.fa-angle-right:before {
+  left: 10px;
+}
+.nextPrev button.fa-angle-double-right:before {
+  left: 11px;
+}
+.nextPrev button.fa-angle-up {
+  position: relative;
+}
+.nextPrev button.fa-angle-up:before {
+  left: 7px;
 }
 .week_list {
   zoom: 1;
@@ -1706,7 +2499,7 @@ body {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.3);
 }
-* {
+.loginContent * {
   box-sizing: border-box;
 }
 a {
@@ -2107,6 +2900,93 @@ input:not([type="checkbox"]).inputBordered:focus {
     left: 20px;
   }
 }
+.collapsed .side_menu {
+  width: 40px !important;
+  margin-right: -100%;
+}
+.collapsed .side_menu .sidebar_toggler:before {
+  transform: rotate(180deg) translate(75%, 50%);
+}
+.collapsed .side_menu .login_panel .user_name {
+  display: none !important;
+}
+.collapsed .side_menu .login_panel .dropdown-button .login_list {
+  top: 15%;
+  left: 100%;
+  margin-left: 1px;
+  width: 150px;
+}
+.collapsed .side_menu .login_panel .dropdown-button .login_list li:first-child {
+  margin-left: -1px;
+  padding-right: 1px;
+}
+.collapsed .side_menu .login_panel .dropdown-button .login_list.opened {
+  display: none;
+}
+.collapsed .side_menu .login_panel .dropdown-button .login_list.opened:hover {
+  display: block;
+}
+.collapsed .side_menu .login_panel .dropdown-button:hover .login_list {
+  display: block;
+}
+.collapsed .side_menu .logo {
+  display: none;
+}
+.collapsed .side_menu nav {
+  width: auto !important;
+}
+.collapsed .side_menu nav > ul {
+  height: auto;
+}
+.collapsed .side_menu .root {
+  position: relative;
+}
+.collapsed .side_menu .root ul {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 150px;
+  margin-left: 1px;
+}
+.collapsed .side_menu .root ul li:first-child {
+  display: block;
+  background-color: #2c3542;
+}
+.collapsed .side_menu .root > a {
+  display: none !important;
+}
+.collapsed .side_menu .root:before {
+  display: none;
+}
+.collapsed .side_menu .root:hover > ul {
+  display: block;
+}
+.collapsed .side_menu .root:hover > ul li:first-child {
+  margin-left: -1px;
+  padding-right: 1px;
+}
+.collapsed .side_menu .root.opened {
+  height: 35px !important;
+}
+.collapsed .side_menu .root.opened > ul {
+  display: none;
+}
+.collapsed .side_menu .root.opened:hover > ul {
+  display: block;
+}
+.collapsed .side_menu .root.active > ul li:first-child {
+  background-color: #7eadcc;
+}
+.collapsed .side_menu .root.active > ul li:first-child a {
+  color: #ffffff;
+}
+.collapsed .content_wrapper .content-holder {
+  margin-left: 45px;
+}
+.collapsed .content_wrapper .top-bar {
+  margin-left: 65px;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -2232,7 +3112,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   background-color: transparent;
 }
 .list2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
   table-layout: fixed;
 }
@@ -2455,6 +3335,25 @@ input:not([type="checkbox"]).inputBordered:focus {
 .hireFireTable {
   margin-bottom: 10px;
 }
+.side_menu {
+  display: block;
+  width: auto;
+  max-width: 200px;
+  height: 100%;
+  float: left;
+  margin-right: -100%;
+}
+.content_wrapper {
+  width: 100%;
+  display: block;
+  float: left;
+}
+.content_wrapper .content-holder {
+  margin-left: 200px;
+}
+.content_wrapper .top-bar {
+  margin-left: 220px;
+}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -2506,6 +3405,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== btn ===*/
 /*== Dialog =============================*/
 /*== Birthday ===========================*/
+/*== Top Bar =======================*/
 /*== Lights =========================*/
 /*== Borders=========================*/
 /*==Main menu==========================*/
@@ -2966,6 +3866,17 @@ textarea {
 span.error {
   color: #e55253 !important;
 }
+.kanban .item.errorContent {
+  border: none !important;
+  background-color: #f78c8c !important;
+}
+.kanban .item.errorContent .opportunity-header h4,
+.kanban .item.errorContent .opportunity-header h3 {
+  color: #fff;
+}
+.kanban .item.errorContent .opportunity-content p {
+  color: #fff;
+}
 .red {
   color: #ff0000;
 }
@@ -3204,11 +4115,10 @@ input::-ms-clear {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 14px;
+  width: 17px;
   height: 17px;
   border-radius: 17px;
   border: 1px solid #7f7f80;
-  padding-left: 3px;
   font-family: Icons;
   line-height: 19px;
   margin: 0 2px 0 4px;
@@ -3459,13 +4369,13 @@ input::-ms-clear {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #000000 !important;
+  color: #b4bcc8 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #000000 !important;
+  color: #b4bcc8 !important;
 }
 .addUserDialog,
 .addGroupDialog {
@@ -3752,7 +4662,7 @@ h3 {
   text-overflow: ellipsis;
 }
 body {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   font-size: 12px;
   height: 100%;
 }
@@ -3965,7 +4875,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -4114,7 +5024,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -4125,7 +5035,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -4552,7 +5462,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formLeftColumn .form .mainInfo p {
   height: 20px !important;
@@ -4701,7 +5611,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formLeftColumn .form h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -4712,7 +5622,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -4777,7 +5687,7 @@ dl dd span.ui-spinner {
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
-  color: #000000;
+  color: #b4bcc8;
 }
 #details-dialog {
   display: none;
@@ -4897,7 +5807,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formRightColumn .form .mainInfo p {
   height: 20px !important;
@@ -5046,7 +5956,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formRightColumn .form h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -5057,7 +5967,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -5148,7 +6058,6 @@ dl dd span.ui-spinner {
   margin-top: 6px;
   background-color: inherit;
   padding: 5px 0 10px 0;
-  margin-bottom: 5px;
 }
 .noteWrapper .addNote label {
   font: normal 12px arial;
@@ -5219,13 +6128,13 @@ dl dd span.ui-spinner {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #000000 !important;
+  color: #b4bcc8 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #000000 !important;
+  color: #b4bcc8 !important;
 }
 .noteWrapper .addNote.active .buttons input {
   width: auto;
@@ -5240,7 +6149,7 @@ dl dd span.ui-spinner {
 }
 .noteWrapper .addNote.active label {
   display: block;
-  color: #000000;
+  color: #b4bcc8;
 }
 .noteWrapper .addNote.active textarea {
   height: 60px;
@@ -5263,7 +6172,7 @@ dl dd span.ui-spinner {
 .noteWrapper #noteBody .noteContainer {
   padding: 10px;
   border: 1px solid #7f7f80;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 .noteWrapper #noteBody .noteContainer .name {
   margin-right: 15px;
@@ -5311,13 +6220,26 @@ dl dd span.ui-spinner {
   height: 100%;
 }
 #wrapper {
-  width: 100%;
-  height: 100%;
+  zoom: 1;
   min-width: 100%;
+  height: 100%;
   height: 100vh;
   position: absolute;
   clear: both;
   box-sizing: border-box;
+}
+#wrapper:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+#wrapper:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
 }
 #wrapper #content-holder {
   height: auto;
@@ -5479,7 +6401,7 @@ dl dd span.ui-spinner {
   line-height: 20px;
 }
 .customer-info dt {
-  color: #000000;
+  color: #b4bcc8;
 }
 .project-edit-info {
   clear: both;
@@ -6213,54 +7135,6 @@ a.red:hover {
 .ui-front {
   z-index: 1000;
 }
-#loginPanel {
-  position: absolute;
-  left: auto;
-  top: 0;
-  right: 0;
-  bottom: auto;
-}
-#loginPanel .dropdown-button {
-  text-indent: 5px;
-  cursor: pointer;
-  width: 200px;
-  float: left;
-  height: auto;
-  padding: 0;
-}
-#loginPanel .dropdown-button #loginSelect {
-  display: none;
-  position: relative;
-  z-index: 999;
-  border: 1px solid #7f7f80;
-  background-color: #ffffff;
-}
-#loginPanel .dropdown-button #loginSelect li {
-  height: 20px;
-  line-height: 20px;
-}
-#loginPanel .dropdown-button #loginSelect li a {
-  color: #000000;
-}
-#loginPanel .dropdown-button img {
-  float: left;
-  margin: 2px 5px 2px 2px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-}
-#loginPanel .dropdown-button span {
-  display: block;
-  line-height: 30px;
-  color: #000000;
-}
-#loginPanel .dropdown-button span:hover {
-  color: #fff;
-}
-#loginPanel .dropdown-button:hover {
-  background: #3e88b9;
-  color: #fff;
-}
 .ui-widget-overlay {
   background-color: #444444;
   opacity: .3;
@@ -6693,7 +7567,7 @@ table#workflows tr td.edit-status {
 #mainmenu-holder {
   display: block;
   float: none;
-  position: relative;
+  position: fixed;
   left: 0;
   top: 0;
   right: auto;
@@ -6703,7 +7577,7 @@ table#workflows tr td.edit-status {
   height: 30px;
   padding: 0;
   margin: 0;
-  border-bottom: 1px solid #7f7f80;
+  z-index: 1000;
 }
 #mainmenu-holder nav {
   float: left;
@@ -6763,68 +7637,280 @@ table#workflows tr td.edit-status {
   display: block;
   letter-spacing: 1.5px;
 }
-#submenu-holder {
+.side_menu {
   display: block;
-  height: 30px;
+  position: fixed;
+  z-index: 100;
   width: auto;
+  height: 100%;
+  background-color: #364150;
+  box-sizing: border-box;
+  padding-top: 110px;
+  left: 0;
+  top: 0;
 }
-#submenu-holder nav ul {
+.side_menu nav {
+  width: 200px;
+}
+.side_menu nav ul {
   zoom: 1;
   clear: both;
 }
-#submenu-holder nav ul:before {
+.side_menu nav ul:before {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
-#submenu-holder nav ul:after {
+.side_menu nav ul:after {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
   clear: both;
 }
-#submenu-holder nav ul li {
+.side_menu nav ul li {
+  position: relative;
   list-style: none;
-  color: #000000;
-  line-height: 30px;
-  float: left;
-  display: block;
-  width: 120px;
-  text-align: center;
-  background: #ffffff;
-}
-#submenu-holder nav ul li a {
-  color: #000000;
-  font-size: 13px;
-  line-height: 30px;
+  line-height: 35px;
+  height: 35px;
   display: block;
   width: 100%;
-  height: 100%;
+  background: #364150;
+  text-align: left;
 }
-#submenu-holder nav ul li a:hover {
-  text-decoration: underline;
+.side_menu nav .root {
+  text-align: left;
+  border-bottom: 1px solid #3d4957;
 }
-#submenu-holder nav ul li.selected {
-  position: relative;
-  height: 30px;
+.side_menu nav .root ul {
+  display: none;
+  height: auto;
+}
+.side_menu nav .root ul li .sub_item {
+  display: block;
+  padding-left: 39px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 35px;
+  color: #b4bcc8;
+}
+.side_menu nav .root ul li:hover,
+.side_menu nav .root ul li.selected {
+  background-color: #404d5f;
+}
+.side_menu nav .root ul li:first-child {
+  display: none;
+}
+.side_menu nav .root .icons {
+  padding: 0 11px;
+  display: inline-block;
+  font: normal normal normal 14px simple-line-icons;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translate(0, 0);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
+.side_menu nav .root > a,
+.side_menu nav .root .icons {
+  color: #b4bcc8;
+  font-size: 16px;
+  line-height: 35px;
+  display: block;
+  float: left;
+  text-decoration: none;
+  text-shadow: none;
+  font-weight: 300;
+}
+.side_menu nav .root .icon-Sales:before {
+  content: "\e043";
+}
+.side_menu nav .root .icon-HR:before {
+  content: "\e001";
+}
+.side_menu nav .root .icon-Project:before {
+  content: "\e02d";
+}
+.side_menu nav .root .icon-Settings:before {
+  content: "\e09a";
+}
+.side_menu nav .root .icon-Accounting:before {
+  content: "\e04b";
+}
+.side_menu nav .root .icon-Expenses:before {
+  content: "\e077";
+}
+.side_menu nav .root .icon-Payroll:before {
+  content: "\e025";
+}
+.side_menu nav .root:hover,
+.side_menu nav .root.opened {
+  cursor: pointer;
+  height: 35px;
+  background-color: #2c3542;
+}
+.side_menu nav .root.active {
+  background-color: #7eadcc;
+}
+.side_menu nav .root.active a,
+.side_menu nav .root.active .icons {
+  color: #ffffff;
+}
+.side_menu nav .root.active:before {
+  color: #ffffff;
+}
+.side_menu nav .root.active.opened:before {
+  transform: rotate(-90deg);
+  color: #ffffff;
+}
+.side_menu nav .root:before {
+  float: right;
+  width: 20px;
+  text-align: center;
+  display: inline;
+  font-size: 16px;
+  font-family: FontAwesome;
+  height: auto;
+  content: "\f104";
+  font-weight: 300;
+  text-shadow: none;
+  position: absolute;
+  top: 0;
+  right: 14px;
+  line-height: 35px;
+  color: #606c7d;
+  transition: all 0.3s;
+}
+.side_menu nav .root.opened {
+  height: auto;
+}
+.side_menu nav .root.opened ul {
+  display: block;
+}
+.side_menu nav .root.opened:before {
+  transform: rotate(-90deg);
+}
+.side_menu .logo {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
+}
+.side_menu .logo a {
+  font-size: 35px;
+  text-decoration: none;
+  color: #7eadcc;
+}
+.side_menu .sidebar_toggler {
+  position: absolute;
+  top: 10px;
+  left: 100%;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  margin: 0;
+  width: 24px;
+  height: 24px;
+  background-color: #364150;
+  border-left: 1px solid #3d4957;
+}
+.side_menu .sidebar_toggler:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-75%, -50%);
+  content: '';
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 6px 5px 0;
+  border-color: transparent #ffffff transparent transparent;
+}
+.side_menu .login_panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  width: 100%;
+}
+.side_menu .login_panel .dropdown-button {
+  text-indent: 5px;
+  cursor: pointer;
+  padding: 5px;
+  box-sizing: border-box;
+  max-width: 200px;
+  width: 100%;
+  float: left;
+  height: auto;
+}
+.side_menu .login_panel .dropdown-button:hover {
+  background: #3e88b9;
+  color: #fff;
+}
+.side_menu .login_panel .login_list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+}
+.side_menu .login_panel .login_list li {
+  text-align: left;
+  color: #b4bcc8;
+  background: #364150;
+}
+.side_menu .login_panel .login_list li:hover {
+  background-color: #404d5f;
+}
+.side_menu .login_panel .login_list a {
+  display: block;
+  padding-left: 39px;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 35px;
+  color: #b4bcc8;
+}
+.side_menu .login_panel .login_list.opened {
+  display: block;
+}
+.side_menu .login_panel .user_name {
+  display: block;
   line-height: 30px;
+  color: #b4bcc8;
+  font-size: 14px;
+  font-weight: 300;
 }
-#submenu-holder nav ul li.selected a {
-  text-decoration: underline;
+.side_menu .login_panel .user_name:hover {
+  color: #ffffff;
+}
+.side_menu .login_panel .iconEmployee {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  float: left;
+  margin: 2px 5px 2px 2px;
+  width: 26px;
+  height: 26px;
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
   display: block;
   height: 30px;
   clear: both;
-  margin: 5px 1% 0;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #000000 !important;
+  color: #666666 !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -6887,13 +7973,12 @@ table#workflows tr td.edit-status {
   display: block;
   height: 30px;
   clear: both;
-  margin: 5px 1% 0;
   margin-left: 0;
 }
 .projectInfoTopBar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #000000 !important;
+  color: #666666 !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -6964,12 +8049,12 @@ table#workflows tr td.edit-status {
   margin-right: 3px;
   cursor: pointer;
   vertical-align: baseline;
-  color: #000000;
-  line-height: 29px;
+  color: #666666;
+  line-height: 40px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
-  color: #333333;
+  color: #999999;
 }
 .createBtnHolder .fa,
 #createBtnHolder .fa {
@@ -7102,7 +8187,7 @@ ul.dialog-tabs li.right button {
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
 .thumbnailwithavatar h4 span,
@@ -7128,7 +8213,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .thumbnailwithavatar .inner .info p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
   font-size: 12px;
   font-weight: 200 !important;
@@ -7199,7 +8284,7 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .list {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
 .list td,
@@ -7356,7 +8441,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
 }
 .thumbnail span {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   position: relative;
   color: #4c4c4c;
   font-size: 13px;
@@ -7381,7 +8466,7 @@ ul.dialog-tabs li.right button {
   text-decoration: underline;
 }
 .thumbnail p {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
 }
@@ -7389,7 +8474,7 @@ ul.dialog-tabs li.right button {
   font-weight: normal !important;
 }
 .thumbnail h2 {
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   margin: 0 0 8px;
@@ -8060,13 +9145,13 @@ ul.dialog-tabs li.right button {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #000000 !important;
+  color: #b4bcc8 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
   border: 1px solid #3e88b9 !important;
-  color: #000000 !important;
+  color: #b4bcc8 !important;
 }
 .form-holder form label {
   font-weight: normal;
@@ -8414,6 +9499,7 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 .dialog-tabs-items {
   margin-bottom: -29px;
+  padding-top: 10px;
 }
 .dialog-tabs-items .dialog-tabs-item,
 .dialog-tabs-items .chart-tabs-item {
@@ -10070,7 +11156,7 @@ textarea#editInput {
   height: 25px;
   line-height: 25px;
   display: block;
-  color: #000000;
+  color: #b4bcc8;
 }
 .grid tr td {
   border-top: 1px solid #7f7f80;
@@ -10085,7 +11171,7 @@ textarea#editInput {
   border-left: 1px solid #7f7f80;
 }
 .grid tr td span {
-  height: 20px;
+  height: 21px;
   padding: 0 7px;
   line-height: 20px;
   display: block;
@@ -11015,7 +12101,7 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
   padding: 5px 25px;
   position: absolute;
   z-index: 10;
@@ -11164,7 +12250,7 @@ textarea#editInput {
   float: right;
   width: 35%;
   position: relative;
-  margin-top: -27px;
+  margin-top: -35px;
   margin-right: 90px;
 }
 #searchContainer .btn {
@@ -11488,4 +12574,7 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
+}
+.bgRed {
+  background-color: #eb5a46!important;
 }
