@@ -194,6 +194,39 @@ module.exports = function (models, event) {
      ]
      */
     router.get('/getCustomersImages', handler.getCustomersImages);
+
+    /**
+     *@api {get} /customers/getCompaniesForDd Request Customers for dropDown
+     *
+     * @apiVersion 0.0.1
+     * @apiName getCustomersForDropDown
+     * @apiGroup Customers
+     *
+     * @apiSuccess {Object} Customers for dropDown
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *{
+    "data": [
+        {
+            "_id": "55ba0301d79a3a343900000d",
+            "name": {
+                "first": "#Play"
+            },
+            "fullName": "#Play undefined",
+            "id": "55ba0301d79a3a343900000d"
+        },
+        {
+            "_id": "5721d153dce306912118af85",
+            "name": {
+                "first": "AVANT WEB SOLUTIONS"
+            },
+            "fullName": "AVANT WEB SOLUTIONS undefined",
+            "id": "5721d153dce306912118af85"
+        },
+        ...
+    ]
+}
+     */
     router.get('/getCompaniesForDd', handler.getCompaniesForDd);
 
     /**
