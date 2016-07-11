@@ -1949,7 +1949,7 @@ body {
 .btn-list li a {
   display: block;
   line-height: 20px;
-  font-size: 18px !important;
+  font-size: 19px !important;
   text-align: center;
 }
 .btn-list li a.fa {
@@ -2929,7 +2929,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .topbarHolder {
   position: fixed;
-  height: 50px;
+  height: 40px;
   width: 100%;
   background-color: #2b3643;
   z-index: 200;
@@ -2979,8 +2979,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   position: relative;
   display: inline-block;
   float: right;
-  padding: 14px 6px 12px 8px;
-  margin-right: 50px;
+  padding: 9px 6px 7px 8px;
+  margin-right: 40px;
+  cursor: pointer;
 }
 .topbarHolder .loginPanel:hover {
   background-color: #3f4f62;
@@ -3017,7 +3018,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: none;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
   right: 0;
-  top: 45px;
+  top: 35px;
   min-width: 120px;
   position: absolute;
   z-index: 1000;
@@ -3107,7 +3108,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   position: absolute;
   top: 0;
   left: 100%;
-  width: 150px;
+  width: 160px;
   margin-left: 1px;
   padding: 0;
 }
@@ -4048,16 +4049,8 @@ textarea {
 span.error {
   color: #e55253 !important;
 }
-.kanban .item.errorContent {
-  border: none !important;
-  background-color: #f78c8c !important;
-}
-.kanban .item.errorContent .opportunity-header h4,
-.kanban .item.errorContent .opportunity-header h3 {
-  color: #fff;
-}
-.kanban .item.errorContent .opportunity-content p {
-  color: #fff;
+.kanban .item.errorContent .opportunity-date {
+  color: #ff0000;
 }
 .red {
   color: #ff0000;
@@ -7826,7 +7819,7 @@ table#workflows tr td.edit-status {
   display: block;
   z-index: 100;
   width: auto;
-  height: calc(100% - 50px);
+  height: calc(100% - 40px);
   background-color: #364150;
   box-sizing: border-box;
   padding-top: 60px;
@@ -7892,6 +7885,7 @@ table#workflows tr td.edit-status {
   background-color: #404d5f;
 }
 .sideMenu nav .root ul li:first-child {
+  border-top: none;
   display: none;
 }
 .sideMenu nav .root .icons {
@@ -7938,6 +7932,9 @@ table#workflows tr td.edit-status {
 }
 .sideMenu nav .root .icon-Payroll:before {
   content: "\e025";
+}
+.sideMenu nav .root .icon-Purchases:before {
+  content: "\e04e";
 }
 .sideMenu nav .root:hover,
 .sideMenu nav .root.opened {

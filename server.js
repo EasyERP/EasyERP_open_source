@@ -18,8 +18,8 @@ connectOptions = {
     db    : {native_parser: true},
     server: {poolSize: 5},
     // replset: { rs_name: 'myReplicaSetName' },
-    user  : process.env.DB_USER,
-    pass  : process.env.DB_PASS,
+    //user  : process.env.DB_USER,
+    //pass  : process.env.DB_PASS,
     w     : 1,
     j     : true
     // mongos: true
@@ -66,8 +66,8 @@ mainDb.once('open', function callback() {
                 db    : {native_parser: true},
                 server: {poolSize: 5},
                 // replset: { rs_name: 'myReplicaSetName' },
-                user  : _db.user,
-                pass  : _db.pass,
+                //user  : _db.user,
+                //pass  : _db.pass,
                 w     : 1,
                 j     : true
                 // mongos: true
