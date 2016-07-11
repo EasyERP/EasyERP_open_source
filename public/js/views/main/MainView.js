@@ -26,9 +26,11 @@ define([
 
         expandCollapse: function () {
             $('#wrapper').toggleClass('collapsed');
+            $('.loginPanel').removeClass('open');
         },
 
         openLogin: function (e) {
+            e.stopPropagation();
             $(e.target).closest('.loginPanel').toggleClass('open');
         },
 

@@ -36,6 +36,8 @@ define([
             var $current = $(e.target).closest('.root');
             var isSubMenu = !!$(e.target).closest($current.find('ul')).length;
 
+            $('.loginPanel').removeClass('open');
+
             if (isSubMenu) {
                 return;
             }
