@@ -28,17 +28,42 @@ var Products = function (models) {
      return models.get(req.session.lastDb, 'Product', ProductSchema)
      }, exportMap, 'Products');*/
 
+
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var currentCategory;
+        var newCategory;
 
-        Product.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, product) {
+        Product.findByIdAndUpdate(id, {$set: data}, function (err, product) {
             if (err) {
-                next(err);
+                return next(err);
+            }
+
+            currentCategory = product.accounting.category._id;
+
+            if (data.accounting && data.accounting.category && data.accounting.category._id) {
+                newCategory = data.accounting.category._id;
+
+                async.parallel([
+                    function (parCb) {
+                        ProductCategory.update({_id: currentCategory}, {$inc: {productsCount: -1}}, parCb);
+                    },
+                    function (parCb) {
+                        ProductCategory.update({_id: newCategory}, {$inc: {productsCount: 1}}, parCb);
+                    }
+                ], function (err, cb) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    res.status(200).send({success: 'Product updated', result: product, notes: data.notes});
+
+                });
             } else {
                 res.status(200).send({success: 'Product updated', result: product, notes: data.notes});
             }
         });
-
     }
 
     function getProductImages(req, res, next, data) {
@@ -53,12 +78,23 @@ var Products = function (models) {
     }
 
     function remove(req, res, next, id) {
-        models.get(req.session.lastDb, 'Products', ProductSchema).remove({_id: id}, function (err, product) {
+        var Products = models.get(req.session.lastDb, 'Products', ProductSchema);
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+
+        Products.findOneAndRemove({_id: id}, function (err, product) {
+            var categoryId = product.accounting.category._id;
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send({success: product});
+            ProductCategory.update({_id: categoryId}, {$inc: {productsCount: -1}}, function () {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: product});
+            });
         });
     }
 
@@ -124,42 +160,42 @@ var Products = function (models) {
         };
 
         /*posteritySearch = function (productsIds, waterfallCallback) {
-            var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
-            var searchObj;
+         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+         var searchObj;
 
-            if (!categoryId) {
-                return waterfallCallback(null, productsIds, []);
-            }
+         if (!categoryId) {
+         return waterfallCallback(null, productsIds, []);
+         }
 
-            searchObj = {
-                ancestors: {
-                    $elemMatch: {$eq: categoryId}
-                }
-            };
+         searchObj = {
+         ancestors: {
+         $elemMatch: {$eq: categoryId}
+         }
+         };
 
-            ProductCategory
-                .find(searchObj, {_id: 1}, function (err, result) {
-                    var ids = [];
+         ProductCategory
+         .find(searchObj, {_id: 1}, function (err, result) {
+         var ids = [];
 
-                    if (err) {
-                        return waterfallCallback(err);
-                    }
+         if (err) {
+         return waterfallCallback(err);
+         }
 
-                    if (result && result.length) {
-                        ids = _.pluck(result, '_id');
-                    }
+         if (result && result.length) {
+         ids = _.pluck(result, '_id');
+         }
 
-                    ids.push(categoryId);
+         ids.push(categoryId);
 
-                    waterfallCallback(null, productsIds, ids);
-                });
-        };*/
+         waterfallCallback(null, productsIds, ids);
+         });
+         };*/
 
         contentSearcher = function (productsIds, waterfallCallback) {
 
             /*if (posterityIds.length) {
-                optionsObject.$and.push({'accounting.category._id': {$in: posterityIds}});
-            }*/
+             optionsObject.$and.push({'accounting.category._id': {$in: posterityIds}});
+             }*/
 
             optionsObject.$and.push({_id: {$in: productsIds}});
 
@@ -336,10 +372,12 @@ var Products = function (models) {
 
     this.create = function (req, res, next) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var body = req.body;
         var product = new Product(body);
+        var categoryId;
 
-        if (!body.info) {
+        if (!body.info || !body.accounting || !body.accounting.category || !body.accounting.category._id || !body.accounting.category.name) {
             return res.status(400).send();
         }
 
@@ -348,6 +386,7 @@ var Products = function (models) {
             product.editedBy.user = req.session.uId;
         }
 
+        categoryId = body.accounting.category._id;
         product.info.salePrice = parseFloat(product.info.salePrice).toFixed(2);
 
         product.save(function (err, product) {
@@ -355,7 +394,13 @@ var Products = function (models) {
                 return next(err);
             }
 
-            res.status(200).send({success: product});
+            ProductCategory.update({_id: categoryId}, {$inc: {productsCount: 1}}, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: product});
+            });
         });
     };
 
@@ -385,15 +430,33 @@ var Products = function (models) {
 
     this.bulkRemove = function (req, res, next) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
+        var categoryId;
 
-        Product.remove({_id: {$in: ids}}, function (err, removed) {
+        async.each(ids, function (id, cb) {
+            Product.findOneAndRemove({_id: id}, function (err, product) {
+                if (err) {
+                    return cb(err);
+                }
+
+                if (!product.accounting || !product.accounting.category || product.accounting.category._id) {
+                    err = new Error();
+                    err.status = 400;
+                    return cb(err);
+                }
+
+                categoryId = product.accounting.category._id;
+
+                ProductCategory.update({_id: categoryId}, {$inc: {productsCount: -1}}, cb);
+            });
+        }, function (err) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(removed);
+            res.status(200).send({'success': 'Removed success'});
         });
     };
 

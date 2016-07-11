@@ -248,7 +248,7 @@
                 displayName: 'Journal',
                 backend    : 'journal._id'
             },
-            array: ['project', 'journal']
+            array  : ['project', 'journal']
         },
 
         DividendInvoice: {
@@ -520,6 +520,11 @@
                 displayName: 'Can be Purchased',
                 backend    : 'canBePurchased',
                 type       : 'boolean'
+            },
+
+            productCategory: {
+                displayName: 'Category',
+                backend    : 'accounting.category._id'
             }
         },
 
@@ -555,7 +560,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'
@@ -589,7 +594,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             project: {
                 displayName: 'Project',
                 backend    : 'project._id'
@@ -618,8 +623,8 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
-            project : {
+
+            project: {
                 displayName: 'Project',
                 backend    : 'project._id'
             },
@@ -647,7 +652,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'

@@ -1,9 +1,11 @@
-<li class="item <%=className%> <%=selected%>" data-id="<%=product._id%>" data-name="<%=product.name%>" data-level="<%=product.nestingLevel%>" data-sequence="<%=product.sequence%>">
-    <span class="content">
+<li class="item <%=className%> " data-id="<%=product._id%>" data-name="<%=product.name%>" data-level="<%=product.nestingLevel%>" data-sequence="<%=product.sequence%>">
+    <span class="content <%=selected%>">
         <span class="text"><%=product.name%></span>
         <span class="action-btn">
             <span class="editCategory fa fa-edit" title="Edit"></span>
+            <%if (canDelete) {%>
             <span class="deleteCategory fa fa-trash" title="Delete"></span>
+            <%}%>
         </span>
     </span>
 </li>

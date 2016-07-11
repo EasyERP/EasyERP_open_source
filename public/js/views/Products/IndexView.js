@@ -20,11 +20,11 @@ define([
         itemTemplate     : _.template(ItemTemplate),
 
         events: {
-            'click .expand'        : 'expandHideItem',
-            'click .item > span'   : 'selectCategory',
-            'click .editCategory'  : 'editItem',
-            'click .deleteCategory': 'deleteItem',
-            'click .addProduct'    : 'addProduct'
+            'click .expand'         : 'expandHideItem',
+            'click .item > .content': 'selectCategory',
+            'click .editCategory'   : 'editItem',
+            'click .deleteCategory' : 'deleteItem',
+            'click .addProduct'     : 'addProduct'
         },
 
         initialize: function (options) {
@@ -76,9 +76,13 @@ define([
 
         renderFilteredContent: function (categoryId) {
             var self = this;
-            var categoryUrl = '/category/posterity/' + categoryId;
+            var categoryUrl = '/category/' + categoryId;
+            var ids;
 
-            dataService.getData(categoryUrl, {}, function (ids) {
+            dataService.getData(categoryUrl, {}, function (category) {
+
+                ids = category.child;
+                ids.push(categoryId);
 
                 if (!App.filtersObject.filter) {
                     App.filtersObject.filter = {};
@@ -91,7 +95,7 @@ define([
                 };
 
                 self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
-
+                self.thumbnailsView.filterView.showFilterIcons(self.filter);
             }, this);
         },
 
@@ -102,8 +106,10 @@ define([
             var $currentLi;
             var id;
 
+            e.stopPropagation();
+
             $groupList.find('.selected').removeClass('selected');
-            $targetEl.closest('li').addClass('selected');
+            $targetEl.closest('.content').addClass('selected');
 
             $currentLi = $targetEl.closest('li');
             id = $currentLi.attr('data-id');
@@ -114,7 +120,7 @@ define([
         createItem: function () {
             var $thisEl = this.$el;
             var $groupList = $thisEl.find('.groupList');
-            var $selectedEl = $groupList.find('.selected').length ? $groupList.find('.selected') : $groupList.find('li').first();
+            var $selectedEl = $groupList.find('.selected').length ? $groupList.find('.selected').closest('li') : $groupList.find('li').first();
             var categoryId = $selectedEl.attr('data-id');
 
             new CreateCategoryView({
@@ -147,7 +153,6 @@ define([
             var $targetEl = $(e.target);
             var myModel = this.collection.get($targetEl.closest('li').data('id'));
             var mid = 39;
-            var self = this;
             var answer = confirm('Really DELETE items ?!');
 
             e.preventDefault();
@@ -159,7 +164,7 @@ define([
                     },
                     wait   : true,
                     success: function () {
-                        Backbone.history.navigate('easyErp/Products', {trigger: true})
+                        Backbone.history.navigate('easyErp/Products', {trigger: true});
                     },
 
                     error: function (model, err) {
@@ -178,26 +183,50 @@ define([
         },
 
         renderItem: function (product, className, selected) {
+            var canDelete = true;
+
+            if(product.child && product.child.length) {
+                canDelete = false;
+            } else {
+                if(product.productsCount) {
+                    canDelete = false;
+                }
+            }
 
             return this.itemTemplate({
                 className: className,
                 selected : selected,
-                product  : product
-
+                product  : product,
+                canDelete: canDelete
             });
-
-            //return '<li class="' + className + ' item ' + selected + '" data-id="' + product._id + '"data-name="' + product.name + '" data-level="' + product.nestingLevel + '" data-sequence="' + product.sequence + '"><span class="content"><span class="text">' + product.name + '</span><span class="editCategory">&nbspe&nbsp</span><span class="deleteCategory">&nbspd&nbsp</span></span></li>';
         },
 
         renderFoldersTree: function (products) {
             var self = this;
             var $thisEl = this.$el;
             var par;
+            var selected = '';
+            var selectedMain = '';
+            var currentCategory;
 
-            products.forEach(function (product, i) {
+            if (App.filtersObject.filter && App.filtersObject.filter.productCategory && App.filtersObject.filter.productCategory.value.length) {
+                currentCategory = App.filtersObject.filter.productCategory.value[App.filtersObject.filter.productCategory.value.length - 1];
+            }
+
+            products.forEach(function (product) {
+
+                if (!currentCategory) {
+                    selectedMain = 'selected';
+                } else {
+                    if (currentCategory === product._id) {
+                        selected = 'selected';
+                    } else {
+                        selected = '';
+                    }
+                }
 
                 if (!product.parent) {
-                    $thisEl.find('.groupList').append(self.renderItem(product, 'child', 'selected'));
+                    $thisEl.find('.groupList').append(self.renderItem(product, 'child', selectedMain));
                 } else {
                     par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
 
@@ -209,15 +238,16 @@ define([
                         par.append('<ul></ul>');
                     }
 
-                    par.find('ul').first().append(self.renderItem(product, 'child', ''));
+                    par.find('ul').first().append(self.renderItem(product, 'child', selected));
                 }
 
             });
 
-            $('.groupList .item').droppable({
-                accept: '.product',
-                drop  : function (event, ui) {
-                    var $droppable = $(this);
+            $('.groupList .item .content').droppable({
+                accept   : '.product',
+                tolerance: 'pointer',
+                drop     : function (event, ui) {
+                    var $droppable = $(this).closest('li');
                     var $draggable = ui.draggable;
                     var productId = $draggable.attr('id');
                     var categoryId = $droppable.data('id');
@@ -283,15 +313,16 @@ define([
                     }
                 },
 
-                over: function (event, ui) {
-                    // remove $.css
-                    $(this).css('background-color', 'gray');
-                    $(this).addClass('selected');
+                over: function () {
+                    var $droppableEl = $(this);
+                    var $groupList = self.$el;
+
+                    $groupList.find('.selected').removeClass('selected');
+                    $droppableEl.addClass('selected');
                 },
 
                 out: function () {
-                    $(this).css('background-color', '#fff');
-                    $(this).addClass('selected');
+                    $(this).removeClass('selected');
                 }
             });
         },

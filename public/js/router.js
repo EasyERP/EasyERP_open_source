@@ -650,6 +650,8 @@ define([
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
                     var collection = new ContentCollection();
 
+                    App.filtersObject.filter = filter;
+
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('thumbnails');
 
