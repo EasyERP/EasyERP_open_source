@@ -88,17 +88,42 @@
 
     </table>
     <div class="totalContainer">
-        <label for="currencyDd">Currency</label>
-        <a id="currencyDd" class="current-selected" data-id="565eab29aeb95fa9c0f9df2d"
-           href="javascript:;">USD</a>
-
-        <label>Date of payment</label>
-        <input type="text" id="dateOfPayment" value=""/>
-            <span data-id="value" class="totalName">
-                Total Amount
-            </span>
-            <span data-id="value" class="money" id="total" data-cash="<%=total%>">
-                <%=currencySplitter(total.toFixed(2))%>
-            </span>
+        <div class="half-block left">
+            <dl class="opp-info text-right">
+                <dt><label for="currencyDd">Currency</label></dt>
+                <dd>
+                    <a id="currencyDd" class="current-selected" data-id="565eab29aeb95fa9c0f9df2d"
+                       href="javascript:;">USD</a>
+                </dd>
+                <dt>
+                    <label for="paymentMethod">Bank account
+                    </label>
+                </dt>
+                <dd>
+                    <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
+                </dd>
+                <div id='journalDiv'>
+                    <dt>
+                        <label for="paymentMethod">Journal</label>
+                    </dt>
+                    <dd>
+                        <a id="journal" class="current-selected" href="javascript:;">Select</a>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+        <div class="half-block right">
+            <dl class="opp-info text-right">
+                <dt><label for="dateOfPayment">Date of payment</label></dt>
+                <dd>
+                    <input type="text" id="dateOfPayment" value=""/>
+                </dd>
+                <dt data-id="value" class="totalName"><label>Total Amount</label></dt>
+                <dd>
+                    <span data-id="value" class="money" id="total" data-cash="<%=total%>"><%=currencySplitter(total.toFixed(2))%></span>
+                </dd>
+            </dl>
+        </div>
+        <div class="clearfix"></div>
     </div>
 </div>

@@ -2,15 +2,17 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/PayrollPayments/CreateTemplate.html',
     'moment',
     'populate',
     'helpers',
+    'dataService',
     'constants'
-], function (Backbone, $, _, CreateTemplate, moment, populate, helpers, CONSTANTS) {
+], function (Backbone, $, _, Parent, CreateTemplate, moment, populate, helpers, dataService, CONSTANTS) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = Parent.extend({
         el           : '#content-holder',
         template     : _.template(CreateTemplate),
         changedModels: {},
@@ -34,7 +36,7 @@ define([
             'change .autoCalc'     : 'autoCalc',
             'change .editable'     : 'setEditable',
             'keydown input.editing': 'keyDown'
-            //'click #deleteBtn'     : 'deleteItems'
+            // 'click #deleteBtn'     : 'deleteItems'
         },
 
         savedNewModel: function () {
@@ -62,7 +64,6 @@ define([
                     this.setChangedValueToModel();
                 }
                 this.payRollId = payRollId;
-                this.setChangedValueToModel();
             }
 
             if (!isInput) {
@@ -83,6 +84,56 @@ define([
             return false;
         },
 
+        chooseOption: function (e) {
+            var self = this;
+            var target = $(e.target);
+            var targetElement = target.closest('a');
+            var attr = targetElement.attr('id');
+            var newCurrency = target.attr('id');
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+            var paymentMethods;
+            var el;
+
+            var array = this.$el.find('#paidAmountDd');
+            array.attr('class', newCurrencyClass);
+
+            if (attr === 'paymentMethod') {
+
+                paymentMethods = self.responseObj['#paymentMethod'];
+
+                el = _.find(paymentMethods, function (item) {
+                    return item._id === newCurrency;
+                });
+
+                if (el && el.chartAccount && el.chartAccount._id) {
+                    dataService.getData('/journals/getByAccount', {
+                        transaction : 'Payment',
+                        debitAccount: el.chartAccount._id
+                    }, function (resp) {
+                        self.responseObj['#journal'] = resp.data || [];
+
+                        self.$el.find('#journalDiv').show();
+
+                        if (resp.data && resp.data.length) {
+                            (self.$el.find('#journal').text(resp.data[0].name)).attr('data-id', resp.data[0]._id);
+                        } else {
+                            (self.$el.find('#journal').text('Select')).attr('data-id', null);
+                            self.$el.find('#journal').addClass('errorContent');
+                        }
+
+                    });
+                } else {
+                    (self.$el.find('#journal').text('Select')).attr('data-id', null);
+                }
+
+                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            } else {
+                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            }
+        },
+
         setChangedValue: function () {
             if (!this.changed) {
                 this.changed = true;
@@ -94,6 +145,20 @@ define([
             var id;
             var i;
             var keys;
+            var editCollectionJSON = this.editCollection.toJSON();
+            var currency = this.$el.find('#currencyDd').attr('data-id');
+            var paymentMethod = this.$el.find('#paymentMethod').attr('data-id');
+            var journal = this.$el.find('#journal').attr('data-id') || null;
+            var date = helpers.setTimeToDate(new Date(this.$el.find('#dateOfPayment').val()));
+
+            for (i = editCollectionJSON.length - 1; i >= 0; i--) {
+                editCollectionJSON[i].date = date;
+                editCollectionJSON[i].currency = currency;
+                editCollectionJSON[i].paymentMethod = paymentMethod;
+                editCollectionJSON[i].journal = journal;
+            }
+
+            this.editCollection.reset(editCollectionJSON);
 
             this.setChangedValueToModel();
 
@@ -109,6 +174,8 @@ define([
         },
 
         autoCalc: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
             var el = $(e.target);
             var td = $(el.closest('td'));
             var tr = el.closest('tr');
@@ -119,8 +186,8 @@ define([
             var total;
             var newTotal;
             var totalEl = this.$el.find('#total');
-            var payOld = editModel.changed.paidAmount ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
-            var diffOld = editModel.changed.differenceAmount ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
+            var payOld = (editModel.changed && editModel.changed.paidAmount) ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
+            var diffOld = (editModel.changed && editModel.changed.differenceAmount) ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
             var diffOnCash = tr.find('.differenceAmount[data-content="onCash"]');
             var value;
             var tdForUpdate;
@@ -183,7 +250,7 @@ define([
                     payTD.text(pay);
                     calcTD.attr('data-cash', calc);
 
-                    tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
+                    tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value.toFixed(2)));
 
                     changedAttr = this.changedModels[editedElementRowId];
 
@@ -331,26 +398,26 @@ define([
             }
         },
 
-       /* deleteItems: function (e) {
-            var that = this;
-            var answer = confirm('Really DELETE items ?!');
-            var value;
-            var tr;
+        /* deleteItems: function (e) {
+         var that = this;
+         var answer = confirm('Really DELETE items ?!');
+         var value;
+         var tr;
 
-            e.preventDefault();
+         e.preventDefault();
 
-            this.collectionLength = this.editCollection.length;
+         this.collectionLength = this.editCollection.length;
 
-            if (answer) {
-                $.each(that.$el.find('input:checked'), function (index, checkbox) {
-                    checkbox = $(checkbox);
-                    value = checkbox.attr('id');
-                    tr = checkbox.closest('tr');
-                    that.deleteItem(tr, value);
-                });
-            }
+         if (answer) {
+         $.each(that.$el.find('input:checked'), function (index, checkbox) {
+         checkbox = $(checkbox);
+         value = checkbox.attr('id');
+         tr = checkbox.closest('tr');
+         that.deleteItem(tr, value);
+         });
+         }
 
-        },*/
+         },*/
 
         deleteItem: function (tr, id) {
             var self = this;
@@ -433,6 +500,9 @@ define([
             });
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true);
+
+            this.$el.find('#journalDiv').hide();
 
             this.$el.find('#dateOfPayment').datepicker({
                 dateFormat : 'd M, yy',
