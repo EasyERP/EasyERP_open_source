@@ -170,7 +170,12 @@ define([
                 callback();
             }
 
-            if (filterView !== 'letter') {
+            if (filterView === 'productCategory') {
+                delete App.filtersObject.filter.productCategory;
+                
+                self.setDbOnce();
+                self.showFilterIcons(App.filtersObject.filter);
+            } else if (filterView !== 'letter') {
                 if (filterView) {
                     filtersKeysForRemove = [filterView];
                 } else {
@@ -178,7 +183,6 @@ define([
                 }
 
                 async.each(filtersKeysForRemove, setStatusFalse, function () {
-
                     self.$el.find('#searchInput').empty();
 
                     if (favouriteIconState) {
