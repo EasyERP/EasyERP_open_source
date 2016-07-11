@@ -69,7 +69,7 @@
         },
 
         urlRoot: function () {
-            return CONSTANTS.URLS.OPPORTUNITIES;
+            return CONSTANTS.URLS.DEALS;
         },
 
         initialize: function () {

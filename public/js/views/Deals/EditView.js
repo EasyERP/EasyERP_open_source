@@ -3,8 +3,8 @@
     'jQuery',
     'Underscore',
     'views/dialogViewBase',
-    'text!templates/Opportunities/EditTemplate.html',
-    'text!templates/Opportunities/editSelectTemplate.html',
+    'text!templates/Deals/EditTemplate.html',
+    'text!templates/Deals/editSelectTemplate.html',
     'text!templates/history.html',
     'views/Notes/NoteView',
     'common',
@@ -44,7 +44,7 @@
 
             _.bindAll(this, 'render', 'saveItem', 'deleteItem');
             this.currentModel = options.model;
-            this.currentModel.urlRoot = CONSTANTS.URLS.OPPORTUNITIES;
+            this.currentModel.urlRoot = CONSTANTS.URLS.DEALS;
             this.responseObj = {};
             this.elementId = options.elementId || null;
 

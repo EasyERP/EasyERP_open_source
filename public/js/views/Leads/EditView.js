@@ -371,7 +371,7 @@ define([
                             success: function () {
                                 $(self).dialog('close');
                                 // that.opportunitiesCollection.add(model);
-                                Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
+                                Backbone.history.navigate('easyErp/Leads', {trigger: true});
                             },
 
                             error: function (model, xhr) {

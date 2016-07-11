@@ -1,8 +1,8 @@
 define([
     'Backbone',
     'Underscore',
-    'text!templates/Opportunities/form/FormTemplate.html',
-    'views/Opportunities/EditView'
+    'text!templates/Deals/form/FormTemplate.html',
+    'views/Deals/EditView'
 ], function (Backbone, _, OpportunitiesFormTemplate, EditView) {
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',

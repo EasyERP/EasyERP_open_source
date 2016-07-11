@@ -1102,6 +1102,7 @@ define([
                     var startTime = new Date();
 
                     var collection = new workflowsCollection({id: contentType});
+
                     var url = 'easyErp/' + contentType + '/kanban';
 
                     collection.bind('reset', _.bind(createViews, self));

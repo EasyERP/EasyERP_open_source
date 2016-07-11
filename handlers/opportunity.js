@@ -2167,7 +2167,7 @@ var Module = function (models, event) {
 
         switch (contentType) {
 
-            case ('Opportunities'):
+            case ('Deals'):
                 optionsObject.push({isOpportunitie: true});
                 break;
 
@@ -2224,7 +2224,7 @@ var Module = function (models, event) {
 
             switch (contentType) {
 
-                case ('Opportunities'):
+                case ('Deals'):
                     aggregateQuery.push({
                         $lookup: {
                             from        : 'Customers',

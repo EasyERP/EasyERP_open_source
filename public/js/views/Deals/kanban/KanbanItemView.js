@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Opportunities/kanban/KanbanItemTemplate.html',
+    'text!templates/Deals/kanban/KanbanItemTemplate.html',
     'moment',
     'helpers'
 ], function (Backbone, $, _, KanbanItemTemplate, moment, helpers) {

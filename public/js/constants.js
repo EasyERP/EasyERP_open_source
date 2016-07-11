@@ -3,7 +3,7 @@ define([], function () {
         PERSONS           : 'Persons',
         COMPANIES         : 'Companies',
         LEADS             : 'Leads',
-        OPPORTUNITIES     : 'Opportunities',
+        DEALS             : 'Deals',
         PROJECTS          : 'Projects',
         TASKS             : 'Tasks',
         EMPLOYEES         : 'Employees',
@@ -106,7 +106,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 100,
+        DEFAULT_ELEMENTS_PER_PAGE  : 50,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
