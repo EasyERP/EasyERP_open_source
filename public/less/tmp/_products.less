@@ -6,7 +6,7 @@
 
   #productTree {
     padding-top: 30px;
-    padding-right: 10px;
+    //padding-right: 10px;
     flex: 0 0 300px;
     border-right: 1px solid #ddd;
 
@@ -14,53 +14,73 @@
       position: relative;
     }
 
+    ul ul {
+      margin: 0 0 0 20px;
+    }
+
+    .action-btn {
+      display: none;
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      -webkit-transform: translate(0, -50%);
+      -ms-transform: translate(0, -50%);
+      transform: translate(0, -50%);
+
+      span {
+        vertical-align: middle;
+        cursor: pointer;
+        color: @top-font-color;
+        font-size: 16px;
+
+        &:before {
+          font-size: 16px;
+        }
+      }
+    }
+
     span.content {
       position: relative;
       display: block;
-      margin-bottom: 10px;
-      padding-right: 30px;
-      padding-left: 25px;
+      padding: 5px 40px 5px 24px;
+
+      //margin-bottom: 5px;
       line-height: 16px;
 
       &:hover {
         cursor: pointer;
-         background-color: rgba(0,0,0,.05);
+         background-color: #E5EBFB;
       }
 
       &.selected {
-        background-color: rgba(0,0,0,.1);
+        background-color: #E5EBFB;
       }
 
       .text {
         font-size: 16px;
         line-height: 20px;
       }
-    }
 
-    .action-btn {
-      position: absolute;
-      top: 50%;
-      right: 0;
-      -webkit-transform: translate(0, -50%);
-      -ms-transform: translate(0, -50%);
-      transform: translate(0, -50%);
-
-      span {
-        cursor: pointer;
-        color: @top-font-color;
-        font-size: 14px;
+      &:hover {
+        .action-btn {
+          display: block;
+        }
       }
     }
 
     .expand {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 7px;
+      left: 4px;
+      width: 16px;
+      height: 16px;
       border: 1px solid @border-color;
       font-size: 14px;
-      padding: 2px 5px 3px;
-      line-height: 12px;
+      padding: 2px;
+      line-height: 9px;
       text-decoration: none !important;
+      box-sizing: border-box;
+      text-align: center;
     }
   }
 

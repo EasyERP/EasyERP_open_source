@@ -79,7 +79,11 @@ define([
                 allResults = $searchInput.next().find('.ui-autocomplete-category');
 
                 if (allResults.length) {
-                    self.clickSearchResult(allResults.first());
+                    this.clickSearchResult(allResults
+                        .first()
+                        .find('.subUl li')
+                        .first()
+                    );
                 }
 
                 if (!allResults.length && $searchInput.html()) {  // added message in case of search unsuccessful

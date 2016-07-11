@@ -500,7 +500,7 @@
         });
     };
     var getEmployeesCount = function (data, callback) {
-        dataService.getData('employees/getEmployeesCount', data, function (response) {
+        dataService.getData('employees/getEmployeesCountForDashboard', data, function (response) {
             callback(response);
         });
     };
@@ -520,7 +520,7 @@
         });
     };
     var getSalary = function(filter, callback){
-        dataService.getData('/employee/getSalaryForChart', {
+        dataService.getData('/employees/getSalaryForChart', {
             year: filter.year,
             month: filter.month
         }, function (response) {
@@ -528,7 +528,7 @@
         });
     };
     var getSalaryByDepartment = function(filter, callback){
-        dataService.getData('employee/getSalaryByDepartment', {
+        dataService.getData('employees/getSalaryByDepartment', {
             year: filter.year,
             month: filter.month
         }, function (response) {

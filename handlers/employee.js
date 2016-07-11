@@ -14,6 +14,7 @@ var Employee = function (event, models) {
     var birthdaysSchema = mongoose.Schemas.birthday;
 
     var _ = require('underscore');
+    var moment = require('../public/js/libs/moment/moment');
     var fs = require('fs');
     var path = require('path');
     var validatorEmployee = require('../helpers/validator');
@@ -136,6 +137,377 @@ var Employee = function (event, models) {
             }
 
             res.status(200).send({count: result});
+        });
+    };
+
+    this.getEmployeesCountForDashboard = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var month = parseInt(req.query.month, 10) + 1;
+        var year = parseInt(req.query.year, 10);
+        var startMomentDate = moment().year(year).month(month - 1).startOf('month');
+        var endMomentDate = moment().year(year).month(month - 1).endOf('month');
+        var startDate = year * 100 + moment(startMomentDate).week();
+        var endDate = year * 100 + moment(endMomentDate).week();
+        var employeeQueryForEmployeeByDep = {
+            $and: [{
+                $or: [{
+                    $and: [{
+                        isEmployee: true
+                    }, {
+                        $or: [{
+                            lastFire: null,
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }, {
+                            lastFire: {
+                                $ne : null,
+                                $gte: startDate
+                            }
+                        }, {
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
+                        }]
+                    }]
+                }, {
+                    $and: [{
+                        isEmployee: false
+                    }, {
+                        lastFire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }]
+            }]
+        };
+
+        function isEmployee(callback) {
+            Employee.aggregate([{
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHired : {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                }
+            }, {
+                $match: {
+                    lastHired: {
+                        $ne: null
+                    }
+                }
+            }, {
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHire  : {
+                        $let: {
+                            vars: {lastHired: '$lastHired'},
+                            in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: employeeQueryForEmployeeByDep
+            }, {
+                $group: {
+                    _id  : null,
+                    count: {$sum: 1}
+                }
+            }], function (err, result) {
+                var count;
+
+                if (err) {
+                    return callback(err);
+                }
+
+                count = result && result.length ? result[0].count : 0;
+
+                callback(null, count);
+            });
+        }
+
+        function hired(callback) {
+            Employee.aggregate([{
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHired : {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                }
+            }, {
+                $match: {
+                    lastHired: {
+                        $ne: null
+                    }
+                }
+            }, {
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHire  : {
+                        $let: {
+                            vars: {lastHired: '$lastHired'},
+                            in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: {
+                    $and: [{
+                        lastFire: null,
+                        lastHire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }
+            }, {
+                $group: {
+                    _id  : null,
+                    count: {$sum: 1}
+                }
+            }], function (err, result) {
+                var count;
+
+                if (err) {
+                    return callback(err);
+                }
+
+                count = result && result.length  ? result[0].count : 0;
+
+                callback(null, count);
+            });
+        }
+
+        function fired(callback) {
+            Employee.aggregate([{
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHired : {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                }
+            }, {
+                $match: {
+                    lastHired: {
+                        $ne: null
+                    }
+                }
+            }, {
+                $project: {
+                    lastFire  : 1,
+                    hire      : 1,
+                    fire      : 1,
+                    isEmployee: 1,
+                    lastHire  : {
+                        $let: {
+                            vars: {lastHired: '$lastHired'},
+                            in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                        }
+                    }
+                }
+            }, {
+                $match: {
+                    $and: [{
+                        isEmployee: false
+                    }, {
+                        lastFire: {
+                            $ne : null,
+                            $gte: startDate
+                        }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
+                    }]
+                }
+            }, {
+                $group: {
+                    _id  : null,
+                    count: {$sum: 1}
+                }
+            }], function (err, result) {
+                var count;
+
+                if (err) {
+                    return callback(err);
+                }
+
+                count = result && result.length  ? result[0].count : 0;
+
+                callback(null, count);
+            });
+        }
+
+        async.parallel([
+            isEmployee,
+            hired,
+            fired
+        ], function (err, result) {
+            var employeeCount;
+            var hiredCount;
+            var firedCount;
+
+            if (err) {
+                return next(err);
+            }
+
+            result = result && result.length ? result : [];
+
+            employeeCount = result[0];
+            hiredCount = result[1];
+            firedCount = result[2];
+
+            res.status(200).send({employeeCount: employeeCount, hiredCount: hiredCount, firedCount: firedCount});
+        });
+    };
+
+    this.getSalaryForChart = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var query = req.query;
+        var month = parseInt(query.month, 10) + 1;
+        var year = parseInt(query.year, 10);
+        var startMomentDate = moment().year(year).month(month - 1).startOf('month');
+        var endMomentDate = moment().year(year).month(month - 1).endOf('month');
+        var startDate = new Date(startMomentDate);
+        var endDate = new Date(endMomentDate);
+
+        Employee.aggregate([{
+            $project: {
+                transfer  : 1,
+                isEmployee: 1
+            }
+        }, {
+            $unwind: '$transfer'
+        }, {
+            $project: {
+                _id       : 1,
+                isEmployee: 1,
+                date      : '$transfer.date',
+                salary    : '$transfer.salary'
+            }
+        }, {
+            $match: {
+                $and: [{
+                    isEmployee: true
+                }, {
+                    date: {
+                        $ne : null,
+                        $lte: endDate
+                    }
+                }]
+            }
+        }, {
+            $group: {
+                _id   : '$_id',
+                salary: {$last: '$salary'}
+            }
+        }, {
+            $project: {
+                _id: '$salary'
+            }
+        }], function (err, result) {
+            var salary;
+
+            if (err) {
+                return next(err);
+            }
+
+            salary = _.map(result, function (item) {
+                return item._id;
+            });
+
+            res.status(200).send({data: salary});
+        });
+    };
+
+    this.getSalaryForChartByDepartment = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var query = req.query;
+        var month = parseInt(query.month, 10) + 1;
+        var year = parseInt(query.year, 10);
+        var startMomentDate = moment().year(year).month(month - 1).startOf('month');
+        var endMomentDate = moment().year(year).month(month - 1).endOf('month');
+        var startDate = new Date(startMomentDate);
+        var endDate = new Date(endMomentDate);
+
+        Employee.aggregate([{
+            $project: {
+                transfer  : 1,
+                isEmployee: 1
+            }
+        }, {
+            $unwind: '$transfer'
+        }, {
+            $project: {
+                _id       : 1,
+                isEmployee: 1,
+                date      : '$transfer.date',
+                salary    : '$transfer.salary',
+                department: '$transfer.department'
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'department',
+                foreignField: '_id',
+                as          : 'department'
+            }
+        }, {
+            $match: {
+                $and: [{
+                    isEmployee: true
+                }, {
+                    date: {
+                        $ne : null,
+                        $lte: endDate
+                    }
+                }]
+            }
+        }, {
+            $group: {
+                _id       : '$_id',
+                salary    : {$last: '$salary'},
+                department: {$first: '$department'}//{$push: ['$department', 0]}*/
+            }
+        }, {
+            $group: {
+                _id   : '$department',
+                salary: {$sum: '$salary'}
+            }
+        }, {
+            $project: {
+                _id   : '$_id.name',
+                salary: 1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
         });
     };
 

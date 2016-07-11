@@ -34,7 +34,7 @@ define([
              keyValidator) {
     'use strict';
     var ProductItemTemplate = Backbone.View.extend({
-        el: '#productItemsHolder',
+        /*el: '#productItemsHolder',*/
 
         events: {
             'click .addProductItem a'                                                 : 'getProducts',
@@ -230,7 +230,6 @@ define([
         },
 
         getProducts: function (e) {
-
             var self = this;
             var target = $(e.target);
             var $parrent = target.closest('tbody');

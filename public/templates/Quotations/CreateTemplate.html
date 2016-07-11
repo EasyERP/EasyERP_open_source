@@ -24,9 +24,6 @@
                                         <% } %>
 
                                     </label></dt>
-                                    <!--<dt><label for="supplierReference">Supplier Reference</label></dt>
-                                    <dd><input type="text" name="supplierReference" id="supplierReference"
-                                               maxlength="32"/></dd>-->
 
                                     <%if (forSales) {%>
                                     <dd>
@@ -41,7 +38,10 @@
                                         <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
                                     </dd>
                                     <% } %>
-
+                                    <dt><label for="deliveryDd">Deliver To</label></dt>
+                                    <dd>
+                                        <a id="deliveryDd" class="current-selected" href="javascript:;">YourCompany</a>
+                                    </dd>
                                 </dl>
                             </div>
                             <div class="half-block left">
@@ -51,11 +51,6 @@
                                         <input class="extrainfo" type="text" name="orderDate" id="orderDate" value=""
                                                readonly="" placeholder="Order Date">
                                     </dd>
-                                    <dt><label for="deliveryDd">Deliver To</label></dt>
-                                    <dd>
-                                        <a id="deliveryDd" class="current-selected" href="javascript:;">YourCompany</a>
-                                    </dd>
-
                                     <dt><label for="currencyDd">Currency</label></dt>
                                     <dd>
                                         <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
@@ -77,23 +72,6 @@
 
                                 </div>
                             </div>
-                            <!-- <div class="dialog-tabs-item">
-                                 <div class="bid-container">
-                                     <div class="half-block left">
-                                         <dl class="opp-info">
-                                             <dt><label for="bidReceivedOn">Bid Received On</label></dt>
-                                             <dd>
-                                                 <span id="bidReceivedOn">
-
-                                                 </span>
-                                             </dd>
-                                             <dt><label for="bidValidUntill">Bid Valid Until</label></dt>
-                                             <dd><input id="bidValidUntill" placeholder="" type="text"
-                                                        readonly/></dd>
-                                         </dl>
-                                     </div>
-                                 </div>
-                             </div>-->
                             <div class="dialog-tabs-item childTabs">
                                 <div class="delivery-invoices-container">
                                     <div class="half-block left">
