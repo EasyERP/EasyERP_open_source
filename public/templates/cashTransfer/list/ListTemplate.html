@@ -4,7 +4,7 @@
     <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=item.name%></td>
     <td><%=utcDateToLocaleDate(item.date)%></td>
-    <td><%=item.debiAccount ? item.debiAccount.name : ''%></td>
+    <td><%=item.debitAccount ? item.debitAccount.name : ''%></td>
     <td><%=item.creditAccount ? item.creditAccount.name : ''%></td>
     <td class="<%=currencyClass(item.currency._id)%>"><%=currencySplitter((item.amount / 100).toFixed(2))%></td>
 </tr>

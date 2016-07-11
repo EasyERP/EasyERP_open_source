@@ -32,20 +32,26 @@ define([
             var creditAccount = this.$el.find('#creditAccount').attr('data-id');
             var amount = parseFloat(this.$el.find('#amount').val()) * 100;
             var date = this.$el.find('#date').val();
+            var currency = this.$el.find('#currency').text();
+            var currencyTo;
 
             var debitAcc = _.find(this.responseObj['#debitAccount'], function (el) {
                 return debitAccount === el._id;
             });
 
             var creditAcc = _.find(this.responseObj['#creditAccount'], function (el) {
-                return debitAccount === el._id;
+                return creditAccount === el._id;
             });
 
+            currencyTo = creditAcc.currency;
+
             data = {
-                debitAccount : debitAcc.chartAccount._id || null,
-                creditAccount: creditAcc.chartAccount._id || null,
+                debitAccount : debitAcc.chartAccount ? debitAcc.chartAccount._id : null,
+                creditAccount: creditAcc.chartAccount ? creditAcc.chartAccount._id : null,
                 amount       : amount,
-                date         : helpers.setTimeToDate(date)
+                date         : helpers.setTimeToDate(date),
+                currency     : currency,
+                currencyTo   : currencyTo
             };
 
             this.model.save(data, {
@@ -64,9 +70,26 @@ define([
         },
 
         chooseOption: function (e) {
-            var $target = $(e.target);
+            var target = $(e.target);
+            var targetElement = target.closest('a');
+            var attr = targetElement.attr('id');
+            var targetId = target.attr('id');
+            var debitAcc;
+            var currency;
 
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            if (attr === 'debitAccount') {
+                debitAcc = _.find(this.responseObj['#debitAccount'], function (el) {
+                    return targetId === el._id;
+                });
+
+                currency = debitAcc.currency || 'USD';
+
+                this.$el.find('#currency').text(currency);
+
+            }
+
+            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
         },
 
         render: function () {
@@ -99,7 +122,7 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : new Date(),
+                maxDate    : new Date(),
                 onSelect   : function () {
                     // set date to model
                 }
