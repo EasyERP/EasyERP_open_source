@@ -797,7 +797,6 @@ define([
                 month: this.month,
                 year : this.year
             }, function (data) {
-                data = data.data;
                 dataLength = data.length;
                 globalSalary = {
                     '>=$2250'   : [],
@@ -947,9 +946,7 @@ define([
                 month: this.month,
                 year : this.year
             }, function (data) {
-
-                data = data.data;
-
+                
                 for (i = data.length; i--;) {
                     salary[i] = {
                         department: data[i]._id[0],

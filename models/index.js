@@ -9,6 +9,7 @@ module.exports = (function () {
     require('./employee.js');
     require('./jobPosition.js');
     require('./jobType.js');
+    require('./tag.js');
     require('./journal.js');
     require('./journalEntry.js');
     require('./incoterm.js');
