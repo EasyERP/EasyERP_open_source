@@ -7875,7 +7875,7 @@ table#workflows tr td.edit-status {
   background-color: #364150;
 }
 .sideMenu nav .root ul li {
-  margin-top: 1px!important;
+  border-top: 1px solid #364150;
   height: 31px;
 }
 .sideMenu nav .root ul li .sub_item {
