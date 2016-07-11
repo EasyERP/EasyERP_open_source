@@ -42,8 +42,10 @@ define([
 
             this.model.save(data, {
                 success: function (res, model) {
+                    var tags;
                     self.hideDialog();
-                    var tags = $('.tags [data-id="' + model._id + '"]')
+                    tags = $('.tags [data-id="' + model._id + '"]');
+
                     tags.each(function(){
                         $(this).attr('data-color', model.color).text(model.name);
                     });
