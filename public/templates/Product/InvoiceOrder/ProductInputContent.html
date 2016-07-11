@@ -12,7 +12,6 @@
         <td data-name="jobs" class="jobs text-overflow trash">
             <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
         </td>
-        <td data-name="quantity"><span></span></td>
     <% } else { %>
         <td data-name="productName">
             <a class="current-selected productsDd" href="javascript:;" data-id="">Select</a>
@@ -23,8 +22,11 @@
             </span>
             <textarea class="productDescr hidden"></textarea>
         </td>
-        <td data-name="quantity"><span></span><input id="quantity" class="quantity statusInfo hidden" maxlength="9" size=10 type="text" /></td>
+
     <% } %>
+    <td data-name="quantity">
+        <input id="quantity" class="quantity statusInfo" maxlength="9" size=10 type="text" />
+    </td>
     <% if (!writeOff){
         var currencyClassVal;
         currencyClassVal = currencyClass(currency._id);

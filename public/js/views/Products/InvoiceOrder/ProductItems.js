@@ -196,7 +196,7 @@ define([
             e.preventDefault();
 
             if (project && project.length >= 24) {
-                dataService.getData('/jobs/getForDD', {projectId: project, notPayed : this.notPayed}, function (jobs) {
+                dataService.getData('/jobs/getForDD', {projectId: project, notPayed: this.notPayed}, function (jobs) {
                     var aEl;
 
                     self.responseObj['#jobs'] = jobs;
@@ -374,7 +374,7 @@ define([
             var $trEl = $target.parents('tr');
             var $quantityContainer = $trEl.find('[data-name="quantity"]');
 
-            var $quantity = $quantityContainer.find('span');
+            var $quantity = $quantityContainer.find('input');
             var $parrents = $trEl.find('td');
             var _id = $target.attr('id');
             var quantity = $quantity.text() || 0;
@@ -411,7 +411,7 @@ define([
                 $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
                 // $quantity.text(currentJob.budget.budgetTotal.hoursSum);
                 model = this.products.get(_id);
-
+                $quantity.attr('disabled', 'disabled');
             } else {
                 model = this.products.get(_id);
 
@@ -431,7 +431,7 @@ define([
                 $($parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             }
 
-            $quantity.text(1);
+            $quantity.val(1);
             $($parrents[2]).find('.datepicker.notVisible').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
@@ -689,9 +689,11 @@ define([
                     }));
                 }
             } else {
-                this.$el.html(this.template({forSales: self.forSales,
-                    writeOff : self.writeOff}));
-                if (!this.writeOff){
+                this.$el.html(this.template({
+                    forSales: self.forSales,
+                    writeOff: self.writeOff
+                }));
+                if (!this.writeOff) {
                     totalAmountContainer = $thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : null,
