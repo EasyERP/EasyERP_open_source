@@ -33,8 +33,11 @@ module.exports = function (event, models) {
     router.get('/birthdays', accessStackMiddleware, handler.getBirthdays);
     router.get('/getYears', handler.getYears);
     router.get('/getEmployeesCount', handler.getEmployeesCount);
+    router.get('/getEmployeesCountForDashboard', handler.getEmployeesCountForDashboard);
     router.get('/EmployeesForChart', handler.getEmployeesForChart);
     router.get('/byDepartmentForChart', handler.byDepartmentForChart);
+    router.get('/getSalaryForChart', handler.getSalaryForChart);
+    router.get('/getSalaryByDepartment', handler.getSalaryForChartByDepartment);
 
     router.post('/', accessStackMiddleware, handler.create);
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
