@@ -78,9 +78,11 @@ module.exports = function (models, event) {
      * @apiName getDepartmentsForDropDown
      * @apiGroup Departments
      *
+     * @apiParam (?Field=value) {String} id Unique id of Department
+     *
      * @apiSuccess {Object} DepartmentsForDropDown
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 304 Not Modified
+     *     HTTP/1.1 200 OK
      {
   "data": [
     {
@@ -105,11 +107,120 @@ module.exports = function (models, event) {
     router.get('/getForDD', authStackMiddleware, handler.getForDD);
     /* router.get('/exportToXlsx',authStackMiddleware, accessStackMiddleware, handler.exportToXlsx);
      router.get('/exportToCsv',authStackMiddleware, accessStackMiddleware, handler.exportToCsv); */
+
+    /**
+     *@api {get} /departments/getDepartmentsForEditDd Request Departments for edit dropDown
+     *
+     * @apiVersion 0.0.1
+     * @apiName getDepartmentsForEditDd
+     * @apiGroup Departments
+     *
+     * @apiSuccess {Object} DepartmentsForEditDd
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     {
+  "data": [
+    {
+      "_id": "55b92ace21e4b7c40f000014",
+      "nestingLevel": 1,
+      "parentDepartment": "56e6775c5ec71b00429745a4",
+      "name": "BusinessDev"
+    },
+    {
+      "_id": "560c0b83a5d4a2e20ba5068c",
+      "nestingLevel": 1,
+      "parentDepartment": "56e6775c5ec71b00429745a4",
+      "name": "Finance"
+    },
+    ...
+  ]
+}
+     * */
     router.get('/getDepartmentsForEditDd', authStackMiddleware, handler.getDepartmentsForEditDd);
 
+    /**
+     *@api {post} /departments/ Request for creating new department
+     *
+     * @apiVersion 0.0.1
+     * @apiName createNewDepartment
+     * @apiGroup Departments
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+      "name": "C++",
+      "parentDepartment": null,
+      "departmentManager": "564dac3e9b85f8b16b574fea",
+      "nestingLevel": null,
+      "users": [
+
+      ],
+      "isDevelopment": true,
+      "sequence": 0
+    }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 201 Created
+     {
+       "success": "A new Department create success",
+       "id": "57835523828f9c302171c2eb"
+     }
+     * */
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
+
+    /**
+     *@api {put} /departments/:id Request for updating department
+     *
+     * @apiVersion 0.0.1
+     * @apiName updateDepartment
+     * @apiGroup Departments
+     *
+     *
+     * @apiParam {String} id Unique id of Department
+     * @apiParamExample {json} Request-Example:
+     * {
+      "validate": false,
+      "name": "C++",
+      "parentDepartment": null,
+      "departmentManager": "55b92ad221e4b7c40f000044",
+      "_id": "57835523828f9c302171c2eb",
+      "isDevelopment": true,
+      "__v": 0,
+      "sequence": 2,
+      "nestingLevel": 0,
+      "editedBy": {
+        "user": null
+      },
+      "createdBy": {
+        "date": "2016-07-11T08:13:23.271Z",
+        "user": null
+      },
+      "users": [
+
+      ],
+      "isAllUpdate": true
+    }
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     {"success":"Department updated success"}
+     * */
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.update);
-    
+
+    /**
+     *@api {delete} /departments/:id Request for deleting department
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteDepartment
+     * @apiGroup Departments
+     *
+     * @apiParam {String} id Unique id of Department
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     {"success":"Department removed"}
+     * */
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
     return router;

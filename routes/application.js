@@ -292,6 +292,7 @@ module.exports = function (event, models) {
      * @apiName UpdateApplication
      * @apiGroup Applications
      *
+     * @apiParam {String} id Uniaue id of application
      *  @apiParamExample {json} Request-Example:
      {
   "name": {

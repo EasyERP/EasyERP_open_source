@@ -180,12 +180,13 @@ module.exports = function (models) {
     router.patch('/', accessStackMiddleware, handler.putchBulk);
 
     /**
-     *@api {delete} /chartOfAccount/ Request for deleting Chart Of Account
+     *@api {delete} /chartOfAccount/:id Request for deleting Chart Of Account
      *
      * @apiVersion 0.0.1
      * @apiName deleteChartOfAccount
      * @apiGroup Chart Of Account
      *
+     * @apiParam {String} id Uniaue id of ChartOfAccount
      * @apiParamExample {json} Request-Example:
      * {
       "contentType": "ChartOfAccount",

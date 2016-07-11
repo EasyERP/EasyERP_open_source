@@ -617,6 +617,7 @@ module.exports = function (models, event) {
      * @apiName UpdateCompany
      * @apiGroup Customers
      *
+     * @apiParam {String} id Unique id of Company
      * @apiParamExample {json} Request-Example:
      *{
       "address": {
