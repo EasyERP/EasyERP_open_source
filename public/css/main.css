@@ -2900,6 +2900,19 @@ input:not([type="checkbox"]).inputBordered:focus {
     left: 20px;
   }
 }
+.opportunity-content .fa-comment-o,
+.opportunity-content .fa-paperclip {
+  color: #fff;
+}
+.opportunity-content .fa-paperclip {
+  margin-left: 10px;
+}
+.opportunity-content .projectType {
+  color: #549ecf;
+}
+.kanban .column .item .inner {
+  padding: 5px 5px 8px;
+}
 .collapsed .side_menu {
   width: 40px !important;
   margin-right: -100%;
@@ -7893,13 +7906,10 @@ table#workflows tr td.edit-status {
   color: #ffffff;
 }
 .side_menu .login_panel .iconEmployee {
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  float: left;
-  margin: 2px 5px 2px 2px;
-  width: 26px;
-  height: 26px;
+  border-radius: 3px;
+  margin: 4px auto;
+  width: 29px;
+  height: 29px;
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
