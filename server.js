@@ -73,7 +73,6 @@ mainDb.once('open', function callback() {
                 // mongos: true
             };
             var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
-            var models = require('./helpers/models.js')(dbsObject);
             var Scheduler = require('./services/scheduler')(models);
 
             dbObject.on('error', function (err) {
