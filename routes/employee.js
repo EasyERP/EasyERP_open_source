@@ -429,7 +429,6 @@ module.exports = function (event, models) {
      * */
     router.get('/nationality', accessStackMiddleware, handler.getNationality);
 
-
     /**
      *@api {get} /employees/languages/ Request Employees languages
      *
@@ -452,7 +451,6 @@ module.exports = function (event, models) {
      *
      * */
     router.get('/languages', accessStackMiddleware, handler.getLanguages);
-
 
     /**
      *@api {get} /employees/sources/ Request Employees sources
@@ -919,10 +917,49 @@ module.exports = function (event, models) {
     router.post('/', accessStackMiddleware, handler.create);
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
 
-
     router.patch('/:id', accessStackMiddleware, handler.updateOnlySelectedFields);
 
+    /**
+     *@api {delete} /employees/:id Request for deleting employee
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteEmployee
+     * @apiGroup Employee
+     *
+     * @apiParam {String} id Unique id of employee
+     *
+     * @apiSuccess {Object} deletedEmployee
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *      {
+     *          "success":"Employee removed"
+     *      }
+     * */
     router.delete('/:id', accessStackMiddleware, handler.remove);
+
+    /**
+     *@api {delete} /employees/ Request for deleting a few employees
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteFewEmployees
+     * @apiGroup Employee
+     *
+     * @apiParamExample {json} Request-Example:
+     *{
+      "contentType": "Employees",
+      "ids": [
+        "577caddabfecefaf11e473e5",
+        "577cad55bfecefaf11e473e4"
+      ]
+    }
+     *
+     * @apiSuccess {Object} deletedEmployees
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *      {
+              "success": true
+            }
+     * */
     router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
