@@ -3862,6 +3862,44 @@ var Module = function (models, event) {
         });
     };
 
+    this.getBalanceForAccount = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = req.query;
+        var account = query.account;
+        var date = query.date;
+
+        date = moment(new Date(date)).endOf('day');
+
+        Model.aggregate([{
+            $match: {
+                account: objectId(account),
+                date   : {
+                    $lte: new Date(date)
+                }
+            }
+        }, {
+            $project: {
+                date   : 1,
+                debit  : {$divide: ['$debit', '$currency.rate']},
+                credit : {$divide: ['$credit', '$currency.rate']},
+                account: 1
+            }
+        }, {
+            $group: {
+                _id   : '$account',
+                debit : {$sum: '$debit'},
+                credit: {$sum: '$credit'}
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({maxAmount: result && result.length ? result[0].debit - result[0].credit : 0})
+        });
+
+    };
+
     this.getExpenses = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -5767,13 +5805,13 @@ var Module = function (models, event) {
                     $match: filterObj
                 }, {
                     $project: {
-                        debit                        : 1,
-                        currency                     : 1,
-                        journal                      : 1,
-                        date                         : 1,
-                        'sourceDocument.model'       : 1,
-                        'sourceDocument._id'         : 1,
-                        'sourceDocument.name'        : 1,
+                        debit                              : 1,
+                        currency                           : 1,
+                        journal                            : 1,
+                        date                               : 1,
+                        'sourceDocument.model'             : 1,
+                        'sourceDocument._id'               : 1,
+                        'sourceDocument.name'              : 1,
                         'sourceDocument.subject.name.first': '$sourceDocument.model'
                     }
                 }, {

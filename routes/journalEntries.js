@@ -26,6 +26,7 @@ module.exports = function (models, event) {
     router.get('/getPayrollForReport', _journalEntryHandler.getPayrollForReport);
     router.get('/getInventoryReport', _journalEntryHandler.getInventoryReport);
     router.get('/getExpenses', _journalEntryHandler.getExpenses);
+    router.get('/getBalanceForAccount', _journalEntryHandler.getBalanceForAccount);
     router.get('/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/', _journalEntryHandler.getForView);
