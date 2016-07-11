@@ -47,5 +47,6 @@ module.exports = {
     WORKFLOWS         : 44,
     DIVIDENDINVOICE   : 101,
     EXPENSESINVOICE   : 97,
-    PROFORMA          : 99
+    PROFORMA          : 99,
+    WRITEOFF          : 105
 };

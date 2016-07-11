@@ -572,81 +572,81 @@ var Module = function (models, event) {
     };
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var filterNameKeys = Object.keys(filter);
-        var filterName;
-        var i;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var filterNameKeys = Object.keys(filter);
+     var filterName;
+     var i;
 
-        for (i = filterNameKeys.length - 1; i >= 0; i--) {
-            filterName = filterNameKeys[i];
-            condition = filter[filterName].value;
+     for (i = filterNameKeys.length - 1; i >= 0; i--) {
+     filterName = filterNameKeys[i];
+     condition = filter[filterName].value;
 
-            switch (filterName) {
-                case 'journalName':
-                    filtrElement['journal.name'] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'sourceDocument':
-                    filtrElement['sourceDocument.subject._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'creditAccount':
-                    filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'salesManager':
-                    filtrElement['salesmanager._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'project':
-                    filtrElement['project._id'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'type':
-                    filtrElement['project.projecttype'] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                // skip default;
-            }
-        }
+     switch (filterName) {
+     case 'journalName':
+     filtrElement['journal.name'] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'sourceDocument':
+     filtrElement['sourceDocument.subject._id'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'creditAccount':
+     filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'salesManager':
+     filtrElement['salesmanager._id'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'project':
+     filtrElement['project._id'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'type':
+     filtrElement['project.projecttype'] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     // skip default;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     /*function caseFilterForTotalCount(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterNameKeys = Object.keys(filter);
-        var filterName;
-        var i;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterNameKeys = Object.keys(filter);
+     var filterName;
+     var i;
 
-        for (i = filterNameKeys.length - 1; i >= 0; i--) {
-            filterName = filterNameKeys[i];
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (i = filterNameKeys.length - 1; i >= 0; i--) {
+     filterName = filterNameKeys[i];
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'journalName':
-                    filtrElement['journal.name'] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'sourceDocument':
-                    filtrElement['sourceDocument.subject'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'creditAccount':
-                    filtrElement['journal.creditAccount'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
+     switch (filterName) {
+     case 'journalName':
+     filtrElement['journal.name'] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'sourceDocument':
+     filtrElement['sourceDocument.subject'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'creditAccount':
+     filtrElement['journal.creditAccount'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     function totalCollectionLength(req, mainCallback) {
         var dbIndex = req.session.lastDb;
@@ -1089,20 +1089,19 @@ var Module = function (models, event) {
         var type = req.query.type;
         var options;
         /*var startDate = filter.startDate.value;
-        var endDate = filter.endDate.value;*/
+         var endDate = filter.endDate.value;*/
         var matchObject = {};
         var filterMapper = new FilterMapper();
 
         /*startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');*/
+         endDate = moment(new Date(endDate)).endOf('day');*/
 
         /*matchObject = {
-            date: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            }
-        };*/
-
+         date: {
+         $gte: new Date(startDate),
+         $lte: new Date(endDate)
+         }
+         };*/
 
         if (filter && typeof filter === 'object') {
             filterObj = filterMapper.mapFilter(filter, 'journalEntry'); // caseFilter(filter);
@@ -1113,8 +1112,6 @@ var Module = function (models, event) {
                 delete filterObj.date;
             }
         }
-
-
 
         options = {
             res         : res,
@@ -1243,19 +1240,19 @@ var Module = function (models, event) {
         var options;
         var query = [];
         /*var startDate = filter.startDate.value;
-        var endDate = filter.endDate.value;*/
+         var endDate = filter.endDate.value;*/
         var matchObject = {};
         var filterMapper = new FilterMapper();
 
         /*startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+         endDate = moment(new Date(endDate)).endOf('day');
 
-        matchObject = {
-            date: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            }
-        };*/
+         matchObject = {
+         date: {
+         $gte: new Date(startDate),
+         $lte: new Date(endDate)
+         }
+         };*/
 
         if (filter && typeof filter === 'object') {
             filterObj = filterMapper.mapFilter(filter, 'journalEntry'); // caseFilter(filter);
@@ -2329,7 +2326,8 @@ var Module = function (models, event) {
         var jobsArray = options.jobId;
         var newReq = req;
 
-        var cb = function () {
+
+        var cb = options.callback || function () {
             return false;
         };
 
@@ -2781,10 +2779,6 @@ var Module = function (models, event) {
                             }
                         }
 
-                        if (employee.toString() === '564dac3e9b85f8b16b574fea') {
-                            console.dir(weeklyScheduler);
-                        }
-
                         if (!Object.keys(weeklyScheduler).length) {
                             weeklyScheduler = {
                                 1         : 8,
@@ -3018,6 +3012,7 @@ var Module = function (models, event) {
                     message: 'Please, refresh browser, costs were calculated.',
                     dbName : dbName
                 });
+
             }
 
             Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
@@ -3028,6 +3023,10 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
+                if (cb && typeof(cb) === 'function'){
+                    cb();
+                }
+
 
             });
         });
@@ -3935,7 +3934,7 @@ var Module = function (models, event) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var query = req.query;
         /*var startDate = query.startDate || query.filter.startDate.value;
-        var endDate = query.endDate || query.filter.endDate.value;*/
+         var endDate = query.endDate || query.filter.endDate.value;*/
         var findJobs;
         var composeReport;
         var waterfallTasks;
@@ -3951,6 +3950,7 @@ var Module = function (models, event) {
         var filterMapper = new FilterMapper();
         var matchObject = {};
         var startDate;
+        var endDate;
 
         if (query.sort) {
             sort = {};
@@ -3961,9 +3961,6 @@ var Module = function (models, event) {
                 sort[key] = parseInt(query.sort[key], 10);
             }
         }
-
-        /*startDate = new Date(moment(new Date(startDate)).startOf('day'));
-        endDate = new Date(moment(new Date(endDate)).endOf('day'));*/
 
         findJobs = function (wfCb) {
             JobsModel.find({}, function (err, result) {
@@ -3981,20 +3978,21 @@ var Module = function (models, event) {
             });
         };
 
-        /*if (filter) {
+        /* i f (filter) {
          filterArray = caseFilter(filter);
 
          if (filterArray.length) {*/
 
         filterObject = filterMapper.mapFilter(filter, 'inventoryReport'); // filterArray;
-        /*}
-         }*/
 
         if (filterObject.date) {
             matchObject = filterObject.date;
 
             delete filterObject.date;
         }
+
+        startDate = matchObject.$gte;
+        endDate = matchObject.$lte;
 
         composeReport = function (jobs, wfCb) {
             var parallelTasks;
@@ -5463,11 +5461,11 @@ var Module = function (models, event) {
         // endDate = moment(new Date(endDate)).endOf('day');
 
         /*matchObject = {
-            date: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            }
-        };*/
+         date: {
+         $gte: new Date(startDate),
+         $lte: new Date(endDate)
+         }
+         };*/
 
         if (sort) {
             key = Object.keys(data.sort)[0].toString();
@@ -5478,12 +5476,12 @@ var Module = function (models, event) {
         }
 
         /*if (filter) {
-            filterArray = caseFilter(filter);
+         filterArray = caseFilter(filter);
 
-            if (filterArray.length) {
-                filterObj.$and = filterArray;
-            }
-        }*/
+         if (filterArray.length) {
+         filterObj.$and = filterArray;
+         }
+         }*/
 
         filterObj = filterMapper.mapFilter(filter, 'journalEntry');
 
@@ -5499,7 +5497,7 @@ var Module = function (models, event) {
                     $match: matchObject
                 }, {
                     $match: {
-                        'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice']},
+                        'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice', 'writeOff']},
                         debit                 : {$gt: 0}
                     }
                 }, {

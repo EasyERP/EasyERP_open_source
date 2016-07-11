@@ -2,14 +2,11 @@ define([
     'Backbone',
     'Underscore',
     'jQuery',
-    'views/menu/MenuItem',
-    'collections/menu/MenuItems'
-], function (Backbone, _, $, MenuItemView) {
+    'text!templates/menu/LeftMenuTemplate.html'
+], function (Backbone, _, $, LeftMenuTemplate) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
-        tagName       : 'nav',
-        className     : 'menu',
-        el            : '#submenu-holder nav',
+        el            : '#submenu-holder',
         currentSection: null,
         selectedId    : null,
 
@@ -22,182 +19,72 @@ define([
             }
 
             this.collection = options.collection;
+            this.currentRoot = options.currentRoot;
+            this.currentModule = options.currentModule;
 
-            if (options.currentRoot) {
-                this.currentSection = options.currentRoot[0] ? options.currentRoot[0].get('mname') : null;
-            }
-
-            this.currentChildren = options.currentChildren;
-
-            if (this.currentChildren && this.currentChildren.length > 0) {
-                this.selectedId = this.currentChildren[0].get('_id');
-                this.render(null, this.currentChildren[0].get('_id'));
-            } else {
-                this.render();
-            }
-
-            this.collection.bind('reset', _.bind(this.render, this));
-            this.mouseLeave = _.debounce(this.mouseLeaveEl, 2000);
-
-            _.bindAll(this, 'render');
+            this.render();
         },
 
         events: {
-            'click a'     : 'selectMenuItem',
-            'mouseover a' : 'hoverItem',
-            'mouseleave a': 'mouseLeave'
+            'click .root'      : 'openRoot',
+            'click #loginPanel': 'openLogin'
         },
 
-        setCurrentSection: function (section) {
-            this.leftMenu.currentSection = section;
-            this.leftMenu.lastClickedLeftMenuItem = null;
-            this.leftMenu.selectedId = null;
-            this.leftMenu.render();
-        },
+        openLogin: function (e) {
+            var $activeRoot = this.$el.find('.opened');
 
-        mouseOver: function (section, selectedId) {
-            if (this.leftMenu) {
-                this.leftMenu.currentSection = section;
-                this.leftMenu.render(true, selectedId);
-            } else {
-                this.currentSection = section;
-                this.render(true, selectedId);
-
-            }
-        },
-
-        updateLeftMenu: function (currentChildren, currentRoot) {
-            this.currentChildren = currentChildren;
-            this.currentSection = currentRoot[0] ? currentRoot[0].get('mname') : null;
-            this.selectedId = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get('_id') : null;
-            this.render(null, this.selectedId);
-        },
-
-        hoverItem: function (e) {
-            this.$el.find('li.hover').removeClass('hover');
-            $(e.target).closest('li').addClass('hover');
-        },
-
-        selectMenuItem: function (e) {
-            var root = this.collection.root();
-            var i;
-
-            this.selectedId = $(e.target).data('module-id');
-            this.$('li.selected').removeClass('selected');
-            this.lastClickedLeftMenuItem = $(e.target).data('module-id');
-
-            $(e.target).closest('li').addClass('selected');
-
-            for (i = 0; i < root.length; i++) {
-                if (root[i].get('mname') === this.currentSection) {
-                    $('#mainmenu-holder .selected').removeClass('selected');
-                    $('#' + this.currentSection).closest('li').addClass('selected');
-                }
-            }
-        },
-
-        mouseLeaveEl: function (option) {
-            var self = this;
-
-            var unSelect = function (section) {
-                var selectSection = $('#mainmenu-holder .selected > a').text();
-
-                if (selectSection === section) {
-                    return;
-                }
-
-                self.mouseOver(selectSection, self.selectedId);
-                $('#mainmenu-holder .hover').not('.selected').removeClass('hover');
-            };
-            unSelect(option);
-        },
-
-        mouseLeave: function (event) {
-            this.mouseLeaveEl = _.bind(this.mouseLeaveEl, this, this.currentSection);
-            this.mouseLeaveEl = _.debounce(this.mouseLeaveEl, 2000);
-            this.mouseLeaveEl();
-        },
-
-        renderMenu: function (list, onMouseOver) {
-            var self = this;
-            var $dom = $('<ul></ul>');
-            var clickEl;
-            var children;
-            var _el;
-
-            if (_.size(list) === 0) {
-                return null;
-            }
-
-            _.each(list, function (model) {
-                var html = this.renderMenuItem(model);
-
-                $dom.append(html);
-            }, this);
-
-            clickEl = $dom.find('a')[0];
-            children = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get('_id') : null;
-
-            if (this.currentChildren) {
-                clickEl = $dom.find('li#' + children + ' a')[0];
-            }
-
-            _el = $('.selected > a').text();
-
-            $(clickEl).on('click', {mouseOver: onMouseOver}, function (option) {
-                if (_el === self.currentSection) {
-                    $(clickEl).closest('li').addClass('selected');
-                }
-                if (!option.data.mouseOver) {
-                    $(clickEl).closest('li').addClass('selected');
-                    window.location.href = $(clickEl).attr('href');
-                }
+            $(e.target).parent().find('#loginSelect').toggleClass('opened');
+            $activeRoot.find('ul').animate({height: 0}, 200, function () {
+                $activeRoot.removeClass('opened');
             });
-            if (!this.currentChildren) {
-                $(clickEl).click();
+
+
+        },
+
+        openRoot: function (e) {
+            var $activeRoot = this.$el.find('.opened');
+            var $current = $(e.target).closest('.root');
+            var isSubMenu = !!$(e.target).closest($current.find('ul')).length;
+
+            if (isSubMenu) {
+                return;
             }
-            this.currentChildren = null;
 
-            return $dom;
+            this.$el.find('#loginSelect').removeClass('opened');
+
+            $activeRoot.find('ul').animate({height: 0}, 200, function () {
+                $activeRoot.removeClass('opened');
+            });
+
+            if (!$current.hasClass('opened')) {
+                $activeRoot.find('ul').animate({height: 0}, 200, function () {
+                    $activeRoot.removeClass('opened');
+                });
+
+                $current.addClass('opened').find('ul').css({height: 0}).animate({height: $current.find('ul').get(0).scrollHeight}, 200);
+            }
         },
 
-        renderMenuItem: function (model) {
-            var view = new MenuItemView({model: model});
-            var elem = view.render().el;
-            return elem;
+        selectMenuItem: function (rootIndex, childIndex) {
+            var $rootElement = this.$el.find('li.root').eq(rootIndex);
+
+            this.$el.find('li.opened').removeClass('opened');
+            this.$el.find('ul.opened').removeClass('opened');
+            this.$el.find('li.active').removeClass('active');
+            this.$el.find('li.selected').removeClass('selected');
+
+            $rootElement.find('li').eq(childIndex+1).addClass('selected');
+            $rootElement.addClass('active opened');
         },
 
-        render: function (onMouseOver, selectedId) {
+        render: function () {
             var $el = this.$el;
-            var currentModule = null;
-            var root = this.collection.root();
-            var i;
-            var elem;
-            var len;
-            var currentSelElem;
 
-            $el.html('');
-
-            if (this.currentSection === null) {
-                this.currentSection = root[0].get('mname');
-            }
-
-            for (i = 0, len = root.length; i < len; i++) {
-                if (root[i].get('mname') === this.currentSection) {
-                    currentModule = root[i];
-                    break;
-                }
-            }
-            if (currentModule === null) {
-                currentModule = root[0];
-            }
-            elem = $el.append(this.renderMenu(this.collection.children(currentModule), onMouseOver));
-            currentSelElem = document.getElementById(selectedId);
-            if ($(currentSelElem).length === 0) {
-                currentSelElem = $(this.lastClickedLeftMenuItem);
-            }
-            $(currentSelElem).closest('ul').find('.selected').removeClass('selected');
-            $(currentSelElem).addClass('selected');
+            $el.find('nav').html(_.template(LeftMenuTemplate)({
+                menuList     : this.collection.toJSON(),
+                currentRoot  : this.currentRoot,
+                currentModule: this.currentModule
+            }));
 
             return this;
         }

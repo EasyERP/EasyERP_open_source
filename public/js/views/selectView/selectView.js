@@ -16,6 +16,38 @@ define([
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
         },
 
+        chooseOption: function (e) {
+            var id;
+            var data;
+            var $target = $(e.target);
+            var attrId = $target.parents('td').find('.current-selected').attr('id');
+
+            $('.newSelectList').hide();
+
+            if ($target.parents('dd').find('.current-selected').length) {
+                $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            } else {
+                id = $target.parents('td').closest('tr').attr('data-id');
+
+                if (attrId === 'workflow') {
+                    data = {_id: id, workflowId: $target.attr('id')};
+                } else if (attrId === 'type') {
+                    data = {_id: id, type: $target.text()};
+                }
+
+                $target.parents('td').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+
+                dataService.postData('/jobs/update', data, function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+
+                });
+            }
+
+            this.showSaveButton();
+        },
+
         initialize: function (options) {
             var self = this;
             var data;
@@ -31,9 +63,8 @@ define([
 
             $target = $(this.e.target);
 
-            this.attr = $target.attr('id');
-
-            data = this.responseObj['#' + this.attr];
+            this.attr = $target.attr('id') || $target.attr('class');
+            data = this.responseObj['#' + this.attr] || this.responseObj['.' + this.attr];
 
             if (!data || !data.length) {
                 this.attr = $target.attr('data-content') || $target.parent().attr('data-content');

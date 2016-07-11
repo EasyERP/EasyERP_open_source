@@ -3,6 +3,7 @@
     'jQuery',
     'Underscore',
     'text!templates/Projects/thumbnails/ThumbnailsItemTemplate.html',
+    'views/selectView/selectView',
     'views/thumbnailsViewBase',
     'views/Projects/EditView',
     'views/Projects/CreateView',
@@ -12,7 +13,7 @@
     'common',
     'constants',
     'populate'
-], function (Backbone, $, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, FilterView, projects, dataService, common, CONSTANTS, populate) {
+], function (Backbone, $, _, thumbnailsItemTemplate, selectView, BaseView, EditView, CreateView, FilterView, projects, dataService, common, CONSTANTS, populate) {
     'use strict';
     var ProjectThumbnalView = BaseView.extend({
         el           : '#content-holder',
@@ -22,6 +23,7 @@
 
         initialize: function (options) {
             $(document).off('click');
+            this.responseObj = {};
 
             this.EditView = EditView;
             this.CreateView = CreateView;
@@ -33,12 +35,58 @@
         },
 
         events: {
-            'click .health-wrapper .health-container': projects.showHealthDd,
-            'click .health-wrapper ul li div'        : projects.chooseHealthDd,
-            'click .newSelectList li'                : projects.chooseOption,
-            'click .tasksByProject'                  : 'dropDown',
-            'click .stageSelect'                     : projects.showNewSelect,
-            'click .project'                         : 'useProjectFilter'
+            'click .health-wrapper .health-container'                                           : projects.showHealthDd,
+            'click .health-wrapper ul li div'                                                   : projects.chooseHealthDd,
+            'click .forStage .newSelectList li'                                                 : projects.chooseOption,
+            'click .tasksByProject'                                                             : 'dropDown',
+            'click .stageSelect'                                                                : projects.showNewSelect,
+            'click .project'                                                                    : 'useProjectFilter',
+            'click .forProjectsTypes .newSelectList li:not(.miniStylePagination):not(.disabled)': 'chooseOption',
+            'click .current-selected:not(.disabled)'                                            : 'showNewSelect'
+        },
+
+        chooseOption: function (e) {
+            var id;
+            var $target = $(e.target);
+            var model;
+            var $idContainer;
+
+            $('.newSelectList').hide();
+
+            $idContainer = $target.parents('.thumbnail');
+            id = $idContainer.attr('id');
+
+            $target.parents('.forProjectsTypes').find('.current-selected').text($target.text());
+
+            model = this.collection.get(id);
+            model.save({projecttype: $target.text()}, {
+                patch   : true,
+                validate: false
+            });
+
+        },
+
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
         },
 
         useProjectFilter: function (e) {
@@ -109,8 +157,8 @@
                 self.stages = stages || [];
             });
 
+            populate.get('.current-selected', CONSTANTS.URLS.PROJECT_TYPE, {}, 'name', this, false, true);
             populate.getPriority('#priority', this);
-
             return this;
         }
     });

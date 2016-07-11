@@ -135,6 +135,7 @@ define([
                     case CONTENT_TYPES.USERS:
                     case CONTENT_TYPES.JOBPOSITIONS:
                     case CONTENT_TYPES.DEGREES:
+                    case CONTENT_TYPES.WRITEOFF:
                     case CONTENT_TYPES.SOURCEOFAPPLICANTS:
                     case CONTENT_TYPES.LEADS:
                     case CONTENT_TYPES.BIRTHDAYS:
@@ -200,6 +201,7 @@ define([
                     case CONTENT_TYPES.DEGREES:
                     case CONTENT_TYPES.SOURCEOFAPPLICANTS:
                     case CONTENT_TYPES.LEADS:
+                    case CONTENT_TYPES.WRITEOFF:
                     case CONTENT_TYPES.BIRTHDAYS:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:
@@ -500,12 +502,10 @@ define([
         var defSavedFilterValues = defSavedFilter ? defSavedFilter.filters : null;
 
         if (defSavedFilterValues) {
-            App.filtersObject.curDefSavedFilter = defSavedFilter;
-
             App.storage.save(contentType + '.savedFilter', defSavedFilter.name);
         }
 
-        return defSavedFilterValues;
+        return defSavedFilterValues ? _.extend({}, defSavedFilterValues) : null;
     };
 
     var getSavedFilterForCT = function (contentType) {
@@ -516,7 +516,7 @@ define([
         var savedFilter = _.findWhere(savedFilters, {name: savedFilterName});
         var savedFilterValues = savedFilter ? savedFilter.filters : null;
 
-        return savedFilterValues;
+        return savedFilterValues ? _.extend({}, savedFilterValues) : null;
     };
 
     App.storage = new Store();

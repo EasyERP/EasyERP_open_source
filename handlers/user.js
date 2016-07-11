@@ -14,8 +14,9 @@ var User = function (event, models) {
     var mailer = new Mailer();
     var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
-
+    var tracker = require('../helpers/tracker.js');
     var ObjectId = mongoose.Types.ObjectId;
+    var geoip = require('geoip-lite');
 
     function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
@@ -266,6 +267,9 @@ var User = function (event, models) {
         var data = req.body;
         var UserModel = models.get(data.dbId, 'Users', userSchema);
         var login = data.login || data.email;
+        // var ip = req.ip;
+        var ip = req.headers ? req.headers['x-real-ip'] : '127.0.0.1';
+        var geo = geoip.lookup(ip);
         var err;
         var queryObject;
 
@@ -295,6 +299,18 @@ var User = function (event, models) {
                     err = new Error(constants.BAD_REQUEST);
                     err.status = 400;
 
+                    tracker.track({
+                        name       : 'production:login:error',
+                        status     : 301,
+                        registrType: process.env.SERVER_TYPE,
+                        ip         : ip,
+                        country    : (geo) ? geo.country : '',
+                        city       : (geo) ? geo.city : '',
+                        region     : geo ? geo.region : '',
+                        login      : login,
+                        message    : err.message
+                    });
+
                     return next(err);
                 }
 
@@ -322,6 +338,18 @@ var User = function (event, models) {
                 });
 
                 res.send(200);
+
+                tracker.track({
+                    name       : 'production:login:success',
+                    status     : 301,
+                    registrType: process.env.SERVER_TYPE,
+                    ip         : ip,
+                    country    : (geo) ? geo.country : '',
+                    city       : (geo) ? geo.city : '',
+                    region     : geo ? geo.region : '',
+                    login      : login,
+                    message    : 'loggedIn'
+                });
             });
         } else {
             err = new Error(constants.BAD_REQUEST);
@@ -651,6 +679,63 @@ var User = function (event, models) {
         aggregateQuery = [
             {
                 $lookup: {
+                    from        : 'Employees',
+                    localField  : 'relatedEmployee',
+                    foreignField: '_id',
+                    as          : 'relatedEmployee'
+                }
+            },
+            {
+                $project: {
+                    kanbanSettings : 1,
+                    credentials    : 1,
+                    email          : 1,
+                    login          : 1,
+                    imageSrc       : 1,
+                    lastAccess     : 1,
+                    savedFilters   : 1,
+                    total          : 1,
+                    profile        : 1,
+                    relatedEmployee: {$arrayElemAt: ['$relatedEmployee', 0]}
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'relatedEmployee.department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            },
+            {
+                $project: {
+                    kanbanSettings: 1,
+                    credentials   : 1,
+                    email         : 1,
+                    login         : 1,
+                    imageSrc      : 1,
+                    lastAccess    : 1,
+                    savedFilters  : 1,
+                    total         : 1,
+                    profile       : 1,
+                    department    : {$arrayElemAt: ['$department', 0]}
+                }
+            },
+            {
+                $project: {
+                    kanbanSettings: 1,
+                    credentials   : 1,
+                    email         : 1,
+                    login         : 1,
+                    imageSrc      : 1,
+                    lastAccess    : 1,
+                    savedFilters  : 1,
+                    total         : 1,
+                    profile       : 1,
+                    department    : '$department.name'
+                }
+            }, {
+                $lookup: {
                     from        : 'Profile',
                     localField  : 'profile',
                     foreignField: '_id',
@@ -669,17 +754,17 @@ var User = function (event, models) {
             },
             {
                 $project: {
-                    _id            : '$root._id',
-                    kanbanSettings : '$root.kanbanSettings',
-                    credentials    : '$root.credentials',
-                    email          : '$root.email',
-                    login          : '$root.login',
-                    imageSrc       : '$root.imageSrc',
-                    lastAccess     : '$root.lastAccess',
-                    savedFilters   : '$root.savedFilters',
-                    relatedEmployee: '$root.relatedEmployee',
-                    total          : 1,
-                    profile        : {
+                    _id           : '$root._id',
+                    kanbanSettings: '$root.kanbanSettings',
+                    credentials   : '$root.credentials',
+                    email         : '$root.email',
+                    login         : '$root.login',
+                    imageSrc      : '$root.imageSrc',
+                    lastAccess    : '$root.lastAccess',
+                    savedFilters  : '$root.savedFilters',
+                    department    : '$root.department',
+                    total         : 1,
+                    profile       : {
                         $arrayElemAt: ['$root.profile', 0]
                     }
                 }
@@ -693,6 +778,7 @@ var User = function (event, models) {
             {
                 $limit: limit
             }
+
         ];
 
         UserModel.aggregate(aggregateQuery, function (err, result) {
@@ -730,7 +816,7 @@ var User = function (event, models) {
             $lookup: {
                 from        : 'Profile',
                 localField  : 'profile',
-                foreignField: "_id",
+                foreignField: '_id',
                 as          : 'profile'
             }
         });
@@ -739,7 +825,7 @@ var User = function (event, models) {
             $lookup: {
                 from        : 'Employees',
                 localField  : 'relatedEmployee',
-                foreignField: "_id",
+                foreignField: '_id',
                 as          : 'relatedEmployee'
             }
         });

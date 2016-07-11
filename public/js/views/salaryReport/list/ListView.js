@@ -47,10 +47,12 @@ define([
             if (!this.filter.startDate) {
                 this.filter.startDate = {
                     key  : 'startDate',
+                    type : 'date',
                     value: new Date(dateRange.startDate)
                 };
                 this.filter.endDate = {
                     key  : 'endDate',
+                    type : 'date',
                     value: new Date(dateRange.endDate)
                 };
             }
@@ -121,11 +123,13 @@ define([
 
             this.filter.startDate = {
                 key  : 'startDate',
+                type: 'date',
                 value: stDate
             };
 
             this.filter.endDate = {
                 key  : 'endDate',
+                type: 'date',
                 value: enDate
             };
 

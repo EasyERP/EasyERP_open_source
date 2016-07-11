@@ -49,6 +49,7 @@ define([
             var endDate;
 
             this.$el.find('.customTime').addClass('hidden');
+            this.$el.find('.buttons').addClass('hidden');
 
             this.removeAllChecked();
 
@@ -93,6 +94,7 @@ define([
 
             $target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
+            this.$el.find('.buttons').toggleClass('hidden');
         },
 
         changeDateRange: function (e) {
@@ -182,7 +184,7 @@ define([
             var viewType = Custom.getCurrentVT();
             // var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
 
-            var filter = Custom.retriveFromCash('journalEntry.filter');
+            var filter = Custom.retriveFromCash('inventoryReport.filter');
             var dateRange = filter && filter.date ? filter.date.value : [];
 
             /*this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
