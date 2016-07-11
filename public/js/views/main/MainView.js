@@ -21,18 +21,16 @@ define([
 
         events: {
             'click .sidebarToggler': 'expandCollapse',
-            'click .loginPanel': 'openLogin'
+            'click .loginPanel'    : 'openLogin'
         },
 
         expandCollapse: function () {
             $('body').toggleClass('collapsed');
         },
 
-
         openLogin: function (e) {
-            $(e.target).closest('.loginPanel').find('ul').toggleClass('open');
+            $(e.target).closest('.loginPanel').toggleClass('open');
         },
-
 
         createMenuViews: function () {
             var modules = this.collection.toJSON();
