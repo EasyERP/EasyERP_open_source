@@ -8,6 +8,9 @@ var jobsSchema = mongoose.Schemas.jobs;
 var invoiceSchema = mongoose.Schemas.Invoice;
 var holidaysSchema = mongoose.Schemas.Holiday;
 var vacationSchema = mongoose.Schemas.Vacation;
+var PaymentMethodSchema = mongoose.Schemas.PaymentMethod;
+var cashTransferSchema = mongoose.Schemas.cashTransfer;
+var PaymentSchema = mongoose.Schemas.Payment;
 var objectId = mongoose.Types.ObjectId;
 
 var oxr = require('open-exchange-rates');
@@ -5252,23 +5255,212 @@ var Module = function (models, event) {
 
     this.getCashBook = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var getAssets;
-        var getLiabilities;
-        var getEquities;
+        var PaymentMethod = models.get(req.session.lastDb, 'PaymentMethod', PaymentMethodSchema);
+        var cashTransferModel = models.get(req.session.lastDb, 'cashTransfer', cashTransferSchema);
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var query = req.query;
         var startDate = query.startDate;
         var endDate = query.endDate;
-        var liabilities = CONSTANTS.LIABILITIES.objectID();
-        var equity = CONSTANTS.EQUITY.objectID();
-        var currentAssets = [CONSTANTS.ACCOUNT_RECEIVABLE, CONSTANTS.WORK_IN_PROCESS, CONSTANTS.FINISHED_GOODS];
-        var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
-        var replaceToAssets = false;
-        var resultLiabilities;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
 
-        res.status(200).send({assets: [], liabilities: [], equity: []});
+        PaymentMethod.aggregate([{
+            $group: {
+                _id: '$chartAccount'
+            }
+        }], function (err, result) {
+            var accounts;
+
+            if (err) {
+                return next(err);
+            }
+
+            accounts = _.pluck(result, '_id');
+
+            Model.aggregate([{
+                $match: {
+                    account: {$in: accounts},
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    }
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'account',
+                    foreignField: '_id',
+                    as          : 'account'
+                }
+            }, {
+                $project: {
+                    date          : 1,
+                    sourceDocument: 1,
+                    account       : {$arrayElemAt: ['$account', 0]},
+                    currency      : 1,
+                    debit         : 1,
+                    credit        : 1
+                }
+            }, {
+                $project: {
+                    date          : 1,
+                    sourceDocument: 1,
+                    'account.name': '$account.name',
+                    'account._id' : '$account._id',
+                    currency      : 1,
+                    debit         : 1,
+                    credit        : 1
+                }
+            }, {
+                $sort: {
+                    date: 1
+                }
+            }, {
+                $group: {
+                    _id     : '$sourceDocument.model',
+                    accounts: {$addToSet: '$account'},
+                    root    : {$push: '$$ROOT'}
+                }
+            }], function (err, result) {
+                var paymentResult;
+                var cashTransfer;
+                var populateCashTransfer;
+                var populateSalaryPayment;
+                var populatePayment;
+                var getOpeningBalance;
+                var salaryPayment;
+
+                if (err) {
+                    return next(err);
+                }
+
+                paymentResult = _.find(result, function (el) {
+                    return el._id === 'Payment';
+                });
+
+                cashTransfer = _.find(result, function (el) {
+                    return el._id === 'cashTransfer';
+                });
+
+                salaryPayment = _.find(result, function (el) {
+                    return el._id === 'salaryPayment';
+                });
+
+                cashTransfer = cashTransfer || {};
+                paymentResult = paymentResult || {};
+                salaryPayment = salaryPayment || {};
+
+                populatePayment = function (cb) {
+                    Payment.populate(paymentResult.root, {
+                        path  : 'sourceDocument._id',
+                        select: 'name',
+                        lean  : true
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    })
+                };
+
+                populateSalaryPayment = function (cb) {
+                    Employee.populate(salaryPayment.root, {
+                        path  : 'sourceDocument._id',
+                        select: 'name',
+                        lean  : true
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    })
+                };
+
+                getOpeningBalance = function (cb) {
+                    Model.aggregate([{
+                        $match: {
+                            account: {$in: accounts},
+                            date   : {
+                                $lt: new Date(startDate)
+                            }
+                        }
+                    }, {
+                        $project: {
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            account: 1
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account',
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $project: {
+                            balance: {$subtract: ['$debit', '$credit']}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                };
+
+                populateCashTransfer = function (cb) {
+                    cashTransferModel.populate(cashTransfer.root, {
+                        path  : 'sourceDocument._id',
+                        select: 'name',
+                        lean  : true
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    })
+                };
+
+                async.parallel([populatePayment, populateCashTransfer, populateSalaryPayment, getOpeningBalance], function (err, result) {
+                    var accounts;
+                    var newAccounts = [];
+                    var keys = {};
+
+                    if (err) {
+                        return next(err);
+                    }
+
+                    accounts = _.union(paymentResult.accounts || [], cashTransfer.accounts || [], salaryPayment.accounts || []);
+
+                    accounts.forEach(function (el){
+                        if (!keys[el._id.toString()]){
+                            newAccounts.push(el);
+                            keys[el._id.toString()] = true;
+                        }
+                    });
+
+                    newAccounts.forEach(function (acc){
+                        var balance = _.find(result[3], function (el){
+                            return el._id.toString() === acc._id.toString();
+                        });
+
+                        acc.balance = balance.balance;
+                    });
+
+                    res.status(200).send({
+                        data    : _.union(paymentResult.root || [], cashTransfer.root || [], salaryPayment.root || []),
+                        accounts: newAccounts
+                    });
+                });
+            });
+        })
+
     };
 
     this.getForGL = function (req, res, next) {

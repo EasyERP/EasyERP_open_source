@@ -28,10 +28,6 @@ define([
         yearElement       : null,
         FilterView        : FilterView,
 
-        events: {
-            'click .mainTr': 'showHidden'
-        },
-
         initialize: function (options) {
             var dateRange;
             var jsonCollection;
@@ -74,45 +70,6 @@ define([
             custom.cacheToApp('cashBook.filter', this.filter);
         },
 
-        showHidden: function (e) {
-            var $target = $(e.target);
-            var $tr = $target.closest('tr');
-            var dataId = $tr.attr('data-id');
-            var $body = this.$el;
-            var childTr = $body.find('[data-main="' + dataId + '"]');
-            var sign = $.trim($tr.find('.expand').text());
-
-            if (sign === '+') {
-                $tr.find('.expand').text('-');
-            } else {
-                $tr.find('.expand').text('+');
-            }
-
-            childTr.toggleClass();
-        },
-
-        asyncRenderInfo: function (asyncKeys) {
-            var body = this.$el;
-            var stDate = this.filter.startDate.value;
-            var endDate = this.filter.endDate.value;
-
-            async.each(asyncKeys, function (asyncId) {
-                dataService.getData('journalEntries/getAsyncDataForGL', {
-                    startDate: stDate,
-                    endDate  : endDate,
-                    _id      : asyncId
-                }, function (result) {
-                    var journalEntries = result.journalEntries;
-                    var mainTr = body.find('[data-id="' + asyncId + '"]');
-                    journalEntries.forEach(function (entry) {
-                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td></tr>');
-                    });
-                });
-
-            });
-
-        },
-
         changeDateRange: function () {
             var stDate = $('#startDate').val();
             var enDate = $('#endDate').val();
@@ -152,17 +109,17 @@ define([
             var $currentEl = this.$el;
             var collection;
             var itemView;
-            var asyncKeys = [];
+            var header = _.template(listTemplate);
 
-            this.$el.find('#listTableAssets').html('');
-            this.$el.find('#listTableLiabilities').html('');
-            this.$el.find('#listTableEquity').html('');
+            $currentEl.html('');
+            $currentEl.find('#listTable').html('');
 
             collection = newModels.toJSON();
 
-            this.assets = collection[0].assets;
-            this.liabilities = collection[0].liabilities;
-            this.equity = collection[0].equity;
+            this.data = collection[0].data;
+            this.accounts = collection[0].accounts;
+
+            $currentEl.append(header({accounts: this.accounts}));
 
             itemView = new ListItemView({
                 collection      : collection,
@@ -171,19 +128,7 @@ define([
 
             $currentEl.append(itemView.render());
 
-            this.liabilities.forEach(function (el) {
-                asyncKeys.push(el._id);
-            });
-
-            this.assets.forEach(function (el) {
-                asyncKeys.push(el._id);
-            });
-
-            this.equity.forEach(function (el) {
-                asyncKeys.push(el._id);
-            });
-
-            this.asyncRenderInfo(asyncKeys);
+            this.renderBalance(this.accounts);
         },
 
         showFilteredPage: function (filter, context) {
@@ -204,32 +149,59 @@ define([
             });
         },
 
+        renderBalance: function (accounts) {
+            var $table = this.$el.find('#listTable');
+            var $trFirst = $table.find('tr').first();
+            var $trs = $table.find('tr');
+            var trLength = $trs.length;
+            var i;
+
+            accounts.forEach(function (acc) {
+                $trFirst.find('[data-id="' + acc._id + '"]').text(helpers.currencySplitter((acc.balance / 100 ).toFixed(2)));
+                $trFirst.find('[data-id="' + acc._id + '"]').attr('data-value', acc.balance);
+            });
+
+            for (i = 1; i <= trLength; i++) {
+                var tds = $trs.find('[data-level="' + i + '"]');
+                var sumObject = {};
+                var nextBalance = $trs.find('[data-level="' + (i + 1) + '"]');
+                var keys;
+
+                tds.each(function (td) {
+                    if (!sumObject[$(this).attr('data-id')]){
+                        sumObject[$(this).attr('data-id')] = 0;
+                    }
+                    sumObject[$(this).attr('data-id')] += parseFloat($(this).attr('data-value'));
+                });
+
+                keys = Object.keys(sumObject);
+
+                keys.forEach(function (key){
+                    nextBalance.each(function (){
+                        if ($(this).hasClass('balance') && $(this).attr('data-id') === key){
+                            $(this).text(helpers.currencySplitter((sumObject[key] / 100).toFixed(2)));
+                            $(this).attr('data-value', sumObject[key]);
+                        }
+                    });
+
+                });
+
+
+            }
+
+        },
+
         render: function () {
             var $currentEl = this.$el;
             var collection;
             var itemView;
-            var asyncKeys = [];
+            var header = _.template(listTemplate);
+            var accounts = this.collection.toJSON()[0].accounts;
 
             $currentEl.html('');
-            $currentEl.append(_.template(listTemplate));
+            $currentEl.append(header({accounts: accounts}));
 
             collection = this.collection.toJSON();
-
-            this.liabilities.forEach(function (el) {
-                asyncKeys.push(el._id);
-            });
-
-            this.assets.forEach(function (el) {
-                asyncKeys.push(el._id);
-            });
-
-            this.equity.forEach(function (el) {
-                asyncKeys.push(el._id);
-            });
-
-            this.$el.find('#listTableLiabilities').html('');
-            this.$el.find('#listTableAssets').html('');
-            this.$el.find('#listTableEquity').html('');
 
             itemView = new ListItemView({
                 collection      : collection,
@@ -240,7 +212,7 @@ define([
 
             App.filtersObject.filter = this.filter;
 
-            this.asyncRenderInfo(asyncKeys);
+            this.renderBalance(accounts);
 
             return this;
         }
