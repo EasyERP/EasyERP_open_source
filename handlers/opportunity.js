@@ -2497,8 +2497,8 @@ var Module = function (models, event) {
                     salesPerson    : 1,
                     nextAction     : 1,
                     workflow       : 1,
-                    projectType    : 1
-                    tags           : 1
+                    projectType    : 1,
+                    tags           : 1,
                     attachments    : 1,
                     notes          : 1
                 })
