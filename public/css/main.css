@@ -2925,9 +2925,11 @@ input:not([type="checkbox"]).inputBordered:focus {
   color: #FF3F3F;
 }
 .topbarHolder {
+  position: fixed;
   height: 50px;
-  background-color: #364150;
-  margin-left: 235px;
+  width: 100%;
+  background-color: #2b3643;
+  z-index: 200;
 }
 .topbarHolder .topbarLogo {
   float: left;
@@ -2936,32 +2938,83 @@ input:not([type="checkbox"]).inputBordered:focus {
   height: 50px;
   padding-left: 20px;
   padding-right: 20px;
+  box-sizing: border-box;
+}
+.topbarHolder .topbarLogo .mainLogo {
+  font-size: 18px;
+  line-height: 50px;
+}
+.topbarHolder .sidebarToggler {
+  position: relative;
+  top: 15px;
+  height: 17px;
+  width: 17px;
+  float: right;
+  cursor: pointer;
+}
+.topbarHolder .sidebarToggler span {
+  position: absolute;
+  height: 1px;
+  width: 19px;
+  background: #a7b5c6;
+  opacity: .75;
+  transition: all ease .3s;
+}
+.topbarHolder .sidebarToggler span:hover {
+  opacity: 1;
+}
+.topbarHolder .sidebarToggler span:first-child {
+  top: 2px;
+}
+.topbarHolder .sidebarToggler span:last-child {
+  bottom: 2px;
+}
+.topbarHolder .sidebarToggler span:nth-child(2) {
+  top: 8px;
 }
 .topbarHolder .loginPanel {
   position: relative;
   display: inline-block;
   float: right;
-  padding: 16px 6px 13px 8px;
+  padding: 14px 6px 12px 8px;
+  margin-right: 50px;
 }
-.topbarHolder .loginPanel img {
+.topbarHolder .loginPanel:hover {
+  background-color: #3f4f62;
+}
+.topbarHolder .loginPanel .dropdownButton:after {
+  content: "\f107";
+  display: inline-block;
+  float: right;
+  font-size: 13px;
+  font-family: FontAwesome;
+  line-height: 20px;
+  color: #fff;
+  width: 20px;
+  text-align: center;
+}
+.topbarHolder .loginPanel .iconEmployee {
   float: left;
   margin-top: -5px;
   margin-right: 5px;
   height: 29px;
+  border-radius: 50%;
   display: inline-block;
 }
 .topbarHolder .loginPanel .userName {
   display: inline-block;
   font-size: 13px;
   font-weight: 300;
+  color: #c6cfda;
 }
 .topbarHolder .loginPanel .loginList {
+  display: block;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
-  left: 0;
-  min-width: 175px;
+  right: 0;
+  top: 45px;
+  min-width: 120px;
   position: absolute;
   z-index: 1000;
-  display: none;
   float: left;
   list-style: none;
   text-shadow: none;
@@ -2979,6 +3032,16 @@ input:not([type="checkbox"]).inputBordered:focus {
   border-bottom: 7px solid #eee;
   border-left: 7px solid transparent;
   border-bottom-color: rgba(0, 0, 0, 0.2);
+  content: '';
+}
+.topbarHolder .loginPanel .loginList:after {
+  position: absolute;
+  top: -6px;
+  right: 10px;
+  display: inline-block !important;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #fff;
+  border-left: 6px solid transparent;
   content: '';
 }
 .topbarHolder .loginPanel .loginList > li > a {
@@ -3439,12 +3502,13 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: 100%;
   display: block;
   float: left;
+  padding-top: 50px;
 }
 .content_wrapper .content-holder {
-  margin-left: 200px;
+  margin-left: 235px;
 }
 .content_wrapper .top-bar {
-  margin-left: 220px;
+  margin-left: 235px;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -7730,16 +7794,16 @@ table#workflows tr td.edit-status {
   letter-spacing: 1.5px;
 }
 .sideMenu {
-  display: block;
   position: fixed;
+  bottom: 0;
+  left: 0;
+  display: block;
   z-index: 100;
   width: auto;
-  height: 100%;
+  height: calc(100% - 50px);
   background-color: #364150;
   box-sizing: border-box;
-  padding-top: 110px;
-  left: 0;
-  top: 0;
+  padding-top: 60px;
   font-family: 'Open Sans Light';
 }
 .sideMenu nav {

@@ -1,14 +1,14 @@
 .submenu(@defaultColor: @bg-submenu, @height: 40px) {
-  display: block;
   position: fixed;
+  bottom: 0;
+  left: 0;
+  display: block;
   z-index: 100;
   width: auto;
-  height: 100%;
+  height: calc(~"100% - 50px");
   background-color: @defaultColor;
   box-sizing: border-box;
-  padding-top: 110px;
-  left: 0;
-  top: 0;
+  padding-top: 60px;
   font-family: 'Open Sans Light';
 
   nav {
