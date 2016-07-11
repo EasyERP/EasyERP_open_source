@@ -2921,6 +2921,9 @@ input:not([type="checkbox"]).inputBordered:focus {
 .mainLogo {
   color: #fff;
 }
+.mainLogo:hover {
+  text-decoration: none;
+}
 .mainLogo span {
   color: #FF3F3F;
 }
@@ -2936,7 +2939,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: block;
   width: 235px;
   height: 50px;
-  padding-left: 20px;
+  padding-left: 39px;
   padding-right: 20px;
   box-sizing: border-box;
 }
@@ -2951,17 +2954,17 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: 17px;
   float: right;
   cursor: pointer;
+  opacity: .75;
+}
+.topbarHolder .sidebarToggler:hover {
+  opacity: 1;
 }
 .topbarHolder .sidebarToggler span {
   position: absolute;
   height: 1px;
   width: 19px;
   background: #a7b5c6;
-  opacity: .75;
   transition: all ease .3s;
-}
-.topbarHolder .sidebarToggler span:hover {
-  opacity: 1;
 }
 .topbarHolder .sidebarToggler span:first-child {
   top: 2px;
@@ -3022,6 +3025,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   background-color: #fff;
   margin: 10px 0 0;
   border: 1px solid #eee;
+}
+.topbarHolder .loginPanel .loginList a:hover {
+  background-color: #555;
 }
 .topbarHolder .loginPanel .loginList:before {
   position: absolute;

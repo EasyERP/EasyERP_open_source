@@ -512,6 +512,9 @@ input {
 
 .mainLogo {
   color: #fff;
+  &:hover {
+    text-decoration: none;
+  }
 
   span {
     color: #FF3F3F;
@@ -530,7 +533,7 @@ input {
     display: block;
     width: 235px;
     height: 50px;
-    padding-left: 20px;
+    padding-left: 39px;
     padding-right: 20px;
     box-sizing: border-box;
 
@@ -546,18 +549,18 @@ input {
     width: 17px;
     float: right;
     cursor: pointer;
+    opacity: .75;
+    &:hover {
+      opacity: 1;
+    }
+
 
     span {
       position: absolute;
       height: 1px;
       width: 19px;
       background: #a7b5c6;
-      opacity: .75;
       transition: all ease .3s;
-      &:hover {
-        opacity: 1;
-      }
-
       &:first-child {
         top: 2px;
       }
@@ -626,6 +629,11 @@ input {
       background-color: #fff;
       margin: 10px 0 0;
       border: 1px solid #eee;
+      a {
+        &:hover {
+          background-color: #555;
+        }
+      }
 
       &:before {
         position: absolute;
