@@ -2951,7 +2951,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   position: relative;
   top: 15px;
   height: 17px;
-  width: 17px;
+  width: 19px;
   float: right;
   cursor: pointer;
   opacity: .75;
@@ -2985,6 +2985,9 @@ input:not([type="checkbox"]).inputBordered:focus {
 .topbarHolder .loginPanel:hover {
   background-color: #3f4f62;
 }
+.topbarHolder .loginPanel.open .loginList {
+  display: block;
+}
 .topbarHolder .loginPanel .dropdownButton:after {
   content: "\f107";
   display: inline-block;
@@ -3011,7 +3014,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   color: #c6cfda;
 }
 .topbarHolder .loginPanel .loginList {
-  display: block;
+  display: none;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
   right: 0;
   top: 45px;
@@ -3125,7 +3128,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   padding-right: 1px;
 }
 .collapsed .sideMenu .root.opened {
-  height: 35px !important;
+  height: 40px !important;
 }
 .collapsed .sideMenu .root.opened > ul {
   display: none;
@@ -3145,8 +3148,16 @@ input:not([type="checkbox"]).inputBordered:focus {
 .collapsed .content_wrapper .top-bar {
   margin-left: 65px;
 }
-.collapsed .topbarHolder {
-  margin-left: 65px;
+.collapsed .topbarLogo {
+  width: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+.collapsed .topbarLogo .mainLogo {
+  display: none;
+}
+.collapsed .topbarLogo .sidebarToggler {
+  margin-left: 10px;
 }
 .btn {
   border: 1px solid #7f7f80;

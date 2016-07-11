@@ -546,7 +546,7 @@ input {
     position: relative;
     top: 15px;
     height: 17px;
-    width: 17px;
+    width: 19px;
     float: right;
     cursor: pointer;
     opacity: .75;
@@ -584,6 +584,12 @@ input {
       background-color: #3f4f62;
     }
 
+    &.open {
+      .loginList {
+        display: block;
+      }
+    }
+
     .dropdownButton {
 
       &:after {
@@ -614,14 +620,13 @@ input {
       color: #c6cfda;
     }
     .loginList {
-      display: block;
+      display: none;
       box-shadow: 5px 5px rgba(102, 102, 102, .1);
       right: 0;
       top: 45px;
       min-width: 120px;
       position: absolute;
       z-index: 1000;
-      //display: none;
       float: left;
       list-style: none;
       text-shadow: none;
