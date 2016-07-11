@@ -2498,9 +2498,11 @@ var Module = function (models, event) {
                     nextAction     : 1,
                     workflow       : 1,
                     projectType    : 1
+                    tags           : 1
                 })
                 .populate('customer', 'name')
                 .populate('salesPerson', 'name')
+                .populate('tags', 'color name')
                 .populate('workflow', '_id')
                 .sort({sequence: -1})
                 .limit(req.session.kanbanSettings.opportunities.countPerPage);
@@ -2553,11 +2555,13 @@ var Module = function (models, event) {
             source          : 1,
             social          : 1,
             skype           : 1,
+            tags            : 1,
             attachments     : 1
         });
 
         query
             .populate('company', 'name')
+            .populate('tags', 'name color')
             .populate('customer', 'name')
             .populate('salesPerson', 'name')
             .populate('workflow', 'name')
