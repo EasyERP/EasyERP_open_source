@@ -35,7 +35,7 @@ define([
             'click td.editable'    : 'editRow',
             'change .autoCalc'     : 'autoCalc',
             'change .editable'     : 'setEditable',
-            'keydown input.editing': 'keyDown',
+            'keydown input.editing': 'keyDown'
             // 'click #deleteBtn'     : 'deleteItems'
         },
 
@@ -175,6 +175,7 @@ define([
         },
 
         autoCalc: function (e) {
+            // e.preventDefault();
             var el = $(e.target);
             var td = $(el.closest('td'));
             var tr = el.closest('tr');
@@ -185,8 +186,8 @@ define([
             var total;
             var newTotal;
             var totalEl = this.$el.find('#total');
-            var payOld = editModel.changed.paidAmount ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
-            var diffOld = editModel.changed.differenceAmount ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
+            var payOld = (editModel.changed && editModel.changed.paidAmount) ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
+            var diffOld = (editModel.changed && editModel.changed.differenceAmount) ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
             var diffOnCash = tr.find('.differenceAmount[data-content="onCash"]');
             var value;
             var tdForUpdate;
@@ -249,7 +250,7 @@ define([
                     payTD.text(pay);
                     calcTD.attr('data-cash', calc);
 
-                    tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
+                    tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value.toFixed(2)));
 
                     changedAttr = this.changedModels[editedElementRowId];
 
