@@ -150,8 +150,10 @@ define([
             var currency = this.$el.find('#currencyDd').attr('data-id');
             var paymentMethod = this.$el.find('#paymentMethod').attr('data-id');
             var journal = this.$el.find('#journal').attr('data-id') || null;
+            var date = helpers.setTimeToDate(new Date(this.$el.find('#dateOfPayment').val()));
 
             for (i = editCollectionJSON.length - 1; i >= 0; i--) {
+                editCollectionJSON[i].date = date;
                 editCollectionJSON[i].currency = currency;
                 editCollectionJSON[i].paymentMethod = paymentMethod;
                 editCollectionJSON[i].journal = journal;
