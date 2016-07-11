@@ -13,10 +13,17 @@
             <div class="clearfix">
             </div>
         </div>
-        <div id="worflowProgress">
+        <div id="workflowProgress" class="workflowProgress">
 
         </div>
         <div class="inner">
+            <div class="formTitle">
+                <h3>About </h3>
+
+                <div class="clearfix">
+                </div>
+            </div>
+
             <div class="half-block left">
                 <dl class="person-info">
                     <dt>Email</dt>
@@ -53,38 +60,19 @@
                 <dl class="person-info">
                     <dt>Customer Name</dt>
                     <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
-                    <dt>Address :</dt>
+                    <dt>Address </dt>
+                    <dt>Street :</dt>
                     <dd><span><%=address.street%></span></dd>
-                    <dt>&nbsp;</dt>
+                    <dt>City :</dt>
                     <dd><span><%=address.city%></span></dd>
-                    <dt>&nbsp;</dt>
+                    <dt>State :</dt>
                     <dd><span><%=address.state%></span></dd>
-                    <dt>&nbsp;</dt>
+                    <dt>Zip :</dt>
                     <dd><span><%=address.zip%></span></dd>
-                    <dt>&nbsp;</dt>
+                    <dt>Country: </dt>
                     <dd><span><%=address.country%></span></dd>
                     <dt>Contact Name</dt>
                     <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
-                    <dt>Function</dt>
-                    <dd><span><%=func%></span></dd>
-                    <dt>Mobile</dt>
-                    <dd><span><%=phones.mobile%></span></dd>
-                    <dt>
-                    <h4>Mailings</h4></dt>
-                    <dd>&nbsp;</dd>
-                    <dt>Opt-Out</dt>
-                    <dd class="withCheckbox"><input type="checkbox" <%= (optout)? checked='checked':''%> id="optout" />
-                    </dd>
-                    <dt>
-                    <h4>Misc</h4></dt>
-                    <dd>&nbsp;</dd>
-                    <dt>Active</dt>
-                    <dd class="withCheckbox"><input type="checkbox" <%= (active)? checked='checked':''%> id="active" />
-                    </dd>
-                    <dt>Days To Open</dt>
-                    <dd><span>0.00</span></dd>
-                    <dt>Days To Close</dt>
-                    <dd><span>0.00</span></dd>
                 </dl>
             </div>
             <div class="half-block left">

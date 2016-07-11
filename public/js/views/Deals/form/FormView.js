@@ -24,7 +24,7 @@ define([
 
             dataService.getData('/workflows/', {id: 'Deals'}, function (response){
                 self.responseObj = {workflows : response.data};
-                self.$el.find('#worflowProgress').append(_.template(workflowProgress, {workflows : self.responseObj.workflows, workflow : formModel.workflow  }));
+                self.$el.find('#workflowProgress').append(_.template(workflowProgress, {workflows : self.responseObj.workflows, workflow : formModel.workflow  }));
 
             });
 
