@@ -2639,7 +2639,7 @@ h2.green {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 .loginForgot {
   color: #a4aab2;
@@ -4078,6 +4078,142 @@ li.fired {
 }
 .H {
   background-color: #696969;
+}
+.flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.flex #productTree {
+  padding-top: 30px;
+  flex: 0 0 300px;
+  border-right: 1px solid #ddd;
+}
+.flex #productTree ul li {
+  position: relative;
+}
+.flex #productTree ul .content {
+  padding-left: 24px;
+}
+.flex #productTree ul .expand {
+  left: 4px;
+}
+.flex #productTree ul ul .content {
+  padding-left: 44px;
+}
+.flex #productTree ul ul .expand {
+  left: 24px;
+}
+.flex #productTree ul ul ul .content {
+  padding-left: 64px;
+}
+.flex #productTree ul ul ul .expand {
+  left: 44px;
+}
+.flex #productTree ul ul ul ul .content {
+  padding-left: 74px;
+}
+.flex #productTree ul ul ul ul .expand {
+  left: 64px;
+}
+.flex #productTree ul ul ul ul ul .content {
+  padding-left: 104px;
+}
+.flex #productTree ul ul ul ul ul .expand {
+  left: 84px;
+}
+.flex #productTree ul ul ul ul ul ul .content {
+  padding-left: 124px;
+}
+.flex #productTree ul ul ul ul ul ul .expand {
+  left: 104px;
+}
+.flex #productTree .action-btn {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  -webkit-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+}
+.flex #productTree .action-btn span {
+  vertical-align: middle;
+  cursor: pointer;
+  color: #666666;
+  font-size: 16px;
+}
+.flex #productTree .action-btn span:before {
+  font-size: 16px;
+}
+.flex #productTree span.content {
+  position: relative;
+  display: block;
+  padding: 5px 40px 5px 24px;
+  line-height: 16px;
+}
+.flex #productTree span.content:hover {
+  cursor: pointer;
+  background-color: #E5EBFB;
+}
+.flex #productTree span.content.selected {
+  background-color: #E5EBFB;
+}
+.flex #productTree span.content .text {
+  font-size: 16px;
+  line-height: 20px;
+}
+.flex #productTree span.content:hover .action-btn {
+  display: block;
+}
+.flex #productTree .expand {
+  position: absolute;
+  top: 7px;
+  left: 4px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #7f7f80;
+  font-size: 14px;
+  padding: 2px;
+  line-height: 9px;
+  text-decoration: none !important;
+  box-sizing: border-box;
+  text-align: center;
+}
+.flex .addProduct {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.flex .addProduct a {
+  border: 1px solid #7f7f80;
+  margin: 5px 12px 2px 5px;
+  padding: 0 5px;
+  text-align: center;
+  cursor: pointer;
+  vertical-align: baseline;
+  color: #666666;
+  line-height: 30px;
+  font-size: 14px;
+  font-family: Title;
+}
+.flex .addProduct a:before {
+  font-size: 16px;
+  padding-right: 10px;
+  font-family: FontAwesome;
+}
+.flex .addProduct a:hover {
+  text-decoration: none;
+}
+.flex #thumbnailContent {
+  padding-top: 30px;
+}
+.flex #productContent {
+  webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
 }
 /*------------------------Constants-----------------------------*/
 .spinner {
