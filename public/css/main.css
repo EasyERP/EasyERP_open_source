@@ -2501,6 +2501,36 @@ body {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
 }
+.settings_modal .check_wrap {
+  float: left;
+  width: 20px;
+}
+.settings_modal .setting_element {
+  margin-bottom: 25px;
+}
+.settings_modal .setting_element .fa {
+  color: #000000;
+  text-decoration: none;
+  vertical-align: top;
+}
+.settings_modal .setting_element .fa,
+.settings_modal .setting_element .selected {
+  line-height: 30px;
+}
+.settings_modal .setting_element .setting_title {
+  display: inline-block;
+}
+.settings_modal .setting_element .selected {
+  vertical-align: top;
+  padding-left: 15px;
+}
+.settings_modal .settings_list .content {
+  margin: 0;
+  border-width: 0 0 1px 0 !important;
+}
+.settings_modal .resultFormula {
+  text-align: center;
+}
 .sliderWrap,
 .sliderContainer {
   height: 100vh;
@@ -3574,6 +3604,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
+  overflow: hidden;
   color: #000000;
   line-height: 23px;
   font-size: 13px;
@@ -3662,6 +3693,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
+  overflow: hidden;
   color: #000000;
   line-height: 23px;
   font-size: 13px;
@@ -5276,6 +5308,318 @@ dl dd span.ui-spinner {
   text-overflow: ellipsis;
   color: #000000;
 }
+.form h3 {
+  margin-bottom: 10px;
+  display: block;
+  color: #000000;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form h3 span {
+  padding: 0;
+  width: 99%;
+  display: block;
+  float: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .mainInfo {
+  margin-left: 156px;
+  width: auto;
+  display: block;
+}
+.form .mainInfo h3 {
+  color: #000000;
+  font-size: 24px;
+  line-height: 30px;
+  min-height: 24px;
+  font: 'Open Sans Regular', sans-serif, Verdana;
+}
+.form .mainInfo p {
+  height: 20px !important;
+  line-height: 20px !important;
+  min-height: 20px !important;
+}
+.form .details {
+  border: 1px solid #7f7f80;
+  background: #cecece;
+  padding: 2px 3px;
+  line-height: 5px;
+  text-align: center;
+  color: #999;
+  cursor: pointer;
+  width: 12px;
+  height: 6px;
+}
+.form .details.center {
+  margin: 0 auto;
+}
+.form .details.person {
+  margin-top: -30px;
+  margin-right: -15px;
+  z-index: 100;
+  position: relative;
+}
+.form #details {
+  display: none;
+}
+.form .details-box {
+  display: none;
+}
+.form .social {
+  clear: both;
+}
+.form .social a {
+  display: block;
+  height: 28px;
+  width: 28px;
+  float: left;
+  margin-right: 5px;
+  background-position: top;
+  -webkit-transition: background-position 0.1s ease-in;
+  -moz-transition: background-position 0.1s ease-in;
+  -o-transition: background-position 0.1s ease-in;
+  transition: background-position 0.1s ease-in;
+}
+.form .social a:hover {
+  background-position: bottom;
+}
+.form .social .facebook {
+  background: url("../images/facebook.png");
+}
+.form .social .linkedin {
+  background: url("../images/linkedin.png");
+}
+.form .social .skype {
+  background: url("../images/skype.png");
+}
+.form .avatar {
+  display: block;
+  overflow: hidden;
+  width: 140px;
+  height: 140px;
+  margin: 10px 0 10px 0;
+  float: left;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+  border: none;
+}
+.form .avatar img {
+  height: auto;
+  width: 100%;
+}
+.form .avatar canvas {
+  height: auto;
+  width: 100%;
+}
+.form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 20px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 20px;
+}
+.form .inner .half-block textarea {
+  width: 99%;
+  resize: none;
+  padding: 10px 5px;
+}
+.form > #tabList li {
+  float: left;
+  margin: 0 2px 5px 0;
+}
+.form h2 {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 24px !important;
+  margin-bottom: 12px;
+}
+.form h2:first-of-type {
+  font-size: 26px;
+  color: #000000;
+  margin: 0 0 8px;
+}
+.form p {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 13px;
+  line-height: 30px;
+  min-height: 30px;
+}
+.form p label {
+  margin-bottom: 2px;
+}
+.form p input {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.form p select {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.form span#saveSpan a,
+.form span#cancelSpan a,
+.form span#editSpan a {
+  margin-left: 5px;
+  width: 16px;
+  height: 20px;
+  font-size: 16px;
+  background: no-repeat 0 50%;
+  margin-right: 5px;
+  font-family: Icons;
+}
+.form span#saveSpan i,
+.form span#cancelSpan i,
+.form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.form #cancelSpan a,
+.form #saveSpan a,
+.form #editSpan a {
+  color: #3e88b9;
+}
+.form label {
+  display: block;
+  float: left;
+  width: 90%;
+  height: 30px;
+  line-height: 26px;
+  color: #000000;
+}
+.form input {
+  margin: 2px 2px 2px 0;
+}
+.form textarea {
+  width: 99%;
+  min-height: 160px;
+  resize: none;
+}
+.form .job-create-info textarea {
+  width: 99%;
+  height: 160px;
+  resize: none;
+  line-height: 20px;
+}
+.form #internalNotes {
+  resize: none;
+}
+.form #differenceAmount {
+  line-height: 26px;
+}
+.form.employee {
+  width: 100%;
+  max-width: 100%;
+}
+.form .compactList li {
+  border-bottom: 1px solid #7f7f80;
+}
+.form .compactList li.inner {
+  margin: 0 !important;
+  padding: 4px 10px;
+}
+.form .compactList li.inner:hover p {
+  color: #000000;
+}
+.form .compactList li p {
+  line-height: 20px !important;
+  min-height: 20px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .formTitle {
+  width: 100%;
+  border-bottom: 1px solid #7f7f80;
+}
+.form .formTitle.withMargin {
+  margin-bottom: 0;
+}
+.form .formTitle .btnHolder {
+  float: right;
+  height: 26px;
+}
+.form .formTitle .btnHolder .calculateTotal {
+  width: 50%;
+  text-align: right;
+}
+.form .formTitle .btnHolder .calculateTotal .totalAmount {
+  border-top: 1px solid grey;
+}
+.form .formTitle h3 {
+  color: #000000 !important;
+  margin: 0;
+  font-family: Title;
+  font-size: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 4px;
+}
+.form .formTitle h3 span {
+  width: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #000000;
+}
 .form .formTitle .area_holder {
   position: relative;
 }
@@ -5863,6 +6207,318 @@ dl dd span.ui-spinner {
   text-overflow: ellipsis;
   color: #000000;
 }
+.formLeftColumn .form h3 {
+  margin-bottom: 10px;
+  display: block;
+  color: #000000;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.formLeftColumn .form h3 span {
+  padding: 0;
+  width: 99%;
+  display: block;
+  float: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.formLeftColumn .form .mainInfo {
+  margin-left: 156px;
+  width: auto;
+  display: block;
+}
+.formLeftColumn .form .mainInfo h3 {
+  color: #000000;
+  font-size: 24px;
+  line-height: 30px;
+  min-height: 24px;
+  font: 'Open Sans Regular', sans-serif, Verdana;
+}
+.formLeftColumn .form .mainInfo p {
+  height: 20px !important;
+  line-height: 20px !important;
+  min-height: 20px !important;
+}
+.formLeftColumn .form .details {
+  border: 1px solid #7f7f80;
+  background: #cecece;
+  padding: 2px 3px;
+  line-height: 5px;
+  text-align: center;
+  color: #999;
+  cursor: pointer;
+  width: 12px;
+  height: 6px;
+}
+.formLeftColumn .form .details.center {
+  margin: 0 auto;
+}
+.formLeftColumn .form .details.person {
+  margin-top: -30px;
+  margin-right: -15px;
+  z-index: 100;
+  position: relative;
+}
+.formLeftColumn .form #details {
+  display: none;
+}
+.formLeftColumn .form .details-box {
+  display: none;
+}
+.formLeftColumn .form .social {
+  clear: both;
+}
+.formLeftColumn .form .social a {
+  display: block;
+  height: 28px;
+  width: 28px;
+  float: left;
+  margin-right: 5px;
+  background-position: top;
+  -webkit-transition: background-position 0.1s ease-in;
+  -moz-transition: background-position 0.1s ease-in;
+  -o-transition: background-position 0.1s ease-in;
+  transition: background-position 0.1s ease-in;
+}
+.formLeftColumn .form .social a:hover {
+  background-position: bottom;
+}
+.formLeftColumn .form .social .facebook {
+  background: url("../images/facebook.png");
+}
+.formLeftColumn .form .social .linkedin {
+  background: url("../images/linkedin.png");
+}
+.formLeftColumn .form .social .skype {
+  background: url("../images/skype.png");
+}
+.formLeftColumn .form .avatar {
+  display: block;
+  overflow: hidden;
+  width: 140px;
+  height: 140px;
+  margin: 10px 0 10px 0;
+  float: left;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+  border: none;
+}
+.formLeftColumn .form .avatar img {
+  height: auto;
+  width: 100%;
+}
+.formLeftColumn .form .avatar canvas {
+  height: auto;
+  width: 100%;
+}
+.formLeftColumn .form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.formLeftColumn .form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 20px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.formLeftColumn .form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.formLeftColumn .form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 20px;
+}
+.formLeftColumn .form .inner .half-block textarea {
+  width: 99%;
+  resize: none;
+  padding: 10px 5px;
+}
+.formLeftColumn .form > #tabList li {
+  float: left;
+  margin: 0 2px 5px 0;
+}
+.formLeftColumn .form h2 {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 24px !important;
+  margin-bottom: 12px;
+}
+.formLeftColumn .form h2:first-of-type {
+  font-size: 26px;
+  color: #000000;
+  margin: 0 0 8px;
+}
+.formLeftColumn .form p {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 13px;
+  line-height: 30px;
+  min-height: 30px;
+}
+.formLeftColumn .form p label {
+  margin-bottom: 2px;
+}
+.formLeftColumn .form p input {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.formLeftColumn .form p select {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.formLeftColumn .form span#saveSpan a,
+.formLeftColumn .form span#cancelSpan a,
+.formLeftColumn .form span#editSpan a {
+  margin-left: 5px;
+  width: 16px;
+  height: 20px;
+  font-size: 16px;
+  background: no-repeat 0 50%;
+  margin-right: 5px;
+  font-family: Icons;
+}
+.formLeftColumn .form span#saveSpan i,
+.formLeftColumn .form span#cancelSpan i,
+.formLeftColumn .form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.formLeftColumn .form #cancelSpan a,
+.formLeftColumn .form #saveSpan a,
+.formLeftColumn .form #editSpan a {
+  color: #3e88b9;
+}
+.formLeftColumn .form label {
+  display: block;
+  float: left;
+  width: 90%;
+  height: 30px;
+  line-height: 26px;
+  color: #000000;
+}
+.formLeftColumn .form input {
+  margin: 2px 2px 2px 0;
+}
+.formLeftColumn .form textarea {
+  width: 99%;
+  min-height: 160px;
+  resize: none;
+}
+.formLeftColumn .form .job-create-info textarea {
+  width: 99%;
+  height: 160px;
+  resize: none;
+  line-height: 20px;
+}
+.formLeftColumn .form #internalNotes {
+  resize: none;
+}
+.formLeftColumn .form #differenceAmount {
+  line-height: 26px;
+}
+.formLeftColumn .form.employee {
+  width: 100%;
+  max-width: 100%;
+}
+.formLeftColumn .form .compactList li {
+  border-bottom: 1px solid #7f7f80;
+}
+.formLeftColumn .form .compactList li.inner {
+  margin: 0 !important;
+  padding: 4px 10px;
+}
+.formLeftColumn .form .compactList li.inner:hover p {
+  color: #000000;
+}
+.formLeftColumn .form .compactList li p {
+  line-height: 20px !important;
+  min-height: 20px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.formLeftColumn .form .formTitle {
+  width: 100%;
+  border-bottom: 1px solid #7f7f80;
+}
+.formLeftColumn .form .formTitle.withMargin {
+  margin-bottom: 0;
+}
+.formLeftColumn .form .formTitle .btnHolder {
+  float: right;
+  height: 26px;
+}
+.formLeftColumn .form .formTitle .btnHolder .calculateTotal {
+  width: 50%;
+  text-align: right;
+}
+.formLeftColumn .form .formTitle .btnHolder .calculateTotal .totalAmount {
+  border-top: 1px solid grey;
+}
+.formLeftColumn .form .formTitle h3 {
+  color: #000000 !important;
+  margin: 0;
+  font-family: Title;
+  font-size: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 4px;
+}
+.formLeftColumn .form .formTitle h3 span {
+  width: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #000000;
+}
 .formLeftColumn .form .formTitle .area_holder {
   position: relative;
 }
@@ -6145,6 +6801,318 @@ dl dd span.ui-spinner {
   position: relative;
   border: 0 solid #7f7f80;
   margin-bottom: 10px;
+}
+.formRightColumn .form #internalNotes {
+  resize: none;
+}
+.formRightColumn .form #differenceAmount {
+  line-height: 26px;
+}
+.formRightColumn .form.employee {
+  width: 100%;
+  max-width: 100%;
+}
+.formRightColumn .form .compactList li {
+  border-bottom: 1px solid #7f7f80;
+}
+.formRightColumn .form .compactList li.inner {
+  margin: 0 !important;
+  padding: 4px 10px;
+}
+.formRightColumn .form .compactList li.inner:hover p {
+  color: #000000;
+}
+.formRightColumn .form .compactList li p {
+  line-height: 20px !important;
+  min-height: 20px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.formRightColumn .form .formTitle {
+  width: 100%;
+  border-bottom: 1px solid #7f7f80;
+}
+.formRightColumn .form .formTitle.withMargin {
+  margin-bottom: 0;
+}
+.formRightColumn .form .formTitle .btnHolder {
+  float: right;
+  height: 26px;
+}
+.formRightColumn .form .formTitle .btnHolder .calculateTotal {
+  width: 50%;
+  text-align: right;
+}
+.formRightColumn .form .formTitle .btnHolder .calculateTotal .totalAmount {
+  border-top: 1px solid grey;
+}
+.formRightColumn .form .formTitle h3 {
+  color: #000000 !important;
+  margin: 0;
+  font-family: Title;
+  font-size: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 4px;
+}
+.formRightColumn .form .formTitle h3 span {
+  width: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #000000;
+}
+.formRightColumn .form h3 {
+  margin-bottom: 10px;
+  display: block;
+  color: #000000;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.formRightColumn .form h3 span {
+  padding: 0;
+  width: 99%;
+  display: block;
+  float: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.formRightColumn .form .mainInfo {
+  margin-left: 156px;
+  width: auto;
+  display: block;
+}
+.formRightColumn .form .mainInfo h3 {
+  color: #000000;
+  font-size: 24px;
+  line-height: 30px;
+  min-height: 24px;
+  font: 'Open Sans Regular', sans-serif, Verdana;
+}
+.formRightColumn .form .mainInfo p {
+  height: 20px !important;
+  line-height: 20px !important;
+  min-height: 20px !important;
+}
+.formRightColumn .form .details {
+  border: 1px solid #7f7f80;
+  background: #cecece;
+  padding: 2px 3px;
+  line-height: 5px;
+  text-align: center;
+  color: #999;
+  cursor: pointer;
+  width: 12px;
+  height: 6px;
+}
+.formRightColumn .form .details.center {
+  margin: 0 auto;
+}
+.formRightColumn .form .details.person {
+  margin-top: -30px;
+  margin-right: -15px;
+  z-index: 100;
+  position: relative;
+}
+.formRightColumn .form #details {
+  display: none;
+}
+.formRightColumn .form .details-box {
+  display: none;
+}
+.formRightColumn .form .social {
+  clear: both;
+}
+.formRightColumn .form .social a {
+  display: block;
+  height: 28px;
+  width: 28px;
+  float: left;
+  margin-right: 5px;
+  background-position: top;
+  -webkit-transition: background-position 0.1s ease-in;
+  -moz-transition: background-position 0.1s ease-in;
+  -o-transition: background-position 0.1s ease-in;
+  transition: background-position 0.1s ease-in;
+}
+.formRightColumn .form .social a:hover {
+  background-position: bottom;
+}
+.formRightColumn .form .social .facebook {
+  background: url("../images/facebook.png");
+}
+.formRightColumn .form .social .linkedin {
+  background: url("../images/linkedin.png");
+}
+.formRightColumn .form .social .skype {
+  background: url("../images/skype.png");
+}
+.formRightColumn .form .avatar {
+  display: block;
+  overflow: hidden;
+  width: 140px;
+  height: 140px;
+  margin: 10px 0 10px 0;
+  float: left;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+  border: none;
+}
+.formRightColumn .form .avatar img {
+  height: auto;
+  width: 100%;
+}
+.formRightColumn .form .avatar canvas {
+  height: auto;
+  width: 100%;
+}
+.formRightColumn .form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.formRightColumn .form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 20px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.formRightColumn .form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.formRightColumn .form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 20px;
+}
+.formRightColumn .form .inner .half-block textarea {
+  width: 99%;
+  resize: none;
+  padding: 10px 5px;
+}
+.formRightColumn .form > #tabList li {
+  float: left;
+  margin: 0 2px 5px 0;
+}
+.formRightColumn .form h2 {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 24px !important;
+  margin-bottom: 12px;
+}
+.formRightColumn .form h2:first-of-type {
+  font-size: 26px;
+  color: #000000;
+  margin: 0 0 8px;
+}
+.formRightColumn .form p {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 13px;
+  line-height: 30px;
+  min-height: 30px;
+}
+.formRightColumn .form p label {
+  margin-bottom: 2px;
+}
+.formRightColumn .form p input {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.formRightColumn .form p select {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.formRightColumn .form span#saveSpan a,
+.formRightColumn .form span#cancelSpan a,
+.formRightColumn .form span#editSpan a {
+  margin-left: 5px;
+  width: 16px;
+  height: 20px;
+  font-size: 16px;
+  background: no-repeat 0 50%;
+  margin-right: 5px;
+  font-family: Icons;
+}
+.formRightColumn .form span#saveSpan i,
+.formRightColumn .form span#cancelSpan i,
+.formRightColumn .form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.formRightColumn .form #cancelSpan a,
+.formRightColumn .form #saveSpan a,
+.formRightColumn .form #editSpan a {
+  color: #3e88b9;
+}
+.formRightColumn .form label {
+  display: block;
+  float: left;
+  width: 90%;
+  height: 30px;
+  line-height: 26px;
+  color: #000000;
+}
+.formRightColumn .form input {
+  margin: 2px 2px 2px 0;
+}
+.formRightColumn .form textarea {
+  width: 99%;
+  min-height: 160px;
+  resize: none;
+}
+.formRightColumn .form .job-create-info textarea {
+  width: 99%;
+  height: 160px;
+  resize: none;
+  line-height: 20px;
 }
 .formRightColumn .form #internalNotes {
   resize: none;
@@ -8760,6 +9728,7 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
+  overflow: hidden;
   color: #000000;
   line-height: 23px;
   font-size: 13px;
@@ -9132,6 +10101,460 @@ ul.dialog-tabs li.right button {
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
+}
+.ui-dialog .ui-widget-content {
+  border: none;
+}
+.ui-dialog .ui-widget-content a {
+  color: #3e88b9;
+}
+.ui-dialog .avatar {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 5px 5px 5px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #7f7f80;
+}
+.ui-dialog .avatar img {
+  height: auto;
+  width: 100%;
+}
+.ui-dialog .avatar canvas {
+  height: auto;
+  width: 100%;
+}
+.ui-dialog .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.ui-dialog .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 20px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.ui-dialog .ui-dialog-content {
+  position: relative;
+  border: 0;
+  padding: .5em 1em;
+  background: 0;
+}
+.ui-dialog .ui-dialog-buttonpane {
+  margin-top: 30px !important;
+}
+.ui-dialog .ui-dialog-titlebar {
+  display: none;
+}
+.ui-dialog .app-block {
+  width: 42%;
+  margin-right: 5%;
+}
+.ui-dialog .app-block.withPaddingRightProject .inner {
+  padding-top: 5px;
+  padding-left: 8px;
+  padding-right: 0;
+}
+.ui-dialog .app-block.withPaddingLeftProject .inner {
+  padding-left: 0;
+}
+.ui-dialog .app-block.projectNote {
+  width: 45%;
+  padding-right: 4%;
+}
+.ui-dialog .app-block.projectNote .noteWrapper {
+  width: 100%;
+}
+.ui-dialog .app-block.projectNote #noteArea {
+  width: 100%;
+}
+.ui-dialog .app-block.taskNote {
+  width: 45%;
+  padding-right: 4%;
+}
+.ui-dialog .app-block.taskNote .noteWrapper {
+  width: 95%;
+}
+.ui-dialog .app-block.taskNote #noteArea {
+  width: 100%;
+}
+.ui-dialog .app-block + .half-block {
+  margin-right: 0;
+}
+.ui-dialog textarea {
+  padding: 0;
+  margin: 0;
+  width: 95%;
+  resize: none;
+}
+.ui-dialog textarea#description {
+  margin-top: 0 !important;
+}
+.ui-dialog textarea#description.taskDescription {
+  height: 310px;
+}
+.ui-dialog textarea#description.projectDescription {
+  height: 225px;
+  margin-top: 5px !important;
+}
+.ui-dialog textarea#description.projectDescriptionEdit {
+  width: 98%;
+  height: 265px;
+}
+.ui-dialog textarea#description.taskDescriptionCreate {
+  height: 205px;
+  margin-top: 8px !important;
+  margin-left: 1px;
+  width: 100%;
+}
+.ui-dialog textarea#description.taskDescriptionEdit {
+  height: 188px;
+  margin-top: 8px !important;
+  margin-left: 1px;
+  width: 100%;
+}
+.ui-dialog textarea#description.projectDescriptionCreate {
+  height: 230px;
+}
+.ui-dialog textarea#otherInfo {
+  margin-top: 13px;
+  width: 300px;
+  height: 193px;
+  min-height: initial;
+  max-width: 300px;
+}
+.ui-dialog .inner {
+  padding: 5px;
+  background: #ffffff;
+}
+.ui-dialog .form-holder {
+  position: relative;
+  padding: .5em 1em;
+  clear: both;
+}
+.ui-dialog .form-holder.task-create-holder {
+  margin-bottom: -17px;
+}
+.ui-dialog .app-empty-info {
+  clear: both;
+  font-size: 14px;
+  margin-top: -3px;
+}
+.ui-dialog .app-empty-info dt {
+  padding: 1px;
+  margin: -1px;
+  width: 100%;
+  max-width: 200px;
+  float: left;
+  clear: both;
+  line-height: 0;
+  min-height: 16px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ui-dialog .app-empty-info dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.ui-dialog .app-empty-info dt:first-child {
+  margin-top: 0;
+}
+.ui-dialog .app-empty-info dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 0;
+  min-height: 16px;
+  float: left;
+  width: 0%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ui-dialog .app-empty-info dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.ui-dialog .app-empty-info dd:nth-child(2) {
+  margin-top: 0;
+}
+.ui-dialog .app-empty-info dd input:not([type='checkbox']) {
+  width: 100%;
+}
+.ui-dialog .app-empty-info dd input.pikerSize {
+  width: 137px;
+}
+.ui-dialog .app-empty-info dd a.formLink {
+  line-height: 0;
+}
+.ui-dialog .app-empty-info dd span.ui-spinner {
+  width: 100%;
+}
+.ui-dialog .app-empty-info dd {
+  display: none;
+}
+.ui-dialog .app-empty-info dt {
+  margin-top: 11px;
+}
+.ui-dialog .app-empty-info dt input {
+  width: 95% !important;
+}
+.ui-dialog .person-info-h3 {
+  width: auto;
+  clear: both;
+  font-size: 14px;
+  clear: none;
+}
+.ui-dialog .person-info-h3 dt {
+  padding: 1px;
+  margin: -1px;
+  width: 50%;
+  max-width: auto;
+  float: left;
+  clear: both;
+  line-height: 0;
+  min-height: 16px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ui-dialog .person-info-h3 dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.ui-dialog .person-info-h3 dt:first-child {
+  margin-top: 0;
+}
+.ui-dialog .person-info-h3 dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 0;
+  min-height: 16px;
+  float: left;
+  width: 50%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ui-dialog .person-info-h3 dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.ui-dialog .person-info-h3 dd:nth-child(2) {
+  margin-top: 0;
+}
+.ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
+  width: 100%;
+}
+.ui-dialog .person-info-h3 dd input.pikerSize {
+  width: 137px;
+}
+.ui-dialog .person-info-h3 dd a.formLink {
+  line-height: 0;
+}
+.ui-dialog .person-info-h3 dd span.ui-spinner {
+  width: 100%;
+}
+.ui-dialog .person-info-h3 dt,
+.ui-dialog .person-info-h3 dd {
+  clear: none;
+  margin-top: 0 !important;
+}
+.ui-dialog .person-info-h3 dt a,
+.ui-dialog .person-info-h3 dd a {
+  line-height: 22px;
+  margin-right: 3px;
+}
+.ui-dialog .person-info-h3 dt {
+  width: 90px;
+}
+.ui-dialog .person-info-h3 dd {
+  width: auto;
+}
+.ui-dialog .summary-info {
+  width: 50%;
+  clear: both;
+  font-size: 14px;
+  height: 30px;
+}
+.ui-dialog .summary-info dt {
+  padding: 1px;
+  margin: -1px;
+  width: 30%;
+  max-width: none;
+  float: left;
+  clear: both;
+  line-height: 0;
+  min-height: 16px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ui-dialog .summary-info dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.ui-dialog .summary-info dt:first-child {
+  margin-top: 0;
+}
+.ui-dialog .summary-info dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 0;
+  min-height: 16px;
+  float: left;
+  width: 70%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ui-dialog .summary-info dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.ui-dialog .summary-info dd:nth-child(2) {
+  margin-top: 0;
+}
+.ui-dialog .summary-info dd input:not([type='checkbox']) {
+  width: 100%;
+}
+.ui-dialog .summary-info dd input.pikerSize {
+  width: 137px;
+}
+.ui-dialog .summary-info dd a.formLink {
+  line-height: 0;
+}
+.ui-dialog .summary-info dd span.ui-spinner {
+  width: 100%;
+}
+.ui-dialog .summary-info #summary {
+  width: 89% !important;
+}
+.ui-dialog input {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  border: 1px solid #E2E9EF;
+  border-top: 1px solid #CBD3E2;
+  max-width: 280px;
+  height: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border: 1px solid #d7d7d7;
+  line-height: 20px;
+  background-color: transparent;
+  padding: 0 2px;
+  color: #000000;
+}
+.ui-dialog input:focus {
+  outline: medium none;
+  border: 1px solid #3e88b9;
+}
+.ui-dialog input#summary {
+  width: 100%;
+  max-width: none;
+}
+.ui-dialog input#summaryTask,
+.ui-dialog input#summaryEdit {
+  margin-top: 17px;
+  margin-bottom: 8px;
+  padding-left: 2px;
+  padding-right: 2px;
+  width: 544px;
+  max-width: none;
+}
+.ui-dialog input#summaryTask {
+  width: 544px;
+}
+.ui-dialog input#summaryEdit {
+  margin-top: 7px;
+}
+.ui-dialog .ui-dialog-buttonpane {
+  border: 1px solid #7f7f80;
+  background: #ffffff;
+  color: #000000;
+  text-align: left;
+  border-width: 1px 0 0;
+  background-image: none;
+  margin: 0 1em;
+  margin-top: .7em;
+  padding: .3em 1em .5em .4em;
+}
+.ui-dialog .ui-dialog-buttonpane:before {
+  content: "";
+  display: table;
+  border-collapse: collapse;
+}
+.ui-dialog .ui-dialog-buttonpane:after {
+  clear: both;
+  content: "";
+  display: table;
+  border-collapse: collapse;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+  text-align: center;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
+  margin: .5em .4em .5em 0;
+  line-height: normal;
+}
+.ui-dialog .ui-helper-clearfix:before,
+.ui-dialog .ui-helper-clearfix:after {
+  content: "";
+  display: table;
+  border-collapse: collapse;
+}
+.ui-dialog .ui-helper-clearfix:after {
+  clear: both;
+}
+.ui-dialog .ui-helper-clearfix {
+  min-height: 0;
+}
+.ui-dialog .ui-helper-zfix {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+.ui-dialog.task-edit-dialog .ui-dialog-buttonpane {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+.ui-dialog.task-edit-dialog .ui-dialog-buttonpane button {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 .ui-dialog .ui-widget-content {
   border: none;
@@ -13068,6 +14491,12 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
+}
+.text-left {
+  text-align: left !important;
+}
+.text-right {
+  text-align: right !important;
 }
 .bgRed {
   background-color: #eb5a46 !important;
