@@ -105,11 +105,11 @@ var Products = function (models) {
         var projection = query.projection || {};
         var key;
 
-        if (query && query.canBeSold) {
+        if (query && query.canBeSold === 'true') {
             queryObject.canBeSold = true;
 
             // todo change it for category
-            if (query.service) {
+            if (query.service === 'true') {
                 key = 'info.productType';
                 queryObject[key] = 'Service';
             }
