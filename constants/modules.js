@@ -48,7 +48,7 @@ module.exports = {
     DIVIDENDINVOICE   : 101,
     EXPENSESINVOICE   : 97,
     PROFORMA          : 99,
-    WRITEOFF          : 105,
     CASHBOOK          : 105,
-    CASHTRANSFER      : 106
+    CASHTRANSFER      : 106,
+    WRITEOFF          : 107
 };
