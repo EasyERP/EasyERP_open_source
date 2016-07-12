@@ -3361,11 +3361,33 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: calc(100% - 55px);
   overflow: auto;
 }
+.borderBottom {
+  border-bottom: 1px solid #7f7f80;
+}
+.cashBalance {
+  margin-left: 75px;
+  margin-right: 88px;
+}
+.form-holder form dd.cashBalanceRow {
+  width: 390px;
+}
+.form-holder form.createJournalForm {
+  margin-top: 25px;
+}
 .editEmployeeForm .tableResponsive {
   width: 926px;
 }
 .editEmployeeForm .ui-dialog-buttonset {
   margin-top: 15px;
+}
+dl.payrollDateBlock dd {
+  line-height: normal;
+}
+dl.payrollDateBlock dt {
+  margin-right: 15px;
+}
+.totalContainer .half-block {
+  width: 46%;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -3959,7 +3981,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   padding: 0;
 }
 .payRoll-list #payRoll-Table .datePicker {
-  padding: 0px;
+  padding: 0;
 }
 .payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
   outline: 1px solid #66b5d4 !important;
@@ -3989,7 +4011,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 @media (min-width: 1320px) {
   table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 190px);
+    height: calc(100vh - 290px);
   }
 }
 tr.redBorder {

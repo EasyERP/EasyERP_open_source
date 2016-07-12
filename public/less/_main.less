@@ -2156,10 +2156,15 @@ input::-ms-clear {
       dt, dd {
         line-height: 17px;
       }
-      dd.editable {
-        a {
-          line-height: 17px;
-          width: 100%;
+      dd {
+        &.editable {
+          a {
+            line-height: 17px;
+            width: 100%;
+          }
+        }
+        &.cashBalance {
+
         }
       }
       .no-long {
