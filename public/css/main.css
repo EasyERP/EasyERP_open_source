@@ -2646,7 +2646,7 @@ h2.green {
   color: #4e5a64;
   font-size: 30px;
   font-weight: 300;
-  font-family: 'Open Sans Light', sans-serif, Verdana;
+  font-family: 'Open Sans Light';
   white-space: nowrap;
 }
 .loginTitleBlock {
@@ -3333,13 +3333,17 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .opportunity-content .fa-comment-o,
 .opportunity-content .fa-paperclip {
-  color: #fff;
+  color: #2c3e50;
 }
-.opportunity-content .fa-paperclip {
+.opportunity-content .fa:nth-child(n+2) {
   margin-left: 10px;
 }
 .opportunity-content .projectType {
   color: #549ecf;
+}
+.commentWrap,
+.attachmentWrap {
+  color: #2c3e50;
 }
 .kanban .column .item .inner {
   padding: 5px 5px 8px;
@@ -3356,6 +3360,34 @@ input:not([type="checkbox"]).inputBordered:focus {
   height: calc(100% - 40px);
   width: calc(100% - 55px);
   overflow: auto;
+}
+.borderBottom {
+  border-bottom: 1px solid #7f7f80;
+}
+.cashBalance {
+  margin-left: 75px;
+  margin-right: 88px;
+}
+.form-holder form dd.cashBalanceRow {
+  width: 390px;
+}
+.form-holder form.createJournalForm {
+  margin-top: 25px;
+}
+.editEmployeeForm .tableResponsive {
+  width: 926px;
+}
+.editEmployeeForm .ui-dialog-buttonset {
+  margin-top: 15px;
+}
+dl.payrollDateBlock dd {
+  line-height: normal;
+}
+dl.payrollDateBlock dt {
+  margin-right: 15px;
+}
+.totalContainer .half-block {
+  width: 46%;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -3593,7 +3625,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   background-color: transparent;
 }
 .list2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   width: 100%;
   table-layout: fixed;
 }
@@ -3603,6 +3635,8 @@ input:not([type="checkbox"]).inputBordered:focus {
   padding: 0 6px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   color: #000000;
@@ -3692,6 +3726,8 @@ input:not([type="checkbox"]).inputBordered:focus {
   padding: 0 6px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   color: #000000;
@@ -3945,7 +3981,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   padding: 0;
 }
 .payRoll-list #payRoll-Table .datePicker {
-  padding: 0px;
+  padding: 0;
 }
 .payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
   outline: 1px solid #66b5d4 !important;
@@ -3975,7 +4011,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 @media (min-width: 1320px) {
   table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 190px);
+    height: calc(100vh - 290px);
   }
 }
 tr.redBorder {
@@ -4344,7 +4380,7 @@ textarea {
 span.error {
   color: #e55253 !important;
 }
-.kanban .item.errorContent .projectType {
+.kanban .item.errorContent .opportunity-date {
   color: #ff0000;
 }
 .red {
@@ -5132,7 +5168,7 @@ h3 {
   text-overflow: ellipsis;
 }
 body {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans Regular', 'Segoe UI', Helvetica, Verdana, sans-serif;
   font-size: 12px;
   height: 100%;
 }
@@ -5335,7 +5371,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -5484,7 +5520,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -5495,7 +5531,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -5657,7 +5693,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -5806,7 +5842,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -5817,7 +5853,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -6234,7 +6270,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .formLeftColumn .form .mainInfo p {
   height: 20px !important;
@@ -6383,7 +6419,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formLeftColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -6394,7 +6430,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -6556,7 +6592,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .formLeftColumn .form .mainInfo p {
   height: 20px !important;
@@ -6705,7 +6741,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formLeftColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -6716,7 +6752,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -6891,7 +6927,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .formRightColumn .form .mainInfo p {
   height: 20px !important;
@@ -7040,7 +7076,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formRightColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -7051,7 +7087,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -7213,7 +7249,7 @@ dl dd span.ui-spinner {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
+  font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 }
 .formRightColumn .form .mainInfo p {
   height: 20px !important;
@@ -7362,7 +7398,7 @@ dl dd span.ui-spinner {
   margin: 0 2px 5px 0;
 }
 .formRightColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -7373,7 +7409,7 @@ dl dd span.ui-spinner {
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -9056,7 +9092,7 @@ table#workflows tr td.edit-status {
   height: calc(100% - 40px);
   background-color: #364150;
   box-sizing: border-box;
-  font-family: 'Open Sans Light', sans-serif, Verdana;
+  font-family: 'Open Sans Light';
 }
 .sideMenu nav {
   width: 235px;
@@ -9621,7 +9657,7 @@ ul.dialog-tabs li.right button {
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   white-space: normal;
 }
 .thumbnailwithavatar h4 span,
@@ -9647,7 +9683,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .thumbnailwithavatar .inner .info p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #000;
   font-size: 12px;
   font-weight: 200 !important;
@@ -9718,7 +9754,7 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .list {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   width: 100%;
 }
 .list td,
@@ -9727,6 +9763,8 @@ ul.dialog-tabs li.right button {
   padding: 0 6px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   color: #000000;
@@ -9877,7 +9915,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
 }
 .thumbnail span {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   position: relative;
   color: #4c4c4c;
   font-size: 13px;
@@ -9902,7 +9940,7 @@ ul.dialog-tabs li.right button {
   text-decoration: underline;
 }
 .thumbnail p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #4c4c4c;
   font-size: 13px;
 }
@@ -9910,7 +9948,7 @@ ul.dialog-tabs li.right button {
   font-weight: normal !important;
 }
 .thumbnail h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   color: #4c4c4c;
   font-size: 13px;
   margin: 0 0 8px;
@@ -11278,7 +11316,6 @@ ul.dialog-tabs .withEndContract .arrow {
   -webkit-font-smoothing: antialiased;
   outline: none;
   background: #ffffff;
-  height: 15px;
   border-radius: 0;
   background-color: #8f1311;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#b13533), to(#8f1311));
@@ -11390,7 +11427,7 @@ ul.dialog-tabs .withEndContract .arrow {
   line-height: 20px;
   width: 8px;
   margin-left: -2px;
-  height: 17px;
+  min-height: 17px;
   display: block;
 }
 .dialog-tabs-items {
@@ -11727,7 +11764,7 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .legend-box {
   border: 1px solid #7f7f80;
-  width: 555px;
+  width: 525px;
   margin: 0 auto;
   color: #000000;
 }
@@ -11743,14 +11780,6 @@ ul.chart-tabs .withEndContract .arrow {
   display: table;
 }
 .legend-box.small:after {
-  clear: both;
-}
-.legend-box:before,
-.legend-box:after {
-  content: '';
-  display: table;
-}
-.legend-box:after {
   clear: both;
 }
 .legend-box div {
@@ -14014,7 +14043,7 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
   padding: 5px 25px;
   position: absolute;
   z-index: 10;
