@@ -1,3 +1,5 @@
+@tree-item-bg: #E5EBFB;
+
 .flex {
   display: -webkit-box;
   display: -webkit-flex;
@@ -5,10 +7,11 @@
   display: flex;
 
   #productTree {
-    padding-top: 30px;
-    //padding-right: 10px;
-    flex: 0 0 300px;
+    margin-top: 30px;
     border-right: 1px solid #ddd;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 250px;
+            flex: 0 0 250px;
 
     ul li {
       position: relative;
@@ -43,7 +46,7 @@
 
           ul {
             .content {
-              padding-left: 74px;
+              padding-left: 84px;
             }
 
             .expand {
@@ -80,8 +83,8 @@
       top: 50%;
       right: 5px;
       -webkit-transform: translate(0, -50%);
-      -ms-transform: translate(0, -50%);
-      transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
 
       span {
         vertical-align: middle;
@@ -99,17 +102,16 @@
       position: relative;
       display: block;
       padding: 5px 40px 5px 24px;
-
-      //margin-bottom: 5px;
       line-height: 16px;
+      border-bottom: 1px dotted @tree-item-bg;
 
       &:hover {
         cursor: pointer;
-         background-color: #E5EBFB;
+         background-color: @tree-item-bg;
       }
 
       &.selected {
-        background-color: #E5EBFB;
+        background-color: @tree-item-bg;
       }
 
       .text {
@@ -147,13 +149,13 @@
 
     a {
       border: 1px solid @border-color;
-      margin: 5px 12px 2px 5px;
+      margin: 0 12px 0 5px;
       padding: 0 5px;
       text-align: center;
       cursor: pointer;
       vertical-align: baseline;
       color: @top-font-color;
-      line-height: 30px;
+      line-height: 28px;
       font-size: 14px;
       font-family: Title;
 
@@ -170,7 +172,73 @@
   }
 
   #thumbnailContent {
-    padding-top: 30px;
+    padding: 35px 0 4px 12px;
+
+    box-sizing: border-box;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-flow: row wrap;
+        flex-flow: row wrap;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-line-pack: stretch;
+        align-content: stretch;
+
+    &:before,
+    &:after {
+      content: " ";
+      display: table;
+    }
+    &:after {
+      clear: both;
+    }
+
+    .thumbnail {
+      &.product {
+        position: relative;
+        -webkit-box-flex: 1;
+            -ms-flex: 1 1 200px;
+                flex: 1 1 200px;
+        box-sizing: border-box;
+        padding: 8px;
+        min-width: 150px;
+        margin: 4px;
+        background-color: white;
+
+        // reset default style for .thumbnail / removed during refactor, if there is no need
+        float: none;
+        display: block;
+        width: auto;
+        min-height: initial;
+
+        .inner {
+          float: left;
+          width: 50px;
+
+          // reset default style for .thumbnail / removed during refactor, if there is no need
+          padding: 0;
+
+          img {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+          }
+
+          .avater {
+            border: 1px solid @border-color-main;
+          }
+        }
+
+        .info {
+          word-break: break-all;
+          padding-left: 55px;
+        }
+      }
+    }
   }
 
   #productContent {
