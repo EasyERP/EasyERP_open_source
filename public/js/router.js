@@ -56,6 +56,12 @@ define([
 
             $('.loginPanel').removeClass('open');
         });
+
+        $('#wrapper').on('click', function () {
+            $('.loginPanel').removeClass('open');
+        });
+
+
     };
     var appRouter = Backbone.Router.extend({
 

@@ -21,12 +21,12 @@ define([
 
         events: {
             'click .sidebarToggler': 'expandCollapse',
-            'click .loginPanel'    : 'openLogin'
+            'click #loginPanel'    : 'openLogin'
         },
 
         expandCollapse: function () {
             $('#wrapper').toggleClass('collapsed');
-            $('.loginPanel').removeClass('open');
+
         },
 
         openLogin: function (e) {
@@ -122,7 +122,7 @@ define([
                         }
                     } else {
                         $('#loginPanel .iconEmployee').attr('src', currentUser.imageSrc);
-                        $('#loginPanel  #userName').text(currentUser.login);
+                        $('#loginPanel  .userName').text(currentUser.login);
                     }
                 }, this);
 
@@ -131,7 +131,7 @@ define([
                 this.$el.html(_.template(MainTemplate));
 
                 icon = $('#loginPanel .iconEmployee');
-                log = $('#loginPanel  #userName');
+                log = $('#loginPanel  .userName');
 
                 if (App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName === 'baned') {
                     $('title').text('EasyERP');
