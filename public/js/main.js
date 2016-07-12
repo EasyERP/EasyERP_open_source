@@ -27,7 +27,6 @@ require.config({
         common       : 'common',
         helpers      : 'helpers',
         constants    : 'constants',
-        constantsDir : './constants',
         dateFormat   : './libs/date.format',
         d3           : './libs/d3.v3.min',
         topojson     : './libs/topojson.v0.min/index',

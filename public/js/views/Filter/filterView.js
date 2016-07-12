@@ -10,7 +10,7 @@ define([
     'collections/Filter/filterCollection',
     'custom',
     'common',
-    'constantsDir/filters',
+    'constants/filters',
     'async'
 ], function (Backbone, _, $, ContentFilterTemplate,
              searchGroupLiTemplate, FilterIconElement, valuesView,
