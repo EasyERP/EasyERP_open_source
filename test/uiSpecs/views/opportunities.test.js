@@ -21,7 +21,7 @@ define([
     'chai-jquery',
     'sinon-chai',
     'testConstants/currentUser',
-    'constantsDir/filters'
+    'constants/filters'
 ], function (Backbone,
              _,
              modules,
