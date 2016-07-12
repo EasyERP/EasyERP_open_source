@@ -2907,12 +2907,12 @@ dl {
   box-sizing: border-box;
 
   #content-holder {
-    height: auto;
-    display: block;
-    background: inherit;
-    clear: both;
     position: relative;
+    height: calc(~"100% - 40px");
+    display: block;
     padding: 0 5px;
+    clear: both;
+    background: inherit;
   }
 }
 
@@ -3806,7 +3806,7 @@ table#workflows {
 }
 
 .dashBoardVocationSearch {
-  margin-top: 4px !important; /*only for DashBoard vocation*/
+  margin-top: 7px !important; /*only for DashBoard vocation*/
 }
 
 .projectInfoTopBar {
@@ -3830,7 +3830,7 @@ table#workflows {
     cursor: pointer;
     vertical-align: baseline;
     color: @top-font-color;
-    line-height: 30px; //it was 18px
+    line-height: 40px; //it was 18px
 
     &:hover {
       color: @top-font-color + #333;
@@ -4206,11 +4206,14 @@ ul.chart-tabs {
 .legend-box {
   border: @thin-border @border-color-main;
   width: 525px;
-  margin: -39px auto 0;
+  margin: 0 auto;
   color: @mainText-color;
 
   &.small {
     width: 265px;
+    height: 26px;
+    line-height: 26px;
+    margin-top: 0!important;
 
     &:before,&:after {
       content: '';

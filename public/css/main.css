@@ -780,32 +780,32 @@
 @font-face {
   font-family: 'Open Sans ExtraBold';
   font-style: normal;
-  font-weight: 300;
-  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-extrabold-webfont.woff) format('woff');
+  font-weight: 800;
+  src: local('Open Sans ExtraBold'), local('opensans-extrabold'), url(../font/opensans-extrabold.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans Bold';
   font-style: normal;
-  font-weight: 300;
-  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-bold-webfont.woff) format('woff');
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('opensans-bold'), url(../font/opensans-bold.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans SemiBold';
   font-style: normal;
-  font-weight: 300;
-  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-semibold-webfont.woff) format('woff');
+  font-weight: 600;
+  src: local('Open Sans SemiBold'), local('opensans-semibold'), url(../font/opensans-semibold.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans Regular';
   font-style: normal;
-  font-weight: 300;
-  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-regular-webfont.woff) format('woff');
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('opensans-regular'), url(../font/opensans-regular.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans Light';
   font-style: normal;
   font-weight: 300;
-  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/opensans-light-webfont.woff) format('woff');
+  src: local('Open Sans Light'), local('opensans-light'), url(../font/opensans-light.woff) format('woff');
 }
 html {
   font-family: sans-serif;
@@ -2925,7 +2925,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   text-decoration: none;
 }
 .mainLogo span {
-  color: #FF3F3F;
+  color: #7eadcc;
 }
 .topbarHolder {
   position: fixed;
@@ -3314,6 +3314,19 @@ input:not([type="checkbox"]).inputBordered:focus {
 .kanban .column .item .inner {
   padding: 5px 5px 8px;
 }
+.graphicControlls:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.content-holder .grid-conatiner.revenue {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: calc(100% - 40px);
+  width: calc(100% - 55px);
+  overflow: auto;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
@@ -3534,6 +3547,10 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: 100%;
   overflow-y: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+.tableResponsiveNew {
+  min-height: .01%;
+  width: 100%;
 }
 #loading {
   position: fixed;
@@ -3778,16 +3795,17 @@ input:not([type="checkbox"]).inputBordered:focus {
   margin-right: -100%;
 }
 .content_wrapper {
-  width: 100%;
-  display: block;
-  float: left;
-  padding-top: 50px;
+  height: calc(100% - 40px);
+  margin-top: 40px;
 }
 .content_wrapper .content-holder {
   margin-left: 235px;
 }
 .content_wrapper .top-bar {
   margin-left: 235px;
+}
+.template-switcher {
+  margin-top: 10px;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -6666,12 +6684,12 @@ dl dd span.ui-spinner {
   clear: both;
 }
 #wrapper #content-holder {
-  height: auto;
-  display: block;
-  background: inherit;
-  clear: both;
   position: relative;
+  height: calc(100% - 40px);
+  display: block;
   padding: 0 5px;
+  clear: both;
+  background: inherit;
 }
 #startLetter {
   margin: 0;
@@ -8074,7 +8092,6 @@ table#workflows tr td.edit-status {
   height: calc(100% - 40px);
   background-color: #364150;
   box-sizing: border-box;
-  padding-top: 60px;
   font-family: 'Open Sans Light';
 }
 .sideMenu nav {
@@ -8356,11 +8373,11 @@ table#workflows tr td.edit-status {
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
   display: block;
-  height: 28px;
+  height: 40px;
   clear: both;
 }
 #top-bar h3 {
-  line-height: 28px;
+  line-height: 40px;
   padding: 0 10px;
   color: #666666 !important;
   font-family: Title;
@@ -8384,7 +8401,7 @@ table#workflows tr td.edit-status {
 #top-bar .vocationFilter .dateFilter {
   width: 200px;
   position: absolute;
-  top: 0;
+  top: 8px;
   left: 0;
   z-index: 10;
   border: 1px solid #7f7f80;
@@ -8418,17 +8435,17 @@ table#workflows tr td.edit-status {
   text-align: center;
 }
 .dashBoardVocationSearch {
-  margin-top: 4px !important;
+  margin-top: 7px !important;
   /*only for DashBoard vocation*/
 }
 .projectInfoTopBar {
   display: block;
-  height: 28px;
+  height: 40px;
   clear: both;
   margin-left: 0;
 }
 .projectInfoTopBar h3 {
-  line-height: 28px;
+  line-height: 40px;
   padding: 0 10px;
   color: #666666 !important;
   font-family: Title;
@@ -8452,7 +8469,7 @@ table#workflows tr td.edit-status {
 .projectInfoTopBar .vocationFilter .dateFilter {
   width: 200px;
   position: absolute;
-  top: 0;
+  top: 8px;
   left: 0;
   z-index: 10;
   border: 1px solid #7f7f80;
@@ -8502,7 +8519,7 @@ table#workflows tr td.edit-status {
   cursor: pointer;
   vertical-align: baseline;
   color: #666666;
-  line-height: 30px;
+  line-height: 40px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
@@ -10294,11 +10311,14 @@ ul.chart-tabs .withEndContract .arrow {
 .legend-box {
   border: 1px solid #7f7f80;
   width: 525px;
-  margin: -39px auto 0;
+  margin: 0 auto;
   color: #000000;
 }
 .legend-box.small {
   width: 265px;
+  height: 26px;
+  line-height: 26px;
+  margin-top: 0!important;
 }
 .legend-box.small:before,
 .legend-box.small:after {
