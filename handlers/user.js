@@ -856,8 +856,8 @@ var User = function (event, models) {
                 credentials    : '$credentials',
                 profile        : {
                     _id          : '$profile._id',
-                    profileName  : '$profileName',
-                    profileAccess: '$profileAccess'
+                    profileName  : '$profile.profileName',
+                    profileAccess: '$profile.profileAccess'
                 },
                 relatedEmployee: {
                     _id     : '$relatedEmployee._id',
