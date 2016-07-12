@@ -475,7 +475,8 @@ var Categories = function (models, event) {
                     return next(err);
                 }
 
-                res.status(200).send({success: 'Category was removed'});
+                //res.status(200).send({success: 'Category was removed'}
+                res.status(200).send(result);
             });
 
         });

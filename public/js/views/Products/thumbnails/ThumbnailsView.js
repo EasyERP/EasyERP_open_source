@@ -79,7 +79,7 @@
             className = target.parent().attr('class');
 
             if ((className !== 'dropDown') || (className !== 'inner')) {
-                id = target.closest('.thumbnailwithavatar').attr('id');
+                id = target.closest('.product').attr('id');
                 model = new CurrentModel({validate: false});
 
                 model.urlRoot = CONSTANTS.URLS.PRODUCT;

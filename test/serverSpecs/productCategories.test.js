@@ -190,6 +190,7 @@ describe('ProductCategories Specs', function () {
                     id = body._id;
                     parentId = body.parent;
 
+
                     aggent
                         .get('category/' + parentId)
                         .expect(200)
@@ -207,8 +208,8 @@ describe('ProductCategories Specs', function () {
                                 .to.not.include(id);
 
                             done();
-                        });
-                });
+                        })
+                })
         });
 
         it('should fail delete productCategory', function (done) {

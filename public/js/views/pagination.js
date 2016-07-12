@@ -5,7 +5,7 @@ define([
     'views/Filter/filterView',
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
-    'constantsDir/filters',
+    'constants/filters',
     'common',
     'async',
     'dataService',

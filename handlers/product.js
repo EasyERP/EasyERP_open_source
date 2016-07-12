@@ -102,12 +102,14 @@ var Products = function (models) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
         var queryObject = {};
         var query = req.query;
+        var projection = query.projection || {};
         var key;
 
-        if (query && query.canBeSold) {
+        if (query && query.canBeSold === 'true') {
             queryObject.canBeSold = true;
 
-            if (query.service) {
+            // todo change it for category
+            if (query.service === 'true') {
                 key = 'info.productType';
                 queryObject[key] = 'Service';
             }
@@ -115,10 +117,11 @@ var Products = function (models) {
             queryObject.canBePurchased = true;
         }
 
-        Product.find(queryObject, function (err, products) {
+        Product.find(queryObject, projection, function (err, products) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send({success: products});
         });
     }
@@ -308,7 +311,6 @@ var Products = function (models) {
             query = Product.findById(id);
 
             query
-                .populate('info.productType', 'name _id')
                 .populate('department', '_id name')
                 .populate('createdBy.user')
                 .populate('editedBy.user')

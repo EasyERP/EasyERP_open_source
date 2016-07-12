@@ -20,7 +20,7 @@ define([
     'chai-jquery',
     'sinon-chai',
     'testConstants/filtersEmployees',
-    'constantsDir/filters'
+    'constants/filters'
 ], function (Backbone,
              _,
              fixtures,
