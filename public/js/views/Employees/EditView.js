@@ -448,7 +448,7 @@ define([
             if (id === 'jobPositionDd' || id === 'departmentsDd' ||
                 id === 'projectManagerDD' || id === 'jobTypeDd' ||
                 id === 'hireFireDd' || id === 'scheduledPayDd' ||
-                id === 'payrollStructureTypeDd') {
+                id === 'payrollStructureTypeDd' || id === 'weeklySchedulerDd') {
 
                 this.setEditable($element);
 
