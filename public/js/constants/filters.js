@@ -525,7 +525,9 @@
             productCategory: {
                 displayName: 'Category',
                 backend    : 'accounting.category._id'
-            }
+            },
+
+            array: ['name', 'productType', 'canBeSold', 'canBeExpensed', 'canBePurchased']
         },
 
         salesProduct: {
