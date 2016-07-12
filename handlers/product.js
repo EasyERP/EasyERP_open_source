@@ -308,7 +308,6 @@ var Products = function (models) {
             query = Product.findById(id);
 
             query
-                .populate('info.productType', 'name _id')
                 .populate('department', '_id name')
                 .populate('createdBy.user')
                 .populate('editedBy.user')
