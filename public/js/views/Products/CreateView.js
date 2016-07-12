@@ -82,7 +82,7 @@ define([
             var salePrice = $currEl.find('#salePrice').val();
             var barcode = $.trim($currEl.find('#barcode').val());
             var isActive = $currEl.find('#active').prop('checked');
-            var productType = $currEl.find('#productType').attr('data-id');
+            //var productType = $currEl.find('#productType').attr('data-id');
             var $categoryEl = $currEl.find('#productCategory');
             var categoryId =  $categoryEl.attr('data-id');
             var categoryName = $categoryEl.text();
@@ -117,7 +117,7 @@ define([
                 whoCanRW         : whoCanRW,
 
                 info: {
-                    productType: productType,
+                    //productType: productType,
                     salePrice  : salePrice ? salePrice : 0,
                     isActive   : isActive,
                     barcode    : barcode,
@@ -198,7 +198,7 @@ define([
                 }).render().el
             );
 
-            populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this, true, true);
+            //populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this, true, true);
             populate.get('#productCategory', '/category', {}, 'fullName', this, true);
             common.canvasDraw({model: this.model.toJSON()}, this);
 
