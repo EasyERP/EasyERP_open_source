@@ -31,6 +31,30 @@ dbObject.once('open', function callback() {
         }
 
         console.log(result);
-    })
+    });
+
+    Payment.update({paymentMethod: '565f2e05ab70d49024242e08'}, {$set: {paymentMethod: "565f2e05ab70d49024242e0f"}}, {multi: true}, function (err, result) {
+        if (err) {
+            return console.log(err);
+        }
+
+        console.log(result);
+    });
+
+    Payment.update({paymentMethod: '565f2e05ab70d49024242e0a'}, {$set: {paymentMethod: "565f2e05ab70d49024242e0c"}}, {multi: true}, function (err, result) {
+        if (err) {
+            return console.log(err);
+        }
+
+        console.log(result);
+    });
+
+    Payment.update({paymentMethod: '565f2e05ab70d49024242e0a'}, {$set: {paymentMethod: "565f2e05ab70d49024242e0c"}}, {multi: true}, function (err, result) {
+        if (err) {
+            return console.log(err);
+        }
+
+        console.log(result);
+    });
 
 });
