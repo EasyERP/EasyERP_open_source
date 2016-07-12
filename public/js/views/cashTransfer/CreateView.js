@@ -84,6 +84,23 @@ define([
             });
         },
 
+        currencyClass: function (currency) {
+            var currencyName;
+            switch (currency) {
+                case 'USD':
+                    currencyName = 'dollar';
+                    break;
+                case 'EUR':
+                    currencyName = 'euro';
+                    break;
+                case 'UAH':
+                    currencyName = 'uah';
+                    break;
+                // skip default;
+            }
+            return currencyName;
+        },
+
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
@@ -93,23 +110,6 @@ define([
             var date = this.$el.find('#date').val();
             var debitAcc;
             var currency;
-
-            function currencyClass(currency) {
-                var currencyName;
-                switch (currency) {
-                    case 'USD':
-                        currencyName = 'dollar';
-                        break;
-                    case 'EUR':
-                        currencyName = 'euro';
-                        break;
-                    case 'UAH':
-                        currencyName = 'uah';
-                        break;
-                    // skip default;
-                }
-                return currencyName;
-            }
 
             if (attr === 'debitAccount') {
                 debitAcc = _.find(this.responseObj['#debitAccount'], function (el) {
@@ -141,7 +141,7 @@ define([
                     }
 
                     self.$el.find('#maxAmount').text(helpers.currencySplitter((resp.maxAmount / 100).toFixed(2)));
-                    self.$el.find('#maxAmount').addClass(currencyClass(currency));
+                    self.$el.find('#maxAmount').addClass(self.currencyClass(currency));
 
                     self.maxAmount = resp.maxAmount;
                 });
@@ -215,7 +215,7 @@ define([
                             }
 
                             self.$el.find('#maxAmount').text(helpers.currencySplitter((resp.maxAmount / 100).toFixed(2)));
-                            self.$el.find('#maxAmount').addClass(currencyClass(currency));
+                            self.$el.find('#maxAmount').addClass(self.currencyClass(currency));
 
                             self.maxAmount = resp.maxAmount;
                         });

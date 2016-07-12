@@ -4,7 +4,7 @@
     'text!templates/payrollComponentTypes/list/ListTemplate.html'
 ], function (Backbone, _, listTemplate) {
     'use strict';
-    
+
     var WeeklySchedulerListItemView = Backbone.View.extend({
         el: '#listTable',
 

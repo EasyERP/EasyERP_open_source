@@ -45,7 +45,7 @@ define([
                 });
             }
         },
-        
+
         onKeyDownInput: function (e) {
             if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 || (e.keyCode >= 35 && e.keyCode <= 39)) {
                 return;

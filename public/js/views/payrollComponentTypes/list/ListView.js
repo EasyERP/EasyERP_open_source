@@ -51,7 +51,7 @@ define([
 
             e.preventDefault();
 
-            new CreateView({
+            return new CreateView({
                 eventChannel     : self.eventChannel,
                 updateAfterCreate: true,
                 type             : self.type
@@ -87,7 +87,7 @@ define([
 
             e.preventDefault();
 
-            new EditView({
+            return new EditView({
                 eventChannel: self.eventChannel,
                 model       : model,
                 type        : self.type

@@ -176,6 +176,7 @@ define([
                     target$.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
                     break;
+                // skip default;
             }
             sortObject[sortBy] = sortConst;
 
@@ -479,7 +480,7 @@ define([
                 this.editCollection.add(model);
                 this.changed = true;
 
-                new CreateView({model: startData});
+                return new CreateView({model: startData});
             }
         },
 
@@ -516,7 +517,7 @@ define([
                     month = parseInt(oldStr.slice(0, 2), 10);
                     year = parseInt(oldStr.slice(3, 7), 10);
 
-                    editedElementValue = parseInt(newStr) ? parseInt(newStr) : 0;
+                    editedElementValue = parseInt(newStr, 10) ? parseInt(newStr, 10) : 0;
                 } else {
                     editedElementValue = parseInt(editedElement.val(), 10);
                     editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
@@ -678,7 +679,7 @@ define([
                     tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
                     diffOnCashRealValue = diffOnCash.attr('data-value');
-                    diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
+                    diffOnCashRealValue = diffOnCashRealValue || diffOnCash.text();
 
                     totalValue = parseInt(diffOnCashRealValue, 10);
 

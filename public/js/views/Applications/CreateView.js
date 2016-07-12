@@ -188,7 +188,6 @@ define([
             var note;
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
 
-
             if (internalNotes) {
                 note = {
                     title: '',

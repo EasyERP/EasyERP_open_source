@@ -373,37 +373,144 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getSalaryByMonth = function (req, res, next) {
+    this.getSalaryForChart = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var query = req.query;
-        var _id = query._id;
-        var month = query.month;
-        var year = query.year;
-        var date = moment().year(year).month(month - 1).date(1);
+        var month = parseInt(query.month, 10) + 1;
+        var year = parseInt(query.year, 10);
+        var startMomentDate = moment().year(year).month(month - 1).startOf('month');
+        var endMomentDate = moment().year(year).month(month - 1).endOf('month');
+        var startDate = new Date(startMomentDate);
+        var endDate = new Date(endMomentDate);
 
-        Employee.findById(_id, {transfer: 1}, function (err, result) {
-            var salary = 0;
-            var hire;
-            var i;
-            var length;
+        Employee.aggregate([{
+            $project: {
+                transfer  : 1,
+                isEmployee: 1
+            }
+        }, {
+            $lookup: {
+                from        : 'transfers',
+                localField  : '_id',
+                foreignField: 'employee',
+                as          : 'transfer'
+            }
+        }, {
+            $unwind: '$transfer'
+        }, {
+            $project: {
+                _id       : 1,
+                isEmployee: 1,
+                date      : '$transfer.date',
+                salary    : '$transfer.salary'
+            }
+        }, {
+            $match: {
+                $and: [{
+                    isEmployee: true
+                }, {
+                    date: {
+                        $ne : null,
+                        $lte: endDate
+                    }
+                }]
+            }
+        }, {
+            $group: {
+                _id   : '$_id',
+                salary: {$last: '$salary'}
+            }
+        }, {
+            $project: {
+                _id: '$salary'
+            }
+        }], function (err, result) {
+            var salary;
 
             if (err) {
                 return next(err);
             }
 
-            if (result) {
-                hire = result.transfer;
-                length = hire.length;
-
-                for (i = length - 1; i >= 0; i--) {
-                    if (date >= hire[i].date) {
-                        salary = hire[i].salary;
-                        break;
-                    }
-                }
-            }
+            salary = _.map(result, function (item) {
+                return item._id;
+            });
 
             res.status(200).send({data: salary});
+        });
+    };
+
+    this.getSalaryForChartByDepartment = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var query = req.query;
+        var month = parseInt(query.month, 10) + 1;
+        var year = parseInt(query.year, 10);
+        var startMomentDate = moment().year(year).month(month - 1).startOf('month');
+        var endMomentDate = moment().year(year).month(month - 1).endOf('month');
+        var startDate = new Date(startMomentDate);
+        var endDate = new Date(endMomentDate);
+
+        Employee.aggregate([{
+            $project: {
+                transfer  : 1,
+                isEmployee: 1
+            }
+        }, {
+            $lookup: {
+                from        : 'transfers',
+                localField  : '_id',
+                foreignField: 'employee',
+                as          : 'transfer'
+            }
+        }, {
+            $unwind: '$transfer'
+        }, {
+            $project: {
+                _id       : 1,
+                isEmployee: 1,
+                date      : '$transfer.date',
+                salary    : '$transfer.salary',
+                department: '$transfer.department'
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'department',
+                foreignField: '_id',
+                as          : 'department'
+            }
+        }, {
+            $match: {
+                $and: [{
+                    isEmployee: true
+                }, {
+                    date: {
+                        $ne : null,
+                        $lte: endDate
+                    }
+                }]
+            }
+        }, {
+            $group: {
+                _id       : '$_id',
+                salary    : {$last: '$salary'},
+                department: {$first: '$department'}//{$push: ['$department', 0]}*/
+            }
+        }, {
+            $group: {
+                _id   : '$department',
+                salary: {$sum: '$salary'}
+            }
+        }, {
+            $project: {
+                _id   : '$_id.name',
+                salary: 1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
         });
     };
 
@@ -514,23 +621,27 @@ var Employee = function (event, models) {
                     employeesCount: {
                         $sum: 1
                     },
-                    maleCount     : {
+
+                    maleCount: {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$gender', 'male']
                                 },
+
                                 then: 1,
                                 else: 0
                             }
                         }
                     },
-                    femaleCount   : {
+
+                    femaleCount: {
                         $sum: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$gender', 'female']
                                 },
+
                                 then: 1,
                                 else: 0
                             }
@@ -567,14 +678,15 @@ var Employee = function (event, models) {
             $unwind: '$employees'
         }, {
             $match: {
-                "employees.isEmployee": true
+                'employees.isEmployee': true
             }
         }, {
             $project: {
-                employees       : {
+                employees: {
                     name: {$concat: ['$employees.name.first', ' ', '$employees.name.last']},
                     _id : '$employees._id'
                 },
+
                 parentDepartment: 1,
                 _id             : 1,
                 name            : 1
@@ -798,15 +910,15 @@ var Employee = function (event, models) {
                     return next(error);
                 }
 
-                    if (body.relatedUser) {
-                        UsersModel.findByIdAndUpdate(body.relatedUser, {$set: {relatedEmployee: result._id}}, function (error) {
-                            if (error) {
-                                return next(error);
-                            }
-                        });
-                    }
+                if (body.relatedUser) {
+                    UsersModel.findByIdAndUpdate(body.relatedUser, {$set: {relatedEmployee: result._id}}, function (error) {
+                        if (error) {
+                            return next(error);
+                        }
+                    });
+                }
 
-                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+                res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
                 if (result.isEmployee) {
                     event.emit('recalculate', req, {}, next);
@@ -883,9 +995,9 @@ var Employee = function (event, models) {
         });
     };
 
-    /*TODO remove after filters check*/
+    /* TODO remove after filters check*/
 
-    /*function caseFilter(filter) {
+    /* function caseFilter(filter) {
      var condition;
      var resArray = [];
      var filtrElement = {};
@@ -947,7 +1059,6 @@ var Employee = function (event, models) {
                     manager             : 1,
                     date                : 1,
                     status              : 1,
-                    // isDeveloper         : 1,
                     jobType             : 1,
                     info                : 1,
                     employee            : 1,
@@ -962,7 +1073,6 @@ var Employee = function (event, models) {
                     manager             : 1,
                     date                : 1,
                     status              : 1,
-                    // isDeveloper         : 1,
                     jobType             : 1,
                     info                : 1,
                     employee            : 1,
@@ -1025,7 +1135,6 @@ var Employee = function (event, models) {
                         manager             : {$arrayElemAt: ['$manager', 0]},
                         date                : 1,
                         status              : 1,
-                        // isDeveloper         : 1,
                         jobType             : 1,
                         salary              : 1,
                         info                : 1,
@@ -1045,7 +1154,6 @@ var Employee = function (event, models) {
                         'manager.name'             : '$manager.name',
                         date                       : 1,
                         status                     : 1,
-                        // isDeveloper           : 1,
                         jobType                    : 1,
                         salary                     : 1,
                         info                       : 1,
@@ -1545,19 +1653,16 @@ var Employee = function (event, models) {
                 event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
             }
 
-            Department.aggregate([
-                {
-                    $match: {
-                        parentDepartment: {$ne: null}
-                    }
-                },
-                {
-                    $group: {
-                        _id        : '$parentDepartment',
-                        sublingDeps: {$push: '$_id'}
-                    }
+            Department.aggregate([{
+                $match: {
+                    parentDepartment: {$ne: null}
                 }
-            ], function (error, deps) {
+            }, {
+                $group: {
+                    _id        : '$parentDepartment',
+                    sublingDeps: {$push: '$_id'}
+                }
+            }], function (error, deps) {
                 var adminDeps;
 
                 if (error) {
@@ -1586,7 +1691,7 @@ var Employee = function (event, models) {
                         return next(err);
                     }
 
-                    /*if (!accessEmployeeSalary(profileId)) {
+                    /* if (!accessEmployeeSalary(profileId)) {
                      data.transfer = data.transfer.map(function (tr, i) {
                      if (i !== 0) {
                      if (emp.transfer[i] && emp.transfer[i].salary) {
@@ -1643,6 +1748,7 @@ var Employee = function (event, models) {
                                     path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                     dir = newDirname + '\/uploads\/' + _id;
                                     break;
+                                // skip default;
                             }
 
                             fs.unlink(path, function (err) {
@@ -1929,8 +2035,7 @@ var Employee = function (event, models) {
                             _id  : '$workflow',
                             count: {$sum: 1}
                         }
-                    }
-                ], function (err, result) {
+                    }], function (err, result) {
                     if (err) {
                         return cb(err);
                     }

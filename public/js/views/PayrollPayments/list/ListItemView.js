@@ -5,7 +5,7 @@ define([
     'helpers'
 ], function (Backbone, _, PaymentListTemplate, helpers) {
     'use strict';
-    
+
     var PaymentListItemView = Backbone.View.extend({
         el: '#listTable',
 

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var PayrollComponentType = function (models) {
+var Module = function (models) {
     'use strict';
     var PayrollComponentTypesSchema = mongoose.Schemas.payrollComponentType;
     var payrollStructureTypesSchema = mongoose.Schemas.payrollStructureTypes;
@@ -78,7 +78,12 @@ var PayrollComponentType = function (models) {
                 return next(err);
             }
 
-            payrollStructureTypes.update({}, {$pull: {deductions: result._id, earnings: result._id}}, function (err, result) {
+            payrollStructureTypes.update({}, {
+                $pull: {
+                    deductions: result._id,
+                    earnings  : result._id
+                }
+            }, function (err) {
                 if (err) {
                     return next(err);
                 }
@@ -104,4 +109,4 @@ var PayrollComponentType = function (models) {
 
 };
 
-module.exports = PayrollComponentType;
+module.exports = Module;

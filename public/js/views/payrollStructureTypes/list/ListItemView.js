@@ -4,7 +4,7 @@ define([
     'text!templates/payrollStructureTypes/list/ListTemplate.html'
 ], function (Backbone, _, listTemplate) {
     'use strict';
-    var WeeklySchedulerListItemView = Backbone.View.extend({
+    var ListItemView = Backbone.View.extend({
         el: '#listTablePayrollStructure',
 
         initialize: function (options) {
@@ -25,5 +25,5 @@ define([
         }
     });
 
-    return WeeklySchedulerListItemView;
+    return ListItemView;
 });

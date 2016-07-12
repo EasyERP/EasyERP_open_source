@@ -68,7 +68,7 @@ define([
             var self = this;
             var checkboxes = this.$el.find('.checkbox:checked');
             var dataArray = [];
-           
+
             App.startPreload();
 
             checkboxes.each(function () {
@@ -77,7 +77,7 @@ define([
 
             dataService.postData('/payroll/recountAll', {dataArray: dataArray}, function () {
                 App.stopPreload();
-                
+
                 Backbone.history.fragment = '';
                 Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
             });

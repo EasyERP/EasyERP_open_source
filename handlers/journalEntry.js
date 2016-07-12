@@ -2402,10 +2402,9 @@ var Module = function (models, event) {
         var jobsArray = options.jobId;
         var newReq = req;
 
-
         var cb = options.callback || function () {
-            return false;
-        };
+                return false;
+            };
 
         newReq.body.jobs = jobsArray;
 
@@ -3106,10 +3105,9 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
-                if (cb && typeof(cb) === 'function'){
+                if (cb && typeof(cb) === 'function') {
                     cb();
                 }
-
 
             });
         });
@@ -5440,15 +5438,15 @@ var Module = function (models, event) {
 
                     accounts = _.union(paymentResult.accounts || [], cashTransfer.accounts || [], salaryPayment.accounts || []);
 
-                    accounts.forEach(function (el){
-                        if (!keys[el._id.toString()]){
+                    accounts.forEach(function (el) {
+                        if (!keys[el._id.toString()]) {
                             newAccounts.push(el);
                             keys[el._id.toString()] = true;
                         }
                     });
 
-                    newAccounts.forEach(function (acc){
-                        var balance = _.find(result[3], function (el){
+                    newAccounts.forEach(function (acc) {
+                        var balance = _.find(result[3], function (el) {
                             return el._id.toString() === acc._id.toString();
                         });
 

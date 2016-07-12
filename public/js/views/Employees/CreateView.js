@@ -223,7 +223,6 @@ define([
             var note;
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
 
-
             if ($thisEl.find('.errorContent').length) {
                 return App.render({
                     type   : 'error',
@@ -393,6 +392,7 @@ define([
                         success: function (model) {
 
                         },
+                        
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
                         }

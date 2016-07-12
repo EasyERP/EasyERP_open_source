@@ -55,8 +55,6 @@ define([
         },
 
         render: function () {
-            var result = this.getTotal();
-
             if (this.$el.find('tr').length > 0) {
                 this.$el.find('#total').text(this.getTotal('.total').total);
             } else {

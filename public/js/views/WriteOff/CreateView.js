@@ -138,7 +138,8 @@ define([
                     users: usersId,
                     group: groupsId
                 },
-                whoCanRW      : whoCanRW
+                
+                whoCanRW: whoCanRW
 
             };
 

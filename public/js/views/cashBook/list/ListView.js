@@ -155,6 +155,10 @@ define([
             var $trs = $table.find('tr');
             var trLength = $trs.length;
             var i;
+            var tds;
+            var sumObject;
+            var nextBalance;
+            var keys;
 
             accounts.forEach(function (acc) {
                 $trFirst.find('[data-id="' + acc._id + '"]').text(helpers.currencySplitter((acc.balance / 100 ).toFixed(2)));
@@ -162,13 +166,12 @@ define([
             });
 
             for (i = 1; i <= trLength; i++) {
-                var tds = $trs.find('[data-level="' + i + '"]');
-                var sumObject = {};
-                var nextBalance = $trs.find('[data-level="' + (i + 1) + '"]');
-                var keys;
+                tds = $trs.find('[data-level="' + i + '"]');
+                sumObject = {};
+                nextBalance = $trs.find('[data-level="' + (i + 1) + '"]');
 
-                tds.each(function (td) {
-                    if (!sumObject[$(this).attr('data-id')]){
+                tds.each(function () {
+                    if (!sumObject[$(this).attr('data-id')]) {
                         sumObject[$(this).attr('data-id')] = 0;
                     }
                     sumObject[$(this).attr('data-id')] += parseFloat($(this).attr('data-value'));
@@ -176,16 +179,15 @@ define([
 
                 keys = Object.keys(sumObject);
 
-                keys.forEach(function (key){
-                    nextBalance.each(function (){
-                        if ($(this).hasClass('balance') && $(this).attr('data-id') === key){
+                keys.forEach(function (key) {
+                    nextBalance.each(function () {
+                        if ($(this).hasClass('balance') && $(this).attr('data-id') === key) {
                             $(this).text(helpers.currencySplitter((sumObject[key] / 100).toFixed(2)));
                             $(this).attr('data-value', sumObject[key]);
                         }
                     });
 
                 });
-
 
             }
 

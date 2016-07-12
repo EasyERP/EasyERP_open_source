@@ -68,7 +68,7 @@ var cashTransfer = function (models, event) {
                     query._id = modelId;
                 } else {
                     query.debitAccount = body.debitAccount;
-                    query.creditAccount = body.creditAccount
+                    query.creditAccount = body.creditAccount;
                 }
 
                 Journal.find(query, function (err, result) {
@@ -78,7 +78,7 @@ var cashTransfer = function (models, event) {
 
                     cb(null, currency, result && result.length ? result[0]._id : null);
                 });
-            })
+            });
 
         };
 
@@ -181,13 +181,20 @@ var cashTransfer = function (models, event) {
         };
 
         var getData = function (pCb) {
-            cashTransferModel.find().populate('debitAccount', 'name').populate('creditAccount', 'name').skip(skip).limit(limit).sort(sort).exec(function (err, _res) {
-                if (err) {
-                    return pCb(err);
-                }
+            cashTransferModel
+                .find()
+                .populate('debitAccount', 'name')
+                .populate('creditAccount', 'name')
+                .skip(skip)
+                .limit(limit)
+                .sort(sort)
+                .exec(function (err, _res) {
+                    if (err) {
+                        return pCb(err);
+                    }
 
-                pCb(null, _res);
-            });
+                    pCb(null, _res);
+                });
         };
 
         parallelTasks = [getTotal, getData];
@@ -228,7 +235,7 @@ var cashTransfer = function (models, event) {
         var body = req.body || {ids: []};
         var ids = body.ids;
 
-        async.each(ids, function(id, cb){
+        async.each(ids, function (id, cb) {
             cashTransferModel.remove({_id: id}, function (err, removed) {
                 if (err) {
                     return cb(err);
@@ -237,8 +244,8 @@ var cashTransfer = function (models, event) {
                 _journalEntryHandler.removeByDocId(id, req.session.lastDb, cb);
 
             });
-        }, function (err, result){
-            if (err){
+        }, function (err, result) {
+            if (err) {
                 return next(err);
             }
 

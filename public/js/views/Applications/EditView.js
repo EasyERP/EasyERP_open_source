@@ -117,9 +117,9 @@
             // 'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .hireEmployee'         : 'isEmployee',
             'click .refuseEmployee'       : 'refuseEmployee',
-            //'click td.editable'                               : 'editJob',
-            //'click #jobPosition,#department,#manager,#jobType': 'showNotification',
-            //'click .fa-trash'                                 : 'deleteRow',
+            // 'click td.editable'                               : 'editJob',
+            // 'click #jobPosition,#department,#manager,#jobType': 'showNotification',
+            // 'click .fa-trash'                                 : 'deleteRow',
             'keydown input.editing'       : 'keyDown',
             'change .editable '           : 'setEditable',
             'keydown .salary'             : 'validateNumbers'
