@@ -21,6 +21,7 @@ var ProformaSchema = mongoose.Schemas.Proforma;
 var payRollInvoiceSchema = mongoose.Schemas.payRollInvoice;
 var DepartmentSchema = mongoose.Schemas.Department;
 var wTrackSchema = mongoose.Schemas.wTrack;
+var journalSchema = mongoose.Schemas.journal;
 var objectId = mongoose.Types.ObjectId;
 
 var Module = function (models, event) {
@@ -1150,6 +1151,7 @@ var Module = function (models, event) {
         var body = req.body;
         var PaymentSchema = mongoose.Schemas.InvoicePayment;
         var Invoice = models.get(dbName, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice;
         var now = new Date();
@@ -1211,7 +1213,14 @@ var Module = function (models, event) {
                 if (err) {
                     return waterfallCallback(err);
                 }
-                waterfallCallback(null, invoice, payment);
+
+                Payment.findById(payment._id).populate('paymentMethod', 'chartAccount').populate('currency._id').exec(function (err, resultPayment){
+                    if (err){
+                        return waterfallCallback(err);
+                    }
+
+                    waterfallCallback(null, invoice, resultPayment);
+                });
             });
         }
 
@@ -1328,6 +1337,10 @@ var Module = function (models, event) {
             var journal = MAIN_CONSTANTS.PAYMENT_JOURNAL;
             var invoiceType = invoice._type;
             var paymentBody;
+            var bodyOtherIncome;
+            var queryForJournal = {};
+            var amountByInvoice;
+            var differenceAmount;
 
             if (!isForSale) {
                 waterfallCallback = payment;
@@ -1342,23 +1355,96 @@ var Module = function (models, event) {
                 journal = MAIN_CONSTANTS.DIVIDEND_PAYMENT_JOURNAL;
             }
 
+            amountByInvoice = payment.paidAmount / invoice.currency.rate;
+            differenceAmount = payment.paidAmount / fx.rates[payment.currency._id.name];
+
             paymentBody = {
                 journal       : journal,
-                currency      : MAIN_CONSTANTS.CURRENCY_USD,
+                currency      : payment.currency._id._id,
                 date          : payment.date,
                 sourceDocument: {
                     model: 'Payment',
                     _id  : payment._id
                 },
 
-                amount: payment.paidAmount
+                amount: amountByInvoice
             };
 
-            journalEntry.createReconciled(paymentBody, req.session.lastDb, function () {
+            bodyOtherIncome = {
+                currency      : MAIN_CONSTANTS.CURRENCY_USD,
+                date          : new Date(date),
+                sourceDocument: {
+                    model: 'Payment',
+                    _id  : payment._id
+                },
+                amount        : Math.abs(amountByInvoice - differenceAmount)
+            };
 
-            }, req.session.uId);
+            if (Math.abs(amountByInvoice - differenceAmount) !== 0) {
 
-            waterfallCallback(null, invoice, payment);
+                if (differenceAmount > amountByInvoice) {
+                    queryForJournal = {
+                        debitAccount: payment.paymentMethod ? payment.paymentMethod.chartAccount : null,
+                        creditAccount: MAIN_CONSTANTS.OTHER_INCOME_ACCOUNT
+                    }
+                } else if (differenceAmount < amountByInvoice) {
+                    queryForJournal = {
+                        debitAccount: MAIN_CONSTANTS.OTHER_INCOME_ACCOUNT,
+                        creditAccount: payment.paymentMethod ? payment.paymentMethod.chartAccount : null
+                    }
+                }
+
+                queryForJournal.name = 'Other Income / Loss';
+                queryForJournal.transaction = 'Payment';
+
+                Journal.update(queryForJournal, {
+                    $set: queryForJournal
+                }, {upsert: true}, function (err, result) {
+                    var modelId;
+                    var query = {};
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    modelId = result && result.upserted && result.upserted.length ? result.upserted[0]._id : null;
+
+                    if (modelId) {
+                        query._id = modelId;
+                    } else {
+                        query.debitAccount = body.debitAccount;
+                        query.creditAccount = body.creditAccount
+                    }
+
+                    Journal.find(query, function (err, result) {
+                        if (err) {
+                            return waterfallCallback(err);
+                        }
+
+                        bodyOtherIncome.journal = result && result.length ? result[0]._id : null;
+
+                        if (bodyOtherIncome.journal) {
+
+                            journalEntry.createReconciled(bodyOtherIncome, req.session.lastDb, function () {
+
+                            }, req.session.uId);
+                        }
+
+                        journalEntry.createReconciled(paymentBody, req.session.lastDb, function () {
+
+                        }, req.session.uId);
+
+                        waterfallCallback(null, invoice, payment);
+                    });
+                })
+            } else {
+                journalEntry.createReconciled(paymentBody, req.session.lastDb, function () {
+
+                }, req.session.uId);
+
+                waterfallCallback(null, invoice, payment);
+            }
+
         }
 
         function updateWtrack(invoice, payment, waterfallCallback) {

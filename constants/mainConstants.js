@@ -53,6 +53,8 @@ module.exports = {
 
     INCOME_SUMMARY_ACCOUNT: '56f538149c85020807b4001f',
 
+    OTHER_INCOME_ACCOUNT: '565eb53a6aa50532e5df0bd5',
+
     BANK_AND_CASH: [
         '565eb53a6aa50532e5df0bd6', // bank and Cash
         '565eb53a6aa50532e5df0bd3',
@@ -66,7 +68,7 @@ module.exports = {
         '565eb53a6aa50532e5df0bcb',
         '565eb53a6aa50532e5df0bca',
         '577f983b5dc67c373fced537', // Privat EUR
-        'd577f98244b90ec163f270f1b' , // Provat USD
+        'd577f98244b90ec163f270f1b', // Provat USD
     ],
 
     FINISHED_GOODS : '565eb53a6aa50532e5df0bd9',
@@ -177,6 +179,6 @@ module.exports = {
         '1438158808000',
         '1438768659000'
     ],
-    
+
     SESSION_TTL: 120000
 };
