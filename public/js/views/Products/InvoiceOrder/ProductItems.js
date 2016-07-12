@@ -25,7 +25,7 @@ define([
              ProductItemsEditList,
              ItemsEditList,
              totalAmount,
-             productCollection,
+             ProductCollection,
              GenerateWTrack,
              populate,
              helpers,
@@ -59,6 +59,8 @@ define([
         initialize: function (options) {
             var products;
 
+            options = options || Object.create(null);
+
             this.responseObj = {};
             this.taxesRate = 0;
 
@@ -91,7 +93,12 @@ define([
             this.forSales = options.service;
             this.notPayed = options.notPayed;
 
-            products = new productCollection(options);
+            options.projection = {
+                name: 1,
+                info: 1
+            };
+
+            products = new ProductCollection(options);
             products.bind('reset', function () {
                 this.products = products;
                 this.filterProductsForDD();
@@ -103,11 +110,11 @@ define([
         generateJob: function () {
             var self = this;
             var model = this.projectModel;
-            var projectsDdContainer = $('#projectDd');
-            var projectId = $('#projectDd').attr('data-id');
+            var $projectsDdContainer = this.$dialogContainer.find('#projectDd'); // this.$projectsDdContainer created in render block
+            var projectId = $projectsDdContainer.attr('data-id');
 
             if (!model) {
-                projectsDdContainer.css('color', 'red');
+                $projectsDdContainer.css('color', 'red');
 
                 App.render({
                     type   : 'error',
@@ -149,7 +156,6 @@ define([
         },
 
         deleteRow: function (e) {
-
             var target = $(e.target);
             var tr = target.closest('tr');
             var jobId = tr.attr('data-id');
@@ -157,6 +163,7 @@ define([
 
             e.stopPropagation();
             e.preventDefault();
+
             if (this.responseObj['#jobs']) {
                 this.responseObj['#jobs'].splice(_.indexOf(this.responseObj['#jobs'], exJob), 1);
             }
@@ -186,8 +193,8 @@ define([
             var $targetEl = $(e.target);
             var self = this;
             var $thisEl = this.$el;
-            var project = $('#projectDd').attr('data-id');
-            var existedJobs = $thisEl.find('.jobs.current-selected[data-id!="jobs"]');
+            var project = this.$dialogContainer.find('#projectDd').attr('data-id');
+            var $existedJobs = $thisEl.find('.jobs.current-selected[data-id!="jobs"]');
 
             if (!this.checkForQuickEdit($targetEl)) {
                 return false;
@@ -200,10 +207,12 @@ define([
                     var aEl;
 
                     self.responseObj['#jobs'] = jobs;
-                    if (existedJobs.length) {
-                        existedJobs.each(function () {
+
+                    if ($existedJobs.length) {
+                        $existedJobs.each(function () {
                             var jobId = $(this).attr('data-id');
                             var exJob = _.findWhere(self.responseObj['#jobs'], {_id: jobId});
+
                             self.responseObj['#jobs'].splice(_.indexOf(self.responseObj['#jobs'], exJob), 1);
                         });
 
@@ -273,39 +282,20 @@ define([
             var self = this;
             var products = this.products.toJSON();
 
-            this.responseObj[id] = [];
-            this.responseObj[id] = this.responseObj[id].concat(_.map(products, function (item) {
-                return {_id: item._id, name: item.name, level: item.projectShortDesc || ''};
-            }));
+            this.responseObj[id] = products;
 
-            //  $(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
-
+            /*this.responseObj[id] = [];
+             this.responseObj[id] = this.responseObj[id].concat(_.map(products, function (item) {
+             return {_id: item._id, name: item.name, level: item.projectShortDesc || ''};
+             }));*/
         },
-
-        /* quickEdit: function (e) {
-         var target = $(e.target);
-         var trId = target.closest("tr");
-         var tdId = target.closest("td");
-
-         if (trId.find("#editSpan").length === 0) {
-         tdId.append('<span id="editSpan" class=""><a href="javascript:;">e</a></span>');
-         if (tdId.width() - 30 < tdId.find(".no-long").width()) {
-         tdId.find(".no-long").width(tdId.width() - 40);
-         }
-         }
-         },*/
-
-        /* removeEdit: function (e) {
-         $('#editSpan').remove();
-         $("td .no-long").css({width: "auto"});
-         },
-         */
 
         priceChange: function (e) {
             var $targetEl = $(e.target);
             var parent = $targetEl.closest('td');
             var inputEl = parent.find('input');
             var val;
+
             if (!inputEl.length) {
                 inputEl = parent.find('textarea');
             }
@@ -329,31 +319,6 @@ define([
 
             this.recalculateTaxes(parent);
         },
-
-        /* cancelClick: function (e) {
-         e.preventDefault();
-
-         var text = this.text ? this.text : '';
-         var $targetEl = $(e.target);
-         var parent = $targetEl.closest('td');
-         var inputEl = parent.find('input');
-
-         if (!inputEl.length) {
-         inputEl = parent.find('textarea');
-         }
-         if (this.prevQuickEdit) {
-         if ($(this.prevQuickEdit).hasClass('quickEdit')) {
-         $('.quickEdit').removeClass('quickEdit').html('<span>' + text + '</span>');
-         }
-         }
-         if (inputEl.hasClass('datepicker')) {
-         parent.find('span').addClass('datepicker');
-         }
-         if (inputEl.hasClass('textarea')) {
-         parent.find('span').addClass('textarea');
-         }
-
-         },*/
 
         showProductsSelect: function (e, prev, next) {
             var $targetEl = $(e.target);
@@ -490,62 +455,6 @@ define([
             return isNaN(val) ? 0 : val;
         },
 
-        /* recalculatePriceByJob: function () {
-         var self = this;
-         var $thisEl = this.$el;
-         var $amountInput = $('#amountDd');
-         var $totalAmountEl = $thisEl.find('#totalAmountContainer');
-
-         var $totalUntaxContainer = $totalAmountEl.find('#totalUntaxes');
-         var $taxesContainer = $totalAmountEl.find('#taxes');
-         var $totalContainer = $totalAmountEl.find('#totalAmount');
-         var $resultForCalculate = $thisEl.find('tr.productItem');
-
-         var inputPrice = $amountInput.val() || 0;
-         var totalUntax = 0;
-         var totalHours = 0;
-         var $currentEl;
-         var quantity;
-         var cost;
-         var dates = [];
-         var date;
-         var taxes;
-         var total;
-
-         $resultForCalculate.each(function (index) {
-         var $tr = $(this);
-         var hours = $.trim($tr.find('[data-name="quantity"]').text()) || 0;
-
-         hours = parseInt(hours);
-
-         totalHours += hours;
-         });
-
-         $resultForCalculate.each(function (index) {
-         var $tr = $(this);
-         var hours = $.trim($tr.find('[data-name="quantity"]').text()) || 0;
-         var $priceContainer = $tr.find('[data-name="price"]');
-         var $subtotalContainer = $tr.find('td.subtotal');
-         var $taxesContainer = $tr.find('td.taxes');
-         var price = 0;
-
-         $priceContainer.removeClass('editable');
-
-         hours = parseInt(hours);
-
-         price = (hours / totalHours) * inputPrice;
-         price = self.isNaN(price);
-         price = price.toFixed(2);
-
-         $priceContainer.text(price);
-         $subtotalContainer.text(price);
-         $taxesContainer.text('0.00');
-         });
-
-         $totalUntaxContainer.text(inputPrice);
-         $totalContainer.text(inputPrice);
-         },*/
-
         quantityRetriver: function ($parent) {
             var selectedProduct = this.products || new Backbone.Collection();
             var id;
@@ -662,6 +571,8 @@ define([
             var products;
             var self = this;
             var currency;
+
+            this.$dialogContainer = $('#dialogContainer');
 
             if (options && options.model) {
                 products = options.model.products;
