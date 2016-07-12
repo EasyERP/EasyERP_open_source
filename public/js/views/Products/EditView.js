@@ -44,17 +44,6 @@ define([
             this.$el.find('.input-file .inputAttach').click();
         },
 
-       /* drawBarcode: function () {
-            var el = this.$el;
-            var content = el.find('#barcode').val();
-
-            if (!content) {
-                el.find('#bcTarget').empty();
-            } else {
-                el.find('#bcTarget').barcode(el.find('#barcode').val(), 'code128');
-            }
-        },*/
-
         showDetailsBox: function (e) {
             $(e.target).parent().find('.details-box').toggle();
         },
@@ -91,8 +80,8 @@ define([
             var eventSubscription = this.$el.find('#subscription').prop('checked');
             var canBePurchased = this.$el.find('#purchased').prop('checked');
             var salePrice = this.$el.find('#salePrice').val();
-            var barcode = $.trim(this.$el.find('#barcode').val());
-            var isActive = this.$el.find('#active').prop('checked');
+            //var barcode = $.trim(this.$el.find('#barcode').val());
+            //var isActive = this.$el.find('#active').prop('checked');
             //var productType = this.$el.find('#productType').data('id');
             var categoryEl = this.$el.find('#productCategory');
             var category = {
@@ -247,7 +236,6 @@ define([
             });
 
             $thisEl = this.$el;
-            $thisEl.find('#bcTarget').barcode(model.info.barcode, 'code128');
 
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(
@@ -259,12 +247,8 @@ define([
 
             this.renderAssignees(this.currentModel);
 
-            //populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this, true, true);
 
-            //populate.getParrentCategory('#parentCategory', '/category', {}, this);
             populate.get('#parentCategory', '/category', {}, 'fullName', this, true);
-
-
             common.canvasDraw({model: this.model.toJSON()}, this);
 
             this.delegateEvents(this.events);

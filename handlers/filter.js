@@ -1221,7 +1221,7 @@ var Filters = function (models) {
                         _id : '$_id',
                         name: '$name'
                     }
-                },
+                }/*,
 
                 productType: {
                     $addToSet: {
@@ -1230,7 +1230,7 @@ var Filters = function (models) {
                             $ifNull: ['$info.productType', 'None']
                         }
                     }
-                }
+                }*/
             }
         }];
 
@@ -1246,6 +1246,39 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+
+            result.canBePurchased = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
+
+            result.canBeSold = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
+
+            result.canBeExpensed = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
 
             res.status(200).send(result);
         });

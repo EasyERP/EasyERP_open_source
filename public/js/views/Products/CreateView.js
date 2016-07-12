@@ -9,8 +9,7 @@ define([
     'populate',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
-    'constants',
-    "jqueryBarcode"
+    'constants'
 ], function (Backbone, $, _, CreateTemplate, ParentView, ProductModel, common, populate, AttachView, AssigneesView, CONSTANTS) {
 
     var CreateView = ParentView.extend({
@@ -26,8 +25,10 @@ define([
             if (options && options.contentType) {
                 this.contentType = options.contentType;
             } else {
-                this.contentType = CONSTANTS.PRODUCT;
+                this.contentType = CONSTANTS.PRODUCTS;
             }
+
+            this.viewType = options.viewType || 'list';
 
             this.model = new ProductModel();
             this.responseObj = {};
@@ -84,7 +85,7 @@ define([
             var isActive = $currEl.find('#active').prop('checked');
             //var productType = $currEl.find('#productType').attr('data-id');
             var $categoryEl = $currEl.find('#productCategory');
-            var categoryId =  $categoryEl.attr('data-id');
+            var categoryId = $categoryEl.attr('data-id');
             var categoryName = $categoryEl.text();
 
             var category = {
@@ -142,7 +143,13 @@ define([
 
                 success: function (model, response) {
                     self.attachView.sendToServer(null, model.changed);
-                    self.eventChannel.trigger('itemCreated', categoryId);
+
+                    if (self.viewType === 'thumbnails') {
+                        self.eventChannel.trigger('itemCreated', categoryId);
+                    } else {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
+                    }
                 },
 
                 error: function (model, xhr) {
@@ -185,9 +192,10 @@ define([
             notDiv = this.$el.find('.attach-container');
 
             this.attachView = new AttachView({
-                model   : new ProductModel,
-                url     : '/product/uploadProductFiles',
-                isCreate: true
+                model      : new ProductModel,
+                url        : '/product/uploadProductFiles',
+                isCreate   : true,
+                contentType: CONSTANTS.PRODUCTS
             });
 
             notDiv.append(this.attachView.render().el);
@@ -198,7 +206,6 @@ define([
                 }).render().el
             );
 
-            //populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this, true, true);
             populate.get('#productCategory', '/category', {}, 'fullName', this, true);
             common.canvasDraw({model: this.model.toJSON()}, this);
 
