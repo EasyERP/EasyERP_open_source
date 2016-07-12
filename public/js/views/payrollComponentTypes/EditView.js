@@ -3,25 +3,17 @@ define([
     'Underscore',
     'Backbone',
     'text!templates/payrollComponentTypes/EditTemplate.html',
-    'models/PayrollComponentTypeModel',
-    'common',
-    'populate',
-    'dataService',
-    'constants'
-], function ($, _, Backbone, CreateTemplate, WeeklySchedulerModel, common, populate, dataService, CONSTANTS) {
+    'models/PayrollComponentTypeModel'
+], function ($, _, Backbone, EditTemplate) {
 
     var EditView = Backbone.View.extend({
         el         : '#content-holder',
         contentType: 'payrollComponentTypes',
-        template   : _.template(CreateTemplate),
-
-        events: {
-            'keyup td[data-type="input"]': 'recalcTotal'
-        },
+        template   : _.template(EditTemplate),
 
         initialize: function (options) {
             var self = this;
-            
+
             options = options || {};
 
             self.model = options.model;
@@ -37,10 +29,14 @@ define([
             var $currentEl = this.$el;
             var name = $.trim($currentEl.find('#payrollComponentTypeName').val());
             var description = $currentEl.find('#payrollComponentTypeComment').val();
+            var minRange = $currentEl.find('#minRange').val();
+            var maxRange = $currentEl.find('#maxRange').val();
             var data = {
                 name       : name,
                 description: description,
-                type       : self.type
+                type       : self.type,
+                minRange   : parseFloat(minRange),
+                maxRange   : parseFloat(maxRange)
             };
 
             if (!name) {
@@ -84,6 +80,38 @@ define([
             $('.crop-images-dialog').remove();
         },
 
+        formulaParser: function (formula) {
+            var formulaStr = '';
+            var length = formula.length || 0;
+            var i;
+            var formulaObject = {};
+            var lastSign;
+            var signs = ['+', '-', '/', '*'];
+
+            this.operations = {
+                multiply : '*',
+                divide   : '/',
+                substract: '-',
+                add      : '+'
+            };
+
+            for (i = 0; i <= length - 1; i++) {
+                formulaObject = formula[i];
+
+                formulaStr += ' ' + formulaObject.operand + ' ' + this.operations[formulaObject.operation] + ' ' + formulaObject.ratio + ' ' + this.operations[formulaObject.prefix];
+            }
+
+            lastSign = formulaStr[formulaStr.length - 1];
+
+            if (signs.indexOf(lastSign) !== -1) {
+                formulaStr = formulaStr.substr(0, formulaStr.length - 1);
+            }
+
+            this.$el.find('#formula').text(formulaStr);
+
+            return formulaStr;
+        },
+
         render: function () {
             var self = this;
             var formString = this.template({
@@ -116,6 +144,8 @@ define([
                     }]
 
             });
+
+            this.formulaParser(this.model.get('formula'));
 
             this.delegateEvents(this.events);
 

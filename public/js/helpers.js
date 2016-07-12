@@ -35,7 +35,11 @@ define([
     }
 
     function spaceReplacer(value) {
-        return value.replace(/\s/g, '');
+        if (value) {
+            return value.replace(/\s/g, '');
+        } else {
+            return value;
+        }
     }
 
     function setTimeToDate(date) {

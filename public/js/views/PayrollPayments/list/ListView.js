@@ -77,7 +77,7 @@ define([
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    return employee
+                    return employee;
                 });
 
                 self.responseObj['#employee'] = employees;
@@ -107,12 +107,12 @@ define([
             dataService.getData(requestedUrl, {viewType: 'form', id: id}, function (response) {
                 if (!response.error) {
                     return new DialogView(response.success);
-                } else {
-                    App.render({
-                        type   : 'error',
-                        message: 'Something went wrong'
-                    });
                 }
+                
+                App.render({
+                    type   : 'error',
+                    message: 'Something went wrong'
+                });
             });
         }
     });

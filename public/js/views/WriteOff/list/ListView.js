@@ -23,6 +23,7 @@ define([
             name : 'forSales',
             value: {
                 key  : 'forSales',
+                type : 'boolean',
                 value: [false]
             }
         },
@@ -127,11 +128,11 @@ define([
             model.urlRoot = '/Invoices';
             model.fetch({
                 data: {
-                    id       : id,
-                    viewType : 'form',
-                    contentType : this.contentType,
-                    currentDb: App.currentDb,
-                    forSales : 'false'
+                    id         : id,
+                    viewType   : 'form',
+                    contentType: this.contentType,
+                    currentDb  : App.currentDb,
+                    forSales   : 'false'
                 },
 
                 success: function (response) {

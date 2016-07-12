@@ -11,7 +11,7 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('testdemo.easyerp.com', 'sergey', 28017, connectOptions);
+var dbObject = mongoose.createConnection('testdemo.easyerp.com', 'alex', 28017, connectOptions);
 
 //var dbObject = mongoose.createConnection('localhost', 'production');
 
@@ -23,6 +23,8 @@ var parallelTasks = [function (cb) {
     Module.update({_id: 67}, {visible : false}, cb);
 }, function (cb) {
     Module.update({_id: 53}, {visible : false}, cb);
+}, function (cb) {
+    Module.update({_id: 80}, {visible : false}, cb);
 }];
 
 async.parallel(parallelTasks, function (err) {

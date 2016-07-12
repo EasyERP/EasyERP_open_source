@@ -759,6 +759,10 @@ var Module = function (models, event) {
 
             if (resp._type !== 'Proforma') {
                 setWorkflow = function (callback) {
+
+                    journalEntryComposer(resp, req.session.lastDb, function () {
+                    }, req.session.uId);
+
                     var request = {
                         query: {
                             wId   : 'Proforma',

@@ -122,20 +122,22 @@ module.exports = (function () {
             phone : {type: String, default: ''}
         },
 
-        skype          : {type: String, default: ''},
-        officeLocation : {type: String, default: ''},
-        relatedUser    : {type: ObjectId, ref: 'Users', default: null},
-        visibility     : {type: String, default: 'Public'},
-        department     : {type: ObjectId, ref: 'Department', default: null},
-        jobPosition    : {type: ObjectId, ref: 'JobPosition', default: null},
-        weeklyScheduler: {type: ObjectId, ref: 'weeklyScheduler', default: null},
-        manager        : {type: ObjectId, ref: 'Employees', default: null},
-        coach          : {type: ObjectId, ref: 'Employees', default: null},
-        nationality    : {type: String, default: ''},
-        identNo        : String,
-        passportNo     : String,
-        bankAccountNo  : {type: String, default: ''},
-        otherId        : {type: String, default: ''},
+        skype               : {type: String, default: ''},
+        officeLocation      : {type: String, default: ''},
+        relatedUser         : {type: ObjectId, ref: 'Users', default: null},
+        visibility          : {type: String, default: 'Public'},
+        department          : {type: ObjectId, ref: 'Department', default: null},
+        jobPosition         : {type: ObjectId, ref: 'JobPosition', default: null},
+        weeklyScheduler     : {type: ObjectId, ref: 'weeklyScheduler', default: null},
+        payrollStructureType: {type: ObjectId, ref: 'payrollStructureTypes', default: null},
+        scheduledPay        : {type: ObjectId, ref: 'scheduledPay', default: null},
+        manager             : {type: ObjectId, ref: 'Employees', default: null},
+        coach               : {type: ObjectId, ref: 'Employees', default: null},
+        nationality         : {type: String, default: ''},
+        identNo             : String,
+        passportNo          : String,
+        bankAccountNo       : {type: String, default: ''},
+        otherId             : {type: String, default: ''},
 
         homeAddress: {
             street : {type: String, default: ''},
@@ -200,19 +202,7 @@ module.exports = (function () {
         hire: [Date],
         fire: [Date],
 
-        transfer: [{
-            _id            : false,
-            date           : Date,
-            status         : {type: String, enum: ['hired', 'fired', 'updated'], default: 'updated'},
-            department     : {type: ObjectId, ref: 'Department', default: null},
-            isDeveloper    : {type: Boolean, required: true},
-            jobPosition    : {type: ObjectId, ref: 'JobPosition', default: null},
-            manager        : {type: ObjectId, ref: 'Employees', default: null},
-            weeklyScheduler: {type: ObjectId, ref: 'weeklyScheduler', default: null},
-            jobType        : {type: String, default: ''},
-            salary         : {type: Number, default: 0},
-            info           : {type: String, default: ''}
-        }],
+        transfer: {type: Array, default: []},
 
         lastFire: {type: Number, default: null}
     }, {collection: 'Employees'});
