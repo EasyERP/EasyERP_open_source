@@ -2443,7 +2443,7 @@ var Module = function (models, event) {
         if (jobIds && !Array.isArray(jobIds)) {
             jobIds = [jobIds];
             match = {
-                jobs: {$in: jobIds.objectID()}
+                jobs: {$in: jobIds}
             };
         }
 
@@ -3136,9 +3136,7 @@ var Module = function (models, event) {
                                     });
                                 });
 
-                            } else {
-                                callback();
-                            }
+                            };
 
                         });
                     }, function () {
