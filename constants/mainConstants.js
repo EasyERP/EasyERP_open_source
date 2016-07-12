@@ -57,6 +57,8 @@ module.exports = {
 
     WRITE_OFF: '57767a427134263421caa841',
 
+    WRITE_OFF_RD: '57767be5ca7bd4d021041d34',
+
     BANK_AND_CASH: [
         '565eb53a6aa50532e5df0bd6', // bank and Cash
         '565eb53a6aa50532e5df0bd3',

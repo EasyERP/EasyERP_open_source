@@ -5,7 +5,7 @@ var CurrencySchema = mongoose.Schemas.Currency;
 var wTrackSchema = mongoose.Schemas.wTrack;
 var employeeSchema = mongoose.Schemas.Employee;
 var jobsSchema = mongoose.Schemas.jobs;
-var invoiceSchema = mongoose.Schemas.Invoice;
+var invoiceSchema = mongoose.Schemas.wTrackInvoice;
 var holidaysSchema = mongoose.Schemas.Holiday;
 var vacationSchema = mongoose.Schemas.Vacation;
 var PaymentMethodSchema = mongoose.Schemas.PaymentMethod;
@@ -2419,7 +2419,7 @@ var Module = function (models, event) {
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'journalEntry', journalEntrySchema);
         var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
-        var Invoice = models.get(dbName, 'Invoice', invoiceSchema);
+        var Invoice = models.get(dbName, 'wTrackInvoice', invoiceSchema);
         var Job = models.get(dbName, 'jobs', jobsSchema);
         var body = req.body;
         var month = parseInt(body.month, 10);
@@ -2443,7 +2443,7 @@ var Module = function (models, event) {
         if (jobIds && !Array.isArray(jobIds)) {
             jobIds = [jobIds];
             match = {
-                jobs: {$in: jobIds}
+                jobs: {$in: jobIds.objectID()}
             };
         }
 
@@ -2975,9 +2975,15 @@ var Module = function (models, event) {
                         var callback = _.after(3, asyncCb);
                         var startMonthDate;
                         var endMonthDate;
+                        var checkWriteOff = false;
 
                         if (!model.invoice) {
                             return asyncCb();
+                        }
+
+                        if (model.invoice._type === 'writeOff') {
+                            callback = _.after(4, asyncCb);
+                            checkWriteOff = true;
                         }
 
                         date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
@@ -2996,6 +3002,7 @@ var Module = function (models, event) {
                         }], function (err, result) {
                             var bodyFinishedJob;
                             var bodyClosedJob;
+                            var bodyWriteOff;
 
                             if (err) {
                                 return console.log(err);
@@ -3020,12 +3027,25 @@ var Module = function (models, event) {
 
                                 amount: 0
                             };
+
+                            bodyWriteOff = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.WRITE_OFF,
+                                sourceDocument: {
+                                    model: 'writeOff'
+                                },
+
+                                amount: 0
+                            };
                             bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
                             bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyWriteOff.amount = result && result[0] ? result[0].amount : 0;
                             bodyFinishedJob.date = new Date(date);
                             bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
+                            bodyWriteOff.date = new Date(moment(date).subtract(1, 'seconds'));
                             bodyFinishedJob.sourceDocument._id = jobId;
                             bodyClosedJob.sourceDocument._id = jobId;
+                            bodyWriteOff.sourceDocument._id = model.invoice._id;
 
                             startMonthDate = moment(bodyClosedJob.date).startOf('month');
                             endMonthDate = moment(bodyClosedJob.date).endOf('month');
@@ -3050,6 +3070,72 @@ var Module = function (models, event) {
 
                             if (bodyClosedJob.amount > 0) {
                                 createReconciled(bodyClosedJob, req.session.lastDb, callback, req.session.uId);
+                            } else {
+                                callback();
+                            }
+
+                            if (checkWriteOff && bodyWriteOff.amount > 0) {
+                                Model.remove({
+                                    journal             : {$in: [CONSTANTS.WRITE_OFF, CONSTANTS.WRITE_OFF_RD]},
+                                    'sourceDocument._id': model.invoice._id
+                                }, function (err, result) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+
+                                    Invoice.findById(model.invoice._id, {
+                                        products   : 1,
+                                        paymentInfo: 1
+                                    }, function (err, result) {
+                                        var products;
+                                        var paymentInfo;
+                                        var newProducts = [];
+                                        var newTotal = 0;
+
+                                        if (err) {
+                                            return callback(err);
+                                        }
+
+                                        result = result.toJSON();
+
+                                        products = result.products;
+                                        paymentInfo = result.paymentInfo;
+
+                                        products.forEach(function (prod) {
+                                            if (prod.jobs.toString() === jobId.toString()) {
+
+                                                prod.unitPrice = bodyFinishedJob.amount;
+                                                prod.subTotal = bodyFinishedJob.amount;
+
+                                                newProducts.push(prod);
+
+                                            } else {
+                                                newProducts.push(prod);
+                                            }
+
+                                            newTotal += parseInt(prod.unitPrice, 10);
+                                        });
+
+                                        paymentInfo.unTaxed = newTotal;
+                                        paymentInfo.total = newTotal;
+
+                                        Invoice.findByIdAndUpdate(model.invoice._id, {
+                                            $set: {
+                                                products   : newProducts,
+                                                paymentInfo: paymentInfo
+                                            }
+                                        }, function (err, resu) {
+                                            if (err) {
+                                                return callback(err);
+                                            }
+
+                                            createReconciled(bodyWriteOff, req.session.lastDb, callback, req.session.uId);
+
+                                        });
+
+                                    });
+                                });
+
                             } else {
                                 callback();
                             }
