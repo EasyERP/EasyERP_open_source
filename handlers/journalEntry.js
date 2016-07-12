@@ -5559,7 +5559,9 @@ var Module = function (models, event) {
                             return el._id.toString() === acc._id.toString();
                         });
 
-                        acc.balance = balance.balance;
+                        balance = balance || {};
+
+                        acc.balance = balance.balance || 0;
                     });
 
                     res.status(200).send({
