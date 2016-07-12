@@ -2596,6 +2596,80 @@ var Module = function (models, event) {
         });
     }
 
+    function getForChart(req, res, next) {
+        var query = req.query;
+        var starDate = query.startDate ? new Date(query.startDate) : null;
+        var endDate = query.endDate ? new Date(query.endDate) : null;
+        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+        var matchObj = {
+            $and: []
+        };
+
+        matchObj.$and.push({isOpportunitie: false});
+
+        if (starDate && endDate) {
+            matchObj.$and.push({
+                creationDate: {
+                    $gte: starDate,
+                    $lte: endDate
+                }
+            });
+        }
+
+        async
+            .parallel({
+                assignedTo: function (parCb) {
+                    Opportunities.aggregate([{
+                        $match: {
+                            $and: [
+                                {isOpportunitie: false}
+                            ]
+
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesPerson',
+                            foreignField: '_id',
+                            as          : 'people'
+                        }
+                    }, {
+                        $unwind: {path: '$people', preserveNullAndEmptyArrays: true}
+                    }, {
+                        $project: {
+                            salesPerson: {$concat: ['$people.name.first', ' ', '$people.name.last']}
+                        }
+                    }, {
+                        $project: {
+                            salesPerson: {$ifNull: ['$salesPerson', 'Empty']}
+                        }
+                    }, {
+                        $group: {
+                            _id: '$salesPerson', count: {$sum: 1}
+                        }
+                    }
+                    ], parCb);
+                },
+
+                createdBy: function (parCb) {
+                    Opportunities.aggregate([{
+                        $match: matchObj
+                    }, {$sort: {'createdBy.date': 1}}, {
+                        $group: {
+                            _id  : {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]},
+                            count: {$sum: 1}
+                        }
+                    }], parCb);
+                }
+            }, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
+    }
+
     this.getByViewType = function (req, res, next) {
         var viewType = req.query.viewType;
 
@@ -2609,7 +2683,8 @@ var Module = function (models, event) {
             case 'kanban':
                 getForKanban(req, res, next);
                 break;
-            // skip default;
+            default:
+                getForChart(req, res, next);
         }
     };
 
