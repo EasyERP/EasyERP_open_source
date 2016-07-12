@@ -1,21 +1,21 @@
 .collapsed {
 
-  .side_menu {
+  .sideMenu {
     width: 40px !important;
     margin-right: -100%;
 
-    .sidebar_toggler {
+    .sidebarToggler {
       &:before {
         transform: rotate(180deg) translate(75%, 50%);
       }
     }
 
-    .login_panel {
-      .user_name {
+    .loginPanel {
+      .userName {
         display: none !important;
       }
-      .dropdown-button {
-        .login_list {
+      .dropdownButton {
+        .loginList {
           top: 15%;
           left: 100%;
           margin-left: 1px;
@@ -54,17 +54,27 @@
 
     .root {
       position: relative;
+
       ul {
         display: none;
         position: absolute;
         top: 0;
         left: 100%;
-        width: 150px;
+        width: 160px;
         margin-left: 1px;
+        padding: 0;
+
         li {
+          height: 40px;
+
           &:first-child {
             display: block;
+            margin-top: 0!important;
             background-color: @submenu-hover;
+          }
+          .sub_item {
+            padding-left: 20px;
+            line-height: 40px;
           }
         }
       }
@@ -89,7 +99,7 @@
       }
 
       &.opened {
-        height: 35px !important;
+        height: 40px !important;
         >ul {
           display: none;
         }
@@ -122,6 +132,20 @@
     }
     .top-bar {
       margin-left: 65px;
+    }
+  }
+
+  .topbarLogo {
+    width: auto;
+    padding-left: 0;
+    padding-right: 0;
+
+    .mainLogo {
+      display: none;
+    }
+
+    .sidebarToggler {
+      margin-left: 10px;
     }
   }
 }

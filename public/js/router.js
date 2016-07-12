@@ -53,6 +53,8 @@ define([
             if (contentTypes[currentContentType]) {
                 $('.list2 tbody').find('[data-id="false"]').remove();
             }
+
+            $('.loginPanel').removeClass('open');
         });
     };
 
@@ -110,11 +112,11 @@ define([
                         App.filtersObject.savedFilters = response.savedFilters;
                     }
                     /*else {
-                     App.render({
-                     type   : 'error',
-                     message: 'can\'t fetch currentUser'
-                     });
-                     }*/
+                                           App.render({
+                                               type   : 'error',
+                                               message: 'can\'t fetch currentUser'
+                                           });
+                                       }*/
                 });
             }
         },
