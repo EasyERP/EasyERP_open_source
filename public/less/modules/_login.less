@@ -1,4 +1,3 @@
-@font-light: 'Open Sans Light';
 @input-placeholder: #a0a9b4;
 @input-border: @input-placeholder;
 
@@ -126,7 +125,7 @@ h2 {
     color: #4e5a64;
     font-size: 30px;
     font-weight: 300;
-    font-family: @font-light;
+    font-family: @fontLight;
     white-space: nowrap;
 
     &Block {
@@ -517,7 +516,7 @@ input {
   }
 
   span {
-    color: #FF3F3F;
+    color: #7eadcc;
   }
 }
 
@@ -975,5 +974,35 @@ input {
   padding: 5px 5px 8px;
 }
 
+.graphicControlls {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
 
+.content-holder {
 
+  .grid-conatiner {
+    &.revenue {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: calc(~"100% - 40px");
+      width: calc(~"100% - 55px");
+      overflow: auto;
+    }
+  }
+}
+
+//.dashbordActions {
+//  .choseDateRange {
+//
+//  }
+//
+//  .legend-box {
+//    &.small {
+//    }
+//  }
+//}

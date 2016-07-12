@@ -1,3 +1,4 @@
+@import "utilities/_variables";
 @import "_colors";
 @import "_darckColor";
 @import "_whiteColor";
@@ -14,15 +15,9 @@
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
-//@body-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-//@lucida-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-@body-font: 'Open Sans Regular', 'Segoe UI', Helvetica, Verdana, sans-serif;
-@lucida-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 @icon-font: Icons;
 @title-font: Title;
-
 @metroicon-font: "Metrize-Icons";
-
 @bold-border: 3px solid;
 @thin-border: 1px solid;
 
@@ -247,8 +242,7 @@ span.error {
 .kanban {
   .item {
     &.errorContent {
-      //border: 1px solid #7f7f80!important;
-      .opportunity-date {
+      .projectType {
         color: #ff0000;
       }
     }
@@ -535,7 +529,7 @@ input::-ms-clear {
       font-size: 24px;
       line-height: 30px;
       min-height: 24px;
-      font: @lucida-font;
+      font: @fontRegular;
     }
 
     p {
@@ -654,7 +648,7 @@ input::-ms-clear {
   }
 
   h2 {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     color: @mainText-color;
     .bold;
     font-size: 24px !important;
@@ -669,7 +663,7 @@ input::-ms-clear {
   }
 
   p {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     color: @mainText-color;
     font-size: 13px;
     line-height: 30px;
@@ -1130,7 +1124,7 @@ input::-ms-clear {
   }
 
   span {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     position: relative;
     .thumbnail-text;
 
@@ -1163,7 +1157,7 @@ input::-ms-clear {
   }
 
   p {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     .thumbnail-text;
 
     span {
@@ -1172,7 +1166,7 @@ input::-ms-clear {
   }
 
   h2 {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     .thumbnail-text;
     .bold;
     margin: 0 0 8px;
@@ -1612,7 +1606,7 @@ input::-ms-clear {
     font-size: 13px;
     font-weight: 600;
     line-height: 18px;
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     white-space: normal;
     span {
       .text-overflow;
@@ -1635,7 +1629,7 @@ input::-ms-clear {
       }
 
       p {
-        font-family: @lucida-font;
+        font-family: @fontRegular;
         color: #000;
         font-size: @font-size;
         font-weight: 200 !important;
@@ -2584,7 +2578,7 @@ h3 {
 }
 
 body {
-  font-family: @body-font;
+  font-family: @fontRegular;
   font-size: 12px;
   height: 100%;
   //min-width: 1349px;//this return bug in login view
@@ -2905,12 +2899,12 @@ dl {
   box-sizing: border-box;
 
   #content-holder {
-    height: auto;
-    display: block;
-    background: inherit;
-    clear: both;
     position: relative;
+    height: calc(~"100% - 40px");
+    display: block;
     padding: 0 5px;
+    clear: both;
+    background: inherit;
   }
 }
 
@@ -3804,7 +3798,7 @@ table#workflows {
 }
 
 .dashBoardVocationSearch {
-  margin-top: 4px !important; /*only for DashBoard vocation*/
+  margin-top: 7px !important; /*only for DashBoard vocation*/
 }
 
 .projectInfoTopBar {
@@ -3828,7 +3822,7 @@ table#workflows {
     cursor: pointer;
     vertical-align: baseline;
     color: @top-font-color;
-    line-height: 30px; //it was 18px
+    line-height: 40px; //it was 18px
 
     &:hover {
       color: @top-font-color + #333;
@@ -4203,12 +4197,15 @@ ul.chart-tabs {
 
 .legend-box {
   border: @thin-border @border-color-main;
-  width: 525px;
-  margin: -39px auto 0;
+  width: 555px;
+  margin: 0 auto;
   color: @mainText-color;
 
   &.small {
     width: 265px;
+    height: 26px;
+    line-height: 26px;
+    margin-top: 0!important;
 
     &:before,&:after {
       content: '';
@@ -4217,6 +4214,14 @@ ul.chart-tabs {
     &:after {
       clear: both;
     }
+  }
+
+  &:before,&:after {
+    content: '';
+    display: table;
+  }
+  &:after {
+    clear: both;
   }
 
   div {
@@ -6162,7 +6167,7 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: @lucida-font;
+  font-family: @fontRegular;
   padding: 5px 25px;
   position: absolute;
   z-index: 10;

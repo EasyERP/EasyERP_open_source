@@ -304,11 +304,6 @@ define([
             self.renderOpportunitiesAging();
             self.renderSalesByCountry();
 
-            if ($(window).width() < 1370) {
-                $('.legend-box').css('margin-top', '10px');
-            } else {
-                $('.legend-box').css('margin-top', '-39px');
-            }
         },
 
         bindDataPickers: function (startDate, endDate) {
