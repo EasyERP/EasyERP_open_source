@@ -87,7 +87,7 @@ define(
         };
 
         var validateDate = function (validatedString) {
-            return new Date(validatedString).getMonth() ? true : false;
+            return new Date(validatedString).getYear() ? true : false;
         };
 
         var hasInvalidChars = function (validatedString) {

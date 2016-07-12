@@ -225,7 +225,7 @@
                 payrollStructureType = $tr.find('[data-content="payrollStructureType"]').attr('data-id') || null;
                 scheduledPay = $tr.find('[data-content="scheduledPay"]').attr('data-id') || null;
                 department = $tr.find('[data-content="department"]').attr('data-id');
-                jobType = $.trim($tr.find('[data-content="jobType"]').text());
+                jobType = $.trim($tr.find('[data-content="jobType"]').text()) || null;
                 info = $tr.find('[data-content="status"]').val();
                 event = $tr.attr('data-content');
                 employeeId = this.currentModel.get('_id');
@@ -233,15 +233,15 @@
             } else {
 
                 salary = parseInt(helpers.spaceReplacer($.trim($thisEl.find('#proposedSalary').val())), 10) || 0;
-                manager = $thisEl.find('#projectManagerDD').attr('data-id');
+                manager = $thisEl.find('#projectManagerDD').attr('data-id') || null;
                 date = helpers.setTimeToDate(new Date());
                 jobPosition = $thisEl.find('#jobPositionDd').attr('data-id');
                 weeklyScheduler = $thisEl.find('#weeklySchedulerDd').attr('data-id');
                 payrollStructureType = $thisEl.find('#payrollStructureTypeDd').attr('data-id') || null;
                 scheduledPay = $thisEl.find('#scheduledPayDd').attr('data-id') || null;
                 department = $thisEl.find('#departmentsDd').attr('data-id');
-                jobType = $thisEl.find('#jobTypeDd').attr('data-id');
-                info = $thisEl.find('#statusInfoDd').val() || null;
+                jobType = $thisEl.find('#jobTypeDd').text();
+                info = $thisEl.find('#statusInfoDd').val();
                 event = 'hired';
                 employeeId = this.currentModel.get('_id');
             }
