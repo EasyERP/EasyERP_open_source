@@ -60,6 +60,13 @@ define([
             this.thumbnailsView.createItem();
         },
 
+        selectFirstCategory: function () {
+            var $thisEl = this.$el;
+
+            $thisEl.find('.groupList .selected').removeClass('selected');
+            $thisEl.find('.content').first().addClass('selected');
+        },
+
         expandHideItem: function (e) {
             var $target = $(e.target);
             var $ulEl = $target.closest('li').find('ul');
@@ -71,7 +78,6 @@ define([
                 $ulEl.addClass('hidden');
                 $ulEl.closest('li').find('.expand').text('+');
             }
-
         },
 
         renderFilteredContent: function (categoryId) {
@@ -185,10 +191,10 @@ define([
         renderItem: function (product, className, selected) {
             var canDelete = true;
 
-            if(product.child && product.child.length) {
+            if (product.child && product.child.length) {
                 canDelete = false;
             } else {
-                if(product.productsCount) {
+                if (product.productsCount) {
                     canDelete = false;
                 }
             }
@@ -346,6 +352,8 @@ define([
                 currentPage : this.productCollection.currentPage,
                 pageSize    : this.productCollection.pageSize
             });
+
+            this.listenTo(this.thumbnailsView.filterView, 'categoryRemoved', this.selectFirstCategory);
         },
 
         render: function () {

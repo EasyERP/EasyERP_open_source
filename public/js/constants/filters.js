@@ -498,11 +498,11 @@
                 backend    : '_id'
             },
 
-            productType: {
+            /*productType: {
                 displayName: 'Product Type',
                 backend    : 'info.productType',
                 type       : 'string'
-            },
+            },*/
 
             canBeSold: {
                 displayName: 'Can be Sold',
@@ -527,7 +527,7 @@
                 backend    : 'accounting.category._id'
             },
 
-            array: ['name', 'productType', 'canBeSold', 'canBeExpensed', 'canBePurchased']
+            array: ['name', 'canBeSold', 'canBeExpensed', 'canBePurchased']
         },
 
         salesProduct: {

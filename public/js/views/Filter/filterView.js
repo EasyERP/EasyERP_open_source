@@ -175,6 +175,7 @@ define([
                 
                 self.setDbOnce();
                 self.showFilterIcons(App.filtersObject.filter);
+                this.trigger('categoryRemoved');
             } else if (filterView !== 'letter') {
                 if (filterView) {
                     filtersKeysForRemove = [filterView];
