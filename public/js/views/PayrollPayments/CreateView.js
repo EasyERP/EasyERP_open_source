@@ -108,7 +108,7 @@ define([
                 if (el && el.chartAccount && el.chartAccount._id) {
                     dataService.getData('/journals/getByAccount', {
                         transaction : 'Payment',
-                        debitAccount: el.chartAccount._id
+                        creditAccount: el.chartAccount._id
                     }, function (resp) {
                         self.responseObj['#journal'] = resp.data || [];
 

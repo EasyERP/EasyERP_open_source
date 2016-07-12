@@ -1,11 +1,11 @@
-var BonusTypeHandler = require('../handlers/cashTransfer');
+var Handler = require('../handlers/cashTransfer');
 var express = require('express');
 var router = express.Router();
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
-module.exports = function (models) {
-    var handler = new BonusTypeHandler(models);
+module.exports = function (models, event) {
+    var handler = new Handler(models, event);
     var moduleId = MODULES.CASHTRANSFER;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 

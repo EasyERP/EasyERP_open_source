@@ -1,9 +1,19 @@
-<% collection.forEach(function(account, index){ %>
-<%var value = account.debit - account.credit;%>
-<%if (account.group === 'liabilities'){value = Math.abs(value)}%>
-<tr data-id="<%=account._id%>" class="mainTr">
-    <td class="expand centerCell">+</td>
-    <td colspan="2" class="centerCell"><%=account.name%></td>
-    <td data-id="debit" data-value="<%=value%>" class="money <%= parseInt((value / 100).toFixed(2), 10) < 0 ? 'redText' : '' %>"><%=currencySplitter((value / 100).toFixed(2))%></td>
+<% for(var i = 0; i < collection.length; i++) {%>
+<%var item = collection[i];%>
+<tr data-id="<%=item._id%>">
+    <td class="expand centerCell"><%=i + 1%></td>
+    <td><%=utcDateToLocaleDate(item.date)%></td>
+    <td><%=item.sourceDocument.model%></td>
+    <td><%=item.sourceDocument._id.name && item.sourceDocument._id.name.first ? item.sourceDocument._id.name.first + ' ' + item.sourceDocument._id.name.last: item.sourceDocument._id.name%></td>
+    <%for (var j = 0; j < accounts.length; j ++){%>
+    <% var accountId = accounts[j]._id; %>
+    <%if (item.account._id === accountId) {%>
+    <td data-id="<%= item.account._id %>" data-value="<%= item.debit || item.credit * (-1)%>" data-level="<%=i + 1%>" class="money"><%=item.debit ?currencySplitter((item.debit / 100).toFixed(2)) : currencySplitter(((item.credit * (-1)) / 100).toFixed(2))%></td>
+    <td data-id="<%= item.account._id %>" data-level="<%=i + 2%>" class="balance money"></td>
+    <% } else { %>
+    <td data-id="<%= accountId %>" data-value="0" data-level="<%=i + 1%>"></td>
+    <td data-id="<%= accountId %>" data-value="0" data-level="<%=i + 2%>" class="balance money"></td>
+    <% } %>
+    <% } %>
 </tr>
-<% }) %>
+<% } %>

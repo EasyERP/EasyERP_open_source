@@ -115,7 +115,7 @@ define([], function () {
             USERS                      : '/users/',
             USERS_FOR_DD               : '/users/forDd',
             APPLICATIONS               : '/applications/',
-            CASH_TRANSFER              : 'cashTransfer/',
+            CASH_TRANSFER              : '/cashTransfer/',
             EMPLOYEES                  : '/employees/',
             CHARTOFACCOUNT             : '/ChartOfAccount/',
             CHARTOFACCOUNT_FORDD       : '/ChartOfAccount/getForDd',
@@ -187,7 +187,8 @@ define([], function () {
             SALARY_REPORT              : '/salaryReport/',
             WEEKLYSCHEDULER            : '/weeklyScheduler/forDd',
             SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
-            PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd'
+            PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
+            PAYMENT_METHOD_DD          : 'paymentMethod/'
         },
 
         MID: {
