@@ -1412,8 +1412,8 @@ var Module = function (models, event) {
                     if (modelId) {
                         query._id = modelId;
                     } else {
-                        query.debitAccount = body.debitAccount;
-                        query.creditAccount = body.creditAccount
+                        query.debitAccount = queryForJournal.debitAccount;
+                        query.creditAccount = queryForJournal.creditAccount
                     }
 
                     Journal.find(query, function (err, result) {
@@ -1922,7 +1922,9 @@ var Module = function (models, event) {
                                         var invoiceType = invoice._type;
                                         var paymentDate = null;
 
-                                        paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
+                                        if (paymentCurrency.name !== invoice.currency._id.name){
+                                            paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
+                                        }
 
                                         payments.forEach(function (payment) {
                                             if (payment._type !== 'ProformaPayment') {
