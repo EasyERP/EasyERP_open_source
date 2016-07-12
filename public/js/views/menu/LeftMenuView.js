@@ -26,16 +26,14 @@ define([
         },
 
         events: {
-            'click .root'      : 'openRoot'
-        },
+            'click .root': 'openRoot'
 
+        },
 
         openRoot: function (e) {
             var $activeRoot = this.$el.find('.opened');
             var $current = $(e.target).closest('.root');
             var isSubMenu = !!$(e.target).closest($current.find('ul')).length;
-
-            $('.loginPanel').removeClass('open');
 
             if (isSubMenu) {
                 return;
