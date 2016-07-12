@@ -44,6 +44,7 @@ describe('ProductCategories Specs', function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var parentId;
 
                     if (err) {
                         return done(err);
@@ -55,8 +56,26 @@ describe('ProductCategories Specs', function () {
                         .to.have.property('_id');
 
                     id = body._id;
+                    parentId = body.parent;
 
-                    done();
+                    aggent
+                        .get('category/' + parentId)
+                        .expect(200)
+                        .end(function(err, res) {
+                            var body;
+
+                            if (err) {
+                                return done(err);
+                            }
+
+                            body = res.body;
+
+                            expect(body.child)
+                                .to.be.instanceOf(Array)
+                                .to.include(id);
+
+                            done();
+                        });
                 });
         });
 
@@ -157,7 +176,40 @@ describe('ProductCategories Specs', function () {
         it('should delete productCategory', function (done) {
             aggent
                 .delete('category/' + id)
-                .expect(200, done);
+                .expect(200)
+                .end(function(err, res) {
+                    var id;
+                    var parentId;
+                    var body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    body = res.body;
+                    id = body._id;
+                    parentId = body.parent;
+
+
+                    aggent
+                        .get('category/' + parentId)
+                        .expect(200)
+                        .end(function(err, res) {
+                            var body;
+
+                            if (err) {
+                                return done(err);
+                            }
+
+                            body = res.body;
+
+                            expect(body.child)
+                                .to.be.instanceOf(Array)
+                                .to.not.include(id);
+
+                            done();
+                        })
+                })
         });
 
         it('should fail delete productCategory', function (done) {
@@ -200,9 +252,10 @@ describe('ProductCategories Specs', function () {
             };
 
             aggent
-                .get('category')
+                .post('category')
                 .send(body)
                 .expect(403, done);
+
         });
     });
 

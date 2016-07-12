@@ -160,11 +160,12 @@ define([
                 });
             } else {
                 this.currentModel.set({
-                    name        : categoryName,
-                    parent      : parentCategory,
-                    nestingLevel: ++nestingLevel,
-                    sequence    : res.length,
-                    fullName    : fullName
+                    name           : categoryName,
+                    parent         : parentCategory,
+                    nestingLevel   : ++nestingLevel,
+                    sequence       : res.length,
+                    fullName       : fullName,
+                    isChangedLevel: nestingLevel !== this.currentModel.toJSON().nestingLevel
                 });
             }
 

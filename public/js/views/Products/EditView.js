@@ -30,34 +30,18 @@ define([
         events: {
             'click #saveBtn'                                                  : 'saveItem',
             'click #cancelBtn'                                                : 'hideDialog',
-            'click .current-selected'                                         : 'showNewSelect',
             click                                                             : 'hideNewSelect',
             'mouseenter .avatar'                                              : 'showEdit',
             'mouseleave .avatar'                                              : 'hideEdit',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
             'click .newSelectList li.miniStylePagination'                     : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             'click .details'                                                  : 'showDetailsBox',
-            'keyup #barcode'                                                  : 'drawBarcode',
-            'change #barcode'                                                 : 'drawBarcode',
             'click .fa-paperclip'                                             : 'clickInput'
         },
 
         clickInput: function () {
             this.$el.find('.input-file .inputAttach').click();
-        },
-
-        drawBarcode: function () {
-            var el = this.$el;
-            var content = el.find('#barcode').val();
-
-            if (!content) {
-                el.find('#bcTarget').empty();
-            } else {
-                el.find('#bcTarget').barcode(el.find('#barcode').val(), 'code128');
-            }
         },
 
         showDetailsBox: function (e) {
@@ -76,51 +60,8 @@ define([
             this.showNewSelect(e, true, false);
         },
 
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialogHolder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find('a.active').removeClass('active');
-            holder.addClass('active');
-
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $(selector);
-
-            dialogHolder.find(itemActiveSelector).removeClass('active');
-            dialogHolder.find(itemSelector).eq(n).addClass('active');
-        },
-
         chooseUser: function (e) {
             $(e.target).toggleClass('choosen');
-        },
-
-        hideDialog: function () {
-            $('.edit-dialog').remove();
-            $('.crop-images-dialog').remove();
-            $('.add-group-dialog').remove();
-            $('.add-user-dialog').remove();
-        },
-
-        showEdit: function () {
-            $('.upload').animate({
-                height : '20px',
-                display: 'block'
-            }, 250);
-
-        },
-
-        hideEdit: function () {
-            $('.upload').animate({
-                height : '0px',
-                display: 'block'
-            }, 250);
-
         },
 
         saveItem: function () {
@@ -139,9 +80,9 @@ define([
             var eventSubscription = this.$el.find('#subscription').prop('checked');
             var canBePurchased = this.$el.find('#purchased').prop('checked');
             var salePrice = this.$el.find('#salePrice').val();
-            var barcode = $.trim(this.$el.find('#barcode').val());
-            var isActive = this.$el.find('#active').prop('checked');
-            var productType = this.$el.find('#productType').data('id');
+            //var barcode = $.trim(this.$el.find('#barcode').val());
+            //var isActive = this.$el.find('#active').prop('checked');
+            //var productType = this.$el.find('#productType').data('id');
             var categoryEl = this.$el.find('#productCategory');
             var category = {
                 _id : categoryEl.data('id'),
@@ -155,10 +96,10 @@ define([
                 imageSrc         : this.imageSrc,
                 name             : name,
                 info             : {
-                    productType: productType,
+                    //productType: productType,
                     salePrice  : salePrice || 0,
-                    isActive   : isActive,
-                    barcode    : barcode,
+                    //isActive   : isActive,
+                    //barcode    : barcode,
                     description: description
                 },
 
@@ -206,6 +147,7 @@ define([
         showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
             return false;
+
 
         },
 
@@ -294,7 +236,6 @@ define([
             });
 
             $thisEl = this.$el;
-            $thisEl.find('#bcTarget').barcode(model.info.barcode, 'code128');
 
             notDiv = $thisEl.find('.attach-container');
             notDiv.append(
@@ -306,10 +247,8 @@ define([
 
             this.renderAssignees(this.currentModel);
 
-            populate.get('#productType', CONSTANTS.URLS.PRODUCT + '/getProductsTypeForDd', {}, 'name', this, true, true);
 
-            populate.getParrentCategory('#parentCategory', '/category', {}, this);
-
+            populate.get('#parentCategory', '/category', {}, 'fullName', this, true);
             common.canvasDraw({model: this.model.toJSON()}, this);
 
             this.delegateEvents(this.events);
