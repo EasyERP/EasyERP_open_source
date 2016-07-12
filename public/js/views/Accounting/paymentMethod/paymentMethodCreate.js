@@ -134,7 +134,7 @@ define([
             });
 
             populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
-            populate.get('#chartAccount', CONSTANTS.URLS.CHARTOFACCOUNT_FORDD, {}, 'name', this, true);
+            populate.get('#chartAccount', '/ChartOfAccount/getForDd', {}, 'name', this, true);
 
             App.stopPreload();
 
