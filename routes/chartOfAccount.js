@@ -178,31 +178,6 @@ module.exports = function (models) {
      {"success":"updated"}
      */
     router.patch('/', accessStackMiddleware, handler.putchBulk);
-
-    /**
-     *@api {delete} /chartOfAccount/:id Request for deleting Chart Of Account
-     *
-     * @apiVersion 0.0.1
-     * @apiName deleteChartOfAccount
-     * @apiGroup Chart Of Account
-     *
-     * @apiParam {String} id Uniaue id of ChartOfAccount
-     * @apiParamExample {json} Request-Example:
-     * {
-      "contentType": "ChartOfAccount",
-      "ids": [
-        "565eb53a6aa50532e5df0bc8"
-      ]
-    }
-     *
-     * @apiSuccess {Object} Status
-     * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-     *      "ok":1,
-     *      "n":1
-     *     }
-     */
     router.delete('/:id', accessStackMiddleware, handler.remove);
 
     /**

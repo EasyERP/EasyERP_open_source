@@ -14,6 +14,84 @@ module.exports = function (models, event) {
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
 
+    /**
+     *@api {get} /invoice/ Request Invoices
+     *
+     * @apiVersion 0.0.1
+     * @apiName getInvoices
+     * @apiGroup Invoice
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Number} count=100 Count of Invoices which will show
+     *
+     * @apiParam (?Field=value) {String} filter-forSales-key="forSales" Property of filter object
+     * @apiParam (?Field=value) {String} filter-forSales-type="Boolean" Property of filter object
+     * @apiParam (?Field=value) {String[]} filter-forSales-value='["true"]' Property of filter object
+     *
+     * @apiParam (?Field=value) {String} contentType="salesInvoices" Type of content
+     * @apiParam (?Field=value) {Boolean} forSales=true Type of content
+     *
+     * @apiSuccess {Object} Invoices Fetched Invoices
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+    "total": 731,
+    "data": [
+        {
+                    "_id": "577a7da67134263421cab3ee",
+                    "total": 731,
+                    "salesPerson": {
+                        "name": {
+                            "last": "Voloshchuk",
+                            "first": "Peter"
+                        },
+                        "_id": "55b92ad221e4b7c40f00005f"
+                    },
+                    "workflow": {
+                        "_id": "5555e54c6a3f01acae0b5564",
+                        "name": "Draft",
+                        "status": "New"
+                    },
+                    "supplier": {
+                        "_id": "573489c07a1132cd762a6405",
+                        "name": {
+                            "last": "",
+                            "first": "InProjetech LTD"
+                        }
+                    },
+                    "project": {
+                        "_id": "568b85b33cce9254776f2b4c",
+                        "name": "FluxIOT"
+                    },
+                    "currency": {
+                        "rate": 1,
+                        "_id": "565eab29aeb95fa9c0f9df2d"
+                    },
+                    "journal": {
+                        "_id": "565ef6ba270f53d02ee71d65",
+                        "name": "Invoice Journal"
+                    },
+                    "paymentInfo": {
+                        "taxes": 0,
+                        "unTaxed": 400000,
+                        "balance": 400000,
+                        "total": 400000
+                    },
+                    "invoiceDate": "2016-07-04T06:50:12.000Z",
+                    "name": "PI050716",
+                    "dueDate": "2016-07-19T22:00:00.000Z",
+                    "approved": false,
+                    "removable": true,
+                    "paid": 0,
+                    "editedBy": {
+                        "date": "2016-07-05T06:49:50.624Z"
+                    }
+                },
+                ...
+            ]
+        }
+     */
     router.get('/', function (req, res, next) {
         var viewType = req.query.viewType;
         switch (viewType) {
@@ -28,14 +106,201 @@ module.exports = function (models, event) {
         }
     });
 
+    /**
+     *@api {get} /invoice/getFilterValues Request Filter values
+     *
+     * @apiVersion 0.0.1
+     * @apiName getFilterValues
+     * @apiGroup Invoice
+     *
+     * @apiSuccess {Object} FilterValues
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     [
+     {
+         "_id": null,
+         "Due date": [
+             "2016-07-19T22:00:00.000Z",
+             "2016-06-28T22:00:00.000Z",
+             "2016-06-21T22:00:00.000Z",
+             "2016-07-14T22:00:00.000Z",
+             ...
+         ]
+     }
+     ]
+     * */
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/getSalesByCountry', handler.getSalesByCountry);
     router.get('/generateName', handler.generateName);
     router.get('/stats', handler.getStats);
+
+    /**
+     *@api {get} /invoice/stats/project Request stats for project
+     *
+     * @apiVersion 0.0.1
+     * @apiName getStatsForProject
+     * @apiGroup Invoice
+     *
+     * @apiSuccess {Object} StatsForProject
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+          "success": {
+            "_id": null,
+            "invoices": [
+              {
+                "_id": "55b92ae121e4b7c40f00122a",
+                "name": "17-15/01/15",
+                "status": "Paid",
+                "currency": {
+                  "_id": "565eab29aeb95fa9c0f9df2d",
+                  "rate": 1
+                },
+                "paymentInfo": {
+                  "ammount": 455,
+                  "paid": 455,
+                  "balance": 0
+                }
+              }
+            ],
+            "ammount": 455,
+            "paid": 455,
+            "balance": 0
+          }
+        }
+     *
+     * */
     router.get('/stats/project', handler.getStatsForProject);
     router.get('/chart', handler.chartForProject);
 
     router.patch('/approve', accessStackMiddleware, handler.approve);
+
+    /**
+     *@api {patch} /invoice/:id Request for updating only selected fields of Invoice
+     *
+     * @apiVersion 0.0.1
+     * @apiName UpdateOnlySelectedFields
+     * @apiGroup Invoice
+     *
+     * @apiParam {String} id Unique id of Invoice
+     * @apiParamExample {json} Request-Example:
+     * {
+          "currency": {
+            "_id": "565eab29aeb95fa9c0f9df2d",
+            "name": "USD"
+          },
+          "supplier": "573489c07a1132cd762a6405",
+          "fiscalPosition": null,
+          "name": "PI050716",
+          "invoiceDate": "2016-07-10T07:35:06.000Z",
+          "dueDate": "20 Jul, 2016",
+          "account": null,
+          "journal": null,
+          "salesPerson": null,
+          "paymentTerms": null,
+          "groups": {
+            "owner": null,
+            "users": [
+
+            ],
+            "group": [
+
+            ]
+          },
+          "whoCanRW": "everyOne",
+          "workflow": "5555e54c6a3f01acae0b5564"
+        }
+     *
+     * @apiSuccess {Object} UpdatedInvoice
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+          "_id": "577a7da67134263421cab3ee",
+          "_type": "wTrackInvoice",
+          "__v": 0,
+          "dueDate": "2016-07-19T21:00:00.000Z",
+          "products": [
+            {
+              "unitPrice": 400000,
+              "subTotal": 400000,
+              "taxes": null,
+              "jobs": "577a7d23d2658cb5213589b0",
+              "description": "",
+              "product": "5540d528dacb551c24000003",
+              "quantity": 1
+            }
+          ],
+          "project": "568b85b33cce9254776f2b4c",
+          "emailed": false,
+          "approved": false,
+          "removable": true,
+          "invoiced": false,
+          "notes": [
+
+          ],
+          "attachments": [
+            {
+              "_id": "577b586e9d43bc7c213c5b47",
+              "name": "FluxIO_PI040716.pdf",
+              "shortPas": "uploads%2Finvoices%2F577a7da67134263421cab3ee%2FFluxIO_PI040716.pdf",
+              "size": "0.15&nbsp;Mb",
+              "uploadDate": "2016-07-05T06:49:18.039Z",
+              "uploaderName": "gabriella.shterr"
+            }
+          ],
+          "editedBy": {
+            "date": "2016-07-12T07:35:06.623Z",
+            "user": "52203e707d4dba8813000003"
+          },
+          "createdBy": {
+            "date": "2016-07-04T15:15:41.246Z",
+            "user": "563b58c2ab9698be7c9df6b6"
+          },
+          "creationDate": "2016-07-04T15:15:41.246Z",
+          "groups": {
+            "group": [
+
+            ],
+            "users": [
+
+            ],
+            "owner": null
+          },
+          "whoCanRW": "everyOne",
+          "workflow": "5555e54c6a3f01acae0b5564",
+          "payments": [
+
+          ],
+          "paymentInfo": {
+            "taxes": 0,
+            "unTaxed": 400000,
+            "balance": 400000,
+            "total": 400000
+          },
+          "paymentTerms": null,
+          "salesPerson": null,
+          "currency": {
+            "rate": 1,
+            "_id": "565eab29aeb95fa9c0f9df2d"
+          },
+          "journal": "565ef6ba270f53d02ee71d65",
+          "invoiceDate": "2016-07-10T07:35:06.000Z",
+          "paymentReference": "PO1149",
+          "sourceDocument": "577a7d9dd2658cb5213589b1",
+          "supplier": {
+            "_id": "573489c07a1132cd762a6405",
+            "name": {
+              "last": "",
+              "first": "InProjetech LTD"
+            },
+            "fullName": "InProjetech LTD ",
+            "id": "573489c07a1132cd762a6405"
+          },
+          "forSales": true,
+          "name": "PI050716",
+          "id": "577a7da67134263421cab3ee"
+        }
+     * */
     router.patch('/:id', handler.updateOnlySelected);
     router.put('/:_id', function (req, res) {
         var data = {};
@@ -50,11 +315,34 @@ module.exports = function (models, event) {
     // router.post('/attach', multipartMiddleware, handler.attach);
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
 
+
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');
 
         handler.removeInvoice(req, res, id);
     });
+
+    /**
+     *@api {delete} /invoice/ Request for deleting selected Invoices
+     *
+     * @apiVersion 0.0.1
+     * @apiName DeleteInvoices
+     * @apiGroup Invoice
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+          "contentType": "salesInvoices",
+          "ids": [
+            "577a7da67134263421cab3ee"
+          ]
+        }
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *   {
+     *      "success":true
+     *   }
+     * */
     router.delete('/', handler.bulkRemove);
 
     return router;

@@ -223,31 +223,6 @@ module.exports = function (models) {
      {"success":"updated"}
      */
     router.patch('/', handler.patchM);
-
-    /**
-     *@api {delete} /bonusType/:_id Request for deleting one Bonus Type
-     *
-     * @apiVersion 0.0.1
-     * @apiName deleteOneBonusType
-     * @apiGroup BonusType
-     *
-     * @apiParam {String} _id Uniaue id of bonusType
-     * @apiParamExample {json} Request-Example:
-     {
-      "contentType": "bonusType",
-      "ids": [
-        "55b92ad521e4b7c40f000602"
-      ]
-    }
-     *
-     * @apiSuccess {Object} Status Stutus and number of deleted bonus types
-     * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
-         "ok":1,
-         "n":1
-     }
-     */
     router.delete('/:_id', handler.remove);
 
     /**
