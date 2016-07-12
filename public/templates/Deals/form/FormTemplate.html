@@ -1,9 +1,3 @@
-<!-- <div class="formHeader">
-	 <button id="won" class="red">Mark Won</button>
-     <button id="lost" class="red">Mark Lost</button>
-	 <ul class="breadcrumb">
-	 </ul> 
-</div>-->
 <div class="form-holder">
     <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
         <div class="formTitle">
@@ -26,39 +20,33 @@
 
             <div class="half-block left">
                 <dl class="person-info">
-                    <dt>Email</dt>
-                    <dd><span><%=email%></span></dd>
-                    <dt>Phone</dt>
-                    <dd><span><%=phones.phone%></span></dd>
                     <dt>Salesperson</dt>
                     <dd><span><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></span></dd>
-                    <dt>Sales Team</dt>
-                    <dd><span><%=(salesTeam) ? salesTeam.departmentName : ''%></span></dd>
+                    <dt>Next Action</dt>
+                    <dd><span><%(nextAction && nextAction.date) ? nextAction.date : ''%> - <%(nextAction && nextAction.desc) ? nextAction.desc : ''%></span>
+                    </dd>
                     <dt>Status</dt>
                     <dd><span><%=(workflow) ? workflow.name : ''%></span></dd>
                 </dl>
             </div>
             <div class="half-block left">
                 <dl class="person-info">
-                    <dt>Next Action</dt>
-                    <dd><span><%(nextAction && nextAction.date) ? nextAction.date : ''%> - <%(nextAction && nextAction.desc) ? nextAction.desc : ''%></span>
-                    </dd>
-                    <dt>Expected Closing</dt>
-                    <dd><span><%=expectedClosing%></span></dd>
-                    <dt>Priority</dt>
-                    <dd><span><%=priority%></span></dd>
+
                 </dl>
             </div>
             <div class="clearfix"></div>
-            <div class="half-block left withPaddingLeft">
-                <div class="formTitle">
-                    <h3>Lead</h3>
+            <div class="formTitle">
+                <h3>Lead</h3>
 
-                    <div class="clearfix">
-                    </div>
+                <div class="clearfix">
                 </div>
+            </div>
+            <div class="half-block left withPaddingLeft">
+
                 <dl class="person-info">
                     <dt>Customer Name</dt>
+                    <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
+                    <dt>Contact Name</dt>
                     <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
                     <dt>Address </dt>
                     <dt>Street :</dt>
@@ -71,8 +59,10 @@
                     <dd><span><%=address.zip%></span></dd>
                     <dt>Country: </dt>
                     <dd><span><%=address.country%></span></dd>
-                    <dt>Contact Name</dt>
-                    <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
+                    <dt>Phone: </dt>
+                    <dd><span><%=phones.phone%></span></dd>
+                    <dt>Email: </dt>
+                    <dd><span><%=email%></span></dd>
                 </dl>
             </div>
             <div class="half-block left">

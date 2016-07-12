@@ -14,6 +14,7 @@ module.exports = function (models, event) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
+    router.get('/getForDd', authStackMiddleware, accessStackMiddleware, handler.getForDd);
 
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddleware, handler.opportunitiesForMiniView);

@@ -480,7 +480,7 @@
                 self.responseObj['#salesPersonDd'] = employees;
             });
 
-            populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Opportunities'}, 'name', this);
+            populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Deals'}, 'name', this);
             populate.get('#salesTeamDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, false, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
 

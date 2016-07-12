@@ -38,6 +38,33 @@ var Module = function (models, event) {
         return body.name ? true : false;
     }
 
+    this.getForDd = function (req, res, next) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var query = req.query;
+        var isOpportunitie = query.isOpportunitie;
+        var queryObject = {};
+
+        if (isOpportunitie) {
+            queryObject.isOpportunitie = isOpportunitie;
+        }
+
+        if (query && query.id) {
+            queryObject._id = objectId(query.id);
+        }
+
+        Opportunity
+            .find(queryObject)
+            .sort({name: 1})
+            .exec(function (err, opportunities) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: opportunities});
+            });
+
+    };
+
     function sendEmailToAssigned(req, opportunity) {
         var mailOptions;
         var Employee;

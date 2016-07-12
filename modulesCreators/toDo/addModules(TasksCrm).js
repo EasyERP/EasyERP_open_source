@@ -1,11 +1,12 @@
 var mongoose = require('mongoose');
 var connectOptions = {
-    user: 'easyErp',
+    user: 'easyerp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
 };
-var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
+//var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
+var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
 var url = 'mongodb://144.76.56.111:28017/pavlodb';
 var async = require('async');
 
@@ -16,9 +17,9 @@ function childModule(callback) {
     var module = {
         _id     : 106,
         mname   : 'Tasks',
-        href    : 'DealTasks',
+        href    : 'dealTasks',
         sequence: 106,
-        parrent : 1,
+        parrent : 19,
         link    : true,
         visible : true
     };
