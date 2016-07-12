@@ -1924,6 +1924,8 @@ var Module = function (models, event) {
 
                                         if (paymentCurrency.name !== invoice.currency._id.name){
                                             paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
+                                        } else {
+                                            paid = removed.paidAmount;
                                         }
 
                                         payments.forEach(function (payment) {
