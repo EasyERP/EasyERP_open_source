@@ -180,25 +180,25 @@ module.exports = function (models) {
      *
      * @apiParamExample {json} Request-Example:
      * {
-  "name": "Sales/Head 10%",
-  "bonusType": "Developer",
-  "value": "10",
-  "isPercent": "true"
-}
+      "name": "Sales/Head 10%",
+      "bonusType": "Developer",
+      "value": "10",
+      "isPercent": "true"
+    }
      *
      * @apiSuccess {Object} NewBonusType Just created bonus type
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 201 Created
      *{
-  "success": {
-    "__v": 0,
-    "name": "Sales/Head 10%",
-    "value": 10,
-    "isPercent": true,
-    "_id": "577f50d873ac376519277cb2",
-    "bonusType": "Developer"
-  }
-}
+      "success": {
+        "__v": 0,
+        "name": "Sales/Head 10%",
+        "value": 10,
+        "isPercent": true,
+        "_id": "577f50d873ac376519277cb2",
+        "bonusType": "Developer"
+      }
+    }
      */
     router.post('/', handler.create);
 
