@@ -4316,7 +4316,7 @@ textarea {
 span.error {
   color: #e55253 !important;
 }
-.kanban .item.errorContent .opportunity-date {
+.kanban .item.errorContent .projectType {
   color: #ff0000;
 }
 .red {
