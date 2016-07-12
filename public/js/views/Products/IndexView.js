@@ -194,7 +194,7 @@ define([
             if (product.child && product.child.length) {
                 canDelete = false;
             } else {
-                if (product.productsCount) {
+                if (product.productsCount > 0) {
                     canDelete = false;
                 }
             }

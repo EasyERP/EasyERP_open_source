@@ -50,7 +50,8 @@
 
         createItem: function () {
             new CreateView({
-                eventChannel: this.eventChannel
+                eventChannel: this.eventChannel,
+                viewType    : 'thumbnails'
             });
         },
 
