@@ -1,5 +1,5 @@
 <div class="form-holder">
-    <form method="post" action="" id="editEmployeeForm" class="form">
+    <form method="post" action="" id="editEmployeeForm" class="form editEmployeeForm">
         <fieldset>
             <div class="inner">
 
@@ -406,87 +406,88 @@
                     <div class="clearfix"></div>
                     <div class="dialog-tabs-item" id="job">
                         <div class="clearfix"></div>
+                        <div class="tableResponsive">
+                            <table class="list hireFireTable" id="hireFireTable">
+                                <thead>
+                                <tr>
+                                    <th>X</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Job position</th>
+                                    <th>Department</th>
+                                    <th>Manager</th>
+                                    <th>Job Type</th>
+                                    <th>Schedule</th>
+                                    <th>Contract</th>
+                                    <th>Scheduled Pay</th>
+                                    <%if (model.transfer[0].salary || model.transfer[0].salary === 0) {%>
+                                    <th>Salary</th>
+                                    <% } %>
+                                    <th>Status info</th>
+                                </tr>
+                                </thead>
+                                <tbody id="transfersTable">
 
-                        <table class="list hireFireTable" id="hireFireTable">
-                            <thead>
-                            <tr>
-                                <th>X</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Job position</th>
-                                <th>Department</th>
-                                <th>Manager</th>
-                                <th>Job Type</th>
-                                <th>Schedule</th>
-                                <th>Contract</th>
-                                <th>Scheduled Pay</th>
-                                <%if (model.transfer[0].salary || model.transfer[0].salary === 0) {%>
-                                <th>Salary</th>
-                                <% } %>
-                                <th>Status info</th>
-                            </tr>
-                            </thead>
-                            <tbody id="transfersTable">
+                                <%var i;%>
+                                <%for(i=0;i<=model.transfer.length-2;i++){
+                                var transfer = model.transfer[i];
 
-                            <%var i;%>
-                            <%for(i=0;i<=model.transfer.length-2;i++){
-                            var transfer = model.transfer[i];
+                                if (transfer.status === 'transfer') {
+                                continue;
+                                }
 
-                            if (transfer.status === 'transfer') {
-                            continue;
-                            }
-
-                            %>
-                            <tr class="transfer" id="<%=transfer._id%>" data-id="" data-content=<%=
-                                transfer.status %>>
-                                <td class="remove">
-                                </td>
-                                <td data-content="status"><%= transfer.status %></td>
-                                <td class="date" data-content="date"><%= transfer.date %></td>
-                                <td class="" data-content="jobPosition"
-                                    data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>">
-                                    <span><%=transfer.jobPosition ? transfer.jobPosition.name : ''%></span>
-                                </td>
-                                <td class="" data-content="department"
-                                    data-id="<%=transfer.department ? transfer.department._id : null%>">
-                                    <span><%=transfer.department ? transfer.department.name : "" %></span>
-                                </td>
-                                <td class="" data-content="manager"
-                                    data-id="<%= transfer.manager ?  transfer.manager._id : null%>">
+                                %>
+                                <tr class="transfer" id="<%=transfer._id%>" data-id="" data-content=<%=
+                                    transfer.status %>>
+                                    <td class="remove">
+                                    </td>
+                                    <td data-content="status"><%= transfer.status %></td>
+                                    <td class="date" data-content="date"><%= transfer.date %></td>
+                                    <td class="" data-content="jobPosition"
+                                        data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>">
+                                        <span><%=transfer.jobPosition ? transfer.jobPosition.name : ''%></span>
+                                    </td>
+                                    <td class="" data-content="department"
+                                        data-id="<%=transfer.department ? transfer.department._id : null%>">
+                                        <span><%=transfer.department ? transfer.department.name : "" %></span>
+                                    </td>
+                                    <td class="" data-content="manager"
+                                        data-id="<%= transfer.manager ?  transfer.manager._id : null%>">
                                         <span><%=transfer.manager ? transfer.manager.name.first + ' ' +
                                         transfer.manager.name.last : "Select"%></span>
-                                </td>
-                                <td class="" data-content="jobType"
-                                    data-id="<%= transfer.jobType ? transfer.jobType :''%>">
-                                    <span><%=transfer.jobType ? transfer.jobType : ""%></span>
-                                </td>
-                                <td data-content="weeklyScheduler"
-                                    data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>">
-                                    <span><%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : ""%></span>
-                                </td>
-                                <td data-content="payrollStructureType"
-                                    data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">
-                                    <span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>
-                                </td>
-                                <td data-content="scheduledPay"
-                                    data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
-                                    <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
-                                </td>
-                                <%if (transfer.salary || transfer.salary === 0) {%>
-                                <td class="dollar" data-content="salary" data-id="salary">
-                                    <%=currencySplitter(transfer.salary.toString())%>
-                                </td>
-                                <% } %>
-                                <td class="statusInfo" data-content="info"
-                                    data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info &&
-                                    transfer.info.length > 1 ? transfer.info : ""%>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="" data-content="jobType"
+                                        data-id="<%= transfer.jobType ? transfer.jobType :''%>">
+                                        <span><%=transfer.jobType ? transfer.jobType : ""%></span>
+                                    </td>
+                                    <td data-content="weeklyScheduler"
+                                        data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>">
+                                        <span><%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : ""%></span>
+                                    </td>
+                                    <td data-content="payrollStructureType"
+                                        data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">
+                                        <span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>
+                                    </td>
+                                    <td data-content="scheduledPay"
+                                        data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
+                                        <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
+                                    </td>
+                                    <%if (transfer.salary || transfer.salary === 0) {%>
+                                    <td class="dollar" data-content="salary" data-id="salary">
+                                        <%=currencySplitter(transfer.salary.toString())%>
+                                    </td>
+                                    <% } %>
+                                    <td class="statusInfo" data-content="info"
+                                        data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info &&
+                                        transfer.info.length > 1 ? transfer.info : ""%>
+                                    </td>
+                                </tr>
 
-                            <% }; %>
+                                <% }; %>
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                         <div class="ui-dialog-buttonset">
                             <% if (model.transfer.length && model.transfer[0].hasOwnProperty('salary')) {%>
                             <a href="javascript:;" id="update" class="btn"><span>Add</span></a>

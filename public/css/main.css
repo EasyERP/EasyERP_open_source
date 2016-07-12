@@ -3361,9 +3361,11 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: calc(100% - 55px);
   overflow: auto;
 }
-.opportunity-content .saleName,
-.opportunity-content .customerName {
-  white-space: nowrap;
+.editEmployeeForm .tableResponsive {
+  width: 926px;
+}
+.editEmployeeForm .ui-dialog-buttonset {
+  margin-top: 15px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -11292,7 +11294,6 @@ ul.dialog-tabs .withEndContract .arrow {
   -webkit-font-smoothing: antialiased;
   outline: none;
   background: #ffffff;
-  height: 15px;
   border-radius: 0;
   background-color: #8f1311;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#b13533), to(#8f1311));
@@ -11404,7 +11405,7 @@ ul.dialog-tabs .withEndContract .arrow {
   line-height: 20px;
   width: 8px;
   margin-left: -2px;
-  height: 17px;
+  min-height: 17px;
   display: block;
 }
 .dialog-tabs-items {
