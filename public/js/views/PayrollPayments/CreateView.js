@@ -174,8 +174,6 @@ define([
         },
 
         autoCalc: function (e) {
-            e.preventDefault();
-            e.stopPropagation();
             var el = $(e.target);
             var td = $(el.closest('td'));
             var tr = el.closest('tr');
