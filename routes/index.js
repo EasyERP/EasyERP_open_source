@@ -68,6 +68,7 @@ module.exports = function (app, mainDb) {
     var degreesRouter = require('./degrees')(models);
     var profilesRouter = require('./profiles')(models);
     var tasksRouter = require('./tasks')(models, event);
+    var tagRouter = require('./tags')(models, event);
     var journalEntriesRouter = require('./journalEntries')(models, event);
     var writeOffRouter = require('./writeOff')(models, event);
 
@@ -176,6 +177,7 @@ module.exports = function (app, mainDb) {
     app.use('/degrees', degreesRouter);
     app.use('/profiles', profilesRouter);
     app.use('/tasks', tasksRouter);
+    app.use('/tags', tagRouter);
     app.use('/users', userRouter);
     app.use('/writeOff', writeOffRouter);
 
@@ -218,18 +220,6 @@ module.exports = function (app, mainDb) {
         }
         res.clearCookie('lastDb');
         res.redirect('/#login');
-    });
-
-    app.get('/:id', function (req, res, next) {
-        var id = req.params.id;
-
-        id = parseInt(id, 10);
-
-        if (isNaN(id)) {
-            return next();
-        }
-
-        modulesHandler.redirectTo(req, res, next);
     });
 
     function notFound(req, res, next) {

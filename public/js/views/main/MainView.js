@@ -20,13 +20,19 @@ define([
         },
 
         events: {
-            'click .sidebar_toggler': 'expandCollapse'
+            'click .sidebarToggler': 'expandCollapse',
+            'click .loginPanel'    : 'openLogin'
         },
 
         expandCollapse: function () {
-            $('body').toggleClass('collapsed');
+            $('#wrapper').toggleClass('collapsed');
+            $('.loginPanel').removeClass('open');
         },
 
+        openLogin: function (e) {
+            e.stopPropagation();
+            $(e.target).closest('.loginPanel').toggleClass('open');
+        },
 
         createMenuViews: function () {
             var modules = this.collection.toJSON();

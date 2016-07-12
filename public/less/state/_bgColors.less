@@ -1,3 +1,105 @@
-.bgRed {
-  background-color: #eb5a46!important;
+.bg {
+  &Red {
+    background-color: #eb5a46 !important;
+  }
+  &Pink {
+    background-color: #ff80ce !important;
+  }
+  &Orange {
+    background-color: #ffab4a !important;
+  }
+  &Yellow {
+    background-color: #f2d600 !important;
+  }
+  &GreenDark {
+    background-color: #61bd4f !important;
+  }
+  &GreenLight {
+    background-color: #51e898 !important;
+  }
+  &BlueLight {
+    background-color: #00c2e0 !important;
+  }
+  &BlueDark {
+    background-color: #0079bf !important;
+  }
+  &Purple {
+    background-color: #c377e0 !important;
+  }
+  &Black {
+    background-color: #4d4d4d !important;
+  }
+  &Grey {
+    background-color: #b6bbbf !important;
+  }
+
+  &Hover {
+    .bg {
+      &Red,
+      &Pink,
+      &Orange,
+      &Yellow,
+      &GreenDark,
+      &GreenLight,
+      &BlueLight,
+      &BlueDark,
+      &Purple,
+      &Black,
+      &Grey {
+        &:hover {
+          opacity: 0.75 !important;
+        }
+      }
+    }
+  }
+}
+
+[data-color="bgRed"] {
+  background-color: #eb5a46 !important;
+}
+[data-color="bgPink"] {
+  background-color: #ff80ce !important;
+}
+[data-color="bgOrange"] {
+  background-color: #ffab4a !important;
+}
+[data-color="bgYellow"] {
+  background-color: #f2d600 !important;
+}
+[data-color="bgGreenDark"] {
+  background-color: #61bd4f !important;
+}
+[data-color="bgGreenLight"] {
+  background-color: #51e898 !important;
+}
+[data-color="bgBlueLight"] {
+  background-color: #00c2e0 !important;
+}
+[data-color="bgBlueDark"] {
+  background-color: #0079bf !important;
+}
+[data-color="bgPurple"] {
+  background-color: #c377e0 !important;
+}
+[data-color="bgBlack"] {
+  background-color: #4d4d4d !important;
+}
+[data-color="bgGrey"] {
+  background-color: #b6bbbf !important;
+}
+
+[data-color="bgRed"],
+[data-color="bgPink"],
+[data-color="bgOrange"],
+[data-color="bgYellow"],
+[data-color="bgGreenDark"],
+[data-color="bgGreenLight"],
+[data-color="bgBlueLight"],
+[data-color="bgBlueDark"],
+[data-color="bgPurple"],
+[data-color="bgBlack"],
+[data-color="bgGrey"] {
+  &:hover {
+    opacity: 0.75 !important;
+  }
 }
