@@ -4030,12 +4030,37 @@ var Module = function (models, event) {
             });
         };
 
+        var marketingExpenses = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date                  : {$gte: new Date(startDate), $lte: new Date(endDate)},
+                    'sourceDocument.model': 'writeOff',
+                    journal               : objectId(CONSTANTS.WRITE_OFF),
+                    credit                : {$gt: 0}
+                }
+            }, {
+                $group: {
+                    _id: null,
+                    sum: {
+                        $sum: '$credit'
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result && result.length ? result[0].sum : 0);
+            });
+        };
+
         parallelTasks = {
             adminExpenses   : adminExpenses,
             vacationExpenses: vacationExpenses,
             idleExpenses    : idleExpenses,
             adminSalary     : adminSalary,
-            actualHours     : actualHours
+            actualHours     : actualHours,
+            marketingBudget : marketingExpenses
         };
 
         async.parallel(parallelTasks, function (err, result) {

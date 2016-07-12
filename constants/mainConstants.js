@@ -55,6 +55,8 @@ module.exports = {
 
     OTHER_INCOME_ACCOUNT: '565eb53a6aa50532e5df0bd5',
 
+    WRITE_OFF: '57767a427134263421caa841',
+
     BANK_AND_CASH: [
         '565eb53a6aa50532e5df0bd6', // bank and Cash
         '565eb53a6aa50532e5df0bd3',

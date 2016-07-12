@@ -2316,7 +2316,7 @@ var Module = function (models, event) {
             } else if (contentType === 'DividendInvoice') {
                 optionsObject.$and.push({_type: 'dividendInvoice'});
             } else {
-                optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
+                optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}, {_type: {$ne: 'writeOff'}}]});
             }
 
             Invoice
