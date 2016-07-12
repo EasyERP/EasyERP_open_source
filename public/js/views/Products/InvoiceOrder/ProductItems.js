@@ -435,7 +435,7 @@ define([
             currency._id = $('#currencyDd').attr('data-id');
             classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
 
-            $($parrents[4]).attr('class', classForParent).find('span').text(salePrice);
+            $($parrents[4]).attr('class', classForParent).find('input').val(salePrice);
             total = parseFloat(selectedProduct.info.salePrice);
             taxes = total * this.taxesRate;
             subtotal = total + taxes;
@@ -468,7 +468,7 @@ define([
             if (selectedProduct && selectedProduct.get('name') === CONSTANTS.IT_SERVICES) {
                 quantity = 1;
             } else {
-                quantity = $parent.find('[data-name="quantity"] span').text();
+                quantity = $parent.find('#quantity').val();
                 quantity = parseFloat(quantity);
             }
 
