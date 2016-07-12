@@ -116,11 +116,11 @@ define([
                         App.filtersObject.savedFilters = response.savedFilters;
                     }
                     /*else {
-                                           App.render({
-                                               type   : 'error',
-                                               message: 'can\'t fetch currentUser'
-                                           });
-                                       }*/
+                     App.render({
+                     type   : 'error',
+                     message: 'can\'t fetch currentUser'
+                     });
+                     }*/
                 });
             }
         },
@@ -1025,7 +1025,7 @@ define([
                 }
 
                 if (contentType === 'PayrollExpenses') {
-                    contentFormModelUrl = "collections/PayrollExpenses/monthCollection";
+                    contentFormModelUrl = "collections/PayrollExpenses/oneMonthCollection";
                     contentFormViewUrl = "views/" + contentType + "/form/FormView";
                     topBarViewUrl = "views/" + contentType + "/TopBarView";
                 } else if (contentType !== 'ownCompanies') {
@@ -1195,7 +1195,6 @@ define([
                 }
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
-
 
                 if (!filter) {
 

@@ -499,8 +499,11 @@
             callback(response);
         });
     };
-    var getEmployeesCount = function (data, callback) {
-        dataService.getData('employees/getEmployeesCountForDashboard', data, function (response) {
+    var getEmployeesCount = function (params, callback) {
+        dataService.getData('employees/getEmployeesCountForDashboard', {
+            month: params.month,
+            year : params.year
+        }, function (response) {
             callback(response);
         });
     };

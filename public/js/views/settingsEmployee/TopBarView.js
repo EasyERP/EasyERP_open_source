@@ -1,24 +1,13 @@
 define([
-    'Backbone',
-    'jQuery',
+    'views/topBarViewBase',
     'Underscore',
     'text!templates/settingsEmployee/TopBarTemplate.html',
     'constants'
-], function (Backbone, $, _, ContentTopBarTemplate, CONSTANTS) {
-    var TopBarView = Backbone.View.extend({
+], function (BaseView, _, ContentTopBarTemplate, CONSTANTS) {
+    var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: CONSTANTS.SETTINGSEMPLOYEE,
-        template   : _.template(ContentTopBarTemplate),
-
-        initialize: function () {
-            this.render();
-        },
-
-        render: function () {
-            this.$el.html(this.template({contentType: this.contentType}));
-
-            return this;
-        }
+        template   : _.template(ContentTopBarTemplate)
     });
 
     return TopBarView;

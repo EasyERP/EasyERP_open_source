@@ -52,7 +52,7 @@
                             <!--<td class="notForm centerCell"><input id="<%=_supplier._id%>" type="checkbox"-->
                                                                   <!--value="<%=_supplier._id%>"-->
                                                                   <!--class="checkbox"/></td>-->
-                            <td class="" data-content="supplier"><%=_supplier._id.fullName ? _supplier._id.fullName :''%></td>
+                            <td class="" data-content="supplier"><%=_supplier.name ? _supplier.name.first + " " + _supplier.name.last :''%></td>
                             <td><%=model.month + '/' + model.year%></td>
                             <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
                                 data-cash="<%=_supplier.paidAmount%>">

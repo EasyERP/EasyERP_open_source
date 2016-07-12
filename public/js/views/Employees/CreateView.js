@@ -4,14 +4,16 @@ define([
     'Underscore',
     'text!templates/Employees/CreateTemplate.html',
     'models/EmployeesModel',
+    'models/TransferModel',
     'common',
     'populate',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
     'views/dialogViewBase',
     'constants',
-    'moment'
-], function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment) {
+    'moment',
+    'helpers'
+], function (Backbone, $, _, CreateTemplate, EmployeeModel, TransferModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment, helpers) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -181,8 +183,9 @@ define([
 
         saveItem: function () {
             var weeklyScheduler;
-            var transferArray;
+            var transfer;
             var employeeModel;
+            var transferModel;
             var homeAddress;
             var dateBirthSt;
             var self = this;
@@ -214,9 +217,12 @@ define([
             var $tr;
             var el;
             var $thisEl = this.$el;
+            var payrollStructureType;
+            var scheduledPay;
             var notes = [];
             var note;
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
+
 
             if ($thisEl.find('.errorContent').length) {
                 return App.render({
@@ -256,34 +262,21 @@ define([
                 homeAddress[el.attr('name')] = $.trim(el.val());
             });
 
-            salary = parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text(), 10) || 0;
+            salary = parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val()) || helpers.spaceReplacer($tr.find('[data-id="salary"]').text()), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
             dateText = $.trim($tr.find('td').eq(2).text());
-            date = dateText ? new Date(dateText) : new Date();
+            date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+            payrollStructureType = $tr.find('#payrollStructureTypeDd').attr('data-id') || null;
+            scheduledPay = $tr.find('#scheduledPayDd').attr('data-id') || null;
             department = $tr.find('#departmentsDd').attr('data-id');
             jobType = $.trim($tr.find('#jobTypeDd').text());
             info = $tr.find('#statusInfoDd').val();
             event = $tr.attr('data-content');
 
-            transferArray = [{
-                status         : event,
-                date           : date,
-                department     : department,
-                jobPosition    : jobPosition,
-                manager        : manager,
-                jobType        : jobType,
-                salary         : salary,
-                info           : info,
-                weeklyScheduler: weeklyScheduler
-            }];
-
             hireArray.push(date);
 
-            date = moment(date);
-            fireArray.push(date);
-            lastFire = date.year() * 100 + date.isoWeek();
             isEmployee = true;
 
             $thisEl.find('.groupsAndUser tr').each(function (index, element) {
@@ -357,8 +350,8 @@ define([
 
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
-                fire    : fireArray,
-                transfer: transferArray
+                fire    : fireArray
+                // transfer: transferArray
             };
 
             employeeModel.save(data, {
@@ -379,6 +372,31 @@ define([
                     // Backbone.history.fragment = '';
                     // Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
                     self.hideDialog();
+
+                    transfer = {
+                        status              : event,
+                        date                : date,
+                        department          : department,
+                        jobPosition         : jobPosition,
+                        manager             : manager,
+                        jobType             : jobType,
+                        salary              : salary,
+                        info                : info,
+                        weeklyScheduler     : weeklyScheduler,
+                        employee            : model.get('id'),
+                        scheduledPay        : scheduledPay,
+                        payrollStructureType: payrollStructureType
+                    };
+
+                    transferModel = new TransferModel();
+                    transferModel.save(transfer, {
+                        success: function (model) {
+
+                        },
+                        error: function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
                 },
 
                 error: function (model, xhr) {
@@ -399,7 +417,7 @@ define([
 
             this.$el = $(formString).dialog({
                 dialogClass: 'edit-dialog',
-                width      : 800,
+                width      : 900,
                 title      : 'Create Employee',
                 buttons    : {
                     save: {
@@ -444,7 +462,9 @@ define([
             populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, true, true);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, true, true);
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true);
-            populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);
+            populate.get('#weeklySchedulerDd', CONSTANTS.URLS.WEEKLYSCHEDULER, {}, 'name', this, true);
+            populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
+            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
 

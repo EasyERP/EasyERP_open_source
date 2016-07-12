@@ -14,7 +14,7 @@ module.exports = {
     BIRTHDAYS         : 52,
     DEPARTMENTS       : 15,
     PROFILES          : 51,
-    ORDERS             : 57,
+    ORDERS            : 57,
     INVOICE           : 56,
     QUOTATIONS        : 55,
     DASHBOARD         : 29,
@@ -49,4 +49,6 @@ module.exports = {
     EXPENSESINVOICE   : 97,
     PROFORMA          : 99,
     WRITEOFF          : 105
+    CASHBOOK          : 105,
+    CASHTRANSFER      : 106
 };

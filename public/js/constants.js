@@ -62,6 +62,8 @@ define([], function () {
         DIVIDENDINVOICE   : 'DividendInvoice',
         DIVIDENDPAYMENTS  : 'DividendPayments',
         SETTINGSEMPLOYEE  : 'settingsEmployee',
+        CASHBOOK          : 'cashBook',
+        CASHTRANSFER      : 'cashTransfer',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -100,7 +102,7 @@ define([], function () {
         IT_SERVICES: 'IT services',
 
         END_CONTRACT_WORKFLOW_ID: '52d2c1369b57890814000005',
-        TRASH_BIN               : "<a class='fa fa - trash'></a>",
+        TRASH_BIN               : "<a class='fa fa-trash'></a>",
 
         DASH_VAC_WEEK_BEFORE    : 2,
         DASH_VAC_WEEK_AFTER     : 8,
@@ -115,8 +117,10 @@ define([], function () {
             USERS                     : '/users/',
             USERS_FOR_DD              : '/users/forDd',
             APPLICATIONS              : '/applications/',
+            CASH_TRANSFER              : '/cashTransfer/',
             EMPLOYEES                 : '/employees/',
             CHARTOFACCOUNT            : '/ChartOfAccount/',
+            CHARTOFACCOUNT_FORDD       : '/ChartOfAccount/getForDd',
             COMPANIES                 : '/companies/',
             DEGREES                   : '/Degrees/',
             DEPARTMENTS               : '/departments/',
@@ -142,6 +146,7 @@ define([], function () {
             TASKS                     : '/Tasks/',
             VACATION                  : '/vacation/',
             WTRACK                    : '/wTrack/',
+            TRANSFER                   : '/employees/transfer/',
             BIRTHDAYS                 : '/employees/birthdays/',
             BONUSTYPE                 : '/bonusType/',
             BONUSTYPE_FORDD           : '/bonusType/getForDD',
@@ -184,6 +189,10 @@ define([], function () {
             SALARY_REPORT             : '/salaryReport/',
             WRITE_OFF                 : '/writeOff/',
             WRITE_OFF_WAY             : '/journals/writeOff'
+            WEEKLYSCHEDULER            : '/weeklyScheduler/forDd',
+            SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
+            PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
+            PAYMENT_METHOD_DD          : 'paymentMethod/'
         },
 
         MID: {

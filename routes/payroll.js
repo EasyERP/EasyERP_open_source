@@ -41,6 +41,7 @@ module.exports = function (models) {
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
     router.post('/recount', handler.recount);
+    router.post('/recountAll', handler.recountAll);
     router.patch('/', handler.putchBulk);
     router.patch('/byDataKey', handler.patchByDataKey);
     router.patch('/:id', handler.putchModel);

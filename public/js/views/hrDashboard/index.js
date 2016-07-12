@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'text!templates/hrDashboard/index.html',
@@ -11,7 +12,7 @@ define([
     'moment',
     'common',
     'helpers'
-], function ($, _, mainTemplate, hrDashboard, dataService, CONSTANTS, async, d3, custom, moment, common, helpers) {
+], function (Backbone, $, _, mainTemplate, hrDashboard, dataService, CONSTANTS, async, d3, custom, moment, common, helpers) {
     'use strict';
 
     var View = Backbone.View.extend({

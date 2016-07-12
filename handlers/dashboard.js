@@ -338,27 +338,34 @@ var wTrack = function (models) {
                 function employeeByDepComposer(parallelCb) {
                     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-                    Employee.aggregate([{
-                        $match: {
-                            hire: {$ne: []} // add by Liliya for new Application ToDO review
-                        }
-                    }, {
-                        $project: {
-                            isEmployee  : 1,
-                            department  : 1,
-                            isLead      : 1,
-                            fire        : 1,
-                            hire        : 1,
-                            name        : 1,
-                            lastFire    : 1,
-                            transfer    : 1,
-                            lastTransfer: {$max: '$transfer.date'},
-                            hireCount   : {$size: '$hire'},
-                            lastHire    : {
-                                $let: {
-                                    vars: {
-                                        lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
-                                    },
+                Employee.aggregate([{
+                    $match: {
+                        hire: {$ne: []} // add by Liliya for new Application ToDO review
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'transfer'
+                    }
+                }, {
+                    $project: {
+                        isEmployee  : 1,
+                        department  : 1,
+                        isLead      : 1,
+                        fire        : 1,
+                        hire        : 1,
+                        name        : 1,
+                        lastFire    : 1,
+                        transfer    : 1,
+                        lastTransfer: {$max: '$transfer.date'},
+                        hireCount   : {$size: '$hire'},
+                        lastHire    : {
+                            $let: {
+                                vars: {
+                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                },
 
                                     in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
                                 }

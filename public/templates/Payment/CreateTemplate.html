@@ -32,6 +32,16 @@
                         <dd>
                             <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
                         </dd>
+                        <div id='journalDiv'>
+                            <dt>
+                                <label for="paymentMethod">Journal
+                                </label>
+                            </dt>
+                            <dd>
+                                <a id="journal" class="current-selected" href="javascript:;">Select</a>
+                            </dd>
+                        </div>
+
                     </dl>
                 </div>
                 <div class="half-block left">
@@ -46,7 +56,7 @@
                         <dd>
                             <a id="paymentRef" data-id="<%=invoice._id%>" href="javascript:;"><%=invoice.name%></a>
                             <!--<input type="text" name="paymentRef" id="paymentRef" maxlength="20"-->
-                                   <!--value="<%=invoice.name%>" readonly />-->
+                            <!--value="<%=invoice.name%>" readonly />-->
                         </dd>
                         <!--                        <dt><label for="memo">Memo</label></dt>
                                                 <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->
@@ -61,7 +71,7 @@
                 </div>
                 <div id="differenceAmountContainer" class="half-block left hidden">
                     <dt><label>Difference Amount</label></dt>
-                    <dd class="dollar"> <span id="differenceAmount"></span></dd>
+                    <dd class="dollar"><span id="differenceAmount"></span></dd>
                     <!--<dt><label for="paymentDifference">Payment Difference</label></dt>
                     <dd>
                         <a id="paymentDifference" class="current-selected" href="javascript:;">Select</a>
