@@ -313,9 +313,9 @@ define([
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
             }
-            if (inputEl.hasClass('textarea')) {
+            /* if (inputEl.hasClass('textarea')) {
                 parent.find('span').addClass('textarea');
-            }
+            } */
 
             this.recalculateTaxes(parent);
         },
@@ -338,7 +338,7 @@ define([
             var $parrent = $target.parents('td');
             var $trEl = $target.parents('tr');
             var $quantityContainer = $trEl.find('[data-name="quantity"]');
-
+            var isJob = !!$parrent.hasClass('jobs');
             var $quantity = $quantityContainer.find('input');
             var $parrents = $trEl.find('td');
             var _id = $target.attr('id');
@@ -362,7 +362,7 @@ define([
                 return self.generateJob();
             }
 
-            if ($parrent.hasClass('jobs')) {
+            if (isJob) {
                 _id = product.attr('data-id');
                 jobId = $target.attr('id');
 
@@ -386,6 +386,9 @@ define([
 
             selectedProduct = model ? model.toJSON() : null;
 
+            if (!isJob) {
+                $($parrents[2]).val('class', 'editable');
+            }
             if (currentJob && selectedProduct) {
                 selectedProduct.info.salePrice = 0;
 
@@ -409,8 +412,6 @@ define([
 
             spanDatePicker.text(datePicker.val());
             datePicker.remove();
-
-            //  $($parrents[2]).attr('class', 'editable');
             $trEl.find('#editInput').val(salePrice); // changed on def 0
             /* if (currentJob && currentJob.budget) {
              price = currentJob.budget.budgetTotal.revenueSum;
