@@ -53,8 +53,10 @@ define([
             if (contentTypes[currentContentType]) {
                 $('.list2 tbody').find('[data-id="false"]').remove();
             }
+
+            $('.loginPanel').removeClass('open');
         });
-    }
+    };
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,

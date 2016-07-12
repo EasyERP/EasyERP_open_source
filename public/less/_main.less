@@ -16,8 +16,8 @@
 @imagesfolder: '../images';
 //@body-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 //@lucida-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-@body-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
-@lucida-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
+@body-font: 'Open Sans Regular', 'Segoe UI', Helvetica, Verdana, sans-serif;
+@lucida-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, sans-serif;
 @icon-font: Icons;
 @title-font: Title;
 
@@ -236,9 +236,9 @@ textarea {
   }
 }
 
-.errorContent {
-  border: 1px solid red !important;
-}
+//.errorContent {
+//  border: 1px solid red !important;
+//}
 
 span.error {
   color: @unpaid-wtrack !important;
@@ -247,20 +247,9 @@ span.error {
 .kanban {
   .item {
     &.errorContent {
-      border: none !important;
-      background-color: #f78c8c !important;
-
-      .opportunity {
-        &-header {
-          h4, h3 {
-            color: #fff;
-          }
-        }
-        &-content {
-          p {
-            color: #fff;
-          }
-        }
+      //border: 1px solid #7f7f80!important;
+      .opportunity-date {
+        color: #ff0000;
       }
     }
   }
@@ -1086,6 +1075,10 @@ input::-ms-clear {
     top: 2.5px;
     right: 7px;
     position: absolute;
+
+    .icon {
+      font-size: 19px;
+    }
 
     a {
       &:hover {
@@ -3803,7 +3796,7 @@ table#workflows {
   .mainmenu;
 }
 
-.side_menu {
+.sideMenu {
   .submenu;
 }
 
@@ -3837,7 +3830,7 @@ table#workflows {
     cursor: pointer;
     vertical-align: baseline;
     color: @top-font-color;
-    line-height: 40px; //it was 18px
+    line-height: 30px; //it was 18px
 
     &:hover {
       color: @top-font-color + #333;
@@ -3847,6 +3840,7 @@ table#workflows {
     font-size: 15px;
     text-decoration: none;
     text-align: center;
+    margin-right: 10px;
     &:before {
       line-height: 18px;
     }
@@ -3876,9 +3870,9 @@ table#workflows {
       }
     }
   }
-  .btn {
-    max-height: 26px;
-    line-height: 14px;
+  .btnRounded {
+    height: 26px;
+    line-height: 26px!important;
   }
 }
 
@@ -4184,7 +4178,7 @@ ul.chart-tabs {
 }
 
 .choseDateRange, .choseDateItem, .choseDateRangeSource {
-  padding: 5px;
+  padding: 3px 10px;
   border: @thin-border #efefef;
   float: right;
   margin-right: 10px;
@@ -4212,18 +4206,24 @@ ul.chart-tabs {
 .legend-box {
   border: @thin-border @border-color-main;
   width: 525px;
-  height: 32px;
-  padding: 3px 0 0;
   margin: -39px auto 0;
   color: @mainText-color;
 
   &.small {
-    width: 255px;
+    width: 265px;
+
+    &:before,&:after {
+      content: '';
+      display: table;
+    }
+    &:after {
+      clear: both;
+    }
   }
 
   div {
     float: left;
-    padding: 5px 10px;
+    padding: 3px 10px;
 
     .square {
       width: 20px;
@@ -6344,7 +6344,7 @@ textarea#editInput {
   float: right;
   width: 35%;
   position: relative;
-  margin-top: -35px;
+  margin-top: -30px;
   margin-right: 90px;
 
   .btn {
@@ -6610,7 +6610,7 @@ textarea#editInput {
 
 .invoiceChart-legend {
   position: absolute;
-  top: 20px;
+  top: -28px;
   left: 0;
   width: 100%;
   text-align: center;
@@ -6621,7 +6621,7 @@ textarea#editInput {
   }
   .legend-box {
     margin-top: 0;
-    padding: 3px;
+    padding: 0;
     .invoiced {
       .square {
         background-color: @invoiced;
@@ -6637,12 +6637,16 @@ textarea#editInput {
   }
   .choseDateItem {
     border: 1px solid @border-color-main;
-    button {
+    span {
       background: #fff;
       color: #4d5a75;
+      padding: 2px 5px;
+      font-size: 12px;
+      line-height: 16px;
       &:hover {
         background-color: #66b5d4;
         color: white;
+        cursor: pointer;
       }
     }
     .active {
