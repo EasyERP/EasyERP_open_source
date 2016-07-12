@@ -962,15 +962,34 @@ input {
 .opportunity-content {
   .fa-comment-o,
   .fa-paperclip {
-    color: #fff;
+    color: #2c3e50;
   }
-  .fa-paperclip {
-    margin-left: 10px;
+  .fa {
+    &:nth-child(n+2) {
+      margin-left: 10px;
+    }
   }
   .projectType {
     color: #549ecf;
   }
 }
+
+.commentWrap,
+.attachmentWrap {
+  color: #2c3e50;
+}
+
+//.commentWrap,
+//.attachmentWrap {
+//  position: relative;
+//
+//  span {
+//    position: absolute;
+//    right: 0;
+//    top: 0;
+//  }
+//}
+
 .kanban .column .item .inner {
   padding: 5px 5px 8px;
 }
@@ -994,5 +1013,16 @@ input {
       width: calc(~"100% - 55px");
       overflow: auto;
     }
+  }
+}
+.opportunity-content {
+  .saleName, .customerName {
+    white-space: nowrap;
+  }
+  .saleName {
+
+  }
+  .customerName {
+
   }
 }
