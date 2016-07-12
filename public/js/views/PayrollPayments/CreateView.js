@@ -107,7 +107,7 @@ define([
 
                 if (el && el.chartAccount && el.chartAccount._id) {
                     dataService.getData('/journals/getByAccount', {
-                        transaction : 'Payment',
+                        transaction  : 'Payment',
                         creditAccount: el.chartAccount._id
                     }, function (resp) {
                         self.responseObj['#journal'] = resp.data || [];
@@ -219,16 +219,12 @@ define([
                 calc = calc ? parseFloat(calc) : 0;
                 newValue = parseFloat(helpers.spaceReplacer(input.val()));
 
-                if (payTD.text()) {
-                    pay = pay;
-                } else {
+                if (!payTD.text()) {
                     subValues = newValue - pay;
                     pay = newValue;
                 }
 
                 if (calcTD.text()) {
-                    calc = calc;
-                } else {
                     subValues = newValue - calc;
                     calc = newValue;
                 }
