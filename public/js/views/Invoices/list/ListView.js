@@ -22,9 +22,12 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        contentType      : 'Invoices',
+        contentType      : CONSTANTS.INVOICES,
+        page             : null,
+        hasPagination    : true,
 
         initialize: function (options) {
+            //this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.filter = options.filter || {};
@@ -37,10 +40,13 @@ define([
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
+
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
             this.render();
+
+            //ListViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
         },
