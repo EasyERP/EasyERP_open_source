@@ -43,7 +43,13 @@ async.waterfall([
             async.each(productCategories, function (cat, cb) {
                 ProductCategories.update({_id: cat}, {$set: {productsCount: 0, child: []}}, {multi: true}, cb);
             }, function (err) {
-                console.log('Parent Categories Updated!');
+
+                if(err){
+                    console.error(err);
+                    return;
+                }
+
+                console.log('Child Categories Updated!');
 
                 wCb(null, productCategories);
             });
@@ -64,7 +70,11 @@ async.waterfall([
             child        : child,
             productsCount: productsCount
         }
-    }, function () {
+    }, function (err) {
+        if (err){
+            console.error(err);
+        }
+
         console.log('DONE!');
     });
 });
