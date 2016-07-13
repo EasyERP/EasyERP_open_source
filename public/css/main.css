@@ -2919,7 +2919,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .tabListItem:hover > span {
   display: block;
 }
-.tabListItem.active {
+.tabListItem.passed {
   background-image: linear-gradient(to top, #158b0c, #18a815);
 }
 .tabListItem span {
@@ -2932,15 +2932,26 @@ input:not([type="checkbox"]).inputBordered:focus {
   color: #666;
   white-space: nowrap;
 }
-.dealTitle h3 {
-  position: relative;
+.clearLeft {
+  float: left!important;
+  clear: both!important;
+}
+.dealsLeadBlock {
+  margin-top: 30px;
+}
+.form-holder .form .dealTitle h3 {
   display: inline-block;
   float: left;
   white-space: nowrap;
 }
-.dealTitle h3 > * {
+.form-holder .form .dealTitle h3.editable {
+  position: relative;
+  padding-left: 20px;
+}
+.form-holder .form .dealTitle h3.editable > * {
   position: absolute;
   left: 0;
+  top: 0;
 }
 .collapsed .side_menu {
   width: 40px !important;

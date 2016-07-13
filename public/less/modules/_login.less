@@ -536,7 +536,7 @@ input {
       }
     }
 
-    &.active {
+    &.passed {
       background-image: linear-gradient(to top, #158b0c,#18a815);
     }
 
@@ -553,15 +553,34 @@ input {
   }
 }
 
-.dealTitle {
-  h3 {
-    position: relative;
-    display: inline-block;
-    float: left;
-    white-space: nowrap;
-    > * {
-      position: absolute;
-      left: 0;
+.clearLeft {
+  float: left!important;
+  clear: both!important;
+}
+
+.dealsLeadBlock {
+  margin-top: 30px;
+}
+
+.form-holder {
+  .form {
+    .dealTitle {
+      h3 {
+        display: inline-block;
+        float: left;
+        white-space: nowrap;
+
+        &.editable {
+          position: relative;
+          padding-left: 20px;
+
+          > * {
+            position: absolute;
+            left: 0;
+            top: 0;
+          }
+        }
+      }
     }
   }
 }
