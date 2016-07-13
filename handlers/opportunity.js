@@ -2598,8 +2598,8 @@ var Module = function (models, event) {
 
     function getForChart(req, res, next) {
         var query = req.query;
-        var starDate = query.startDate ? new Date(query.startDate) : null;
-        var endDate = query.endDate ? new Date(query.endDate) : null;
+        var starDate = query.startDay ? new Date(query.startDay) : null;
+        var endDate = query.endDay ? new Date(query.endDay) : null;
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var matchObj = {
             $and: []
@@ -2620,12 +2620,7 @@ var Module = function (models, event) {
             .parallel({
                 assignedTo: function (parCb) {
                     Opportunities.aggregate([{
-                        $match: {
-                            $and: [
-                                {isOpportunitie: false}
-                            ]
-
-                        }
+                        $match: matchObj
                     }, {
                         $lookup: {
                             from        : 'Employees',
@@ -2654,9 +2649,15 @@ var Module = function (models, event) {
                 createdBy: function (parCb) {
                     Opportunities.aggregate([{
                         $match: matchObj
-                    }, {$sort: {'createdBy.date': 1}}, {
+                    }, {
+                        $sort: {'createdBy.date': 1}
+                    }, {
+                        $project: {
+                            date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
+                        }
+                    }, {
                         $group: {
-                            _id  : {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]},
+                            _id  : '$date',
                             count: {$sum: 1}
                         }
                     }], parCb);

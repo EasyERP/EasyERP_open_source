@@ -28,7 +28,7 @@ dbObject.once('open', function callback() {
 var ProductCategories = dbObject.model('jobs', ProductsCategoriesSchema);
 var Product = dbObject.model('jobs', ProductsSchema);
 var category = {
-    _id : '564591f9624e48551dfe3b23',
+    _id: '564591f9624e48551dfe3b23',
     name: 'All'
 };
 var productCategories;
@@ -49,10 +49,8 @@ ProductCategories.find({_id: {$ne: ObjectId('564591f9624e48551dfe3b23')}}, {_id:
 });
 
 
-
-
 async.waterfall([
-    function(wCb){
+    function (wCb) {
         ProductCategories.find({_id: {$ne: ObjectId('564591f9624e48551dfe3b23')}}, {_id: 1}, function (err, result) {
 
             productCategories = _.pluck(result, '_id');
@@ -69,15 +67,20 @@ async.waterfall([
 
     function (productCategories, wCb) {
         Product.count({}, function (err, count) {
-            wCb(null, productCategories, count);
+            wCb(null, {productCategories: productCategories, count: count});
         });
     }
-], function(err, result){
-    var child = result[0];
-    var productsCount = result[1];
+], function (err, result) {
+    var child = result.productCategories;
+    var productsCount = result.count;
 
-    Product.findOneAndUpdate({_id: ObjectId('564591f9624e48551dfe3b23')}, {$set: {child: child, productsCount: productsCount}}, function(){
-       console.log('DONE!');
+    Product.findOneAndUpdate({_id: ObjectId('564591f9624e48551dfe3b23')}, {
+        $set: {
+            child        : child,
+            productsCount: productsCount
+        }
+    }, function () {
+        console.log('DONE!');
     });
 });
 
