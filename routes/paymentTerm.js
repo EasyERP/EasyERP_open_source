@@ -13,7 +13,7 @@ module.exports = function (models) {
      *
      * @apiVersion 0.0.1
      * @apiName getPaymentTerms
-     * @apiGroup paymentTerm
+     * @apiGroup Payment Term
      *
      * @apiSuccess {Object} PaymentTerms
      * @apiSuccessExample Success-Response:
@@ -50,7 +50,7 @@ module.exports = function (models) {
      *
      * @apiVersion 0.0.1
      * @apiName getPaymentTermsForList
-     * @apiGroup paymentTerm
+     * @apiGroup Payment Term
      *
      * @apiSuccess {Object} PaymentTermsForList
      * @apiSuccessExample Success-Response:

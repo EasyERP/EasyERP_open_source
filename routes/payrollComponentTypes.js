@@ -10,8 +10,23 @@ module.exports = function (models) {
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
-    
+
+    /**
+     *@api {get} /payrollComponentTypes/forDd/ Request PayrollComponentTypesForDd
+     *
+     * @apiVersion 0.0.1
+     * @apiName getPayrollComponentTypesForDd
+     * @apiGroup Payroll Component Types
+     *
+     * @apiSuccess {Object} PayrollComponentTypesForDd
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "data": []
+           }
+     */
     router.get('/forDd', handler.getForDd);
+
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {

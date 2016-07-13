@@ -8,6 +8,18 @@ module.exports = function (models) {
 
     router.use(authStackMiddleware);
 
+    /**
+     *@api {get} /paymentType/ Request PaymentTypes
+     *
+     * @apiVersion 0.0.1
+     * @apiName getPaymentTypes
+     * @apiGroup PaymentType
+     *
+     * @apiSuccess {Object} PaymentTypes
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *      []
+     */
     router.get('/', handler.getForDd);
 
     return router;
