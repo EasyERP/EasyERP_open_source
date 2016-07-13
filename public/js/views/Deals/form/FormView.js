@@ -3,7 +3,7 @@ define([
     'Underscore',
     'text!templates/Deals/form/FormTemplate.html',
     'text!templates/Deals/workflowProgress.html',
-    'views/Notes/NoteView',
+    'views/Editor/NoteView',
     'views/Deals/EditView',
     'constants',
     'dataService',

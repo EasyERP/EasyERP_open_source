@@ -1,0 +1,75 @@
+<div class="attachments"></div>
+<div class="noteWrapper">
+    <ul class="chart-tabs">
+        <li><a class="active" id="noteTab" href="javascript:;">New Note</a></li>
+        <li><a href="javascript:;" id="taskTab" class="">Create task</a></li>
+    </ul>
+    <div class="dialog-tabs-items">
+        <div class="editorTab dialog-tabs-item active" id="note">
+        <label>New Note</label>
+        <div class="addNote">
+            <div class="area_holder">
+                <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
+                <a href="javascript:;" class="attach_file">
+                    <i class="fa fa-paperclip" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div>
+                <a class="addTitle" href="javascript:;">Add a title</a>
+            </div>
+
+            <div class="title-wrapper">
+                <label>Note Title</label>
+                <input type="text" id="noteTitleArea" value="" maxlength="64">
+            </div>
+
+            <div class="buttons">
+                <buttom class="btn" id="addNote">
+                    <span>Save</span>
+                </buttom>
+                <buttom class="btn" id="cancelNote">
+                    <span>Cancel</span>
+                </buttom>
+                <div class="clearfix">
+                </div>
+            </div>
+            <input type="hidden" id="getNoteKey" value="">
+        </div>
+    </div>
+
+        <div class="editorTab dialog-tabs-item" id="task">
+            <div class="addTask">
+                <div class="title-wrapper ">
+                    <label>Assigned To</label>
+                    <a  href="javascript:;"  class="current-selected" id="assignedToDd">Select</a>
+                    <input type="text" class="date" id="taskDueDate"
+                           value="<%= date %>" maxlength="32"
+                           placeholder="Date"readonly/>
+                </div>
+                <div class="area_holder">
+                    <textarea id="taskArea" placeholder="Description..." maxlength="500"></textarea>
+                    <a href="javascript:;" class="attach_file">
+                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                    </a>
+                </div>
+
+                <div class="buttons">
+                    <buttom class="btn" id="addTask">
+                        <span>Save</span>
+                    </buttom>
+                    <buttom class="btn" id="cancelTask">
+                        <span>Cancel</span>
+                    </buttom>
+                    <div class="clearfix">
+                    </div>
+                </div>
+                <!--   <input type="hidden" id="getNoteKey" value="">-->
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <div class="clearfix"></div>
+</div>
