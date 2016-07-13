@@ -20,8 +20,8 @@ module.exports = function (models, event) {
      * @apiName getOpportunities
      * @apiGroup Opportunity
      *
-     * @apiParam {string} workflowId
-     * @apiParam {string} viewType="kanban"
+     * @apiParam {String} workflowId
+     * @apiParam {String} viewType="kanban"
      *
      *
      * @apiSuccess {Object} Opportunities
