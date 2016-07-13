@@ -2621,7 +2621,7 @@ var Module = function (models, event) {
             });
 
             historyMatchObj.$and.push({
-                creationDate: {
+                date: {
                     $gte: starDate,
                     $lte: endDate
                 }
@@ -2633,6 +2633,8 @@ var Module = function (models, event) {
                 assignedTo: function (parCb) {
                     History.aggregate([{
                         $match: historyMatchObj
+                    },{
+                        $sort: {date: 1}
                     }, {
                         $project: {
                             date: {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]}
