@@ -21,8 +21,8 @@ var connectOptions = {
     j   : true
 };
 
-//var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
-var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
+var dbObject = mongoose.createConnection('144.76.56.111', 'alex', 28017, connectOptions);
+//var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -191,7 +191,8 @@ dbObject.once('open', function callback() {
                             model: 'Payment',
                             _id  : model._id
                         },
-                        amount        : invoiceRate
+
+                        amount: invoiceRate
                     };
 
                     var bodyOtherIncome = {
@@ -201,14 +202,15 @@ dbObject.once('open', function callback() {
                             model: 'Payment',
                             _id  : model._id
                         },
-                        amount        : Math.abs(PaymRate - invoiceRate)
+                        
+                        amount: Math.abs(PaymRate - invoiceRate)
                     };
 
                     if (PaymRate > invoiceRate) {
-                        bodyOtherIncome.journal = '57848f8e7501f35c20bd0973'
+                        bodyOtherIncome.journal = '57848f8e7501f35c20bd0973';
                     } else if (PaymRate < invoiceRate) {
                         bodyOtherIncome.journal = '57848fc57501f35c20bd0974';
-                    } else if (PaymRate === invoiceRate && model.currency._id.name !== 'USD'){
+                    } else if (PaymRate === invoiceRate && model.currency._id.name !== 'USD') {
                         console.log(model._id);
                     }
 

@@ -17,8 +17,8 @@ var connectOptions = {
     j   : true
 };
 
-//var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
-var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
+var dbObject = mongoose.createConnection('144.76.56.111', 'alex', 28017, connectOptions);
+//var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -50,6 +50,15 @@ dbObject.once('open', function callback() {
     });
 
     Payment.update({paymentMethod: '565f2e05ab70d49024242e0a'}, {$set: {paymentMethod: "565f2e05ab70d49024242e0c"}}, {multi: true}, function (err, result) {
+        if (err) {
+            return console.log(err);
+        }
+
+        console.log(result);
+    });
+
+
+    Payment.update({paymentMethod: '577f97a15dc67c373fced536'}, {$set: {paymentMethod: "576cf2edd742b37b20468e4e"}}, {multi: true}, function (err, result) {
         if (err) {
             return console.log(err);
         }

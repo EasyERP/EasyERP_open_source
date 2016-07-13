@@ -142,7 +142,7 @@ define([
                     dataService.patchData(url, data, function (err) {
                         if (!err) {
                             self.currentModel.set({approved: true});
-                            $buttons.show();
+                           // $buttons.show();
 
                             App.stopPreload();
 
@@ -371,10 +371,6 @@ define([
 
                         self.hideDialog();
 
-                        if (paymentCb && typeof paymentCb === 'function') {
-                            return paymentCb(null, currency);
-                        }
-
                         if (self.redirect) {
 
                             if (self.eventChannel) {
@@ -386,6 +382,10 @@ define([
                             $dueDateEl.text(result.dueDate);
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
+                        }
+
+                        if (paymentCb && typeof paymentCb === 'function') {
+                            return paymentCb(null, currency);
                         }
                     },
 
