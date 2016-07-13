@@ -36,7 +36,7 @@ module.exports = (function () {
     quotationSchema = new Schema({
         currency: {
             _id : {type: ObjectId, ref: 'currency', default: null},
-            rate: {type: Number, default: 0} //changed default to '0' for catching errors
+            rate: {type: Number, default: 0} // changed default to '0' for catching errors
         },
 
         forSales      : {type: Boolean, default: true},
@@ -85,10 +85,11 @@ module.exports = (function () {
     quotationSchema.pre('save', function (next) {
         var quotation = this;
         var db = quotation.db.db;
+        var prefix = quotation.forSales ? 'SO' : 'PO';
 
         db.collection('settings').findOneAndUpdate({
             dbName: db.databaseName,
-            name  : 'quotation'
+            name  : prefix
         }, {
             $inc: {seq: 1}
         }, {
@@ -99,7 +100,7 @@ module.exports = (function () {
                 return next(err);
             }
             // quotation.name = 'PO' + rate.seq; //it was working before mongoose and mongo update
-            quotation.name = 'PO' + rate.value.seq;
+            quotation.name = prefix + '_' + rate.value.seq;
 
             next();
         });

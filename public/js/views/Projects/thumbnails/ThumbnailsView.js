@@ -9,11 +9,12 @@
     'views/Projects/CreateView',
     'views/Filter/filterView',
     'services/projects',
+    'services/select',
     'dataService',
     'common',
     'constants',
     'populate'
-], function (Backbone, $, _, thumbnailsItemTemplate, selectView, BaseView, EditView, CreateView, FilterView, projects, dataService, common, CONSTANTS, populate) {
+], function (Backbone, $, _, thumbnailsItemTemplate, selectView, BaseView, EditView, CreateView, FilterView, projects, selectService, dataService, common, CONSTANTS, populate) {
     'use strict';
     var ProjectThumbnalView = BaseView.extend({
         el           : '#content-holder',
@@ -39,7 +40,7 @@
             'click .health-wrapper ul li div'                                                   : projects.chooseHealthDd,
             'click .forStage .newSelectList li'                                                 : projects.chooseOption,
             'click .tasksByProject'                                                             : 'dropDown',
-            'click .stageSelect'                                                                : projects.showNewSelect,
+            'click .stageSelect'                                                                : selectService.showStageSelect,
             'click .project'                                                                    : 'useProjectFilter',
             'click .forProjectsTypes .newSelectList li:not(.miniStylePagination):not(.disabled)': 'chooseOption',
             'click .current-selected:not(.disabled)'                                            : 'showNewSelect'
