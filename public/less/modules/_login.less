@@ -936,9 +936,11 @@ input {
             background-color: #8c8c8c;
           }
           &:before {
+            -webkit-transform: rotate(-45deg);
             transform: rotate(-45deg);
           }
           &:after {
+            -webkit-transform: rotate(45deg);
             transform: rotate(45deg);
           }
           &:hover {
@@ -996,13 +998,14 @@ input {
   }
 }
 
-//.dashbordActions {
-//  .choseDateRange {
-//
-//  }
-//
-//  .legend-box {
-//    &.small {
-//    }
-//  }
-//}
+.tableFixedWrap {
+  height: 100%;
+
+  .tableFixed {
+    height: 100%;
+  }
+
+  table.payRoll-list #payRoll-Table .scrollit {
+    height: 100%;
+  }
+}

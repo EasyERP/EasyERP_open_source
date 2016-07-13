@@ -3286,9 +3286,11 @@ input:not([type="checkbox"]).inputBordered:focus {
   background-color: #8c8c8c;
 }
 .tag-list-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.exitButton:before {
+  -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
 .tag-list-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.exitButton:after {
+  -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 .tag-list-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.exitButton:hover {
@@ -3326,6 +3328,15 @@ input:not([type="checkbox"]).inputBordered:focus {
   height: calc(100% - 40px);
   width: calc(100% - 55px);
   overflow: auto;
+}
+.tableFixedWrap {
+  height: 100%;
+}
+.tableFixedWrap .tableFixed {
+  height: 100%;
+}
+.tableFixedWrap table.payRoll-list #payRoll-Table .scrollit {
+  height: 100%;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -3941,7 +3952,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 #searchContainer.payRoll {
   margin: 0 0 10px;
 }
-@media (min-width: 1320px) {
+@media (min-width: 920px) {
   table.payRoll-list #payRoll-Table .scrollit {
     height: calc(100vh - 190px);
   }
@@ -6681,9 +6692,9 @@ dl dd span.ui-spinner {
 }
 #wrapper #content-holder {
   position: relative;
-  height: calc(100% - 40px);
+  height: calc(100% - 50px);
   display: block;
-  padding: 0 5px;
+  padding: 0 20px;
   clear: both;
   background: inherit;
 }
@@ -8430,6 +8441,9 @@ table#workflows tr td.edit-status {
   margin: 15px 0;
   text-align: center;
 }
+#top-bar .btn {
+  margin-top: 4px;
+}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
@@ -8497,6 +8511,9 @@ table#workflows tr td.edit-status {
   width: 100%;
   margin: 15px 0;
   text-align: center;
+}
+.projectInfoTopBar .btn {
+  margin-top: 4px;
 }
 .noPadding {
   padding: 0 !important;
