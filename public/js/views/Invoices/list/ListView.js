@@ -22,7 +22,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        contentType      : 'Invoice',
+        contentType      : 'Invoices',
 
         initialize: function (options) {
             this.startTime = options.startTime;
