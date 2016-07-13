@@ -34,21 +34,6 @@ var category = {
 var productCategories;
 var productsCount;
 
-
-ProductCategories.find({_id: {$ne: ObjectId('564591f9624e48551dfe3b23')}}, {_id: 1}, function (err, result) {
-
-    productCategories = _.pluck(result, '_id');
-
-    async.each(productCategories, function (cat, cb) {
-        ProductCategories.update({_id: cat}, {$set: {productsCount: 0, child: []}}, {multi: true}, cb);
-    }, function (err) {
-        console.log('Parent Categories Updated!');
-
-
-    });
-});
-
-
 async.waterfall([
     function (wCb) {
         ProductCategories.find({_id: {$ne: ObjectId('564591f9624e48551dfe3b23')}}, {_id: 1}, function (err, result) {
@@ -58,7 +43,13 @@ async.waterfall([
             async.each(productCategories, function (cat, cb) {
                 ProductCategories.update({_id: cat}, {$set: {productsCount: 0, child: []}}, {multi: true}, cb);
             }, function (err) {
-                console.log('Parent Categories Updated!');
+
+                if(err){
+                    console.error(err);
+                    return;
+                }
+
+                console.log('Child Categories Updated!');
 
                 wCb(null, productCategories);
             });
@@ -79,7 +70,11 @@ async.waterfall([
             child        : child,
             productsCount: productsCount
         }
-    }, function () {
+    }, function (err) {
+        if (err){
+            console.error(err);
+        }
+
         console.log('DONE!');
     });
 });
