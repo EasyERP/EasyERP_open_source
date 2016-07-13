@@ -681,7 +681,6 @@ input {
   }
 }
 
-
 .color {
   &Card {
     &Wrap {
@@ -999,6 +998,7 @@ input {
 .content-holder {
 
   .grid-conatiner {
+
     &.revenue {
       position: absolute;
       right: 0;
@@ -1020,4 +1020,27 @@ input {
   table.payRoll-list #payRoll-Table .scrollit {
     height: 100%;
   }
+}
+
+.absoluteContent {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  table {
+    height: 100%;
+  }
+
+  .scrollable {
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+.flexTableWrap {
+  flex-grow: 1;
+  position: relative;
 }

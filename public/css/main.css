@@ -3348,6 +3348,25 @@ input:not([type="checkbox"]).inputBordered:focus {
 .tableFixedWrap table.payRoll-list #payRoll-Table .scrollit {
   height: 100%;
 }
+.absoluteContent {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+.absoluteContent table {
+  height: 100%;
+}
+.absoluteContent .scrollable {
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.flexTableWrap {
+  flex-grow: 1;
+  position: relative;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
@@ -3438,11 +3457,8 @@ input:not([type="checkbox"]).inputBordered:focus {
 .collapsed .sideMenu .root.active > ul li:first-child a {
   color: #ffffff;
 }
-.collapsed .content_wrapper .content-holder {
-  margin-left: 45px;
-}
-.collapsed .content_wrapper .top-bar {
-  margin-left: 65px;
+.collapsed .content_wrapper {
+  width: calc(100% - 40px);
 }
 .collapsed .topbarLogo {
   width: auto;
@@ -3812,14 +3828,11 @@ input:not([type="checkbox"]).inputBordered:focus {
   margin-right: -100%;
 }
 .content_wrapper {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   height: calc(100% - 40px);
-  margin-top: 40px;
-}
-.content_wrapper .content-holder {
-  margin-left: 235px;
-}
-.content_wrapper .top-bar {
-  margin-left: 235px;
+  width: calc(100% - 235px);
 }
 .template-switcher {
   margin-top: 10px;
@@ -6675,10 +6688,18 @@ dl dd span.ui-spinner {
 #wrapper #content-holder {
   position: relative;
   height: calc(100% - 50px);
-  display: block;
-  padding: 0 20px;
-  clear: both;
-  background: inherit;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-direction: normal;
+  -moz-box-direction: normal;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 #startLetter {
   margin: 0;
