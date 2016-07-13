@@ -4,10 +4,10 @@ define([
     'Underscore',
     'text!templates/Persons/form/FormTemplate.html',
     'views/Persons/EditView',
-    'views/Opportunities/compactContent',
+    'views/Deals/compactContent',
     'views/Notes/NoteView',
     'views/Notes/AttachView',
-    'views/Opportunities/CreateView',
+    'views/Deals/CreateView',
     'common',
     'constants'
 ], function (Backbone,

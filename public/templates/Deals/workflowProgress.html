@@ -1,0 +1,3 @@
+﻿<% _.each(workflows, function(item){ %>
+<span value="<%= item.status %>" data-id="<%= item._id %>" class="<%= item.sequence >= workflow.sequence ? 'passed' : '' %>"><%= item.name %></span>
+<%}); %>

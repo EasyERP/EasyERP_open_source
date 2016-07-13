@@ -59,4 +59,5 @@ module.exports = (function () {
     require('./scheduledPay.js');
     require('./payrollComponentType.js');
     require('./historyEntry.js');
+    require('./dealTask.js');
 })();

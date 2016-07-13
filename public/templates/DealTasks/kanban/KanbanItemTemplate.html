@@ -1,0 +1,44 @@
+<div class="inner" data-id="<%=model._id%>" data-sequence="<%=model.sequence%>">
+    <div class="task-header">
+
+       <!-- <div class="left">
+            <div class="left"><span id="deal<%=model._id%>"><%=model.deal.name%></span><%=model.taskCount%>&nbsp;|&nbsp;
+            </div>
+        </div>-->
+        <div class="clearfix"></div>
+    </div>
+    <div class="task-content">
+        <div class="info">
+            <p id="<%=model._id%>"><%=model.description%></p>
+
+            <h3> Due : </h3>
+            <p class="dueDate"><%=model.dueDate%></p>
+        </div>
+
+
+
+        <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right"><img class="person"
+                                                                                                     src=""
+                                                                                                     alt="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>"/>
+
+
+        </div>
+        <div class="sources">
+            <% if (model.company) { %>
+            <a href="<%='/#easyErp/Companies/form/' + model.company._id %>"><i></i> </a>
+            <% }%>
+            <% if (model.deal) { %>
+            <a href="<%='/#easyErp/Deals/form/' + model.deal._id %>"><i></i> </a>
+            <% }%>
+            <% if (model.contact) { %>
+            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>"><i></i> </a>
+            <% }%>
+        </div>
+
+        <div class="bottom taskSelect">
+            <a id="type_<%=model._id%>" data-id="<%=model.type%>" class="current-selected bold" href="javascript:;"><%=model.type%></a>
+        </div>
+        <div class="clearfix">
+        </div>
+    </div>
+</div>
