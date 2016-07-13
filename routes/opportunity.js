@@ -73,6 +73,27 @@ module.exports = function (models, event) {
      ]
      */
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
+
+    /**
+     *@api {get} /opportunities/OpportunitiesForMiniView Request Opportunities For MiniView
+     *
+     * @apiVersion 0.0.1
+     * @apiName getOpportunitiesForMiniView
+     * @apiGroup Opportunity
+     *
+     * @apiParam (?Field=value) {String} person Unique id of Person
+     * @apiParam (?Field=value) {String} company Unique id of Company
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Number} count=4 Count of Opportunities which will show
+     * @apiParam (?Field=value) {Boolean} onlyCount=true
+     *
+     * @apiSuccess {Object} OpportunitiesForMiniView
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+                "listLength": 0
+            }
+     */
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddleware, handler.opportunitiesForMiniView);
     router.get('/OpportunitiesForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesForChart);
     router.get('/OpportunitiesConversionForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesConversionForChart);
