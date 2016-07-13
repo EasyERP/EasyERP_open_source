@@ -780,6 +780,7 @@ define([
             var dataLength;
             var $wrapper;
             var margin;
+            var yLabels;
             var xScale;
             var yScale;
             var height;
@@ -797,6 +798,7 @@ define([
                 month: this.month,
                 year : this.year
             }, function (data) {
+
                 data = data.data;
                 dataLength = data.length;
                 globalSalary = {
@@ -813,8 +815,12 @@ define([
                     '<$250'     : []
                 };
 
-                for (i = dataLength; i--;) {
+                yLabels = ['>=$2250', '$2250-2000', '$2000-1750', '$1750-1500', '$1500-1750',
+                    '$1250-1500', '$1000-1250', '$750-1000', '$500-750', '$250-500', '<$250'];
 
+            for (i = dataLength; i--;) {
+
+                if (data[i] >= 1500) {
                     if (data[i] >= 2250) {
                         globalSalary['>=$2250'].push(data[i]);
                     } else if (data[i] < 2250 && data[i] >= 2000) {
@@ -823,7 +829,9 @@ define([
                         globalSalary['$2000-1750'].push(data[i]);
                     } else if (data[i] < 1750 && data[i] >= 1500) {
                         globalSalary['$1750-1500'].push(data[i]);
-                    } else if (data[i] < 1500 && data[i] >= 1250) {
+                    }
+                } else if (data[i] < 1500) {
+                    if (data[i] < 1500 && data[i] >= 1250) {
                         globalSalary['$1250-1500'].push(data[i]);
                     } else if (data[i] < 1250 && data[i] >= 1000) {
                         globalSalary['$1000-1250'].push(data[i]);
@@ -837,8 +845,9 @@ define([
                         globalSalary['<$250'].push(data[i]);
                     }
                 }
+            }
 
-                $wrapper = $('#wrapper');
+                $wrapper = $('#content-holder');
                 keys = Object.keys(globalSalary);
                 margin = {top: 20, right: 160, bottom: 30, left: 10};
                 width = ($wrapper.width() - margin.right) / 2;
@@ -869,9 +878,9 @@ define([
                     .tickSize(0)
                     .tickPadding(offset)
                     .tickFormat(function (d, i) {
-                        return keys[i];
+                        return yLabels[i];
                     })
-                    .tickValues(d3.range(keys.length));
+                    .tickValues(d3.range(yLabels.length));
 
                 chart = d3.select('.salaryChart')
                     .attr({
@@ -883,13 +892,11 @@ define([
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
                 chart.selectAll('rect')
-                    .data(keys)
+                    .data(yLabels)
                     .enter()
                     .append('rect')
                     .attr({
-                        x     : function () {
-                            return 0;
-                        },
+                        x     : 0,
                         y     : function (d, i) {
                             return yScale(i);
                         },
@@ -928,8 +935,6 @@ define([
             var padding = 15;
             var salary = [];
             var offset = 4;
-            var globalSalary;
-            var dataLength;
             var $wrapper;
             var margin;
             var xScale;
@@ -941,8 +946,8 @@ define([
             var chart;
             var rect;
             var max;
-            var j;
             var i;
+            
             common.getSalaryByDepartment({
                 month: this.month,
                 year : this.year
@@ -961,7 +966,7 @@ define([
                             return d.salary;
                         }) / 1000) * 1000;
 
-                $wrapper = $('#wrapper');
+                $wrapper = $('#content-holder');
                 margin = {top: 20, right: 160, bottom: 30, left: 10};
                 width = ($wrapper.width() - margin.right) / 2;
                 height = salary.length * 30;

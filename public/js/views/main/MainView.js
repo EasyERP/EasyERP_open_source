@@ -15,6 +15,7 @@ define([
         initialize: function (options) {
             this.contentType = options ? options.contentType : null;
             this.render();
+
             this.collection = new MenuItemsCollection();
             this.collection.bind('reset', this.createMenuViews, this);
         },
