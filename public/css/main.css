@@ -2520,6 +2520,11 @@ body {
 .loginContent * {
   box-sizing: border-box;
 }
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
 a {
   text-decoration: none;
 }
@@ -3305,7 +3310,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .opportunity-content .fa-comment-o,
 .opportunity-content .fa-paperclip {
-  color: #fff;
+  color: #2c3e50;
 }
 .opportunity-content .fa-paperclip {
   margin-left: 10px;
@@ -3317,6 +3322,11 @@ input:not([type="checkbox"]).inputBordered:focus {
   padding: 5px 5px 8px;
 }
 .graphicControlls:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.clearfixNew:after {
   content: "";
   display: table;
   clear: both;
@@ -4581,33 +4591,6 @@ input::-ms-clear {
 .kanban .column .columnNameDiv .columnName .text .dollar {
   margin-left: 5px;
 }
-.kanban .column .columnNameDiv.cancelled .columnName {
-  border-bottom: 2px solid #FF5454 !important;
-}
-.kanban .column .columnNameDiv.inprogress .columnName {
-  border-bottom: 2px solid #ffea73 !important;
-}
-.kanban .column .columnNameDiv.fixed .columnName {
-  border-bottom: 2px solid #bef624 !important;
-}
-.kanban .column .columnNameDiv.done .columnName {
-  border-bottom: 2px solid #BDEA74 !important;
-}
-.kanban .column .columnNameDiv.testing .columnName {
-  border-bottom: 2px solid #D9FFC8 !important;
-}
-.kanban .column .columnNameDiv.merge .columnName {
-  border-bottom: 2px solid #FFEA73;
-}
-.kanban .column .columnNameDiv.development .columnName {
-  border-bottom: 2px solid #67C2EF;
-}
-.kanban .column .columnNameDiv.specification .columnName {
-  border-bottom: 2px solid #EAE874;
-}
-.kanban .column .columnNameDiv.analysis .columnName {
-  border-bottom: 2px solid #808080;
-}
 .kanban .column .columnNameDiv:hover .foldUnfold img,
 .kanban .column .columnNameDiv.selected .foldUnfold img {
   margin: -20px 6px 3px 0;
@@ -4657,7 +4640,6 @@ input::-ms-clear {
   border-width: 0;
   text-align: center;
   height: 17px;
-  border-bottom: 2px solid #d9d9d9;
 }
 .kanban .column.fold .columnNameDiv .columnName .text {
   width: auto;
@@ -10327,7 +10309,7 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .legend-box.small {
   width: 265px;
-  height: 26px;
+  height: 28px;
   line-height: 26px;
   margin-top: 0!important;
 }
@@ -11154,7 +11136,6 @@ a.cancelled {
 .form-holder form .opp-internal-create {
   height: 60px;
   margin-top: 5px;
-  border-bottom-color: transparent;
 }
 .form-holder form .startDate,
 .form-holder form .endDate {

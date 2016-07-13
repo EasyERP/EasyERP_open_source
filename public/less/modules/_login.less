@@ -7,6 +7,10 @@
   }
 }
 
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
 a{
   text-decoration: none;
 }
@@ -963,7 +967,7 @@ input {
 .opportunity-content {
   .fa-comment-o,
   .fa-paperclip {
-    color: #fff;
+    color: #2c3e50;
   }
   .fa-paperclip {
     margin-left: 10px;
@@ -977,6 +981,14 @@ input {
 }
 
 .graphicControlls {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+.clearfixNew {
   &:after {
     content: "";
     display: table;
