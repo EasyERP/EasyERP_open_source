@@ -12,6 +12,7 @@ module.exports = function (models) {
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
 
+
     router.get('/', handler.getForView);
     router.get('/getProductsAlphabet', handler.getProductsAlphabet);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);

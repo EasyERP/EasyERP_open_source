@@ -13,6 +13,7 @@ module.exports = function (models, event) {
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
 
+
     router.get('/', handler.getForDd);
     router.get('/getExpenses', handler.getExpenses);
     router.get('/:id', handler.getForDd);
