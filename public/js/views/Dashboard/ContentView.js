@@ -33,13 +33,13 @@ define([
                 opportunitie          : 30,
                 sale                  : 7,
                 opportunitieConversion: 90,
-                winLost               : 30,
-                leadsChart            : 'createdBy'
+                winLost               : 30
             };
 
             this.dateItem = {
                 date   : 'D',
-                winLost: 'D'
+                winLost: 'D',
+                leadsChart            : 'createdBy'
             };
 
             this.numberToDate = {};
@@ -241,7 +241,7 @@ define([
             $(e.target).parent().find('.active').removeClass('active');
             $(e.target).addClass('active');
 
-            this.dateRange[type] = $(e.target).data('item');
+            this.dateItem[type] = $(e.target).data('item');
 
             switch (type) {
                 case 'date':
@@ -417,8 +417,7 @@ define([
                 startDay: this.startDateLeads,
                 endDay  : this.endDateLeads
             }, function (data) {
-
-                max = d3.max(data[self.dateRange.leadsChart], function (d) {
+                max = d3.max(data[self.dateItem.leadsChart], function (d) {
                     return d.count;
                 });
 
@@ -472,7 +471,7 @@ define([
                 }
 
                 barChart.selectAll('rect')
-                    .data(data[self.dateRange.leadsChart])
+                    .data(data[self.dateItem.leadsChart])
                     .enter()
                     .append('rect')
                     .attr({
