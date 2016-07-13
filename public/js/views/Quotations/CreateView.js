@@ -152,7 +152,7 @@ define([
 
             if (!selectedLength) {
                 return App.render({
-                    type   : 'notify',
+                    type   : 'error',
                     message: "Products can't be empty."
                 });
             }
@@ -163,7 +163,7 @@ define([
 
                 if (!productId) {
                     return App.render({
-                        type   : 'notify',
+                        type   : 'error',
                         message: "Products can't be empty."
                     });
                 }
@@ -193,7 +193,7 @@ define([
 
                 if (jobs === 'jobs' && this.forSales) {
                     return App.render({
-                        type   : 'notify',
+                        type   : 'error',
                         message: "Job field can't be empty. Please, choose or create one."
                     });
                 }
@@ -257,14 +257,14 @@ define([
 
             } else {
                 return App.render({
-                    type   : 'notify',
+                    type   : 'error',
                     message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                 });
             }
         },
 
         redirectAfterSave: function (content) {
-            var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/quotations';
+            var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
 
             content.hideDialog();
             Backbone.history.navigate(redirectUrl, {trigger: true});

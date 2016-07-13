@@ -10,8 +10,9 @@ define([
     'models/ProjectsModel',
     'collections/Projects/filterCollection',
     'services/projects',
+    'services/select',
     'common'
-], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects, common) {
+], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects, selectService, common) {
     var ProjectsListView = ListViewBase.extend({
         CreateView       : CreateView,
         listTemplate     : listTemplate,
@@ -38,7 +39,7 @@ define([
         },
 
         events: {
-            'click .stageSelect'                     : projects.showNewSelect,
+            'click .stageSelect'                     : selectService.showStageSelect,
             'click .newSelectList li'                : projects.chooseOption,
             'click .health-wrapper .health-container': projects.showHealthDd,
             'click .health-wrapper ul li div'        : projects.chooseHealthDd
