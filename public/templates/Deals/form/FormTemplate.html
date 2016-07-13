@@ -1,8 +1,9 @@
 <div class="form-holder">
     <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
         <div class="formTitle">
-            <h3><%=name%> <%=expectedRevenue.value%> <%=expectedRevenue.currency%> at
-                <%=expectedRevenue.progress%>%</h3>
+            <h3 class="editable" data-id="name"><%=name%></h3>
+            <h3 class="editable" data-id="value"><%=expectedRevenue.value%></h3>
+            <h3> <%=expectedRevenue.currency%></h3>
 
             <div class="clearfix">
             </div>
@@ -20,13 +21,17 @@
 
             <div class="half-block left">
                 <dl class="person-info">
-                    <dt>Salesperson</dt>
-                    <dd><span><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></span></dd>
+                    <dt>Assigned To</dt>
+                    <dd><a  class="current-selected" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a></dd>
                     <dt>Next Action</dt>
-                    <dd><span><%(nextAction && nextAction.date) ? nextAction.date : ''%> - <%(nextAction && nextAction.desc) ? nextAction.desc : ''%></span>
+                    <dd><span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
                     </dd>
                     <dt>Status</dt>
-                    <dd><span><%=(workflow) ? workflow.name : ''%></span></dd>
+                    <dd><span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span></dd>
+                    <dt>Company</dt>
+                    <dd><a  class="current-selected" id="customerDd" data-id="customer"><%=(customer) ? customer.name.first + ' ' + customer.name.last : 'Select'%></a></dd>
+                    <dt>Priority</dt>
+                    <dd><a  class="current-selected" id="priorityDd" data-id="priority"><%=priority%></a></dd>
                 </dl>
             </div>
             <div class="half-block left">
@@ -41,30 +46,28 @@
                 <div class="clearfix">
                 </div>
             </div>
+
             <div class="half-block left withPaddingLeft">
 
                 <dl class="person-info">
-                    <dt>Customer Name</dt>
-                    <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
-                    <dt>Contact Name</dt>
-                    <dd><span><%=contactName.first%> <%=contactName.last%></span></dd>
                     <dt>Address </dt>
                     <dt>Street :</dt>
-                    <dd><span><%=address.street%></span></dd>
+                    <dd data-id="address_street"class="editable"><%=address.street%></dd>
                     <dt>City :</dt>
-                    <dd><span><%=address.city%></span></dd>
+                    <dd data-id="address_city"class="editable"><<%=address.city%></dd>
                     <dt>State :</dt>
-                    <dd><span><%=address.state%></span></dd>
+                    <dd data-id="address_state"class="editable"><%=address.state%></dd>
                     <dt>Zip :</dt>
-                    <dd><span><%=address.zip%></span></dd>
+                    <dd data-id="address_zip"class="editable"><%=address.zip%></dd>
                     <dt>Country: </dt>
-                    <dd><span><%=address.country%></span></dd>
+                    <dd data-id="address_country" class="editable"><%=address.country%></dd>
                     <dt>Phone: </dt>
-                    <dd><span><%=phones.phone%></span></dd>
+                    <dd data-id="phones_phone"class="editable"><%=phones.phone%></dd>
                     <dt>Email: </dt>
-                    <dd><span><%=email%></span></dd>
+                    <dd class="editable"><%=email%></dd>
                 </dl>
             </div>
+
             <div class="half-block left">
                 <div class="formTitle notes">
                 </div>
