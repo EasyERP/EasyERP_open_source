@@ -50,7 +50,7 @@ define([
             'click #saveSpan'                                                         : 'saveClick',
             'click #editSpan'                                                         : 'editClick',
             'click .fa-trash-o'                                                       : 'deleteRow',
-            'keyup td[data-name=price] input'                                         : 'priceChange',
+            'keyup td[data-name=price],td[data-name=quantity] input'                  : 'priceChange',
             'keypress  .forNum'                                                       : 'keypressHandler'
         },
 
@@ -313,9 +313,9 @@ define([
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
             }
-            if (inputEl.hasClass('textarea')) {
+            /* if (inputEl.hasClass('textarea')) {
                 parent.find('span').addClass('textarea');
-            }
+            } */
 
             this.recalculateTaxes(parent);
         },
@@ -338,16 +338,19 @@ define([
             var $parrent = $target.parents('td');
             var $trEl = $target.parents('tr');
             var $quantityContainer = $trEl.find('[data-name="quantity"]');
+            var $descriptionContainer = $trEl.find('[data-name="productDescr"] textarea');
+            var $taxesContainer = $trEl.find('[data-name="taxes"]');
+            var $subtotalContainer = $trEl.find('[data-name="subtotal"]');
 
+            var isJob = !!$parrent.hasClass('jobs');
             var $quantity = $quantityContainer.find('input');
             var $parrents = $trEl.find('td');
             var _id = $target.attr('id');
             var quantity = $quantity.text() || 0;
             var salePrice = 0;
+            var description;
             var model;
             var taxes;
-            var datePicker;
-            var spanDatePicker;
             var total;
             var subtotal;
             var selectedProduct;
@@ -362,7 +365,7 @@ define([
                 return self.generateJob();
             }
 
-            if ($parrent.hasClass('jobs')) {
+            if (isJob) {
                 _id = product.attr('data-id');
                 jobId = $target.attr('id');
 
@@ -386,6 +389,10 @@ define([
 
             selectedProduct = model ? model.toJSON() : null;
 
+            if (!isJob) {
+                description = selectedProduct && selectedProduct.info ? selectedProduct.info.description : '';
+                $descriptionContainer.val(description);
+            }
             if (currentJob && selectedProduct) {
                 selectedProduct.info.salePrice = 0;
 
@@ -397,38 +404,8 @@ define([
             }
 
             $quantity.val(1);
-            $($parrents[2]).find('.datepicker.notVisible').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true
-            }).datepicker('setDate', new Date());
-
-            datePicker = $trEl.find('input.datepicker');
-            spanDatePicker = $trEl.find('span.datepicker');
             $trEl.attr('data-error', null);
-
-            spanDatePicker.text(datePicker.val());
-            datePicker.remove();
-
-            //  $($parrents[2]).attr('class', 'editable');
             $trEl.find('#editInput').val(salePrice); // changed on def 0
-            /* if (currentJob && currentJob.budget) {
-             price = currentJob.budget.budgetTotal.revenueSum;
-             if (price) {
-             $trEl.find('[data-name="price"]').find('input').val(price);
-             } else {
-             $trEl.find('[data-name="price"]').find('input').val('0');
-             }
-             }*/
-            /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
-             $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
-
-             this.recalculatePriceByJob();
-             } else {*/
-            if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
-                $($parrents[2]).addClass('editable');
-                /* $($parrents[3]).addClass('editable');*/ // in case of taken away Scheduled Date
-            }
 
             salePrice = selectedProduct.info.salePrice;
 
@@ -442,8 +419,8 @@ define([
             taxes = taxes.toFixed(2);
             subtotal = subtotal.toFixed(2);
 
-            $($parrents[5]).text(taxes);
-            $($parrents[6]).text(subtotal);
+            $taxesContainer.text(taxes);
+            $subtotalContainer.text(subtotal);
 
             $('.newSelectList').remove();
 
@@ -528,7 +505,9 @@ define([
                     cost = $currentEl.find('[data-name="price"] input').val() || '0';
                     quantity = this.quantityRetriver($currentEl);
                     cost = helpers.spaceReplacer(cost);
-                    totalUntax += parseFloat(cost);
+                    cost = parseFloat(cost);
+                    cost = quantity * cost;
+                    totalUntax += cost;
                     date = $currentEl.find('.datepicker').text();
                     dates.push(date);
                 }

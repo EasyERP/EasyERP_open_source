@@ -24,7 +24,7 @@ define([
 
     var runApplication = function (success) {
         var location = window.location.hash;
-        var emailRedirectRegExp = /password/;
+        var regExp = /password|home/;
         var url;
 
         if (!Backbone.History.started) {
@@ -32,7 +32,7 @@ define([
         }
         if (success) {
             url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
-            if ((url === '') || url === 'login' || emailRedirectRegExp.test(url)) {
+            if ((url === '') || url === 'login' || regExp.test(url)) {
                 url = 'easyErp';
             }
 
@@ -47,7 +47,7 @@ define([
             if (emailRedirectRegExp.test(location)) {
                 url = location;
             } else {
-                url = 'login'
+                url = 'login';
             }
 
             Backbone.history.navigate(url, {trigger: true});

@@ -257,7 +257,7 @@ define([
                     var $draggable = ui.draggable;
                     var productId = $draggable.attr('id');
                     var categoryId = $droppable.data('id');
-                    var categoryName = $droppable.data('name');
+                    var categoryName = $droppable.data('fullname');
                     var update = {
                         category: {
                             _id : categoryId,

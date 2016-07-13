@@ -247,8 +247,6 @@ define([
 
             this.renderAssignees(this.currentModel);
 
-
-            populate.get('#parentCategory', '/category', {}, 'fullName', this, true);
             common.canvasDraw({model: this.model.toJSON()}, this);
 
             this.delegateEvents(this.events);
