@@ -1,6 +1,6 @@
 <div class="form-holder">
     <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
-        <div class="formTitle">
+        <div class="formTitle dealTitle">
             <h3 class="editable" data-id="name"><%=name%></h3>
             <h3 class="editable" data-id="value"><%=expectedRevenue.value%></h3>
             <h3> <%=expectedRevenue.currency%></h3>
@@ -12,14 +12,11 @@
 
         </div>
         <div class="inner">
-            <div class="formTitle">
-                <h3>About </h3>
-
-                <div class="clearfix">
-                </div>
-            </div>
 
             <div class="half-block left">
+                <div class="formTitle">
+                    <h3>About </h3>
+                </div>
                 <dl class="person-info">
                     <dt>Assigned To</dt>
                     <dd><a  class="current-selected" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a></dd>
@@ -35,20 +32,19 @@
                 </dl>
             </div>
             <div class="half-block left">
-                <dl class="person-info">
-
-                </dl>
-            </div>
-            <div class="clearfix"></div>
-            <div class="formTitle">
-                <h3>Lead</h3>
-
-                <div class="clearfix">
+                <div class="formTitle notes">
                 </div>
             </div>
+            <!--<div class="half-block left">-->
+                <!--<dl class="person-info">-->
 
-            <div class="half-block left withPaddingLeft">
+                <!--</dl>-->
+            <!--</div>-->
 
+            <div class="half-block clearLeft dealsLeadBlock">
+                <div class="formTitle">
+                    <h3>Lead</h3>
+                </div>
                 <dl class="person-info">
                     <dt>Address </dt>
                     <dt>Street :</dt>
@@ -66,11 +62,6 @@
                     <dt>Email: </dt>
                     <dd class="editable"><%=email%></dd>
                 </dl>
-            </div>
-
-            <div class="half-block left">
-                <div class="formTitle notes">
-                </div>
             </div>
 
         </div>

@@ -2900,6 +2900,59 @@ input:not([type="checkbox"]).inputBordered:focus {
     left: 20px;
   }
 }
+.tabListWrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+.tabListItem {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  position: relative;
+  margin: 5px;
+  height: 10px;
+  background-color: #e6e6e6;
+}
+.tabListItem:hover > span {
+  display: block;
+}
+.tabListItem.passed {
+  background-image: linear-gradient(to top, #158b0c, #18a815);
+}
+.tabListItem span {
+  display: none;
+  position: absolute;
+  bottom: -15px;
+  left: 20px;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+.clearLeft {
+  float: left!important;
+  clear: both!important;
+}
+.dealsLeadBlock {
+  margin-top: 30px;
+}
+.form-holder .form .dealTitle h3 {
+  display: inline-block;
+  float: left;
+  white-space: nowrap;
+}
+.form-holder .form .dealTitle h3.editable {
+  position: relative;
+  padding-left: 20px;
+}
+.form-holder .form .dealTitle h3.editable > * {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
 .collapsed .side_menu {
   width: 40px !important;
   margin-right: -100%;
