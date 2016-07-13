@@ -25,8 +25,9 @@ module.exports = (function () {
 
         accounting: {
             category: {
-                _id : {type: ObjectId, ref: 'ProductCategory', default: null},
-                name: {type: String, default: ''}
+                _id     : {type: ObjectId, ref: 'ProductCategory', default: null},
+                name    : {type: String, default: ''},
+                fullName: {type: String, default: ''}
             }
         },
 
