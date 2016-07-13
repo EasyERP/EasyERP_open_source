@@ -103,6 +103,59 @@ describe('ProductCategories Specs', function () {
                 .expect(200, done);
         });
 
+        it('should update productCategory with checking to change of parent', function (done) {
+            var body = {
+                'fullName'    : 'All/Testing',
+                'name'        : 'Testing',
+                'nestingLevel': null,
+                'parent'      : '564591f9624e48551dfe3b23',
+                'sequence'    : 0
+            };
+
+            aggent.get('category/' + id).expect(200).end(function(err, res) {
+                var body;
+                var nameFirst;
+
+                if (err) {
+                    return done(err);
+                }
+
+                body = res.body;
+                nameFirst = body.name;
+                //console.log(res.body);
+                aggent
+                    .put('category/' + id)
+                    .send(body)
+                    .expect(200)
+                    .end(function(end, res){
+                        var body;
+                        var nameSecond;
+
+                        if (err) {
+                            return done(err);
+                        }
+
+                        body = res.body;
+                        //console.log(body);
+                        nameSecond = body.name;
+
+                        console.log(nameFirst);
+                        console.log(nameSecond);
+
+                        expect(nameFirst)
+                            .to.eql(nameSecond);
+
+                        done();
+                    });
+            });
+            /*
+            aggent
+                .put('category/' + id)
+                .send(body)
+                .expect(200, done);
+                */
+        });
+
         it('should get productCategories Expenses', function (done) {
 
             aggent
