@@ -686,21 +686,6 @@ module.exports = function (models) {
      *
      * */
     router.get('/supplierPayments', handler.getSupplierPaymentsFilters);
-
-    /**
-     *@api {get} /filter/Product Request filter for Product
-     *
-     * @apiVersion 0.0.1
-     * @apiName getFilterForProduct
-     * @apiGroup Filter
-     *
-     * @apiSuccess {Object} FilterForProduct
-     * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *
-     * */
-
-    //todo "handler doesn`t work"
     router.get('/Product', handler.getProductsFilters);
 
     /**
@@ -713,7 +698,21 @@ module.exports = function (models) {
      * @apiSuccess {Object} FilterForQuotations
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-     *
+     *     {
+            "_id": null,
+            "supplier": [
+                {
+                    "_id": "55b92ad521e4b7c40f00061e",
+                    "name": "Luke Raskino "
+                }
+            ],
+            "workflow": [
+                {
+                    "_id": "55647b962e4aa3804a765ec6",
+                    "name": "Invoiced"
+                }
+            ]
+        }
      * */
     router.get('/Quotations', handler.getQuotationFilters);
 
@@ -727,7 +726,44 @@ module.exports = function (models) {
      * @apiSuccess {Object} FilterForSalesQuotations
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-     *      {}
+     *      {
+    "_id": null,
+    "project": [
+        {
+            "_id": "55b92ad621e4b7c40f00067f",
+            "name": "Player iOS/And"
+        },
+        {
+            "_id": "5732cda74b20992a37961efc",
+            "name": "Sandos E-Learning"
+        },
+        ...
+    ],
+    "supplier": [
+        {
+            "_id": "570f3f2fe3b40faf4f238ac3",
+            "name": "MyVote Today "
+        },
+        ...
+    ],
+    "salesManager": [
+        {
+            "_id": "56029cc950de7f4138000005",
+            "name": "Eugen Lendyel"
+        },
+        ...
+    ],
+    "workflow": [
+        {
+            "_id": "55647b932e4aa3804a765ec5",
+            "name": "Not Invoiced"
+        },
+        {
+            "_id": "5555bf276a3f01acae0b5560",
+            "name": "Not Ordered"
+        }
+    ]
+}
      * */
     router.get('/salesQuotations', handler.getSalesQuotationFilters);
 
@@ -806,8 +842,26 @@ module.exports = function (models) {
      * @apiSuccess {Object} FilterForOrders
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-     *     {}
-     *
+     *     {
+            "_id": null,
+            "projectName": [
+                {}
+            ],
+            "supplier": [
+                {
+                    "name": null
+                }
+            ],
+            "projectmanager": [
+                {}
+            ],
+            "workflow": [
+                {
+                    "_id": "55647b962e4aa3804a765ec6",
+                    "name": "Invoiced"
+                }
+            ]
+        }
      * */
     router.get('/Orders', handler.getOrdersFilters);
 
@@ -958,44 +1012,44 @@ module.exports = function (models) {
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      *     {
-    "_id": null,
-    "employee": [
-        {
-            "_id": "577e59c98286c89d37076872",
-            "name": "Vasya Pupkin",
-            "isEmployee": false
-        },
-        {
-            "_id": "577e52b73d3b1efd3422d4fc",
-            "name": "sadas sadasdas",
-            "isEmployee": false
-        },
-        {
-            "_id": "5773bff2c51130066a4f3837",
-            "name": "Ivan Chekan",
-            "isEmployee": true
-        },
-        ...
-    ],
-    "department": [
-        {
-            "name": "None"
-        },
-        {
-            "_id": "560c0b83a5d4a2e20ba5068c",
-            "name": "Finance"
-        },
-        {
-            "_id": "56e175c4d62294582e10ca68",
-            "name": "Unity"
-        },
-        ...
-    ],
-    "onlyEmployees": {
-        "_id": "true",
-        "name": "true"
-    }
-}
+            "_id": null,
+            "employee": [
+                {
+                    "_id": "577e59c98286c89d37076872",
+                    "name": "Vasya Pupkin",
+                    "isEmployee": false
+                },
+                {
+                    "_id": "577e52b73d3b1efd3422d4fc",
+                    "name": "sadas sadasdas",
+                    "isEmployee": false
+                },
+                {
+                    "_id": "5773bff2c51130066a4f3837",
+                    "name": "Ivan Chekan",
+                    "isEmployee": true
+                },
+                ...
+            ],
+            "department": [
+                {
+                    "name": "None"
+                },
+                {
+                    "_id": "560c0b83a5d4a2e20ba5068c",
+                    "name": "Finance"
+                },
+                {
+                    "_id": "56e175c4d62294582e10ca68",
+                    "name": "Unity"
+                },
+                ...
+            ],
+            "onlyEmployees": {
+                "_id": "true",
+                "name": "true"
+            }
+        }
      *
      * */
     router.get('/salaryReport', handler.getSalaryReportFilters);
@@ -1162,20 +1216,6 @@ module.exports = function (models) {
      *
      * */
     router.get('/ExpensesInvoice', handler.getExpensesInvoiceFilters);
-
-    /**
-     *@api {get} /filter/WriteOff Request filter for WriteOff
-     *
-     * @apiVersion 0.0.1
-     * @apiName getFilterForWriteOff
-     * @apiGroup Filter
-     *
-     * @apiSuccess {Object} FilterForWriteOff
-     * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {}
-     *
-     * */
     router.get('/WriteOff', handler.getWriteOffFilters);
 
     /**

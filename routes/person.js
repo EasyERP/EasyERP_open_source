@@ -13,7 +13,6 @@ module.exports = function (models, event) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-
     router.get('/', accessStackMiddleware, handler.getByViewType);
     router.get('/getPersonAlphabet', accessStackMiddleware, handler.getCompaniesAlphabet);
     router.get('/getPersonsForMiniView', handler.getFilterPersonsForMiniView);
