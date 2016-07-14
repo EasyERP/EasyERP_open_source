@@ -1,0 +1,204 @@
+input[type="checkbox"] {
+  position: absolute;
+  left: -9999px;
+  padding: 0 !important;
+  box-sizing: border-box;
+  cursor: default;
+  -moz-binding: none;
+  opacity: 0;
+
+  + label {
+    position: relative;
+    height: 20px;
+    display: block;
+    padding-left: 20px;
+    cursor: pointer;
+    line-height: 18px;
+    font-size: 13px;
+    color: $checkbox-text;
+    user-select: none;
+
+    &:before, &:after {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: 3px;
+      width: 12px;
+      height: 12px;
+      border: 1px solid $checkbox-text;
+      border-radius: 1px;
+      margin-top: 3px;
+      transition: .2s;
+      z-index: 0;
+    }
+
+    &:after {
+      border: 0;
+      transform: scale(0);
+    }
+  }
+
+  &:checked + label:before {
+    top: -3px;
+    left: 0;
+    width: 6px;
+    height: 12px;
+    border-top: 2px solid transparent;
+    border-left: 2px solid transparent;
+    border-right: 2px solid $checkbox-border;
+    border-bottom: 2px solid $checkbox-border;
+    transform: rotate(45deg);
+    backface-visibility: hidden;
+    transform-origin: 100% 100%;
+  }
+}
+
+.form-holder {
+  .inputField {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0 0 15px 0;
+    overflow: visible;
+
+    input[type="text"] {
+      height: 20px;
+      width: 100%;
+      margin: 0;
+      padding: 6px 0 0;
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid $input-border;
+      border-radius: 0;
+      outline: none;
+      font-size: 12px;
+      line-height: 20px;
+      box-shadow: none;
+      box-sizing: content-box;
+      transition: all 0.3s;
+
+      + label {
+        position: absolute;
+        height: auto;
+        width: auto;
+        line-height: 1;
+        color: $input-border;
+        top: 50%;
+        left: 0;
+        font-size: 12px;
+        cursor: text;
+        transition: .2s ease-out;
+        z-index: 5;
+        transform: translateY(-50%);
+
+        &:after {
+          display: block;
+          content: "";
+          position: absolute;
+          top: 65px;
+          opacity: 0;
+          transition: .2s opacity ease-out, .2s color ease-out;
+        }
+      }
+
+      &:focus, &:valid {
+        border: none;
+        border-bottom: 1px solid $input-text;
+
+        + label {
+          color: $input-text;
+          font-size: 10px;
+          transform: translateY(-180%);
+        }
+      }
+
+      &:valid {
+        border-bottom: 1px solid $input-border;
+
+        + label {
+          color: $input-border;
+        }
+
+        &:focus {
+          border-bottom: 1px solid $input-text;
+
+          + label {
+            color: $input-text;
+          }
+        }
+      }
+    }
+
+    textarea {
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid $input-border;
+      border-radius: 0;
+      outline: none;
+      height: 80px;
+      width: 100%;
+      font-size: 12px;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+      box-sizing: content-box;
+      transition: all 0.3s;
+
+      + label {
+        position: absolute;
+        height: auto;
+        width: auto;
+        line-height: 1;
+        color: $input-border;
+        top: 0;
+        left: 0;
+        font-size: 12px;
+        cursor: text;
+        transition: .2s ease-out;
+        z-index: 5;
+
+        &:after {
+          display: block;
+          content: "";
+          position: absolute;
+          top: 65px;
+          opacity: 0;
+          transition: .2s opacity ease-out, .2s color ease-out;
+        }
+      }
+
+      &:valid {
+        border: none;
+        border-bottom: 1px solid $input-text;
+
+        + label {
+          color: $input-text;
+          font-size: 10px;
+          transform: translateY(-140%);
+        }
+
+        &:empty {
+          border: none;
+          border-bottom: 1px solid $input-border;
+
+          + label {
+            color: $input-border;
+            font-size: 12px;
+            transform: translateY(0%);
+          }
+        }
+      }
+
+      &:focus {
+        border: none;
+        border-bottom: 1px solid $input-text;
+
+        + label {
+          color: $input-text;
+          font-size: 10px;
+          transform: translateY(-140%);
+        }
+      }
+    }
+  }
+}

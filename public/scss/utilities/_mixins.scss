@@ -69,6 +69,17 @@ $base-font-size: 16;
   #{$property}: $em;
 }
 
+@mixin clearfix() {
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
 @mixin make-font-size($font-size) {
   // If $font-size is a list, include both font-size and line-height
   @if type-of($font-size) == "list" {

@@ -11,7 +11,6 @@
 @import "projectsInfo/_projectInfo";
 @import "tmp/_firedEmployee";
 @import "tmp/_wTrackCreate";
-@import "tmp/_products";
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
@@ -1867,10 +1866,10 @@ input::-ms-clear {
     }
   }
 
-  .inner {
-    padding: 5px;
-    background: @background;
-  }
+  //.inner {
+  //  padding: 5px;
+  //  background: @background;
+  //}
 
   .form-holder {
     position: relative;
@@ -2187,7 +2186,7 @@ input::-ms-clear {
 }
 
 .tabs(@marginTop: 0, @marginLeft: -20px) {
-  height: 35px;
+  //height: 35px;
   border-bottom: @thin-border @border-color-main;
   li {
     float: left;
@@ -3329,19 +3328,6 @@ button.red, a.red {
   }
 }
 
-.tabs-items {
-  margin-bottom: -29px;
-
-  .dialog-tabs-item,
-  .chart-tabs-item {
-    display: none;
-
-    &.active {
-      display: block;
-    }
-  }
-}
-
 .ui-helper-clearfix {
   &::before, &::after {
     content: "";
@@ -3966,7 +3952,7 @@ ul.dialog-tabs {
 }
 
 .tabs-items {
-  margin-bottom: -29px;
+  //margin-bottom: -29px;
 
   .dialog-tabs-item,
   .chart-tabs-item {

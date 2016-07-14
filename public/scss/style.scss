@@ -8,17 +8,20 @@
 @import "utilities/placeholder";
 
 // Base styles
-@import "base/normalize";
-@import "base/fonts";
+//@import "base/normalize";
+//@import "base/fonts";
 @import "base/base";
-@import "base/typography";
+//@import "base/typography";
 
 // Styles for grid
 @import "layouts/grid";
 @import "layouts/flexgrid";
 
 // General styles
+@import "general/forms";
 
 // Styles for specific modules
+@import "modules/products";
+@import "modules/dialog";
 
 // Styles for condition

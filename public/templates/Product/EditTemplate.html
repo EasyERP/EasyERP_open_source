@@ -1,4 +1,4 @@
-<div class="form-holder">
+<div class="form-holder p">
     <form method="post" action="" id="createEmployeeForm" class="form">
         <fieldset>
             <div class="inner">
@@ -17,23 +17,26 @@
                         </div>
                         <div class="avatarInfoContainer">
                             <div class="half-block left">
-                                <dl class="product-info">
-                                    <dt><label for="product">Product Name</label></dt>
-                                    <dd><input type="text" id="product" required maxlength="32"
-                                               value="<%=model.name%>"/></dd>
-                                    <dt><label for="sold">Can be Sold</label></dt>
-                                    <dd><input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
+                                <div class="product-info">
+                                    <div class="inputField">
+                                        <input type="text" id="product" required maxlength="32"
+                                               value="<%=model.name%>"/>
+                                        <label for="product">Product Name</label>
+                                    </div>
+                                    <div><input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
                                         %> checked <% } %>/>
-                                    </dd>
-                                    <dt><label for="expensed">Can be Expensed</label></dt>
-                                    <dd><input type="checkbox" id="expensed" class="checkbox left" <%
+                                        <label for="sold">Can be Sold</label>
+                                    </div>
+                                    <div><input type="checkbox" id="expensed" class="checkbox left" <%
                                         if(model.canBeExpensed) { %> checked <% } %>/>
-                                    </dd>
-                                    <dt><label for="purchased">Can be Purchased</label></dt>
-                                    <dd><input type="checkbox" id="purchased" class="checkbox left" <%
+                                        <label for="expensed">Can be Expensed</label>
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" id="purchased" class="checkbox left" <%
                                         if(model.canBePurchased) { %> checked <% } %>/>
-                                    </dd>
-                                </dl>
+                                        <label for="purchased">Can be Purchased</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -47,9 +50,8 @@
                                 <div class="clearfix"></div>
                                 <div class="half-block left">
                                     <dl class="product-info">
-                                        <dt><label for="productCategory">Product Category</label></dt>
-                                        <dd><a id="productCategory" class="current-selected" href="javascript:;" data-id="<%model.accounting.category._id%>"><%=model.accounting.category.name%></a>
-                                        </dd>
+                                        <dt class="productCategory"><label for="productCategory">Product Category</label></dt>
+                                        <dd class="productCategory"><a id="productCategory" class="current-selected" href="javascript:;" data-id="<%model.accounting.category._id%>"><%=model.accounting.category.name%></a></dd>
                                         <!--
                                         <dt><label for="productType">Product Type</label></dt>
                                         <dd><a id="productType"
@@ -61,9 +63,10 @@
                                     </dl>
                                 </div>
                                 <div class="half-block left">
-                                    <dt><label for="salePrice">Sale Price</label></dt>
-                                    <dd><input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                               value="<%=model.info.salePrice%>"/></dd>
+                                    <div class="inputField"><input type="text" id="salePrice" class="extra-info" maxlength="10"
+                                               value="<%=model.info.salePrice%>"/>
+                                        <label for="salePrice">Sale Price</label>
+                                    </div>
                                     <!--
                                     <dt><label for="active">Active</label></dt>
                                     <dd><input type="checkbox" id="active" class="checkbox left" <%
@@ -130,16 +133,19 @@
                             </div>
                             -->
                             <div class="dialog-tabs-item childTabs">
-                                <div class="clearfix"></div>
+                                <!--<div class="clearfix"></div>-->
                                 <div class="full-width left">
-                                    <div class="textarea-wrapper">
-                                        <textarea type="text" class="full-width productDescriptionCreate"
-                                                  name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
-                                    </div>
-                                    <a href="javascript:;" class="attach_file">
-                                        <i class="fa fa-paperclip" aria-hidden="true"></i>
-                                    </a>
-                                    <div class="attach-container">
+                                    <div class="inner">
+                                        <div class="textarea-wrapper inputField">
+                                            <textarea type="text" class="full-width productDescriptionCreate"
+                                                      name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
+                                                <label for="description">Add note...</label>
+                                        </div>
+                                        <a href="javascript:;" class="attach_file">
+                                            <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                        </a>
+                                        <div class="attach-container">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

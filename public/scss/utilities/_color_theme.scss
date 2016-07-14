@@ -1,4 +1,5 @@
 @import "colors/dark_theme";
+@import "colors/white_theme";
 
 // usage: color("name_of_array", "name_of_color")
 // to avoid to repeating map-get($colors, ...)
@@ -35,5 +36,9 @@ $base-border : $white;
 
 // Tables ----------------
 
+// -----------------------
+
+// Forms -----------------
+$ui-dialog-bg: $white;
 // -----------------------
 
