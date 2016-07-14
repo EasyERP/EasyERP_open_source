@@ -1,0 +1,24 @@
+// Variables
+@import "utilities/_color_theme";
+
+@import "utilities/variables";
+@import "utilities/fonts_var";
+@import "utilities/mixins";
+@import "utilities/vendor";
+@import "utilities/placeholder";
+
+// Base styles
+@import "base/normalize";
+@import "base/fonts";
+@import "base/base";
+@import "base/typography";
+
+// Styles for grid
+@import "layouts/grid";
+@import "layouts/flexgrid";
+
+// General styles
+
+// Styles for specific modules
+
+// Styles for condition
