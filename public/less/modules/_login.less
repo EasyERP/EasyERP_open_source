@@ -530,18 +530,12 @@ input {
     margin: 5px;
     height: 10px;
     background-color: #e6e6e6;
-    &:hover {
-      > span {
-        display: block;
-      }
-    }
 
     &.passed {
       background-image: linear-gradient(to top, #158b0c,#18a815);
     }
 
     span {
-      display: none;
       position: absolute;
       bottom: -15px;
       left: 20px;
@@ -583,4 +577,28 @@ input {
       }
     }
   }
+}
+
+.floatColumn {
+  display: inline-block;
+  float: left;
+
+  > * {
+    float: left;
+    clear: both;
+  }
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  .dialog-tabs-items {
+    margin-bottom: 0;
+  }
+}
+
+.halfColumn {
+  width: 50%;
 }

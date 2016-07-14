@@ -2851,6 +2851,10 @@ dl {
         color: #777;
       }
 
+      .dateNote {
+        float: right;
+      }
+
       .noteTitle {
         font-size: 15px;
       }
@@ -2882,6 +2886,12 @@ dl {
             font-size: 11px;
           }
         }
+      }
+
+      &:after {
+        content: '';
+        display: table;
+        clear: both;
       }
     }
   }
@@ -3963,7 +3973,7 @@ ul.dialog-tabs {
 }
 
 .tabs-items {
-  margin-bottom: -29px;
+  //margin-bottom: -29px;
 
   .dialog-tabs-item,
   .chart-tabs-item {

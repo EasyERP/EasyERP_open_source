@@ -2916,14 +2916,10 @@ input:not([type="checkbox"]).inputBordered:focus {
   height: 10px;
   background-color: #e6e6e6;
 }
-.tabListItem:hover > span {
-  display: block;
-}
 .tabListItem.passed {
   background-image: linear-gradient(to top, #158b0c, #18a815);
 }
 .tabListItem span {
-  display: none;
   position: absolute;
   bottom: -15px;
   left: 20px;
@@ -2952,6 +2948,25 @@ input:not([type="checkbox"]).inputBordered:focus {
   position: absolute;
   left: 0;
   top: 0;
+}
+.floatColumn {
+  display: inline-block;
+  float: left;
+}
+.floatColumn > * {
+  float: left;
+  clear: both;
+}
+.floatColumn:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.floatColumn .dialog-tabs-items {
+  margin-bottom: 0;
+}
+.halfColumn {
+  width: 50%;
 }
 .collapsed .side_menu {
   width: 40px !important;
@@ -6235,6 +6250,9 @@ dl dd span.ui-spinner {
   font-size: 11px;
   color: #777;
 }
+.noteWrapper #noteBody .noteContainer .dateNote {
+  float: right;
+}
 .noteWrapper #noteBody .noteContainer .noteTitle {
   font-size: 15px;
 }
@@ -6262,6 +6280,11 @@ dl dd span.ui-spinner {
 }
 .noteWrapper #noteBody .noteContainer:hover .right a {
   font-size: 11px;
+}
+.noteWrapper #noteBody .noteContainer:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 .text-overflow {
   overflow: hidden;
@@ -9346,9 +9369,6 @@ ul.dialog-tabs li.right button {
   text-align: center;
   color: #000000;
   padding-bottom: 5px;
-}
-.tabs-items {
-  margin-bottom: -29px;
 }
 .tabs-items .dialog-tabs-item,
 .tabs-items .chart-tabs-item {
