@@ -60,4 +60,4 @@ karma.conf.js
 /uploads/
 /karma.conf.js
 /.gitlab-ci.yml
-/config/
+/config/production.js
