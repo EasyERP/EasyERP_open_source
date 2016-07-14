@@ -37,8 +37,15 @@ define([
         },
 
         showButtons : function (e){
-            this.$el.find('.buttonsNote').hide();
-           $(e.target).closest('.noteContainer').find('.buttonsNote').toggle();
+            var $target = $(e.target).closest('.noteContainer');
+            $target.find('.buttonsNote').toggle();
+            $target.prevAll().each(function(){
+                $(this).find('.buttonsNote').hide();
+            });
+            $target.nextAll().each(function(){
+                $(this).find('.buttonsNote').hide();
+            });
+
         },
 
         saveTask: function () {
@@ -153,6 +160,15 @@ define([
             return false;
         },
 
+        editNote : function (id){
+            var $title = this.$el.find('#'+ id +' .noteTitle');
+            var $noteText = this.$el.find('#'+ id +' .noteText');
+            var title = $title.text();
+            var noteText = $noteText.text();
+            $noteText.html('<input value="' + noteText + '"/>');
+            $title.html('<input value="' + noteText + '"/>');
+        },
+
         chooseOption: function (e) {
             var $target = $(e.target);
             var holder = $target.closest('a');
@@ -187,9 +203,7 @@ define([
                     if (model){
                         new EditView({model : model});
                     } else {
-                        $thisEl('#' + idInt).find('.noteText').text();
-                        $thisEl.find('#noteTitleArea').val($('#' + idInt).find('.noteTitle').text());
-                        $thisEl.find('#getNoteKey').attr('value', idInt);
+                        this.editNote(idInt);
                     }
 
                     break;
