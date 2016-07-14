@@ -79,6 +79,7 @@ define([
         newPayment: function (e) {
             var paymentView;
             var self = this;
+            var mid = this.forSales ? 56 : 109;
 
             e.preventDefault();
 
@@ -88,7 +89,7 @@ define([
                         model       : self.currentModel,
                         redirect    : self.redirect,
                         collection  : self.collection,
-                        mid         : 56,
+                        mid         : mid,
                         currency    : currency,
                         eventChannel: self.eventChannel
                     });
@@ -119,6 +120,7 @@ define([
             var $buttons;
             var $selfEl = self.$el;
             var invoiceDate;
+            var redirectUrl;
 
             e.preventDefault();
 
@@ -142,9 +144,18 @@ define([
                     dataService.patchData(url, data, function (err) {
                         if (!err) {
                             self.currentModel.set({approved: true});
-                            $buttons.show();
+                            // $buttons.show();
 
                             App.stopPreload();
+
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('invoiceUpdated');
+                            }
+
+                            redirectUrl = window.location.hash;
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();
@@ -470,7 +481,6 @@ define([
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
             dueDate = model.dueDate;
-
 
             if (!model.approved) {
                 needNotes = true;

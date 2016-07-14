@@ -8,10 +8,6 @@ module.exports = (function () {
     var products;
     var quotationSchema;
 
-    /*    function setPrice(num) {
-     return num * 100;
-     }*/
-
     payments = {
         _id    : false,
         id     : false,

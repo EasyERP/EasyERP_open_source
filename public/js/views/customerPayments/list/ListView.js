@@ -52,6 +52,8 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = paymentCollection;
 
+            this.forSale = options.forSale;
+
             ListViewBase.prototype.initialize.call(this, options);
         },
 

@@ -1,8 +1,9 @@
 ﻿define([
     'Backbone',
     'Underscore',
-    'text!templates/Invoices/list/ListTemplate.html'
-], function (Backbone, _, listTemplate) {
+    'text!templates/Invoices/list/ListTemplate.html',
+    'helpers'
+], function (Backbone, _, listTemplate, helpers) {
     'use strict';
 
     var InvoiceListItemView = Backbone.View.extend({
@@ -16,7 +17,9 @@
         render: function () {
             this.$el.append(_.template(listTemplate, {
                 invoiceCollection: this.collection.toJSON(),
-                startNumber      : this.startNumber
+                startNumber      : this.startNumber,
+                currencyClass    : helpers.currencyClass,
+                currencySplitter : helpers.currencySplitter
             }));
         }
     });

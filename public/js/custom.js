@@ -44,7 +44,7 @@ define([
             }
             Backbone.history.fragment = '';
 
-            if (emailRedirectRegExp.test(location)) {
+            if (regExp.test(location)) {
                 url = location;
             } else {
                 url = 'login';
@@ -174,6 +174,7 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
+                    case CONTENT_TYPES.PURCHASEPAYMENTS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -237,6 +238,7 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
+                    case CONTENT_TYPES.PURCHASEPAYMENTS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

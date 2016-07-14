@@ -314,8 +314,8 @@ define([
                 parent.find('span').addClass('datepicker');
             }
             /* if (inputEl.hasClass('textarea')) {
-                parent.find('span').addClass('textarea');
-            } */
+             parent.find('span').addClass('textarea');
+             } */
 
             this.recalculateTaxes(parent);
         },
@@ -446,6 +446,7 @@ define([
                 quantity = 1;
             } else {
                 quantity = $parent.find('#quantity').val();
+                //quantity = $.trim($parent.find('[data-name="quantity"]').text());
                 quantity = parseFloat(quantity);
             }
 

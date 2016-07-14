@@ -1,4 +1,3 @@
-/*TODO remove caseFilter methid after testing filters*/
 var mongoose = require('mongoose');
 var async = require('async');
 var WorkflowHandler = require('./workflow');
@@ -15,6 +14,7 @@ var salaryPaymentSchema = mongoose.Schemas.salaryPayment;
 var payrollSchema = mongoose.Schemas.PayRoll;
 var JobsSchema = mongoose.Schemas.jobs;
 var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
+var InvoiceSchema = mongoose.Schemas.Invoice;
 var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
 var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
 var ProformaSchema = mongoose.Schemas.Proforma;
@@ -61,85 +61,85 @@ var Module = function (models, event) {
     }
 
     /*function ConvertType(array, type) {
-        var i;
+     var i;
 
-        if (type === 'integer') {
-            for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i], 10);
-            }
-        } else if (type === 'boolean') {
-            for (i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }*/
+     if (type === 'integer') {
+     for (i = array.length - 1; i >= 0; i--) {
+     array[i] = parseInt(array[i], 10);
+     }
+     } else if (type === 'boolean') {
+     for (i = array.length - 1; i >= 0; i--) {
+     if (array[i] === 'true') {
+     array[i] = true;
+     } else if (array[i] === 'false') {
+     array[i] = false;
+     } else {
+     array[i] = null;
+     }
+     }
+     }
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var i;
-        var filterKeys = Object.keys(filter);
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var i;
+     var filterKeys = Object.keys(filter);
 
-        for (i = filterKeys.length - 1; i >= 0; i--) {
-            filterName = filterKeys[i];
-            condition = filter[filterName].value ? filter[filterName].value : [];
-            key = filter[filterName].key;
+     for (i = filterKeys.length - 1; i >= 0; i--) {
+     filterName = filterKeys[i];
+     condition = filter[filterName].value ? filter[filterName].value : [];
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'assigned':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentMethod':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSale':
-                    condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = condition;
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentRef':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'year':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'month':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                // skip default;
-            }
-        }
+     switch (filterName) {
+     case 'assigned':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'name':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'supplier':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'paymentMethod':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'workflow':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'forSale':
+     condition = ConvertType(condition, 'boolean');
+     filtrElement[key] = condition;
+     resArray.push(filtrElement);
+     break;
+     case 'paymentRef':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'year':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'month':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     // skip default;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     function getPaymentFilter(req, res, next, options) {
         var moduleId = returnModuleId(req);
@@ -151,6 +151,7 @@ var Module = function (models, event) {
         var salary = options ? !!options.salary : false;
         var expenses = options ? !!options.expenses : false;
         var dividend = options ? !!options.dividend : false;
+        var purchasePayments = options ? !!options.purchasePayments : false;
         var Payment = returnModel(req, options);
         var supplier = 'Customers';
         var paymentMethod = 'PaymentMethod';
@@ -165,6 +166,8 @@ var Module = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var filterMapper = new FilterMapper();
+        var aggregate;
+        var aggregatePurchase = false;
 
         if (req.query.sort) {
             key = Object.keys(req.query.sort)[0];
@@ -192,7 +195,7 @@ var Module = function (models, event) {
             supplier = 'Employees';
         }
 
-        if (!forSale && !dividend && !expenses) {
+        if (!forSale && !dividend && !expenses && !purchasePayments) {
             optionsObject.$and.push({_type: {$nin: ['expensesInvoicePayment', 'dividendInvoicePayment']}});
         }
 
@@ -202,6 +205,11 @@ var Module = function (models, event) {
 
         if (dividend) {
             optionsObject.$and.push({_type: 'dividendInvoicePayment'});
+        }
+
+        if (purchasePayments) {
+            optionsObject.$and.push({_type: 'purchasePayments'});
+            aggregatePurchase = true;
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -281,234 +289,464 @@ var Module = function (models, event) {
                     }]
             };
 
-            Payment.aggregate([{
-                $lookup: {
-                    from        : supplier,
-                    localField  : 'supplier',
-                    foreignField: '_id',
-                    as          : 'supplier'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Invoice',
-                    localField  : 'invoice',
-                    foreignField: '_id',
-                    as          : 'invoice'
-                }
-            }, {
-                $lookup: {
-                    from        : paymentMethod,
-                    localField  : 'paymentMethod',
-                    foreignField: '_id',
-                    as          : 'paymentMethod'
-                }
-            }, {
-                $lookup: {
-                    from        : 'currency',
-                    localField  : 'currency._id',
-                    foreignField: '_id',
-                    as          : 'currency.obj'
-                }
-            }, {
-                $project: {
-                    supplier        : {$arrayElemAt: ['$supplier', 0]},
-                    invoice         : {$arrayElemAt: ['$invoice', 0]},
-                    paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
-                    'currency.obj'  : {$arrayElemAt: ['$currency.obj', 0]},
-                    'currency.rate' : 1,
-                    forSale         : 1,
-                    differenceAmount: 1,
-                    paidAmount      : 1,
-                    workflow        : 1,
-                    name            : 1,
-                    date            : 1,
-                    isExpense       : 1,
-                    bonus           : 1,
-                    paymentRef      : 1,
-                    year            : 1,
-                    month           : 1,
-                    period          : 1,
-                    _type           : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'projectMembers',
-                    localField  : 'invoice.project',
-                    foreignField: 'projectId',
-                    as          : 'projectMembers'
-                }
-            }, {
-                $lookup: {
-                    from        : 'workflows',
-                    localField  : 'invoice.workflow',
-                    foreignField: '_id',
-                    as          : 'invoice.workflow'
-                }
-            }, {
-                $project: {
-                    'supplier.name'   : '$supplier.name',
-                    'supplier._id'    : '$supplier._id',
-                    'currency.name'   : '$currency.obj.name',
-                    'currency._id'    : '$currency.obj._id',
-                    'currency.rate'   : 1,
-                    'invoice._id'     : 1,
-                    'invoice.name'    : 1,
-                    'invoice.workflow': {$arrayElemAt: ['$invoice.workflow', 0]},
-
-                    salesmanagers: {
-                        $filter: {
-                            input: '$projectMembers',
-                            as   : 'projectMember',
-                            cond : salesManagerMatch
+            if (aggregatePurchase) {
+                aggregate = [
+                    {
+                        $lookup: {
+                            from        : supplier,
+                            localField  : 'supplier',
+                            foreignField: '_id',
+                            as          : 'supplier'
                         }
-                    },
+                    }, {
+                        $lookup: {
+                            from        : 'Invoice',
+                            localField  : 'invoice',
+                            foreignField: '_id',
+                            as          : 'invoice'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : paymentMethod,
+                            localField  : 'paymentMethod',
+                            foreignField: '_id',
+                            as          : 'paymentMethod'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'currency',
+                            localField  : 'currency._id',
+                            foreignField: '_id',
+                            as          : 'currency.obj'
+                        }
+                    }, {
+                        $project: {
+                            supplier        : {$arrayElemAt: ['$supplier', 0]},
+                            invoice         : {$arrayElemAt: ['$invoice', 0]},
+                            paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
+                            'currency.obj'  : {$arrayElemAt: ['$currency.obj', 0]},
+                            'currency.rate' : 1,
+                            forSale         : 1,
+                            differenceAmount: 1,
+                            paidAmount      : 1,
+                            workflow        : 1,
+                            name            : 1,
+                            date            : 1,
+                            isExpense       : 1,
+                            bonus           : 1,
+                            paymentRef      : 1,
+                            year            : 1,
+                            month           : 1,
+                            period          : 1,
+                            _type           : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'invoice.workflow',
+                            foreignField: '_id',
+                            as          : 'invoice.workflow'
+                        }
+                    }, {
+                        $project: {
+                            'supplier.name'     : '$supplier.name',
+                            'supplier._id'      : '$supplier._id',
+                            'currency.name'     : '$currency.obj.name',
+                            'currency._id'      : '$currency.obj._id',
+                            'currency.rate'     : 1,
+                            'invoice._id'       : 1,
+                            'invoice.name'      : 1,
+                            'invoice.workflow'  : {$arrayElemAt: ['$invoice.workflow', 0]},
+                            salesmanager        : '$supplier.salesPurchases.salesPerson',
+                            forSale             : 1,
+                            differenceAmount    : 1,
+                            paidAmount          : 1,
+                            workflow            : 1,
+                            date                : 1,
+                            'paymentMethod.name': '$paymentMethod.name',
+                            'paymentMethod._id' : '$paymentMethod._id',
+                            isExpense           : 1,
+                            bonus               : 1,
+                            paymentRef          : 1,
+                            year                : 1,
+                            month               : 1,
+                            period              : 1,
+                            _type               : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesmanager',
+                            foreignField: '_id',
+                            as          : 'salesmanager'
+                        }
+                    }, {
+                        $project: {
+                            supplier               : 1,
+                            'currency.name'        : 1,
+                            'currency._id'         : 1,
+                            'currency.rate'        : 1,
+                            'invoice._id'          : 1,
+                            'invoice.name'         : 1,
+                            'invoice.workflow.name': '$invoice.workflow.name',
+                            salesmanager           : {$arrayElemAt: ['$salesmanager', 0]},
+                            forSale                : 1,
+                            differenceAmount       : 1,
+                            paidAmount             : 1,
+                            workflow               : 1,
+                            date                   : 1,
+                            paymentMethod          : 1,
+                            isExpense              : 1,
+                            bonus                  : 1,
+                            paymentRef             : 1,
+                            year                   : 1,
+                            month                  : 1,
+                            period                 : 1,
+                            _type                  : 1
+                        }
+                    }, {
+                        $project: {
+                            'assigned.name': {
+                                $cond: {
+                                    if  : {ifNull: ['salesmanager', true]},
+                                    then: null,
+                                    else: '$salesmanager.name'
+                                }
+                            },
 
-                    forSale             : 1,
-                    differenceAmount    : 1,
-                    paidAmount          : 1,
-                    workflow            : 1,
-                    date                : 1,
-                    'paymentMethod.name': '$paymentMethod.name',
-                    'paymentMethod._id' : '$paymentMethod._id',
-                    isExpense           : 1,
-                    bonus               : 1,
-                    paymentRef          : 1,
-                    year                : 1,
-                    month               : 1,
-                    period              : 1,
-                    _type               : 1
-                }
-            }, {
-                $project: {
-                    supplier               : 1,
-                    'currency.name'        : 1,
-                    'currency._id'         : 1,
-                    'currency.rate'        : 1,
-                    'invoice._id'          : 1,
-                    'invoice.name'         : 1,
-                    'invoice.workflow.name': '$invoice.workflow.name',
-                    salesmanagers          : {$arrayElemAt: ['$salesmanagers', 0]},
-                    forSale                : 1,
-                    differenceAmount       : 1,
-                    paidAmount             : 1,
-                    workflow               : 1,
-                    date                   : 1,
-                    paymentMethod          : 1,
-                    isExpense              : 1,
-                    bonus                  : 1,
-                    paymentRef             : 1,
-                    year                   : 1,
-                    month                  : 1,
-                    period                 : 1,
-                    _type                  : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'salesmanagers.employeeId',
-                    foreignField: '_id',
-                    as          : 'salesmanagers'
-                }
-            }, {
-                $project: {
-                    assigned          : {$arrayElemAt: ['$salesmanagers', 0]},
-                    supplier          : 1,
-                    'currency.name'   : 1,
-                    'currency._id'    : 1,
-                    'currency.rate'   : 1,
-                    'invoice._id'     : 1,
-                    'invoice.name'    : 1,
-                    'invoice.workflow': 1,
-                    forSale           : 1,
-                    differenceAmount  : 1,
-                    paidAmount        : 1,
-                    workflow          : 1,
-                    date              : 1,
-                    name              : 1,
-                    paymentMethod     : 1,
-                    isExpense         : 1,
-                    bonus             : 1,
-                    paymentRef        : 1,
-                    year              : 1,
-                    month             : 1,
-                    period            : 1,
-                    _type             : 1
-                }
-            }, {
-                $match: optionsObject
-            }, {
-                $project: {
-                    supplier          : 1,
-                    'currency.name'   : 1,
-                    'currency._id'    : 1,
-                    'currency.rate'   : 1,
-                    'invoice._id'     : 1,
-                    'invoice.name'    : 1,
-                    'invoice.workflow': 1,
-                    'assigned.name'   : '$assigned.name',
-                    'assigned._id'    : '$assigned._id',
-                    forSale           : 1,
-                    differenceAmount  : 1,
-                    name              : 1,
-                    paidAmount        : 1,
-                    workflow          : 1,
-                    date              : 1,
-                    paymentMethod     : 1,
-                    isExpense         : 1,
-                    bonus             : 1,
-                    paymentRef        : 1,
-                    year              : 1,
-                    month             : 1,
-                    period            : 1,
-                    _type             : 1,
-                    removable         : {
-                        $cond: {
-                            if  : {$and: [{$eq: ['$_type', 'ProformaPayment']}, {$eq: ['$invoice.workflow.name', 'Invoiced']}]},
-                            then: false,
-                            else: true
+                            'assigned._id'    : {
+                                $cond: {
+                                    if  : {ifNull: ['salesmanager', true]},
+                                    then: null,
+                                    else: '$salesmanager._id'
+                                }
+                            },
+
+                            supplier          : 1,
+                            'currency.name'   : 1,
+                            'currency._id'    : 1,
+                            'currency.rate'   : 1,
+                            'invoice._id'     : 1,
+                            'invoice.name'    : 1,
+                            'invoice.workflow': 1,
+                            forSale           : 1,
+                            differenceAmount  : 1,
+                            paidAmount        : 1,
+                            workflow          : 1,
+                            date              : 1,
+                            name              : 1,
+                            paymentMethod     : 1,
+                            isExpense         : 1,
+                            bonus             : 1,
+                            paymentRef        : 1,
+                            year              : 1,
+                            month             : 1,
+                            period            : 1,
+                            _type             : 1
+                        }
+                    }, {
+                        $match: optionsObject
+                    }, {
+                        $project: {
+                            supplier          : 1,
+                            'currency.name'   : 1,
+                            'currency._id'    : 1,
+                            'currency.rate'   : 1,
+                            'invoice._id'     : 1,
+                            'invoice.name'    : 1,
+                            'invoice.workflow': 1,
+                            assigned          : 1,
+                            forSale           : 1,
+                            differenceAmount  : 1,
+                            name              : 1,
+                            paidAmount        : 1,
+                            workflow          : 1,
+                            date              : 1,
+                            paymentMethod     : 1,
+                            isExpense         : 1,
+                            bonus             : 1,
+                            paymentRef        : 1,
+                            year              : 1,
+                            month             : 1,
+                            period            : 1,
+                            _type             : 1,
+                            removable         : {
+                                $cond: {
+                                    if  : {$and: [{$eq: ['$_type', 'ProformaPayment']}, {$eq: ['$invoice.workflow.name', 'Invoiced']}]},
+                                    then: false,
+                                    else: true
+                                }
+                            }
+                        }
+                    }, {
+                        $group: {
+                            _id  : null,
+                            total: {$sum: 1},
+                            root : {$push: '$$ROOT'}
+                        }
+                    }, {
+                        $unwind: '$root'
+                    }, {
+                        $project: {
+                            _id             : '$root._id',
+                            supplier        : '$root.supplier',
+                            currency        : '$root.currency',
+                            invoice         : '$root.invoice',
+                            assigned        : '$root.assigned',
+                            forSale         : '$root.forSale',
+                            differenceAmount: '$root.differenceAmount',
+                            name            : '$root.name',
+                            paidAmount      : '$root.paidAmount',
+                            workflow        : '$root.workflow',
+                            date            : '$root.date',
+                            paymentMethod   : '$root.paymentMethod',
+                            isExpense       : '$root.isExpense',
+                            bonus           : '$root.bonus',
+                            paymentRef      : '$root.paymentRef',
+                            year            : '$root.year',
+                            month           : '$root.month',
+                            period          : '$root.period',
+                            _type           : '$root._type',
+                            removable       : '$root.removable',
+                            total           : 1
                         }
                     }
-                }
-            }, {
-                $group: {
-                    _id  : null,
-                    total: {$sum: 1},
-                    root : {$push: '$$ROOT'}
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id             : '$root._id',
-                    supplier        : '$root.supplier',
-                    currency        : '$root.currency',
-                    invoice         : '$root.invoice',
-                    assigned        : '$root.assigned',
-                    forSale         : '$root.forSale',
-                    differenceAmount: '$root.differenceAmount',
-                    name            : '$root.name',
-                    paidAmount      : '$root.paidAmount',
-                    workflow        : '$root.workflow',
-                    date            : '$root.date',
-                    paymentMethod   : '$root.paymentMethod',
-                    isExpense       : '$root.isExpense',
-                    bonus           : '$root.bonus',
-                    paymentRef      : '$root.paymentRef',
-                    year            : '$root.year',
-                    month           : '$root.month',
-                    period          : '$root.period',
-                    _type           : '$root._type',
-                    removable       : '$root.removable',
-                    total           : 1
-                }
-            }, {
+                ];
+            } else {
+                aggregate = [
+                    {
+                        $lookup: {
+                            from        : supplier,
+                            localField  : 'supplier',
+                            foreignField: '_id',
+                            as          : 'supplier'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Invoice',
+                            localField  : 'invoice',
+                            foreignField: '_id',
+                            as          : 'invoice'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : paymentMethod,
+                            localField  : 'paymentMethod',
+                            foreignField: '_id',
+                            as          : 'paymentMethod'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'currency',
+                            localField  : 'currency._id',
+                            foreignField: '_id',
+                            as          : 'currency.obj'
+                        }
+                    }, {
+                        $project: {
+                            supplier        : {$arrayElemAt: ['$supplier', 0]},
+                            invoice         : {$arrayElemAt: ['$invoice', 0]},
+                            paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
+                            'currency.obj'  : {$arrayElemAt: ['$currency.obj', 0]},
+                            'currency.rate' : 1,
+                            forSale         : 1,
+                            differenceAmount: 1,
+                            paidAmount      : 1,
+                            workflow        : 1,
+                            name            : 1,
+                            date            : 1,
+                            isExpense       : 1,
+                            bonus           : 1,
+                            paymentRef      : 1,
+                            year            : 1,
+                            month           : 1,
+                            period          : 1,
+                            _type           : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'projectMembers',
+                            localField  : 'invoice.project',
+                            foreignField: 'projectId',
+                            as          : 'projectMembers'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'invoice.workflow',
+                            foreignField: '_id',
+                            as          : 'invoice.workflow'
+                        }
+                    }, {
+                        $project: {
+                            'supplier.name'   : '$supplier.name',
+                            'supplier._id'    : '$supplier._id',
+                            'currency.name'   : '$currency.obj.name',
+                            'currency._id'    : '$currency.obj._id',
+                            'currency.rate'   : 1,
+                            'invoice._id'     : 1,
+                            'invoice.name'    : 1,
+                            'invoice.workflow': {$arrayElemAt: ['$invoice.workflow', 0]},
+
+                            salesmanagers: {
+                                $filter: {
+                                    input: '$projectMembers',
+                                    as   : 'projectMember',
+                                    cond : salesManagerMatch
+                                }
+                            },
+
+                            forSale             : 1,
+                            differenceAmount    : 1,
+                            paidAmount          : 1,
+                            workflow            : 1,
+                            date                : 1,
+                            'paymentMethod.name': '$paymentMethod.name',
+                            'paymentMethod._id' : '$paymentMethod._id',
+                            isExpense           : 1,
+                            bonus               : 1,
+                            paymentRef          : 1,
+                            year                : 1,
+                            month               : 1,
+                            period              : 1,
+                            _type               : 1
+                        }
+                    }, {
+                        $project: {
+                            supplier               : 1,
+                            'currency.name'        : 1,
+                            'currency._id'         : 1,
+                            'currency.rate'        : 1,
+                            'invoice._id'          : 1,
+                            'invoice.name'         : 1,
+                            'invoice.workflow.name': '$invoice.workflow.name',
+                            salesmanagers          : {$arrayElemAt: ['$salesmanagers', 0]},
+                            forSale                : 1,
+                            differenceAmount       : 1,
+                            paidAmount             : 1,
+                            workflow               : 1,
+                            date                   : 1,
+                            paymentMethod          : 1,
+                            isExpense              : 1,
+                            bonus                  : 1,
+                            paymentRef             : 1,
+                            year                   : 1,
+                            month                  : 1,
+                            period                 : 1,
+                            _type                  : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesmanagers.employeeId',
+                            foreignField: '_id',
+                            as          : 'salesmanagers'
+                        }
+                    }, {
+                        $project: {
+                            assigned          : {$arrayElemAt: ['$salesmanagers', 0]},
+                            supplier          : 1,
+                            'currency.name'   : 1,
+                            'currency._id'    : 1,
+                            'currency.rate'   : 1,
+                            'invoice._id'     : 1,
+                            'invoice.name'    : 1,
+                            'invoice.workflow': 1,
+                            forSale           : 1,
+                            differenceAmount  : 1,
+                            paidAmount        : 1,
+                            workflow          : 1,
+                            date              : 1,
+                            name              : 1,
+                            paymentMethod     : 1,
+                            isExpense         : 1,
+                            bonus             : 1,
+                            paymentRef        : 1,
+                            year              : 1,
+                            month             : 1,
+                            period            : 1,
+                            _type             : 1
+                        }
+                    }, {
+                        $match: optionsObject
+                    }, {
+                        $project: {
+                            supplier          : 1,
+                            'currency.name'   : 1,
+                            'currency._id'    : 1,
+                            'currency.rate'   : 1,
+                            'invoice._id'     : 1,
+                            'invoice.name'    : 1,
+                            'invoice.workflow': 1,
+                            'assigned.name'   : '$assigned.name',
+                            'assigned._id'    : '$assigned._id',
+                            forSale           : 1,
+                            differenceAmount  : 1,
+                            name              : 1,
+                            paidAmount        : 1,
+                            workflow          : 1,
+                            date              : 1,
+                            paymentMethod     : 1,
+                            isExpense         : 1,
+                            bonus             : 1,
+                            paymentRef        : 1,
+                            year              : 1,
+                            month             : 1,
+                            period            : 1,
+                            _type             : 1,
+                            removable         : {
+                                $cond: {
+                                    if  : {$and: [{$eq: ['$_type', 'ProformaPayment']}, {$eq: ['$invoice.workflow.name', 'Invoiced']}]},
+                                    then: false,
+                                    else: true
+                                }
+                            }
+                        }
+                    }, {
+                        $group: {
+                            _id  : null,
+                            total: {$sum: 1},
+                            root : {$push: '$$ROOT'}
+                        }
+                    }, {
+                        $unwind: '$root'
+                    }, {
+                        $project: {
+                            _id             : '$root._id',
+                            supplier        : '$root.supplier',
+                            currency        : '$root.currency',
+                            invoice         : '$root.invoice',
+                            assigned        : '$root.assigned',
+                            forSale         : '$root.forSale',
+                            differenceAmount: '$root.differenceAmount',
+                            name            : '$root.name',
+                            paidAmount      : '$root.paidAmount',
+                            workflow        : '$root.workflow',
+                            date            : '$root.date',
+                            paymentMethod   : '$root.paymentMethod',
+                            isExpense       : '$root.isExpense',
+                            bonus           : '$root.bonus',
+                            paymentRef      : '$root.paymentRef',
+                            year            : '$root.year',
+                            month           : '$root.month',
+                            period          : '$root.period',
+                            _type           : '$root._type',
+                            removable       : '$root.removable',
+                            total           : 1
+                        }
+                    }
+                ];
+            }
+
+            aggregate.push({
                 $sort: sort
             }, {
                 $skip: skip
             }, {
                 $limit: limit
-            }
-            ], waterfallCallback);
+            });
+
+            Payment.aggregate(aggregate, waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -604,12 +842,15 @@ var Module = function (models, event) {
         var salary = type === 'PayrollPayments';
         var expenses = type === 'ExpensesPayments';
         var dividend = type === 'DividendPayments';
+        var purchasePayments = type === 'purchasePayments';
+
         var options = {
-            forSale : forSale,
-            bonus   : bonus,
-            salary  : salary,
-            dividend: dividend,
-            expenses: expenses
+            forSale         : forSale,
+            bonus           : bonus,
+            salary          : salary,
+            dividend        : dividend,
+            expenses        : expenses,
+            purchasePayments: purchasePayments
         };
 
         if (id && id.length >= 24) {
@@ -1026,7 +1267,7 @@ var Module = function (models, event) {
                 $project: {
                     assigned        : {$arrayElemAt: ['$salesmanagers', 0]},
                     supplier        : 1,
-                    'currencyModel' : {$arrayElemAt: ['$currency._id', 0]},
+                    currencyModel   : {$arrayElemAt: ['$currency._id', 0]},
                     'currency.rate' : 1,
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
@@ -1153,6 +1394,10 @@ var Module = function (models, event) {
             PaymentSchema = mongoose.Schemas.DividendInvoicePayment;
             Payment = models.get(req.session.lastDb, 'dividendInvoicePayment', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
+        } else if (109) {
+            PaymentSchema = mongoose.Schemas.purchasePayments;
+            Payment = models.get(req.session.lastDb, 'purchasePayments', PaymentSchema);
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
 
         function fetchInvoice(waterfallCallback) {
@@ -1908,7 +2153,10 @@ var Module = function (models, event) {
                                                 }
 
                                                 if (project) {
-                                                    event.emit('fetchInvoiceCollection', {project: project, dbName: db});
+                                                    event.emit('fetchInvoiceCollection', {
+                                                        project: project,
+                                                        dbName : db
+                                                    });
                                                 }
 
                                             });

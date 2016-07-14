@@ -10,8 +10,11 @@ define([
     'views/Assignees/AssigneesView',
     'views/Payment/list/ListHeaderInvoice',
     'constants',
-    'helpers'
-], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS, helpers) {
+    'helpers',
+    'views/Notes/AttachView',
+    'views/Notes/NoteView',
+    'views/Products/InvoiceOrder/ProductItems'
+], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS, helpers, AttachView, NoteView, ProductItemView) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -31,8 +34,22 @@ define([
         },
 
         chooseOption: function (e) {
-            var holder = $(e.target).parents('dd').find('.current-selected');
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+            var holder;
+            var array = this.$el.find('.' + oldCurrencyClass);
+
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
+
+            holder = $(e.target).parents('dd').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            this.hideNewSelect();
         },
 
         showDetailsBox: function (e) {
@@ -52,7 +69,7 @@ define([
             var quantity;
             var price;
             var taxes;
-            var amount;
+            var subtotal;
             var description;
 
             var forSales = this.forSales || false;
@@ -63,9 +80,9 @@ define([
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
             var i;
-            var total = parseFloat($currentEl.find('#totalAmount').text());
-            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text());
-            var balance = parseFloat($currentEl.find('#balance').text());
+            var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
+            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
+            var balance = parseFloat($currentEl.find('#balance').text()) * 100;
 
             var payments = {
                 total  : total,
@@ -89,11 +106,26 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        quantity = targetEl.find('[data-name="price"] input').val();
+                        price = targetEl.find('[data-name="price"] input').val() * 100;
+                        description = targetEl.find('[data-name="productDescr"] textarea').val();
                         taxes = targetEl.find('.taxes').text();
-                        amount = targetEl.find('.amount').text();
+                        subtotal = targetEl.find('.subtotal').text();
+                        subtotal = parseFloat(subtotal) * 100;
+
+                        if (isNaN(price) || price <= 0) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Please, enter Unit Price!'
+                            });
+                        }
+
+                        if (price === '') {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Unit price can\'t be empty'
+                            });
+                        }
 
                         products.push({
                             product    : productId,
@@ -101,7 +133,7 @@ define([
                             unitPrice  : price,
                             quantity   : quantity,
                             taxes      : taxes,
-                            subTotal   : amount
+                            subTotal   : subtotal
                         });
                     }
                 }
@@ -130,9 +162,9 @@ define([
                 dueDate              : dueDate,
                 account              : null,
                 journal              : null,
-
-                salesPerson : salesPersonId,
-                paymentTerms: paymentTermId,
+                name                 : $.trim($('#supplier_invoice_num').val()),
+                salesPerson          : salesPersonId,
+                paymentTerms         : paymentTermId,
 
                 products   : products,
                 paymentInfo: payments,
@@ -177,11 +209,29 @@ define([
 
         },
 
+        createProductView: function () {
+            var productItemContainer;
+
+            productItemContainer = this.$el.find('#productItemsHolder');
+
+            if (this.forSales) {
+                productItemContainer.append(
+                    new ProductItemView({canBeSold: true, service: true}).render().el
+                );
+            } else {
+                productItemContainer.append(
+                    new ProductItemView({canBeSold: false}).render().el
+                );
+            }
+        },
+
         render: function () {
             var formString = this.template();
             var self = this;
             var invoiceItemContainer;
             var paymentContainer;
+            var $notDiv;
+            var needNotes = false;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -211,6 +261,8 @@ define([
 
             this.renderAssignees(this.model);
 
+            this.createProductView();
+
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
             invoiceItemContainer.append(
                 new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
@@ -220,6 +272,16 @@ define([
             paymentContainer.append(
                 new ListHederInvoice().render().el
             );
+
+            $notDiv = this.$el.find('#attach-container');
+            $notDiv.append(
+                //new NoteView({
+                //    model      : this.model,
+                //    contentType: CONSTANTS.INVOICES,
+                //    needNotes  : needNotes
+                //}).render().el
+            );
+
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 

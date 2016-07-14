@@ -321,20 +321,17 @@ var Module = function (models, event) {
             };
 
             workflowHandler.getFirstForConvert(request, function (err, workflow) {
-                Invoice.update(
-                    {
-                        sourceDocument: objectId(id)
-                    },
-                    {
-                        $set: {
-                            workflow: workflow._id,
-                            invoiced: true,
-                            editedBy: editedBy
-                        }
-                    },
-                    {
-                        multi: true
-                    }, callback);
+                Invoice.update({
+                    sourceDocument: objectId(id)
+                }, {
+                    $set: {
+                        workflow: workflow._id,
+                        invoiced: true,
+                        editedBy: editedBy
+                    }
+                }, {
+                    multi: true
+                }, callback);
             });
         }
 
@@ -440,7 +437,7 @@ var Module = function (models, event) {
                 });
 
             } else {
-                query = Company.findById(invoice.supplier).lean();
+                query = Company.findById(invoice.supplier, {salesPurchases: 1}).lean();
 
                 query.populate('salesPurchases.salesPerson', 'name');
 
@@ -1193,7 +1190,7 @@ var Module = function (models, event) {
                         expense           : '$root.expense',
                         // forSales          : '$root.forSales',
                         currency          : '$root.currency',
-                        journal          : '$root.journal',
+                        journal           : '$root.journal',
                         paymentInfo       : '$root.paymentInfo',
                         invoiceDate       : '$root.invoiceDate',
                         name              : '$root.name',
@@ -1587,7 +1584,6 @@ var Module = function (models, event) {
                 if (result && result._type === 'writeOff') {
                     updateObject.type = 'Not Quoted';
                 }
-
 
                 async.each(jobs, function (id, cb) {
                     setData.editedBy = {

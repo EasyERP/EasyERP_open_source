@@ -30,7 +30,7 @@ define([
     'use strict';
 
     var QuotationListView = ListView.extend({
-        createView       : CreateView,
+        CreateView       : CreateView,
         EditView         : EditView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
