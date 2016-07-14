@@ -409,7 +409,7 @@ var Module = function (models, event) {
                             'assigned.name': {
                                 $cond: {
                                     if  : {ifNull: ['salesmanager', true]},
-                                    then: {},
+                                    then: null,
                                     else: '$salesmanager.name'
                                 }
                             },
@@ -417,7 +417,7 @@ var Module = function (models, event) {
                             'assigned._id'    : {
                                 $cond: {
                                     if  : {ifNull: ['salesmanager', true]},
-                                    then: {},
+                                    then: null,
                                     else: '$salesmanager._id'
                                 }
                             },
