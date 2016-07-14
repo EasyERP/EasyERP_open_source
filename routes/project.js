@@ -359,9 +359,264 @@ module.exports = function (models, event) {
 }
      */
     router.get('/:id', accessStackMiddleWare, handler.getById);
+
+    /**
+     *@api {get} /projects/:id/invoices Request ProjectInvoices
+     *
+     * @apiVersion 0.0.1
+     * @apiName getProjectInvoices
+     * @apiGroup Project
+     *
+     * @apiParam {String} id Unique id of Project
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Number} count=100 Count of ProjectInvoices which will show
+     * @apiParam (?Field=value) {String="proforma","salesInvoice"} contentType Type of content
+     *
+     * @apiParam (?Field=value) {Object} filter={forSales : {key: "forSales", type: "Boolean", value: false}}
+     *
+     * @apiSuccess {Object} ProjectInvoices
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "total": 1,
+              "data": [
+                {
+                  "_id": "5710d954bdf5e5ce780db66e",
+                  "total": 1,
+                  "salesPerson": {
+                    "_id": "55b92ad221e4b7c40f00005f",
+                    "name": {
+                      "last": "Voloshchuk",
+                      "first": "Peter"
+                    }
+                  },
+                  "workflow": {
+                    "status": "Done",
+                    "name": "Paid"
+                  },
+                  "supplier": {
+                    "_id": "55b92ad621e4b7c40f00064b",
+                    "name": {
+                      "last": "Knudsen",
+                      "first": "Thomas"
+                    }
+                  },
+                  "forSales": true,
+                  "currency": {
+                    "_id": "565eab29aeb95fa9c0f9df2d",
+                    "rate": 1
+                  },
+                  "paymentInfo": {
+                    "total": 300000,
+                    "unTaxed": 300000,
+                    "balance": 0,
+                    "taxes": 0
+                  },
+                  "invoiceDate": "2016-03-01T04:00:00.000Z",
+                  "name": "PO975",
+                  "paymentDate": "2016-03-14T04:00:00.000Z",
+                  "dueDate": "2016-04-21T00:00:00.000Z",
+                  "payments": [
+                    "5710d979508b8c5f797ce3a7"
+                  ],
+                  "approved": true,
+                  "_type": "Proforma",
+                  "removable": true,
+                  "paid": 3000
+                }
+              ]
+            }
+     */
     router.get('/:id/invoices', accessStackMiddleWare, invoiceHandler.getForProject);
+
+    /**
+     *@api {get} /projects/:id/weTracks Request ProjectWTracks
+     *
+     * @apiVersion 0.0.1
+     * @apiName getProjectWTracks
+     * @apiGroup Project
+     *
+     * @apiParam {String} id Unique id of Project
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Number} count=100 Count of ProjectWTracks which will show
+     *
+     * @apiSuccess {Object} ProjectWTracks
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "total": 75,
+              "data": [
+                {
+                  "1": 0,
+                  "2": 0,
+                  "3": 3,
+                  "4": 4,
+                  "5": 0,
+                  "6": 0,
+                  "7": 0,
+                  "_id": "5780eed25dc67c373fcf4a65",
+                  "worked": 7,
+                  "month": 7,
+                  "year": 2016,
+                  "week": 27,
+                  "jobs": {
+                    "_id": "56b8b958d54899a905ae0273",
+                    "name": "15.05.15 - 15.07.16"
+                  },
+                  "isPaid": false,
+                  "cost": 0,
+                  "_type": "ordinary",
+                  "department": {
+                    "name": "Web"
+                  },
+                  "employee": {
+                    "name": {
+                      "last": "Stupchuk",
+                      "first": "Andriy"
+                    }
+                  },
+                  "project": {
+                    "_id": "55b92ad621e4b7c40f000686",
+                    "name": "Sensei"
+                  },
+                  "customer": {
+                    "_id": "55b92ad621e4b7c40f00064b",
+                    "name": {
+                      "last": "Knudsen",
+                      "first": "Thomas"
+                    }
+                  }
+                },
+                ...
+              ]
+            }
+     */
     router.get('/:id/weTracks', accessStackMiddleWare, wTrackHandler.getForProject);
+
+    /**
+     *@api {get} /projects/:id/info Request ProjectInfo
+     *
+     * @apiVersion 0.0.1
+     * @apiName getProjectInfo
+     * @apiGroup Project
+     *
+     * @apiParam {String} id Unique id of Project
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Number} count=100
+     * @apiParam (?Field=value) {String} projectId
+     *
+     * @apiParam (?Field=value) {Object} filter={project : {key: "project._id", value: ...}}
+     *
+     * @apiSuccess {Object} ProjectInfo
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     [
+             {
+               "_id": "56b8b958d54899a905ae0273",
+               "revenueTotal": 600000,
+               "profitTotal": -105017.70047110086,
+               "costTotal": 705017.7004711009,
+               "workedTotal": 898,
+               "name": "15.05.15 - 15.07.16",
+               "invoice": {
+
+               },
+               "type": "Quoted",
+               "quotation": {
+                 "_id": "5710d94b04850cef78c94929",
+                 "name": "PO975"
+               },
+               "workflow": {
+                 "_id": "56337c705d49d8d6537832eb",
+                 "name": "In Progress"
+               },
+               "cost": 705017.7004711009,
+               "jobPrice": 600000,
+               "totalWorked": 898,
+               "revenue": [
+                 {
+                   "employee": {
+                     "_id": "55b92ad221e4b7c40f000063",
+                     "name": "Yana Gusti",
+                     "worked": 242
+                   },
+                   "department": "QA",
+                   "revenue": 161692.6503340757
+                 },
+                 ...
+               ],
+               "totalRevenue": 600000,
+               "profit": -105017.70047110086
+             }
+             ]
+     */
     router.get('/:id/info', accessStackMiddleWare, jobsHandler.getForOverview);
+
+    /**
+     *@api {get} /projects/:id/quotations Request ProjectQuotations
+     *
+     * @apiVersion 0.0.1
+     * @apiName getProjectQuotations
+     * @apiGroup Project
+     *
+     * @apiParam {String} id Unique id of Project
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Number} count=100 Count of salesQuotations which will show
+     * @apiParam (?Field=value) {String} contentType="salesQuotations" Type of content
+     *
+     * @apiParam (?Field=value) {Object} filter={forSales : {key: "forSales", type: "Boolean", value: true}}
+     *
+     * @apiSuccess {Object} ProjectQuotations
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "total": 1,
+            "data": [
+                {
+                    "_id": "5710d94b04850cef78c94929",
+                    "total": 1,
+                    "salesPerson": {
+                        "_id": "55b92ad221e4b7c40f00005f",
+                        "name": {
+                            "last": "Voloshchuk",
+                            "first": "Peter"
+                        }
+                    },
+                    "workflow": {
+                        "name": "Not Ordered",
+                        "status": "New"
+                    },
+                    "supplier": {
+                        "_id": "55b92ad621e4b7c40f00064b",
+                        "name": {
+                            "last": "Knudsen",
+                            "first": "Thomas"
+                        }
+                    },
+                    "currency": {
+                        "rate": 1,
+                        "_id": "565eab29aeb95fa9c0f9df2d"
+                    },
+                    "paymentInfo": {
+                        "total": 600000,
+                        "unTaxed": 600000,
+                        "taxes": 0
+                    },
+                    "orderDate": "2015-12-01T00:00:00.000Z",
+                    "name": "PO975",
+                    "isOrder": false
+                }
+            ]
+        }
+     */
     router.get('/:id/quotations', accessStackMiddleWare, quotationHandler.getForProject);
     router.get('/:id/orders', accessStackMiddleWare, quotationHandler.getForProject);
     router.get('/:id/payments', accessStackMiddleWare, paymentsHandler.getForProject);

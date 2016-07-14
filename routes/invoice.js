@@ -15,7 +15,7 @@ module.exports = function (models, event) {
     router.use(accessStackMiddleware);
 
     /**
-     *@api {get} /invoice/ Request Invoices
+     *@api {get} /invoices/ Request Invoices
      *
      * @apiVersion 0.0.1
      * @apiName getInvoices
@@ -107,7 +107,7 @@ module.exports = function (models, event) {
     });
 
     /**
-     *@api {get} /invoice/getFilterValues Request Filter values
+     *@api {get} /invoices/getFilterValues Request Filter values
      *
      * @apiVersion 0.0.1
      * @apiName getFilterValues
@@ -135,7 +135,7 @@ module.exports = function (models, event) {
     router.get('/stats', handler.getStats);
 
     /**
-     *@api {get} /invoice/stats/project Request stats for project
+     *@api {get} /invoices/stats/project Request stats for project
      *
      * @apiVersion 0.0.1
      * @apiName getStatsForProject
@@ -176,7 +176,7 @@ module.exports = function (models, event) {
     router.patch('/approve', accessStackMiddleware, handler.approve);
 
     /**
-     *@api {patch} /invoice/:id Request for updating only selected fields of Invoice
+     *@api {patch} /invoices/:id Request for updating only selected fields of Invoice
      *
      * @apiVersion 0.0.1
      * @apiName UpdateOnlySelectedFields
@@ -317,7 +317,7 @@ module.exports = function (models, event) {
 
 
     /**
-     *@api {delete} /invoice/:id Request for deleting Invoice
+     *@api {delete} /invoices/:id Request for deleting Invoice
      *
      * @apiVersion 0.0.1
      * @apiName DeleteInvoice
@@ -413,7 +413,7 @@ module.exports = function (models, event) {
     });
 
     /**
-     *@api {delete} /invoice/ Request for deleting selected Invoices
+     *@api {delete} /invoices/ Request for deleting selected Invoices
      *
      * @apiVersion 0.0.1
      * @apiName DeleteInvoices
