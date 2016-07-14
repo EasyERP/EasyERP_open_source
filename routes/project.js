@@ -72,6 +72,77 @@ module.exports = function (models, event) {
     router.get('/', accessStackMiddleWare, handler.getByViewType);
     router.get('/test', accessStackMiddleWare, handler.getByViewTypeTest);
     router.get('/getProjectPMForDashboard', accessStackMiddleWare, handler.getProjectPMForDashboard);
+
+    /**
+     *@api {get} /projects/getForQuotation/ Request ProjectsForQuotation
+     *
+     * @apiVersion 0.0.1
+     * @apiName getProjectsForQuotation
+     * @apiGroup Project
+     *
+     * @apiParam (?Field=value) {String} projectId Unique id of Project
+     *
+     * @apiSuccess {Object} ProjectsForQuotation
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "_id": "573db3d09fdef3d14282b561",
+              "StartDate": "2016-04-30T22:00:00.000Z",
+              "__v": 0,
+              "budget": {
+                "projectTeam": [
+                  
+                ],
+                "bonus": [
+                  
+                ]
+              },
+              "bonus": [
+                
+              ],
+              "health": 1,
+              "editedBy": {
+                "date": "2016-05-19T12:38:40.501Z",
+                "user": "567181ae8453e8b464b70c19"
+              },
+              "attachments": [
+                
+              ],
+              "notes": [
+                
+              ],
+              "paymentMethod": "565f2e05ab70d49024242e07",
+              "paymentTerms": "55536e52475b7be475f335f6",
+              "projecttype": "fixed",
+              "createdBy": {
+                "date": "2016-05-19T12:38:40.501Z",
+                "user": "567181ae8453e8b464b70c19"
+              },
+              "progress": 0,
+              "remaining": 0,
+              "logged": 0,
+              "estimated": 0,
+              "workflow": "528ce7d0f3f67bc40b000021",
+              "parent": null,
+              "sequence": 0,
+              "groups": {
+                "group": [
+                  
+                ],
+                "users": [
+                  
+                ],
+                "owner": "55b9fc0fd79a3a3439000008"
+              },
+              "whoCanRW": "everyOne",
+              "customer": "57347f7fa91aace5132deff9",
+              "task": [
+                
+              ],
+              "name": "ADBC",
+              "projectShortDesc": "Abu-Dhabi Business Centre"
+            }
+     */
     router.get('/getForQuotation', accessStackMiddleWare, handler.getForQuotation);
 
     /**
