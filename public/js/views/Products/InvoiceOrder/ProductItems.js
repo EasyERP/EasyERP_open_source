@@ -445,8 +445,8 @@ define([
             if (selectedProduct && selectedProduct.get('name') === CONSTANTS.IT_SERVICES) {
                 quantity = 1;
             } else {
-                // quantity = $parent.find('#quantity').val();
-                quantity = $.trim($parent.find('[data-name="quantity"]').text());
+                quantity = $parent.find('#quantity').val();
+                //quantity = $.trim($parent.find('[data-name="quantity"]').text());
                 quantity = parseFloat(quantity);
             }
 
