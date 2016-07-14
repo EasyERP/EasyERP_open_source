@@ -209,6 +209,8 @@ define([
                             redirectUrl = '#easyErp/ExpensesPayments/list';
                         } else if (mid === 100) {
                             redirectUrl = '#easyErp/DividendPayments/list';
+                        } else if (mid === 109) {
+                            redirectUrl = '#easyErp/purchasePayments/list';
                         } else {
                             redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';
                         }

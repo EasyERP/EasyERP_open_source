@@ -62,6 +62,7 @@ define([], function () {
         DIVIDENDINVOICE   : 'DividendInvoice',
         DIVIDENDPAYMENTS  : 'DividendPayments',
         SETTINGSEMPLOYEE  : 'settingsEmployee',
+        PURCHASEPAYMENTS  : 'purchasePayments',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -129,7 +130,7 @@ define([], function () {
             LEADS                     : '/leads/',
             MONTHHOURS                : '/monthHours/',
             OPPORTUNITIES             : '/Opportunities/',
-            PAYMENT                   : '/payment/',
+            PAYMENT                   : '/payments/',
             PAYROLL                   : '/payroll/',
             PERSONS                   : '/persons/',
             PRODUCT                   : '/products/',
@@ -146,7 +147,7 @@ define([], function () {
             BONUSTYPE                 : '/bonusType/',
             BONUSTYPE_FORDD           : '/bonusType/getForDD',
             CAPACITY                  : '/capacity/',
-            PAYMENTCUSTOMERS          : '/payment/',
+            PAYMENTCUSTOMERS          : '/payments/',
             EMPLOYEES_PERSONSFORDD    : '/employees/getPersonsForDd',
             CUSTOMERS                 : '/customers/',
             DASHBOARD_HR              : 'dashboard/hr',
@@ -160,12 +161,12 @@ define([], function () {
             JOURNAL_ENTRY             : '/journalEntries/',
             WORKFLOWS                 : '/workflows/',
             MODULES                   : '/modules/',
-            PAYMENT_SALARY            : '/payment/',
+            PAYMENT_SALARY            : '/payments/',
             PRIORITY                  : '/Priority',
             PRODUCT_ALPHABET          : '/products/getProductsAlphabet',
             CATEGORY                  : '/category/',
             PROJECT_DASHBOARD         : 'project/getProjectPMForDashboard',
-            PAYMENT_SUPPLIER          : '/payment/',
+            PAYMENT_SUPPLIER          : '/payments/',
             APPLICATIONS_WFLENGTH     : '/applications/getApplicationsLengthByWorkflows',
             APPLICATIONS_KANBAN       : '/applications/',
             EMPLOYEES_NATIONALITY     : '/employees/nationality',
@@ -180,10 +181,11 @@ define([], function () {
             CURRENCY_FORDD            : '/currency/getForDd',
             SUPPLIER                  : '/supplier',
             WORKFLOWS_FETCH           : '/workflows/fetch',
-            PAYMENT_AMOUNT_LEFT       : '/payment/amountLeftCalc',
+            PAYMENT_AMOUNT_LEFT       : '/payments/amountLeftCalc',
             SALARY_REPORT             : '/salaryReport/',
             WRITE_OFF                 : '/writeOff/',
-            WRITE_OFF_WAY             : '/journals/writeOff'
+            WRITE_OFF_WAY             : '/journals/writeOff',
+            PURCHASE_PAYMENTS         : '/payments/'
         },
 
         MID: {

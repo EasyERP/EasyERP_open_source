@@ -79,6 +79,7 @@ define([
         newPayment: function (e) {
             var paymentView;
             var self = this;
+            var mid = this.forSales ? 56 : 109;
 
             e.preventDefault();
 
@@ -88,7 +89,7 @@ define([
                         model       : self.currentModel,
                         redirect    : self.redirect,
                         collection  : self.collection,
-                        mid         : 56,
+                        mid         : mid,
                         currency    : currency,
                         eventChannel: self.eventChannel
                     });
@@ -143,7 +144,7 @@ define([
                     dataService.patchData(url, data, function (err) {
                         if (!err) {
                             self.currentModel.set({approved: true});
-                           // $buttons.show();
+                            // $buttons.show();
 
                             App.stopPreload();
 
@@ -480,7 +481,6 @@ define([
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
             dueDate = model.dueDate;
-
 
             if (!model.approved) {
                 needNotes = true;
