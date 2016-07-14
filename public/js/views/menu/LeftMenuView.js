@@ -26,8 +26,13 @@ define([
         },
 
         events: {
-            'click .root': 'openRoot'
+            'click .root': 'openRoot',
+            'click .root>a,.root ul li:first-child': 'preventOpen',
 
+        },
+
+        preventOpen: function (e) {
+            e.preventDefault();
         },
 
         openRoot: function (e) {
