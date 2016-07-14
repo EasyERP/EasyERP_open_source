@@ -2838,7 +2838,6 @@ dl {
   #noteBody {
     .noteContainer {
       padding: 10px;
-      border: @thin-border @border-color-main;
       margin-bottom: 10px;
 
       .name {
@@ -2868,7 +2867,7 @@ dl {
       .right {
         float: right;
         margin-right: 10px;
-        display: none;
+        //display: none;
 
         .sep {
           padding: 0 3px;
@@ -2877,22 +2876,27 @@ dl {
         }
       }
 
-      &:hover {
-        background-color: @bg-hover-drop-down-color;
-        .right {
-          display: block;
-
-          a {
-            font-size: 11px;
-          }
-        }
-      }
+      //&:hover {
+      //  background-color: @bg-hover-drop-down-color;
+      //  .right {
+      //    display: block;
+      //
+      //    a {
+      //      font-size: 11px;
+      //    }
+      //  }
+      //}
 
       &:after {
         content: '';
         display: table;
         clear: both;
       }
+    }
+
+    .noteBody,
+    .noteBtnBlock {
+      border: @thin-border @border-color-main;
     }
   }
 }
@@ -2912,7 +2916,7 @@ dl {
   .clearfix;
   min-width: 100%;
   height: 100%;
-  height: 100vh;
+  //height: 100vh;
   position: absolute;
   clear: both;
   box-sizing: border-box;
