@@ -2602,6 +2602,8 @@ var Module = function (models, event) {
         var endDate = query.endDay ? new Date(query.endDay) : null;
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var History = models.get(req.session.lastDb, 'History', historySchema);
+        var stage = query.stage;
+        var secondMatchObj = {};
         var matchObj = {
             $and: [{
                 isOpportunitie: false
@@ -2628,14 +2630,16 @@ var Module = function (models, event) {
             });
         }
 
+        if (stage === 'Qualified') {
+            secondMatchObj = {'workflows.name': 'Qualified'};
+        }
+
         async
             .parallel({
                 assignedTo: function (parCb) {
                     History.aggregate([
                         {
-                            $match: {
-                                $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
-                            }
+                            $match: historyMatchObj
                         },
                         {
                             $lookup: {
@@ -2663,7 +2667,25 @@ var Module = function (models, event) {
                                 path                      : '$sales',
                                 preserveNullAndEmptyArrays: true
                             }
-                        }, {
+                        },
+                        {
+                            $lookup: {
+                                from        : 'workflows',
+                                localField  : 'lead.workflow',
+                                foreignField: '_id',
+                                as          : 'workflows'
+                            }
+                        },
+                        {
+                            $unwind: {
+                                path                      : '$workflows',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
+                        {
+                            $match: secondMatchObj
+                        },
+                        {
                             $project: {
                                 date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
                                 'sales._id' : 1,
@@ -2690,7 +2712,8 @@ var Module = function (models, event) {
                         }, {
                             $group: {
                                 _id       : '$date',
-                                salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}}
+                                salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
+                                count     : {$sum: '$count'}
                             }
                         }, {
                             $sort: {_id: -1}
@@ -2703,6 +2726,20 @@ var Module = function (models, event) {
                         $match: matchObj
                     }, {
                         $sort: {'createdBy.date': 1}
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflows'
+                        }
+                    }, {
+                        $unwind: {
+                            path                      : '$workflows',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    }, {
+                        $match: secondMatchObj
                     }, {
                         $project: {
                             date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
