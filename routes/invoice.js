@@ -316,6 +316,96 @@ module.exports = function (models, event) {
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
 
 
+    /**
+     *@api {delete} /invoice/:id Request for deleting Invoice
+     *
+     * @apiVersion 0.0.1
+     * @apiName DeleteInvoice
+     * @apiGroup Invoice
+     *
+     * @apiParam {String} id Unique id of Invoice
+     * @apiSuccess {Object} DeletedInvoice
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+          "_id": "5783ad06f810fcf53eb2f0aa",
+          "_type": "wTrackInvoice",
+          "__v": 0,
+          "dueDate": "2016-08-10T22:00:00.000Z",
+          "products": [
+            {
+              "unitPrice": 120600,
+              "subTotal": 120600,
+              "taxes": null,
+              "jobs": "57597f9b3319da9d6ac1c13b",
+              "description": "",
+              "product": "5540d528dacb551c24000003",
+              "quantity": 1
+            }
+          ],
+          "project": "571de200d4761c212289b7dc",
+          "emailed": false,
+          "approved": true,
+          "removable": true,
+          "invoiced": false,
+          "notes": [
+            
+          ],
+          "attachments": [
+            {
+              "_id": "5783ad2ad72226643fc8e0b0",
+              "name": "Thinkmobiles invoices 08.07.2016.xlsx",
+              "shortPas": "uploads%2Finvoices%2F5783ad06f810fcf53eb2f0aa%2FThinkmobiles%20invoices%2008.07.2016.xlsx",
+              "size": "0.481&nbsp;Mb",
+              "uploadDate": "2016-07-11T14:28:58.377Z",
+              "uploaderName": "natalia.yartysh"
+            }
+          ],
+          "editedBy": {
+            "date": "2016-07-11T14:39:41.006Z",
+            "user": "560255d1638625cf32000005"
+          },
+          "createdBy": {
+            "date": "2016-07-11T14:28:05.847Z",
+            "user": "561e37f7d6c741e8235f42cb"
+          },
+          "creationDate": "2016-07-11T14:28:05.847Z",
+          "groups": {
+            "group": [
+              
+            ],
+            "users": [
+              
+            ],
+            "owner": null
+          },
+          "whoCanRW": "everyOne",
+          "workflow": "55647d932e4aa3804a765ec9",
+          "payments": [
+            
+          ],
+          "paymentInfo": {
+            "taxes": 0,
+            "unTaxed": 120600,
+            "balance": 120600,
+            "total": 120600
+          },
+          "paymentTerms": null,
+          "salesPerson": null,
+          "currency": {
+            "rate": 1,
+            "_id": "565eab29aeb95fa9c0f9df2d"
+          },
+          "journal": "565ef6ba270f53d02ee71d65",
+          "invoiceDate": "2016-07-11T14:39:46.000Z",
+          "paymentReference": "PO1171",
+          "sourceDocument": "5783acf5f810fcf53eb2f0a9",
+          "supplier": "5719e4f7abaa894076dbb2d3",
+          "forSales": true,
+          "name": "NG11072016",
+          "id": "5783ad06f810fcf53eb2f0aa"
+        }
+     * */
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');
 

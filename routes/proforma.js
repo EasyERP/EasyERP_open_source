@@ -231,8 +231,122 @@ module.exports = function (models, event) {
         }
      */
     router.post('/', handler.create);
+
+    /**
+     *@api {post} /proforma/uploadFiles/ Request for uploading files and updating Invoice
+     *
+     * @apiVersion 0.0.1
+     * @apiName uploadFiles
+     * @apiGroup Proforma
+     *
+     * @apiSuccess {Object} UpdatedInvoice
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+          "success": "Invoice updated success",
+          "data": {
+            "_id": "57874dc5664ba9a8225cbec1",
+            "_type": "Proforma",
+            "__v": 0,
+            "products": [
+              {
+                "unitPrice": 92500,
+                "subTotal": 92500,
+                "taxes": null,
+                "jobs": "5732ce2286a6054b37025b6d",
+                "description": "",
+                "product": "5540d528dacb551c24000003",
+                "quantity": 1
+              }
+            ],
+            "project": "5732cda74b20992a37961efc",
+            "emailed": false,
+            "approved": false,
+            "removable": true,
+            "invoiced": false,
+            "notes": [
+
+            ],
+            "attachments": [
+              {
+                "_id": "57874e06664ba9a8225cbec3",
+                "name": "united-kingdom-england-london-6527.jpg",
+                "shortPas": "uploads%2Fproforma%2F57874dc5664ba9a8225cbec1%2Funited-kingdom-england-london-6527.jpg",
+                "size": "0.309&nbsp;Mb",
+                "uploadDate": "2016-07-14T08:32:06.779Z",
+                "uploaderName": "admin"
+              }
+            ],
+            "editedBy": {
+              "date": "2016-07-14T08:31:01.155Z",
+              "user": "52203e707d4dba8813000003"
+            },
+            "createdBy": {
+              "date": "2016-07-06T15:07:58.300Z",
+              "user": "52203e707d4dba8813000003"
+            },
+            "creationDate": "2016-07-06T15:07:58.300Z",
+            "groups": {
+              "group": [
+
+              ],
+              "users": [
+
+              ],
+              "owner": null
+            },
+            "whoCanRW": "everyOne",
+            "workflow": "56fabc6b5ad5d96f4fb08eab",
+            "payments": [
+
+            ],
+            "paymentInfo": {
+              "taxes": 0,
+              "unTaxed": 92500,
+              "balance": 92500,
+              "total": 92500
+            },
+            "paymentTerms": null,
+            "salesPerson": null,
+            "currency": {
+              "rate": 0.90075,
+              "_id": "565eab34aeb95fa9c0f9df2e"
+            },
+            "journal": "57035e4321f9b0c4313d4146",
+            "invoiceDate": "2016-07-06T08:31:00.000Z",
+            "paymentReference": "PO1153",
+            "sourceDocument": "577d1ece3e23cb6656e89455",
+            "supplier": "5604170eb904af832d000005",
+            "forSales": true,
+            "name": "PO1153_2"
+          }
+        }
+     */
+    //todo "@apiParamExample"
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, iHandler.uploadFile);
-    
+
+    /**
+     *@api {delete} /proforma/ Request for deleting Proforma
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteProforma
+     * @apiGroup Proforma
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+          "contentType": "salesProforma",
+          "ids": [
+            "57874c2c664ba9a8225cbebb",
+            "57874c27664ba9a8225cbeba",
+            "57874be8664ba9a8225cbeb9"
+          ]
+        }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {"success":true}
+     */
     router.delete('/', iHandler.bulkRemove);
     
     return router;
