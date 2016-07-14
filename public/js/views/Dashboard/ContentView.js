@@ -30,13 +30,13 @@ define([
                 sale                  : 7,
                 opportunitieConversion: 90,
                 winLost               : 30,
-                salesByCountry: 30,
-                leadsChart            : 'createdBy'
+                salesByCountry        : 30
             };
 
             this.dateItem = {
-                date   : 'D',
-                winLost: 'D'
+                date       : 'D',
+                winLost    : 'D',
+                leadsByName: 'all'
             };
 
             this.numberToDate = {};
@@ -49,33 +49,38 @@ define([
         },
 
         events: {
-            'click .dateRange'                                : 'toggleDateRange',
-            'click .dateRangeLeads'                           : 'toggleDateRange',
-            'click #updateDate'                               : 'changeDateRange',
-            'click #updateDateLeads'                          : 'changeLeadsDateRange',
-            'click li.filterValues:not(#custom, #customLeads)': 'setDateRange',
-            'click .choseDateRange .item'                     : 'newRange',
-            'click .choseDateItem .item'                      : 'newItem',
-            'click .chart-tabs a'                             : 'changeTab',
-            'click #custom'                                   : 'showDatePickers',
-            'click #customLeads'                              : 'showDatePickersLeads',
-            'click #cancelBtn'                                : 'cancel',
-            'click #leadsCancelBtn'                           : 'cancel'
+            'click .dateRange'                                                    : 'toggleDateRange',
+            'click .dateRangeLeadsByName'                                         : 'toggleDateRange',
+            'click #updateDate'                                                   : 'changeDateRange',
+            'click #updateDateLeadsByName'                                        : 'changeLeadsDateRangeByName',
+            'click li.filterValues:not(#custom, #customLeads, #customLeadsByName)': 'setDateRange',
+            'click .choseDateRange .item'                                         : 'newRange',
+            'click .choseDateItem .item'                                          : 'newItem',
+            'click .chart-tabs a'                                                 : 'changeTab',
+            'click #custom'                                                       : 'showDatePickers',
+            'click #customLeadsByName'                                            : 'showDatePickersLeadsByName',
+            'click #cancelBtn'                                                    : 'cancel',
+            'click #cancelBtnLeadsByName'                                         : 'cancel'
         },
 
         setDateRange: function (e) {
             var date = moment(new Date());
             var $target = $(e.target);
-            var isLeads = $target.hasClass('leads');
             var id = $target.attr('id');
             var type = '';
             var quarter;
-
             var startDate;
             var endDate;
 
-            if(isLeads){
-                type = 'Leads';
+            //ToDo: change this to data-type when all branches are merged
+            switch($target.attr('class').split(' ')[0]){
+                case 'leads':
+                    type = 'Leads';
+                    break;
+                case 'leadsName':
+                    type = 'LeadsByName';
+                    break;
+                default: type = '';
             }
 
             this.$el.find('.customTime' + type).addClass('hidden');
@@ -97,7 +102,6 @@ define([
                     break;
                 case 'lastQuarter'+type:
                     quarter = date.quarter();
-
                     startDate = date.quarter(quarter - 1).startOf('quarter');
                     endDate = moment(startDate).endOf('quarter');
                     break;
@@ -114,8 +118,8 @@ define([
             this.changeDateRange(null, type);
         },
 
-        changeLeadsDateRange: function(e){
-            this.changeDateRange(null, 'Leads')
+        changeLeadsDateRangeByName: function(e){
+            this.changeDateRange(null, 'LeadsByName')
         },
 
         changeDateRange: function (e, type) {
@@ -130,24 +134,31 @@ define([
             endDate = dateFilter.find('#endDate' + type);
             startTime = dateFilter.find('#startTime' + type);
             endTime = dateFilter.find('#endTime' + type);
-
             startDate = startDate.val();
             endDate = endDate.val();
-
             startTime.text(startDate);
             endTime.text(endDate);
 
-            if (type) {
-                this.startDateLeads = startDate;
-                this.endDateLeads = endDate;
-                this.renderLeadsChart();
-                this.toggleDateRange(null, 'Leads');
-            } else {
-                this.startDate = startDate;
-                this.endDate = endDate;
-                this.toggleDateRange(null, '');
-                this.renderSalesByCountry();
-                this.renderTreemap();
+            switch (type){
+                case 'Leads':
+                    this.startDateLeads = startDate;
+                    this.endDateLeads = endDate;
+                    this.renderLeadsChart();
+                    this.toggleDateRange(null, type);
+                    break;
+                case 'LeadsByName':
+                    this.startDateLeadsByName = startDate;
+                    this.endDateLeadsByName = endDate;
+                    this.renderLeadsChartByName();
+                    this.toggleDateRange(null, type);
+                    break;
+                default:
+                    this.startDate = startDate;
+                    this.endDate = endDate;
+                    this.toggleDateRange(null, '');
+                    this.renderSalesByCountry();
+                    this.renderTreemap();
+                    break;
             }
 
             this.trigger('changeDateRange');
@@ -179,12 +190,12 @@ define([
             this.$el.find('.customTime').toggleClass('hidden');
         },
 
-        showDatePickersLeads: function (e) {
+        showDatePickersLeadsByName: function (e) {
             var $target = $(e.target);
-            this.removeAllChecked('Leads');
+            this.removeAllChecked('LeadsByName');
 
             $target.toggleClass('checkedValue');
-            this.$el.find('.customTimeLeads').toggleClass('hidden');
+            this.$el.find('.customTimeLeadsByName').toggleClass('hidden');
         },
 
         cancel: function (e) {
@@ -263,6 +274,9 @@ define([
                     break;
                 case 'winLost':
                     this.renderOpportunitiesWinAndLost();
+                    break;
+                case 'leadsByName':
+                    this.renderLeadsChartByName();
                     break;
                 // skip default;
             }
@@ -379,22 +393,27 @@ define([
             var date = moment(new Date());
             this.startDate = (date.startOf('month')).format('D MMM, YYYY');
             this.endDate = (moment(this.startDate).endOf('month')).format('D MMM, YYYY');
-            this.startDateLeadsByNames = this.startDate;
-            this.endDateLeadsByNames = this.endDate;
+            this.startDateLeadsByName = this.startDate;
+            this.endDateLeadsByName = this.endDate;
 
             this.$el.html(this.template({
                 startDate            : this.startDate,
                 endDate              : this.endDate,
-                startDateLeadsByNames: this.startDateLeadsByNames,
-                endDateLeadsByNames  : this.endDateLeadsByNames
+                startDateLeadsByNames: this.startDateLeadsByName,
+                endDateLeadsByNames  : this.endDateLeadsByName
             }));
             this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
             this.bindDatePickers(this.startDate, this.endDate, '');
-            this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'Leads');
+            this.bindDatePickers(this.startDateLeadsByName, this.endDateLeadsByName, 'LeadsByName');
             this.renderSalesByCountry();
             this.renderTreemap();
-            this.renderLeadsChart();
+            this.renderLeadsChartByName();
             return this;
+        },
+
+        renderLeadsChartByName: function(){
+            /*console.log(this.startDateLeadsByName, this.endDateLeadsByName);
+            console.log(this.dateItem.leadsByName)*/
         },
 
         renderPopulateByType: function (that, type) {
