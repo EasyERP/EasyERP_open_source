@@ -12,6 +12,31 @@ module.exports = function (event, models) {
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getAll);
     router.get('/profiles/:id', authStackMiddleware, accessStackMiddleware, handler.getByProfile);
+
+    /**
+     *@api {get} /users/forDD Request UsersForDD
+     *
+     * @apiVersion 0.0.1
+     * @apiName getUsersForDD
+     * @apiGroup User
+     *
+     * @apiSuccess {Object} UsersForDD
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+          "data": [
+            {
+              "_id": "560c099da5d4a2e20ba5068b",
+              "login": "AlexSvatuk"
+            },
+            {
+              "_id": "55ba28c8d79a3a3439000016",
+              "login": "AndrianaLemko"
+            },
+            ...
+          ]
+        }
+     */
     router.get('/forDd', authStackMiddleware, handler.getForDd);
     router.get('/current', authStackMiddleware, handler.getById);
     router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddleware, handler.totalCollectionLength);

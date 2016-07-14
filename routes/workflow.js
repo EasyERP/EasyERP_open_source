@@ -13,6 +13,36 @@ module.exports = function (models, event) {
     router.get('/', authStackMiddleware, handler.get);
     router.get('/relatedStatus', authStackMiddleware, handler.relatedStatus);
     router.get('/getWorkflowsForDd', authStackMiddleware, handler.getWorkflowsForDd);
+
+    /**
+     *@api {get} /workflows/getFirstForConvert/ Request FirstWorkflowForConvert
+     *
+     * @apiVersion 0.0.1
+     * @apiName getFirstWorkflowForConvert
+     * @apiGroup Workflow
+     *
+     * @apiParam (?Field=value) {String} wId="Purchase Order"
+     * @apiParam (?Field=value) {String} source="purchase"
+     * @apiParam (?Field=value) {String} targetSource="quotation"
+     *
+     * @apiSuccess {Object} FirstWorkflowForConvert
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "_id": "5555bf276a3f01acae0b5560",
+            "color": "#2C3E50",
+            "name": "Not Ordered",
+            "sequence": 3,
+            "status": "New",
+            "wId": "Purchase Order",
+            "wName": "order",
+            "source": "purchase",
+            "targetSource": [
+                "quotation"
+            ],
+            "visible": true
+        }
+     */
     router.get('/getFirstForConvert', handler.getFirstForConvert);
     router.get('/fetch', handler.fetch);
 
