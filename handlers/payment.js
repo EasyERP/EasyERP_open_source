@@ -1,4 +1,3 @@
-/*TODO remove caseFilter methid after testing filters*/
 var mongoose = require('mongoose');
 var async = require('async');
 var WorkflowHandler = require('./workflow');
@@ -61,85 +60,85 @@ var Module = function (models, event) {
     }
 
     /*function ConvertType(array, type) {
-        var i;
+     var i;
 
-        if (type === 'integer') {
-            for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i], 10);
-            }
-        } else if (type === 'boolean') {
-            for (i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }*/
+     if (type === 'integer') {
+     for (i = array.length - 1; i >= 0; i--) {
+     array[i] = parseInt(array[i], 10);
+     }
+     } else if (type === 'boolean') {
+     for (i = array.length - 1; i >= 0; i--) {
+     if (array[i] === 'true') {
+     array[i] = true;
+     } else if (array[i] === 'false') {
+     array[i] = false;
+     } else {
+     array[i] = null;
+     }
+     }
+     }
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var i;
-        var filterKeys = Object.keys(filter);
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var i;
+     var filterKeys = Object.keys(filter);
 
-        for (i = filterKeys.length - 1; i >= 0; i--) {
-            filterName = filterKeys[i];
-            condition = filter[filterName].value ? filter[filterName].value : [];
-            key = filter[filterName].key;
+     for (i = filterKeys.length - 1; i >= 0; i--) {
+     filterName = filterKeys[i];
+     condition = filter[filterName].value ? filter[filterName].value : [];
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'assigned':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentMethod':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSale':
-                    condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = condition;
-                    resArray.push(filtrElement);
-                    break;
-                case 'paymentRef':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'year':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'month':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                // skip default;
-            }
-        }
+     switch (filterName) {
+     case 'assigned':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'name':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'supplier':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'paymentMethod':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'workflow':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'forSale':
+     condition = ConvertType(condition, 'boolean');
+     filtrElement[key] = condition;
+     resArray.push(filtrElement);
+     break;
+     case 'paymentRef':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'year':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'month':
+     ConvertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     // skip default;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     function getPaymentFilter(req, res, next, options) {
         var moduleId = returnModuleId(req);
@@ -1026,7 +1025,7 @@ var Module = function (models, event) {
                 $project: {
                     assigned        : {$arrayElemAt: ['$salesmanagers', 0]},
                     supplier        : 1,
-                    'currencyModel' : {$arrayElemAt: ['$currency._id', 0]},
+                    currencyModel   : {$arrayElemAt: ['$currency._id', 0]},
                     'currency.rate' : 1,
                     'invoice._id'   : 1,
                     'invoice.name'  : 1,
@@ -1908,7 +1907,10 @@ var Module = function (models, event) {
                                                 }
 
                                                 if (project) {
-                                                    event.emit('fetchInvoiceCollection', {project: project, dbName: db});
+                                                    event.emit('fetchInvoiceCollection', {
+                                                        project: project,
+                                                        dbName : db
+                                                    });
                                                 }
 
                                             });
