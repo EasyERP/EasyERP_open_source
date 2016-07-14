@@ -4,6 +4,7 @@ define([
     'Underscore',
     'text!templates/Editor/EditorTemplate.html',
     'text!templates/Editor/timelineTemplate.html',
+    'text!templates/Editor/editNote.html',
     'models/DealTasksModel',
     'views/DealTasks/EditView',
     'views/Editor/AttachView',
@@ -11,7 +12,7 @@ define([
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate, timelineTemplate, TaskModel,EditView, AttachView, SelectView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel,EditView, AttachView, SelectView, moment, populate, CONSTANTS) {
     var NoteView = Backbone.View.extend({
 
         template: _.template(NoteTemplate),
@@ -27,7 +28,8 @@ define([
             'click #cancelNote'   : 'cancelNote',
             'click #addNote'      : 'saveNote',
             'click .noteContainer': 'showButtons',
-            'click #addTask'      : 'saveTask',
+            'click #addTask, .saveTask' : 'saveTask',
+
             'click .addTitle'     : 'showTitle',
             'click .editDelNote'  : 'editDelNote',
             'click .fa-paperclip' : 'clickInput',
@@ -160,14 +162,10 @@ define([
             return false;
         },
 
-        editNote : function (id){
-            var holder =this.$el.find('#'+ id);
-            var $title = holder.find('.noteTitle');
-            var $noteText = holder.find('.noteText');
-            var title = $title.text();
-            var noteText = $noteText.text();
-            $noteText.html('<input value="' + noteText + '"/>');
-            $title.html('<input value="' + noteText + '"/>');
+        editNote : function (currentNote){
+            var holder = this.$el.find('#'+ currentNote._id);
+            holder.find('.contentHolder').hide();
+            holder.append(_.template(editNote, currentNote));
         },
 
         chooseOption: function (e) {
@@ -204,7 +202,7 @@ define([
                     if (model){
                         new EditView({model : model});
                     } else {
-                        this.editNote(idInt);
+                        this.editNote(currentNote);
                     }
 
                     break;
@@ -279,6 +277,7 @@ define([
             var $target = $(e.target);
             var $noteArea = $target.parents('.addNote').find('#noteArea');
             var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');
+            var targetId = $target.parents('.noteContainer').id();
             var $thisEl = this.$el;
             var val;
             var title;
@@ -312,14 +311,14 @@ define([
                 notes = notes.filter(function (elem) {
                     return !elem.task;
                 });
-                arrKeyStr = $thisEl.find('#getNoteKey').attr('value');
+
                 noteObj = {
                     note : '',
                     title: ''
                 };
-                if (arrKeyStr) {
+                if (targetId) {
                     editNotes = _.map(notes, function (note) {
-                        if (note._id === arrKeyStr) {
+                        if (note._id === targetId) {
                             note.note = val;
                             note.title = title;
                         }
@@ -332,8 +331,8 @@ define([
                             },
                             patch  : true,
                             success: function () {
-                                $thisEl.find('#noteBody').val($('#' + arrKeyStr).find('.noteText').html(val));
-                                $thisEl.find('#noteBody').val($('#' + arrKeyStr).find('.noteTitle').html(title));
+                                $thisEl.find('#noteBody').val($('#' + targetId).html('.noteText').html(val));
+                                $thisEl.find('#noteBody').val($('#' + targetId).find('.noteTitle').html(title));
                                 $thisEl.find('#getNoteKey').attr('value', '');
                             }
                         });

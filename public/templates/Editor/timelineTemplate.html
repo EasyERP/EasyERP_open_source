@@ -3,6 +3,7 @@
     <% notes.reverse();%>
     <%_.each(notes, function(val,key){ %>
     <div id="<%=val._id%>" class="noteContainer">
+        <div class="contentHolder">
         <%if (val.task){%>
         <div class="noteType task" id="<%= val.task._id%>">Created Task <a href="javascript:;" ><%=val.task.description  %></a></div>
         <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
@@ -24,7 +25,7 @@
 
 
         <div>
-           <span class="dateNote"><%=val['date'] %></span>
+           <span class="dateNote"><%=val.date%></span>
             <div class="buttonsNote">
           <span>
             <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
@@ -36,6 +37,7 @@
           </span>
 
             </div>
+        </div>
         </div>
     </div>
 

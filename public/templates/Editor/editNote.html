@@ -1,0 +1,19 @@
+<div class="addNote">
+<div class="noteType">Created Note</div>
+<div class="noteTitle" ><input value="<%=title%>"/></div>
+<textarea class="noteText" id="taskArea"><%=note%></textarea>
+<div>
+    </a><span class="dateNote"><%=date%></span>
+
+    <div>
+          <span>
+            <a href="javascript:;" id="save_<%=_id%>" data-id="<%=_id%>" class="editDelNote saveNote">Save</a>
+          </span>
+        <span class="sep">|</span>
+          <span>
+            <a href="javascript:;" id="cancel_<%=_id%>" data-id="<%=_id%>" class="editDelNote cancelNote">Cancel</a>
+          </span>
+    </div>
+</div>
+</div>
+
