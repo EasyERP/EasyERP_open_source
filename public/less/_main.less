@@ -4,6 +4,7 @@
 @import "_whiteColor";
 @import "generals/_index";
 @import "modules/_topBar";
+@import "layouts/_grid";
 @import "modules/_vacationList";
 /*== temp files==*/
 @import "tmp/_payRoll";
@@ -1395,41 +1396,41 @@ input::-ms-clear {
         }
       }
 
-      &.cancelled .columnName {
-        border-bottom: 2px solid #FF5454 !important;
-      }
-
-      &.inprogress .columnName {
-        border-bottom: 2px solid #ffea73 !important;
-      }
-
-      &.fixed .columnName {
-        border-bottom: 2px solid #bef624 !important;
-      }
-
-      &.done .columnName {
-        border-bottom: 2px solid #BDEA74 !important;
-      }
-
-      &.testing .columnName {
-        border-bottom: 2px solid #D9FFC8 !important;
-      }
-
-      &.merge .columnName {
-        border-bottom: 2px solid #FFEA73;
-      }
-
-      &.development .columnName {
-        border-bottom: 2px solid #67C2EF;
-      }
-
-      &.specification .columnName {
-        border-bottom: 2px solid #EAE874;
-      }
-
-      &.analysis .columnName {
-        border-bottom: 2px solid #808080;
-      }
+      //&.cancelled .columnName {
+      //  border-bottom: 2px solid #FF5454 !important;
+      //}
+      //
+      //&.inprogress .columnName {
+      //  border-bottom: 2px solid #ffea73 !important;
+      //}
+      //
+      //&.fixed .columnName {
+      //  border-bottom: 2px solid #bef624 !important;
+      //}
+      //
+      //&.done .columnName {
+      //  border-bottom: 2px solid #BDEA74 !important;
+      //}
+      //
+      //&.testing .columnName {
+      //  border-bottom: 2px solid #D9FFC8 !important;
+      //}
+      //
+      //&.merge .columnName {
+      //  border-bottom: 2px solid #FFEA73;
+      //}
+      //
+      //&.development .columnName {
+      //  border-bottom: 2px solid #67C2EF;
+      //}
+      //
+      //&.specification .columnName {
+      //  border-bottom: 2px solid #EAE874;
+      //}
+      //
+      //&.analysis .columnName {
+      //  border-bottom: 2px solid #808080;
+      //}
 
       &:hover .foldUnfold img, &.selected .foldUnfold img {
         margin: -20px 6px 3px 0;
@@ -1483,7 +1484,7 @@ input::-ms-clear {
           border-width: 0;
           text-align: center;
           height: 17px;
-          border-bottom: 2px solid @defaultBgHover-color;
+          //border-bottom: 2px solid @defaultBgHover-color;
 
           .text {
             width: auto;
@@ -2905,11 +2906,19 @@ dl {
 
   #content-holder {
     position: relative;
-    height: calc(~"100% - 40px");
-    display: block;
-    padding: 0 5px;
-    clear: both;
-    background: inherit;
+    height: calc(~"100% - 50px");
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
   }
 }
 
@@ -4208,7 +4217,7 @@ ul.chart-tabs {
 
   &.small {
     width: 265px;
-    height: 26px;
+    height: 28px;
     line-height: 26px;
     margin-top: 0!important;
 
@@ -4648,7 +4657,7 @@ h3.dashboard {
   .opp-internal-create {
     height: 60px;
     margin-top: 5px;
-    border-bottom-color: transparent;
+    //border-bottom-color: transparent;
 
   }
 
