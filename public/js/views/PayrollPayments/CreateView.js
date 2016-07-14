@@ -503,6 +503,7 @@ define([
                 changeMonth: true,
                 changeYear : true,
                 minDate    : new Date(self.date),
+                maxDate    : new Date(),
                 onSelect   : function () {
                     // set date to model
                 }
