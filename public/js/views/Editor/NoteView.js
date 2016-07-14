@@ -27,7 +27,7 @@ define([
             'click #noteArea'     : 'expandNote',
             'click .cancelNote'   : 'cancelNote',
             'click #addNote, .saveNote'      : 'saveNote',
-            'click .noteContainer': 'showButtons',
+            'click .contentHolder': 'showButtons',
             'click #addTask' : 'saveTask',
 
             'click .addTitle'     : 'showTitle',
@@ -39,7 +39,7 @@ define([
         },
 
         showButtons : function (e){
-            var $target = $(e.target).closest('.noteContainer');
+            var $target = $(e.target).closest('.contentHolder');
             $target.toggleClass('showButtons');
             $target.prevAll().each(function(){
                 $(this).removeClass('showButtons');
