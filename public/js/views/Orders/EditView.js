@@ -44,7 +44,21 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            //$(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+            var array = this.$el.find('.' + oldCurrencyClass);
+
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
+
+            this.hideNewSelect();
         },
 
         cancelOrder: function (e) {
@@ -217,7 +231,7 @@ define([
                         scheduledDate = $.trim(targetEl.find('[data-name="scheduledDate"]').text());
                         taxes = helpers.spaceReplacer($.trim(targetEl.find('[data-name="taxes"]').text()));
                         taxes = parseFloat(taxes) * 100;
-                        description = $.trim(targetEl.find('[data-name="productDescr"]').text());
+                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
                         subTotal = helpers.spaceReplacer($.trim(targetEl.find('.subtotal').text()));
                         subTotal = parseFloat(subTotal) * 100;
