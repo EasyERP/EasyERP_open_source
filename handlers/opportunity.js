@@ -86,7 +86,7 @@ var Module = function (models, event) {
                         note : '',
                         date : elem.dealDate,
                         task : elem,
-                        id   : elem._id
+                        _id   : elem._id
                     }
                 });
                 model.notes = model.notes.concat(res);
@@ -2635,10 +2635,6 @@ var Module = function (models, event) {
             var historyOptions = {
                 req: req,
                 id : result._id
-            };
-            var options = {
-                path : 'notes.task.assignedTo',
-                model: 'Employees'
             };
 
             if (err) {

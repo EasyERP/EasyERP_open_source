@@ -26,6 +26,7 @@ define([
             'click #noteArea'     : 'expandNote',
             'click #cancelNote'   : 'cancelNote',
             'click #addNote'      : 'saveNote',
+            'click .noteContainer': 'showButtons',
             'click #addTask'      : 'saveTask',
             'click .addTitle'     : 'showTitle',
             'click .editDelNote'  : 'editDelNote',
@@ -33,6 +34,18 @@ define([
             'click .chart-tabs'   : 'changeTab',
             'click .current-selected:not(.jobs)'                         : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)'          : 'chooseOption'
+        },
+
+        showButtons : function (e){
+            var $target = $(e.target).closest('.noteContainer');
+            $target.find('.buttonsNote').toggle();
+            $target.prevAll().each(function(){
+                $(this).find('.buttonsNote').hide();
+            });
+            $target.nextAll().each(function(){
+                $(this).find('.buttonsNote').hide();
+            });
+
         },
 
         saveTask: function () {
@@ -96,6 +109,9 @@ define([
             var formModel = this.model;
             var self = this;
             var notes = formModel.get('notes');
+            notes = notes.filter(function(elem){
+                return !elem.task;
+            });
             notes.push(optionsObj);
             formModel.save({notes: notes}, {
                 headers: {
@@ -144,6 +160,15 @@ define([
             return false;
         },
 
+        editNote : function (id){
+            var $title = this.$el.find('#'+ id +' .noteTitle');
+            var $noteText = this.$el.find('#'+ id +' .noteText');
+            var title = $title.text();
+            var noteText = $noteText.text();
+            $noteText.html('<input value="' + noteText + '"/>');
+            $title.html('<input value="' + noteText + '"/>');
+        },
+
         chooseOption: function (e) {
             var $target = $(e.target);
             var holder = $target.closest('a');
@@ -155,6 +180,7 @@ define([
         editDelNote: function (e) {
             var id = e.target.id;
             var k = id.indexOf('_');
+            var $thisEl = this.$el;
             var self = this;
             var type = id.substr(0, k);
             var idInt = id.substr(k + 1);
@@ -175,17 +201,9 @@ define([
                 case 'edit':
 
                     if (model){
-                        model.fetch({success : function (model){
-                            new EditView({model : model});
-                        }});
+                        new EditView({model : model});
                     } else {
-                        this.$el.find('.addTitle').show();
-
-                        // here and in all next global searching $ changed for correct finding elements
-                        this.$el.find('#noteArea').attr('placeholder', '').parents('.addNote').addClass('active');
-                        this.$el.find('#noteArea').val($('#' + idInt).find('.noteText').text());
-                        this.$el.find('#noteTitleArea').val($('#' + idInt).find('.noteTitle').text());
-                        this.$el.find('#getNoteKey').attr('value', idInt);
+                        this.editNote(idInt);
                     }
 
                     break;
@@ -257,6 +275,10 @@ define([
 
         saveNote: function (e) {
             var self = this;
+            var $target = $(e.target);
+            var $noteArea = $target.parents('.addNote').find('#noteArea');
+            var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');
+            var $thisEl = this.$el;
             var val;
             var title;
             var formModel;
@@ -265,86 +287,64 @@ define([
             var noteObj;
             var editNotes;
 
-            if ($(e.target).parents('.addNote').find('#noteArea').val().replace(/ /g, '') || $(e.target).parents('.addNote').find('#noteTitleArea').val().replace(/ /g, '')) {
-                $(e.target).parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
-                this.$el.find('.title-wrapper').hide();
-                this.$el.find('.addTitle').hide();
+            if ($noteArea.val().replace(/ /g, '') || $noteTitleArea.val().replace(/ /g, '')) {
+                $noteArea.attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
+                $thisEl.find('.title-wrapper').hide();
+                $thisEl.find('.addTitle').hide();
             } else {
-                $(e.target).parents('.addNote').find('#noteArea').focus();
+                $noteArea.focus();
             }
 
             e.preventDefault();
-            val = $.trim(this.$el.find('#noteArea').val()).replace(/</g, '&#60;').replace(/>/g, '&#62;'); // changed by Liliya when there is dialog and form
-            title = $.trim(this.$el.find('#noteTitleArea').val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
+            val = $.trim($noteArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
+            title = $.trim($noteTitleArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
 
             if (!val && !title) { // textarrea notes not be empty
-                App.render({
+               return App.render({
                     type   : 'error',
                     message: 'Note can not be empty'
                 });
-            } else {
-                if (val.replace(/ /g, '') || title.replace(/ /g, '')) {
-                    formModel = this.model;
-                    notes = formModel.get('notes');
-                    notes = notes.filter(function(elem){
-                        return !elem.task;
+            }
+            if (val.replace(/ /g, '') || title.replace(/ /g, '')) {
+                formModel = this.model;
+                notes = formModel.get('notes');
+                notes = notes.filter(function (elem) {
+                    return !elem.task;
+                });
+                arrKeyStr = $thisEl.find('#getNoteKey').attr('value');
+                noteObj = {
+                    note : '',
+                    title: ''
+                };
+                if (arrKeyStr) {
+                    editNotes = _.map(notes, function (note) {
+                        if (note._id === arrKeyStr) {
+                            note.note = val;
+                            note.title = title;
+                        }
+                        return note;
                     });
-                    arrKeyStr = this.$el.find('#getNoteKey').attr('value');
-                    noteObj = {
-                        note : '',
-                        title: ''
-                    };
-                    if (arrKeyStr) {
-                        editNotes = _.map(notes, function (note) {
-                            if (note._id === arrKeyStr) {
-                                note.note = val;
-                                note.title = title;
-                            }
-                            return note;
-                        });
-                        formModel.save({notes: editNotes},
-                            {
-                                headers: {
-                                    mid: 39
-                                },
-                                patch  : true,
-                                success: function () {
-                                    self.$el.find('#noteBody').val($('#' + arrKeyStr).find('.noteText').html(val));
-                                    self.$el.find('#noteBody').val($('#' + arrKeyStr).find('.noteTitle').html(title));
-                                    self.$el.find('#getNoteKey').attr('value', '');
-                                }
-                            });
-                    } else {
-                        noteObj.note = val;
-                        noteObj.title = title;
-                        notes.push(noteObj);
-                        formModel.save({notes: notes}, {
+                    formModel.save({notes: editNotes},
+                        {
                             headers: {
                                 mid: 39
                             },
-
                             patch  : true,
-                            wait   : true,
-                            success: function (models, data) {
-                                var formLeftColumn = self.$el.find('.formLeftColumn');
-                                var noteWrapper = formLeftColumn.find('.noteWrapper');
-
-                                noteWrapper.empty();
-                                formLeftColumn.append(self.render());
-                            },
-
-                            error: function (models, xhr) {
-                                self.errorNotification(xhr);
-
+                            success: function () {
+                                $thisEl.find('#noteBody').val($('#' + arrKeyStr).find('.noteText').html(val));
+                                $thisEl.find('#noteBody').val($('#' + arrKeyStr).find('.noteTitle').html(title));
+                                $thisEl.find('#getNoteKey').attr('value', '');
                             }
                         });
-                    }
-                    /*this.$el.find('#noteArea').val('');
-                    this.$el.find('#noteTitleArea').val('');*/
                 } else {
-                    return false;
+                    noteObj.note = val;
+                    noteObj.title = title;
+                    self.saveNewNote(noteObj);
                 }
+            } else {
+                return false;
             }
+
         },
 
         showTitle: function (e) {
