@@ -211,7 +211,7 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {  // added more info for save
-                        quantity = $.trim(targetEl.find('[data-name="quantity"]').text());
+                        quantity = $.trim(targetEl.find('[data-name="quantity"]').text()) || targetEl.find('[data-name="quantity"] input').val();
                         price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text()) || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
                         scheduledDate = $.trim(targetEl.find('[data-name="scheduledDate"]').text());

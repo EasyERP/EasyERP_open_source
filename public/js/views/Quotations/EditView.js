@@ -379,7 +379,7 @@ define([
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"] textarea').val();
+                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subTotal = parseFloat(subTotal) * 100;
@@ -391,7 +391,7 @@ define([
                                 quantity     : quantity,
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
-                                description  : description,
+                                description  : $.trim(description),
                                 subTotal     : subTotal,
                                 jobs         : jobs
                             });
