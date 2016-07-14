@@ -4,9 +4,7 @@
     'jQuery',
     'views/dialogViewBase',
     'text!templates/DealTasks/EditTemplate.html',
-    'views/selectView/selectView',
     'views/Notes/NoteView',
-    'views/Notes/AttachView',
     'common',
     'populate',
     'custom',
@@ -16,9 +14,7 @@
              $,
              ParentView,
              EditTemplate,
-             selectView,
              NoteView,
-             AttachView,
              common,
              populate,
              custom,
@@ -146,6 +142,7 @@
             this.currentModel.save(data, {
                 patch  : true,
                 success: function (model, res) {
+                    var redirectUrl = window.location.hash;
                     var ids = [];
                     var result;
                     var $trHolder;
@@ -202,6 +199,11 @@
                                 counter = $workflowStart.closest('.column').find('.totalCount');
                                 counter.html(parseInt(counter.html(), 10) - 1);
                             }
+                        case 'form':
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
+
+                            break;
                     }
                 },
 
@@ -241,6 +243,9 @@
 
                                 newTotal = ($totalCount.html() - 1);
                                 $totalCount.html(newTotal);
+                            case 'form':
+                                $('#' + model._id).remove();
+                                break;
                         }
                         self.hideDialog();
                     },
