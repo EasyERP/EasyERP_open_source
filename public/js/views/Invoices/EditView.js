@@ -119,6 +119,7 @@ define([
             var $buttons;
             var $selfEl = self.$el;
             var invoiceDate;
+            var redirectUrl;
 
             e.preventDefault();
 
@@ -149,6 +150,11 @@ define([
                             if (self.eventChannel) {
                                 self.eventChannel.trigger('invoiceUpdated');
                             }
+
+                            redirectUrl = window.location.hash;
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();
