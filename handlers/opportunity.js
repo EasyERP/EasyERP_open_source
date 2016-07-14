@@ -4,6 +4,7 @@ var Module = function (models, event) {
 
     var opportunitiesSchema = mongoose.Schemas.Opportunitie;
     var CustomerSchema = mongoose.Schemas.Customer;
+    var TasksSchema = mongoose.Schemas.DealTasks;
     var WorkflowSchema = mongoose.Schemas.workflow;
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
@@ -64,6 +65,37 @@ var Module = function (models, event) {
             });
 
     };
+
+    function getTasks(req, model, cb) {
+        var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
+
+        TasksSchema.find({'deal': model._id})
+            .populate('deal', '_id name')
+            .populate('company', '_id name')
+            .populate('contact', '_id name')
+            .populate('assignedTo', '_id name fullName imageSrc')
+            .populate('workflow')
+            .exec(function (err, res) {
+                if (err) {
+                    return cb(err);
+                }
+                model;
+                res = res.map(function (elem) {
+                    return {
+                        title: '',
+                        note : '',
+                        date : elem.dealDate,
+                        task : elem,
+                        id   : elem._id
+                    }
+                });
+                model.notes = model.notes.concat(res);
+                model.notes.sort(function (a, b) {
+                    return a.date - b.date;
+                });
+                cb(null, model);
+            });
+    }
 
     function sendEmailToAssigned(req, opportunity) {
         var mailOptions;
@@ -619,11 +651,15 @@ var Module = function (models, event) {
                         });
 
                     }
-                    res.status(200).send({
-                        success : 'Opportunities updated',
-                        notes   : result.notes,
-                        sequence: result.sequence
+
+                    getTasks(req, result.toJSON(), function (err, model) {
+                        res.status(200).send({
+                            success : 'Opportunities updated',
+                            notes   : model.notes,
+                            sequence: model.sequence
+                        });
                     });
+
                 });
             });
 
@@ -2601,39 +2637,31 @@ var Module = function (models, event) {
                 id : result._id
             };
             var options = {
-                path: 'notes.task.assignedTo',
+                path : 'notes.task.assignedTo',
                 model: 'Employees'
             };
 
-
             if (err) {
-                return next(err);
+                return net(err);
             }
-            Opportunities.populate(result, options, function (err, populatedRes) {
-
-                if (err) {
-                    return next(err);
-                }
+            getTasks(req, result, function (err, model) {
                 historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
                     if (err) {
                         return console.log(err);
                     }
 
-                    populatedRes = populatedRes.toJSON();
-                    populatedRes.history = history;
-                    res.status(200).send(populatedRes);
+                    model = model.toJSON();
+                    model.history = history;
+                    res.status(200).send(model);
                 });
-            });
 
-
-
+            })
         });
     }
 
     this.getById = function (req, res, next) {
         getById(req, res, next);
     };
-
 
     this.getByViewType = function (req, res, next) {
         var viewType = req.query.viewType;

@@ -165,8 +165,11 @@ define([
                                 newAttachment = attachments[attachments.length-1];
                                 self.saveNewNote({attachment : {name : newAttachment.name, shortPas :  newAttachment.shortPas }});
                             }
-                            addFrmAttach[0].reset();
-                            status.hide();
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true});
+                           /* addFrmAttach[0].reset();
+                            status.hide();*/
                         }
                     },
 

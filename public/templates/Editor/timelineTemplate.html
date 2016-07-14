@@ -4,7 +4,7 @@
     <%_.each(notes, function(val,key){ %>
     <div id="<%=val._id%>" class="noteContainer">
         <%if (val.task){%>
-        <div class="noteType">Created Task <a href="javascript:;" id="<%= val.task._id%>"><%=val.task.description  %></a></div>
+        <div class="noteType task" id="<%= val.task._id%>">Created Task <a href="javascript:;" ><%=val.task.description  %></a></div>
         <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
         <%} else {%>
         <div class="noteType">Created Note</div>

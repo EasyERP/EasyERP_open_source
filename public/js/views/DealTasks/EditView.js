@@ -88,6 +88,11 @@
             var company = this.$el.find('#companyDd').data('id');
             var description = $.trim(this.$el.find('#description').val());
             var contact = this.$el.find('#contactDd').data('id');
+            var companyObject;
+            var dealObject;
+            var contactObject;
+
+
 
             event.preventDefault();
 
@@ -114,11 +119,21 @@
                 assignedTo   : assignedTo || null,
                 description  : description,
                 dueDate    : $.trim(holder.find('#dueDate').val()),
-                sequenceStart: this.currentModel.toJSON().sequence,
-                deal         : deal,
-                company      : company,
-                contact      : contact
+                sequenceStart: this.currentModel.toJSON().sequence
             };
+
+            if (company) {
+                data.company = company;
+                data.companyDate = new Date();
+            }
+            if (contact) {
+                data.contact = contact;
+                data.contactDate = new Date();
+            }
+            if (deal) {
+                data.deal = deal;
+                data.dealDate = new Date();
+            }
 
             currentWorkflow = this.currentModel.get('workflow');
 

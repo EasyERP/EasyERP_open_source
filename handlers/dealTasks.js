@@ -6,6 +6,8 @@ var tasksSchema = mongoose.Schemas.DealTasks;
 var department = mongoose.Schemas.Department;
 var projectSchema = mongoose.Schemas.Project;
 var prioritySchema = mongoose.Schemas.Priority;
+var CustomerSchema = mongoose.Schemas.Customer;
+var opportunitiesSchema = mongoose.Schemas.Opportunitie;
 var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
 var async = require('async');
@@ -20,6 +22,8 @@ var Module = function (models, event) {
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
     var FilterMapper = require('../helpers/filterMapper');
+
+
 
     this.createTask = function (req, res, next) {
         var body = req.body;
@@ -54,6 +58,9 @@ var Module = function (models, event) {
                         res.status(201).send({success: 'New Task created success', id: result._id});
                     });
                 });
+
+
+
             });
 
     };
@@ -96,6 +103,7 @@ var Module = function (models, event) {
         var _id = req.params._id;
         var data = req.body;
         var fileName = data.fileName;
+        var DealTask = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
         var obj;
 
         delete data._id;
@@ -246,9 +254,10 @@ var Module = function (models, event) {
 
     function getTaskById(req, res, next) {
         var data = req.query;
+        var id = req.params.id;
         var Tasks = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
 
-        Tasks.findById(data.id)
+        Tasks.findById(data.id || id)
             .populate('deal', '_id name')
             .populate('company', '_id name')
             .populate('contact', '_id name')
@@ -455,6 +464,9 @@ var Module = function (models, event) {
             event.emit('updateSequence', DealTask, 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);
             res.send(200, {success: 'Success removed'});
         });
+    };
+    this.getById = function (req, res, next) {
+        getTaskById(req, res, next);
     };
 
     this.getFilterValues = function (req, res, next) {

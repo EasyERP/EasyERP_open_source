@@ -5,12 +5,13 @@ define([
     'text!templates/Editor/EditorTemplate.html',
     'text!templates/Editor/timelineTemplate.html',
     'models/DealTasksModel',
+    'views/DealTasks/EditView',
     'views/Editor/AttachView',
     'views/selectView/selectView',
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate, timelineTemplate, TaskModel, AttachView, SelectView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, timelineTemplate, TaskModel,EditView, AttachView, SelectView, moment, populate, CONSTANTS) {
     var NoteView = Backbone.View.extend({
 
         template: _.template(NoteTemplate),
@@ -19,7 +20,6 @@ define([
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
             this.responseObj = {};
-            this.model.on('change')
         },
 
         events: {
@@ -52,12 +52,15 @@ define([
             switch(this.contentType) {
                 case 'Persons':
                     saveObject.contact = this.model.id;
+                    saveObject.contactDate =new Date();
                     break;
                 case 'Companies':
                     saveObject.company = this.model.id;
+                    saveObject.companyDate = new Date();
                     break;
                 case 'opportunities':
                     saveObject.deal = this.model.id;
+                    saveObject.dealDate = new Date();
                     break;
             }
 
@@ -73,7 +76,13 @@ define([
             model.save(saveObject, {
                     wait   : true,
                     success: function (model, res) {
-                        self.saveNewNote({task :  res.id});
+                        var formLeftColumn = self.$el.find('.formLeftColumn');
+                        var noteWrapper = formLeftColumn.find('.noteWrapper');
+
+                        noteWrapper.empty();
+                        self.model.fetch({success : function(){
+                            formLeftColumn.append(self.render());
+                        }});
                     },
 
                     error: function (model, xhr) {
@@ -85,6 +94,7 @@ define([
 
         saveNewNote : function (optionsObj){
             var formModel = this.model;
+            var self = this;
             var notes = formModel.get('notes');
             notes.push(optionsObj);
             formModel.save({notes: notes}, {
@@ -94,6 +104,11 @@ define([
                 patch  : true,
                 wait   : true,
                 success: function (models, data) {
+                    var formLeftColumn = self.$el.find('.formLeftColumn');
+                    var noteWrapper = formLeftColumn.find('.noteWrapper');
+
+                    noteWrapper.empty();
+                    formLeftColumn.append(self.render());
                 },
 
                 error: function (models, xhr) {
@@ -140,44 +155,71 @@ define([
         editDelNote: function (e) {
             var id = e.target.id;
             var k = id.indexOf('_');
+            var self = this;
             var type = id.substr(0, k);
             var idInt = id.substr(k + 1);
             var currentModel = this.model;
             var notes = currentModel.get('notes');
             var newNotes;
+            var currentNote = _.filter(notes, function (note) {
+                if (note._id === idInt) {
+                    return note;
+                }
+            })[0];
+            var model;
+            if (currentNote.task){
+                model = new TaskModel(currentNote.task);
+            }
 
             switch (type) {
                 case 'edit':
-                    this.$el.find('.addTitle').show();
 
-                    // here and in all next global searching $ changed for correct finding elements
-                    this.$el.find('#noteArea').attr('placeholder', '').parents('.addNote').addClass('active');
-                    this.$el.find('#noteArea').val($('#' + idInt).find('.noteText').text());
-                    this.$el.find('#noteTitleArea').val($('#' + idInt).find('.noteTitle').text());
-                    this.$el.find('#getNoteKey').attr('value', idInt);
+                    if (model){
+                        model.fetch({success : function (model){
+                            new EditView({model : model});
+                        }});
+                    } else {
+                        this.$el.find('.addTitle').show();
+
+                        // here and in all next global searching $ changed for correct finding elements
+                        this.$el.find('#noteArea').attr('placeholder', '').parents('.addNote').addClass('active');
+                        this.$el.find('#noteArea').val($('#' + idInt).find('.noteText').text());
+                        this.$el.find('#noteTitleArea').val($('#' + idInt).find('.noteTitle').text());
+                        this.$el.find('#getNoteKey').attr('value', idInt);
+                    }
 
                     break;
                 case 'del':
 
-                    newNotes = _.filter(notes, function (note) {
-                        if (note._id !== idInt) {
-                            return note;
+                    if (model && confirm('You really want to remove task? ')){
+                        model.destroy({success : function (){
+                            $('#' + idInt).remove();
+                        }});
+
+
+                    } else {
+                        newNotes = _.filter(notes, function (note) {
+                            if (note._id !== idInt && !note.task) {
+                                return note;
+                            }
+                        });
+
+                        if (confirm('You really want to remove note? ')) {
+                            currentModel.save({notes: newNotes},
+                                {
+                                    headers: {
+                                        mid: 39
+                                    },
+                                    patch  : true,
+                                    success: function () {
+                                        $('#' + idInt).remove();
+                                    }
+                                });
                         }
-                    });
-                    if (confirm('You really want to remove note? ')) {
-                        currentModel.save({notes: newNotes},
-                            {
-                                headers: {
-                                    mid: 39
-                                },
-                                patch  : true,
-                                success: function () {
-                                    $('#' + idInt).remove();
-                                }
-                            });
                     }
+
+
                     break;
-                // skip default;
             }
         },
 
@@ -244,6 +286,9 @@ define([
                 if (val.replace(/ /g, '') || title.replace(/ /g, '')) {
                     formModel = this.model;
                     notes = formModel.get('notes');
+                    notes = notes.filter(function(elem){
+                        return !elem.task;
+                    });
                     arrKeyStr = this.$el.find('#getNoteKey').attr('value');
                     noteObj = {
                         note : '',
@@ -307,7 +352,6 @@ define([
         },
 
         render: function () {
-            var notDiv;
             var modelObj = this.model.toJSON();
             var date = moment().format("DD MMM, YYYY");
             var notes = this.model.get('notes');

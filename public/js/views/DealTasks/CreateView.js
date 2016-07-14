@@ -84,24 +84,37 @@ define([
             var contact = this.$el.find('#contactDd').data('id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
+            var saveObject;
 
-            if (!description){
+            if (!description) {
                 return App.render({
                     type   : 'error',
                     message: 'Please add Description'
                 });
             }
 
-            this.model.save(
-                {
-                    assignedTo : assignedTo || '',
-                    company    : company,
-                    contact    : contact,
-                    deal       : deal || '',
-                    description: description,
-                    dueDate   : dueDate,
-                    workflow  : workflow
-                },{
+            saveObject = {
+                assignedTo: assignedTo || '',
+
+                description: description,
+                dueDate    : dueDate,
+                workflow   : workflow
+            }
+            if (company) {
+                saveObject.company = company;
+                saveObject.companyDate = new Date();
+            }
+            if (contact) {
+                saveObject.contact = contact;
+                saveObject.contactDate = new Date();
+            }
+            if (deal) {
+                saveObject.deal = deal;
+                saveObject.dealDate = new Date();
+            }
+
+            this.model.save(saveObject
+                , {
                     wait   : true,
                     success: function (model) {
                         var currentModel = model.changed;
@@ -164,9 +177,9 @@ define([
 
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this, true);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
-            populate.get('#dealDd', 'opportunities/getForDd', {isOpportunitie : true},  'name', this, false);
-            populate.get2name('#contactDd', CONSTANTS.URLS.COMPANIES, {type :'Person'}, this, true, true, (this.model) ? this.model._id : null);
-            populate.get2name('#companyDd', CONSTANTS.URLS.COMPANIES, {type :'Company'}, this, true, true, (this.model) ? this.model._id : null);
+            populate.get('#dealDd', 'opportunities/getForDd', {isOpportunitie: true}, 'name', this, false);
+            populate.get2name('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'}, this, true, true, (this.model) ? this.model._id : null);
+            populate.get2name('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'}, this, true, true, (this.model) ? this.model._id : null);
             this.$el.find('#dueDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
