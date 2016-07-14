@@ -128,10 +128,11 @@ define([
 
             model.urlRoot = '/quotations/';
             model.fetch({
-                data   : {
+                data: {
                     id      : id,
                     viewType: 'form'
                 },
+                
                 success: function (model) {
                     return new self.EditView({model: model});
                 },

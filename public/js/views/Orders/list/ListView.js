@@ -144,9 +144,13 @@ define([
                 return false;
             }
 
-            model.urlRoot = '/orders/form/' + id;
+            model.urlRoot = '/orders/';
             model.fetch({
-                data   : {contentType: this.contentType},
+                data: {
+                    id      : id,
+                    viewType: 'form'
+                },
+                
                 success: function (model) {
                     return new EditView({model: model});
                 },

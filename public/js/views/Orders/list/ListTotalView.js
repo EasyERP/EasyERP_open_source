@@ -13,16 +13,16 @@ define([
             var result = {unTaxed: 0, total: 0, cellSpan: this.cellSpan};
 
             this.element.find('.unTaxed').each(function () {
-                result.unTaxed += parseFloat($(this).text());
+                result.unTaxed += parseFloat(helpers.spaceReplacer($(this).text()));
             });
             this.element.find('.total').each(function () {
-                result.total += parseFloat($(this).text());
+                result.total += parseFloat(helpers.spaceReplacer($(this).text()));
             });
             this.element.find('.paid').each(function () {
-                result.paid += parseFloat($(this).text());
+                result.paid += parseFloat(helpers.spaceReplacer($(this).text()));
             });
             this.element.find('.balance').each(function () {
-                result.balance += parseFloat($(this).text());
+                result.balance += parseFloat(helpers.spaceReplacer($(this).text()));
             });
 
             return result;

@@ -168,14 +168,19 @@ define([
             var orderDate = thisEl.find('#orderDate').val();
             var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
-            var total = $.trim(thisEl.find('#totalAmount').text());
-            var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+            var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+            var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
+            var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
 
             var usersId = [];
             var groupsId = [];
             var whoCanRW;
             var currency;
             var i;
+
+            unTaxed = parseFloat(unTaxed) * 100;
+            total = parseFloat(total) * 100;
+            totalTaxes = parseFloat(totalTaxes) * 100;
 
             if (thisEl.find('#currencyDd').attr('data-id')) {
                 currency = {
@@ -206,23 +211,26 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {  // added more info for save
-                        quantity = targetEl.find('[data-name="quantity"]').text();
+                        quantity = $.trim(targetEl.find('[data-name="quantity"]').text());
                         price = targetEl.find('[data-name="price"]').text() || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
-                        scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                        taxes = targetEl.find('.taxes').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        price = parseFloat(price) * 100;
+                        scheduledDate = $.trim(targetEl.find('[data-name="scheduledDate"]').text());
+                        taxes = $.trim(targetEl.find('.taxes').text());
+                        taxes = parseFloat(taxes) * 100;
+                        description = $.trim(targetEl.find('[data-name="productDescr"]').text());
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        subTotal = targetEl.find('.subtotal').text();
+                        subTotal = $.trim(targetEl.find('.subtotal').text());
+                        subTotal = parseFloat(subTotal) * 100;
 
                         products.push({
                             product      : productId,
                             unitPrice    : price,
                             quantity     : quantity,
                             scheduledDate: scheduledDate,
-                            taxes        : taxes,
+                            taxes        : helpers.spaceReplacer(taxes),
                             description  : description,
-                            subTotal     : subTotal,
-                            jobs         : jobs
+                            subTotal     : helpers.spaceReplacer(subTotal),
+                            jobs         : jobs || null
                         });
                     }
                 }
@@ -380,8 +388,8 @@ define([
 
             productItemContainer.append(
                 new ProductItemView({
-                    editable: false,
-                    editablePrice: self.editablePrice,
+                    editable       : false,
+                    editablePrice  : self.editablePrice,
                     balanceVissible: false
                 }).render({model: model}).el
             );
