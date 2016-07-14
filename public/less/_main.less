@@ -2047,11 +2047,9 @@ input::-ms-clear {
   input {
     height: 25px !important;
     line-height: 15px !important;
-    //background-image: url("@{imagesfolder}/bt-bg.png") !important;
     background-color: inherit !important;
     font-size: 11px;
     font-family: Tahoma, Arial, Helvetica, sans-serif;
-    //text-shadow: 0 1px 0 #FFF;
     color: @formColum-main-subText-color !important;
     border: @thin-border @border-color-main !important;
     padding: 5px 15px;
@@ -2153,10 +2151,15 @@ input::-ms-clear {
       dt, dd {
         line-height: 17px;
       }
-      dd.editable {
-        a {
-          line-height: 17px;
-          width: 100%;
+      dd {
+        &.editable {
+          a {
+            line-height: 17px;
+            width: 100%;
+          }
+        }
+        &.cashBalance {
+
         }
       }
       .no-long {
@@ -3998,7 +4001,7 @@ ul.dialog-tabs {
       float: right;
       width: 80px;
       .btn;
-      height: 15px;
+      //height: 15px;
       border-radius: 0;
       .gradient(#A02422);
       -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
@@ -4020,7 +4023,7 @@ ul.dialog-tabs {
       line-height: 20px;
       width: 8px;
       margin-left: -2px;
-      height: 17px;
+      min-height: 17px;
       display: block;
     }
   }

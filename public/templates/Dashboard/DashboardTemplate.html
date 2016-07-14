@@ -7,6 +7,7 @@
     <li><a href="javascript:;" class="">Opportunities</a></li>
     <li><a href="javascript:;" class="">Won/Lost</a></li>
     <li><a href="javascript:;" class="">Sales by country</a></li>
+    <li><a href="javascript:;" class="">Leads</a></li>
 </ul>
 
 
@@ -298,7 +299,7 @@
                 </li>
                 <li>
                     <ul class="frameDetail hidden">
-                        <li id="thisMonth" class="filterValues checked">This Month</li>
+                        <li id="thisMonth" class="filterValues checked checkedValue">This Month</li>
                         <li id="thisYear" class="filterValues checked">This Financial Year</li>
                         <li id="lastMonth" class="filterValues checked">Last Month</li>
                         <li id="lastQuarter" class="filterValues checked">Last Quarter</li>
@@ -325,10 +326,55 @@
         <div class="clearfix"></div>
         <div>
             <div class="treemap_sales" style="margin-left: 130px"></div>
-            <div style="margin-left: 870px">
+            <div style="margin-left: 800px">
                 <svg class="salesByCountryChart"></svg>
             </div>
             <svg class="salesByCountryBarChart"></svg>
+        </div>
+    </div>
+    <div class="chart-tabs-item">
+
+        <h3>Leads</h3>
+        <div class="vocationFilter">
+            <ul class="dateFilterLeads">
+                <li class="dateRangeLeads">
+                    <span id="startTimeLeads"><%= startDateLeads%></span> - <span id="endTimeLeads"><%= endDateLeads%></span>
+                    <i class="fa fa-caret-down"></i>
+                </li>
+                <li>
+                    <ul class="frameDetail hidden">
+                        <li id="thisMonthLeads" class="leads filterValues checked checkedValue">This Month</li>
+                        <li id="thisYearLeads" class="leads filterValues checked">This Financial Year</li>
+                        <li id="lastMonthLeads" class="leads filterValues checked">Last Month</li>
+                        <li id="lastQuarterLeads" class="leads filterValues checked">Last Quarter</li>
+                        <li id="lastYearLeads" class="leads filterValues checked">Last Financial Year</li>
+                        <li id="customLeads" class="leads filterValues checked">Custom Dates</li>
+                        <li class="customTimeLeads hidden">
+                    <span>
+                        <label for="startDate">From </label><input readonly type="text" id="startDateLeads"><br/>
+                        <label for="endDate">To </label><input readonly type="text" id="endDateLeads">
+                    </span>
+                        </li>
+                        <li class="buttons">
+                            <button id="updateDateLeads" class="btn">
+                                <span>Update</span>
+                            </button>
+                            <button id="cancelBtnLeads" class="btn">
+                                <span>Cancel</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div data-type="leadsChart" class="choseDateItem">
+            <div class="item active" data-item="createdBy">Created By</div>
+            <div class="item" data-item="assignedTo">Assigned To</div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div>
+            <svg class="leadsBarChart"></svg>
         </div>
     </div>
 </div>

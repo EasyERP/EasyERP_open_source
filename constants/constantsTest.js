@@ -24,9 +24,9 @@ module.exports = {
     //-----------------------------------
 
     //-----------  test purchase invoice-
-    TESTSUPPLIER : "55fe60f5e2a48c310c000005",
-    BANKEXPENSES : "55c0e4a30343b37542000005",
-    DRAFT        : "5555e54c6a3f01acae0b5564",
+    TESTSUPPLIER    : "55fe60f5e2a48c310c000005",
+    BANKEXPENSES    : "55c0e4a30343b37542000005",
+    DRAFT           : "5555e54c6a3f01acae0b5564",
     PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146'
 
     //-----------------------------------

@@ -32,6 +32,13 @@
                         <dd>
                             <a id="paymentMethod" class="current-selected" href="javascript:;"><%=model.paymentMethod.name%></a>
                         </dd>
+                        <dt>
+                            <label for="journal">Journal
+                            </label>
+                        </dt>
+                        <dd>
+                            <a id="journal" class="current-selected" href="javascript:;"><%=model.journal ? model.journal.name : 'Not found journal'%></a>
+                        </dd>
                     </dl>
                 </div>
                 <div class="half-block left">

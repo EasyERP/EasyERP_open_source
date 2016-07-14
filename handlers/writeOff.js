@@ -36,7 +36,7 @@ var WriteOffObj = function (models, event) {
         var products = data.products;
         var parallelTasks;
         var waterFallTasks;
-        var jobs = products.map(function(elem){
+        var jobs = products.map(function (elem) {
             return elem.jobs;
         });
         jobs = jobs.objectID();
@@ -49,13 +49,12 @@ var WriteOffObj = function (models, event) {
             });
         }
 
-        function getJobCosts (parallelTasks, callback){
-
+        function getJobCosts(parallelTasks, callback) {
 
             JobsModel
                 .aggregate([{
                     $match: {
-                        _id : {$in : jobs}
+                        _id: {$in: jobs}
                     }
                 }, {
                     $lookup: {
@@ -71,13 +70,15 @@ var WriteOffObj = function (models, event) {
                                 input: '$journalentries',
                                 as   : 'je',
                                 cond : {
-                                    $and : [{$eq : ['$$je.credit', 0]}, {$or: [{
-                                        $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
-                                    }, {
-                                        $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
-                                    }, {
-                                        $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
-                                    }]}]
+                                    $and: [{$eq: ['$$je.credit', 0]}, {
+                                        $or: [{
+                                            $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
+                                        }, {
+                                            $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
+                                        }, {
+                                            $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
+                                        }]
+                                    }]
 
                                 }
                             }
@@ -87,7 +88,8 @@ var WriteOffObj = function (models, event) {
                     $unwind: {
                         path                      : '$journalentries',
                         preserveNullAndEmptyArrays: true
-                                    }}, {
+                    }
+                }, {
                     $group: {
                         _id      : null,
                         costTotal: {$sum: '$journalentries.debit'},
@@ -106,7 +108,6 @@ var WriteOffObj = function (models, event) {
                     callback(null, result[0]);
                 });
         };
-
 
         function fetchFirstWorkflow(callback) {
             request = {
@@ -138,24 +139,25 @@ var WriteOffObj = function (models, event) {
             });
 
             saveObject = {
-                currency   : {
-                    _id : CONSTANTS.CURRENCY_USD
+                currency: {
+                    _id: CONSTANTS.CURRENCY_USD
                 },
+
                 dueDate    : data.dueDate,
                 forSales   : data.forSales,
                 groups     : data.groups,
                 invoiceDate: data.invoiceDate,
                 project    : data.project,
                 paymentInfo: {
-                    total : jobCosts.costTotal,
-                    balance : 0,
-                    unTaxed :jobCosts.costTotal
+                    total  : jobCosts.costTotal,
+                    balance: 0,
+                    unTaxed: jobCosts.costTotal
                 },
-                products   : data.products,
-                whoCanRW   : data.whoCanRW,
-                journal    : data.journal
+                
+                products: data.products,
+                whoCanRW: data.whoCanRW,
+                journal : data.journal
             };
-
 
             if (req.session.uId) {
 
@@ -182,13 +184,12 @@ var WriteOffObj = function (models, event) {
                 JobsModel.update({_id: {$in: jobs}}, {
                     $set: {invoice: result._id}
 
-                }, {multi: true}, function (err, res) {
+                }, {multi: true}, function (err) {
                     if (err) {
                         callback(err);
                     }
                     callback(null, result);
                 });
-
 
             });
         }
@@ -228,10 +229,10 @@ var WriteOffObj = function (models, event) {
                         date: new Date()
                     };
                     JobsModel.findByIdAndUpdate(jobs, {
-                            type    : 'WriteOff',
-                            workflow: CONSTANTS.JOBSFINISHED,
-                            editedBy: editedBy
-                        }, {new: true}, function (err, job) {
+                        type    : 'WriteOff',
+                        workflow: CONSTANTS.JOBSFINISHED,
+                        editedBy: editedBy
+                    }, {new: true}, function (err, job) {
                         if (err) {
                             return cb(err);
                         }
@@ -244,7 +245,6 @@ var WriteOffObj = function (models, event) {
                             callback: cb
                         });
 
-
                     });
 
                 }, function () {
@@ -254,108 +254,108 @@ var WriteOffObj = function (models, event) {
             }
         }
 
-       /* function removeDocsByJob(writeOff, callback) {
-            var products = writeOff.products;
-            var project;
-            var jobsForUpdate = [];
-            var Invoice = models.get(dbIndex, 'wTrackInvoice', InvoiceSchema);
-            var Order = models.get(dbIndex, 'Quotation', OrderSchema);
-            var Proforma = models.get(dbIndex, 'Proforma', ProformaSchema);
+        /* function removeDocsByJob(writeOff, callback) {
+         var products = writeOff.products;
+         var project;
+         var jobsForUpdate = [];
+         var Invoice = models.get(dbIndex, 'wTrackInvoice', InvoiceSchema);
+         var Order = models.get(dbIndex, 'Quotation', OrderSchema);
+         var Proforma = models.get(dbIndex, 'Proforma', ProformaSchema);
 
-            if (products) {
-                async.each(products, function (result, cb) {
-                    var jobs = result.jobs;
-                    var parallelTasks;
+         if (products) {
+         async.each(products, function (result, cb) {
+         var jobs = result.jobs;
+         var parallelTasks;
 
-                    var editedBy = {
-                        user: req.session.uId,
-                        date: new Date()
-                    };
+         var editedBy = {
+         user: req.session.uId,
+         date: new Date()
+         };
 
-                    function removeInvoices(parallelCb) {
-                        Invoice.find({'products.jobs': jobs, _type : {$ne : 'writeOff'}}, function (err, results) {
-                            if (err) {
-                                parallelCb(err);
-                            }
-                            async.each(results, function (file, eachCb) {
-                                if (file.products) {
-                                    file.products.forEach(function (elem) {
-                                        if (elem.jobs.toString() !== jobs.toString()) {
-                                            jobsForUpdate.push(elem.jobs);
-                                        }
-                                    });
-                                    Invoice.findByIdAndRemove(file._id, function (err, res) {
-                                        if (err) {
-                                            eachCb(err);
-                                        }
-                                        eachCb();
-                                    });
-                                }
-                            }, parallelCb);
+         function removeInvoices(parallelCb) {
+         Invoice.find({'products.jobs': jobs, _type : {$ne : 'writeOff'}}, function (err, results) {
+         if (err) {
+         parallelCb(err);
+         }
+         async.each(results, function (file, eachCb) {
+         if (file.products) {
+         file.products.forEach(function (elem) {
+         if (elem.jobs.toString() !== jobs.toString()) {
+         jobsForUpdate.push(elem.jobs);
+         }
+         });
+         Invoice.findByIdAndRemove(file._id, function (err, res) {
+         if (err) {
+         eachCb(err);
+         }
+         eachCb();
+         });
+         }
+         }, parallelCb);
 
-                        });
-                    }
+         });
+         }
 
-                    function removeOrders(parallelCb) {
-                        Order.find({'products.jobs': jobs}, function (err, results) {
-                            if (err) {
-                                parallelCb(err);
-                            }
-                            async.each(results, function (file, eachCb) {
-                                if (file.products) {
-                                    file.products.forEach(function (elem) {
-                                        if (elem.jobs.toString() !== jobs.toString()) {
-                                            jobsForUpdate.push(elem.jobs);
-                                        }
-                                    });
-                                    Order.findByIdAndRemove(file._id, function (err, res) {
-                                        if (err) {
-                                            eachCb(err);
-                                        }
-                                        eachCb();
-                                    });
-                                }
-                            }, parallelCb);
+         function removeOrders(parallelCb) {
+         Order.find({'products.jobs': jobs}, function (err, results) {
+         if (err) {
+         parallelCb(err);
+         }
+         async.each(results, function (file, eachCb) {
+         if (file.products) {
+         file.products.forEach(function (elem) {
+         if (elem.jobs.toString() !== jobs.toString()) {
+         jobsForUpdate.push(elem.jobs);
+         }
+         });
+         Order.findByIdAndRemove(file._id, function (err, res) {
+         if (err) {
+         eachCb(err);
+         }
+         eachCb();
+         });
+         }
+         }, parallelCb);
 
-                        });
-                    }
+         });
+         }
 
-                    parallelTasks = [removeInvoices, removeOrders];
+         parallelTasks = [removeInvoices, removeOrders];
 
-                    async.parallel(parallelTasks, function () {
+         async.parallel(parallelTasks, function () {
 
-                        if (jobsForUpdate.length) {
-                            jobsForUpdate = _.uniq(jobsForUpdate);
-                            async.each(jobsForUpdate, function (elem, eachCb) {
-                                JobsModel.findByIdAndUpdate(elem, {
-                                    $set: {
-                                        invoice : null,
-                                        type    : 'Not Quoted',
-                                        workflow: CONSTANTS.JOBSINPROGRESS,
-                                        editedBy: editedBy
-                                    }
-                                }, {new: true}, function (err, job) {
-                                    if (err) {
-                                        return eachCb(err);
-                                    }
+         if (jobsForUpdate.length) {
+         jobsForUpdate = _.uniq(jobsForUpdate);
+         async.each(jobsForUpdate, function (elem, eachCb) {
+         JobsModel.findByIdAndUpdate(elem, {
+         $set: {
+         invoice : null,
+         type    : 'Not Quoted',
+         workflow: CONSTANTS.JOBSINPROGRESS,
+         editedBy: editedBy
+         }
+         }, {new: true}, function (err, job) {
+         if (err) {
+         return eachCb(err);
+         }
 
-                                    _journalEntryHandler.removeByDocId(elem, dbIndex, function () {
+         _journalEntryHandler.removeByDocId(elem, dbIndex, function () {
 
-                                    });
-                                    eachCb();
-                                });
-                            }, cb);
-                        } else {
-                            cb();
-                        }
-                    });
+         });
+         eachCb();
+         });
+         }, cb);
+         } else {
+         cb();
+         }
+         });
 
-                }, function () {
+         }, function () {
 
-                    callback(null, writeOff);
-                });
-            }
-        }*/
+         callback(null, writeOff);
+         });
+         }
+         }*/
 
         parallelTasks = [fetchFirstWorkflow, getRates];
         waterFallTasks = [parallel, updateJobs, getJobCosts, createWriteOff, createJournalEntry/*,  removeDocsByJob*/];

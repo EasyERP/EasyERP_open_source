@@ -58,6 +58,9 @@ module.exports = (function () {
     require('./projectMember.js');
     require('./weeklyScheduler.js');
     require('./scheduledPay.js');
+    require('./transfer.js');
     require('./payrollComponentType.js');
     require('./historyEntry.js');
+    require('./payrollStructureTypes.js');
+    require('./cashTransfer.js');
 })();

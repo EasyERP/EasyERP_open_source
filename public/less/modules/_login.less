@@ -968,13 +968,32 @@ input {
   .fa-paperclip {
     color: #2c3e50;
   }
-  .fa-paperclip {
-    margin-left: 10px;
+  .fa {
+    &:nth-child(n+2) {
+      margin-left: 10px;
+    }
   }
   .projectType {
     color: #549ecf;
   }
 }
+
+.commentWrap,
+.attachmentWrap {
+  color: #2c3e50;
+}
+
+//.commentWrap,
+//.attachmentWrap {
+//  position: relative;
+//
+//  span {
+//    position: absolute;
+//    right: 0;
+//    top: 0;
+//  }
+//}
+
 .kanban .column .item .inner {
   padding: 5px 5px 8px;
 }
@@ -1007,6 +1026,59 @@ input {
       width: calc(~"100% - 55px");
       overflow: auto;
     }
+  }
+}
+//.opportunity-content {
+//  .saleName, .customerName {
+//    white-space: nowrap;
+//  }
+//  .saleName {
+//
+//  }
+//  .customerName {
+//
+//  }
+//}
+
+.borderBottom {
+  border-bottom: 1px solid #7f7f80;
+}
+
+.cashBalance {
+  margin-left: 75px;
+  margin-right: 88px;
+}
+.form-holder form dd.cashBalanceRow {
+  width: 390px;
+}
+
+.form-holder form.createJournalForm {
+  margin-top: 25px;
+}
+
+.editEmployeeForm {
+  .tableResponsive {
+    width: 926px;
+  }
+  .ui-dialog-buttonset {
+    margin-top: 15px;
+  }
+}
+
+dl.payrollDateBlock {
+  dd, dt {
+  }
+  dd {
+    line-height: normal;
+  }
+  dt {
+    margin-right: 15px;
+  }
+}
+
+.totalContainer {
+  .half-block {
+    width: 46%;
   }
 }
 

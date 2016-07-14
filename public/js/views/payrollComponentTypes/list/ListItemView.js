@@ -4,14 +4,15 @@
     'text!templates/payrollComponentTypes/list/ListTemplate.html'
 ], function (Backbone, _, listTemplate) {
     'use strict';
-    
+
     var WeeklySchedulerListItemView = Backbone.View.extend({
         el: '#listTable',
 
         initialize: function (options) {
             this.type = options.type;
             this.collection = options.collection;
-            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
+            this.page = isNaN(this.page) ? 1 : this.page;
+            this.startNumber = (this.page - 1) * options.itemsNumber;
         },
 
         render: function (options) {

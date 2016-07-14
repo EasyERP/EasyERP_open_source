@@ -86,8 +86,8 @@ define(
             return moneyAmountRegExp.test(validatedString);
         };
 
-        var validDate = function (validatedString) {
-            return new Date(validatedString).getMonth() ? true : false;
+        var validateDate = function (validatedString) {
+            return new Date(validatedString).getYear() ? true : false;
         };
 
         var hasInvalidChars = function (validatedString) {
@@ -114,6 +114,36 @@ define(
             invalidPhoneMsg      : "field should contain only numbers and '+ - ( )' signs",
             invalidZipMsg        : "field should contain only letters, numbers and '-' sing",
             passwordsNotMatchMsg : 'Password and confirm password field do not match'
+        };
+
+        var checkDateField = function (errorArray, required, fieldValue, fieldName) {
+            if (required) {
+                if (!fieldValue) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                    return;
+                }
+                if (hasInvalidChars(fieldValue)) {
+                    errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
+                    return;
+                }
+                if (fieldValue.length < MIN_LENGTH) {
+                    errorArray.push([fieldName, errorMessages.minLengthMsg(MIN_LENGTH)].join(' '));
+                    return;
+                }
+                if (!validateDate(fieldValue)) {
+                    errorArray.push([fieldName, errorMessages.userName].join(' '));
+                }
+            } else {
+                if (fieldValue) {
+                    if (hasInvalidChars(fieldValue)) {
+                        errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
+                        return;
+                    }
+                    if (!validateDate(fieldValue)) {
+                        errorArray.push([fieldName, errorMessages.userName].join(' '));
+                    }
+                }
+            }
         };
 
         var checkNameField = function (errorArray, required, fieldValue, fieldName) {
@@ -617,7 +647,6 @@ define(
             errorMessages             : errorMessages,
             checkNumberField          : checkNumberField,
             validStreet               : validateStreet,
-            validDate                 : validDate,
             validPhone                : validatePhone,
             validName                 : validateName,
             validGroupsName           : validateGroupsName,
@@ -627,6 +656,7 @@ define(
             checkSkypeField           : checkSkypeField,
             checkPriceField           : checkPriceField,
             checkJobPositionField     : checkJobPositionField,
+            checkDateField            : checkDateField,
 
             loginCharNotValid: loginCharNotValid
         };

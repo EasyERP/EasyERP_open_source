@@ -1,13 +1,15 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
     var Schema = mongoose.Schema;
+    var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var paymentSchema = new Schema({
-        name    : {type: String},
-        account : {type: String},
-        currency: {type: String},
-        bank    : {type: String},
-        owner   : {type: String, default: ''}
+        name        : {type: String},
+        account     : {type: String},
+        chartAccount: {type: ObjectId, ref: 'chartOfAccount', default: null},
+        currency    : {type: String},
+        bank        : {type: String},
+        owner       : {type: String, default: ''}
     }, {collection: 'PaymentMethod'});
 
     mongoose.model('PaymentMethod', paymentSchema);
