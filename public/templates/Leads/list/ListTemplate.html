@@ -1,8 +1,20 @@
 <tr class="innerRow">
-    <td colspan="11">
+    <td colspan="11" class="colspanFix">
         <div class="scrollable">
             <table>
-
+                <colgroup>
+                    <col width="26px">
+                    <col width="45px">
+                    <col width="20%">
+                    <col width="15%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="10%">
+                    <col width="15%">
+                </colgroup>
                 <% leadsCollection.forEach(function(lead, index){ %>
                 <tr data-id="<%=lead._id%>" class="stage-<%=(lead.workflow) ? lead.workflow.status.toLowerCase() : ''%>">
                     <td class="notForm centerCell"><input type="checkbox" value="<%=lead._id%>" class="checkbox listCB"/></td>

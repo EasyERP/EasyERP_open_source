@@ -3418,6 +3418,9 @@ dl.payrollDateBlock dt {
 .absoluteContent table {
   height: 100%;
 }
+.absoluteContent table th {
+  border-bottom: 1px solid #d7d7d7;
+}
 .absoluteContent .scrollable {
   max-height: 100%;
   width: 100%;
@@ -3428,6 +3431,77 @@ dl.payrollDateBlock dt {
 .flexTableWrap {
   flex-grow: 1;
   position: relative;
+}
+.flexActionsWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: start;
+  -moz-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+.flexActionsWrap .actionsItem {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+.flexActionsWrap .choseDateRange {
+  -webkit-box-ordinal-group: 1;
+  -moz-box-ordinal-group: 1;
+  -ms-flex-order: 1;
+  -webkit-order: 1;
+  order: 1;
+}
+.flexActionsWrap .legend-box {
+  margin: 0;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.innerRow {
+  border-top: none !important;
+}
+.innerRow table tr:first-child {
+  border-top: none;
+}
+.innerRow table tr:first-child td {
+  border-top: none;
+}
+.innerRow table tr:last-child td {
+  border-bottom: none;
+}
+.colspanFix {
+  padding: 0!important;
+  border: none !important;
+}
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+.salesGraphWrap .treemap_sales > div:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -3897,6 +3971,7 @@ dl.payrollDateBlock dt {
   right: 0;
   height: calc(100% - 40px);
   width: calc(100% - 235px);
+  padding: 0 20px;
 }
 .template-switcher {
   margin-top: 5px;
@@ -7667,7 +7742,6 @@ dl dd span.ui-spinner {
   zoom: 1;
   min-width: 100%;
   height: 100%;
-  height: 100vh;
   position: absolute;
   clear: both;
   box-sizing: border-box;
@@ -9581,7 +9655,7 @@ table#workflows tr td.edit-status {
 .createBtnHolder .btnRounded,
 #createBtnHolder .btnRounded {
   height: 26px;
-  line-height: 26px!important;
+  line-height: 24px!important;
 }
 /*----------------------------- Login Form --------------------------------*/
 /*----------------------------- Tabs ------------------------------------*/
@@ -11794,6 +11868,11 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .legend-box.small:after {
   clear: both;
+}
+.legend-box.medium {
+  width: 420px;
+  height: 28px;
+  line-height: 26px;
 }
 .legend-box:before,
 .legend-box:after {
