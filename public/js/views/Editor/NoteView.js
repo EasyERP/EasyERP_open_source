@@ -38,12 +38,12 @@ define([
 
         showButtons : function (e){
             var $target = $(e.target).closest('.noteContainer');
-            $target.find('.buttonsNote').toggle();
+            $target.find('.buttonsNote').toggleClass('showButtons');
             $target.prevAll().each(function(){
-                $(this).find('.buttonsNote').hide();
+                $(this).find('.buttonsNote').removeClass('showButtons');
             });
             $target.nextAll().each(function(){
-                $(this).find('.buttonsNote').hide();
+                $(this).find('.buttonsNote').removeClass('showButtons');
             });
 
         },
@@ -161,8 +161,9 @@ define([
         },
 
         editNote : function (id){
-            var $title = this.$el.find('#'+ id +' .noteTitle');
-            var $noteText = this.$el.find('#'+ id +' .noteText');
+            var holder =this.$el.find('#'+ id);
+            var $title = holder.find('.noteTitle');
+            var $noteText = holder.find('.noteText');
             var title = $title.text();
             var noteText = $noteText.text();
             $noteText.html('<input value="' + noteText + '"/>');
