@@ -86,6 +86,8 @@ define([
             var data;
             var model;
 
+            App.startPreload();
+
             if (selectedLength) {
                 for (i = selectedLength - 1; i >= 0; i--) {
                     targetEl = $(selectedProducts[i]);
@@ -156,6 +158,8 @@ define([
                     success: function () {
                         var redirectUrl = window.location.hash;
 
+                        App.stopPreload();
+
                         self.hideDialog();
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -167,6 +171,8 @@ define([
                 });
 
             } else {
+                App.stopPreload();
+
                 App.render({
                     type   : 'error',
                     message: CONSTANTS.RESPONSES.CREATE_WRITEOFF
