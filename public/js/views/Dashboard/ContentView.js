@@ -30,13 +30,15 @@ define([
                 sale                  : 7,
                 opportunitieConversion: 90,
                 winLost               : 30,
-                salesByCountry: 30
+                salesByCountry        : 30
             };
 
             this.dateItem = {
-                date   : 'D',
-                winLost: 'D'
+                date       : 'D',
+                winLost    : 'D',
+                leadsByName: 'all'
             };
+
             this.numberToDate = {};
             this.source = null;
 
@@ -47,51 +49,63 @@ define([
         },
 
         events: {
-            'click .dateRange'                  : 'toggleDateRange',
-            'click #updateDate'                 : 'changeDateRange',
-            'click li.filterValues:not(#custom)': 'setDateRange',
-            'click .choseDateRange .item': 'newRange',
-            'click .choseDateItem .item' : 'newItem',
-            'click .chart-tabs a'        : 'changeTab',
-            'click #custom'                     : 'showDatePickers',
-            'click #cancelBtn'                  : 'cancel'
+            'click .dateRange'                                                    : 'toggleDateRange',
+            'click .dateRangeLeadsByName'                                         : 'toggleDateRange',
+            'click #updateDate'                                                   : 'changeDateRange',
+            'click #updateDateLeadsByName'                                        : 'changeLeadsDateRangeByName',
+            'click li.filterValues:not(#custom, #customLeads, #customLeadsByName)': 'setDateRange',
+            'click .choseDateRange .item'                                         : 'newRange',
+            'click .choseDateItem .item'                                          : 'newItem',
+            'click .chart-tabs a'                                                 : 'changeTab',
+            'click #custom'                                                       : 'showDatePickers',
+            'click #customLeadsByName'                                            : 'showDatePickersLeadsByName',
+            'click #cancelBtn'                                                    : 'cancel',
+            'click #cancelBtnLeadsByName'                                         : 'cancel'
         },
 
         setDateRange: function (e) {
+            var date = moment(new Date());
             var $target = $(e.target);
             var id = $target.attr('id');
-            var date = moment(new Date());
+            var type = '';
             var quarter;
-
             var startDate;
             var endDate;
 
-            this.$el.find('.customTime').addClass('hidden');
+            //ToDo: change this to data-type when all branches are merged
+            switch($target.attr('class').split(' ')[0]){
+                case 'leads':
+                    type = 'Leads';
+                    break;
+                case 'leadsName':
+                    type = 'LeadsByName';
+                    break;
+                default: type = '';
+            }
 
-            this.removeAllChecked();
-
+            this.$el.find('.customTime' + type).addClass('hidden');
+            this.removeAllChecked(type);
             $target.toggleClass('checkedValue');
 
             switch (id) {
-                case 'thisMonth':
+                case 'thisMonth'+type:
                     startDate = date.startOf('month');
                     endDate = moment(startDate).endOf('month');
                     break;
-                case 'thisYear':
+                case 'thisYear'+type:
                     startDate = date.startOf('year');
                     endDate = moment(startDate).endOf('year');
                     break;
-                case 'lastMonth':
+                case 'lastMonth'+type:
                     startDate = date.subtract(1, 'month').startOf('month');
                     endDate = moment(startDate).endOf('month');
                     break;
-                case 'lastQuarter':
+                case 'lastQuarter'+type:
                     quarter = date.quarter();
-
                     startDate = date.quarter(quarter - 1).startOf('quarter');
                     endDate = moment(startDate).endOf('quarter');
                     break;
-                case 'lastYear':
+                case 'lastYear'+type:
                     startDate = date.subtract(1, 'year').startOf('year');
                     endDate = moment(startDate).endOf('year');
                     break;
@@ -99,36 +113,59 @@ define([
                     break;
             }
 
-            this.$el.find('#startDate').datepicker('setDate', new Date(startDate));
-            this.$el.find('#endDate').datepicker('setDate', new Date(endDate));
-
-            this.changeDateRange();
+            this.$el.find('#startDate' + type).datepicker('setDate', new Date(startDate));
+            this.$el.find('#endDate' + type).datepicker('setDate', new Date(endDate));
+            this.changeDateRange(null, type);
         },
 
-        changeDateRange: function (e) {
-            var dateFilter = e ? $(e.target).closest('ul.dateFilter') : this.$el.find('ul.dateFilter');
-            var startDate = dateFilter.find('#startDate');
-            var endDate = dateFilter.find('#endDate');
-            var startTime = dateFilter.find('#startTime');
-            var endTime = dateFilter.find('#endTime');
+        changeLeadsDateRangeByName: function(e){
+            this.changeDateRange(null, 'LeadsByName')
+        },
 
+        changeDateRange: function (e, type) {
+            var dateFilter;
+            var startDate;
+            var endDate;
+            var startTime;
+            var endTime;
+
+            dateFilter = e ? $(e.target).closest('ul.dateFilter' + type) : this.$el.find('ul.dateFilter' + type);
+            startDate = dateFilter.find('#startDate' + type);
+            endDate = dateFilter.find('#endDate' + type);
+            startTime = dateFilter.find('#startTime' + type);
+            endTime = dateFilter.find('#endTime' + type);
             startDate = startDate.val();
             endDate = endDate.val();
-
             startTime.text(startDate);
             endTime.text(endDate);
 
+            switch (type){
+                case 'Leads':
+                    this.startDateLeads = startDate;
+                    this.endDateLeads = endDate;
+                    this.renderLeadsChart();
+                    this.toggleDateRange(null, type);
+                    break;
+                case 'LeadsByName':
+                    this.startDateLeadsByName = startDate;
+                    this.endDateLeadsByName = endDate;
+                    this.renderLeadsChartByName();
+                    this.toggleDateRange(null, type);
+                    break;
+                default:
+                    this.startDate = startDate;
+                    this.endDate = endDate;
+                    this.toggleDateRange(null, '');
+                    this.renderSalesByCountry();
+                    this.renderTreemap();
+                    break;
+            }
 
-            this.startDate = startDate;
-            this.endDate  = endDate;
-            this.renderSalesByCountry();
-            this.renderTreemap();
             this.trigger('changeDateRange');
-            this.toggleDateRange();
         },
 
-        toggleDateRange: function (e) {
-            var ul = e ? $(e.target).closest('ul') : this.$el.find('.dateFilter');
+        toggleDateRange: function (e, type) {
+            var ul = e ? $(e.target).closest('ul') : this.$el.find('.dateFilter' + type);
 
             if (!ul.hasClass('frameDetail')) {
                 ul.find('.frameDetail').toggleClass('hidden');
@@ -137,8 +174,8 @@ define([
             }
         },
 
-        removeAllChecked: function () {
-            var filter = this.$el.find('ul.dateFilter');
+        removeAllChecked: function (type) {
+            var filter = this.$el.find('ul.dateFilter' + type);
             var li = filter.find('li');
 
             li.removeClass('checkedValue');
@@ -151,6 +188,14 @@ define([
 
             $target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
+        },
+
+        showDatePickersLeadsByName: function (e) {
+            var $target = $(e.target);
+            this.removeAllChecked('LeadsByName');
+
+            $target.toggleClass('checkedValue');
+            this.$el.find('.customTimeLeadsByName').toggleClass('hidden');
         },
 
         cancel: function (e) {
@@ -198,8 +243,8 @@ define([
                 case 'winLost':
                     this.renderOpportunitiesWinAndLost();
                     break;
-                case 'salesByCountry':
-                    this.renderSalesByCountry();
+                case 'leadsChart':
+                    this.renderLeadsChart();
                     break;
                 // skip default;
             }
@@ -229,6 +274,9 @@ define([
                     break;
                 case 'winLost':
                     this.renderOpportunitiesWinAndLost();
+                    break;
+                case 'leadsByName':
+                    this.renderLeadsChartByName();
                     break;
                 // skip default;
             }
@@ -306,10 +354,10 @@ define([
 
         },
 
-        bindDataPickers: function (startDate, endDate) {
+        bindDatePickers: function (startDate, endDate, type) {
             var self = this;
 
-            this.$el.find('#startDate')
+            this.$el.find('#startDate' + type)
                 .datepicker({
                     dateFormat : 'd M, yy',
                     changeMonth: true,
@@ -330,7 +378,7 @@ define([
                     }
                 })
                 .datepicker('setDate', startDate);
-            this.$endDate = this.$el.find('#endDate')
+            this.$endDate = this.$el.find('#endDate' + type)
                 .datepicker({
                     dateFormat : 'd M, yy',
                     changeMonth: true,
@@ -345,13 +393,27 @@ define([
             var date = moment(new Date());
             this.startDate = (date.startOf('month')).format('D MMM, YYYY');
             this.endDate = (moment(this.startDate).endOf('month')).format('D MMM, YYYY');
+            this.startDateLeadsByName = this.startDate;
+            this.endDateLeadsByName = this.endDate;
 
-            this.$el.html(this.template({startDate: this.startDate, endDate: this.endDate}));
+            this.$el.html(this.template({
+                startDate            : this.startDate,
+                endDate              : this.endDate,
+                startDateLeadsByNames: this.startDateLeadsByName,
+                endDateLeadsByNames  : this.endDateLeadsByName
+            }));
             this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
-            $(window).unbind('resize').resize(self.resizeHandler);
-
-            this.bindDataPickers(this.startDate, this.endDate);
+            this.bindDatePickers(this.startDate, this.endDate, '');
+            this.bindDatePickers(this.startDateLeadsByName, this.endDateLeadsByName, 'LeadsByName');
+            this.renderSalesByCountry();
+            this.renderTreemap();
+            this.renderLeadsChartByName();
             return this;
+        },
+
+        renderLeadsChartByName: function(){
+            /*console.log(this.startDateLeadsByName, this.endDateLeadsByName);
+            console.log(this.dateItem.leadsByName)*/
         },
 
         renderPopulateByType: function (that, type) {
@@ -366,6 +428,7 @@ define([
 
             $(chartClass).empty();
             common.getLeadsForChart(type, dateRange, self.dateItem, function (data) {
+
                 $('#timeBuildingDataFromServer').text('Server response in ' + self.buildTime + ' ms');
 
                 if (type === 'sale') {
