@@ -1,8 +1,10 @@
 <div class="noteWrapper attachWrapper">
-  <!--  <label>Attachments</label>-->
+
+    <div class="formTitle">
+        <h3>Attachments </h3>
+    </div>
 
     <form enctype="multipart/form-data" id="<%= elementId %>" action="" method="POST">
-
         <div id="attachBody">
             <ul class="attachContainer">
                 <% if (attachments){ attachments.reverse();
@@ -15,7 +17,7 @@
             </ul>
         </div>
 
-        <div class="input-file btn" style="display: none">
+        <div class="input-file btn">
             <span>Attach</span>
             <input type="file" value="Choose File" id="inputAttach" class="inputAttach" name="attachfile" multiple="multiple" >
 

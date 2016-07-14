@@ -1,4 +1,3 @@
-<div class="attachments"></div>
 <div class="noteWrapper">
     <ul class="chart-tabs">
         <li><a class="active" id="noteTab" href="javascript:;">New Note</a></li>
@@ -39,13 +38,13 @@
 
         <div class="editorTab dialog-tabs-item" id="task">
             <div class="addTask">
-                <div class="title-wrapper ">
+
                     <label>Assigned To</label>
-                    <a  href="javascript:;"  class="current-selected" id="assignedToDd">Select</a>
+                    <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
                     <input type="text" class="date" id="taskDueDate"
                            value="<%= date %>" maxlength="32"
                            placeholder="Date"readonly/>
-                </div>
+
                 <div class="area_holder">
                     <textarea id="taskArea" placeholder="Description..." maxlength="500"></textarea>
                     <a href="javascript:;" class="attach_file">
@@ -68,8 +67,8 @@
 
         </div>
     </div>
-
-
-
     <div class="clearfix"></div>
+    <div id="timeline">
+    </div>
+
 </div>

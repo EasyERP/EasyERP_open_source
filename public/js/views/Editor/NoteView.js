@@ -3,13 +3,14 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Editor/EditorTemplate.html',
+    'text!templates/Editor/timelineTemplate.html',
     'models/DealTasksModel',
-    'views/Notes/AttachView',
+    'views/Editor/AttachView',
     'views/selectView/selectView',
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate,TaskModel, AttachView, SelectView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, timelineTemplate, TaskModel, AttachView, SelectView, moment, populate, CONSTANTS) {
     var NoteView = Backbone.View.extend({
 
         template: _.template(NoteTemplate),
@@ -18,13 +19,14 @@ define([
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
             this.responseObj = {};
+            this.model.on('change')
         },
 
         events: {
             'click #noteArea'     : 'expandNote',
             'click #cancelNote'   : 'cancelNote',
             'click #addNote'      : 'saveNote',
-            'click #saveTask'      : 'saveTask',
+            'click #addTask'      : 'saveTask',
             'click .addTitle'     : 'showTitle',
             'click .editDelNote'  : 'editDelNote',
             'click .fa-paperclip' : 'clickInput',
@@ -35,36 +37,29 @@ define([
 
         saveTask: function () {
             var self = this;
-            var deal = this.$el.find('#dealDd').data('id');
             var assignedTo = this.$el.find('#assignedToDd').data('id');
-            var company = this.$el.find('#companyDd').data('id');
-            var workflow = this.$el.find('#workflowsDd').data('id');
-            var contact = this.$el.find('#contactDd').data('id');
-            var description = $.trim(this.$el.find('#description').val());
-            var dueDate = $.trim(this.$el.find('#dueDate').val());
-            var contact;
-            var company;
-            var deal;
+            var $description = this.$el.find('#taskArea');
+            var description = $.trim($description.val());
+            var dueDate = $.trim(this.$el.find('#taskDueDate').val());
             var saveObject = {
                 assignedTo : assignedTo || '',
                 description: description,
                 dueDate   : dueDate,
-                workflow  : workflow
+                workflow  : CONSTANTS.NOT_STARTED_WORKFLOW
             };
 
 
             switch(this.contentType) {
                 case 'Persons':
-                    saveObject.contact = this.formModel._id;
+                    saveObject.contact = this.model.id;
                     break;
                 case 'Companies':
-                    saveObject.company = this.formModel._id;
+                    saveObject.company = this.model.id;
                     break;
-                case 'Deals':
-                    saveObject.deal = this.formModel._id;
+                case 'opportunities':
+                    saveObject.deal = this.model.id;
                     break;
             }
-
 
             var model = new TaskModel();
 
@@ -77,8 +72,8 @@ define([
 
             model.save(saveObject, {
                     wait   : true,
-                    success: function (model) {
-                        var currentModel = model.changed;
+                    success: function (model, res) {
+                        self.saveNewNote({task :  res.id});
                     },
 
                     error: function (model, xhr) {
@@ -88,8 +83,28 @@ define([
                 });
         },
 
+        saveNewNote : function (optionsObj){
+            var formModel = this.model;
+            var notes = formModel.get('notes');
+            notes.push(optionsObj);
+            formModel.save({notes: notes}, {
+                headers: {
+                    mid: 39
+                },
+                patch  : true,
+                wait   : true,
+                success: function (models, data) {
+                },
+
+                error: function (models, xhr) {
+                    self.errorNotification(xhr);
+
+                }
+            });
+        },
+
         clickInput: function () {
-            this.$el.find('.input-file .inputAttach').click();
+            $('.input-file .inputAttach').click();
         },
         showNewSelect: function (e) {
             var $target = $(e.target);
@@ -295,24 +310,20 @@ define([
             var notDiv;
             var modelObj = this.model.toJSON();
             var date = moment().format("DD MMM, YYYY");
+            var notes = this.model.get('notes');
 
             modelObj.needNotes = this.needNotes;
+            var assignedTo = modelObj.salesPerson;
 
-            this.$el.html(this.template({date : date}));
-            notDiv = this.$el.find('.attachments');
-
-            notDiv.html(
-                new AttachView({
-                    model      : this.model,
-                    contentType: this.contentType
-                }).render().el
-            );
+            this.$el.html(this.template({date : date, assignedTo : assignedTo}));
 
             this.$el.find('#taskDueDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
             });
+
+            this.$el.find('#timeline').html(_.template(timelineTemplate, {notes : notes}));
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
 
             return this;

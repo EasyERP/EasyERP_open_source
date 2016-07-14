@@ -4,19 +4,21 @@ define([
     'text!templates/Deals/form/FormTemplate.html',
     'text!templates/Deals/workflowProgress.html',
     'views/Editor/NoteView',
+    'views/Editor/AttachView',
     'views/Deals/EditView',
     'constants',
     'dataService',
     'populate',
     'constants',
     'views/selectView/selectView'
-], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, EditView, constants, dataService, populate, CONSTANTS, SelectView) {
+], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, constants, dataService, populate, CONSTANTS, SelectView) {
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',
 
         initialize: function (options) {
             this.formModel = options.model;
             this.formModel.urlRoot = constants.URLS.OPPORTUNITIES;
+            this.responseObj = {};
         },
 
         events: {
@@ -27,7 +29,7 @@ define([
             'click #editSpan'                                            : 'editClick',
             'click #cancelSpan'                                          : 'cancelClick',
             'click #saveSpan'                                            : 'saveClick',
-            'click #workflowProgress span'                               : 'changeWorkflow',
+            'click .tabListItem'                                         : 'changeWorkflow',
             'click .current-selected:not(.jobs)'                         : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)'          : 'chooseOption'
         },
@@ -124,14 +126,16 @@ define([
 
         changeWorkflow : function (e){
             var $target = $(e.target);
+            if (!$target.hasClass('tabListItem')){
+                $target = $target.closest('div');
+            }
             var $thisEl = this.$el;
-            var wId = $target.attr('data-id');
-            var $workflows = $thisEl.find('#workflowProgress span');
-            $workflows.removeClass('passed');
-            $thisEl.find('#workflowProgress span[data-id="' + wId + '"]').prevAll().addClass('passed');
+            var wId = $target.find('span').attr('data-id');
+            var $tabs = $thisEl.find('#workflowProgress .tabListItem');
+            $tabs.removeClass('passed');
+            $target.prevAll().addClass('passed');
             $target.addClass('passed');
             $thisEl.find('#statusDd').text($target.text());
-            workflows = $workflows.get();
             this.saveDeal({workflow : wId});
         },
 
@@ -251,10 +255,19 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
+            this.noteView = new NoteView({
+                model: this.formModel,
+                contentType: 'opportunities'
+            });
             this.$el.find('.notes').append(
-                new NoteView({
+                this.noteView.render().el
+            );
+
+            this.$el.find('.attachments').append(
+                new AttachView({
                     model: this.formModel,
-                    contentType: 'opportunities'
+                    contentType: 'opportunities',
+                    saveNewNote : this.noteView.saveNewNote
                 }).render().el
             );
 

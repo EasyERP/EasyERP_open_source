@@ -2,8 +2,8 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Notes/AttachTemplate.html',
-    'text!templates/Notes/AddAttachments.html',
+    'text!templates/Editor/AttachTemplate.html',
+    'text!templates/Editor/AddAttachments.html',
     'moment'
 
 ], function (Backbone, $, _, AttachTemplate, addAttachTemplate, moment) {
@@ -13,6 +13,7 @@ define([
             this.contentType = options.contentType;
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
+            this.saveNewNote = options.saveNewNote;
         },
 
         events: {
@@ -133,6 +134,7 @@ define([
                     success: function (data) {
                         var res;
                         var attachments;
+                        var newAttachment;
 
                         if (self.isCreate) {
                             status.hide();
@@ -146,7 +148,7 @@ define([
                             attachments = currentModel.get('attachments') || [];
                             attachments.length = 0;
                             $('.attachContainer').empty();
-                            res = (data.data) ? data.data : data.result;
+                            res = data.data|| data.result;
 
                             if (!res) {
                                 res = data;
@@ -159,6 +161,10 @@ define([
                                     date: date
                                 }));
                             });
+                            if (self.saveNewNote && typeof(self.saveNewNote) === 'function'){
+                                newAttachment = attachments[attachments.length-1];
+                                self.saveNewNote({attachment : {name : newAttachment.name, shortPas :  newAttachment.shortPas }});
+                            }
                             addFrmAttach[0].reset();
                             status.hide();
                         }

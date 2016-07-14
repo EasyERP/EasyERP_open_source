@@ -277,7 +277,7 @@
 
             this.renderAssignees(this.currentModel);
 
-            populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Tasks'}, 'name', this);
+            populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get2name('#contactDd', CONSTANTS.URLS.COMPANIES, {type :'Person'}, this);
             populate.get2name('#companyDd', CONSTANTS.URLS.COMPANIES, {type :'Company'}, this);

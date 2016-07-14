@@ -1,0 +1,48 @@
+<div id="noteBody">
+    <% notes = notes || [];%>
+    <% notes.reverse();%>
+    <%_.each(notes, function(val,key){ %>
+    <div id="<%=val._id%>" class="noteContainer">
+        <%if (val.task){%>
+        <div class="noteType">Created Task <a href="javascript:;" id="<%= val.task._id%>"><%=val.task.description  %></a></div>
+        <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
+        <%} else {%>
+        <div class="noteType">Created Note</div>
+        <%}%>
+        <%if (val.title){%>
+        <div class="noteTitle"><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
+        <%}%>
+        <%if (val.note){%>
+        <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %> </div>
+        <%}%>
+
+        <% if (val.attachment){%>
+
+        <div class="noteType"><a href="download/<%= val.attachment.shortPas%>" id="<%= val.attachment._id%>"><%= val.attachment.name  %></a></div>
+        <%}%>
+
+
+
+        <div>
+            <!--<a class="name" href="javascript:;"><%=val['author'] %></a>--><a class="name" href="javascript:;"><%=val['author']%> </a><span
+                class="dateNote"><%=val['date'] %></span>
+                        <div class="right">
+          <span>
+            <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
+               class="editDelNote editNote">Edit</a>
+          </span>
+                <span class="sep">|</span>
+          <span>
+            <a href="javascript:;" id="del_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote">Del</a>
+          </span>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="clearfix"></div>
+
+    <% }); notes.reverse(); %>
+</div>

@@ -2589,6 +2589,7 @@ var Module = function (models, event) {
             .populate('salesPerson', 'name')
             .populate('workflow', 'name sequence')
             .populate('groups.users')
+            .populate('notes.task')
             .populate('groups.group')
             .populate('createdBy.user', 'login')
             .populate('editedBy.user', 'login')
@@ -2599,20 +2600,32 @@ var Module = function (models, event) {
                 req: req,
                 id : result._id
             };
+            var options = {
+                path: 'notes.task.assignedTo',
+                model: 'Employees'
+            };
+
 
             if (err) {
                 return next(err);
             }
+            Opportunities.populate(result, options, function (err, populatedRes) {
 
-            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
                 if (err) {
-                    return console.log(err);
+                    return next(err);
                 }
+                historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                    if (err) {
+                        return console.log(err);
+                    }
 
-                result = result.toJSON();
-                result.history = history;
-                res.status(200).send(result);
+                    populatedRes = populatedRes.toJSON();
+                    populatedRes.history = history;
+                    res.status(200).send(populatedRes);
+                });
             });
+
+
 
         });
     }
