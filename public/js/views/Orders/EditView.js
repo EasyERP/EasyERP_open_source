@@ -165,7 +165,7 @@ define([
             var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
             var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
             var supplierReference = thisEl.find('#supplierReference').val();
-            var orderDate = thisEl.find('#orderDate').val();
+            var orderDate = thisEl.find('#orderDate').val() || thisEl.find('#orderDate').text();
             var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
             var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
@@ -212,14 +212,14 @@ define([
                     productId = targetEl.data('id');
                     if (productId) {  // added more info for save
                         quantity = $.trim(targetEl.find('[data-name="quantity"]').text());
-                        price = targetEl.find('[data-name="price"]').text() || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text()) || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
                         scheduledDate = $.trim(targetEl.find('[data-name="scheduledDate"]').text());
-                        taxes = $.trim(targetEl.find('.taxes').text());
+                        taxes = helpers.spaceReplacer($.trim(targetEl.find('[data-name="taxes"]').text()));
                         taxes = parseFloat(taxes) * 100;
                         description = $.trim(targetEl.find('[data-name="productDescr"]').text());
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        subTotal = $.trim(targetEl.find('.subtotal').text());
+                        subTotal = helpers.spaceReplacer($.trim(targetEl.find('.subtotal').text()));
                         subTotal = parseFloat(subTotal) * 100;
 
                         products.push({
@@ -227,9 +227,9 @@ define([
                             unitPrice    : price,
                             quantity     : quantity,
                             scheduledDate: scheduledDate,
-                            taxes        : helpers.spaceReplacer(taxes),
+                            taxes        : taxes,
                             description  : description,
-                            subTotal     : helpers.spaceReplacer(subTotal),
+                            subTotal     : subTotal,
                             jobs         : jobs || null
                         });
                     }
