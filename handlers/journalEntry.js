@@ -2841,8 +2841,28 @@ var Module = function (models, event) {
                         transfer = _.sortBy(transfer, 'date');
 
                         if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[0].date).year() * 100 + moment(transfer[0].date).month() + 1)) {
-                            startDate = moment(transfer[transferLength - 1].date);
+                            startDate = moment(transfer[0].date);
                         }
+                        /* for (i = transferLength - 1; i >= 0; i--) {
+                            transferObj = transfer[i];
+
+                            if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                                if (transferObj.status === 'fired') {
+                                    if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
+                                        salaryForDate = transferObj.salary;
+                                        weeklyScheduler = transferObj.weeklyScheduler;
+                                        break;
+                                    }
+                                } else if (transferObj.status !== 'transfer') {
+                                    salaryForDate = transferObj.salary;
+                                    weeklyScheduler = transferObj.weeklyScheduler;
+                                    break;
+                                }
+                            }
+                        }*/
+
+                        transfer = _.sortBy(transfer, 'date');
+
                         for (i = transferLength - 1; i >= 0; i--) {
                             transferObj = transfer[i];
 
