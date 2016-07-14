@@ -4,46 +4,31 @@
     <%_.each(notes, function(val,key){ %>
     <div id="<%=val._id%>" class="noteContainer">
         <div class="contentHolder">
-        <%if (val.task){%>
-        <div class="noteType task" id="<%= val.task._id%>">Created Task <a href="javascript:;" ><%=val.task.description  %></a></div>
-        <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
-        <%} else {%>
-        <div class="noteType">Created Note</div>
-        <%}%>
-        <%if (val.title){%>
-        <div class="noteTitle"><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
-        <%}%>
-        <%if (val.note){%>
-        <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %> </div>
-        <%}%>
+            <div class="noteBody">
+            <%if (val.task){%>
+            <div class="noteType task" id="<%= val.task._id%>">Created Task <a href="javascript:;" ><%=val.task.description  %></a></div>
+            <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
+            <%} else {%>
+            <div class="noteType">Created Note</div>
+            <%}%>
+            <%if (val.title){%>
+            <div class="noteTitle"><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
+            <%}%>
+            <%if (val.note){%>
+            <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %> </div>
+            <%}%>
 
-        <% if (val.attachment){%>
+            <% if (val.attachment){%>
 
-        <div class="noteType"><a href="download/<%= val.attachment.shortPas%>" id="<%= val.attachment._id%>"><%= val.attachment.name  %></a></div>
-        <%}%>
-
-
-
-        <div>
-           <span class="dateNote"><%=val.date%></span>
-            <div class="buttonsNote">
-          <span>
-            <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
-               class="editDelNote editNote">Edit</a>
-          </span>
-                <span class="sep">|</span>
-          <span>
-            <a href="javascript:;" id="del_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote">Del</a>
-          </span>
-
+            <div class="noteType"><a href="download/<%= val.attachment.shortPas%>" id="<%= val.attachment._id%>"><%= val.attachment.name  %></a></div>
+            <%}%>
             </div>
-        </div>
+        <div class="right noteBtnBlock">
+            <span><a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote editNote">Edit</a></span>
+            <span class="sep">|</span>
+            <span><a href="javascript:;" id="del_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote">Del</a></span>
         </div>
     </div>
-
-
-
-    <div class="clearfix"></div>
-
+    </div>
     <% }); notes.reverse(); %>
 </div>

@@ -12,58 +12,56 @@
 
         </div>
         <div class="inner">
-
-            <div class="half-block left">
-                <div class="formTitle">
-                    <h3>About </h3>
+            <div class="floatColumn halfColumn">
+                <div class="half-block left">
+                    <div class="formTitle">
+                        <h3>About </h3>
+                    </div>
+                    <dl class="person-info">
+                        <dt>Assigned To</dt>
+                        <dd><a  class="current-selected" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a></dd>
+                        <dt>Next Action</dt>
+                        <dd><span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
+                        </dd>
+                        <dt>Status</dt>
+                        <dd><span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span></dd>
+                        <dt>Company</dt>
+                        <dd><a  class="current-selected" id="customerDd" data-id="customer"><%=(customer) ? customer.name.first + ' ' + customer.name.last : 'Select'%></a></dd>
+                        <dt>Priority</dt>
+                        <dd><a  class="current-selected" id="priorityDd" data-id="priority"><%=priority%></a></dd>
+                    </dl>
                 </div>
-                <dl class="person-info">
-                    <dt>Assigned To</dt>
-                    <dd><a  class="current-selected" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a></dd>
-                    <dt>Next Action</dt>
-                    <dd><span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
-                    </dd>
-                    <dt>Status</dt>
-                    <dd><span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span></dd>
-                    <dt>Company</dt>
-                    <dd><a  class="current-selected" id="customerDd" data-id="customer"><%=(customer) ? customer.name.first + ' ' + customer.name.last : 'Select'%></a></dd>
-                    <dt>Priority</dt>
-                    <dd><a  class="current-selected" id="priorityDd" data-id="priority"><%=priority%></a></dd>
-                </dl>
+                <div class="half-block clearLeft dealsLeadBlock">
+                    <div class="formTitle">
+                        <h3>Lead</h3>
+                    </div>
+                    <dl class="person-info">
+                        <dt>Address </dt>
+                        <dt>Street :</dt>
+                        <dd data-id="address_street"class="editable"><%=address.street%></dd>
+                        <dt>City :</dt>
+                        <dd data-id="address_city"class="editable"><<%=address.city%></dd>
+                        <dt>State :</dt>
+                        <dd data-id="address_state"class="editable"><%=address.state%></dd>
+                        <dt>Zip :</dt>
+                        <dd data-id="address_zip"class="editable"><%=address.zip%></dd>
+                        <dt>Country: </dt>
+                        <dd data-id="address_country" class="editable"><%=address.country%></dd>
+                        <dt>Phone: </dt>
+                        <dd data-id="phones_phone"class="editable"><%=phones.phone%></dd>
+                        <dt>Email: </dt>
+                        <dd class="editable"><%=email%></dd>
+                    </dl>
+                </div>
             </div>
-            <div class="half-block left">
-                <div class="formTitle notes">
-                </div>
+            <div class="floatColumn halfColumn">
+                    <div class="formTitle notes">
+                    </div>
             </div>
             <!--<div class="half-block left">-->
-                <!--<dl class="person-info">-->
-
-                <!--</dl>-->
+            <!--<dl class="person-info">-->
+            <!--</dl>-->
             <!--</div>-->
-
-            <div class="half-block clearLeft dealsLeadBlock">
-                <div class="formTitle">
-                    <h3>Lead</h3>
-                </div>
-                <dl class="person-info">
-                    <dt>Address </dt>
-                    <dt>Street :</dt>
-                    <dd data-id="address_street"class="editable"><%=address.street%></dd>
-                    <dt>City :</dt>
-                    <dd data-id="address_city"class="editable"><<%=address.city%></dd>
-                    <dt>State :</dt>
-                    <dd data-id="address_state"class="editable"><%=address.state%></dd>
-                    <dt>Zip :</dt>
-                    <dd data-id="address_zip"class="editable"><%=address.zip%></dd>
-                    <dt>Country: </dt>
-                    <dd data-id="address_country" class="editable"><%=address.country%></dd>
-                    <dt>Phone: </dt>
-                    <dd data-id="phones_phone"class="editable"><%=phones.phone%></dd>
-                    <dt>Email: </dt>
-                    <dd class="editable"><%=email%></dd>
-                </dl>
-            </div>
-
         </div>
         <div class="clearfix"></div>
         <div class="attachments"></div>
