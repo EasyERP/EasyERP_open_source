@@ -168,7 +168,8 @@ define([
                     });
                 }
 
-                quantity = targetEl.find('[data-name="quantity"]').text();
+                quantity = targetEl.find('[data-name="quantity"] input').val();
+
                 price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
 
                 if (isNaN(price) || price <= 0) {
@@ -179,7 +180,7 @@ define([
                 }
                 // scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                 taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
-                description = targetEl.find('[data-name="productDescr"]').text();
+                description = targetEl.find('[data-name="productDescr"] textarea').val();
                 subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                 subTotal = parseFloat(subTotal) * 100;
                 jobs = targetEl.find('.current-selected.jobs').attr('data-id');
