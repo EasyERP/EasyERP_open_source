@@ -36,17 +36,17 @@ define([
         },
 
         events: {
-            'click .checkbox'                         : 'checked',
-            'click td.editable'                       : 'editRow',
-            'click .newSelectList li'                 : 'chooseOption',
-            'change .autoCalc'                        : 'autoCalc',
-            'change .editable'                        : 'setEditable',
-            'keydown input.editing'                   : 'keyDown',
-            click                                     : 'removeNewSelect',
-            'click .diff'                             : 'newPayment',
-            'click .oe_sortable'                      : 'goSort',
+            'click .checkbox'                                : 'checked',
+            'click td.editable'                              : 'editRow',
+            'click .newSelectList li'                        : 'chooseOption',
+            'change .autoCalc'                               : 'autoCalc',
+            'change .editable'                               : 'setEditable',
+            'keydown input.editing'                          : 'keyDown',
+            click                                            : 'removeNewSelect',
+            'click .diff'                                    : 'newPayment',
+            'click .oe_sortable'                             : 'goSort',
             // 'click .expand'                           : 'renderDialogView',
-            'click .mainTr td:not(.expand, .checkbox)': 'goToForm'
+            'click .mainTr td:not(.expand, .checkbox, .diff)': 'goToForm'
         },
 
         goToForm: function (e) {
