@@ -142,9 +142,13 @@ define([
                     dataService.patchData(url, data, function (err) {
                         if (!err) {
                             self.currentModel.set({approved: true});
-                           // $buttons.show();
+                            // $buttons.show();
 
                             App.stopPreload();
+
+                            if (self.eventChannel) {
+                                self.eventChannel.trigger('invoiceUpdated');
+                            }
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();
@@ -371,6 +375,10 @@ define([
 
                         self.hideDialog();
 
+                        if (paymentCb && typeof paymentCb === 'function') {
+                            return paymentCb(null, currency);
+                        }
+
                         if (self.redirect) {
 
                             if (self.eventChannel) {
@@ -384,9 +392,6 @@ define([
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
 
-                        if (paymentCb && typeof paymentCb === 'function') {
-                            return paymentCb(null, currency);
-                        }
                     },
 
                     error: function (model, xhr) {
@@ -470,7 +475,6 @@ define([
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
             dueDate = model.dueDate;
-
 
             if (!model.approved) {
                 needNotes = true;
