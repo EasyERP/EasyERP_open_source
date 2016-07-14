@@ -552,6 +552,14 @@
             callback(response.data);
         });
     };
+    var getLeads = function(filter, callback){
+        dataService.getData('/leads', {
+            startDay: filter.startDay,
+            endDay: filter.endDay
+        }, function (response) {
+            callback(response);
+        });
+    };
     var populateDepartmentsList = function (selectId, targetId, url, model, page, callback) {
         var selectList = $(selectId);
         var targetList = $(targetId);
@@ -1235,6 +1243,7 @@
         totalInvoiceBySales               : totalInvoiceBySales,
         getSalesByCountry                 : getSalesByCountry,
         getSalary                         : getSalary,
-        getSalaryByDepartment             : getSalaryByDepartment
+        getSalaryByDepartment             : getSalaryByDepartment,
+        getLeads                          : getLeads
     }
 });
