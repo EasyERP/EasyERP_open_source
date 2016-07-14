@@ -1943,8 +1943,8 @@ body {
   margin: 0;
   display: block;
   float: left;
-  height: 17px;
-  width: 17px;
+  height: 23px;
+  width: 24px;
 }
 .btn-list li a {
   display: block;
@@ -3734,10 +3734,10 @@ dl.payrollDateBlock dt {
 .list2 .oe_sortable_sub.sortDn .down {
   display: inline-block;
 }
-.list2 .enableTableOdd tr:nth-child(odd) {
+.list2 .enableTableOdd tr:nth-child(odd):not(.innerRow) {
   background-color: #ededed;
 }
-.list2 .enableTableOdd tr:hover {
+.list2 .enableTableOdd tr:not(.innerRow):hover {
   background-color: #d9d9d9;
 }
 .list2 .centerCell {
@@ -3823,10 +3823,10 @@ dl.payrollDateBlock dt {
 .list2 .oe_sortable_sub.sortDn .down {
   display: inline-block;
 }
-.list2 .enableTableOdd tr:nth-child(odd) {
+.list2 .enableTableOdd tr:nth-child(odd):not(.innerRow) {
   background-color: #ededed;
 }
-.list2 .enableTableOdd tr:hover {
+.list2 .enableTableOdd tr:not(.innerRow):hover {
   background-color: #d9d9d9;
 }
 .list2 .centerCell {
@@ -3899,7 +3899,7 @@ dl.payrollDateBlock dt {
   width: calc(100% - 235px);
 }
 .template-switcher {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -7703,7 +7703,6 @@ dl dd span.ui-spinner {
 }
 #startLetter {
   margin: 0;
-  padding: 5px 0;
   text-align: center;
   border-bottom: 1px solid #7f7f80;
 }
@@ -9841,10 +9840,10 @@ ul.dialog-tabs li.right button {
 .list .oe_sortable_sub.sortDn .down {
   display: inline-block;
 }
-.list .enableTableOdd tr:nth-child(odd) {
+.list .enableTableOdd tr:nth-child(odd):not(.innerRow) {
   background-color: #ededed;
 }
-.list .enableTableOdd tr:hover {
+.list .enableTableOdd tr:not(.innerRow):hover {
   background-color: #d9d9d9;
 }
 .list .centerCell {
@@ -14210,10 +14209,10 @@ textarea#editInput {
   display: list-item;
 }
 #searchContainer {
-  float: right;
+  position: absolute;
+  top: -35px;
+  right: 0;
   width: 35%;
-  position: relative;
-  margin-top: -30px;
   margin-right: 90px;
 }
 #searchContainer .btn {
