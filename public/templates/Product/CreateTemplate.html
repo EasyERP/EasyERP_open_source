@@ -1,4 +1,4 @@
-<div class="form-holder">
+<div class="form-holder productForm">
     <form method="post" action="" id="createEmployeeForm" class="form">
         <fieldset>
             <div class="inner">
@@ -18,27 +18,28 @@
                         <div class="avatarInfoContainer">
                             <div class="half-block left">
                                 <dl class="product-info">
-                                    <dt><label for="product">Product Name</label></dt>
-                                    <dd>
-                                        <input type="text" id="product" required maxlength="32"
-                                               placeholder="Product Name"/>
-                                    </dd>
-                                    <dt><label for="sold">Can be Sold</label></dt>
-                                    <dd>
+                                    <dt class="inputField">
+                                        <input type="text" id="product" required maxlength="32"/>
+                                        <label for="product">Product Name</label>
+                                    </dt>
+                                    <dt>
                                         <input type="checkbox" id="sold" <% if (contentType === 'salesProduct') {%>
                                         checked
                                         <%}%> class="checkbox left"/>
-                                    </dd>
-                                    <dt><label for="expensed">Can be Expensed</label></dt>
-                                    <dd><input type="checkbox" id="expensed" class="checkbox left"/></dd>
+                                        <label for="sold">Can be Sold</label>
+                                    </dt>
+                                    <dt>
+                                        <input type="checkbox" id="expensed" class="checkbox left"/>
+                                        <label for="expensed">Can be Expensed</label>
+                                    </dt>
                                     <!--
                                                         <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
-                                    <dt><label for="purchased">Can be Purchased</label></dt>
-                                    <dd>
+                                    <dt>
                                         <input type="checkbox" id="purchased" <% if (contentType === 'Product') {%>
                                         checked
                                         <%}%> class="checkbox left"/>
-                                    </dd>
+                                        <label for="purchased">Can be Purchased</label>
+                                    </dt>
                                 </dl>
                             </div>
                         </div>
@@ -53,8 +54,8 @@
                                 <div class="half-block left">
                                     <dl class="product-info">
                                         <dl class="product-info">
-                                            <dt><label for="productCategory">Product Category</label></dt>
-                                            <dd><a id="productCategory" class="current-selected" href="javascript:;">All</a>
+                                            <dt class="productCategory"><label for="productCategory">Product Category</label></dt>
+                                            <dd class="productCategory"><a id="productCategory" class="current-selected" href="javascript:;">All</a>
                                             </dd>
                                             <!-- <dt><label for="assetType">Asset Type</label></dt>
                                              <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a></dd>
@@ -73,11 +74,12 @@
                                     </dl>
                                 </div>
                                 <div class="half-block left">
-                                    <dt><label for="salePrice">Sale Price</label></dt>
-                                    <dd>
+                                    <dt class="inputField">
                                         <input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                               placeholder="0.00"/>
-                                    </dd>
+                                           placeholder="0.00"/>
+                                        <label for="salePrice">Sale Price</label>
+                                    </dt>
+                                    <!--<dd></dd>-->
                                     <!--
                                     <dt><label for="active">Active</label></dt>
                                     <dd><input type="checkbox" id="active" checked class="checkbox left"/></dd>
@@ -91,11 +93,12 @@
                                 <div class="clearfix"></div>
                                 <div class="full-width left">
                                     <div class="inner">
-                                        <div class="textarea-wrapper">
+                                        <div class="textarea-wrapper inputField">
                                             <textarea type="text" class="full-width productDescriptionCreate"
-                                                      name="description" placeholder="Add a Description..."
+                                                      name="description"
                                                       id="description"
                                                       maxlength="500" required/>
+                                            <label for="description">Add a Description</label>
                                         </div>
                                     </div>
                                 </div>

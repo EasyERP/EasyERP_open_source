@@ -1,4 +1,8 @@
 @tree-item-bg: #E5EBFB;
+@checkbox-border: #3e88b9;
+@checkbox-text: #5a5a5a;
+@input-border: #5a5a5a;
+@input-text: #3e88b9;
 
 .flex {
   display: -webkit-box;
@@ -115,7 +119,7 @@
       }
 
       .text {
-        font-size: 16px;
+        font-size: 14px;
         line-height: 20px;
       }
 
@@ -145,7 +149,8 @@
   .addProduct {
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
+    margin-left: 11px;
 
     a {
       border: 1px solid @border-color;
@@ -173,9 +178,7 @@
 
   #thumbnailContent {
     padding: 35px 0 4px 12px;
-
     box-sizing: border-box;
-
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -193,6 +196,7 @@
       content: " ";
       display: table;
     }
+
     &:after {
       clear: both;
     }
@@ -242,6 +246,7 @@
   }
 
   #productContent {
+    position: relative;
     webkit-box-flex: 1;
     -webkit-flex-grow: 1;
     -ms-flex-positive: 1;
@@ -249,10 +254,250 @@
   }
 }
 
-ul.dialog-tabs {
-  padding-top: 10px;
+.product {
+  &Heading {
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  &Form {
+    .inner {
+      padding-right: 0 !important;
+      padding-left: 0 !important;
+
+      input[type="checkbox"] {
+        position: absolute;
+        left: -9999px;
+        padding: 0 !important;
+        box-sizing: border-box;
+        cursor: default;
+        -moz-binding: none;
+        opacity: 0;
+
+        + label {
+          position: relative;
+          height: 20px;
+          display: block;
+          padding-left: 25px;
+          cursor: pointer;
+          line-height: 20px;
+          font-size: 13px;
+          color: @checkbox-text;
+          -webkit-user-select: none;
+             -moz-user-select: none;
+              -ms-user-select: none;
+
+          &:before, &:after {
+            position: absolute;
+            content: '';
+            top: 0;
+            left: 3px;
+            width: 12px;
+            height: 12px;
+            border: 1px solid @checkbox-text;
+            border-radius: 1px;
+            margin-top: 3px;
+            -webkit-transition: .2s;
+               -moz-transition: .2s;
+                 -o-transition: .2s;
+                    transition: .2s;
+            z-index: 0;
+          }
+
+          &:after {
+            border: 0;
+            -webkit-transform: scale(0);
+               -moz-transform: scale(0);
+                    transform: scale(0);
+          }
+        }
+
+        &:checked + label:before {
+          top: -3px;
+          left: 0;
+          width: 6px;
+          height: 12px;
+          border-top: 2px solid transparent;
+          border-left: 2px solid transparent;
+          border-right: 2px solid @checkbox-border;
+          border-bottom: 2px solid @checkbox-border;
+          -webkit-transform: rotate(45deg);
+             -moz-transform: rotate(45deg);
+                  transform: rotate(45deg);
+          -webkit-backface-visibility: hidden;
+             -moz-backface-visibility: hidden;
+                  backface-visibility: hidden;
+          -webkit-transform-origin: 100% 100%;
+             -moz-transform-origin: 100% 100%;
+                  transform-origin: 100% 100%;
+        }
+      }
+
+      dl dt:not(.productCategory) {
+        width: 100%;
+      }
+
+      .productCategory {
+        line-height: 26px;
+        font-size: 12px;
+      }
+
+      .inputField {
+        position: relative;
+        display: block;
+        width: 100%;
+        margin: 0 0 15px 0;
+        overflow: visible;
+
+        input[type="text"] {
+          height: 20px;
+          width: 100%;
+          margin: 0;
+          padding: 6px 0 0;
+          background-color: transparent;
+          border: none;
+          border-bottom: 1px solid @input-border;
+          border-radius: 0;
+          outline: none;
+          font-size: 12px;
+          box-shadow: none;
+          box-sizing: content-box;
+          -webkit-transition: all 0.3s;
+          -moz-transition: all 0.3s;
+          -o-transition: all 0.3s;
+          transition: all 0.3s;
+
+          + label {
+            position: absolute;
+            height: auto;
+            width: auto;
+            line-height: 1;
+            color: @input-border;
+            top: 50%;
+            left: 0;
+            font-size: 12px;
+            cursor: text;
+            -webkit-transition: .2s ease-out;
+            -moz-transition: .2s ease-out;
+            -o-transition: .2s ease-out;
+            transition: .2s ease-out;
+            z-index: 5;
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            transform: translateY(-50%);
+
+            &:after {
+              display: block;
+              content: "";
+              position: absolute;
+              top: 65px;
+              opacity: 0;
+              -webkit-transition: .2s opacity ease-out, .2s color ease-out;
+              -moz-transition: .2s opacity ease-out, .2s color ease-out;
+              -o-transition: .2s opacity ease-out, .2s color ease-out;
+              transition: .2s opacity ease-out, .2s color ease-out;
+            }
+          }
+
+          &:focus, &:valid {
+            border: none;
+            border-bottom: 1px solid @input-text;
+
+            + label {
+              color: @input-text;
+              font-size: 10px;
+              -webkit-transform: translateY(-180%);
+              -moz-transform: translateY(-180%);
+              transform: translateY(-180%);
+            }
+          }
+        }
+
+        textarea {
+          background-color: transparent;
+          border: none;
+          border-bottom: 1px solid @input-border;
+          border-radius: 0;
+          outline: none;
+          height: 80px;
+          width: 100%;
+          font-size: 12px;
+          margin: 0;
+          padding: 0;
+          box-shadow: none;
+          box-sizing: content-box;
+          -webkit-transition: all 0.3s;
+          -moz-transition: all 0.3s;
+          -o-transition: all 0.3s;
+          transition: all 0.3s;
+
+          + label {
+            position: absolute;
+            height: auto;
+            width: auto;
+            line-height: 1;
+            color: @input-border;
+            top: 0;
+            left: 0;
+            font-size: 12px;
+            cursor: text;
+            -webkit-transition: .2s ease-out;
+            -moz-transition: .2s ease-out;
+            -o-transition: .2s ease-out;
+            transition: .2s ease-out;
+            z-index: 5;
+
+            &:after {
+              display: block;
+              content: "";
+              position: absolute;
+              top: 65px;
+              opacity: 0;
+              -webkit-transition: .2s opacity ease-out, .2s color ease-out;
+              -moz-transition: .2s opacity ease-out, .2s color ease-out;
+              -o-transition: .2s opacity ease-out, .2s color ease-out;
+              transition: .2s opacity ease-out, .2s color ease-out;
+            }
+          }
+
+          &:focus, &:valid {
+            border: none;
+            border-bottom: 1px solid @input-text;
+
+            + label {
+              color: @input-text;
+              font-size: 10px;
+              -webkit-transform: translateY(-140%);
+              -moz-transform: translateY(-140%);
+              transform: translateY(-140%);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
+.ui-dialog {
+  .productForm.form-holder {
+    padding: 15px 20px 0;
+
+    form {
+      max-width: 100%;
+    }
+  }
+
+  .ui-dialog-buttonpane {
+    padding: 0 0 10px !important;
+    margin-top: 0 !important;
+    margin-right: 20px !important;
+    margin-left: 20px !important;
+  }
+}
+.mainTabs ul.dialog-tabs {
+  padding-top: 10px;
+}
 .mainTabs .avatarInfoContainer {
   margin-left: 160px;
 }
