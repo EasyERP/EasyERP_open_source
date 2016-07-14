@@ -12,8 +12,9 @@ define([
     'constants',
     'helpers',
     'views/Notes/AttachView',
-    'views/Notes/NoteView'
-], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS, helpers, AttachView, NoteView) {
+    'views/Notes/NoteView',
+    'views/Products/InvoiceOrder/ProductItems'
+], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS, helpers, AttachView, NoteView, ProductItemView) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -33,8 +34,22 @@ define([
         },
 
         chooseOption: function (e) {
-            var holder = $(e.target).parents('dd').find('.current-selected');
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+            var holder;
+            var array = this.$el.find('.' + oldCurrencyClass);
+
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
+
+            holder = $(e.target).parents('dd').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            this.hideNewSelect();
         },
 
         showDetailsBox: function (e) {
@@ -54,7 +69,7 @@ define([
             var quantity;
             var price;
             var taxes;
-            var amount;
+            var subtotal;
             var description;
 
             var forSales = this.forSales || false;
@@ -91,11 +106,12 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text() * 100;
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        quantity = targetEl.find('[data-name="price"] input').val();
+                        price = targetEl.find('[data-name="price"] input').val() * 100;
+                        description = targetEl.find('[data-name="productDescr"] textarea').val();
                         taxes = targetEl.find('.taxes').text();
-                        amount = targetEl.find('.amount').text() * 100;
+                        subtotal = targetEl.find('.subtotal').text();
+                        subtotal = parseFloat(subtotal) * 100;
 
                         if (isNaN(price) || price <= 0) {
                             return App.render({
@@ -117,7 +133,7 @@ define([
                             unitPrice  : price,
                             quantity   : quantity,
                             taxes      : taxes,
-                            subTotal   : amount
+                            subTotal   : subtotal
                         });
                     }
                 }
@@ -146,9 +162,9 @@ define([
                 dueDate              : dueDate,
                 account              : null,
                 journal              : null,
-
-                salesPerson : salesPersonId,
-                paymentTerms: paymentTermId,
+                name                 : $.trim($('#supplier_invoice_num').val()),
+                salesPerson          : salesPersonId,
+                paymentTerms         : paymentTermId,
 
                 products   : products,
                 paymentInfo: payments,
@@ -193,6 +209,22 @@ define([
 
         },
 
+        createProductView: function () {
+            var productItemContainer;
+
+            productItemContainer = this.$el.find('#productItemsHolder');
+
+            if (this.forSales) {
+                productItemContainer.append(
+                    new ProductItemView({canBeSold: true, service: true}).render().el
+                );
+            } else {
+                productItemContainer.append(
+                    new ProductItemView({canBeSold: false}).render().el
+                );
+            }
+        },
+
         render: function () {
             var formString = this.template();
             var self = this;
@@ -228,6 +260,8 @@ define([
             });
 
             this.renderAssignees(this.model);
+
+            this.createProductView();
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
             invoiceItemContainer.append(
