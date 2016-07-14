@@ -25,10 +25,10 @@ define([
 
         events: {
             'click #noteArea'     : 'expandNote',
-            'click #cancelNote'   : 'cancelNote',
-            'click #addNote'      : 'saveNote',
+            'click .cancelNote'   : 'cancelNote',
+            'click #addNote, .saveNote'      : 'saveNote',
             'click .noteContainer': 'showButtons',
-            'click #addTask, .saveTask' : 'saveTask',
+            'click #addTask' : 'saveTask',
 
             'click .addTitle'     : 'showTitle',
             'click .editDelNote'  : 'editDelNote',
@@ -262,14 +262,22 @@ define([
         },
 
         cancelNote: function (e) {
-            $(e.target).parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
-            $(e.target).parents('.addNote').find('#noteArea').val('');
-            this.$el.find('#getNoteKey').val('');// remove id from hidden field if note editing is cancel
-            this.$el.find('.title-wrapper').hide();
-            this.$el.find('.addTitle').hide();
-            this.$el.find('#noteArea').val('');
-            this.$el.find('#noteTitleArea').val('');
-            this.$el.find('#getNoteKey').attr('value', '');
+            var $target =$(e.target);
+            var contentHolder = $target.closest('.noteContainer');
+            if ( contentHolder.length){
+                contentHolder.find('.contentHolder').show();
+                $target.closest('.addNote').remove();
+            } else {
+                $target.parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
+                $target.parents('.addNote').find('#noteArea').val('');
+                this.$el.find('#getNoteKey').val('');// remove id from hidden field if note editing is cancel
+                this.$el.find('.title-wrapper').hide();
+                this.$el.find('.addTitle').hide();
+                this.$el.find('#noteArea').val('');
+                this.$el.find('#noteTitleArea').val('');
+                this.$el.find('#getNoteKey').attr('value', '');
+            }
+
         },
 
         saveNote: function (e) {
@@ -277,7 +285,8 @@ define([
             var $target = $(e.target);
             var $noteArea = $target.parents('.addNote').find('#noteArea');
             var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');
-            var targetId = $target.parents('.noteContainer').id();
+            var $noteContainer =  $target.closest('.noteContainer');
+            var targetId = $noteContainer.attr('id');
             var $thisEl = this.$el;
             var val;
             var title;
@@ -331,9 +340,11 @@ define([
                             },
                             patch  : true,
                             success: function () {
-                                $thisEl.find('#noteBody').val($('#' + targetId).html('.noteText').html(val));
-                                $thisEl.find('#noteBody').val($('#' + targetId).find('.noteTitle').html(title));
-                                $thisEl.find('#getNoteKey').attr('value', '');
+                                var $contentHolder = $noteContainer.find('.contentHolder');
+                                $contentHolder.find('.noteTitle').text(title);
+                                $contentHolder.find('.noteText').text(val);
+                                $contentHolder.show();
+                                $target.closest('.addNote').remove();
                             }
                         });
                 } else {
