@@ -379,7 +379,7 @@ define([
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        description = targetEl.find('[data-name="productDescr"] textarea').val();
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subTotal = parseFloat(subTotal) * 100;
@@ -453,15 +453,13 @@ define([
                     },
                     wait   : true,
                     success: function (res) {
-                        var url = window.location.hash;
-
-                        if (url === '#easyErp/salesQuotations/list') {
-                            self.hideDialog();
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
-                        } else {
-                            self.hideDialog();
-                        }
+                        //if (url === '#easyErp/salesQuotations/list') {
+                        //    self.hideDialog();
+                        //    Backbone.history.fragment = '';
+                        //    Backbone.history.navigate(url, {trigger: true});
+                        //} else {
+                        //    self.hideDialog();
+                        //}
 
                         if (proformaCb && typeof proformaCb === 'function') {
                             return proformaCb(null, res);
@@ -470,6 +468,8 @@ define([
                         if (self.eventChannel) {
                             self.eventChannel.trigger('quotationUpdated');
                         }
+
+                        self.redirectAfter(self, res);
                     },
 
                     error: function (model, xhr) {
@@ -492,7 +492,6 @@ define([
         deleteItem: function (event) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
-            var url;
             var answer = confirm('Really DELETE items ?!');
 
             event.preventDefault();
@@ -502,18 +501,18 @@ define([
                     headers: {
                         mid: mid
                     },
-                    success: function () {
-                        $('.edit-product-dialog').remove();
-                        url = window.location.hash;
+                    wait   : true,
+                    success: function (model) {
 
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
 
-                        self.hideDialog();
 
                         if (self.eventChannel) {
                             self.eventChannel.trigger('quotationRemove');
                         }
+
+                        self.redirectAfter(self, model);
                     },
 
                     error: function (model, err) {
@@ -527,8 +526,15 @@ define([
                 });
             }
 
-        }
-        ,
+        },
+
+        redirectAfter: function (content) {
+            var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
+
+            $('.edit-dialog').remove();
+            //content.hideDialog();
+            Backbone.history.navigate(redirectUrl, {trigger: true});
+        },
 
         render: function () {
             var self = this;
@@ -641,5 +647,4 @@ define([
     });
 
     return EditView;
-})
-;
+});

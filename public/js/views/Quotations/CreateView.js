@@ -179,7 +179,7 @@ define([
                 }
                 // scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                 taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
-                description = targetEl.find('[data-name="productDescr"]').text();
+                description = targetEl.find('[data-name="productDescr"] textarea').val();
                 subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                 subTotal = parseFloat(subTotal) * 100;
                 jobs = targetEl.find('.current-selected.jobs').attr('data-id');
