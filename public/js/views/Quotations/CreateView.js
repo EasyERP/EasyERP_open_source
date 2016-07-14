@@ -200,7 +200,7 @@ define([
 
                 products.push({
                     product    : productId,
-                    unitPrice  : price,
+                    unitPrice  : price * 100,
                     quantity   : quantity,
                     taxes      : taxes,
                     description: description,

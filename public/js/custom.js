@@ -44,7 +44,7 @@ define([
             }
             Backbone.history.fragment = '';
 
-            if (emailRedirectRegExp.test(location)) {
+            if (regExp.test(location)) {
                 url = location;
             } else {
                 url = 'login';

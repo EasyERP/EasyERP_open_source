@@ -57,9 +57,9 @@ define([
                 this.currentModel = options.collection.getElement();
             }
 
-            this.currentModel.urlRoot = '/quotation';
+            this.currentModel.urlRoot = '/quotations';
             this.responseObj = {};
-            this.forSales = false;
+            this.forSales = options.forSales;
 
             this.render(options);
         },
@@ -395,12 +395,23 @@ define([
                                 subTotal     : subTotal,
                                 jobs         : jobs
                             });
-                        } else {
+                        } else if (this.forSales) {
                             return App.render({
                                 type   : 'notify',
                                 message: "Jobs can't be empty."
                             });
+                        } else {
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal
+                            });
                         }
+
                     }
                 }
             }
@@ -516,7 +527,8 @@ define([
                 });
             }
 
-        },
+        }
+        ,
 
         render: function () {
             var self = this;
@@ -629,4 +641,5 @@ define([
     });
 
     return EditView;
-});
+})
+;
