@@ -62,7 +62,7 @@ define([], function () {
         DIVIDENDINVOICE   : 'DividendInvoice',
         DIVIDENDPAYMENTS  : 'DividendPayments',
         SETTINGSEMPLOYEE  : 'settingsEmployee',
-        CASHBOOK          : 'cashBook',
+        CASHBOOK          : 'cashBook', // cash book
         CASHTRANSFER      : 'cashTransfer',
 
         RESPONSES: {
