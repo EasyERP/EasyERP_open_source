@@ -6238,7 +6238,6 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .noteWrapper #noteBody .noteContainer {
-  padding: 10px;
   margin-bottom: 10px;
 }
 .noteWrapper #noteBody .noteContainer .name {
@@ -6263,7 +6262,6 @@ dl dd span.ui-spinner {
 }
 .noteWrapper #noteBody .noteContainer .right {
   float: right;
-  margin-right: 10px;
 }
 .noteWrapper #noteBody .noteContainer .right .sep {
   padding: 0 3px;
@@ -6278,6 +6276,9 @@ dl dd span.ui-spinner {
 .noteWrapper #noteBody .noteBody,
 .noteWrapper #noteBody .noteBtnBlock {
   border: 1px solid #7f7f80;
+}
+.noteWrapper #noteBody .noteBody {
+  padding: 10px;
 }
 .text-overflow {
   overflow: hidden;
