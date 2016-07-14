@@ -2,8 +2,9 @@ define([
     'Backbone',
     'Underscore',
     'jQuery',
-    'text!templates/Orders/list/ListTotal.html'
-], function (Backbone, _, $, listTemplate) {
+    'text!templates/Orders/list/ListTotal.html',
+    'helpers'
+], function (Backbone, _, $, listTemplate, helpers) {
     'use strict';
     var OrderListTotalView = Backbone.View.extend({
         el: '#listTotal',
@@ -33,11 +34,13 @@ define([
         },
 
         render: function () {
+            var template = _.template(listTemplate);
+
             if (this.$el.find('tr').length > 0) {
                 this.$el.find('#unTaxed').text(this.getTotal().unTaxed.toFixed(2));
                 this.$el.find('#total').text(this.getTotal().total.toFixed(2));
             } else {
-                this.$el.append(_.template(listTemplate, this.getTotal()));
+                this.$el.append(template({currencySplitter: helpers.currencySplitter, total: this.getTotal()}));
             }
         }
     });

@@ -56,10 +56,10 @@ define([
             } else {
                 this.currentModel = options.collection.getElement();
             }
-            console.log(this.currentModel.get('products')[0]);
+
             this.currentModel.urlRoot = '/quotations';
             this.responseObj = {};
-            this.forSales = false;
+            this.forSales = options.forSales;
 
             this.render(options);
         },
@@ -384,7 +384,7 @@ define([
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subTotal = parseFloat(subTotal) * 100;
 
-                        if (jobs || !this.forSales) {
+                        if (jobs) {
                             products.push({
                                 product      : productId,
                                 unitPrice    : price,
@@ -395,12 +395,23 @@ define([
                                 subTotal     : subTotal,
                                 jobs         : jobs
                             });
-                        } else {
+                        } else if (this.forSales) {
                             return App.render({
                                 type   : 'notify',
                                 message: "Jobs can't be empty."
                             });
+                        } else {
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal
+                            });
                         }
+
                     }
                 }
             }

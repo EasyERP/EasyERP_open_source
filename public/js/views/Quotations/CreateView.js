@@ -168,9 +168,8 @@ define([
                     });
                 }
 
-                quantity = targetEl.find('[data-name="quantity"] input').val();
-
-                price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                quantity = targetEl.find('[data-name="quantity"]').text();
+                price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) * 100;
 
                 if (isNaN(price) || price <= 0) {
                     return App.render({

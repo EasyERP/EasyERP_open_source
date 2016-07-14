@@ -2601,15 +2601,27 @@ var Module = function (models, event) {
         var starDate = query.startDay ? new Date(query.startDay) : null;
         var endDate = query.endDay ? new Date(query.endDay) : null;
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+        var History = models.get(req.session.lastDb, 'History', historySchema);
         var matchObj = {
-            $and: []
+            $and: [{
+                isOpportunitie: false
+            }]
         };
 
-        matchObj.$and.push({isOpportunitie: false});
+        var historyMatchObj = {
+            $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
+        };
 
         if (starDate && endDate) {
             matchObj.$and.push({
                 creationDate: {
+                    $gte: starDate,
+                    $lte: endDate
+                }
+            });
+
+            historyMatchObj.$and.push({
+                date: {
                     $gte: starDate,
                     $lte: endDate
                 }
@@ -2619,31 +2631,19 @@ var Module = function (models, event) {
         async
             .parallel({
                 assignedTo: function (parCb) {
-                    Opportunities.aggregate([{
-                        $match: matchObj
-                    }, {
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'salesPerson',
-                            foreignField: '_id',
-                            as          : 'people'
-                        }
-                    }, {
-                        $unwind: {path: '$people', preserveNullAndEmptyArrays: true}
+                    History.aggregate([{
+                        $match: historyMatchObj
+                    },{
+                        $sort: {date: 1}
                     }, {
                         $project: {
-                            salesPerson: {$concat: ['$people.name.first', ' ', '$people.name.last']}
-                        }
-                    }, {
-                        $project: {
-                            salesPerson: {$ifNull: ['$salesPerson', 'Empty']}
+                            date: {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]}
                         }
                     }, {
                         $group: {
-                            _id: '$salesPerson', count: {$sum: 1}
+                            _id: '$date', count: {$sum: 1}
                         }
-                    }
-                    ], parCb);
+                    }], parCb);
                 },
 
                 createdBy: function (parCb) {

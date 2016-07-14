@@ -28,80 +28,80 @@ var Module = function (models, event) {
     /*TODO remove after filters check*/
 
     /*function convertType(array, type) {
-        var i;
+     var i;
 
-        if (type === 'integer') {
-            for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i], 10);
-            }
-        } else if (type === 'boolean') {
-            for (i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }*/
+     if (type === 'integer') {
+     for (i = array.length - 1; i >= 0; i--) {
+     array[i] = parseInt(array[i], 10);
+     }
+     } else if (type === 'boolean') {
+     for (i = array.length - 1; i >= 0; i--) {
+     if (array[i] === 'true') {
+     array[i] = true;
+     } else if (array[i] === 'false') {
+     array[i] = false;
+     } else {
+     array[i] = null;
+     }
+     }
+     }
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var keys = Object.keys(filter);
-        var i;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var keys = Object.keys(filter);
+     var i;
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            filterName = keys[i];
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (i = keys.length - 1; i >= 0; i--) {
+     filterName = keys[i];
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'reference':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'project':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'type':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'salesManager':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSales':
-                    convertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'isOrder':
-                    convertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                // skip default;
-            }
-        }
+     switch (filterName) {
+     case 'reference':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'project':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'supplier':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'workflow':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'type':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'salesManager':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'forSales':
+     convertType(condition, 'boolean');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'isOrder':
+     convertType(condition, 'boolean');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     // skip default;
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     function updateOnlySelectedFields(req, res, next, id, data) {
         var dbName = req.session.lastDb;
@@ -151,70 +151,75 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                products = quotation.toJSON().products;
+                if (quotation.forSales) {
+                    products = quotation.toJSON().products;
 
-                async.each(products, function (product, cb) {
-                    var jobs = product.jobs;
-                    var _type = quotation.toJSON().isOrder ? 'Ordered' : 'Quoted';
+                    async.each(products, function (product, cb) {
+                        var jobs = product.jobs;
+                        var _type = quotation.toJSON().isOrder ? 'Ordered' : 'Quoted';
 
-                    var index = indexOfBinary(oldProducts, jobs.id);
+                        var index = indexOfBinary(oldProducts, jobs.id);
 
-                    if (index !== -1) {
-                        oldProducts.splice(index, 1);
-                    }
-
-                    JobsModel.findByIdAndUpdate(jobs, {
-                        $set: {
-                            quotation: id,
-                            type     : _type,
-                            editedBy : editedBy
+                        if (index !== -1) {
+                            oldProducts.splice(index, 1);
                         }
-                    }, {new: true}, function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        project = result.project || null;
-                        cb();
-                    });
 
-                }, function () {
-                    var type;
-
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project, dbName: dbName});
-                    }
-
-                    res.status(200).send({success: 'Quotation updated', result: quotation});
-
-                    if (oldProducts.length > 0) {
-                        async.each(oldProducts, function (oldProduct, cb) {
-
-                            type = 'Not Quoted';
-
-                            JobsModel.findByIdAndUpdate(oldProduct.jobs, {
-                                type     : type,
-                                quotation: null,
+                        JobsModel.findByIdAndUpdate(jobs, {
+                            $set: {
+                                quotation: id,
+                                type     : _type,
                                 editedBy : editedBy
-                            }, {new: true}, function (err, result) {
-                                var wTracks;
-
-                                if (err) {
-                                    return next(err);
-                                }
-
-                                project = result ? result.get('project') : null;
-                                wTracks = result ? result.wTracks : [];
-
-                                async.each(wTracks, function (wTr, callback) {
-                                    wTrackModel.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
-                                }, function () {
-                                    cb();
-                                });
-                            });
-
+                            }
+                        }, {new: true}, function (err, result) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            project = result.project || null;
+                            cb();
                         });
-                    }
-                });
+
+                    }, function () {
+                        var type;
+
+                        if (project) {
+                            event.emit('fetchJobsCollection', {project: project, dbName: dbName});
+                        }
+
+                        res.status(200).send({success: 'Quotation updated', result: quotation});
+
+                        if (oldProducts.length > 0) {
+                            async.each(oldProducts, function (oldProduct, cb) {
+
+                                type = 'Not Quoted';
+
+                                JobsModel.findByIdAndUpdate(oldProduct.jobs, {
+                                    type     : type,
+                                    quotation: null,
+                                    editedBy : editedBy
+                                }, {new: true}, function (err, result) {
+                                    var wTracks;
+
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    project = result ? result.get('project') : null;
+                                    wTracks = result ? result.wTracks : [];
+
+                                    async.each(wTracks, function (wTr, callback) {
+                                        wTrackModel.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
+                                    }, function () {
+                                        cb();
+                                    });
+                                });
+
+                            });
+                        }
+
+                    });
+                } else {
+                    res.status(200).send({success: 'Quotation updated', result: quotation});
+                }
             });
         });
     }
@@ -520,7 +525,6 @@ var Module = function (models, event) {
             user: req.session.uId,
             date: new Date()
         };
-
 
         currencyHalper(body.orderDate, function (err, oxr) {
             oxr = oxr || {};
@@ -854,19 +858,20 @@ var Module = function (models, event) {
                 $unwind: '$root'
             }, {
                 $project: {
-                    _id                : '$root._id',
-                    'salesManager.name': '$root.salesManager.name',
-                    name               : '$root.name',
-                    'paymentInfo.total': '$root.paymentInfo.total',
-                    orderDate          : '$root.orderDate',
+                    _id                  : '$root._id',
+                    'salesManager.name'  : '$root.salesManager.name',
+                    name                 : '$root.name',
+                    'paymentInfo.total'  : '$root.paymentInfo.total',
+                    'paymentInfo.unTaxed': '$root.paymentInfo.unTaxed',
+                    orderDate            : '$root.orderDate',
                     /* forSales           : '$root.forSales',*/
-                    workflow           : '$root.workflow',
-                    supplier           : '$root.supplier',
+                    workflow             : '$root.workflow',
+                    supplier             : '$root.supplier',
                     /* isOrder            : '$root.isOrder',*/
-                    currency           : '$root.currency',
-                    project            : '$root.project',
-                    proformaCounter    : '$root.proformaCounter',
-                    total              : 1
+                    currency             : '$root.currency',
+                    project              : '$root.project',
+                    proformaCounter      : '$root.proformaCounter',
+                    total                : 1
                 }
             }, {
                 $sort: sort
