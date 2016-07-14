@@ -1595,15 +1595,15 @@ input[type="checkbox"] {
         -webkit-transform: translateY(-140%);
             -ms-transform: translateY(-140%);
                 transform: translateY(-140%); }
-      .form-holder .inputField textarea:valid:empty {
-        border: none;
-        border-bottom: 1px solid #5a5a5a; }
-        .form-holder .inputField textarea:valid:empty + label {
-          color: #5a5a5a;
-          font-size: 12px;
-          -webkit-transform: translateY(0%);
-              -ms-transform: translateY(0%);
-                  transform: translateY(0%); }
+    .form-holder .inputField textarea:not(required) {
+      border: none;
+      border-bottom: 1px solid #5a5a5a; }
+      .form-holder .inputField textarea:not(required) + label {
+        color: #5a5a5a;
+        font-size: 12px;
+        -webkit-transform: translateY(0%);
+            -ms-transform: translateY(0%);
+                transform: translateY(0%); }
     .form-holder .inputField textarea:focus {
       border: none;
       border-bottom: 1px solid #3e88b9; }

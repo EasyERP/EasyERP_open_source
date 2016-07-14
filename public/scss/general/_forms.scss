@@ -176,16 +176,16 @@ input[type="checkbox"] {
           font-size: 10px;
           transform: translateY(-140%);
         }
+      }
 
-        &:empty {
-          border: none;
-          border-bottom: 1px solid $input-border;
+      &:not(required) {
+        border: none;
+        border-bottom: 1px solid $input-border;
 
-          + label {
-            color: $input-border;
-            font-size: 12px;
-            transform: translateY(0%);
-          }
+        + label {
+          color: $input-border;
+          font-size: 12px;
+          transform: translateY(0%);
         }
       }
 
