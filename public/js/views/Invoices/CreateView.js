@@ -10,8 +10,10 @@ define([
     'views/Assignees/AssigneesView',
     'views/Payment/list/ListHeaderInvoice',
     'constants',
-    'helpers'
-], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS, helpers) {
+    'helpers',
+    'views/Notes/AttachView',
+    'views/Notes/NoteView'
+], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, InvoiceItemView, AssigneesView, ListHederInvoice, CONSTANTS, helpers, AttachView, NoteView) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -63,9 +65,9 @@ define([
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
             var i;
-            var total = parseFloat($currentEl.find('#totalAmount').text());
-            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text());
-            var balance = parseFloat($currentEl.find('#balance').text());
+            var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
+            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
+            var balance = parseFloat($currentEl.find('#balance').text()) * 100;
 
             var payments = {
                 total  : total,
@@ -90,10 +92,24 @@ define([
                     productId = targetEl.data('id');
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
+                        price = targetEl.find('[data-name="price"]').text() * 100;
                         description = targetEl.find('[data-name="productDescr"]').text();
                         taxes = targetEl.find('.taxes').text();
-                        amount = targetEl.find('.amount').text();
+                        amount = targetEl.find('.amount').text() * 100;
+
+                        if (isNaN(price) || price <= 0) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Please, enter Unit Price!'
+                            });
+                        }
+
+                        if (price === '') {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Unit price can\'t be empty'
+                            });
+                        }
 
                         products.push({
                             product    : productId,
@@ -182,6 +198,8 @@ define([
             var self = this;
             var invoiceItemContainer;
             var paymentContainer;
+            var $notDiv;
+            var needNotes = false;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -220,6 +238,16 @@ define([
             paymentContainer.append(
                 new ListHederInvoice().render().el
             );
+
+            $notDiv = this.$el.find('#attach-container');
+            $notDiv.append(
+                //new NoteView({
+                //    model      : this.model,
+                //    contentType: CONSTANTS.INVOICES,
+                //    needNotes  : needNotes
+                //}).render().el
+            );
+
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 

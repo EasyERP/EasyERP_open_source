@@ -6,11 +6,8 @@
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <!--<li class="right">
-                        <button class="red confirmOrder">
-                            <span>Confirm Order</span>
-                        </button>
-                        <button class="red cancelOrder">
-                            <span>Cancel</span>
+                        <button class="btn approve">
+                            <span>Approve</span>
                         </button>
                     </li>-->
                 </ul>
@@ -24,11 +21,6 @@
                                     <a id="supplier" href="javascript:;" class="current-selected">Select</a>
                                 </dd>
 
-                                <dt><label for="fiscal_pos">Fiscal Position</label></dt>
-                                <dd>
-                                    <a id="fiscal_pos" href="javascript:;">Select</a>
-                                </dd>
-
                                 <!--<dt><label for="source_document">Source Document</label></dt>-->
                                 <!--<dd>-->
                                 <!--<input type="text"  id="source_document" name="source_document" placeholder="" maxlength="32"/>-->
@@ -38,17 +30,6 @@
                                 <dd>
                                     <input type="text" id="supplier_invoice_num" name="supplier_invoice_num"
                                            placeholder="" maxlength="32"/>
-                                </dd>
-
-                                <dt><label for="payment_reference">Payment Reference</label></dt>
-                                <dd>
-                                    <a id="payment_reference_2" href="javascript:;">Select</a>
-                                </dd>
-
-                                <dt></dt>
-                                <dd>
-                                    <input type="text" id="payment_reference" name="payment_reference" placeholder=""
-                                           maxlength="32"/>
                                 </dd>
 
                             </dl>
@@ -68,10 +49,6 @@
                                            readonly="" placeholder="Due Date">
                                 </dd>
 
-                                <dt><label for="account">Account</label></dt>
-                                <dd>
-                                    <a id="account" href="javascript:;">Select</a>
-                                </dd>
 
                                 <!--<dt><label for="journal">Journal</label></dt>-->
                                 <!--<dd>-->
@@ -90,6 +67,7 @@
                             <li><a class="active" href="javascript:;">Invoice</a></li>
                             <li><a href="javascript:;">Other Info</a></li>
                             <li><a href="javascript:;">Payments</a></li>
+                            <li><a href="javascript:;">Attachments</a></li>
                         </ul>
                         <div class="clearfix"></div>
                         <div class="dialog-tabs-items childTabs">
@@ -106,12 +84,6 @@
                                             <dt><label for="bank_account">Bank Account</label></dt>
                                             <dd>
                                                 <a id="bank_account" href="javascript:;">Select</a>
-                                            </dd>
-
-                                            <dt><label for="salesPerson">Responsible</label></dt>
-                                            <dd>
-                                                <a id="salesPerson" class="current-selected"
-                                                   href="javascript:;">Select</a>
                                             </dd>
 
                                             <dt><label for="payment_terms">Payment Terms</label></dt>
@@ -136,6 +108,9 @@
                             </div>
                             <div class="dialog-tabs-item childTabs">
                                 <div id="payments-container"></div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div id="attach-container"></div>
                             </div>
                         </div>
                     </div>
