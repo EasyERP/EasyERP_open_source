@@ -604,12 +604,28 @@ input {
 }
 
 .noteBtnBlock {
+  height: 0;
+  margin-top: -1px;
+  border: @thin-border @border-color-main;
+  border-top: none;
+  overflow: hidden;
+  transition: all .2s ease;
 
+  .btn {
+    margin: 7px;
+    float: right;
+    height: 19px;
+    line-height: 18px!important;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 .noteContainer {
   &.showButtons {
     .noteBtnBlock {
-
+      height: 34px;
     }
   }
 }

@@ -2968,6 +2968,26 @@ input:not([type="checkbox"]).inputBordered:focus {
 .halfColumn {
   width: 50%;
 }
+.noteBtnBlock {
+  height: 0;
+  margin-top: -1px;
+  border: 1px solid #7f7f80;
+  border-top: none;
+  overflow: hidden;
+  transition: all .2s ease;
+}
+.noteBtnBlock .btn {
+  margin: 7px;
+  float: right;
+  height: 19px;
+  line-height: 18px!important;
+}
+.noteBtnBlock .btn:hover {
+  text-decoration: none;
+}
+.noteContainer.showButtons .noteBtnBlock {
+  height: 34px;
+}
 .collapsed .side_menu {
   width: 40px !important;
   margin-right: -100%;
@@ -6273,12 +6293,9 @@ dl dd span.ui-spinner {
   display: table;
   clear: both;
 }
-.noteWrapper #noteBody .noteBody,
-.noteWrapper #noteBody .noteBtnBlock {
-  border: 1px solid #7f7f80;
-}
 .noteWrapper #noteBody .noteBody {
   padding: 10px;
+  border: 1px solid #7f7f80;
 }
 .text-overflow {
   overflow: hidden;
