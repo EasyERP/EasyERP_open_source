@@ -40,12 +40,12 @@ define([
 
         showButtons : function (e){
             var $target = $(e.target).closest('.noteContainer');
-            $target.find('.buttonsNote').toggleClass('showButtons');
+            $target.toggleClass('showButtons');
             $target.prevAll().each(function(){
-                $(this).find('.buttonsNote').removeClass('showButtons');
+                $(this).removeClass('showButtons');
             });
             $target.nextAll().each(function(){
-                $(this).find('.buttonsNote').removeClass('showButtons');
+                $(this).removeClass('showButtons');
             });
 
         },
