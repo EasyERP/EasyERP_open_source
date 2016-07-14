@@ -94,10 +94,14 @@
     // class to enabled table odd color (add to tbody)
     tr {
       &:nth-child(odd) {
-        background-color: @defaultBgColorOdd-color;
+        &:not(.innerRow) {
+          background-color: @defaultBgColorOdd-color;
+        }
       }
-      &:hover {
-        background-color: @defaultBgHover-color;
+      &:not(.innerRow) {
+        &:hover {
+          background-color: @defaultBgHover-color;
+        }
       }
     }
   }

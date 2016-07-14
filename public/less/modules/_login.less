@@ -7,6 +7,10 @@
   }
 }
 
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
 a{
   text-decoration: none;
 }
@@ -677,7 +681,6 @@ input {
   }
 }
 
-
 .color {
   &Card {
     &Wrap {
@@ -936,9 +939,11 @@ input {
             background-color: #8c8c8c;
           }
           &:before {
+            -webkit-transform: rotate(-45deg);
             transform: rotate(-45deg);
           }
           &:after {
+            -webkit-transform: rotate(45deg);
             transform: rotate(45deg);
           }
           &:hover {
@@ -1001,9 +1006,18 @@ input {
   }
 }
 
+.clearfixNew {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
 .content-holder {
 
   .grid-conatiner {
+
     &.revenue {
       position: absolute;
       right: 0;
@@ -1068,13 +1082,37 @@ dl.payrollDateBlock {
   }
 }
 
-//.dashbordActions {
-//  .choseDateRange {
-//
-//  }
-//
-//  .legend-box {
-//    &.small {
-//    }
-//  }
-//}
+.tableFixedWrap {
+  height: 100%;
+
+  .tableFixed {
+    height: 100%;
+  }
+
+  table.payRoll-list #payRoll-Table .scrollit {
+    height: 100%;
+  }
+}
+
+.absoluteContent {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  table {
+    height: 100%;
+  }
+
+  .scrollable {
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+.flexTableWrap {
+  flex-grow: 1;
+  position: relative;
+}
