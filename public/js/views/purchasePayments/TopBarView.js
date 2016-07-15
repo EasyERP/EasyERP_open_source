@@ -10,6 +10,7 @@ define([
     var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: CONSTANTS.PURCHASEPAYMENTS,
+        contentHeader      : 'Purchase Payments',
         template   : _.template(ContentTopBarTemplate)
     });
 
