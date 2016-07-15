@@ -2954,10 +2954,16 @@ input:not([type="checkbox"]).inputBordered:focus {
 .floatColumn {
   display: inline-block;
   float: left;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 .floatColumn > * {
   float: left;
+  width: 100%;
   clear: both;
+}
+.floatColumn > *:nth-child(n+2) {
+  margin-top: 20px;
 }
 .floatColumn:after {
   content: '';
@@ -2997,15 +3003,15 @@ input:not([type="checkbox"]).inputBordered:focus {
   float: left;
 }
 .editedNote .noteText {
-  padding: 10px!important;
-  margin: 0!important;
+  padding: 10px !important;
+  margin: 0 !important;
   border: none;
   border-top: 1px solid #7f7f80;
 }
 .editedNote .noteText:hover,
 .editedNote .noteText:active,
 .editedNote .noteText:focus {
-  outline: 0;
+  outline: 0 !important;
 }
 .editedNote .noteText.active {
   padding: 0;
@@ -4815,7 +4821,7 @@ dl dt {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -4833,7 +4839,7 @@ dl dd {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -5248,7 +5254,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -5266,7 +5272,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 70%;
   overflow: hidden;
@@ -5304,7 +5310,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -5322,7 +5328,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -5363,7 +5369,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -5381,7 +5387,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -5424,7 +5430,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -5442,7 +5448,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -6420,7 +6426,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6441,7 +6447,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -6490,7 +6496,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6508,7 +6514,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -6552,7 +6558,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6570,7 +6576,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -6608,7 +6614,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6626,7 +6632,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -6667,7 +6673,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6685,7 +6691,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -8972,7 +8978,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -8990,7 +8996,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 0%;
   overflow: hidden;
@@ -9039,7 +9045,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -9057,7 +9063,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 50%;
   overflow: hidden;
@@ -9113,7 +9119,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -9131,7 +9137,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 70%;
   overflow: hidden;
@@ -9305,8 +9311,8 @@ ul.dialog-tabs li.right button {
   max-width: 160px;
   float: left;
   clear: both;
-  line-height: 16px;
-  min-height: 16px;
+  line-height: 18px;
+  min-height: 18px;
   margin-top: 10px;
   overflow: hidden;
   white-space: nowrap;
@@ -9323,8 +9329,8 @@ ul.dialog-tabs li.right button {
   padding: 1px;
   margin: -1px;
   margin-top: 10px;
-  line-height: 16px;
-  min-height: 16px;
+  line-height: 18px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -9345,7 +9351,7 @@ ul.dialog-tabs li.right button {
   width: 137px;
 }
 .form-holder form dd a.formLink {
-  line-height: 16px;
+  line-height: 18px;
 }
 .form-holder form dd span.ui-spinner {
   width: 100%;
@@ -10269,7 +10275,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10287,7 +10293,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -10328,7 +10334,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10346,7 +10352,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -10387,7 +10393,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10405,7 +10411,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 50%;
   overflow: hidden;
@@ -10449,7 +10455,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10467,7 +10473,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 58%;
   overflow: hidden;
@@ -10514,7 +10520,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10532,7 +10538,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 58%;
   overflow: hidden;
@@ -10590,7 +10596,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10608,7 +10614,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 90%;
   overflow: hidden;
@@ -10657,7 +10663,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10675,7 +10681,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -10723,7 +10729,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10741,7 +10747,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -10879,7 +10885,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10897,7 +10903,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 70%;
   overflow: hidden;
@@ -10935,7 +10941,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10953,7 +10959,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -10994,7 +11000,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -11012,7 +11018,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -11055,7 +11061,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -11073,7 +11079,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;

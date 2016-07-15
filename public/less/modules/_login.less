@@ -585,10 +585,16 @@ input {
 .floatColumn {
   display: inline-block;
   float: left;
+  padding: 0 10px;
+  box-sizing: border-box;
 
   > * {
     float: left;
+    width: 100%;
     clear: both;
+    &:nth-child(n+2) {
+      margin-top: 20px;
+    }
   }
 
   &:after {
@@ -635,15 +641,15 @@ input {
   }
 
   .noteText {
-    padding: 10px!important;
-    margin: 0!important;
+    padding: 10px !important;
+    margin: 0 !important;
     border: none;
     border-top: @thin-border @border-color-main;
 
     &:hover,
     &:active,
     &:focus {
-      outline: 0;
+      outline: 0 !important;
     }
 
     &.active {
