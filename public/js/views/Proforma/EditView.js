@@ -15,7 +15,8 @@ define([
     'dataService',
     'populate',
     'constants',
-    'helpers'
+    'helpers',
+    'views/Products/InvoiceOrder/ProductItems'
 ], function (Backbone,
              $,
              _,
@@ -32,7 +33,8 @@ define([
              dataService,
              populate,
              CONSTANTS,
-             helpers) {
+             helpers,
+             ProductItemView) {
     'use strict';
 
     var EditView = ParentView.extend({
@@ -274,7 +276,7 @@ define([
             var price;
             var description;
             var jobs;
-            var amount;
+            var subTotal;
             var data;
             var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
             var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
@@ -330,8 +332,8 @@ define([
                     productId = targetEl.data('id');
 
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text();
+                        quantity = targetEl.find('[data-name="quantity"] input').val();
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
 
                         if (isNaN(price) || price <= 0) {
@@ -341,18 +343,20 @@ define([
                             });
                         }
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        taxes = targetEl.find('.taxes').text();
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         taxes = parseFloat(taxes) * 100;
-                        amount = helpers.spaceReplacer(targetEl.find('.amount').text());
-                        amount = parseFloat(amount) * 100;
+                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
+                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        subTotal = parseFloat(subTotal) * 100;
 
                         products.push({
-                            product  : productId,
-                            jobs     : jobs,
-                            unitPrice: price,
-                            quantity : quantity,
-                            taxes    : taxes,
-                            subTotal : amount
+                            product    : productId,
+                            jobs       : jobs,
+                            unitPrice  : price,
+                            quantity   : quantity,
+                            description: $.trim(description),
+                            taxes      : taxes,
+                            subTotal   : subTotal
                         });
                     }
                 }
@@ -374,7 +378,7 @@ define([
                 fiscalPosition       : null,
                 // sourceDocument: $.trim(this.$el.find('#source_document').val()),
                 supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
-                // name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
+                name                 : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
                 // paymentReference: $.trim(this.$el.find('#payment_reference').val()),
                 invoiceDate          : helpers.setTimeToDate(invoiceDate),
                 dueDate              : dueDate,
@@ -502,6 +506,8 @@ define([
             var invoiceDate;
             var isFinancial;
             var needNotes = false;
+            var productItemContainer;
+            var service = this.forSales;
 
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
@@ -618,6 +624,12 @@ define([
             this.delegateEvents(this.events);
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+
+            productItemContainer = this.$el.find('#productItemsHolder');
+
+            productItemContainer.append(
+                new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
+            );
 
             invoiceItemContainer.append(
                 new InvoiceItemView({
