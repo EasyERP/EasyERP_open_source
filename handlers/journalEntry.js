@@ -1625,7 +1625,7 @@ var Module = function (models, event) {
         var waterfallFuncs;
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var date = moment(endDate).set({
-            hour       : 21,
+            hour       : 20,
             minute     : 0,
             second     : 0,
             millisecond: 0
