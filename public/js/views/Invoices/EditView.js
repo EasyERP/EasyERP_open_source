@@ -150,12 +150,12 @@ define([
 
                             if (self.eventChannel) {
                                 self.eventChannel.trigger('invoiceUpdated');
+                            } else {
+                                redirectUrl = window.location.hash;
+
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
-
-                            redirectUrl = window.location.hash;
-
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();

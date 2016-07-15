@@ -217,6 +217,7 @@ define([
                             }
 
                             if (self.eventChannel) {
+                                $('.edit-dialog').remove();
                                 self.eventChannel.trigger('newProforma', response._id);
                             } else {
                                 Backbone.history.fragment = '';

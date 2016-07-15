@@ -59,7 +59,6 @@ define([
 
             this.eventChannel = options.eventChannel;
 
-
             this.isWtrack = !!options.isWtrack;
             this.filter = options.filter;
             this.forSales = options.forSales;
@@ -243,10 +242,16 @@ define([
 
                             App.stopPreload();
 
-                            redirectUrl = window.location.hash;
+                            if (self.eventChannel) {
+                                $('.edit-dialog').remove();
+                                self.eventChannel.trigger('savedProforma');
+                            } else {
+                                redirectUrl = window.location.hash;
 
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
+
+                            }
 
                         } else {
                             App.render({
@@ -347,7 +352,7 @@ define([
                         taxes = parseFloat(taxes) * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
-                        if (subTotal == ''){
+                        if (subTotal == '') {
                             subTotal = helpers.spaceReplacer(targetEl.find('.amount').text());
                         }
                         subTotal = parseFloat(subTotal) * 100;
@@ -540,7 +545,7 @@ define([
                 isWtrack        : self.isWtrack,
                 isPaid          : this.isPaid,
                 notAddItem      : this.notAddItem,
-                approved : this.currentModel.get('approved'),
+                approved        : this.currentModel.get('approved'),
                 wTracks         : wTracks,
                 project         : project,
                 customer        : customer,
