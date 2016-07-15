@@ -61,7 +61,7 @@ define([
         cancelClick: function (e) {
             e.preventDefault();
 
-            var parent = $(e.target).parent().parent();
+            var parent = $(e.target).closest('.editable');
             parent.removeClass('quickEdit');
             parent.text(this.text);
         },
@@ -96,13 +96,15 @@ define([
 
         quickEdit: function (e) {
             var trId = $(e.target);
+
             if (trId.find('#editSpan').length === 0) {
                 trId.append('<span id="editSpan" class=""><a href="javascript:;">e</a></span>');
             }
         },
 
         editClick: function (e) {
-            var maxlength = $('#' + $(e.target).parent().parent()[0].id).find('.no-long').attr('data-maxlength') || 32;
+            var $target = $(e.target);
+            var maxlength = $target.closest('.editable').find('.no-long').attr('data-maxlength') || 32;
             var parent;
 
             e.preventDefault();
@@ -112,13 +114,13 @@ define([
             $('.quickEdit #saveSpan').remove();
             $('.quickEdit').text(this.text).removeClass('quickEdit');
 
-            parent = $(e.target).parent().parent();
+            parent = $target.closest('.editable');
             parent.addClass('quickEdit');
-            $('#editSpan').remove();
+            this.$el.find('#editSpan').remove();
             this.text = parent.text();
             parent.text('');
             parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
-            $('#editInput').val(this.text);
+            this.$el.find('#editInput').val(this.text);
             parent.append('<span id="saveSpan"><a href="#">c</a></span>');
             parent.append('<span id="cancelSpan"><a href="#">x</a></span>');
             parent.find('#editInput').width(parent.find('#editInput').width() - 50);
@@ -234,7 +236,7 @@ define([
 
             dataService.getData('/workflows/', {id: 'Opportunities'}, function (response){
                 self.responseObj = {workflows : response.data};
-                self.$el.find('#workflowProgress').append(_.template(workflowProgress, {workflows : self.responseObj.workflows, workflow : formModel.workflow  }));
+                self.$el.find('#workflowProgress').append(_.template(workflowProgress, {workflows : self.responseObj.workflows, workflow : formModel.workflow}));
 
             });
             dataService.getData('/opportunities/priority', {}, function (priorities) {
