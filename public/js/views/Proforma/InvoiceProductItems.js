@@ -6,12 +6,13 @@ define([
     'text!templates/Invoices/InvoiceProductInputContent.html',
     'text!templates/Proforma/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
+    'text!templates/Invoices/EditInvoiceProductInputContent.html',
     'collections/Products/products',
     'populate',
     'helpers/keyValidator',
     'helpers',
     'constants'
-], function (Backbone, _, $, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate, keyValidator, helpers, CONSTANTS) {
+], function (Backbone, _, $, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductItemsEditListProforma, ProductCollection, populate, keyValidator, helpers, CONSTANTS) {
     'use strict';
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
@@ -262,6 +263,7 @@ define([
             var thisEl = this.$el;
             var products;
             var currency;
+            var productTemplate = this.forSales ? ProductItemsEditList : ProductItemsEditListProforma;
 
             if (options && options.model) {
                 products = options.model.products;
@@ -276,7 +278,7 @@ define([
 
                 if (products) {
                     productsContainer = thisEl.find('#productList');
-                    productsContainer.prepend(_.template(ProductItemsEditList, {
+                    productsContainer.prepend(_.template(productTemplate, {
                         products        : products,
                         forSales        : self.forSales,
                         isPaid          : self.isPaid,

@@ -934,6 +934,8 @@ var Module = function (models, event) {
         var keysLength;
         var i;
         var filterMapper = new FilterMapper();
+        var aggregation;
+        var forPurchase = false;
 
         if (contentType === 'salesProforma') {
             moduleId = 99;
@@ -949,8 +951,11 @@ var Module = function (models, event) {
             moduleId = 64;
         }
 
-        if (contentType === 'salesProforma' || contentType === 'proforma') {
+        if (contentType === 'salesProforma') {
             Invoice = models.get(db, 'Proforma', ProformaSchema);
+        } else if (contentType === 'proforma') {
+            Invoice = models.get(db, 'Proforma', ProformaSchema);
+            forPurchase = true;
         } else if (contentType === 'ExpensesInvoice') {
             Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
         } else if (contentType === 'DividendInvoice') {
@@ -1049,172 +1054,312 @@ var Module = function (models, event) {
                 optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
             }
 
+            if (forPurchase) {
+                aggregation = [
+                    {
+                        $lookup: {
+                            from        : 'projectMembers',
+                            localField  : 'project',
+                            foreignField: 'projectId',
+                            as          : 'projectMembers'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'journals',
+                            localField  : 'journal',
+                            foreignField: '_id',
+                            as          : 'journal'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflow'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'supplier',
+                            foreignField: '_id',
+                            as          : 'supplier'
+                        }
+                    }, {
+                        $project: {
+                            workflow       : {$arrayElemAt: ['$workflow', 0]},
+                            supplier       : {$arrayElemAt: ['$supplier', 0]},
+                            journal        : {$arrayElemAt: ['$journal', 0]},
+                            expense        : 1,
+                            forSales       : 1,
+                            currency       : 1,
+                            paymentInfo    : 1,
+                            invoiceDate    : 1,
+                            name           : 1,
+                            paymentDate    : 1,
+                            dueDate        : 1,
+                            approved       : 1,
+                            _type          : 1,
+                            removable      : 1,
+                            'editedBy.date': 1,
+                            paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                        }
+                    }, {
+                        $project: {
+                            salesManager     : '$supplier.salesPurchases.salesPerson',
+                            'workflow._id'   : 1,
+                            'workflow.name'  : 1,
+                            'workflow.status': 1,
+                            'supplier._id'   : '$supplier._id',
+                            'supplier.name'  : '$supplier.name',
+                            'journal.name'   : '$journal.name',
+                            'journal._id'    : '$journal._id',
+                            expense          : 1,
+                            forSales         : 1,
+                            currency         : 1,
+                            paymentInfo      : 1,
+                            invoiceDate      : 1,
+                            name             : 1,
+                            paymentDate      : 1,
+                            dueDate          : 1,
+                            payments         : 1,
+                            approved         : 1,
+                            _type            : 1,
+                            removable        : 1,
+                            editedBy         : 1,
+                            paid             : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesManager',
+                            foreignField: '_id',
+                            as          : 'salesManager'
+                        }
+                    }, {
+                        $project: {
+                            salesPerson: {$arrayElemAt: ['$salesManager', 0]},
+                            workflow   : 1,
+                            supplier   : 1,
+                            project    : 1,
+                            expense    : 1,
+                            forSales   : 1,
+                            currency   : 1,
+                            paymentInfo: 1,
+                            invoiceDate: 1,
+                            name       : 1,
+                            paymentDate: 1,
+                            dueDate    : 1,
+                            approved   : 1,
+                            _type      : 1,
+                            removable  : 1,
+                            journal    : 1,
+                            paid       : 1,
+                            editedBy   : 1
+                        }
+                    }, {
+                        $match: optionsObject
+                    }, {
+                        $group: {
+                            _id  : null,
+                            total: {$sum: 1},
+                            root : {$push: '$$ROOT'}
+                        }
+                    }, {
+                        $unwind: '$root'
+                    }, {
+                        $project: {
+                            _id               : '$root._id',
+                            'salesPerson.name': '$root.salesPerson.name',
+                            'salesPerson._id' : '$root.salesPerson._id',
+                            workflow          : '$root.workflow',
+                            supplier          : '$root.supplier',
+                            project           : '$root.project',
+                            expense           : '$root.expense',
+                            currency          : '$root.currency',
+                            journal           : '$root.journal',
+                            paymentInfo       : '$root.paymentInfo',
+                            invoiceDate       : '$root.invoiceDate',
+                            name              : '$root.name',
+                            paymentDate       : '$root.paymentDate',
+                            dueDate           : '$root.dueDate',
+                            approved          : '$root.approved',
+                            removable         : '$root.removable',
+                            paid              : '$root.paid',
+                            editedBy          : '$root.editedBy',
+                            total             : 1
+                        }
+                    }
+                ];
+            } else {
+                aggregation = [
+                    {
+                        $lookup: {
+                            from        : 'projectMembers',
+                            localField  : 'project',
+                            foreignField: 'projectId',
+                            as          : 'projectMembers'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'supplier',
+                            foreignField: '_id',
+                            as          : 'supplier'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'journals',
+                            localField  : 'journal',
+                            foreignField: '_id',
+                            as          : 'journal'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflow'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Project',
+                            localField  : 'project',
+                            foreignField: '_id',
+                            as          : 'project'
+                        }
+                    }, {
+                        $project: {
+                            workflow: {$arrayElemAt: ['$workflow', 0]},
+                            supplier: {$arrayElemAt: ['$supplier', 0]},
+                            project : {$arrayElemAt: ['$project', 0]},
+                            journal : {$arrayElemAt: ['$journal', 0]},
+
+                            salesManagers: {
+                                $filter: {
+                                    input: '$projectMembers',
+                                    as   : 'projectMember',
+                                    cond : salesManagerMatch
+                                }
+                            },
+
+                            expense        : 1,
+                            forSales       : 1,
+                            currency       : 1,
+                            paymentInfo    : 1,
+                            invoiceDate    : 1,
+                            name           : 1,
+                            paymentDate    : 1,
+                            dueDate        : 1,
+                            approved       : 1,
+                            _type          : 1,
+                            removable      : 1,
+                            'editedBy.date': 1,
+                            paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                        }
+                    }, {
+                        $project: {
+                            salesManagers    : {$arrayElemAt: ['$salesManagers', 0]},
+                            'workflow._id'   : 1,
+                            'workflow.name'  : 1,
+                            'workflow.status': 1,
+                            'supplier._id'   : '$supplier._id',
+                            'supplier.name'  : '$supplier.name',
+                            'project._id'    : '$project._id',
+                            'project.name'   : '$project.name',
+                            'journal.name'   : '$journal.name',
+                            'journal._id'    : '$journal._id',
+                            expense          : 1,
+                            forSales         : 1,
+                            currency         : 1,
+                            paymentInfo      : 1,
+                            invoiceDate      : 1,
+                            name             : 1,
+                            paymentDate      : 1,
+                            dueDate          : 1,
+                            payments         : 1,
+                            approved         : 1,
+                            _type            : 1,
+                            removable        : 1,
+                            editedBy         : 1,
+                            paid             : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesManagers.employeeId',
+                            foreignField: '_id',
+                            as          : 'salesManagers'
+                        }
+                    }, {
+                        $project: {
+                            salesPerson: {$arrayElemAt: ['$salesManagers', 0]},
+                            workflow   : 1,
+                            supplier   : 1,
+                            project    : 1,
+                            expense    : 1,
+                            forSales   : 1,
+                            currency   : 1,
+                            paymentInfo: 1,
+                            invoiceDate: 1,
+                            name       : 1,
+                            paymentDate: 1,
+                            dueDate    : 1,
+                            approved   : 1,
+                            _type      : 1,
+                            removable  : 1,
+                            journal    : 1,
+                            paid       : 1,
+                            editedBy   : 1
+                        }
+                    }, {
+                        $match: optionsObject
+                    }, {
+                        $group: {
+                            _id  : null,
+                            total: {$sum: 1},
+                            root : {$push: '$$ROOT'}
+                        }
+                    }, {
+                        $unwind: '$root'
+                    }, {
+                        $project: {
+                            _id               : '$root._id',
+                            'salesPerson.name': '$root.salesPerson.name',
+                            'salesPerson._id' : '$root.salesPerson._id',
+                            workflow          : '$root.workflow',
+                            supplier          : '$root.supplier',
+                            project           : '$root.project',
+                            expense           : '$root.expense',
+                            currency          : '$root.currency',
+                            journal           : '$root.journal',
+                            paymentInfo       : '$root.paymentInfo',
+                            invoiceDate       : '$root.invoiceDate',
+                            name              : '$root.name',
+                            paymentDate       : '$root.paymentDate',
+                            dueDate           : '$root.dueDate',
+                            approved          : '$root.approved',
+                            removable         : '$root.removable',
+                            paid              : '$root.paid',
+                            editedBy          : '$root.editedBy',
+                            total             : 1
+                        }
+                    }
+                ];
+            }
+
+            aggregation.push({
+                $sort: sort
+            }, {
+                $skip: skip
+            }, {
+                $limit: limit
+            });
+
             Invoice
-                .aggregate([{
-                    $lookup: {
-                        from        : 'projectMembers',
-                        localField  : 'project',
-                        foreignField: 'projectId',
-                        as          : 'projectMembers'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Customers',
-                        localField  : 'supplier',
-                        foreignField: '_id',
-                        as          : 'supplier'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'journals',
-                        localField  : 'journal',
-                        foreignField: '_id',
-                        as          : 'journal'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'workflows',
-                        localField  : 'workflow',
-                        foreignField: '_id',
-                        as          : 'workflow'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Project',
-                        localField  : 'project',
-                        foreignField: '_id',
-                        as          : 'project'
-                    }
-                }, {
-                    $project: {
-                        workflow: {$arrayElemAt: ['$workflow', 0]},
-                        supplier: {$arrayElemAt: ['$supplier', 0]},
-                        project : {$arrayElemAt: ['$project', 0]},
-                        journal : {$arrayElemAt: ['$journal', 0]},
-
-                        salesManagers: {
-                            $filter: {
-                                input: '$projectMembers',
-                                as   : 'projectMember',
-                                cond : salesManagerMatch
-                            }
-                        },
-
-                        expense        : 1,
-                        forSales       : 1,
-                        currency       : 1,
-                        paymentInfo    : 1,
-                        invoiceDate    : 1,
-                        name           : 1,
-                        paymentDate    : 1,
-                        dueDate        : 1,
-                        approved       : 1,
-                        _type          : 1,
-                        removable      : 1,
-                        'editedBy.date': 1,
-                        paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
-                    }
-                }, {
-                    $project: {
-                        salesManagers    : {$arrayElemAt: ['$salesManagers', 0]},
-                        'workflow._id'   : 1,
-                        'workflow.name'  : 1,
-                        'workflow.status': 1,
-                        'supplier._id'   : '$supplier._id',
-                        'supplier.name'  : '$supplier.name',
-                        'project._id'    : '$project._id',
-                        'project.name'   : '$project.name',
-                        'journal.name'   : '$journal.name',
-                        'journal._id'    : '$journal._id',
-                        expense          : 1,
-                        forSales         : 1,
-                        currency         : 1,
-                        paymentInfo      : 1,
-                        invoiceDate      : 1,
-                        name             : 1,
-                        paymentDate      : 1,
-                        dueDate          : 1,
-                        payments         : 1,
-                        approved         : 1,
-                        _type            : 1,
-                        removable        : 1,
-                        editedBy         : 1,
-                        paid             : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : 'salesManagers.employeeId',
-                        foreignField: '_id',
-                        as          : 'salesManagers'
-                    }
-                }, {
-                    $project: {
-                        salesPerson: {$arrayElemAt: ['$salesManagers', 0]},
-                        workflow   : 1,
-                        supplier   : 1,
-                        project    : 1,
-                        expense    : 1,
-                        forSales   : 1,
-                        currency   : 1,
-                        paymentInfo: 1,
-                        invoiceDate: 1,
-                        name       : 1,
-                        paymentDate: 1,
-                        dueDate    : 1,
-                        approved   : 1,
-                        _type      : 1,
-                        removable  : 1,
-                        journal    : 1,
-                        paid       : 1,
-                        editedBy   : 1
-                    }
-                }, {
-                    $match: optionsObject
-                }, {
-                    $group: {
-                        _id  : null,
-                        total: {$sum: 1},
-                        root : {$push: '$$ROOT'}
-                    }
-                }, {
-                    $unwind: '$root'
-                }, {
-                    $project: {
-                        _id               : '$root._id',
-                        'salesPerson.name': '$root.salesPerson.name',
-                        'salesPerson._id' : '$root.salesPerson._id',
-                        workflow          : '$root.workflow',
-                        supplier          : '$root.supplier',
-                        project           : '$root.project',
-                        expense           : '$root.expense',
-                        // forSales          : '$root.forSales',
-                        currency          : '$root.currency',
-                        journal           : '$root.journal',
-                        paymentInfo       : '$root.paymentInfo',
-                        invoiceDate       : '$root.invoiceDate',
-                        name              : '$root.name',
-                        paymentDate       : '$root.paymentDate',
-                        dueDate           : '$root.dueDate',
-                        approved          : '$root.approved',
-                        // _type             : '$root._type',
-                        removable         : '$root.removable',
-                        paid              : '$root.paid',
-                        editedBy          : '$root.editedBy',
-                        total             : 1
-                    }
-                }, {
-                    $sort: sort
-                }, {
-                    $skip: skip
-                }, {
-                    $limit: limit
-                }
-                ], function (err, result) {
+                .aggregate(aggregation, function (err, result) {
                     waterfallCallback(null, result);
                 });
-        }
-        ;
+        };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
@@ -1322,10 +1467,7 @@ var Module = function (models, event) {
         contentSearcher = function (invoicesIds, waterfallCallback) {
             var query;
 
-            optionsObject = {
-                _id     : id,
-                forSales: forSales
-            };
+            optionsObject = {_id: id};
 
             query = Invoice.findOne(optionsObject);
             query
