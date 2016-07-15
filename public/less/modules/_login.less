@@ -535,7 +535,7 @@ input {
 
     &.passed {
       background-image: linear-gradient(to top, #158b0c,#18a815);
-      
+
       span {
         color: #fff;
       }
@@ -571,7 +571,7 @@ input {
           position: relative;
           padding-left: 20px;
 
-          > * {
+          #editSpan {
             position: absolute;
             left: 0;
             top: 0;
@@ -636,8 +636,19 @@ input {
 
   .noteText {
     padding: 10px!important;
+    margin: 0!important;
     border: none;
     border-top: @thin-border @border-color-main;
+
+    &:hover,
+    &:active,
+    &:focus {
+      outline: 0;
+    }
+
+    &.active {
+      padding: 0;
+    }
   }
 }
 
@@ -666,5 +677,18 @@ input {
     .noteBtnBlock {
       height: 34px;
     }
+  }
+}
+
+.addTask {
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  .buttons {
+    margin-top: 10px;
   }
 }

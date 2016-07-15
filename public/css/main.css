@@ -2946,7 +2946,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   position: relative;
   padding-left: 20px;
 }
-.form-holder .form .dealTitle h3.editable > * {
+.form-holder .form .dealTitle h3.editable #editSpan {
   position: absolute;
   left: 0;
   top: 0;
@@ -2998,8 +2998,17 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .editedNote .noteText {
   padding: 10px!important;
+  margin: 0!important;
   border: none;
   border-top: 1px solid #7f7f80;
+}
+.editedNote .noteText:hover,
+.editedNote .noteText:active,
+.editedNote .noteText:focus {
+  outline: 0;
+}
+.editedNote .noteText.active {
+  padding: 0;
 }
 .noteTitle {
   margin-top: 10px;
@@ -3019,6 +3028,14 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .contentHolder.showButtons .noteBtnBlock {
   height: 34px;
+}
+.addTask:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.addTask .buttons {
+  margin-top: 10px;
 }
 .collapsed .side_menu {
   width: 40px !important;
@@ -6288,6 +6305,9 @@ dl dd span.ui-spinner {
   display: block;
   line-height: 30px;
 }
+.noteWrapper .editedNote.active {
+  padding: 0;
+}
 .noteWrapper #noteBody .noteContainer {
   margin: 10px 0;
 }
@@ -9362,6 +9382,9 @@ ul.dialog-tabs li.right button {
 .form-holder form input:not([type=checkbox]):focus {
   outline: medium none;
   border: 1px solid #3e88b9;
+}
+.form-holder form input:not([type=checkbox])#editInput {
+  padding: 2px 6px;
 }
 .form-holder form .canReadAndWrite {
   line-height: 22px;
