@@ -119,7 +119,7 @@ define([
             this.$el.find('#editSpan').remove();
             this.text = parent.text();
             parent.text('');
-            parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
+            parent.append('<input id="editInput" maxlength="32" type="text" class="left"/>');
             this.$el.find('#editInput').val(this.text);
             parent.append('<span id="saveSpan"><a href="#">c</a></span>');
             parent.append('<span id="cancelSpan"><a href="#">x</a></span>');
@@ -193,12 +193,12 @@ define([
         },
 
         saveDeal : function (changedAttrs){
+            var self = this;
             this.formModel.save(changedAttrs, {
                 patch  : true,
-                success: function (model) {
-
+                success : function (){
+                    self.noteView.renderTimeline();
                 },
-
                 error: function (model, response) {
                     if (response) {
                         App.render({

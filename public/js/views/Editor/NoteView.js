@@ -28,8 +28,8 @@ define([
             'click #noteArea'   : 'expandNote',
             'click .cancelNote'   : 'cancelNote',
             'click #addNote, .saveNote'      : 'saveNote',
-            'click .noteContainer': 'showButtons',
-            'click #addTask' : 'saveTask',
+            'click .contentHolder': 'showButtons',
+            'click #addTask'      : 'saveTask',
             'click .addTitle'     : 'showTitle',
             'click .editDelNote'  : 'editDelNote',
             'click .fa-paperclip' : 'clickInput',
@@ -106,9 +106,8 @@ define([
                     wait   : true,
                     success: function (model, res) {
                         self.model.fetch({success : function(){
-                            var notes = self.model.get('notes');
                             self.$el.find('#taskArea').val('');
-                            self.$el.find('#timeline').html(self.timeLineTemplate({notes : notes}));
+                            self.renderTimeline();
                         }});
                     },
 
@@ -124,7 +123,7 @@ define([
             var self = this;
             var notes = formModel.get('notes');
             notes = notes.filter(function(elem){
-                return !elem.task;
+                return !elem.task && !elem.history;
             });
             notes.push(optionsObj);
             formModel.save({notes: notes}, {
@@ -287,7 +286,7 @@ define([
             var self = this;
             var $target = $(e.target);
             var $noteArea = $target.parents('.addNote').find('#noteArea');
-            var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');
+           /* var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');*/
             var $noteContainer =  $target.closest('.noteContainer');
             var targetId = $noteContainer.attr('id');
             var $thisEl = this.$el;
@@ -297,7 +296,7 @@ define([
             var notes;
             var editNotes;
 
-            if ($noteArea.val().replace(/ /g, '') || $noteTitleArea.val().replace(/ /g, '')) {
+            if ($noteArea.val().replace(/ /g, '') /*|| $noteTitleArea.val().replace(/ /g, '')*/) {
                 $noteArea.attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
                 $thisEl.find('.title-wrapper').hide();
                 $thisEl.find('.addTitle').hide();
@@ -307,20 +306,20 @@ define([
 
             e.preventDefault();
             val = $.trim($noteArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
-            title = $.trim($noteTitleArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
+          /*  title = $.trim($noteTitleArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');*/
 
-            if (!val && !title) { // textarrea notes not be empty
+            if (!val /*&& !title*/) { // textarrea notes not be empty
                return App.render({
                     type   : 'error',
                     message: 'Note can not be empty'
                 });
             }
-            if (val.replace(/ /g, '') || title.replace(/ /g, '')) {
+            if (val.replace(/ /g, '') /*|| title.replace(/ /g, '')*/) {
                 if (targetId) {
                     formModel = this.model;
                     notes = formModel.get('notes');
                     notes = notes.filter(function (elem) {
-                        return !elem.task;
+                        return !elem.task && !elem.history;
                     });
                     editNotes = _.map(notes, function (note) {
                         if (note._id === targetId) {
@@ -337,7 +336,8 @@ define([
                             patch  : true,
                             success: function () {
                                 var $contentHolder = $noteContainer.find('.contentHolder');
-                                $contentHolder.find('.noteTitle').text(title);
+                                $contentHolder.removeClass('showButtons');
+                               /* $contentHolder.find('.noteTitle').text(title);*/
                                 $contentHolder.find('.noteText').text(val);
                                 $contentHolder.show();
                                 $target.closest('.addNote').remove();
@@ -345,8 +345,7 @@ define([
                         });
                 } else {
                     self.saveNewNote({
-                        note : val,
-                        title : title
+                        note : val
                     });
                 }
             } else {
@@ -356,13 +355,18 @@ define([
         },
 
         showTitle: function (e) {
+
             $(e.target).hide().parents('.addNote').find('.title-wrapper').show().find('input').focus();
+        },
+
+        renderTimeline : function (){
+            var notes = this.model.get('notes');
+            this.$el.find('#timeline').html(_.template(timelineTemplate, {notes : notes}));
         },
 
         render: function () {
             var modelObj = this.model.toJSON();
             var date = moment().format("DD MMM, YYYY");
-            var notes = this.model.get('notes');
 
             modelObj.needNotes = this.needNotes;
             var assignedTo = modelObj.salesPerson;
@@ -375,7 +379,7 @@ define([
                 changeYear : true
             });
 
-            this.$el.find('#timeline').html(_.template(timelineTemplate, {notes : notes}));
+            this.renderTimeline();
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
 
             return this;

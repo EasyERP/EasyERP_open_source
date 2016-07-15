@@ -142,7 +142,7 @@ var History = function (models) {
         }
     };
 
-    this.getHistoryForTrackedObject = function (options, callback) {
+    this.getHistoryForTrackedObject = function (options, callback, forNote) {
         var id = options.id;
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
 
@@ -291,7 +291,10 @@ var History = function (models) {
                 async.parallel(parallel, function (errr, results) {
                     var responseArr = [].concat.apply([], results);
                     responseArr = _.sortBy(responseArr, 'date');
-                    responseArr = _.groupBy(responseArr, 'date');
+
+                    if (!forNote){
+                        responseArr = _.groupBy(responseArr, 'date');
+                    }
                     callback(errr, responseArr);
                 });
             } else {

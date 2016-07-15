@@ -2,8 +2,8 @@
     <% notes = notes || [];%>
     <% notes.reverse();%>
     <%_.each(notes, function(val,key){ %>
-    <div id="<%=val._id%>" class="noteContainer">
-        <div class="contentHolder">
+    <div id="<%=val._id%>" class="noteContainer ">
+        <div class="<%=val.history ? '' : 'contentHolder'%>">
             <div class="noteBody">
                 <%if (val.task){%>
                 <div class="noteType task" id="<%= val.task._id%>">
@@ -12,6 +12,20 @@
                     <div><a href="javascript:;" ><%=val.task.description  %></a></div>
                 </div>
                 <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
+                <%} else if (val.history) {%>
+                <div class="history_body">
+                    <div class="history_changed">
+                        <span class="dateNote"><%=val.date%></span>
+                        <div class="changed_field">
+                            <span class="changedFieldName"><%= val.history.changedField %></span>
+                            <%if (val.history.prevValue){%>
+                            <span><%= val.history.prevValue %></span>
+                            <span> -> </span>
+                            <%}%>
+                            <span><%= val.history.newValue || '' %></span>
+                        </div>
+                    </div>
+                </div>
                 <%} else {%>
                 <div>
                     <span class="noteType">Created Note</span>
