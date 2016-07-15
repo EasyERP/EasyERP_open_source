@@ -1,6 +1,6 @@
 <% orderCollection.forEach(function(quotation, index){ %>
 <tr data-id="<%=quotation._id%>"
-<%if (quotation.workflow && quotation.workflow.status !== 'New') { %>
+<%if (quotation.workflow && quotation.workflow.status === 'Done') { %>
 class="notEditable"
 <% } %>>
 <td class="notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox"/></td>
