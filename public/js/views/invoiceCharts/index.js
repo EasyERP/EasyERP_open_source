@@ -203,7 +203,7 @@ define([
 
                     tooltip.transition()
                         .duration(300)
-                        .style('background', '#f9c2c2')
+                        .style('border-color', '#f9c2c2')
                         .style('width',  (x.rangeBand()*2) + 'px')
                         .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
                         .style('top', (y(d.invoiced) - 40) + 'px')
@@ -251,8 +251,8 @@ define([
 
                     tooltip
                         .transition()
-                        .duration(100)
-                        .style('background', '#b6e7f3')
+                        .duration(300)
+                        .style('border-color', '#b6e7f3')
                         .style('width',  (x.rangeBand()*2) + 'px')
                         .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
                         .style('top', (y(d.paid) - 40) + 'px')
