@@ -292,7 +292,7 @@ define([
 
             var total = helpers.spaceReplacer($thisEl.find('#totalAmount').text());
             var unTaxed = helpers.spaceReplacer($thisEl.find('#totalUntaxes').text());
-            var balance = helpers.spaceReplacer($thisEl.find('#balance').text());
+            var balance = helpers.spaceReplacer($thisEl.find('#balance').text()) || total;
             var taxes = helpers.spaceReplacer($thisEl.find('#taxes').text());
 
             var paymentTermId = $thisEl.find('#payment_terms').attr('data-id') || null;
