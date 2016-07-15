@@ -162,14 +162,12 @@ define([
             var journal = this.$el.find('#journal').attr('data-id') || null;
             var date = helpers.setTimeToDate(new Date(this.$el.find('#dateOfPayment').val()));
 
-            for (i = editCollectionJSON.length - 1; i >= 0; i--) {
-                editCollectionJSON[i].date = date;
-                editCollectionJSON[i].currency = currency;
-                editCollectionJSON[i].paymentMethod = paymentMethod;
-                editCollectionJSON[i].journal = journal;
-            }
-
-            this.editCollection.reset(editCollectionJSON);
+            this.editCollection.forEach(function(el){
+                el.set('date', date);
+                el.set('currency', currency);
+                el.set('paymentMethod', paymentMethod);
+                el.set('journal', journal);
+            });
 
             this.setChangedValueToModel();
 
