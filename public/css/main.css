@@ -2985,7 +2985,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .noteBtnBlock .btn:hover {
   text-decoration: none;
 }
-.noteContainer.showButtons .noteBtnBlock {
+.contentHolder.showButtons .noteBtnBlock {
   height: 34px;
 }
 .collapsed .side_menu {
