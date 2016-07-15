@@ -35,10 +35,6 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
-            name: {
-                name : 'Name',
-                isRef: false
-            },
             salesPerson: {
                 name      : 'Assigned To',
                 isRef     : true,
