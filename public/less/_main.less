@@ -2130,6 +2130,9 @@ input::-ms-clear {
       outline: medium none;
       border: @thin-border @border-color-selected;
     }
+    &#editInput {
+      padding: 2px 6px;
+    }
   }
 
   .canReadAndWrite {
@@ -2832,6 +2835,12 @@ dl {
         line-height: 30px;
       }
 
+    }
+  }
+
+  .editedNote {
+    &.active {
+      padding: 0;
     }
   }
 
