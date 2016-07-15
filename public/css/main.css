@@ -2975,7 +2975,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .topbarHolder .topbarLogo {
   float: left;
   display: block;
-  width: 235px;
+  width: 200px;
   height: 40px;
   padding-left: 39px;
   padding-right: 20px;
@@ -4506,9 +4506,6 @@ input::-ms-clear {
   line-height: 18px;
   clear: left;
   color: #000000;
-}
-.kanban tr:last-child {
-  border-right: 10px solid #d9d9d9;
 }
 .kanban .column {
   min-height: 100%;
