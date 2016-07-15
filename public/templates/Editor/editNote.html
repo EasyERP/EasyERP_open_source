@@ -1,17 +1,17 @@
 <div class="addNote">
 <div class="noteType">Created Note</div>
-<div class="noteTitle" id="noteTitleArea"><input value="<%=title%>"/></div>
-<textarea class="noteText" id="noteArea"><%=note%></textarea>
+<div class="noteTitle" id="noteTitleArea"><input value="<%=note.title%>"/></div>
+<textarea class="noteText" id="noteArea"><%=note.note%></textarea>
 <div>
-    </a><span class="dateNote"><%=date%></span>
+    </a><span class="dateNote"><%=note.date%></span>
 
     <div>
           <span>
-            <a href="javascript:;" id="save_<%=_id%>" data-id="<%=_id%>" class="editDelNote saveNote">Save</a>
+            <a href="javascript:;" data-id="<%=note._id%>" class="saveNote">Save</a>
           </span>
         <span class="sep">|</span>
           <span>
-            <a href="javascript:;" id="cancel_<%=_id%>" data-id="<%=_id%>" class="editDelNote cancelNote">Cancel</a>
+            <a href="javascript:;" data-id="<%=note._id%>" class="cancelNote">Cancel</a>
           </span>
     </div>
 </div>

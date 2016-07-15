@@ -163,7 +163,7 @@ define([
         editNote : function (currentNote){
             var holder = this.$el.find('#' + currentNote._id);
             holder.find('.contentHolder').hide();
-            holder.append(_.template(editNote, currentNote));
+            holder.append(_.template(editNote, {note: currentNote}));
         },
 
         chooseOption: function (e) {
@@ -174,11 +174,10 @@ define([
         },
 
         editDelNote: function (e) {
-            var id = e.target.id;
-            var k = id.indexOf('_');
-            var $thisEl = this.$el;
-            var type = id.substr(0, k);
-            var idInt = id.substr(k + 1);
+            var $target = $(e.target);
+
+            var type = $target.attr('data-type');
+            var idInt = $target.closest('.noteContainer').attr('id');
             var currentModel = this.model;
             var notes = currentModel.get('notes');
             var newNotes;
