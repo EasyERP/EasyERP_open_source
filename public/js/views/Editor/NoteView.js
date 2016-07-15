@@ -25,12 +25,10 @@ define([
         },
 
         events: {
-            'click #noteArea'     : 'expandNote',
             'click .cancelNote'   : 'cancelNote',
             'click #addNote, .saveNote'      : 'saveNote',
             'click .noteContainer': 'showButtons',
             'click #addTask' : 'saveTask',
-
             'click .addTitle'     : 'showTitle',
             'click .editDelNote'  : 'editDelNote',
             'click .fa-paperclip' : 'clickInput',
@@ -247,13 +245,6 @@ define([
             dialogHolder = $('.dialog-tabs-items');
             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
             dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        expandNote: function (e) {
-            if (!$(e.target).parents('.addNote').hasClass('active')) {
-                $(e.target).attr('placeholder', '').parents('.addNote').addClass('active');
-                this.$el.find('.addTitle').show();
-            }
         },
 
         cancelNote: function (e) {
