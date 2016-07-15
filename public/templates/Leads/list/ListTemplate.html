@@ -1,34 +1,25 @@
-<tr class="innerRow">
-    <td colspan="11">
-        <div class="scrollable">
-            <table>
+<% leadsCollection.forEach(function(lead, index){ %>
+<tr data-id="<%=lead._id%>" class="stage-<%=(lead.workflow) ? lead.workflow.status.toLowerCase() : ''%>">
+    <td class="notForm centerCell"><input type="checkbox" value="<%=lead._id%>" class="checkbox listCB"/></td>
+    <td class="centerCell"><%=startNumber + index + 1%></td>
+    <td><span class="blue"><%=lead.name%></span></td>
+    <td><%= lead.contactName || ''%></td>
+    <!--    <td><%=lead.email%></td>-->
+    <td class="notForm"><a href="skype:<%=lead.skype%>?call"><%=lead.skype%></a></td>
+    <td><%=lead.social.LI%></td>
+    <td><%=lead.address.country%></td>
+    <td><%=lead.source%></td>
 
-                <% leadsCollection.forEach(function(lead, index){ %>
-                <tr data-id="<%=lead._id%>" class="stage-<%=(lead.workflow) ? lead.workflow.status.toLowerCase() : ''%>">
-                    <td class="notForm centerCell"><input type="checkbox" value="<%=lead._id%>" class="checkbox listCB"/></td>
-                    <td class="centerCell"><%=startNumber + index + 1%></td>
-                    <td><span class="blue"><%=lead.name%></span></td>
-                    <td><%= lead.contactName || ''%></td>
-                    <!--    <td><%=lead.email%></td>-->
-                    <td class="notForm"><a href="skype:<%=lead.skype%>?call"><%=lead.skype%></a></td>
-                    <td><%=lead.social.LI%></td>
-                    <td><%=lead.address.country%></td>
-                    <td><%=lead.source%></td>
-
-                    <td id='<%=lead._id%>' class="centerCell <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">
-                        <a href="javascript:;" class="stageSelect blue"><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></a>
-                    </td>
-                    <td><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></td>
-                    <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user +
-                        ')'):(lead.createdBy.date?lead.createdBy.date:'')%>
-                    </td>
-                    <!--    <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' +
-                            lead.editedBy.user + ')') : '')):''%>
-                        </td>-->
-
-                </tr>
-                <% }) %>
-            </table>
-        </div>
+    <td id='<%=lead._id%>' class="centerCell <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">
+        <a href="javascript:;" class="stageSelect blue"><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></a>
     </td>
+    <td><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></td>
+    <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user +
+        ')'):(lead.createdBy.date?lead.createdBy.date:'')%>
+    </td>
+    <!--    <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' +
+            lead.editedBy.user + ')') : '')):''%>
+        </td>-->
+
 </tr>
+<% }) %>

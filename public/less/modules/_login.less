@@ -434,9 +434,12 @@ input {
 
 @media (max-width: 992px) {
   .sliderWrap,
-  .sliderContainer,
   .loginContent {
     height: 50%;
+  }
+  .loginWrapper,
+  .sliderContainer {
+    height: 100%;
   }
 }
 
@@ -484,7 +487,7 @@ input {
 }
 
 //iphone6
-@media only screen and (max-device-width : 667px) {
+@media (max-width : 667px) {
   .sliderWrap {
     display: none;
   }
@@ -534,7 +537,7 @@ input {
   .topbarLogo {
     float: left;
     display: block;
-    width: 235px;
+    width: 200px;
     height: 40px;
     padding-left: 39px;
     padding-right: 20px;
@@ -1082,37 +1085,140 @@ dl.payrollDateBlock {
   }
 }
 
-.tableFixedWrap {
-  height: 100%;
+//.tableFixedWrap {
+//  height: 100%;
+//
+//  .tableFixed {
+//    height: 100%;
+//  }
+//
+//  table.payRoll-list #payRoll-Table .scrollit {
+//    height: 100%;
+//  }
+//}
+//
+//.absoluteContent {
+//  position: absolute;
+//  height: 100%;
+//  width: 100%;
+//
+//  table {
+//    height: 100%;
+//
+//    th {
+//      border-bottom: 1px solid #d7d7d7;
+//    }
+//  }
+//
+//  .scrollable {
+//    max-height: 100%;
+//    width: 100%;
+//    height: 100%;
+//    overflow-x: hidden;
+//    overflow-y: auto;
+//  }
+//}
+//
+//.flexTableWrap {
+//  flex-grow: 1;
+//  position: relative;
+//}
+//
+.flexActionsWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: start;
+  -moz-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
 
-  .tableFixed {
-    height: 100%;
+  .actionsItem {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
   }
 
-  table.payRoll-list #payRoll-Table .scrollit {
-    height: 100%;
+  .choseDateRange {
+    -webkit-box-ordinal-group: 1;
+    -moz-box-ordinal-group: 1;
+    -ms-flex-order: 1;
+    -webkit-order: 1;
+    order: 1;
+  }
+
+  .legend-box {
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -ms-flex-pack: justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
   }
 }
+//
+//.innerRow {
+//  border-top: none !important;
+//
+//  table {
+//    tr {
+//      &:first-child {
+//        border-top: none;
+//        td {
+//          border-top: none;
+//        }
+//      }
+//      &:last-child {
+//        td {
+//          border-bottom: none;
+//        }
+//      }
+//    }
+//  }
+//}
+//
+//.colspanFix {
+//  padding: 0!important;
+//  border: none !important;
+//}
+//
+//table {
+//  width: 100%;
+//  table-layout: fixed;
+//}
 
-.absoluteContent {
-  position: absolute;
-  height: 100%;
-  width: 100%;
+.salesGraphWrap {
 
-  table {
-    height: 100%;
+  .treemap_sales {
+    > div {
+      &:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+    }
   }
+  .salesByCountryChart {
 
-  .scrollable {
-    max-height: 100%;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
   }
-}
+  .salesByCountryBarChart {
 
-.flexTableWrap {
-  flex-grow: 1;
-  position: relative;
+  }
 }
