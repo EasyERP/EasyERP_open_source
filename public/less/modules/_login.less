@@ -1247,57 +1247,38 @@ dl.payrollDateBlock {
   display: none;
   border: 2px solid;
   z-index: 11;
-
-  //&:before {
-  //  content: '';
-  //  position: absolute;
-  //  bottom: -11px;
-  //  left: 50%;
-  //  width: 0;
-  //  height: 0;
-  //  border-style: solid;
-  //  border-width: 11px 8px 0 8px;
-  //  border-color: #b6e7f3 transparent transparent transparent;
-  //  -webkit-transform: translateX(-50%);
-  //  -moz-transform: translateX(-50%);
-  //  -ms-transform: translateX(-50%);
-  //  -o-transform: translateX(-50%);
-  //  transform: translateX(-50%);
-  //  z-index: 1;
-  //}
-  //&:after {
-  //  content: '';
-  //  position: absolute;
-  //  bottom: -8px;
-  //  left: 50%;
-  //  width: 0;
-  //  height: 0;
-  //  border-style: solid;
-  //  border-width: 8px 6px 0 6px;
-  //  border-color: #fff transparent transparent transparent;
-  //  -webkit-transform: translateX(-50%);
-  //  -moz-transform: translateX(-50%);
-  //  -ms-transform: translateX(-50%);
-  //  -o-transform: translateX(-50%);
-  //  transform: translateX(-50%);
-  //  z-index: 2;
-  //}
-
   &:before {
     content: '';
     position: absolute;
     bottom: -11px;
     left: 50%;
-    width: 12px;
-    height: 12px;
+    width: 0;
+    height: 0;
     border-style: solid;
     border-width: 11px 8px 0 8px;
     border-color: #b6e7f3 transparent transparent transparent;
-    -webkit-transform: rotate(45%);
-    -moz-transform: rotate(45%);
-    -ms-transform: rotate(45%);
-    -o-transform: rotate(45%);
-    transform: rotate(45%);
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
     z-index: 1;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 6px 0 6px;
+    border-color: #fff transparent transparent transparent;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    z-index: 2;
   }
 }
