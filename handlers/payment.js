@@ -196,7 +196,7 @@ var Module = function (models, event) {
         }
 
         if (!forSale && !dividend && !expenses && !purchasePayments) {
-            optionsObject.$and.push({_type: {$nin: ['expensesInvoicePayment', 'dividendInvoicePayment']}});
+            optionsObject.$and.push({_type: {$nin: ['expensesInvoicePayment', 'dividendInvoicePayment', 'purchasePayments', 'ProformaPayment']}});
         }
 
         if (expenses) {
@@ -208,7 +208,7 @@ var Module = function (models, event) {
         }
 
         if (purchasePayments) {
-            optionsObject.$and.push({_type: 'purchasePayments'});
+            optionsObject.$and.push({_type: {$in: ['purchasePayments', 'ProformaPayment']}});
             aggregatePurchase = true;
         }
 
@@ -348,6 +348,8 @@ var Module = function (models, event) {
                             as          : 'invoice.workflow'
                         }
                     }, {
+                        $match: optionsObject
+                    }, {
                         $project: {
                             'supplier.name'     : '$supplier.name',
                             'supplier._id'      : '$supplier._id',
@@ -406,22 +408,8 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            'assigned.name': {
-                                $cond: {
-                                    if  : {ifNull: ['salesmanager', true]},
-                                    then: null,
-                                    else: '$salesmanager.name'
-                                }
-                            },
-
-                            'assigned._id': {
-                                $cond: {
-                                    if  : {ifNull: ['salesmanager', true]},
-                                    then: null,
-                                    else: '$salesmanager._id'
-                                }
-                            },
-
+                            'assigned.name'   : '$salesmanager.name',
+                            'assigned._id'    : '$salesmanager._id',
                             supplier          : 1,
                             'currency.name'   : 1,
                             'currency._id'    : 1,
