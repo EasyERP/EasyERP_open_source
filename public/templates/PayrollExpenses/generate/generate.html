@@ -1,8 +1,16 @@
-<div class="payRoll-expenses">
-    <label class="payRoll-name" for="month">Month</label><input type="text" id="month" class="edit payRoll-edit"
-                                                                value="<%=month%>"/>
-
+<div class="form-holder">
     <div class="clearfix"></div>
-    <label class="payRoll-name" for="year">Year</label><input type="text" id="year" class="edit payRoll-edit"
-                                                              value="<%=year%>"/>
+    <h3 class="borderBottom">Process Payroll</h3>
+    <div class="clearfix"></div>
+
+    <div class="payRoll-expenses">
+        <dl>
+            <dt><label class="payRoll-name" for="month">Month</label></dt>
+            <dd><a id="month" class="current-selected" data-id="<%=month%>"><%=month%></a></dd>
+
+            <dt><label class="payRoll-name" for="year">Year</label></dt>
+            <dd><a id="year" class="current-selected" data-id="<%=year%>"><%=year%></a>
+            </dd>
+        </dl>
+    </div>
 </div>

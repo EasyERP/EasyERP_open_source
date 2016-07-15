@@ -199,6 +199,7 @@ define([
             var payBtnHtml;
             var $currencyDd;
             var invoiceDate;
+            var redirectUrl;
 
             e.preventDefault();
 
@@ -238,6 +239,11 @@ define([
                             self.$el.find('a.deleteAttach').remove();
 
                             App.stopPreload();
+
+                            redirectUrl = window.location.hash;
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
 
                         } else {
                             App.render({
