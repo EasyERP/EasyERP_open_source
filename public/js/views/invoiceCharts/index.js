@@ -215,37 +215,75 @@ define([
                     'stroke-width': 2
                 })
                 .transition()
-                .duration(2500)
+                .duration(1500)
                 .attr({
                     'y'     : function (datum) {
-                        return y(1.3*datum.paid);
+                        return y(1.2*datum.paid);
                     },
                     'height': function (datum) {
-                        return height - y(1.3*datum.paid);
+                        return height - y(1.2*datum.paid);
                     }
                 })
                 .transition()
                 .duration(1000)
-                .delay(2500)
+                .delay(1500)
                 .attr({
                     'y'     : function (datum) {
-                        if(y(0.9*datum.paid)>0){
-                            return y(0.9*datum.paid);
+                        if(y(0.7*datum.paid)>0){
+                            return y(0.7*datum.paid);
                         }else{
                             return y(datum.paid);
                         }
                     },
                     'height': function (datum) {
-                        if(height - y(0.9*datum.paid)>0){
-                            return height - y(0.9*datum.paid);
+                        if(height - y(0.7*datum.paid)>0){
+                            return height - y(0.7*datum.paid);
                         }else{
                             return height - y(datum.paid);
                         }
                     }
                 })
                 .transition()
+                .delay(2500)
                 .duration(1000)
+                .attr({
+                    'y'     : function (datum) {
+                        if(y(1.1*datum.paid)>0){
+                            return y(1.1*datum.paid);
+                        }else{
+                            return y(datum.paid);
+                        }
+                    },
+                    'height': function (datum) {
+                        if(height - y(1.1*datum.paid)>0){
+                            return height - y(1.1*datum.paid);
+                        }else{
+                            return height - y(datum.paid);
+                        }
+                    }
+                })
+                .transition()
                 .delay(3500)
+                .duration(1000)
+                .attr({
+                    'y'     : function (datum) {
+                        if(y(0.95*datum.paid)>0){
+                            return y(0.95*datum.paid);
+                        }else{
+                            return y(datum.paid);
+                        }
+                    },
+                    'height': function (datum) {
+                        if(height - y(0.95*datum.paid)>0){
+                            return height - y(0.95*datum.paid);
+                        }else{
+                            return height - y(datum.paid);
+                        }
+                    }
+                })
+                .transition()
+                .duration(500)
+                .delay(4500)
                 .attr({
                     'y'     : function (datum) {
                         return y(datum.paid);
