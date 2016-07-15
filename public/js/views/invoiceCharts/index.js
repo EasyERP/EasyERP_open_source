@@ -111,6 +111,9 @@ define([
             var y = d3.scale.linear().range([height, margin.bottom]);
             var now = new Date();
             var max = data.length;
+            var totalLength;
+            var path;
+
             var xAxis;
             var yAxis;
             var line;
@@ -173,7 +176,7 @@ define([
                 });*/
 
 
-            var path = topChart.append('path')
+            path = topChart.append('path')
                 .datum(data)
                 .attr({
                     'd': line,
@@ -183,13 +186,13 @@ define([
                     'opacity': 1
                 });
 
-            var totalLength = path.node().getTotalLength();
+            totalLength = path.node().getTotalLength();
 
             path
-                .attr('stroke-dasharray', totalLength + " " + totalLength)
+                .attr('stroke-dasharray', totalLength + ' '+ totalLength)
                 .attr('stroke-dashoffset', totalLength)
                 .transition()
-                .duration(5000)
+                .duration(4000)
                 .ease('linear')
                 .attr('stroke-dashoffset', 0);
 
@@ -212,7 +215,7 @@ define([
                     'stroke-width': 2
                 })
                 .transition()
-                .duration(1000)
+                .duration(2500)
                 .attr({
                     'y'     : function (datum) {
                         return y(1.3*datum.paid);
@@ -223,7 +226,7 @@ define([
                 })
                 .transition()
                 .duration(1000)
-                .delay(1000)
+                .delay(2500)
                 .attr({
                     'y'     : function (datum) {
                         if(y(0.9*datum.paid)>0){
@@ -242,7 +245,7 @@ define([
                 })
                 .transition()
                 .duration(1000)
-                .delay(2000)
+                .delay(3500)
                 .attr({
                     'y'     : function (datum) {
                         return y(datum.paid);
@@ -305,7 +308,7 @@ define([
 
                     tooltip.transition()
                         .duration(300)
-                        .style('border-color', '#f9c2c2')
+                        .style('border-color', '#ff6666')
                         .style('width',  (x.rangeBand()*2) + 'px')
                         .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
                         .style('top', (y(d.invoiced) - 40) + 'px')
