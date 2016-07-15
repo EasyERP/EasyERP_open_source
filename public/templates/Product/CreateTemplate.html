@@ -19,26 +19,34 @@
                             <div class="half-block left">
                                 <div class="product-info">
                                     <div class="inputField">
-                                        <input type="text" id="product" required maxlength="32"/>
-                                        <label for="product">Product Name</label>
+                                        <label for="product">
+                                            <input type="text" id="product" required maxlength="32"/>
+                                            <span>Product Name</span>
+                                        </label>
                                     </div>
                                     <div>
-                                        <input type="checkbox" id="sold" <% if (contentType === 'salesProduct') {%>
-                                        checked
-                                        <%}%> class="checkbox left"/>
-                                        <label for="sold">Can be Sold</label>
+                                        <label for="sold">
+                                            <input type="checkbox" id="sold" <% if (contentType === 'salesProduct') {%>
+                                            checked
+                                            <%}%> class="checkbox left"/>
+                                            <span>Can be Sold</span>
+                                        </label>
                                     </div>
                                     <div>
-                                        <input type="checkbox" id="expensed" class="checkbox left"/>
-                                        <label for="expensed">Can be Expensed</label>
+                                        <label for="expensed">
+                                            <input type="checkbox" id="expensed" class="checkbox left"/>
+                                            <span>Can be Expensed</span>
+                                        </label>
                                     </div>
                                     <!--
                                                         <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
                                     <div>
-                                        <input type="checkbox" id="purchased" <% if (contentType === 'Product') {%>
-                                        checked
-                                        <%}%> class="checkbox left"/>
-                                        <label for="purchased">Can be Purchased</label>
+                                        <label for="purchased">
+                                            <input type="checkbox" id="purchased" <% if (contentType === 'Product') {%>
+                                            checked
+                                            <%}%> class="checkbox left"/>
+                                            <span>Can be Purchased</span>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -55,8 +63,7 @@
                                     <dl class="product-info">
                                         <dl class="product-info">
                                             <dt class="productCategory"><label for="productCategory">Product Category</label></dt>
-                                            <dd class="productCategory"><a id="productCategory" class="current-selected" href="javascript:;">All</a>
-                                            </dd>
+                                            <dd class="productCategory"><a id="productCategory" class="current-selected" href="javascript:;">All</a></dd>
                                             <!-- <dt><label for="assetType">Asset Type</label></dt>
                                              <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a></dd>
                                              <dt><label for="deferredRevenueType">Deferred Revenue Type</label></dt>
@@ -75,9 +82,11 @@
                                 </div>
                                 <div class="half-block left">
                                     <div class="inputField">
-                                        <input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                           placeholder="0.00"/>
-                                        <label for="salePrice">Sale Price</label>
+                                        <label for="salePrice">
+                                            <input type="text" id="salePrice" class="extra-info" maxlength="10"
+                                                   placeholder="0.00"/>
+                                            <span>Sale Price</span>
+                                        </label>
                                     </div>
                                     <!--<dd></dd>-->
                                     <!--
@@ -94,11 +103,13 @@
                                 <div class="full-width left">
                                     <div class="inner">
                                         <div class="textarea-wrapper inputField">
-                                            <textarea type="text" class="full-width productDescriptionCreate"
-                                                      name="description"
-                                                      id="description"
-                                                      maxlength="500" required/>
-                                            <label for="description">Add a Description</label>
+                                            <label for="description">
+                                                <textarea type="text" class="full-width productDescriptionCreate"
+                                                          name="description"
+                                                          id="description"
+                                                          maxlength="500" required/>
+                                                <span>Add a Description</span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
