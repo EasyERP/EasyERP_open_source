@@ -57,6 +57,7 @@ define([], function () {
         CASHFLOW          : 'cashFlow',
         CLOSEMONTH        : 'closeMonth',
         SALESPROFORMA     : 'salesProforma',
+        PROFORMA          : 'proforma',
         EXPENSESINVOICE   : 'ExpensesInvoice',
         EXPENSESPAYMENTS  : 'ExpensesPayments',
         DIVIDENDINVOICE   : 'DividendInvoice',

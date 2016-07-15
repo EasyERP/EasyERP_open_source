@@ -175,6 +175,7 @@ define([
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
                     case CONTENT_TYPES.PURCHASEPAYMENTS:
+                    case CONTENT_TYPES.PROFORMA:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -239,6 +240,7 @@ define([
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
                     case CONTENT_TYPES.PURCHASEPAYMENTS:
+                    case CONTENT_TYPES.PROFORMA:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

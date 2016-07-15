@@ -117,15 +117,15 @@ define([
             } else {
                 wId = 'Purchase Order';
                 mid = 57;
-                status = 'New'; // todo workflow for purchase
+                status = 'In Progress'; // todo workflow for purchase
             }
 
             this.saveItem(function (err) {
                 if (!err) {
                     populate.fetchWorkflow({
-                        wId   : wId,
-                        source: 'purchase',
-                        status: status
+                        wId    : wId,
+                        status : status,
+                        visible: true
                         // targetSource: 'order'
                     }, function (workflow) {
                         var products;
@@ -506,7 +506,6 @@ define([
 
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
-
 
                         if (self.eventChannel) {
                             self.eventChannel.trigger('quotationRemove');
