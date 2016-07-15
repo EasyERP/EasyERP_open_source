@@ -7,7 +7,7 @@
             <div class="noteBody">
                 <%if (val.task){%>
                 <div class="noteType task" id="<%= val.task._id%>">
-                    <span>Created Tasks</span>
+                    <span>Created Task</span>
                     <span class="dateNote"><%=val.date%></span>
                     <div><a href="javascript:;" ><%=val.task.description  %></a></div>
                 </div>
@@ -17,10 +17,10 @@
                 <span class="dateNote"><%=val.date%></span>
                 <%}%>
                 <%if (val.title){%>
-                <div class="noteTitle"><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
+                <div class="noteTitle"><%=val.title.replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
                 <%}%>
                 <%if (val.note){%>
-                <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %> </div>
+                <div class="noteText"><%=val.note.replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %> </div>
                 <%}%>
 
                 <% if (val.attachment){%>
@@ -29,9 +29,9 @@
                 <%}%>
             </div>
             <div class="right noteBtnBlock">
-                <span><a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote editNote">Edit</a></span>
+                <span><a href="javascript:;" class="editDelNote editNote">Edit</a></span>
                 <span class="sep">|</span>
-                <span><a href="javascript:;" id="del_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote">Del</a></span>
+                <span><a href="javascript:;" class="editDelNote">Del</a></span>
             </div>
         </div>
     </div>
