@@ -8,8 +8,9 @@ define([
     'populate',
     'helpers',
     'dataService',
-    'constants'
-], function (Backbone, $, _, Parent, CreateTemplate, moment, populate, helpers, dataService, CONSTANTS) {
+    'constants',
+    'helpers/keyCodeHelper'
+], function (Backbone, $, _, Parent, CreateTemplate, moment, populate, helpers, dataService, CONSTANTS, keyCodes) {
     'use strict';
 
     var CreateView = Parent.extend({
@@ -31,13 +32,23 @@ define([
         },
 
         events: {
-            'click .checkbox'      : 'checked',
-            'click td.editable'    : 'editRow',
-            'change .autoCalc'     : 'autoCalc',
-            'change .editable'     : 'setEditable',
-            'keydown input.editing': 'keyDown'
+            'click .checkbox'  : 'checked',
+            'click td.editable': 'editRow',
+            'change .autoCalc' : 'autoCalc',
+            'change .editable' : 'setEditable',
+            'keydown .editing' : 'onKeyDownInput'
             // 'click #deleteBtn'     : 'deleteItems'
         },
+
+        onKeyDownInput: function (e) {
+            var code = e.keyCode;
+            if (keyCodes.isEnter(e.keyCode)) {
+                this.setChangedValueToModel();
+            } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                e.preventDefault();
+            }
+        },
+
 
         savedNewModel: function () {
             this.removeDialog();
