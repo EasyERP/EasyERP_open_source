@@ -85,6 +85,7 @@ var Module = function (models, event) {
                         return {
                             date   : elem.date,
                             history: elem,
+                            user   : elem.editedBy,
                             _id    : ''
                         }
                     })
@@ -98,6 +99,7 @@ var Module = function (models, event) {
                     .populate('deal', '_id name')
                     .populate('company', '_id name')
                     .populate('contact', '_id name')
+                    .populate('editedBy.user', '_id login')
                     .populate('assignedTo', '_id name fullName imageSrc')
                     .populate('workflow')
                     .exec(function (err, res) {
@@ -108,7 +110,8 @@ var Module = function (models, event) {
                             return {
                                 date: elem.dealDate,
                                 task: elem,
-                                _id : elem._id
+                                _id : elem._id,
+                                user: elem.editedBy.user
                             }
                         });
                         parallelCb(null, res);
@@ -587,8 +590,10 @@ var Module = function (models, event) {
 
                 obj.date = new Date();
 
-                if (!obj.author) {
-                    obj.author = req.session.uName;
+                if (!obj.user) {
+                    obj.user = {};
+                    obj.user._id = req.session.uId;
+                    obj.user.login = req.session.uName;
                 }
 
                 data.notes[data.notes.length - 1] = obj;

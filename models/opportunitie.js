@@ -184,7 +184,11 @@ module.exports = (function () {
             title       : String,
             task        : {type: ObjectId, ref: 'DealTasks', default: null},
             attachment  : {},
-            date        : {type: Date, default: Date.now}
+            date        : {type: Date, default: Date.now},
+            user        : {
+                _id : {type: ObjectId, ref: 'Users', default: null},
+                login : String
+            }
         }],
         attachments  : {type: Array, default: []},
         projectType  : {type: String, default: 'fixed'},

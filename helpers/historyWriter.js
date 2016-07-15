@@ -200,7 +200,8 @@ var History = function (models) {
                     }
                 }, {
                     $project: {
-                        editedBy    : '$editedBy.login',
+                        'editedBy.login'    : '$editedBy.login',
+                        'editedBy._id'    : '$editedBy._id',
                         newValue    : project,
                         prevValue   : 1,
                         date        : 1,
@@ -263,7 +264,8 @@ var History = function (models) {
                 }
             }, {
                 $project: {
-                    editedBy    : '$editedBy.login',
+                    'editedBy.login'    : '$editedBy.login',
+                    'editedBy._id'    : '$editedBy._id',
                     newValue    : 1,
                     prevValue   : 1,
                     date        : 1,

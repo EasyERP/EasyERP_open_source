@@ -2,12 +2,14 @@
     <% notes = notes || [];%>
     <% notes.reverse();%>
     <%_.each(notes, function(val,key){ %>
+    <% console.log(App.currentUser._id)%>
+    <% var login = val.user ? (App.currentUser._id === val.user._id) ? 'You': val.user.login : '' %>
     <div id="<%=val._id%>" class="noteContainer ">
         <div class="<%=val.history ? '' : 'contentHolder'%>">
             <div class="noteBody">
                 <%if (val.task){%>
                 <div class="noteType task" id="<%= val.task._id%>">
-                    <span>Created Task</span>
+                    <span><%= login %> created task</span>
                     <span class="dateNote"><%=val.date%></span>
                     <div><a href="javascript:;" ><%=val.task.description  %></a></div>
                 </div>
@@ -17,10 +19,12 @@
                     <div class="history_changed">
                         <span class="dateNote"><%=val.date%></span>
                         <div class="changed_field">
-                            <span class="changedFieldName"><%= val.history.changedField %> :</span>
                             <%if (val.history.prevValue){%>
-                            <span><%= val.history.prevValue %></span>
-                            <span> -> </span>
+                            <span class="changedFieldName"><%= login + ' changed ' + val.history.changedField %></span>
+                            <span>from <%= val.history.prevValue %></span>
+                            <span> to </span>
+                            <%} else {%>
+                            <span class="changedFieldName"><%=login + ' added ' + val.history.changedField %></span>
                             <%}%>
                             <span><%= val.history.newValue || '' %></span>
                         </div>
@@ -28,7 +32,7 @@
                 </div>
                 <%} else {%>
                 <div>
-                    <span class="noteType">Created Note</span>
+                    <span class="noteType"><%=login%> left a Note</span>
                     <span class="dateNote"><%=val.date%></span>
                 </div>
                 <%}%>
