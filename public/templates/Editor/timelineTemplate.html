@@ -13,8 +13,10 @@
                 </div>
                 <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
                 <%} else {%>
-                <div class="noteType">Created Note</div>
-                <span class="dateNote"><%=val.date%></span>
+                <div>
+                    <span class="noteType">Created Note</span>
+                    <span class="dateNote"><%=val.date%></span>
+                </div>
                 <%}%>
                 <%if (val.title){%>
                 <div class="noteTitle"><%=val.title.replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
@@ -28,10 +30,10 @@
                 <div class="noteType"><a href="download/<%= val.attachment.shortPas%>" id="<%= val.attachment._id%>"><%= val.attachment.name  %></a></div>
                 <%}%>
             </div>
-            <div class="right noteBtnBlock">
-                <a href="javascript:;" data-type="edit" class="editDelNote editNote">Edit</a>
+            <div class="noteBtnBlock">
+                <a href="javascript:;" data-type="edit" class="editDelNote btn btnRounded editNote">Edit</a>
 
-                <a href="javascript:;" data-type="del" class="editDelNote">Del</a>
+                <a href="javascript:;" data-type="del" class="editDelNote btn btnRounded">Del</a>
             </div>
         </div>
     </div>
