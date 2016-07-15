@@ -2,7 +2,7 @@
     <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
         <div class="formTitle dealTitle">
             <h3 class="editable" data-id="name"><%=name%></h3>
-            <h3 class="editable" data-id="value"><%=expectedRevenue.value%></h3>
+            <h3 class="editable" data-id="expectedRevenue_value"><%=expectedRevenue.value%></h3>
             <h3> <%=expectedRevenue.currency%></h3>
 
             <div class="clearfix">
@@ -27,8 +27,6 @@
                         <dd><span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span></dd>
                         <dt>Company</dt>
                         <dd><a  class="current-selected" id="customerDd" data-id="customer"><%=(customer) ? customer.name.first + ' ' + customer.name.last : 'Select'%></a></dd>
-                        <dt>Priority</dt>
-                        <dd><a  class="current-selected" id="priorityDd" data-id="priority"><%=priority%></a></dd>
                     </dl>
                 </div>
                 <div class="half-block clearLeft dealsLeadBlock">

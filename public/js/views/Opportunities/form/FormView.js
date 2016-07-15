@@ -46,10 +46,16 @@ define([
             e.preventDefault();
 
             var parent = $(e.target).parent().parent();
-            var field = parent.attr('data-id').replace('_', '.');
+            var field = parent.attr('data-id');
             var value = this.$el.find('#editInput').val();
             var newModel = {};
             newModel[field] = value;
+
+            if (field.indexOf('_') !== -1){
+                field = field.split('_');
+                newModel[field[0]] = {};
+                newModel[field[0]][field[1]] = value;
+            }
 
             parent.text(value);
             parent.removeClass('quickEdit');
@@ -238,14 +244,6 @@ define([
                 self.responseObj = {workflows : response.data};
                 self.$el.find('#workflowProgress').append(_.template(workflowProgress, {workflows : self.responseObj.workflows, workflow : formModel.workflow}));
 
-            });
-            dataService.getData('/opportunities/priority', {}, function (priorities) {
-                priorities = _.map(priorities.data, function (priority) {
-                    priority.name = priority.priority;
-
-                    return priority;
-                });
-                self.responseObj['#priorityDd'] = priorities;
             });
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, false, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {

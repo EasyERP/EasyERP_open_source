@@ -35,8 +35,12 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
+            name: {
+                name : 'Name',
+                isRef: false
+            },
             salesPerson: {
-                name      : 'salesPerson',
+                name      : 'Assigned To',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}

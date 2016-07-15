@@ -292,6 +292,7 @@ var History = function (models) {
                     var responseArr = [].concat.apply([], results);
                     responseArr = _.sortBy(responseArr, 'date');
 
+
                     if (!forNote){
                         responseArr = _.groupBy(responseArr, 'date');
                     }

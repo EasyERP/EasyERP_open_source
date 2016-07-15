@@ -17,7 +17,7 @@
                     <div class="history_changed">
                         <span class="dateNote"><%=val.date%></span>
                         <div class="changed_field">
-                            <span class="changedFieldName"><%= val.history.changedField %></span>
+                            <span class="changedFieldName"><%= val.history.changedField %> :</span>
                             <%if (val.history.prevValue){%>
                             <span><%= val.history.prevValue %></span>
                             <span> -> </span>
@@ -32,13 +32,7 @@
                     <span class="dateNote"><%=val.date%></span>
                 </div>
                 <%}%>
-                <%if (val.title){%>
-                <div class="noteTitle"><%=val.title.replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
-                <%}%>
-                <%if (val.note){%>
-                <div class="noteText"><%=val.note.replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %> </div>
-                <%}%>
-
+                <div class="noteText"><%=val.note ? val.note.replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") : '' %> </div>
                 <% if (val.attachment){%>
 
                 <div class="noteType"><a href="download/<%= val.attachment.shortPas%>" id="<%= val.attachment._id%>"><%= val.attachment.name  %></a></div>

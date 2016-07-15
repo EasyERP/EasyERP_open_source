@@ -26,7 +26,7 @@ define([
 
         events: {
             'click #noteArea'   : 'expandNote',
-            'click .cancelNote'   : 'cancelNote',
+            'click .cancelNote, #cancelTask'   : 'cancelNote',
             'click #addNote, .saveNote'      : 'saveNote',
             'click .contentHolder': 'showButtons',
             'click #addTask'      : 'saveTask',
@@ -268,16 +268,16 @@ define([
             var contentHolder = $target.closest('.noteContainer');
             if ( contentHolder.length){
                 contentHolder.find('.contentHolder').show();
+                contentHolder.find('.contentHolder').removeClass('showButtons');
                 $target.closest('.addNote').remove();
             } else {
                 $target.parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
                 $target.parents('.addNote').find('#noteArea').val('');
-                this.$el.find('#getNoteKey').val('');// remove id from hidden field if note editing is cancel
-                this.$el.find('.title-wrapper').hide();
-                this.$el.find('.addTitle').hide();
+                $target.parents('.addTask').find('#taskArea').val('');
+               /* this.$el.find('.title-wrapper').hide();*/
+               /* this.$el.find('.addTitle').hide();*/
                 this.$el.find('#noteArea').val('');
-                this.$el.find('#noteTitleArea').val('');
-                this.$el.find('#getNoteKey').attr('value', '');
+                /*this.$el.find('#noteTitleArea').val('');*/
             }
 
         },
