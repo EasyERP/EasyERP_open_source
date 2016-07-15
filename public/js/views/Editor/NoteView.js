@@ -16,6 +16,7 @@ define([
     var NoteView = Backbone.View.extend({
 
         template: _.template(NoteTemplate),
+        timeLineTemplate : _.template(timelineTemplate),
         
         initialize: function (options) {
             this.contentType = options.contentType;
@@ -27,7 +28,7 @@ define([
             'click #noteArea'     : 'expandNote',
             'click .cancelNote'   : 'cancelNote',
             'click #addNote, .saveNote'      : 'saveNote',
-            'click .contentHolder': 'showButtons',
+            'click .noteContainer': 'showButtons',
             'click #addTask' : 'saveTask',
 
             'click .addTitle'     : 'showTitle',
@@ -39,15 +40,13 @@ define([
         },
 
         showButtons : function (e){
-            var $target = $(e.target).closest('.contentHolder');
-            $target.toggleClass('showButtons');
-            $target.prevAll().each(function(){
-                $(this).removeClass('showButtons');
-            });
-            $target.nextAll().each(function(){
-                $(this).removeClass('showButtons');
-            });
+            var $target = $(e.target).closest('.noteContainer');
+            var hasClass =  $target.hasClass('showButtons');
 
+            this.$el.find('.noteContainer').removeClass('showButtons');
+            if(!hasClass){
+                $target.addClass('showButtons');
+            }
         },
 
         saveTask: function () {
@@ -91,12 +90,10 @@ define([
             model.save(saveObject, {
                     wait   : true,
                     success: function (model, res) {
-                        var formLeftColumn = self.$el.find('.formLeftColumn');
-                        var noteWrapper = formLeftColumn.find('.noteWrapper');
-
-                        noteWrapper.empty();
                         self.model.fetch({success : function(){
-                            formLeftColumn.append(self.render());
+                            var notes = self.model.get('notes');
+                            self.$el.find('#taskArea').val('');
+                            self.$el.find('#timeline').html(self.timeLineTemplate({notes : notes}));
                         }});
                     },
 
@@ -139,6 +136,7 @@ define([
         clickInput: function () {
             $('.input-file .inputAttach').click();
         },
+
         showNewSelect: function (e) {
             var $target = $(e.target);
 
@@ -163,7 +161,7 @@ define([
         },
 
         editNote : function (currentNote){
-            var holder = this.$el.find('#'+ currentNote._id);
+            var holder = this.$el.find('#' + currentNote._id);
             holder.find('.contentHolder').hide();
             holder.append(_.template(editNote, currentNote));
         },
@@ -171,7 +169,6 @@ define([
         chooseOption: function (e) {
             var $target = $(e.target);
             var holder = $target.closest('a');
-            var type = holder.closest('a').attr('data-id');
             var id = $target.attr('id');
             holder.text($target.text()).attr('data-id', id);
         },
@@ -180,7 +177,6 @@ define([
             var id = e.target.id;
             var k = id.indexOf('_');
             var $thisEl = this.$el;
-            var self = this;
             var type = id.substr(0, k);
             var idInt = id.substr(k + 1);
             var currentModel = this.model;
@@ -191,6 +187,7 @@ define([
                     return note;
                 }
             })[0];
+
             var model;
             if (currentNote.task){
                 model = new TaskModel(currentNote.task);
@@ -212,7 +209,6 @@ define([
                         model.destroy({success : function (){
                             $('#' + idInt).remove();
                         }});
-
 
                     } else {
                         newNotes = _.filter(notes, function (note) {
@@ -292,8 +288,6 @@ define([
             var title;
             var formModel;
             var notes;
-            var arrKeyStr;
-            var noteObj;
             var editNotes;
 
             if ($noteArea.val().replace(/ /g, '') || $noteTitleArea.val().replace(/ /g, '')) {
@@ -315,17 +309,12 @@ define([
                 });
             }
             if (val.replace(/ /g, '') || title.replace(/ /g, '')) {
-                formModel = this.model;
-                notes = formModel.get('notes');
-                notes = notes.filter(function (elem) {
-                    return !elem.task;
-                });
-
-                noteObj = {
-                    note : '',
-                    title: ''
-                };
                 if (targetId) {
+                    formModel = this.model;
+                    notes = formModel.get('notes');
+                    notes = notes.filter(function (elem) {
+                        return !elem.task;
+                    });
                     editNotes = _.map(notes, function (note) {
                         if (note._id === targetId) {
                             note.note = val;
@@ -348,9 +337,10 @@ define([
                             }
                         });
                 } else {
-                    noteObj.note = val;
-                    noteObj.title = title;
-                    self.saveNewNote(noteObj);
+                    self.saveNewNote({
+                        note : val,
+                        title : title
+                    });
                 }
             } else {
                 return false;
