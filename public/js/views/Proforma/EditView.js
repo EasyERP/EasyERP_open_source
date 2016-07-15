@@ -90,6 +90,7 @@ define([
         newPayment: function (e) {
             var paymentView;
             var self = this;
+            var mid = this.forSales ? 99 : 95;
 
             e.preventDefault();
 
@@ -99,8 +100,8 @@ define([
                         model       : self.currentModel,
                         redirect    : self.redirect,
                         collection  : self.collection,
+                        mid         : mid,
                         currency    : currency,
-                        mid         : 95,
                         eventChannel: self.eventChannel
                     });
                 }
@@ -199,6 +200,7 @@ define([
             var payBtnHtml;
             var $currencyDd;
             var invoiceDate;
+            var redirectUrl = window.location.hash;
 
             e.preventDefault();
 
@@ -238,6 +240,11 @@ define([
                             self.$el.find('a.deleteAttach').remove();
 
                             App.stopPreload();
+
+                            redirectUrl = window.location.hash;
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
 
                         } else {
                             App.render({

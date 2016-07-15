@@ -189,6 +189,7 @@ define([
                 currency   : this.currentModel.toJSON().currency,
                 journal    : CONSTANTS.PROFORMA_JOURNAL
             };
+            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/proforma/list';
 
             if (e) {
                 e.preventDefault();
@@ -216,6 +217,9 @@ define([
 
                             if (self.eventChannel) {
                                 self.eventChannel.trigger('newProforma', response._id);
+                            } else {
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
 
                             tr = $('[data-id=' + quotationId + ']');
