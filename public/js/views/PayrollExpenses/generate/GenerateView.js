@@ -57,6 +57,13 @@ define([
 
             key = parseInt(self.year, 10) * 100 + parseInt(self.month, 10);
 
+            if (key > this.maxKey) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, choose some previous month and year!'
+                });
+            }
+
             if (this.keys.indexOf(key.toString()) > -1) {
                 return App.render({
                     type   : 'error',
@@ -64,12 +71,7 @@ define([
                 });
             }
 
-            if (key > this.maxKey) {
-                return App.render({
-                    type   : 'error',
-                    message: 'Please, choose some previous month and year!'
-                });
-            }
+
 
             data.month = this.month;
             data.year = this.year;
