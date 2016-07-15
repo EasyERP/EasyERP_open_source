@@ -189,7 +189,7 @@ define([
                 currency   : this.currentModel.toJSON().currency,
                 journal    : CONSTANTS.PROFORMA_JOURNAL
             };
-            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/Proforma/list';
+            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/proforma/list';
 
             if (e) {
                 e.preventDefault();
