@@ -11,7 +11,6 @@
     <li><a href="javascript:;" class="">Leads by names</a></li>
 </ul>
 
-
 <div class="chart-tabs-items">
     <div class="chart-tabs-item active">
         <div class="clearfix"></div>
@@ -227,7 +226,6 @@
             </div>
 
             </div>
-        </div>
         <svg class="opportunitiesChart"></svg>
     </div>
     <div class="chart-tabs-item">
@@ -255,38 +253,40 @@
                     In progress
                 </div>
             </div>
+       </div>
 
-                <div class="unconverted">
-                    <div class="square">
-                    </div>
-                    <div class="text">
-                        Won
-                    </div>
-                </div>
-
-                <div class="unconverted">
-                    <div style="background-color: red" class="square">
-                    </div>
-                    <div  class="text">
-                        Lost
-                    </div>
-                </div>
-
-                <div class="convertRate">
-                    <div style="background-color: #3E88B9" class="square">
-                    </div>
-                    <div class="text">
-                        Win %
-                    </div>
-                </div>
+        <div class="unconverted">
+            <div class="square">
+            </div>
+            <div class="text">
+                Won
             </div>
         </div>
+
+        <div class="unconverted">
+            <div style="background-color: red" class="square">
+            </div>
+            <div class="text">
+                Lost
+            </div>
+        </div>
+
+        <div class="convertRate">
+            <div style="background-color: #3E88B9" class="square">
+            </div>
+            <div class="text">
+                Win %
+            </div>
+
+        </div>
+
         <svg class="winAndLostOpportunitiesChart"></svg>
     </div>
     <div class="chart-tabs-item">
 
         <h3>Sales by country</h3>
         <div class="vocationFilter">
+
             <ul class="dateFilter">
                 <li class="dateRange">
                     <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
@@ -318,6 +318,7 @@
                 </li>
             </ul>
         </div>
+
         <div class="clearfix"></div>
         <div>
             <div class="treemap_sales" style="margin-left: 130px"></div>
@@ -418,5 +419,4 @@
 
     </div>
 </div>
-<div class="clearfix"></div>
-  
+
