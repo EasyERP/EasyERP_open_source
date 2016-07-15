@@ -41,6 +41,10 @@ define([
             var $target = $(e.target).closest('.contentHolder');
             var hasClass =  $target.hasClass('showButtons');
 
+            if (this.$el.find('.editedNote').length){
+                return false;
+            }
+
             this.$el.find('.contentHolder').removeClass('showButtons');
             if(!hasClass){
                 $target.addClass('showButtons');
