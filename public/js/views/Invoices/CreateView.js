@@ -192,6 +192,8 @@ define([
                     success: function () {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
+                        //self.attachView.sendToServer(null, model.changed);
+
                         self.hideDialog();
                         Backbone.history.navigate(redirectUrl, {trigger: true});
                     },
@@ -280,16 +282,22 @@ define([
             );
 
             this.model.set('notes', []);
+            this.model.set('attachments', []);
 
             $notDiv = this.$el.find('#attach-container');
             $notDiv.append(
                 new NoteView({
-                    model      : this.model,
+                    model      : self.model,
                     contentType: CONSTANTS.INVOICES,
                     needNotes  : needNotes,
                     isCreate   : true
                 }).render().el
             );
+
+            if (this.model.approved) {
+                self.$el.find('.input-file').remove();
+                self.$el.find('a.deleteAttach').remove();
+            }
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
