@@ -402,7 +402,7 @@ define([
 
             productItemContainer.append(
                 new ProductItemView({
-                    editable       : false,
+                    editable       : true,
                     editablePrice  : self.editablePrice,
                     balanceVissible: false
                 }).render({model: model}).el
