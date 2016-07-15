@@ -2674,7 +2674,7 @@ h2.green {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 .loginForgot {
   color: #a4aab2;
@@ -8594,17 +8594,6 @@ a.red:hover {
 .birthday-item .info .readMore:hover {
   opacity: 0.5;
 }
-.tabs-items {
-  margin-bottom: -29px;
-}
-.tabs-items .dialog-tabs-item,
-.tabs-items .chart-tabs-item {
-  display: none;
-}
-.tabs-items .dialog-tabs-item.active,
-.tabs-items .chart-tabs-item.active {
-  display: block;
-}
 .ui-helper-clearfix::before,
 .ui-helper-clearfix::after {
   content: "";
@@ -9615,7 +9604,6 @@ table#workflows tr td.edit-status {
 /*----------------------------- Login Form --------------------------------*/
 /*----------------------------- Tabs ------------------------------------*/
 ul.dialog-tabs {
-  height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -9645,17 +9633,6 @@ ul.dialog-tabs li.right {
 }
 ul.dialog-tabs li.right button {
   margin-top: 4px;
-}
-.dialog-tabs-items {
-  margin-bottom: -29px;
-}
-.dialog-tabs-items .dialog-tabs-item,
-.dialog-tabs-items .chart-tabs-item {
-  display: none;
-}
-.dialog-tabs-items .dialog-tabs-item.active,
-.dialog-tabs-items .chart-tabs-item.active {
-  display: block;
 }
 .dialog-tabs-items .dialog-tabs-item,
 .dialog-tabs-items .chart-tabs-item {
@@ -10703,9 +10680,6 @@ ul.dialog-tabs li.right button {
   padding: .5em 1em;
   background: 0;
 }
-.ui-dialog .ui-dialog-buttonpane {
-  margin-top: 30px !important;
-}
 .ui-dialog .ui-dialog-titlebar {
   display: none;
 }
@@ -10785,10 +10759,6 @@ ul.dialog-tabs li.right button {
   height: 193px;
   min-height: initial;
   max-width: 300px;
-}
-.ui-dialog .inner {
-  padding: 5px;
-  background: #ffffff;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -11270,9 +11240,6 @@ ul.dialog-tabs li.right button {
   color: #000000;
   padding-bottom: 5px;
 }
-.tabs-items {
-  margin-bottom: -29px;
-}
 .tabs-items .dialog-tabs-item,
 .tabs-items .chart-tabs-item {
   display: none;
@@ -11282,7 +11249,6 @@ ul.dialog-tabs li.right button {
   display: block;
 }
 ul.dialog-tabs {
-  height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -11473,7 +11439,6 @@ ul.dialog-tabs .withEndContract .arrow {
   display: block;
 }
 .dialog-tabs-items {
-  margin-bottom: -29px;
   padding-top: 10px;
 }
 .dialog-tabs-items .dialog-tabs-item,
@@ -11484,16 +11449,7 @@ ul.dialog-tabs .withEndContract .arrow {
 .dialog-tabs-items .chart-tabs-item.active {
   display: block;
 }
-.dialog-tabs-items .dialog-tabs-item,
-.dialog-tabs-items .chart-tabs-item {
-  display: none;
-}
-.dialog-tabs-items .dialog-tabs-item.active,
-.dialog-tabs-items .chart-tabs-item.active {
-  display: block;
-}
 ul.chart-tabs {
-  height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.chart-tabs li {
@@ -11687,16 +11643,7 @@ ul.chart-tabs .withEndContract .arrow {
   display: block;
 }
 .chart-tabs-items {
-  margin-bottom: -29px;
   margin-bottom: 0;
-}
-.chart-tabs-items .dialog-tabs-item,
-.chart-tabs-items .chart-tabs-item {
-  display: none;
-}
-.chart-tabs-items .dialog-tabs-item.active,
-.chart-tabs-items .chart-tabs-item.active {
-  display: block;
 }
 .chart-tabs-items .dialog-tabs-item,
 .chart-tabs-items .chart-tabs-item {
