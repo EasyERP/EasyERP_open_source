@@ -95,7 +95,84 @@ module.exports = function (models, event) {
             }
      */
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddleware, handler.opportunitiesForMiniView);
+
+    /**
+     *@api {get} /opportunities/OpportunitiesForChart Request OpportunitiesForChart
+     *
+     * @apiVersion 0.0.1
+     * @apiName getOpportunitiesForChart
+     * @apiGroup Opportunity
+     *
+     * @apiParam (?Field=value) {String="Date"} type
+     * @apiParam (?Field=value) {Number} dataRange
+     * @apiParam (?Field=value) {String="D"} dataItem
+     *
+     * @apiSuccess {Object} OpportunitiesForChart
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "data": [
+                {
+                    "_id": {
+                        "year": "2016",
+                        "mounth": "06",
+                        "day": "15"
+                    },
+                    "wonCount": 0,
+                    "lostCount": 0,
+                    "inProgressCount": 0
+                },
+                {
+                    "_id": {
+                        "year": "2016",
+                        "mounth": "06",
+                        "day": "21"
+                    },
+                    "wonCount": 0,
+                    "lostCount": 0,
+                    "inProgressCount": 0
+                },
+                {
+                    "_id": {
+                        "year": "2016",
+                        "mounth": "07",
+                        "day": "06"
+                    },
+                    "wonCount": 0,
+                    "lostCount": 0,
+                    "inProgressCount": 0
+                }
+            ]
+        }
+     */
     router.get('/OpportunitiesForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesForChart);
+
+    /**
+     *@api {get} /opportunities/OpportunitiesConversionForChart Request OpportunitiesConversionForChart
+     *
+     * @apiVersion 0.0.1
+     * @apiName getOpportunitiesConversionForChart
+     * @apiGroup Opportunity
+     *
+     * @apiParam (?Field=value) {Number} dataRange
+     *
+     * @apiSuccess {Object} OpportunitiesConversionForChart
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "data": [
+                {
+                  "_id": "Vasiliy Almashiy",
+                  "wonSum": 0,
+                  "wonCount": 0,
+                  "lostSum": 49000,
+                  "lostCount": 1,
+                  "sale": "Vasiliy Almashiy"
+                },
+                ...
+              ]
+            }
+     */
     router.get('/OpportunitiesConversionForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesConversionForChart);
 
     /**

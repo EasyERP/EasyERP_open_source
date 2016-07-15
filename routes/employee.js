@@ -582,6 +582,21 @@ module.exports = function (event, models) {
      *
      * */
     router.get('/birthdays', accessStackMiddleware, handler.getBirthdays);
+
+    /**
+     *@api {get} /employees/getYears/ Request Years
+     *
+     * @apiVersion 0.0.1
+     * @apiName getYears
+     * @apiGroup Employee
+     *
+     * @apiSuccess {Object} Years
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 304 Not Modified
+     *     {
+            "min": "2011-09-02T00:00:00.000Z"
+        }
+     * */
     router.get('/getYears', handler.getYears);
 
     /**

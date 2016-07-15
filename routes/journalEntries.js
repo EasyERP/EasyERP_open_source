@@ -29,15 +29,446 @@ module.exports = function (models, event) {
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);
     router.get('/getForReport', _journalEntryHandler.getForReport);
     router.get('/getAsyncData', _journalEntryHandler.getAsyncData);
+
+    /**
+     *@api {get} /journalEntries/getAsyncDataForGL Request AsyncDataForGL
+     *
+     * @apiVersion 0.0.1
+     * @apiName getAsyncDataForGL
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} id
+     * @apiParam (?Field=value) {String} startDate
+     * @apiParam (?Field=value) {String} endDate
+     *
+     * @apiSuccess {Object} AsyncDataForGL
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "journalEntries": [
+                {
+                  "_id": "2016-06-30T13:24:53.000Z",
+                  "credit": 0,
+                  "debit": 2350000,
+                  "account": "565eb53a6aa50532e5df0bdc"
+                },
+                {
+                  "_id": "2016-06-29T22:00:00.000Z",
+                  "credit": 2350000,
+                  "debit": 0,
+                  "account": "565eb53a6aa50532e5df0bdc"
+                }
+              ]
+            }
+     * */
     router.get('/getAsyncDataForGL', _journalEntryHandler.getAsyncDataForGL);
+
+    /**
+     *@api {get} /journalEntries/getAsyncCloseMonth Request AsyncCloseMonth
+     *
+     * @apiVersion 0.0.1
+     * @apiName getAsyncCloseMonth
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} _id
+     *
+     * @apiSuccess {Object} AsyncCloseMonth
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "journalEntries": [
+                {
+                    "_id": "56f90e8d8cea58642c57f442",
+                    "debit": 600000,
+                    "credit": 600000,
+                    "date": "2014-08-31T18:59:59.999Z",
+                    "journal": {
+                        "_id": "56f90e8d8cea58642c57f442",
+                        "name": "Close month / Admin expenses",
+                        "creditAccount": "565eb53a6aa50532e5df0bf1",
+                        "debitAccount": "56cc6bf2541812c07197356a",
+                        "editedBy": {
+                            "date": "2016-05-06T12:56:15.940Z",
+                            "user": null
+                        },
+                        "createdBy": {
+                            "date": "2016-03-28T10:59:25.489Z",
+                            "user": null
+                        },
+                        "description": "",
+                        "currency": {
+                            "name": "USD"
+                        },
+                        "transaction": "Accrual",
+                        "type": "",
+                        "date": "2016-03-28T10:59:25.488Z",
+                        "__v": 0
+                    }
+                },
+                ...
+            ]
+        }
+     * */
     router.get('/getAsyncCloseMonth', _journalEntryHandler.getAsyncCloseMonth);
+
+    /**
+     *@api {get} /journalEntries/getTrialBalance Request TrialBalance
+     *
+     * @apiVersion 0.0.1
+     * @apiName getTrialBalance
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Boolean} reset=true
+     * @apiParam (?Field=value) {Number} count=100
+     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {String} contentType="trialBalance" Type of content
+     * @apiParam (?Field=value) {Boolean} showMore=false
+     * @apiParam (?Field=value) {String} parrentContentId
+     * @apiParam (?Field=value) {String} startDate
+     * @apiParam (?Field=value) {String} endDate
+     *
+     * @apiSuccess {Object} TrialBalance
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     [
+             {
+                 "_id": "565eb53a6aa50532e5df0bc9",
+                 "name": "101200 Account Receivable",
+                 "debit": 19587378,
+                 "credit": 15553338.092053942
+             },
+             {
+                 "_id": "565eb53a6aa50532e5df0bcb",
+                 "name": "101402 Ukrsibbank USD ThinkMobiles",
+                 "debit": 6635200,
+                 "credit": 0
+             },
+             ...
+     ]
+     * */
     router.get('/getTrialBalance', _journalEntryHandler.getForGL);
+
+    /**
+     *@api {get} /journalEntries/getBalanceSheet Request BalanceSheet
+     *
+     * @apiVersion 0.0.1
+     * @apiName getBalanceSheet
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Boolean} reset=true
+     * @apiParam (?Field=value) {Number} count=100
+     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {String} contentType="balanceSheet" Type of content
+     * @apiParam (?Field=value) {Boolean} showMore=false
+     * @apiParam (?Field=value) {String} parrentContentId
+     * @apiParam (?Field=value) {String} startDate
+     * @apiParam (?Field=value) {String} endDate
+     *
+     * @apiSuccess {Object} BalanceSheet
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "assets": [
+                {
+                    "_id": "565eb53a6aa50532e5df0bc9",
+                    "name": "101200 Account Receivable",
+                    "credit": 15553338.092053942,
+                    "debit": 19587378
+                },
+                {
+                    "_id": "565eb53a6aa50532e5df0bcb",
+                    "name": "101402 Ukrsibbank USD ThinkMobiles",
+                    "credit": 0,
+                    "debit": 6635200
+                },
+                {
+                    "_id": "565eb53a6aa50532e5df0bd2",
+                    "name": "101500 Cash USD",
+                    "credit": 2350000,
+                    "debit": 6110355.91463318
+                },
+                {
+                    "_id": "565eb53a6aa50532e5df0bd9",
+                    "name": "104000 Finished Goods",
+                    "credit": 17417345.153104898,
+                    "debit": 17417345.153104894
+                },
+                {
+                    "_id": "565eb53a6aa50532e5df0bda",
+                    "name": "104001 Work In Process",
+                    "credit": 17417345.153104886,
+                    "debit": 13100063.676315987
+                }
+            ],
+            "liabilities": [
+                {
+                    "_id": "565eb53a6aa50532e5df0bdc",
+                    "name": "111100 Account Payable",
+                    "credit": 2350000,
+                    "debit": 2350000,
+                    "group": "liabilities"
+                },
+                {
+                    "_id": "56c4444eb81fd51e19207f3e",
+                    "name": "111101 Salary Payable",
+                    "credit": 8749694.736842107,
+                    "debit": 0,
+                    "group": "liabilities"
+                },
+                {
+                    "_id": "56c9d555c3b88f6d64490fb5",
+                    "name": "212103 Salary Overtime Paybale",
+                    "credit": 48375,
+                    "debit": 0,
+                    "group": "liabilities"
+                },
+                {
+                    "_id": "565eb53a6aa50532e5df0bdb",
+                    "name": "111000 Unearned  Service Revenue",
+                    "credit": 3062755.91463318,
+                    "debit": 3009738.092053943,
+                    "group": "liabilities"
+                }
+            ],
+            "equity": [
+                {
+                    "_id": "565eb53a6aa50532e5df0bf3",
+                    "name": [
+                        "300200 Retained Earnings"
+                    ],
+                    "credit": -3917043.4411872514,
+                    "debit": 0,
+                    "group": "assets"
+                }
+            ]
+        }
+     * */
     router.get('/getBalanceSheet', _journalEntryHandler.getBalanceSheet);
+
+    /**
+     *@api {get} /journalEntries/getCloseMonth Request CloseMonth
+     *
+     * @apiVersion 0.0.1
+     * @apiName getCloseMonth
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Boolean} reset=true
+     * @apiParam (?Field=value) {Number} count=100
+     * @apiParam (?Field=value) {Object} filter
+     * @apiParam (?Field=value) {String} contentType="closeMonth" Type of content
+     * @apiParam (?Field=value) {Boolean} showMore=false
+     * @apiParam (?Field=value) {String} parrentContentId
+     *
+     * @apiSuccess {Object} CloseMonth
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     [
+     {
+         "_id": "2014-08-31T18:59:59.999Z"
+     },
+     {
+         "_id": "2014-09-30T18:59:59.999Z"
+     },
+     ...
+     ]
+     * */
     router.get('/getCloseMonth', _journalEntryHandler.getCloseMonth);
+
+    /**
+     *@api {get} /journalEntries/getProfitAndLoss Request ProfitAndLoss
+     *
+     * @apiVersion 0.0.1
+     * @apiName getProfitAndLoss
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Boolean} reset=true
+     * @apiParam (?Field=value) {Number} count=100
+     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {String} contentType="profitAndLoss" Type of content
+     * @apiParam (?Field=value) {Boolean} showMore=false
+     * @apiParam (?Field=value) {String} parrentContentId
+     * @apiParam (?Field=value) {String} startDate
+     * @apiParam (?Field=value) {String} endDate
+     *
+     * @apiSuccess {Object} ProfitAndLoss
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "grossFit": [
+                {
+                    "_id": "565eb53a6aa50532e5df0be0",
+                    "name": "200000 Product Sales",
+                    "debit": 19587378
+                }
+            ],
+            "expenses": [
+                {
+                    "_id": "565eb53a6aa50532e5df0be2",
+                    "name": "210000 Cost of Goods Sold",
+                    "debit": 17417345.153104894
+                }
+            ],
+            "dividends": 0
+        }
+     * */
     router.get('/getProfitAndLoss', _journalEntryHandler.getProfitAndLoss);
+
+    /**
+     *@api {get} /journalEntries/getCashFlow Request CashFlow
+     *
+     * @apiVersion 0.0.1
+     * @apiName getCashFlow
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Boolean} reset=true
+     * @apiParam (?Field=value) {Number} count=100
+     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {String} contentType="cashFlow" Type of content
+     * @apiParam (?Field=value) {Boolean} showMore=false
+     * @apiParam (?Field=value) {String} parrentContentId
+     * @apiParam (?Field=value) {String} startDate
+     * @apiParam (?Field=value) {String} endDate
+     *
+     * @apiSuccess {Object} CashFlow
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "operating": [
+                {
+                    "name": "Operating Income (EBIT)",
+                    "debit": 2170032.846895106
+                },
+                {
+                    "name": "101200 Account Receivable",
+                    "debit": -4034039.9079460576
+                },
+                {
+                    "name": [
+                        "104000 Finished Goods"
+                    ],
+                    "debit": 3.725290298461914e-9
+                },
+                {
+                    "name": [
+                        "104001 Work In Process"
+                    ],
+                    "debit": 4317281.476788899
+                },
+                {
+                    "name": [
+                        "111101 Salary Payable"
+                    ],
+                    "debit": 8749694.736842107
+                },
+                {
+                    "name": [
+                        "212103 Salary Overtime Paybale"
+                    ],
+                    "debit": 48375
+                },
+                {
+                    "name": [
+                        "111000 Unearned  Service Revenue"
+                    ],
+                    "debit": 53017.82257923717
+                },
+                {
+                    "name": [
+                        "111100 Account Payable"
+                    ],
+                    "debit": 0
+                }
+            ],
+            "investing": [],
+            "financing": [
+                {
+                    "name": "777777 Dividends Payable",
+                    "debit": 0
+                }
+            ]
+        }
+     * */
     router.get('/getCashFlow', _journalEntryHandler.getCashFlow);
     router.get('/getPayrollForReport', _journalEntryHandler.getPayrollForReport);
+
+    /**
+     *@api {get} /journalEntries/getInventoryReport Request InventoryReport
+     *
+     * @apiVersion 0.0.1
+     * @apiName getInventoryReport
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {String} viewType="list" Type of View
+     * @apiParam (?Field=value) {Number} page=1 Number of page
+     * @apiParam (?Field=value) {Number} count=100
+     * @apiParam (?Field=value) {Object} filter={date : [...]}
+     * @apiParam (?Field=value) {String} contentType="inventoryReport" Type of content
+     *
+     * @apiSuccess {Object} InventoryReport
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+    "total": 183,
+    "data": [
+        {
+            "_id": "5769142ee6b2b396201e2409",
+            "name": "01-28.02.2016",
+            "salesmanager": "Yana Gusti",
+            "project": "55b92ad621e4b7c40f000694",
+            "projectName": "QA iOS Purple Ocean",
+            "openingBalance": 175.16254737246985,
+            "inwards": 0,
+            "outwards": 0,
+            "closingBalance": 175.16254737246985
+        },
+        {
+            "_id": "57691660d742b37b20468338",
+            "name": "01-30.05.2016",
+            "salesmanager": "Yana Gusti",
+            "project": "55b92ad621e4b7c40f000694",
+            "projectName": "QA iOS Purple Ocean",
+            "openingBalance": 260.6448134153063,
+            "inwards": 0,
+            "outwards": 0,
+            "closingBalance": 260.6448134153063
+        },
+        ...
+    ]
+}
+     * */
     router.get('/getInventoryReport', _journalEntryHandler.getInventoryReport);
+
+    /**
+     *@api {get} /journalEntries/getExpenses Request Expenses
+     *
+     * @apiVersion 0.0.1
+     * @apiName getExpenses
+     * @apiGroup Journal Entries
+     *
+     * @apiParam (?Field=value) {Number} month
+     * @apiParam (?Field=value) {Number} year
+     *
+     * @apiSuccess {Object} Expenses
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "actualHours": 6350,
+            "vacationExpenses": 84000,
+            "adminSalary": 366585.7142857143,
+            "adminExpenses": 1119600,
+            "idleExpenses": 1788812.5
+        }
+     * */
     router.get('/getExpenses', _journalEntryHandler.getExpenses);
     router.get('/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/exportToCsv/:filter', _journalEntryHandler.exportToCsv);

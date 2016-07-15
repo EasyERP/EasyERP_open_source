@@ -130,6 +130,57 @@ module.exports = function (models, event) {
      ]
      * */
     router.get('/getFilterValues', handler.getFilterValues);
+
+    /**
+     *@api {get} /invoices/getSalesByCountry Request SalesByCountry
+     *
+     * @apiVersion 0.0.1
+     * @apiName getSalesByCountry
+     * @apiGroup Invoice
+     *
+     * @apiParam (?Field=value) {String} startDay
+     * @apiParam (?Field=value) {String} endDay
+     *
+     * @apiSuccess {Object} SalesByCountry
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+            "data": [
+                {
+                    "_id": null,
+                    "pays": 30000
+                },
+                {
+                    "_id": "Germany",
+                    "pays": 1693000
+                },
+                {
+                    "_id": "Italy",
+                    "pays": 500000
+                },
+                {
+                    "_id": "Israel",
+                    "pays": 1300000
+                },
+                {
+                    "_id": "UAE",
+                    "pays": 250000
+                },
+                {
+                    "_id": "Sweden",
+                    "pays": 2000000
+                },
+                {
+                    "_id": "Ireland",
+                    "pays": 102400
+                },
+                {
+                    "_id": "Hungary",
+                    "pays": 224000
+                }
+            ]
+        }
+     * */
     router.get('/getSalesByCountry', handler.getSalesByCountry);
     router.get('/generateName', handler.generateName);
     router.get('/stats', handler.getStats);
