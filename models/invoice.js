@@ -65,7 +65,7 @@ module.exports = (function () {
         removable  : {type: Boolean, default: true},
         approved   : {type: Boolean, default: false},
         emailed    : {type: Boolean, default: false},
-        project : {type: ObjectId, ref: 'Project', default: null}
+        project    : {type: ObjectId, ref: 'Project', default: null}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
@@ -80,7 +80,7 @@ module.exports = (function () {
             taxes      : {type: Number, default: 0},
             subTotal   : Number
         }],
-        project: {type: ObjectId, ref: 'Project', default: null}
+        project : {type: ObjectId, ref: 'Project', default: null}
     });
 
     var writeOffSchema = baseSchema.extend({
@@ -179,6 +179,28 @@ module.exports = (function () {
                 return next(err);
             }
             invoice.name = 'WO' + rate.value.seq;
+
+            next();
+        });
+    });
+
+    invoiceSchema.pre('save', function (next) {
+        var invoice = this;
+        var db = invoice.db.db;
+
+        db.collection('settings').findOneAndUpdate({
+            dbName: db.databaseName,
+            name  : 'invoice'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
+            invoice.name = 'PI' + rate.value.seq;
 
             next();
         });

@@ -183,13 +183,14 @@ define([
             var self = this;
             var url = '/proforma';
             var quotationId = this.currentModel.id;
+            var journal = this.forSales ? CONSTANTS.PROFORMA_JOURNAL : null;
             var data = {
                 forSales   : this.forSales,
                 quotationId: quotationId,
                 currency   : this.currentModel.toJSON().currency,
-                journal    : CONSTANTS.PROFORMA_JOURNAL
+                journal    : journal
             };
-            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/Proforma/list';
+            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/proforma/list';
 
             if (e) {
                 e.preventDefault();

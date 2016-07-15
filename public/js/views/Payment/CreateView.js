@@ -112,6 +112,10 @@ define([
             var newCurrencyClass = helpers.currencyClass(newCurrency);
             var paymentMethods;
             var el;
+            var accountName = this.forSales ? 'debitAccount' : 'creditAccount';
+            var query = {
+                transaction: 'Payment'
+            };
 
             var array = this.$el.find('#paidAmountDd');
             array.attr('class', newCurrencyClass);
@@ -125,10 +129,10 @@ define([
                 });
 
                 if (el && el.chartAccount && el.chartAccount._id) {
-                    dataService.getData('/journals/getByAccount', {
-                        transaction : 'Payment',
-                        debitAccount: el.chartAccount._id
-                    }, function (resp) {
+
+                    query[accountName] = el.chartAccount._id;
+
+                    dataService.getData('/journals/getByAccount', query, function (resp) {
                         self.responseObj['#journal'] = resp.data || [];
 
                         self.$el.find('#journalDiv').show();

@@ -82,7 +82,7 @@ define([
             var i;
             var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
             var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
-            var balance = parseFloat($currentEl.find('#balance').text()) * 100;
+            var balance = total; // parseFloat($currentEl.find('#balance').text()) * 100;
             var journal = this.forSales ? CONSTANTS.INVOICE_JOURNAL : CONSTANTS.INVOICE_PURCHASE;
 
             var payments = {
