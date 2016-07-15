@@ -286,7 +286,8 @@ define([
                 new NoteView({
                     model      : this.model,
                     contentType: CONSTANTS.INVOICES,
-                    needNotes  : needNotes
+                    needNotes  : needNotes,
+                    isCreate   : true
                 }).render().el
             );
 
