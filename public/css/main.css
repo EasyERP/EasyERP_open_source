@@ -3457,6 +3457,24 @@ dl.payrollDateBlock dt {
 .treemap_sales {
   display: inline-block;
 }
+table.kanban tbody td {
+  margin: 0 5px;
+  -o-text-overflow: clip;
+  text-overflow: clip;
+  background: -webkit-linear-gradient(90deg, #333a4f 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%), -webkit-linear-gradient(0deg, #333a4f 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+  background: -moz-linear-gradient(0deg, #333a4f 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%), -moz-linear-gradient(90deg, #333a4f 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(0deg, #333a4f 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%), linear-gradient(90deg, #333a4f 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+  background-position: -1px -1px;
+  -webkit-background-origin: padding-box;
+  background-origin: padding-box;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-background-size: 7px 7px;
+  background-size: 7px 7px;
+}
+table.kanban tbody td:nth-child(n+2) {
+  border-left: 9px solid #fff;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
