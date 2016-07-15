@@ -7,6 +7,7 @@ define([
     'views/Assignees/AssigneesView',
     'views/Notes/NoteView',
     'views/Proforma/InvoiceProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/ProformaCreateView',
     'views/Payment/list/ListHeaderInvoice',
@@ -15,8 +16,7 @@ define([
     'dataService',
     'populate',
     'constants',
-    'helpers',
-    'views/Products/InvoiceOrder/ProductItems'
+    'helpers'
 ], function (Backbone,
              $,
              _,
@@ -25,6 +25,7 @@ define([
              AssigneesView,
              NoteView,
              InvoiceItemView,
+             ProductItemView,
              wTrackRows,
              PaymentCreateView,
              ListHederInvoice,
@@ -33,8 +34,7 @@ define([
              dataService,
              populate,
              CONSTANTS,
-             helpers,
-             ProductItemView) {
+             helpers) {
     'use strict';
 
     var EditView = ParentView.extend({
