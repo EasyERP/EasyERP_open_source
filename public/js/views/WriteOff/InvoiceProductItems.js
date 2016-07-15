@@ -16,11 +16,11 @@ define([
         el: '#invoiceItemsHolder',
 
         events: {
-            'click .addProductItem'  : 'getProducts',
-            'click .current-selected': 'showProductsSelect',
-            'change input.statusInfo': 'recalculateTaxes',
+            'click .addProductItem'                            : 'getProducts',
+            'click .current-selected'                          : 'showProductsSelect',
+            'change input.statusInfo'                          : 'recalculateTaxes',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'keyup input.statusInfo' : 'recalculateTaxes'
+            'keyup input.statusInfo'                           : 'recalculateTaxes'
         },
 
         initialize: function (options) {

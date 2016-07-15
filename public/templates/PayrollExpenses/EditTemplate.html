@@ -1,0 +1,133 @@
+<div class="form-holder">
+    <form method="post" action="" class="form">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Payroll Slip</a></li>
+                    <li><a href="javascript:;" class="">Journal Entries</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label>Employee</label></dt>
+                                <dd>
+                                    <span data-id="<%=model.employee._id%>"><%=model.employee.name.first + ' ' + model.employee.name.last%></span>
+                                </dd>
+                                <dt><label>Department</label></dt>
+                                <dd>
+                                    <span><%=model.employee.department%></span>
+                                </dd>
+                                <dt><label>Base Salary</label></dt>
+                                <dd>
+                                    <span class="dollar"><%=currencySplitter(model.salary.toFixed(2))%></span>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block right">
+                            <dl class="opp-info">
+                                <dt><label>Month</label></dt>
+                                <dd>
+                                    <span><%=model.month%></span>
+                                </dd>
+                                <dt><label>Fiscal Year</label></dt>
+                                <dd>
+                                    <span><%=model.year%></span>
+                                </dd>
+                                <%if (model.vacArray.V || model.vacArray.S) {%>
+                                <dt><label>Leave with Pay</label></dt>
+                                <dd>
+                                    <%if (model.vacArray.V) {%>
+                                    <span class="V">Vacation</span> <span><%=model.vacArray.V || 0%></span>
+                                    <%}%>
+                                    <%if (model.vacArray.S) {%>
+                                    <span class="S">Sick</span> <span><%=model.vacArray.S || 0%></span>
+                                    <%}%>
+                                </dd>
+                                <%}%>
+                                <%if (model.vacArray.E || model.vacArray.P) {%>
+                                <dt><label>Leave without Pay</label></dt>
+                                <dd>
+                                    <%if (model.vacArray.E) {%>
+                                    <span class="E">Education</span> <span><%=model.vacArray.E || 0%></span>
+                                    <%}%>
+                                    <%if (model.vacArray.P) {%>
+                                    <span class="P">Personal</span> <span><%=model.vacArray.P || 0%></span>
+                                    <%}%>
+                                </dd>
+                                <%}%>
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <div class="half-block left">
+                            <table class="list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2" class="forCaption text-left">Earnings</th>
+                                </tr>
+                                <tr>
+                                    <td>Type</td>
+                                    <td>Amount</td>
+                                </tr>
+                                </thead>
+                                <tbody class="enableTableOdd">
+                                <%for(var i = model.earnings.length - 1; i >= 0; i--){%>
+                                <tr>
+                                    <td><%=model.earnings[i].formula%></td>
+                                    <td class="money"><%= currencySplitter(model.earnings[i].amount.toFixed(2))%></td>
+                                </tr>
+                                <%}%>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="half-block right">
+                            <table class="list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2" class="forCaption text-left">Deductions</th>
+                                </tr>
+                                <tr>
+                                    <td>Type</td>
+                                    <td>Amount</td>
+                                </tr>
+                                </thead>
+                                <tbody class="enableTableOdd">
+                                <%for(var i = model.deductions.length - 1; i >= 0; i--){%>
+                                <tr>
+                                    <td><%=model.deductions[i].formula%></td>
+                                    <td class="money"><%= currencySplitter(model.deductions[i].amount.toFixed(2))%></td>
+                                </tr>
+                                <%}%>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="half-block left"></div>
+                        <div class="half-block right">
+                            <dl class="opp-info text-right">
+                                <dt><label>Gross Pay</label></dt>
+                                <dd>
+                                    <span class="money"><%= currencySplitter(model.grossPay.toFixed(2))%></span>
+                                </dd>
+                                <dt><label>Total Deduction</label></dt>
+                                <dd>
+                                    <span class="money"><%= currencySplitter(model.totalDeduction.toFixed(2))%></span>
+                                </dd>
+                                <dt><label>Net Pay</label></dt>
+                                <dd>
+                                    <span class="money"><%= currencySplitter((model.grossPay - model.totalDeduction).toFixed(2))%></span>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="dialog-tabs-item" id="journalEntries"></div>
+                </div>
+
+            </div>
+        </fieldset>
+    </form>
+</div>

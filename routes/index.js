@@ -71,6 +71,8 @@ module.exports = function (app, mainDb) {
     var tagRouter = require('./tags')(models, event);
     var journalEntriesRouter = require('./journalEntries')(models, event);
     var writeOffRouter = require('./writeOff')(models, event);
+    var payrollStructureTypesRouter = require('./payrollStructureTypes')(models);
+    var cashTransferRouter = require('./cashTransfer')(models, event);
 
     var logger = require('../helpers/logger');
     var async = require('async');
@@ -180,6 +182,8 @@ module.exports = function (app, mainDb) {
     app.use('/tags', tagRouter);
     app.use('/users', userRouter);
     app.use('/writeOff', writeOffRouter);
+    app.use('/payrollStructureTypes', payrollStructureTypesRouter);
+    app.use('/cashTransfer', cashTransferRouter);
 
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

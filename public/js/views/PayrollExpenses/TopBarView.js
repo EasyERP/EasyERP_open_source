@@ -21,6 +21,7 @@ define([
             'click #top-bar-createBtn'    : 'createEvent',
             'click #top-bar-generate'     : 'generateEvent',
             'click #top-bar-recount'      : 'recountEvent',
+            'click #top-bar-recountAll'   : 'recountAllEvent',
             'click #top-bar-copy'         : 'copyEvent',
             'click #topBarPaymentGenerate': 'createPayment'
         },
@@ -51,6 +52,12 @@ define([
             event.preventDefault();
 
             this.trigger('recountEvent');
+        },
+
+        recountAllEvent: function (event) {
+            event.preventDefault();
+
+            this.trigger('recountAllEvent');
         },
 
         createPayment: function (event) {

@@ -398,6 +398,7 @@ define([
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
+
                     },
 
                     error: function (model, xhr) {

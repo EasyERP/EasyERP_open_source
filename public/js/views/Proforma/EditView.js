@@ -202,7 +202,7 @@ define([
             var payBtnHtml;
             var $currencyDd;
             var invoiceDate;
-            var redirectUrl = window.location.hash;
+            var redirectUrl;
 
             e.preventDefault();
 

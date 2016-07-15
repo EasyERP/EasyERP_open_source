@@ -11,6 +11,7 @@ var Module = function (models) {
         PaymentMethod
             .find()
             .sort({name: 1})
+            .populate('chartAccount')
             .exec(function (err, methods) {
                 if (err) {
                     return next(err);
@@ -25,6 +26,7 @@ var Module = function (models) {
 
         PaymentMethod
             .find()
+            .populate('chartAccount')
             .sort({name: 1})
             .exec(function (err, methods) {
                 if (err) {

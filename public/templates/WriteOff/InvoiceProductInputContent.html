@@ -15,10 +15,4 @@
         <input type="text" class="datepicker notVisible" readonly>
     </td>--> <!--commented on 14 Mar, in quotationEdit commit -->
     <td data-name="quantity"><span></span></td>
-    <%var currencyClassVal;%>
-    <%currencyClassVal = currencyClass(currency._id)%>
-    <td data-name="price" class="<%=currencyClassVal%>"><input id="editInput" class="statusInfo" maxlength="9" size=10 type="text"/>
-    </td>
-    <td class="taxes <%=currencyClassVal%> "><span></span></td>
-    <td class="subtotal <%=currencyClassVal%>"><span></span></td>
 </tr>

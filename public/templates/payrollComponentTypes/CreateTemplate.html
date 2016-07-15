@@ -3,15 +3,36 @@
         <fieldset>
             <div class="clearfix"></div>
             <br>
-            <h3>New Payroll <%= type %> Type</h3>
+            <h3><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h3>
             <div class="clearfix"></div>
-            <br><br>
-            <span>Name: </span>
-            <input id="payrollComponentTypeName"  maxlength="40" size="40" type="text">
+            <br>
+            <div class="half-block left">
+                <span>Name: </span>
+                <input id="structureComponentName" maxlength="40" size="40" type="text" value="<%= name || ''%>">
+            </div>
+            <div class="half-block right">
+                <dl class="opp-info">
+                    <dt><label for="<%= type %>TypeDd">Type</label></dt>
+                    <dd>
+                        <span>
+                            <a id="<%= type %>TypeDd" class="current-selected" data-id="<%= componentType ? componentType._id : '' %>"
+                               href="javascript:;"><%= componentType ? componentType.name : 'Select' %></a>
+                        </span>
+                    </dd>
+                    <dt><label for="minRange">Min Range</label></dt>
+                    <dd><input id="minRange" value="0"/></dd>
+                    <dt><label for="maxRange">Max Range</label></dt>
+                    <dd><input id="maxRange" value="0"/></dd>
+                </dl>
+            </div>
             <br>
             <br>
-            <span>Comment:</span><br>
-            <textarea name="comment" id="payrollComponentTypeComment" cols="3" rows="10"></textarea>
+            <br>
+            <br>
+            <span>Formula: </span>
+            <br>
+            <br>
+            <span id="formula"></span><span><a href="javascript:;" id="addFormulaElement">...</a></span>
         </fieldset>
     </form>
 </div>

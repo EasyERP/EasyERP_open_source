@@ -1,21 +1,25 @@
 module.exports = {
     LEAD: {
         collectionName: 'Opportunities',
-        map           : {
+
+        map: {
             isOpportunitie: {
                 name : 'isOpportunitie',
                 isRef: false
             },
+
             'expectedRevenue.value': {
                 name : 'expectedRevenue',
                 isRef: false
             },
+
             salesPerson: {
                 name      : 'salesPerson',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
+
             workflow: {
                 name      : 'workflow',
                 isRef     : true,
@@ -24,23 +28,28 @@ module.exports = {
             }
         }
     },
+
     OPPORTUNITIE: {
         collectionName: 'Opportunities',
-        map           : {
+
+        map: {
             isOpportunitie: {
                 name : 'isOpportunitie',
                 isRef: false
             },
+
             'expectedRevenue.value': {
                 name : 'expectedRevenue',
                 isRef: false
             },
+
             salesPerson: {
                 name      : 'salesPerson',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
+
             workflow: {
                 name      : 'workflow',
                 isRef     : true,
