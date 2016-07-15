@@ -19,22 +19,31 @@
                             <div class="half-block left">
                                 <div class="product-info">
                                     <div class="inputField">
-                                        <input type="text" id="product" required maxlength="32"
-                                               value="<%=model.name%>"/>
-                                        <label for="product">Product Name</label>
-                                    </div>
-                                    <div><input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
-                                        %> checked <% } %>/>
-                                        <label for="sold">Can be Sold</label>
-                                    </div>
-                                    <div><input type="checkbox" id="expensed" class="checkbox left" <%
-                                        if(model.canBeExpensed) { %> checked <% } %>/>
-                                        <label for="expensed">Can be Expensed</label>
+                                        <label for="product">
+                                            <input type="text" id="product" required maxlength="32"
+                                                   value="<%=model.name%>"/>
+                                            <span>Product Name</span>
+                                        </label>
                                     </div>
                                     <div>
-                                        <input type="checkbox" id="purchased" class="checkbox left" <%
-                                        if(model.canBePurchased) { %> checked <% } %>/>
-                                        <label for="purchased">Can be Purchased</label>
+                                        <label for="sold">
+                                            <input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
+                                            %> checked <% } %>/>
+                                            <span>Can be Sold</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label for="expensed">
+                                            <input type="checkbox" id="expensed" class="checkbox left" <%
+                                            if(model.canBeExpensed) { %> checked <% } %>/>
+                                            <span>Can be Expensed</span></label>
+                                    </div>
+                                    <div>
+                                        <label for="purchased">
+                                            <input type="checkbox" id="purchased" class="checkbox left" <%
+                                            if(model.canBePurchased) { %> checked <% } %>/>
+                                            <span>Can be Purchased</span>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -63,9 +72,12 @@
                                     </dl>
                                 </div>
                                 <div class="half-block left">
-                                    <div class="inputField"><input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                               value="<%=model.info.salePrice%>"/>
-                                        <label for="salePrice">Sale Price</label>
+                                    <div class="inputField">
+                                        <label for="salePrice">
+                                            <input type="text" id="salePrice" class="extra-info" maxlength="10"
+                                                   value="<%=model.info.salePrice%>"/>
+                                            <span>Sale Price</span>
+                                        </label>
                                     </div>
                                     <!--
                                     <dt><label for="active">Active</label></dt>
@@ -137,9 +149,11 @@
                                 <div class="full-width left">
                                     <div class="inner">
                                         <div class="textarea-wrapper inputField">
-                                            <textarea type="text" class="full-width productDescriptionCreate"
-                                                      name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
-                                                <label for="description">Add note...</label>
+                                                <label for="description">
+                                                    <textarea type="text" class="full-width productDescriptionCreate"
+                                                              name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
+                                                    <span>Add note...</span>
+                                                </label>
                                         </div>
                                         <a href="javascript:;" class="attach_file">
                                             <i class="fa fa-paperclip" aria-hidden="true"></i>

@@ -232,6 +232,7 @@ define([
             var paymentContainer;
             var $notDiv;
             var needNotes = false;
+            var invoiceDate;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -273,13 +274,15 @@ define([
                 new ListHederInvoice().render().el
             );
 
+            this.model.set('notes', []);
+
             $notDiv = this.$el.find('#attach-container');
             $notDiv.append(
-                //new NoteView({
-                //    model      : this.model,
-                //    contentType: CONSTANTS.INVOICES,
-                //    needNotes  : needNotes
-                //}).render().el
+                new NoteView({
+                    model      : this.model,
+                    contentType: CONSTANTS.INVOICES,
+                    needNotes  : needNotes
+                }).render().el
             );
 
 
@@ -297,14 +300,25 @@ define([
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
+                changeYear : true,
+                onSelect   : function () {
+                    invoiceDate = self.$el.find('#invoice_date').val();
+                    self.$el.find('#due_date').datepicker('option', 'minDate', invoiceDate);
+                }
             }).datepicker('setDate', new Date());
+
+            invoiceDate = this.$el.find('#invoice_date').val();
 
             this.$el.find('#due_date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
-            });
+                changeYear : true,
+                onSelect   : function () {
+                    var targetInput = $(this);
+
+                    targetInput.removeClass('errorContent');
+                }
+            }).datepicker('option', 'minDate', invoiceDate);
 
             this.delegateEvents(this.events);
 
