@@ -13,6 +13,7 @@
     </div>
     <div class="opportunity-content">
         <div class="half-block left">
+            <p class="opportunity-date"></p>
             <p class="left customerName"><%=(model.customer) && (model.customer.name) ? model.customer.name.first + ' ' +
                 model.customer.name.last : ''%></p>
             <%if (model.nextAction&&model.nextAction.desc){%>
