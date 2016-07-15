@@ -1,0 +1,139 @@
+$base-font-size: 16;
+
+@function parseInt($n) {
+  @return $n / ($n * 0 + 1);
+}
+
+@mixin rem($property, $values) {
+  $px : ();
+  $rem: ();
+
+  @each $value in $values {
+
+    @if $value == 0 or $value == auto {
+      $px : append($px , $value);
+      $rem: append($rem, $value);
+    }
+
+    @else {
+      $unit: unit($value);
+      $val: parseInt($value);
+
+      @if $unit == "px" {
+        $px : append($px,  $value);
+        $rem: append($rem, ($val / $base-font-size + rem));
+      }
+
+      @if $unit == "rem" {
+        $px : append($px,  ($val * $base-font-size + px));
+        $rem: append($rem, $value);
+      }
+    }
+  }
+
+  @if $px == $rem {
+    #{$property}: $px;
+  } @else {
+    //#{$property}: $px;
+    #{$property}: $rem;
+  }
+}
+
+@mixin em($property, $values) {
+  $em: ();
+
+  @each $value in $values {
+
+    @if $value == 0 or $value == auto {
+      $em: append($em, $value);
+    }
+
+    @else {
+      $unit: unit($value);
+      $val: parseInt($value);
+
+      @if $unit == "px" {
+        $em: append($em, ($val / $base-font-size + em));
+      }
+
+      @if $unit == "em" {
+        $em: append($em, $value);
+      }
+
+      @if $unit == "" {
+        $em: append($em, ($value + em));
+      }
+    }
+  }
+
+  #{$property}: $em;
+}
+
+@mixin clearfix() {
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+@mixin make-font-size($font-size) {
+  // If $font-size is a list, include both font-size and line-height
+  @if type-of($font-size) == "list" {
+    @include rem(font-size, nth($font-size, 1));
+
+    @if (length($font-size) > 1) {
+      line-height: nth($font-size, 2);
+    }
+  }  @else {
+    @include rem(font-size, $font-size);
+  }
+}
+
+@mixin make-margin($margin) {
+  @if type-of($margin) == "list" {
+    @if (length($margin) > 2) {
+      @include em(margin-top, ( ( nth($margin, 3) / nth($margin, 1) ) * 1.5 ) );
+      @include em(margin-bottom, ( ( nth($margin, 3) / nth($margin, 1) ) * 0.5 ) );
+    }
+  }
+}
+
+@mixin default-font-size($fs-map, $breakpoints: $screen-breakpoints) {
+  @each $breakpoint, $font-size in $fs-map {
+
+    @if $breakpoint == null {
+      @include make-font-size($font-size);
+    } @else {
+      // If $font-size is a key that exists in $breakpoints, use the value
+      @if map-has-key($breakpoints, $breakpoint) {
+        $breakpoint: map-get($breakpoints, $breakpoint);
+      }
+
+      @media (min-width: $breakpoint) {
+        @include make-font-size($font-size);
+      }
+    }
+  }
+}
+
+@mixin default-margin($m-map, $breakpoints: $screen-breakpoints) {
+  @each $breakpoint, $margin in $m-map {
+
+    @if $breakpoint == null {
+      @include make-margin($margin);
+    } @else {
+      // If $margin is a key that exists in $breakpoints, use the value
+      @if map-has-key($breakpoints, $breakpoint) {
+        $breakpoint: map-get($breakpoints, $breakpoint);
+      }
+
+      @media (min-width: $breakpoint) {
+        @include make-margin($margin);
+      }
+    }
+  }
+}

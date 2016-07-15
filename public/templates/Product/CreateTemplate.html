@@ -17,30 +17,30 @@
                         </div>
                         <div class="avatarInfoContainer">
                             <div class="half-block left">
-                                <dl class="product-info">
-                                    <dt class="inputField">
+                                <div class="product-info">
+                                    <div class="inputField">
                                         <input type="text" id="product" required maxlength="32"/>
                                         <label for="product">Product Name</label>
-                                    </dt>
-                                    <dt>
+                                    </div>
+                                    <div>
                                         <input type="checkbox" id="sold" <% if (contentType === 'salesProduct') {%>
                                         checked
                                         <%}%> class="checkbox left"/>
                                         <label for="sold">Can be Sold</label>
-                                    </dt>
-                                    <dt>
+                                    </div>
+                                    <div>
                                         <input type="checkbox" id="expensed" class="checkbox left"/>
                                         <label for="expensed">Can be Expensed</label>
-                                    </dt>
+                                    </div>
                                     <!--
                                                         <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
-                                    <dt>
+                                    <div>
                                         <input type="checkbox" id="purchased" <% if (contentType === 'Product') {%>
                                         checked
                                         <%}%> class="checkbox left"/>
                                         <label for="purchased">Can be Purchased</label>
-                                    </dt>
-                                </dl>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -74,11 +74,11 @@
                                     </dl>
                                 </div>
                                 <div class="half-block left">
-                                    <dt class="inputField">
+                                    <div class="inputField">
                                         <input type="text" id="salePrice" class="extra-info" maxlength="10"
                                            placeholder="0.00"/>
                                         <label for="salePrice">Sale Price</label>
-                                    </dt>
+                                    </div>
                                     <!--<dd></dd>-->
                                     <!--
                                     <dt><label for="active">Active</label></dt>

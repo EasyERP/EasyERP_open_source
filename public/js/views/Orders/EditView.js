@@ -44,8 +44,6 @@ define([
         },
 
         chooseOption: function (e) {
-            //$(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-
             var currencyElement = $(e.target).parents('dd').find('.current-selected');
             var oldCurrency = currencyElement.attr('data-id');
             var newCurrency = $(e.target).attr('id');
@@ -57,6 +55,8 @@ define([
             array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
             currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
+
+            //$(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
             this.hideNewSelect();
         },

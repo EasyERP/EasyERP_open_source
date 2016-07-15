@@ -1,0 +1,245 @@
+$tree-item-bg: #E5EBFB;
+$tree-border: #ddd;
+$checkbox-border: #3e88b9;
+$checkbox-text: #5a5a5a;
+$input-border: #5a5a5a;
+$input-text: #3e88b9;
+$border-color: #7f7f80;
+$top-font-color: #666666;
+
+.flex {
+  display: flex;
+
+  #productTree {
+    flex: 0 0 250px;
+    margin-top: 30px;
+    border-right: 1px solid $tree-border;
+
+    ul li {
+      position: relative;
+    }
+
+    ul {
+      .content {
+        padding-left: 24px;
+      }
+
+      .expand {
+        left: 4px;
+      }
+
+      ul {
+        .content {
+          padding-left: 44px;
+        }
+
+        .expand {
+          left: 24px;
+        }
+
+        ul {
+          .content {
+            padding-left: 64px;
+          }
+
+          .expand {
+            left: 44px;
+          }
+
+          ul {
+            .content {
+              padding-left: 84px;
+            }
+
+            .expand {
+              left: 64px;
+            }
+
+            ul {
+              .content {
+                padding-left: 104px;
+              }
+
+              .expand {
+                left: 84px;
+              }
+
+              ul {
+                .content {
+                  padding-left: 124px;
+                }
+
+                .expand {
+                  left: 104px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .action-btn {
+      display: none;
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      transform: translate(0, -50%);
+
+      span {
+        vertical-align: middle;
+        cursor: pointer;
+        color: $top-font-color;
+        font-size: 16px;
+
+        &:before {
+          font-size: 16px;
+        }
+      }
+    }
+
+    span.content {
+      position: relative;
+      display: block;
+      padding: 5px 40px 5px 24px;
+      line-height: 16px;
+      border-bottom: 1px dotted $tree-item-bg;
+
+      &:hover {
+        cursor: pointer;
+        background-color: $tree-item-bg;
+      }
+
+      &.selected {
+        background-color: $tree-item-bg;
+      }
+
+      .text {
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      &:hover {
+        .action-btn {
+          display: block;
+        }
+      }
+    }
+
+    .expand {
+      position: absolute;
+      top: 7px;
+      left: 4px;
+      width: 16px;
+      height: 16px;
+      border: 1px solid $border-color;
+      font-size: 14px;
+      padding: 2px;
+      line-height: 9px;
+      text-decoration: none !important;
+      box-sizing: border-box;
+      text-align: center;
+    }
+  }
+
+  .addProduct {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 11px;
+
+    a {
+      border: 1px solid $border-color;
+      margin: 0 12px 0 5px;
+      padding: 0 5px;
+      text-align: center;
+      cursor: pointer;
+      vertical-align: baseline;
+      color: $top-font-color;
+      line-height: 28px;
+      font-size: 14px;
+      font-family: Title;
+
+      &:before {
+        font-size: 16px;
+        padding-right: 10px;
+        font-family: FontAwesome;
+      }
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  #thumbnailContent {
+    @extend %clearfix;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: stretch;
+    padding: 35px 0 4px 12px;
+    box-sizing: border-box;
+
+    .thumbnail {
+      &.product {
+        position: relative;
+        flex: 1 1 200px;
+        box-sizing: border-box;
+        padding: 8px;
+        min-width: 150px;
+        margin: 4px;
+        background-color: white !important;
+
+        // reset default style for .thumbnail / removed during refactor, if there is no need
+        float: none;
+        display: block;
+        width: auto;
+        min-height: inherit;
+
+        .inner {
+          float: left;
+          width: 50px;
+
+          // reset default style for .thumbnail / removed during refactor, if there is no need
+          padding: 0;
+
+          img {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+          }
+
+          .avater {
+            border: 1px solid $border-color;
+          }
+        }
+
+        .info {
+          word-break: break-all;
+          padding-left: 55px;
+        }
+      }
+    }
+  }
+
+  #productContent {
+    position: relative;
+    flex-grow: 1;
+  }
+}
+
+.product {
+  &Heading {
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  %Category {
+    label, a {
+      line-height: 26px;
+      font-size: 12px;
+    }
+  }
+}
