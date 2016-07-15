@@ -378,7 +378,7 @@ input::-ms-clear {
   transform: rotate(@deg);
 }
 
-.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
+.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 18px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
   //overflow: hidden; //������ ������ attache �  Project ->add
@@ -481,11 +481,12 @@ input::-ms-clear {
   }
 
   .formTitle {
+    width: 100%;
+    border-bottom: @thin-border @border-color;
+
     &.withMargin {
       margin-bottom: 0;
     }
-    width: 100%;
-    border-bottom: @thin-border @border-color;
 
     .btnHolder {
       .right;
@@ -2092,7 +2093,7 @@ input::-ms-clear {
     min-width: 80px;
   }
 
-  .dl-auto(160px, 40%, 16px, 16px, 10px);
+  .dl-auto(160px, 40%, 18px, 18px, 10px);
 
   select {
     font-family: Arial, Helvetica, sans-serif;
