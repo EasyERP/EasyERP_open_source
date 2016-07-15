@@ -3473,6 +3473,14 @@ dl.payrollDateBlock dt {
   border: 2px solid;
   z-index: 11;
 }
+.invoiceTooltip > span {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  z-index: 2;
+}
 .invoiceTooltip:before {
   content: '';
   position: absolute;

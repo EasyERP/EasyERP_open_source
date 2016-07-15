@@ -1248,6 +1248,15 @@ dl.payrollDateBlock {
   display: none;
   border: 2px solid;
   z-index: 11;
+  
+  > span {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
 
   &:before {
     content: '';
