@@ -286,7 +286,7 @@ define([
             };
 
             var invoiceDate = $thisEl.find('#invoice_date').val() || $thisEl.find('#inv_date').text();
-            var dueDate = $thisEl.find('#due_date').val();
+            var dueDate = $thisEl.find('#due_date').val() || $thisEl.find('#inv_date').text();
 
             var supplier = $thisEl.find('#supplier').attr('data-id');
 
@@ -332,8 +332,8 @@ define([
                     productId = targetEl.data('id');
 
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"] input').val();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                        quantity = targetEl.find('[data-name="quantity"] input').val() || $thisEl.find('[data-name="quantity"]').text();
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) || helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
                         price = parseFloat(price) * 100;
 
                         if (isNaN(price) || price <= 0) {
@@ -347,6 +347,9 @@ define([
                         taxes = parseFloat(taxes) * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        if (subTotal == ''){
+                            subTotal = helpers.spaceReplacer(targetEl.find('.amount').text());
+                        }
                         subTotal = parseFloat(subTotal) * 100;
 
                         products.push({
@@ -537,6 +540,7 @@ define([
                 isWtrack        : self.isWtrack,
                 isPaid          : this.isPaid,
                 notAddItem      : this.notAddItem,
+                approved : this.currentModel.get('approved'),
                 wTracks         : wTracks,
                 project         : project,
                 customer        : customer,
@@ -625,11 +629,12 @@ define([
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
 
-            productItemContainer = this.$el.find('#productItemsHolder');
-
-            productItemContainer.append(
-                new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
-            );
+            if (!model.approved) {
+                productItemContainer = this.$el.find('#productItemsHolder');
+                productItemContainer.append(
+                    new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
+                );
+            }
 
             invoiceItemContainer.append(
                 new InvoiceItemView({

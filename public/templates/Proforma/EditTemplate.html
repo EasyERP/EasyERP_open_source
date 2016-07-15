@@ -142,9 +142,15 @@
                         <div class="dialog-tabs-items childTabs">
                             <div class="dialog-tabs-item childTabs active">
                                 <%if(!isWtrack) {%>
+                               <% if (!approved) { %>
                                 <div id="productItemsHolder">
 
                                 </div>
+                               <% } else { %>
+                                <div id="invoiceItemsHolder">
+
+                                </div>
+                               <% } %>
                                 <div class="clearfix"></div>
                                 <%} else { %>
                                 <div>
