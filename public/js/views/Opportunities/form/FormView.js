@@ -46,16 +46,10 @@ define([
             e.preventDefault();
 
             var parent = $(e.target).parent().parent();
-            var field = parent.attr('data-id');
+            var field = parent.attr('data-id').replace('_', '.');
             var value = this.$el.find('#editInput').val();
             var newModel = {};
             newModel[field] = value;
-
-            if (field.indexOf('_') !== -1){
-                field = field.split('_');
-                newModel[field[0]] = {};
-                newModel[field[0]][field[1]] = value;
-            }
 
             parent.text(value);
             parent.removeClass('quickEdit');

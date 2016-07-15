@@ -71,9 +71,26 @@ var History = function (models) {
         var historyEntry;
         var key;
         var i;
-
+        var keyArray;
         for (i = dataKeys.length - 1; i >= 0; i--) {
             key = dataKeys[i];
+
+        }
+
+
+        for (i = dataKeys.length - 1; i >= 0; i--) {
+
+            key = dataKeys[i];
+
+            if (key.indexOf('.') !== -1) {
+                keyArray = key.split('.');
+                data[keyArray[0]] = {};
+                data[keyArray[0]][keyArray[1]] = data[key];
+                dataKeys.unshift(keyArray[0]);
+                i++;
+                continue;
+            }
+
             keyValue = {
                 key  : key,
                 value: data[key]
