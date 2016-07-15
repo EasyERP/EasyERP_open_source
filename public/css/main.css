@@ -3358,6 +3358,9 @@ input:not([type="checkbox"]).inputBordered:focus {
 .kanban .column .item .inner {
   padding: 5px 5px 8px;
 }
+.columnBackground {
+  background-image: url(../images/bg_week.png);
+}
 .graphicControlls:after {
   content: "";
   display: table;
@@ -3558,6 +3561,9 @@ dl.payrollDateBlock dt {
 }
 .collapsed .topbarLogo .sidebarToggler {
   margin-left: 10px;
+}
+.collapsed .grid-conatiner .statisticsAtten.stick {
+  width: calc(100% - 40px);
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -13113,6 +13119,7 @@ textarea#editInput {
   padding: 0 !important;
 }
 .openAll {
+  width: 100px;
   cursor: pointer;
   color: #000000;
 }
@@ -13567,8 +13574,8 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten.stick {
   position: fixed;
   bottom: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: calc(100% - 200px);
   background-color: #ffffff;
   padding-top: 10px;
 }
@@ -14242,6 +14249,11 @@ textarea#editInput {
   right: 0;
   width: 35%;
   margin-right: 90px;
+}
+#searchContainer.dashBoardVocationSearch {
+  position: static;
+  float: right;
+  margin-right: 0;
 }
 #searchContainer .btn {
   background: #ffffff;

@@ -4969,6 +4969,7 @@ textarea#editInput {
 }
 
 .openAll {
+  width: 100px;
   cursor: pointer;
   color: @mainText-color;
   .icon {
@@ -5509,8 +5510,8 @@ textarea#editInput {
     &.stick {
       position: fixed;
       bottom: 0;
-      left: 0;
-      width: 100%;
+      right: 0;
+      width: calc(~"100% - 200px");
       background-color: @bg-main;
       padding-top: 10px;
     }
@@ -6370,6 +6371,12 @@ textarea#editInput {
   right: 0;
   width: 35%;
   margin-right: 90px;
+
+  &.dashBoardVocationSearch {
+    position: static;
+    float: right;
+    margin-right: 0;
+  }
 
   .btn {
     background: @bg-main;
