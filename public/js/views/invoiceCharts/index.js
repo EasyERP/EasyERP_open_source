@@ -146,11 +146,11 @@ define([
                     return x(d.date) + x.rangeBand() / 2;
                 })
                 .y(function (d) {
-                    return y(d.revenue);
+                    return y(d.invoiced);
                 })
-                .interpolate('monotone');
+                .interpolate('linear');
 
-            topChart
+           /* topChart
                 .selectAll('rect')
                 .data(data)
                 .enter()
@@ -169,6 +169,60 @@ define([
                 .attr('opacity', 0.3)
                 .on('mouseover', function (d) {
 
+                });*/
+
+            var tooltip = d3.select('div.invoiceTooltip');
+
+            topChart.append('path')
+                .datum(data)
+                .attr({
+                    'stroke': '#ff6666',
+                    'stroke-width': 2,
+                    'fill': 'none',
+                    'd': line,
+                    'opacity': 1
+                });
+
+            topChart
+                .selectAll('rect1')
+                .data(data)
+                .enter()
+                .append('svg:rect')
+                .attr({
+                    'x': function (datum) {
+                        return (x(datum.date) + x.rangeBand()/2 - 5);
+                    },
+                    'y': function (datum) {
+                        return y(datum.invoiced) - 5;
+                    },
+                    'width': 10,
+                    'height': 10,
+                    'fill': '#ff6666',
+                    'opacity': 1
+                })
+                .on('mouseover', function(d){
+
+                    tooltip
+                        .select('span')
+                        .text(d.invoiced);
+
+                    tooltip.transition()
+                        .duration(300)
+                        .style('background', '#f9c2c2')
+                        .style('width',  (d3.select(this).attr('width')*10) + 'px')
+                        .style('left', (parseFloat(d3.select(this).attr('x')) - d3.select(this).attr('width')*2) + 'px')
+                        .style('top', (d3.select(this).attr('y')) + 'px')
+                        .style('display', 'block');
+                })
+                .on('mouseleave', function (d) {
+                    d3.select(this)
+                        .transition()
+                        .delay(100)
+                        .duration(500);
+
+                    tooltip.transition()
+                        .duration(200)
+                        .style('display', 'none');
                 });
 
             topChart
@@ -176,18 +230,56 @@ define([
                 .data(data)
                 .enter()
                 .append('svg:rect')
-                .attr('x', function (datum, index) {
-                    return (x(datum.date));
+                .attr({
+                    'x'           : function (datum, index) {
+                        return (x(datum.date));
+                    },
+                    'y'           : function (datum) {
+                        return y(datum.paid);
+                    },
+                    'height'      : function (datum) {
+                        return height - y(datum.paid);
+                    },
+                    'width'       : x.rangeBand(),
+                    'fill'        : '#0aafd8', // blue  #0aafd8
+                    'opacity'     : 0.3,
+                    'stroke'      : '#045986',
+                    'stroke-width': 2
                 })
-                .attr('y', function (datum) {
-                    return y(datum.paid);
+                .on('mouseover', function (d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr({
+                            'opacity': 0.8
+                        });
+
+                    tooltip
+                        .select('span')
+                        .text(d.paid);
+
+                    tooltip.transition()
+                        .duration(300)
+                        .style('background', '#0aafd8')
+                        .style('width',  (d3.select(this).attr('width')*2) + 'px')
+                        .style('left', (parseFloat(d3.select(this).attr('x')) - parseFloat(d3.select(this).attr('width'))/4 + 4) + 'px')
+                        .style('top', (d3.select(this).attr('y')) + 'px')
+                        .style('display', 'block');
+
                 })
-                .attr('height', function (datum) {
-                    return height - y(datum.paid);
-                })
-                .attr('width', x.rangeBand())
-                .attr('fill', '#40C4FF')// blue  #40C4FF
-                .attr('opacity', 0.3);
+                .on('mouseleave', function (d) {
+                    d3.select(this)
+                        .transition()
+                        .delay(100)
+                        .duration(500)
+                        .attr({
+                            'opacity'     : 0.3
+                        });
+
+                    tooltip.transition()
+                        .duration(200)
+                        .style('display', 'none');
+                });
 
             /* topChart.append('path')
              .datum(data)
