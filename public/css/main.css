@@ -3466,6 +3466,7 @@ dl.payrollDateBlock dt {
   text-align: center;
   height: 28px;
   background-color: #fff;
+  color: #000;
   font: 14px sans-serif;
   pointer-events: none;
   display: none;
