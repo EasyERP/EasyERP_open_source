@@ -43,6 +43,8 @@ module.exports = {
 
     INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
 
+    INVOICE_PURCHASE: '5788b4572bfddc9a494cce0a',
+
     ADMIN_SALARY_JOURNAL: '56f3fac93fb451104c75a477',
 
     VACATION_EXPENSES: '56c9d4c7c3b88f6d64490fb4',
@@ -175,6 +177,6 @@ module.exports = {
         '1438158808000',
         '1438768659000'
     ],
-    
+
     SESSION_TTL: 120000
 };

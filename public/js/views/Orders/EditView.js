@@ -97,10 +97,12 @@ define([
         receiveInvoice: function (e) {
             var self = this;
             var url = '/invoices/receive';
+            var journal = this.forSales ? CONSTANTS.INVOICE_JOURNAL : CONSTANTS.INVOICE_PURCHASE;
             var data = {
                 forSales: this.forSales,
                 orderId : this.currentModel.id,
-                currency: this.currentModel.currency
+                currency: this.currentModel.currency,
+                journal : journal
             };
 
             e.preventDefault();
