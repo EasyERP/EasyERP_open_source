@@ -120,9 +120,142 @@ module.exports = function (models) {
      */
     router.get('/forDd', authStackMiddleware, accessStackMiddleware, handler.getProfileForDd);
 
+    /**
+     * @api {post} /profiles/ Request for creating new Profile
+     *
+     * @apiVersion 0.0.1
+     * @apiName createProfile
+     * @apiGroup Profiles
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+          "profileName": "Eduardo",
+          "profileDescription": "",
+          "profileAccess": [
+            {
+              "module": {
+                "_id": 1,
+                "__v": 0,
+                "attachments": [
+
+                ],
+                "link": false,
+                "mname": "Settings",
+                "parrent": null,
+                "sequence": 1000,
+                "visible": true,
+                "ancestors": [
+
+                ],
+                "href": "Settings"
+              },
+              "_id": "52b0254ead08de381e000002",
+              "access": {
+                "del": false,
+                "editWrite": false,
+                "read": false
+              }
+            },
+            ...
+          ]
+        }
+     *
+     * @apiSuccess {Object} createdProfile
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 201 Created
+     *     {
+              "success": "Profile Saved",
+              "data": {
+                "__v": 0,
+                "_id": 1468587887000,
+                "profileAccess": [
+                  {
+                    "module": 1,
+                    "_id": "52b0254ead08de381e000002",
+                    "access": {
+                      "del": false,
+                      "editWrite": false,
+                      "read": false
+                    }
+                  },
+                  ...
+                ],
+                "profileDescription": "",
+                "profileName": "Eduardo"
+              },
+              "id": 1468587887000
+            }
+     */
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.createProfile);
+
+    /**
+     * @api {put} /profiles/:id Request for updating Profile
+     *
+     * @apiVersion 0.0.1
+     * @apiName updateProfile
+     * @apiGroup Profiles
+     *
+     * @apiParam {Number} id Unique id of Profile
+     * @apiParamExample {json} Request-Example:
+     * {
+          "_id": 1438768659000,
+          "__v": 0,
+          "profileAccess": [
+            {
+              "module": {
+                "_id": 1,
+                "__v": 0,
+                "attachments": [
+
+                ],
+                "link": false,
+                "mname": "Settings",
+                "parrent": null,
+                "sequence": 1000,
+                "visible": true,
+                "ancestors": [
+
+                ],
+                "href": "Settings"
+              },
+              "_id": "52b0254ead08de381e000002",
+              "access": {
+                "del": false,
+                "editWrite": false,
+                "read": true
+              }
+            },
+            ...
+          ],
+          "profileDescription": "No description",
+          "profileName": "Finance"
+        }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *      "success":"Profile updated"
+     *     }
+     */
     router.put('/:_id', authStackMiddleware, accessStackMiddleware, handler.updateProfile);
-   
+
+    /**
+     * @api {delete} /profiles/:id Request for deleting Profile
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteProfile
+     * @apiGroup Profiles
+     *
+     * @apiParam {Number} id Unique id of Profile
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *      "success":"Profile removed"
+     *     }
+     */
     router.delete('/:_id', authStackMiddleware, accessStackMiddleware, handler.removeProfile);
 
     return router;
