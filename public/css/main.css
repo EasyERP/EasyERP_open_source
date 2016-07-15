@@ -3358,9 +3358,6 @@ input:not([type="checkbox"]).inputBordered:focus {
 .kanban .column .item .inner {
   padding: 5px 5px 8px;
 }
-.columnBackground {
-  background-image: url(../images/bg_week.png);
-}
 .graphicControlls:after {
   content: "";
   display: table;
@@ -3377,7 +3374,6 @@ input:not([type="checkbox"]).inputBordered:focus {
   bottom: 0;
   height: calc(100% - 40px);
   width: calc(100% - 55px);
-  overflow: auto;
 }
 .borderBottom {
   border-bottom: 1px solid #7f7f80;
@@ -3457,6 +3453,9 @@ dl.payrollDateBlock dt {
   content: "";
   display: table;
   clear: both;
+}
+.treemap_sales {
+  display: inline-block;
 }
 .collapsed .sideMenu {
   width: 40px !important;
