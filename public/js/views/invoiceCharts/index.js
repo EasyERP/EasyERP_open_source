@@ -196,7 +196,7 @@ define([
                     },
                     'width': 10,
                     'height': 10,
-                    'fill': '#ff6666',
+                    'fill': '#ff6666', //red squares
                     'opacity': 1
                 })
                 .on('mouseover', function(d){
@@ -245,15 +245,13 @@ define([
                 })
                 .on('mouseover', function (d) {
                     d3.select(this)
-                        .transition()
-                        .duration(200)
                         .attr({
                             'opacity': 0.8
                         });
 
                     tooltip
                         .transition()
-                        .duration(300)
+                        .duration(100)
                         .style('background', '#b6e7f3')
                         .style('width',  (x.rangeBand()*2) + 'px')
                         .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
@@ -266,8 +264,7 @@ define([
                 .on('mouseleave', function (d) {
                     d3.select(this)
                         .transition()
-                        .delay(100)
-                        .duration(500)
+                        .duration(600)
                         .attr({
                             'opacity'     : 0.3
                         });
