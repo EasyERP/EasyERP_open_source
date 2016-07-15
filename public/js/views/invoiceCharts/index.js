@@ -99,7 +99,6 @@ define([
 
         renderByFilter: function () {
             var $chartContainer = this.$el.find('#chartContainer');
-
             var WIDTH = $chartContainer.width();
             var HEIGH = $chartContainer.height();
             var data = this.collection.toJSON();
@@ -107,9 +106,9 @@ define([
             var width = WIDTH - margin.left - margin.right - 15;
             var height = HEIGH - margin.top - margin.bottom;
             var topChart = d3.select('#chart');
+            var tooltip = d3.select('div.invoiceTooltip');
             var x = d3.scale.ordinal().rangeRoundBands([margin.left, width], 0.1);
             var y = d3.scale.linear().range([height, margin.bottom]);
-
             var now = new Date();
             var max = data.length;
             var xAxis;
@@ -120,8 +119,10 @@ define([
 
             topChart
                 .append('g')
-                .attr('width', width)
-                .attr('height', height);
+                .attr({
+                    'width': width,
+                    'height': height
+                });
 
             x.domain(data.map(function (d) {
                 return d.date;
@@ -171,8 +172,6 @@ define([
 
                 });*/
 
-            var tooltip = d3.select('div.invoiceTooltip');
-
             topChart.append('path')
                 .datum(data)
                 .attr({
@@ -202,17 +201,15 @@ define([
                 })
                 .on('mouseover', function(d){
 
-                    tooltip
-                        .select('span')
-                        .text(d.invoiced);
-
                     tooltip.transition()
                         .duration(300)
                         .style('background', '#f9c2c2')
-                        .style('width',  (d3.select(this).attr('width')*10) + 'px')
-                        .style('left', (parseFloat(d3.select(this).attr('x')) - d3.select(this).attr('width')*2) + 'px')
-                        .style('top', (d3.select(this).attr('y')) + 'px')
-                        .style('display', 'block');
+                        .style('width',  (x.rangeBand()) + 'px')
+                        .style('left', (x(d.date)) + 'px')
+                        .style('top', (y(d.invoiced) - 40) + 'px')
+                        .style('display', 'block')
+                        .select('span')
+                        .text(d.invoiced);
                 })
                 .on('mouseleave', function (d) {
                     d3.select(this)
@@ -231,7 +228,7 @@ define([
                 .enter()
                 .append('svg:rect')
                 .attr({
-                    'x'           : function (datum, index) {
+                    'x'           : function (datum) {
                         return (x(datum.date));
                     },
                     'y'           : function (datum) {
@@ -255,16 +252,15 @@ define([
                         });
 
                     tooltip
-                        .select('span')
-                        .text(d.paid);
-
-                    tooltip.transition()
+                        .transition()
                         .duration(300)
                         .style('background', '#0aafd8')
-                        .style('width',  (d3.select(this).attr('width')*2) + 'px')
-                        .style('left', (parseFloat(d3.select(this).attr('x')) - parseFloat(d3.select(this).attr('width'))/4 + 4) + 'px')
-                        .style('top', (d3.select(this).attr('y')) + 'px')
-                        .style('display', 'block');
+                        .style('width',  (x.rangeBand()*2) + 'px')
+                        .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
+                        .style('top', (y(d.paid) - 40) + 'px')
+                        .style('display', 'block')
+                        .select('span')
+                        .text(d.paid);
 
                 })
                 .on('mouseleave', function (d) {
@@ -318,27 +314,31 @@ define([
                 .orient('left');
 
             topChart.append('svg:g')
-                .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + (height + 10) + ')')
+                .attr({
+                    'class': 'x axis',
+                    'transform': 'translate(0,' + (height + 10) + ')'
+                })
                 .call(xAxis)
                 .selectAll('text')
-                .attr('transform', 'rotate(-60)')
-                .attr('dx', '-.2em')
-                .attr('dy', '.15em')
-                .style('text-anchor', 'end')
-                .style('fill', 'white');
+                .attr({
+                    'transform': 'rotate(-60)',
+                    'dx': '-.2em',
+                    'dy': '.15em'
+                })
+                .style('text-anchor', 'end');
 
             topChart.append('svg:g')
-                .attr('class', 'y axis')
-                .attr('transform', 'translate(' + (margin.left) + ', 5 )')
+                .attr({
+                    'class': 'y axis',
+                    'transform': 'translate(' + (margin.left) + ', 5 )'
+                })
                 .call(yAxis)
                 .selectAll('.tick line')
                 .attr('x2', function (d) {
                     return width;
                 })
                 .style('fill', 'white')
-                .style('stroke-width', '1px')
-                .style('stroke', 'white');
+                .style('stroke-width', '1px');
 
             /* topChart.append('svg:text')
              .attr('x', x.rangeBand() / 2)
@@ -346,12 +346,15 @@ define([
              .attr('class', 'axesName')
              .text('Date');*/
 
-            topChart.append('svg:text')
-                .attr('x', -(HEIGH / 2))
-                .attr('y', margin.left - 80)
-                .attr('class', 'axesName')
-                .text('Ammount')
-                .attr('transform', 'translate(0, 0) rotate(-90)');
+            topChart
+                .append('svg:text')
+                .attr({
+                    'x'        : -(HEIGH / 2),
+                    'y'        : margin.left - 80,
+                    'class'    : 'axesName',
+                    'transform': 'translate(0, 0) rotate(-90)'
+                })
+                .text('Ammount');
 
             return this;
         },
