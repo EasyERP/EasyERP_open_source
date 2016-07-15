@@ -540,7 +540,7 @@ define([
                 isWtrack        : self.isWtrack,
                 isPaid          : this.isPaid,
                 notAddItem      : this.notAddItem,
-                approved : this.currentModel.get('approved'),
+                approved        : this.currentModel.get('approved'),
                 wTracks         : wTracks,
                 project         : project,
                 customer        : customer,
@@ -632,7 +632,7 @@ define([
             if (!model.approved) {
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
-                    new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
+                    new ProductItemView({editable: true, canBeSold: true, service: service, forSales: self.forSales}).render({model: model}).el
                 );
             }
 
