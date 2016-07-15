@@ -526,19 +526,22 @@ input {
     -webkit-flex-grow: 1;
     flex-grow: 1;
 
+    width: 10px;
     position: relative;
+    padding: 3px 5px;
     margin: 5px;
-    height: 10px;
     background-color: #e6e6e6;
+    font-size: 10px;
 
     &.passed {
       background-image: linear-gradient(to top, #158b0c,#18a815);
+      
+      span {
+        color: #fff;
+      }
     }
 
     span {
-      position: absolute;
-      bottom: -15px;
-      left: 20px;
       text-transform: uppercase;
       font-size: 12px;
       color: #666;
@@ -603,7 +606,8 @@ input {
   width: 50%;
 }
 
-.noteBtnBlock {
+.noteBtnBlock,
+.editNoteBtnBlock {
   height: 0;
   margin-top: -1px;
   border: @thin-border @border-color-main;
@@ -622,6 +626,41 @@ input {
     }
   }
 }
+
+.editedNote {
+  border: 1px solid #7f7f80;
+
+  .noteType {
+    float: left;
+  }
+
+  .noteText {
+    padding: 10px!important;
+    border: none;
+    border-top: @thin-border @border-color-main;
+  }
+}
+
+.noteTitle {
+  margin-top: 10px;
+}
+
+.editedNoteTitle {
+  padding: 10px;
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.editNoteBtnBlock {
+  height: 34px;
+  border: none;
+  border-top: @thin-border @border-color-main;
+}
+
 .contentHolder {
   &.showButtons {
     .noteBtnBlock {

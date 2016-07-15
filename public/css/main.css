@@ -2911,18 +2911,20 @@ input:not([type="checkbox"]).inputBordered:focus {
 .tabListItem {
   -webkit-flex-grow: 1;
   flex-grow: 1;
+  width: 10px;
   position: relative;
+  padding: 3px 5px;
   margin: 5px;
-  height: 10px;
   background-color: #e6e6e6;
+  font-size: 10px;
 }
 .tabListItem.passed {
   background-image: linear-gradient(to top, #158b0c, #18a815);
 }
+.tabListItem.passed span {
+  color: #fff;
+}
 .tabListItem span {
-  position: absolute;
-  bottom: -15px;
-  left: 20px;
   text-transform: uppercase;
   font-size: 12px;
   color: #666;
@@ -2968,7 +2970,8 @@ input:not([type="checkbox"]).inputBordered:focus {
 .halfColumn {
   width: 50%;
 }
-.noteBtnBlock {
+.noteBtnBlock,
+.editNoteBtnBlock {
   height: 0;
   margin-top: -1px;
   border: 1px solid #7f7f80;
@@ -2976,14 +2979,43 @@ input:not([type="checkbox"]).inputBordered:focus {
   overflow: hidden;
   transition: all .2s ease;
 }
-.noteBtnBlock .btn {
+.noteBtnBlock .btn,
+.editNoteBtnBlock .btn {
   margin: 7px;
   float: right;
   height: 19px;
   line-height: 18px!important;
 }
-.noteBtnBlock .btn:hover {
+.noteBtnBlock .btn:hover,
+.editNoteBtnBlock .btn:hover {
   text-decoration: none;
+}
+.editedNote {
+  border: 1px solid #7f7f80;
+}
+.editedNote .noteType {
+  float: left;
+}
+.editedNote .noteText {
+  padding: 10px!important;
+  border: none;
+  border-top: 1px solid #7f7f80;
+}
+.noteTitle {
+  margin-top: 10px;
+}
+.editedNoteTitle {
+  padding: 10px;
+}
+.editedNoteTitle:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.editNoteBtnBlock {
+  height: 34px;
+  border: none;
+  border-top: 1px solid #7f7f80;
 }
 .contentHolder.showButtons .noteBtnBlock {
   height: 34px;
@@ -6145,7 +6177,6 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote {
   margin-top: 6px;
   background-color: inherit;
-  padding: 5px 0 10px 0;
 }
 .noteWrapper .addNote label {
   font: normal 12px arial;
@@ -6258,7 +6289,7 @@ dl dd span.ui-spinner {
   line-height: 30px;
 }
 .noteWrapper #noteBody .noteContainer {
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 .noteWrapper #noteBody .noteContainer .name {
   margin-right: 15px;
