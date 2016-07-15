@@ -83,6 +83,7 @@ define([
             var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
             var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
             var balance = parseFloat($currentEl.find('#balance').text()) * 100;
+            var journal = this.forSales ? CONSTANTS.INVOICE_JOURNAL : CONSTANTS.INVOICE_PURCHASE;
 
             var payments = {
                 total  : total,
@@ -106,7 +107,7 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {
-                        quantity = targetEl.find('[data-name="price"] input').val();
+                        quantity = targetEl.find('[data-name="quantity"] input').val();
                         price = targetEl.find('[data-name="price"] input').val() * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val();
                         taxes = targetEl.find('.taxes').text();
@@ -161,7 +162,7 @@ define([
                 invoiceDate          : helpers.setTimeToDate(invoiceDate),
                 dueDate              : dueDate,
                 account              : null,
-                journal              : null,
+                journal              : journal,
                 name                 : $.trim($('#supplier_invoice_num').val()),
                 salesPerson          : salesPersonId,
                 paymentTerms         : paymentTermId,
@@ -284,7 +285,6 @@ define([
                     needNotes  : needNotes
                 }).render().el
             );
-
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
