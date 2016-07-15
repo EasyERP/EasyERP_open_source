@@ -5,6 +5,25 @@ var WeeklySchedulerHandler = require('../handlers/weeklyScheduler');
 module.exports = function (models) {
     var handler = new WeeklySchedulerHandler(models);
 
+    /**
+     *@api {get} /weeklyScheduler/forDd/ Request WeeklySchedulerForDd
+     *
+     * @apiVersion 0.0.1
+     * @apiName getWeeklySchedulerForDd
+     * @apiGroup Weekly Scheduler
+     *
+     * @apiSuccess {Object} WeeklySchedulerForDd
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+                "data": [
+                    {
+                        "_id": "57332c3b94ee1140b6bb49e2",
+                        "name": "UA-40"
+                    }
+                ]
+            }
+     */
     router.get('/forDd', handler.getForDd);
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;

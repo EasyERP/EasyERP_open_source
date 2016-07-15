@@ -24,8 +24,61 @@ module.exports = function (models) {
         }
     });
 
+    /**
+     *@api {post} /payrollComponentTypes/ Request for creating new PayrollComponentTypes
+     *
+     * @apiVersion 0.0.1
+     * @apiName createPayrollComponentTypes
+     * @apiGroup Payroll Component Types
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+          "name": "PayrollEarningsType",
+          "description": "",
+          "type": "earnings"
+        }
+     *
+     * @apiSuccess {Object} PayrollComponentTypes
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "__v": 0,
+              "_id": "5788c71e62c88999010ca7d0",
+              "description": "",
+              "type": "earnings",
+              "name": "PayrollEarningsType"
+            }
+     */
     router.post('/', handler.create);
+
     router.delete('/:id', handler.delete);
+
+    /**
+     *@api {patch} /payrollComponentTypes/:id Request for partly updating PayrollComponentType
+     *
+     * @apiVersion 0.0.1
+     * @apiName updatePayrollComponentType
+     * @apiGroup Payroll Component Types
+     *
+     * @apiParam {String} id Unique id of PayrollComponentType
+     * @apiParamExample {json} Request-Example:
+     * {
+          "name": "PayrollEarningsType",
+          "description": "It is comment",
+          "type": "earnings"
+       }
+     *
+     * @apiSuccess {Object} updatedPayrollComponentType
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "_id": "5788c71e62c88999010ca7d0",
+              "__v": 0,
+              "description": "",
+              "type": "earnings",
+              "name": "PayrollEarningsType"
+           }
+     */
     router.patch('/:id', handler.update);
 
     return router;
