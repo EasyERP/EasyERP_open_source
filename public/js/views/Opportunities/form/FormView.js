@@ -1,11 +1,11 @@
 define([
     'Backbone',
     'Underscore',
-    'text!templates/Deals/form/FormTemplate.html',
-    'text!templates/Deals/workflowProgress.html',
+    'text!templates/Opportunities/form/FormTemplate.html',
+    'text!templates/Opportunities/workflowProgress.html',
     'views/Editor/NoteView',
     'views/Editor/AttachView',
-    'views/Deals/EditView',
+    'views/Opportunities/EditView',
     'constants',
     'dataService',
     'populate',
@@ -221,7 +221,7 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Deals/kanban', {trigger: true});
+                    Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
                 }
             });
 
@@ -232,7 +232,7 @@ define([
 
             this.$el.html(_.template(OpportunitiesFormTemplate, formModel));
 
-            dataService.getData('/workflows/', {id: 'Deals'}, function (response){
+            dataService.getData('/workflows/', {id: 'Opportunities'}, function (response){
                 self.responseObj = {workflows : response.data};
                 self.$el.find('#workflowProgress').append(_.template(workflowProgress, {workflows : self.responseObj.workflows, workflow : formModel.workflow  }));
 

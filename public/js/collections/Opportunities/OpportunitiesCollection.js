@@ -1,7 +1,7 @@
 define([
     'Backbone',
     'Underscore',
-    'models/DealsModel',
+    'models/OpportunitiesModel',
     'common'
 ], function (Backbone, _, OpportunityModel, common) {
     'use strict';

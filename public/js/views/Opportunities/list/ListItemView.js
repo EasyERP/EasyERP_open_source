@@ -1,7 +1,7 @@
 ﻿define([
     'Backbone',
     'Underscore',
-    'text!templates/Deals/list/ListTemplate.html',
+    'text!templates/Opportunities/list/ListTemplate.html',
     'helpers'
 ], function (Backbone, _, OpportunitiesListTemplate, helpers) {
     'use strict';

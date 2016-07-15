@@ -3,7 +3,7 @@ define([], function () {
         PERSONS           : 'Persons',
         COMPANIES         : 'Companies',
         LEADS             : 'Leads',
-        OPPORTUNITIES     : 'opportunities',
+        OPPORTUNITIES     : 'Opportunities',
         DEALS             : 'Deals',
         PROJECTS          : 'Projects',
         TASKS             : 'Tasks',

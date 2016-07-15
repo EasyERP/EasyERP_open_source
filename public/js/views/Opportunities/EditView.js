@@ -3,8 +3,8 @@
     'jQuery',
     'Underscore',
     'views/dialogViewBase',
-    'text!templates/Deals/EditTemplate.html',
-    'text!templates/Deals/editSelectTemplate.html',
+    'text!templates/Opportunities/EditTemplate.html',
+    'text!templates/Opportunities/editSelectTemplate.html',
     'text!templates/history.html',
     'views/Notes/NoteView',
     'common',
@@ -44,7 +44,7 @@
 
             _.bindAll(this, 'render', 'saveItem', 'deleteItem');
             this.currentModel = options.model;
-            this.currentModel.urlRoot = CONSTANTS.URLS.DEALS;
+            this.currentModel.urlRoot = CONSTANTS.URLS.OPPORTUNITIES;
             this.responseObj = {};
             this.elementId = options.elementId || null;
 
@@ -480,7 +480,7 @@
                 self.responseObj['#salesPersonDd'] = employees;
             });
 
-            populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Deals'}, 'name', this);
+            populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Opportunities'}, 'name', this);
             populate.get('#salesTeamDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, false, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
 

@@ -2,18 +2,18 @@
     'Backbone',
     'Underscore',
     'jQuery',
-    'text!templates/Deals/kanban/WorkflowsTemplate.html',
-    'text!templates/Deals/kanbanSettings.html',
+    'text!templates/Opportunities/kanban/WorkflowsTemplate.html',
+    'text!templates/Opportunities/kanbanSettings.html',
     'collections/Workflows/WorkflowsCollection',
-    'views/Deals/kanban/KanbanItemView',
-    'views/Deals/EditView',
-    'views/Deals/CreateView',
-    'collections/Deals/OpportunitiesCollection',
-    'models/DealsModel',
+    'views/Opportunities/kanban/KanbanItemView',
+    'views/Opportunities/EditView',
+    'views/Opportunities/CreateView',
+    'collections/Opportunities/OpportunitiesCollection',
+    'models/OpportunitiesModel',
     'dataService',
     'views/Filter/filterView',
     'views/selectView/selectView',
-    'collections/Deals/filterCollection',
+    'collections/Opportunities/filterCollection',
     'constants',
     'helpers',
     'views/pagination',
@@ -281,7 +281,7 @@
 
             e.preventDefault();
             App.ownContentType = true;
-            window.location.hash = '#easyErp/Deals/form/' + id;
+            window.location.hash = '#easyErp/Opportunities/form/' + id;
         },
 
         fetchFilteredOpportunities: function (e) {

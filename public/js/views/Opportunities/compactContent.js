@@ -2,9 +2,9 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Deals/compactContentTemplate.html',
-    'views/Deals/EditView',
-    'models/DealsModel'
+    'text!templates/Opportunities/compactContentTemplate.html',
+    'views/Opportunities/EditView',
+    'models/OpportunitiesModel'
 ], function (Backbone, $, _, compactContentTemplate, editView, currentModel) {
     var compactContentView = Backbone.View.extend({
         className: 'form',

@@ -178,7 +178,7 @@ define([
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
-                    case CONTENT_TYPES.DEALS:
+                    case CONTENT_TYPES.OPPORTUNITIES:
                         App.currentViewType = 'kanban';
                         break;
                     default:
@@ -242,7 +242,7 @@ define([
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
-                    case CONTENT_TYPES.DEALS:
+                    case CONTENT_TYPES.OPPORTUNITIES:
                         App.currentViewType = 'kanban';
                         break;
                     default:

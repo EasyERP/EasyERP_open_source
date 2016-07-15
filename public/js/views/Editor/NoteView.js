@@ -25,6 +25,7 @@ define([
         },
 
         events: {
+            'click #noteArea'   : 'expandNote',
             'click .cancelNote'   : 'cancelNote',
             'click #addNote, .saveNote'      : 'saveNote',
             'click .noteContainer': 'showButtons',
@@ -51,6 +52,14 @@ define([
             }
         },
 
+
+        expandNote: function (e) {
+            if (!$(e.target).parents('.addNote').hasClass('active')) {
+                $(e.target).attr('placeholder', '').parents('.addNote').addClass('active');
+              /*  this.$el.find('.addTitle').show();*/
+            }
+        },
+
         saveTask: function () {
             var self = this;
             var assignedTo = this.$el.find('#assignedToDd').data('id');
@@ -60,9 +69,13 @@ define([
             var saveObject = {
                 assignedTo : assignedTo || '',
                 description: description,
-                dueDate   : dueDate,
-                workflow  : CONSTANTS.NOT_STARTED_WORKFLOW
+                dueDate    : dueDate,
+                workflow   : CONSTANTS.NOT_STARTED_WORKFLOW
             };
+
+
+
+
 
 
             switch(this.contentType) {

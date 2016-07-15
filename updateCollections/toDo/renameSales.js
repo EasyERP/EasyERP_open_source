@@ -15,19 +15,19 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
-
+//var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
+var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
 //var dbObject = mongoose.createConnection('localhost', 'production');
 
 var Module = dbObject.model("modules", ModuleSchema);
 var Workflow = dbObject.model("workflows", WorkflowSchema);
 
 var parallelTasks = [function (cb) {
-    Module.update({href: 'Opportunities'}, {href: "Deals", mname: "Deals"}, cb);
+    Module.update({href: 'Deals'}, {href: "Opportunities", mname: "Opportunities"}, cb);
 }, function (cb) {
     Module.update({href: 'Sales'}, {mname: "CRM"}, cb);
 },function (cb) {
-    Workflow.update({wId: 'Opportunities'}, {wId: "Deals"}, {multi : true}, cb);
+    Workflow.update({wId: 'Deals'}, {wId: "Opportunities"}, {multi : true}, cb);
 }];
 
 async.parallel(parallelTasks, function (err) {

@@ -1,7 +1,7 @@
 ﻿define([
     'Backbone',
     'collections/parent',
-    'models/DealsModel',
+    'models/OpportunitiesModel',
     'constants'
 ], function (Backbone, Parent, OpportunityModel, CONSTANTS) {
     'use strict';

@@ -2287,7 +2287,7 @@ var Module = function (models, event) {
 
             switch (contentType) {
 
-                case ('Deals'):
+                case ('Opportunities'):
                     aggregateQuery.push({
                         $lookup: {
                             from        : 'Customers',

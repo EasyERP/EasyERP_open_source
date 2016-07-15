@@ -2,12 +2,12 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/Deals/list/ListHeader.html',
-    'views/Deals/CreateView',
-    'views/Deals/list/ListItemView',
-    'views/Deals/EditView',
-    'models/DealsModel',
-    'collections/Deals/filterCollection',
+    'text!templates/Opportunities/list/ListHeader.html',
+    'views/Opportunities/CreateView',
+    'views/Opportunities/list/ListItemView',
+    'views/Opportunities/EditView',
+    'models/OpportunitiesModel',
+    'collections/Opportunities/filterCollection',
     'common',
     'dataService',
     'text!templates/stages.html'
@@ -31,7 +31,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         formUrl          : '#easyErp/Opportunities/form/',
-        contentType      : 'Deals', // needs in view.prototype.changeLocationHash
+        contentType      : 'Opportunities', // needs in view.prototype.changeLocationHash
         hasPagination    : true,
 
         initialize: function (options) {
@@ -122,7 +122,7 @@ define([
 
             itemView.bind('incomingStages', this.pushStages, this);
 
-            common.populateWorkflowsList('Deals', '.filter-check-list', '', '/Workflows', null, function (stages) {
+            common.populateWorkflowsList('Opportunities', '.filter-check-list', '', '/Workflows', null, function (stages) {
                 var stage = (self.filter) ? self.filter.workflow : null;
 
                 itemView.trigger('incomingStages', stages);
