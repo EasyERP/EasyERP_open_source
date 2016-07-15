@@ -450,6 +450,8 @@ define([
                 quantity = parseFloat(quantity);
             }
 
+            quantity = this.isNaN(quantity);
+
             return quantity;
         },
 

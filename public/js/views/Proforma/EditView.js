@@ -637,7 +637,7 @@ define([
             if (!model.approved) {
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
-                    new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
+                    new ProductItemView({editable: true, canBeSold: true, service: service, forSales: self.forSales}).render({model: model}).el
                 );
             }
 
