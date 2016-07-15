@@ -3401,37 +3401,6 @@ dl.payrollDateBlock dt {
 .totalContainer .half-block {
   width: 46%;
 }
-.tableFixedWrap {
-  height: 100%;
-}
-.tableFixedWrap .tableFixed {
-  height: 100%;
-}
-.tableFixedWrap table.payRoll-list #payRoll-Table .scrollit {
-  height: 100%;
-}
-.absoluteContent {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-}
-.absoluteContent table {
-  height: 100%;
-}
-.absoluteContent table th {
-  border-bottom: 1px solid #d7d7d7;
-}
-.absoluteContent .scrollable {
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-.flexTableWrap {
-  flex-grow: 1;
-  position: relative;
-}
 .flexActionsWrap {
   display: -webkit-box;
   display: -moz-box;
@@ -3477,26 +3446,6 @@ dl.payrollDateBlock dt {
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
-}
-.innerRow {
-  border-top: none !important;
-}
-.innerRow table tr:first-child {
-  border-top: none;
-}
-.innerRow table tr:first-child td {
-  border-top: none;
-}
-.innerRow table tr:last-child td {
-  border-bottom: none;
-}
-.colspanFix {
-  padding: 0!important;
-  border: none !important;
-}
-table {
-  width: 100%;
-  table-layout: fixed;
 }
 .salesGraphWrap .treemap_sales > div:after {
   content: "";
@@ -3960,7 +3909,7 @@ table {
 .sideMenu {
   display: block;
   width: auto;
-  max-width: 235px;
+  max-width: 200px;
   height: 100%;
   float: left;
   margin-right: -100%;
@@ -3970,7 +3919,7 @@ table {
   bottom: 0;
   right: 0;
   height: calc(100% - 40px);
-  width: calc(100% - 235px);
+  width: calc(100% - 200px);
   padding: 0 20px;
 }
 .template-switcher {
@@ -9178,7 +9127,7 @@ table#workflows tr td.edit-status {
   font-family: 'Open Sans Light', sans-serif, Verdana;
 }
 .sideMenu nav {
-  width: 235px;
+  width: 200px;
 }
 .sideMenu nav ul {
   zoom: 1;
