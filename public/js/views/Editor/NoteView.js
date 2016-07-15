@@ -38,10 +38,10 @@ define([
         },
 
         showButtons : function (e){
-            var $target = $(e.target).closest('.noteContainer');
+            var $target = $(e.target).closest('.contentHolder');
             var hasClass =  $target.hasClass('showButtons');
 
-            this.$el.find('.noteContainer').removeClass('showButtons');
+            this.$el.find('.contentHolder').removeClass('showButtons');
             if(!hasClass){
                 $target.addClass('showButtons');
             }
