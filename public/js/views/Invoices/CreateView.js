@@ -261,6 +261,10 @@ define([
 
             });
 
+            if (!this.model.approved) {
+                needNotes = true;
+            }
+
             this.renderAssignees(this.model);
 
             this.createProductView();
