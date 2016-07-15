@@ -462,7 +462,7 @@ define([
 
             $parent = $parent.closest('tr');
 
-            cost = $parent.find('[data-name="price"] input').val();
+            cost = $parent.find('[data-name="price"] input').val() || $parent.find('[data-name="price"]').text() ;
             cost = parseFloat(helpers.spaceReplacer(cost));
 
             total = quantity * cost;
@@ -503,7 +503,7 @@ define([
                 for (i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     //  quantity = $currentEl.find('[data-name="quantity"]').text();
-                    cost = $currentEl.find('[data-name="price"] input').val() || '0';
+                    cost = $currentEl.find('[data-name="price"] input').val() || $currentEl.find('[data-name="price"]').text() || '0';
                     quantity = this.quantityRetriver($currentEl);
                     cost = helpers.spaceReplacer(cost);
                     cost = parseFloat(cost);
