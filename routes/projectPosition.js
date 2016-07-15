@@ -13,7 +13,7 @@ module.exports = function (models) {
      *
      * @apiVersion 0.0.1
      * @apiName getProjectPositionForDD
-     * @apiGroup ProjectPosition
+     * @apiGroup Project Position
      *
      * @apiSuccess {Object} ProjectPositionForDD
      * @apiSuccessExample Success-Response:

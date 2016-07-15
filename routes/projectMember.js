@@ -18,7 +18,7 @@ module.exports = function (models, event) {
      *
      * @apiVersion 0.0.1
      * @apiName getProjectMember
-     * @apiGroup ProjectMember
+     * @apiGroup Project Member
      *
      * @apiParam (?Field=value) {Boolean} showMore=true
      * @apiParam (?Field=value) {Boolean} reset=true
@@ -63,7 +63,7 @@ module.exports = function (models, event) {
      *
      * @apiVersion 0.0.1
      * @apiName createProjectMember
-     * @apiGroup ProjectMember
+     * @apiGroup Project Member
      *
      * @apiParamExample {json} Request-Example:
      * {
@@ -107,7 +107,7 @@ module.exports = function (models, event) {
      *
      * @apiVersion 0.0.1
      * @apiName updateProjectMember
-     * @apiGroup ProjectMember
+     * @apiGroup Project Member
      *
      * @apiParamExample {json} Request-Example:
      * [
@@ -131,7 +131,7 @@ module.exports = function (models, event) {
      *
      * @apiVersion 0.0.1
      * @apiName deleteProjectMember
-     * @apiGroup ProjectMember
+     * @apiGroup Project Member
      *
      * @apiParam {String} id Unique id of ProjectMember
      *
