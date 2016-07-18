@@ -75,7 +75,7 @@ define([
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
-            'easyErp/:contentType/tform(/:modelId)(/c=:countPerPage)(/filter=:filter)'                      : 'goToTForm', // FixMe chenge to required Id after test
+            'easyErp/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)': 'goToList',
             'easyErp/Revenue(/filter=:filter)'                                                              : 'revenue',
@@ -976,7 +976,7 @@ define([
             }
         },
 
-        goToTForm: function (contentType, modelId, countPerPage, filter) {
+        goToTForm: function (contentType, modelId, page, countPerPage, filter) {
             var self = this;
 
             this.checkLogin(function (success) {
@@ -1000,6 +1000,149 @@ define([
             });
 
             function goTForm(context) {
+                var self = context;
+                var currentContentType = context.testContent(contentType);
+                var location = window.location.hash;
+                var startTime = new Date();
+                var url;
+                var savedFilter;
+                var startDate;
+                var endDate;
+                var contentViewUrl;
+                var topBarViewUrl;
+                var collectionUrl;
+                var navigatePage;
+                var count;
+
+                contentViewUrl = 'views/' + contentType + '/form/ContentView';
+                topBarViewUrl = 'views/' + contentType + '/TopBarView';
+                collectionUrl = context.buildCollectionRoute(contentType);
+                page = parseInt(page, 10);
+                count = parseInt(countPerPage, 10);
+
+                if (isNaN(page)) {
+                    page = 1;
+                }
+                if (isNaN(count)) {
+                    count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
+                }
+
+                if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
+
+                    if (contentType === 'salesProduct') {
+                        filter = {
+                            'canBeSold': {
+                                key  : 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
+
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    } else if (contentType === 'Product') {
+                        filter = {
+                            canBePurchased: {
+                                key  : 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
+                } else if (filter) {
+                    filter = JSON.parse(filter);
+                }
+
+                //savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = filter;
+
+                if (context.mainView === null) {
+                    context.main(contentType);
+                } else {
+                    context.mainView.updateMenu(contentType);
+                }
+                require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
+                    var collection;
+
+                    App.filtersObject.filter = filter;
+
+                    collection = new contentCollection({
+                        viewType   : 'list',
+                        page       : page,
+                        reset      : true,
+                        count      : count,
+                        filter     : filter,
+                        contentType: contentType,
+                        showMore   : false
+                    });
+
+                    collection.bind('reset', _.bind(createViews, self));
+                    custom.setCurrentVT('list');
+
+                    function createViews() {
+                        var topbarView;
+                        var contentview;
+
+                        collection.unbind('reset');
+
+                        topbarView = new topBarView({
+                            actionType: 'Content',
+                            collection: collection
+                        });
+                        contentview = new contentView({
+                            collection: collection,
+                            startTime : startTime,
+                            filter    : filter
+                        });
+
+                        eventsBinder.subscribeTopBarEvents(topbarView, contentview);
+                        eventsBinder.subscribeCollectionEvents(collection, contentview);
+
+                        collection.trigger('fetchFinished', {
+                            totalRecords: collection.totalRecords,
+                            currentPage : collection.currentPage,
+                            pageSize    : collection.pageSize
+                        });
+
+                        context.changeView(contentview);
+                        context.changeTopBarView(topbarView);
+                    }
+                });
+            }
+        },
+
+        goToForm: function (contentType, modelId) {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                self.checkDatabase(response);
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goForm(self);
+                        });
+                    } else {
+                        goForm(self);
+                    }
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goForm(context) {
                 var currentContentType = context.testContent(contentType);
                 var self = context;
                 var startTime = new Date();
@@ -1078,163 +1221,6 @@ define([
                         }
                     });
                 });
-            }
-        },
-
-        goToForm: function (contentType, modelId) {
-            var self = this;
-
-            this.checkLogin(function (success) {
-                if (success) {
-                    if (!App || !App.currentDb) {
-                        dataService.getData('/currentDb', null, function (response) {
-                            if (response && !response.error) {
-                                self.checkDatabase(response);
-                            } else {
-                                console.log('can\'t fetch current db');
-                            }
-
-                            goForm(self);
-                        });
-                    } else {
-                        goForm(self);
-                    }
-                } else {
-                    self.redirectTo();
-                }
-            });
-
-            function goForm(context) {
-                function goList(context) {
-                    var self = context;
-                    var currentContentType = context.testContent(contentType);
-                    var location = window.location.hash;
-                    var startTime = new Date();
-                    var url;
-                    var savedFilter;
-                    var startDate;
-                    var endDate;
-                    var contentViewUrl;
-                    var topBarViewUrl;
-                    var collectionUrl;
-                    var navigatePage;
-                    var count;
-
-                    if (contentType !== currentContentType) {
-                        contentType = currentContentType;
-                        url = '#easyErp/' + contentType + '/list';
-
-                        if (parrentContentId) {
-                            url += '/' + parrentContentId;
-                        }
-
-                        Backbone.history.navigate(url, {replace: true});
-                    }
-
-                    contentViewUrl = 'views/' + contentType + '/list/ListView';
-                    topBarViewUrl = 'views/' + contentType + '/TopBarView';
-                    collectionUrl = context.buildCollectionRoute(contentType);
-                    page = parseInt(page, 10);
-                    count = parseInt(countPerPage, 10);
-
-                    if (isNaN(page)) {
-                        page = 1;
-                    }
-                    if (isNaN(count)) {
-                        count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
-                    }
-
-                    if (!filter) {
-
-                        filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
-
-                        if (filter) {
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
-                        }
-
-                        if (contentType === 'salesProduct') {
-                            filter = {
-                                'canBeSold': {
-                                    key  : 'canBeSold',
-                                    value: ['true']
-                                }
-
-                            };
-
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
-                        } else if (contentType === 'Product') {
-                            filter = {
-                                canBePurchased: {
-                                    key  : 'canBePurchased',
-                                    value: ['true']
-                                }
-                            };
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
-                        }
-                    } else if (filter) {
-                        filter = JSON.parse(filter);
-                    }
-
-                    //savedFilter = custom.savedFilters(contentType, filter);
-                    //savedFilter = filter;
-
-                    if (context.mainView === null) {
-                        context.main(contentType);
-                    } else {
-                        context.mainView.updateMenu(contentType);
-                    }
-                    require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
-                        var collection;
-
-                        App.filtersObject.filter = filter;
-
-                        collection = new contentCollection({
-                            viewType        : 'list',
-                            page            : page,
-                            reset           : true,
-                            count           : count,
-                            filter          : filter,
-                            parrentContentId: parrentContentId,
-                            contentType     : contentType,
-                            showMore        : false
-                        });
-
-                        collection.bind('reset', _.bind(createViews, self));
-                        custom.setCurrentVT('list');
-
-                        function createViews() {
-                            var topbarView;
-                            var contentview;
-
-                            collection.unbind('reset');
-
-                            topbarView = new topBarView({
-                                actionType: 'Content',
-                                collection: collection
-                            });
-                            contentview = new contentView({
-                                collection: collection,
-                                startTime : startTime,
-                                filter    : filter
-                            });
-
-                            eventsBinder.subscribeTopBarEvents(topbarView, contentview);
-                            eventsBinder.subscribeCollectionEvents(collection, contentview);
-
-                            collection.trigger('fetchFinished', {
-                                totalRecords: collection.totalRecords,
-                                currentPage : collection.currentPage,
-                                pageSize    : collection.pageSize
-                            });
-
-                            context.changeView(contentview);
-                            context.changeTopBarView(topbarView);
-                        }
-                    });
-                }
             }
         },
 

@@ -1,0 +1,14 @@
+<% personsCollection.forEach(function(person, index){ %>
+<div data-id="<%=person._id%>">
+    <div>
+
+    </div>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=person._id%>" class="checkbox"/></td>
+    <td class="centerCell"><%=startNumber + index + 1%></td>
+    <td><%=person.name.first.substr(0,15)%></td>
+    <td><%=person.name.last%></td>
+    <td><%=person.email%></td>
+    <td class="notForm"><a href="skype:<%=person.phones.phone%>?call"><%=person.phones.phone%></a></td>
+    <td><%=person.address.country%></td>
+</div>
+<% }) %>

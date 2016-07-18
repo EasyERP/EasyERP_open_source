@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -9,7 +10,7 @@ define([
     'views/Filter/filterView',
     'common',
     'constants'
-], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
+], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
     'use strict';
 
     var PersonsListView = ListViewBase.extend({
@@ -18,7 +19,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         FilterView       : FilterView,
-        formUrl          : '#easyErp/Persons/form/',
+        formUrl          : '#easyErp/Persons/tform/',
         contentType      : 'Persons', // needs in view.prototype.changeLocationHash
         viewType         : 'list', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Persons',
@@ -70,6 +71,20 @@ define([
                 }
                 window.location = tempExportToCsvUrl;
             }
+        },
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            /*if(this.filter) {
+                url += '/filter=' + this
+            }*/
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         },
 
         render: function () {
