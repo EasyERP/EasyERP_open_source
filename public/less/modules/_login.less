@@ -1035,14 +1035,14 @@ input {
 
   .grid-conatiner {
 
-    &.revenue {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      height: calc(~"100% - 40px");
-      width: calc(~"100% - 55px");
-      overflow: auto;
-    }
+    //&.revenue {
+    //  position: absolute;
+    //  right: 0;
+    //  bottom: 0;
+    //  height: calc(~"100% - 40px");
+    //  width: calc(~"100% - 55px");
+    //  overflow: auto;
+    //}
   }
 }
 //.opportunity-content {
@@ -1293,5 +1293,24 @@ dl.payrollDateBlock {
     -o-transform: translateX(-50%);
     transform: translateX(-50%);
     z-index: 2;
+  }
+}
+
+.filterWrap {
+  min-height: 26px;
+  margin-bottom: 15px;
+
+  .dateFilter {
+    top: 0;
+  }
+  h3 {
+    display: inline-block;
+    float: left;
+    margin-right: 20px;
+  }
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
   }
 }

@@ -2501,6 +2501,57 @@ body {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
 }
+.vocationFilter {
+  position: relative;
+  float: left;
+  margin-left: 15px;
+  height: 100%;
+  width: 210px;
+}
+.vocationFilter .dateFilter,
+.vocationFilter .dateFilterLeadsByName {
+  width: 200px;
+  position: absolute;
+  top: 8px;
+  left: 0;
+  z-index: 10;
+  border: 1px solid #7f7f80;
+  background-color: #ffffff;
+  padding: 0 5px;
+}
+.vocationFilter .dateFilter li,
+.vocationFilter .dateFilterLeadsByName li {
+  font-size: 12px;
+  text-align: center;
+  color: #000000;
+}
+.vocationFilter .dateFilter li #startTime,
+.vocationFilter .dateFilterLeadsByName li #startTime,
+.vocationFilter .dateFilter li #endTime,
+.vocationFilter .dateFilterLeadsByName li #endTime {
+  line-height: 24px;
+}
+.vocationFilter .dateFilter .frameDetail label,
+.vocationFilter .dateFilterLeadsByName .frameDetail label {
+  display: inline-block;
+  min-width: 15%;
+  margin-right: 2%;
+  text-align: left;
+}
+.vocationFilter .dateFilter .frameDetail input,
+.vocationFilter .dateFilterLeadsByName .frameDetail input {
+  width: 75%;
+}
+.vocationFilter .dateFilter .customTime label + input[type='text'],
+.vocationFilter .dateFilterLeadsByName .customTime label + input[type='text'] {
+  margin-bottom: 5px;
+}
+.vocationFilter .dateFilter .buttons,
+.vocationFilter .dateFilterLeadsByName .buttons {
+  width: 100%;
+  margin: 15px 0;
+  text-align: center;
+}
 .settings_modal .check_wrap {
   float: left;
   width: 20px;
@@ -3374,14 +3425,6 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: table;
   clear: both;
 }
-.content-holder .grid-conatiner.revenue {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  height: calc(100% - 40px);
-  width: calc(100% - 55px);
-  overflow: auto;
-}
 .borderBottom {
   border-bottom: 1px solid #7f7f80;
 }
@@ -3514,6 +3557,23 @@ dl.payrollDateBlock dt {
   -o-transform: translateX(-50%);
   transform: translateX(-50%);
   z-index: 2;
+}
+.filterWrap {
+  min-height: 26px;
+  margin-bottom: 15px;
+}
+.filterWrap .dateFilter {
+  top: 0;
+}
+.filterWrap h3 {
+  display: inline-block;
+  float: left;
+  margin-right: 20px;
+}
+.filterWrap:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -9483,49 +9543,6 @@ table#workflows tr td.edit-status {
 #top-bar #reconcileDate {
   color: #000000;
 }
-#top-bar .vocationFilter {
-  position: relative;
-  float: left;
-  margin-left: 15px;
-  height: 100%;
-  width: 210px;
-}
-#top-bar .vocationFilter .dateFilter {
-  width: 200px;
-  position: absolute;
-  top: 8px;
-  left: 0;
-  z-index: 10;
-  border: 1px solid #7f7f80;
-  background-color: #ffffff;
-  padding: 0 5px;
-}
-#top-bar .vocationFilter .dateFilter li {
-  font-size: 12px;
-  text-align: center;
-  color: #000000;
-}
-#top-bar .vocationFilter .dateFilter li #startTime,
-#top-bar .vocationFilter .dateFilter li #endTime {
-  line-height: 24px;
-}
-#top-bar .vocationFilter .dateFilter .frameDetail label {
-  display: inline-block;
-  min-width: 15%;
-  margin-right: 2%;
-  text-align: left;
-}
-#top-bar .vocationFilter .dateFilter .frameDetail input {
-  width: 75%;
-}
-#top-bar .vocationFilter .dateFilter .customTime label + input[type='text'] {
-  margin-bottom: 5px;
-}
-#top-bar .vocationFilter .dateFilter .buttons {
-  width: 100%;
-  margin: 15px 0;
-  text-align: center;
-}
 #top-bar .btn {
   margin-top: 4px;
 }
@@ -9553,49 +9570,6 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar #reconcileDate {
   color: #000000;
-}
-.projectInfoTopBar .vocationFilter {
-  position: relative;
-  float: left;
-  margin-left: 15px;
-  height: 100%;
-  width: 210px;
-}
-.projectInfoTopBar .vocationFilter .dateFilter {
-  width: 200px;
-  position: absolute;
-  top: 8px;
-  left: 0;
-  z-index: 10;
-  border: 1px solid #7f7f80;
-  background-color: #ffffff;
-  padding: 0 5px;
-}
-.projectInfoTopBar .vocationFilter .dateFilter li {
-  font-size: 12px;
-  text-align: center;
-  color: #000000;
-}
-.projectInfoTopBar .vocationFilter .dateFilter li #startTime,
-.projectInfoTopBar .vocationFilter .dateFilter li #endTime {
-  line-height: 24px;
-}
-.projectInfoTopBar .vocationFilter .dateFilter .frameDetail label {
-  display: inline-block;
-  min-width: 15%;
-  margin-right: 2%;
-  text-align: left;
-}
-.projectInfoTopBar .vocationFilter .dateFilter .frameDetail input {
-  width: 75%;
-}
-.projectInfoTopBar .vocationFilter .dateFilter .customTime label + input[type='text'] {
-  margin-bottom: 5px;
-}
-.projectInfoTopBar .vocationFilter .dateFilter .buttons {
-  width: 100%;
-  margin: 15px 0;
-  text-align: center;
 }
 .projectInfoTopBar .btn {
   margin-top: 4px;
