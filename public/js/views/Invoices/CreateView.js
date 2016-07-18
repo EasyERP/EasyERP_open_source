@@ -205,6 +205,7 @@ define([
                     headers: {
                         mid: mid
                     },
+                    wait: true,
                     success: function (savedModel) {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 

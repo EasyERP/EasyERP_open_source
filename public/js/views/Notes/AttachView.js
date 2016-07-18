@@ -58,7 +58,7 @@ define([
 
             if (this.isCreate) {
                 currentModel = model;
-                currentModelId = currentModel.id;
+                currentModelId = currentModel.id || currentModel._id;
 
                 this.$el.find('li .inputAttach').each(function () {
                     addInptAttach = $(this)[0].files[0];
