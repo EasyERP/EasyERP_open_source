@@ -28,8 +28,8 @@ module.exports = function (event, models) {
      *
      * @apiSuccess {Object} Employees
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "total": 231,
     "data": [
         {
@@ -116,8 +116,8 @@ module.exports = function (event, models) {
      *
      * @apiSuccess {Object} EmployeesForDD
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 304 Not Modified
-     *{
+HTTP/1.1 304 Not Modified
+{
   "data": [
     {
       "_id": "55b92ad221e4b7c40f000030",
@@ -180,7 +180,7 @@ module.exports = function (event, models) {
     },
     ...
     ]
-    }
+}
      * */
     router.get('/getForDD', handler.getForDD);
 
