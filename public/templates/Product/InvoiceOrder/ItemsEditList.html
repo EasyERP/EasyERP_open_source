@@ -28,11 +28,15 @@
         <input type="text" class="datepicker notVisible" readonly>
     </td>--> <!--commented on 14 Mar, in quotationEdit commit -->
     <td data-name="quantity" class="<%=!forSales ? 'editable' : ''%>">
-        <% if (!forSales && !quotations && editable){ %>
+        <% if (forSales){ %>
+        <span><%=product.quantity%></span>
+        <% } else if (quotations) { %>
+        <span><%=product.quantity%></span>
+        <% } else if (!editable) { %>
+        <span><%=product.quantity%></span>
+        <% } else { %>
         <input id="quantity" class="quantity statusInfo" maxlength="9" size=10 type="text"
                value="<%=product.quantity%>"/>
-        <% } else { %>
-        <span><%=product.quantity%></span>
         <% } %>
     </td>
     <%var currencyClassVal;%>
