@@ -47,8 +47,17 @@
 
     nav {
       width: auto !important;
+
       >ul {
         height: auto;
+      }
+
+      .root {
+        &.active {
+          &:after {
+            display: none;
+          }
+        }
       }
     }
 

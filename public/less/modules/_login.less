@@ -1,6 +1,10 @@
 @input-placeholder: #a0a9b4;
 @input-border: @input-placeholder;
 
+.defaultBorRad {
+  border-radius: 3px;
+}
+
 .loginContent {
   *{
     box-sizing: border-box;
@@ -516,19 +520,19 @@ input {
   }
 }
 
-.opportunity-date {
-  &:after {
-    content: 'Due';
-  }
-}
-
-.errorContent {
-  .opportunity-date {
-    &:after {
-      content: 'OverDue';
-    }
-  }
-}
+//.opportunity-date {
+//  &:after {
+//    content: 'Due';
+//  }
+//}
+//
+//.errorContent {
+//  .opportunity-date {
+//    &:after {
+//      content: 'OverDue';
+//    }
+//  }
+//}
 
 .mainLogo {
   color: #fff;
@@ -1245,9 +1249,9 @@ table {
         margin: 0 5px;
         -o-text-overflow: clip;
         text-overflow: clip;
-        background: -webkit-linear-gradient(90deg, rgba(51,58,79,1) 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%), -webkit-linear-gradient(0deg, rgba(51,58,79,1) 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%);
-        background: -moz-linear-gradient(0deg, rgba(51,58,79,1) 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%), -moz-linear-gradient(90deg, rgba(51,58,79,1) 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%);
-        background: linear-gradient(0deg, rgba(51,58,79,1) 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%), linear-gradient(90deg, rgba(51,58,79,1) 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%);
+        background: -webkit-linear-gradient(90deg, #efefef 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%), -webkit-linear-gradient(0deg, #efefef 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%);
+        background: -moz-linear-gradient(0deg, #efefef 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%), -moz-linear-gradient(90deg, #efefef 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%);
+        background: linear-gradient(0deg, #efefef 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%), linear-gradient(90deg, #efefef 0, rgba(255,255,255,0.298039) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 100%);
         background-position: -1px -1px;
         -webkit-background-origin: padding-box;
         background-origin: padding-box;
@@ -1261,5 +1265,35 @@ table {
         }
       }
     }
+  }
+}
+
+#top-bar-createBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #ffffff;
+  line-height: 24px!important;
+  color: #fff;
+  border: 1px solid #7f7f80;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  .defaultBorRad;
+  
+  &:after {
+    content: 'New';
+    margin-left: 5px;
+    font-family: @fontRegular;
+    color: #000;
+    font-size: 13px;
+  }
+
+  &:hover {
+    background: #f4f4f4;
+  }
+}
+
+.top-bar {
+  #top-bar-createBtn {
+    margin-top: 4px;
   }
 }
