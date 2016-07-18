@@ -24,16 +24,17 @@ define([
         template: _.template(AttachTemplate),
 
         addAttach: function (event) {
+            var $thisEl = this.$el;
             var s;
 
             if (this.isCreate) {
-                s = this.$el.find('.inputAttach:last').val().split('\\')[this.$el.find('.inputAttach:last').val().split('\\').length - 1];
-                this.$el.find('.attachContainer').append('<li class="attachFile">' +
+                s = $thisEl.find('.inputAttach:last').val().split('\\')[$thisEl.find('.inputAttach:last').val().split('\\').length - 1];
+                $thisEl.find('.attachContainer').append('<li class="attachFile">' +
                     '<span class="blue">' + s + '</span>' +
                     '<a href="javascript:;" class="deleteAttach">Delete</a></li>'
                 );
-                this.$el.find('.attachContainer .attachFile:last').append(this.$el.find('.input-file .inputAttach').attr('hidden', 'hidden'));
-                this.$el.find('.input-file').append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
+                $thisEl.find('.attachContainer .attachFile:last').append($thisEl.find('.input-file .inputAttach').attr('hidden', 'hidden'));
+                $thisEl.find('.input-file').append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
             } else {
                 this.sendToServer(event, null, this);
             }
@@ -51,6 +52,7 @@ define([
             var currentModelId = currentModel ? currentModel.id : null;
             var addFrmAttach = this.$el.find('#' + elementId);
             var fileArr = [];
+            var $thisEl = this.$el;
             var addInptAttach;
 
             if (!self) {
@@ -61,7 +63,7 @@ define([
                 currentModel = model;
                 currentModelId = currentModel.id;
 
-                this.$el.find('li .inputAttach').each(function () {
+                $thisEl.find('li .inputAttach').each(function () {
                     addInptAttach = $(this)[0].files[0];
                     fileArr.push(addInptAttach);
 
@@ -72,7 +74,7 @@ define([
                         });
                     }
                 });
-                if (this.$el.find('li .inputAttach').length === 0) {
+                if ($thisEl.find('li .inputAttach').length === 0) {
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true});
 
@@ -83,7 +85,7 @@ define([
                 addInptAttach = addFrmAttach.find('#inputAttach')[0].files[0];
 
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
-                    this.$el.find('#inputAttach').val('');
+                    $thisEl.find('#inputAttach').val('');
 
                     return App.render({
                         type   : 'error',
@@ -93,8 +95,8 @@ define([
             }
 
             addFrmAttach.submit(function (e) {
-                var bar = self.$el.find('.bar');
-                var status = self.$el.find('.status');
+                var bar = $thisEl.find('.bar');
+                var status = $thisEl.find('.status');
                 var contentType = self.contentType ? self.contentType.toLowerCase() : '';
                 var formURL;
 
@@ -148,7 +150,7 @@ define([
                             attachments = currentModel.get('attachments') || [];
                             attachments.length = 0;
                             $('.attachContainer').empty();
-                            res = data.data|| data.result;
+                            res = data.data || data.result;
 
                             if (!res) {
                                 res = data;
@@ -156,7 +158,7 @@ define([
                             res.attachments.forEach(function (item) {
                                 var date = moment(item.uploadDate).format('DD MMM, YYYY, H:mm:ss');
                                 attachments.push(item);
-                                self.$el.find('.attachContainer').prepend(_.template(addAttachTemplate, {
+                                $thisEl.find('.attachContainer').prepend(_.template(addAttachTemplate, {
                                     data: item,
                                     date: date
                                 }));

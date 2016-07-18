@@ -22,16 +22,16 @@ define([
         },
 
         events: {
-            click                                                        : 'hideNewSelect',
-            'click #tabList a'                                           : 'switchTab',
-            'mouseenter .editable:not(.quickEdit)'                       : 'quickEdit',
-            'mouseleave .editable'                                       : 'removeEdit',
-            'click #editSpan'                                            : 'editClick',
-            'click #cancelSpan'                                          : 'cancelClick',
-            'click #saveSpan'                                            : 'saveClick',
-            'click .tabListItem'                                         : 'changeWorkflow',
-            'click .current-selected:not(.jobs)'                         : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'          : 'chooseOption'
+            click                                              : 'hideNewSelect',
+            'click #tabList a'                                 : 'switchTab',
+            'mouseenter .editable:not(.quickEdit)'             : 'quickEdit',
+            'mouseleave .editable'                             : 'removeEdit',
+            'click #editSpan'                                  : 'editClick',
+            'click #cancelSpan'                                : 'cancelClick',
+            'click #saveSpan'                                  : 'saveClick',
+            'click .tabListItem'                               : 'changeWorkflow',
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
         hideNewSelect: function () {
@@ -43,12 +43,14 @@ define([
         },
 
         saveClick: function (e) {
-            e.preventDefault();
 
             var parent = $(e.target).parent().parent();
-            var field = parent.attr('data-id').replace('_', '.');
+            var field;
             var value = this.$el.find('#editInput').val();
             var newModel = {};
+            e.preventDefault();
+
+            field = parent.attr('data-id').replace('_', '.');
             newModel[field] = value;
 
             parent.text(value);
@@ -56,7 +58,6 @@ define([
 
             this.saveDeal(newModel);
         },
-
 
         cancelClick: function (e) {
             e.preventDefault();
@@ -90,8 +91,9 @@ define([
         },
 
         removeEdit: function () {
-            $('#editSpan').remove();
-            $('dd .no-long').css({width: 'auto'});
+            var $thisEl = this.$el;
+            $thisEl.find('#editSpan').remove();
+            $thisEl.find('dd .no-long').css({width: 'auto'});
         },
 
         quickEdit: function (e) {
@@ -104,41 +106,44 @@ define([
 
         editClick: function (e) {
             var $target = $(e.target);
+            var $thisEl = this.$el;
             var maxlength = $target.closest('.editable').find('.no-long').attr('data-maxlength') || 32;
             var parent;
 
             e.preventDefault();
 
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
-            $('.quickEdit').text(this.text).removeClass('quickEdit');
+            $thisEl.find('.quickEdit #editInput').remove();
+            $thisEl.find('.quickEdit #cancelSpan').remove();
+            $thisEl.find('.quickEdit #saveSpan').remove();
+            $thisEl.find('.quickEdit').text(this.text).removeClass('quickEdit');
 
             parent = $target.closest('.editable');
             parent.addClass('quickEdit');
-            this.$el.find('#editSpan').remove();
+            $thisEl.find('#editSpan').remove();
             this.text = parent.text();
             parent.text('');
             parent.append('<input id="editInput" maxlength="32" type="text" class="left"/>');
-            this.$el.find('#editInput').val(this.text);
+            $thisEl.find('#editInput').val(this.text);
             parent.append('<span id="saveSpan"><a href="#">c</a></span>');
             parent.append('<span id="cancelSpan"><a href="#">x</a></span>');
             parent.find('#editInput').width(parent.find('#editInput').width() - 50);
         },
 
-        changeWorkflow : function (e){
+        changeWorkflow: function (e) {
             var $target = $(e.target);
-            if (!$target.hasClass('tabListItem')){
+            var $thisEl = this.$el;
+            var wId;
+            var $tabs = $thisEl.find('#workflowProgress .tabListItem');
+
+            if (!$target.hasClass('tabListItem')) {
                 $target = $target.closest('div');
             }
-            var $thisEl = this.$el;
-            var wId = $target.find('span').attr('data-id');
-            var $tabs = $thisEl.find('#workflowProgress .tabListItem');
+            wId = $target.find('span').attr('data-id');
             $tabs.removeClass('passed');
             $target.prevAll().addClass('passed');
             $target.addClass('passed');
             $thisEl.find('#statusDd').text($target.text());
-            this.saveDeal({workflow : wId});
+            this.saveDeal({workflow: wId});
         },
 
         chooseOption: function (e) {
@@ -146,11 +151,10 @@ define([
             var holder = $target.parents('dd').find('.current-selected');
             var type = $target.closest('a').attr('data-id');
             var id = $target.attr('id');
-            var changedObject ={};
+            var changedObject = {};
 
             holder.text($target.text());
             changedObject[type] = id;
-
 
             if (holder.attr('id') === 'customerDd') {
                 this.selectCustomer(id);
@@ -166,7 +170,7 @@ define([
                 id: id
             }, function (response) {
                 var customer = response;
-                self.formModel.set({customer : customer});
+                self.formModel.set({customer: customer});
 
                 $thisEl.find('[data-id="email"]').text(customer.email);
                 $thisEl.find('[data-id="phones_phone"]').text(customer.phones.phone);
@@ -178,28 +182,29 @@ define([
                 $thisEl.find('[data-id="address_country"]').text(customer.address.country);
 
                 self.saveDeal({
-                    customer : customer._id,
-                    email :customer.email,
-                "phones.phone" : customer.phones.phone,
-                "phones.mobile" : customer.phones.mobile,
-                "address.street" : customer.address.street,
-                "address.city" : customer.address.city,
-                "address.state" : customer.address.state,
-                "address.zip" : customer.address.zip,
-                "address.country" : customer.address.country
+                    customer         : customer._id,
+                    email            : customer.email,
+                    'phones.phone'   : customer.phones.phone,
+                    'phones.mobile'  : customer.phones.mobile,
+                    'address.street' : customer.address.street,
+                    'address.city'   : customer.address.city,
+                    'address.state'  : customer.address.state,
+                    'address.zip'    : customer.address.zip,
+                    'address.country': customer.address.country
                 });
             }, this);
 
         },
 
-        saveDeal : function (changedAttrs){
+        saveDeal: function (changedAttrs) {
             var self = this;
+            
             this.formModel.save(changedAttrs, {
                 patch  : true,
-                success : function (){
+                success: function () {
                     self.noteView.renderTimeline();
                 },
-                error: function (model, response) {
+                error  : function (model, response) {
                     if (response) {
                         App.render({
                             type   : 'error',
@@ -228,18 +233,23 @@ define([
             });
 
         },
-        render: function () {
+        
+        render     : function () {
             var formModel = this.formModel.toJSON();
             var self = this;
+            var $thisEl = this.$el;
 
-            this.$el.html(_.template(OpportunitiesFormTemplate, formModel));
+            $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
 
-            dataService.getData('/workflows/', {id: 'Opportunities'}, function (response){
-                self.responseObj = {workflows : response.data};
-                self.$el.find('#workflowProgress').append(_.template(workflowProgress, {workflows : self.responseObj.workflows, workflow : formModel.workflow}));
+            dataService.getData('/workflows/', {id: 'Opportunities'}, function (response) {
+                self.responseObj = {workflows: response.data};
+                $thisEl.find('#workflowProgress').append(_.template(workflowProgress, {
+                    workflows: self.responseObj.workflows,
+                    workflow : formModel.workflow
+                }));
 
             });
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, false, true);
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, false, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
@@ -249,19 +259,20 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
+            
             this.noteView = new NoteView({
-                model: this.formModel,
+                model      : this.formModel,
                 contentType: 'opportunities'
             });
-            this.$el.find('.notes').append(
+            $thisEl.find('.notes').append(
                 this.noteView.render().el
             );
 
-            this.$el.find('.attachments').append(
+            $thisEl.find('.attachments').append(
                 new AttachView({
-                    model: this.formModel,
+                    model      : this.formModel,
                     contentType: 'opportunities',
-                    saveNewNote : this.noteView.saveNewNote
+                    saveNewNote: this.noteView.saveNewNote
                 }).render().el
             );
 

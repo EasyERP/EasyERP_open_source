@@ -12,12 +12,12 @@ define([
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel,EditView, AttachView, SelectView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, AttachView, SelectView, moment, populate, CONSTANTS) {
     var NoteView = Backbone.View.extend({
 
-        template: _.template(NoteTemplate),
-        timeLineTemplate : _.template(timelineTemplate),
-        
+        template        : _.template(NoteTemplate),
+        timeLineTemplate: _.template(timelineTemplate),
+
         initialize: function (options) {
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
@@ -25,47 +25,49 @@ define([
         },
 
         events: {
-            'click #noteArea'   : 'expandNote',
-            'click .cancelNote, #cancelTask'   : 'cancelNote',
-            'click #addNote, .saveNote'      : 'saveNote',
-            'click .contentHolder': 'showButtons',
-            'click #addTask'      : 'saveTask',
-            'click .addTitle'     : 'showTitle',
-            'click .editDelNote'  : 'editDelNote',
-            'click .fa-paperclip' : 'clickInput',
-            'click .chart-tabs'   : 'changeTab',
-            'click .current-selected:not(.jobs)'                         : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'          : 'chooseOption'
+            'click #noteArea'                                  : 'expandNote',
+            'click .cancelNote, #cancelTask'                   : 'cancelNote',
+            'click #addNote, .saveNote'                        : 'saveNote',
+            'click .contentHolder'                             : 'showButtons',
+            'click #addTask'                                   : 'saveTask',
+            'click .editDelNote'                               : 'editDelNote',
+            'click .fa-paperclip'                              : 'clickInput',
+            'click .chart-tabs'                                : 'changeTab',
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
-        showButtons : function (e){
+        showButtons: function (e) {
             var $target = $(e.target).closest('.contentHolder');
-            var hasClass =  $target.hasClass('showButtons');
+            var hasClass = $target.hasClass('showButtons');
+            var $thisEl = this.$el;
 
-            if (this.$el.find('.editedNote').length){
+            if ($thisEl.find('.editedNote').length) {
                 return false;
             }
 
-            this.$el.find('.contentHolder').removeClass('showButtons');
-            if(!hasClass){
+            $thisEl.find('.contentHolder').removeClass('showButtons');
+            if (!hasClass) {
                 $target.addClass('showButtons');
             }
         },
 
-
         expandNote: function (e) {
-            if (!$(e.target).parents('.addNote').hasClass('active')) {
-                $(e.target).attr('placeholder', '').parents('.addNote').addClass('active');
-              /*  this.$el.find('.addTitle').show();*/
+            var $target = $(e.target);
+            if (!$target.parents('.addNote').hasClass('active')) {
+                $target.attr('placeholder', '').parents('.addNote').addClass('active');
+                /*  this.$el.find('.addTitle').show();*/
             }
         },
 
         saveTask: function () {
             var self = this;
-            var assignedTo = this.$el.find('#assignedToDd').data('id');
-            var $description = this.$el.find('#taskArea');
+            var $thisEl = this.$el;
+            var assignedTo = $thisEl.find('#assignedToDd').data('id');
+            var $description = $thisEl.find('#taskArea');
             var description = $.trim($description.val());
-            var dueDate = $.trim(this.$el.find('#taskDueDate').val());
+            var dueDate = $.trim($thisEl.find('#taskDueDate').val());
+            var model = new TaskModel();
             var saveObject = {
                 assignedTo : assignedTo || '',
                 description: description,
@@ -73,15 +75,10 @@ define([
                 workflow   : CONSTANTS.NOT_STARTED_WORKFLOW
             };
 
-
-
-
-
-
-            switch(this.contentType) {
+            switch (this.contentType) {
                 case 'Persons':
                     saveObject.contact = this.model.id;
-                    saveObject.contactDate =new Date();
+                    saveObject.contactDate = new Date();
                     break;
                 case 'Companies':
                     saveObject.company = this.model.id;
@@ -93,9 +90,7 @@ define([
                     break;
             }
 
-            var model = new TaskModel();
-
-            if (!description){
+            if (!description) {
                 return App.render({
                     type   : 'error',
                     message: 'Please add Description'
@@ -103,26 +98,28 @@ define([
             }
 
             model.save(saveObject, {
-                    wait   : true,
-                    success: function (model, res) {
-                        self.model.fetch({success : function(){
-                            self.$el.find('#taskArea').val('');
+                wait   : true,
+                success: function (model, res) {
+                    self.model.fetch({
+                        success: function () {
+                            $thisEl.find('#taskArea').val('');
                             self.renderTimeline();
-                        }});
-                    },
+                        }
+                    });
+                },
 
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
+                error: function (model, xhr) {
+                    self.errorNotification(xhr);
+                }
 
-                });
+            });
         },
 
-        saveNewNote : function (optionsObj){
+        saveNewNote: function (optionsObj) {
             var formModel = this.model;
             var self = this;
             var notes = formModel.get('notes');
-            notes = notes.filter(function(elem){
+            notes = notes.filter(function (elem) {
                 return !elem.task && !elem.history;
             });
             notes.push(optionsObj);
@@ -174,7 +171,7 @@ define([
             return false;
         },
 
-        editNote : function (currentNote){
+        editNote: function (currentNote) {
             var holder = this.$el.find('#' + currentNote._id);
             holder.find('.contentHolder').hide();
             holder.append(_.template(editNote, {note: currentNote}));
@@ -195,22 +192,23 @@ define([
             var currentModel = this.model;
             var notes = currentModel.get('notes');
             var newNotes;
+            var model;
+
             var currentNote = _.filter(notes, function (note) {
                 if (note._id === idInt) {
                     return note;
                 }
             })[0];
 
-            var model;
-            if (currentNote.task){
+            if (currentNote.task) {
                 model = new TaskModel(currentNote.task);
             }
 
             switch (type) {
                 case 'edit':
 
-                    if (model){
-                        new EditView({model : model});
+                    if (model) {
+                        new EditView({model: model});
                     } else {
                         this.editNote(currentNote);
                     }
@@ -218,10 +216,12 @@ define([
                     break;
                 case 'del':
 
-                    if (model && confirm('You really want to remove task? ')){
-                        model.destroy({success : function (){
-                            $('#' + idInt).remove();
-                        }});
+                    if (model && confirm('You really want to remove task? ')) {
+                        model.destroy({
+                            success: function () {
+                                $('#' + idInt).remove();
+                            }
+                        });
 
                     } else {
                         newNotes = _.filter(notes, function (note) {
@@ -244,7 +244,6 @@ define([
                         }
                     }
 
-
                     break;
             }
         },
@@ -264,9 +263,9 @@ define([
         },
 
         cancelNote: function (e) {
-            var $target =$(e.target);
+            var $target = $(e.target);
             var contentHolder = $target.closest('.noteContainer');
-            if ( contentHolder.length){
+            if (contentHolder.length) {
                 contentHolder.find('.contentHolder').show();
                 contentHolder.find('.contentHolder').removeClass('showButtons');
                 $target.closest('.addNote').remove();
@@ -274,8 +273,8 @@ define([
                 $target.parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
                 $target.parents('.addNote').find('#noteArea').val('');
                 $target.parents('.addTask').find('#taskArea').val('');
-               /* this.$el.find('.title-wrapper').hide();*/
-               /* this.$el.find('.addTitle').hide();*/
+                /* this.$el.find('.title-wrapper').hide();*/
+                /* this.$el.find('.addTitle').hide();*/
                 this.$el.find('#noteArea').val('');
                 /*this.$el.find('#noteTitleArea').val('');*/
             }
@@ -286,8 +285,8 @@ define([
             var self = this;
             var $target = $(e.target);
             var $noteArea = $target.parents('.addNote').find('#noteArea');
-           /* var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');*/
-            var $noteContainer =  $target.closest('.noteContainer');
+            /* var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');*/
+            var $noteContainer = $target.closest('.noteContainer');
             var targetId = $noteContainer.attr('id');
             var $thisEl = this.$el;
             var val;
@@ -306,10 +305,10 @@ define([
 
             e.preventDefault();
             val = $.trim($noteArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
-          /*  title = $.trim($noteTitleArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');*/
+            /*  title = $.trim($noteTitleArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');*/
 
             if (!val /*&& !title*/) { // textarrea notes not be empty
-               return App.render({
+                return App.render({
                     type   : 'error',
                     message: 'Note can not be empty'
                 });
@@ -337,7 +336,7 @@ define([
                             success: function () {
                                 var $contentHolder = $noteContainer.find('.contentHolder');
                                 $contentHolder.removeClass('showButtons');
-                               /* $contentHolder.find('.noteTitle').text(title);*/
+                                /* $contentHolder.find('.noteTitle').text(title);*/
                                 $contentHolder.find('.noteText').text(val);
                                 $contentHolder.show();
                                 $target.closest('.addNote').remove();
@@ -345,7 +344,7 @@ define([
                         });
                 } else {
                     self.saveNewNote({
-                        note : val
+                        note: val
                     });
                 }
             } else {
@@ -354,26 +353,29 @@ define([
 
         },
 
-        showTitle: function (e) {
+        /*  showTitle: function (e) {
 
-            $(e.target).hide().parents('.addNote').find('.title-wrapper').show().find('input').focus();
-        },
+         $(e.target).hide().parents('.addNote').find('.title-wrapper').show().find('input').focus();
+         },*/
 
-        renderTimeline : function (){
+        renderTimeline: function () {
             var notes = this.model.get('notes');
-            this.$el.find('#timeline').html(_.template(timelineTemplate, {notes : notes}));
+
+            this.$el.find('#timeline').html(_.template(timelineTemplate, {notes: notes}));
         },
 
         render: function () {
             var modelObj = this.model.toJSON();
             var date = moment().format("DD MMM, YYYY");
+            var assignedTo = modelObj.salesPerson;
+            var $thisEl = this.$el;
 
             modelObj.needNotes = this.needNotes;
-            var assignedTo = modelObj.salesPerson;
 
-            this.$el.html(this.template({date : date, assignedTo : assignedTo}));
 
-            this.$el.find('#taskDueDate').datepicker({
+            $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
+
+            $thisEl.find('#taskDueDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
