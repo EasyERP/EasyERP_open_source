@@ -116,10 +116,10 @@ define([
 
             startTime.text(startDate);
             endTime.text(endDate);
-            
-            this.startDate =  startDate;
+
+            this.startDate = startDate;
             this.endDate = endDate;
-            this.trigger('renderSalesByCountry');
+            this.trigger('changeDateRange');
             this.toggleDateRange();
         },
 
