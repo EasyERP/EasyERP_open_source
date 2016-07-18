@@ -848,9 +848,14 @@ define([
 
                 $wrapper = $('#content-holder');
                 keys = Object.keys(globalSalary);
-                margin = {top: 20, right: 160, bottom: 30, left: 10};
-                width = ($wrapper.width() - margin.right) / 2;
-                height = keys.length * 30;
+                margin = {
+                    top: 20, 
+                    right: 160, 
+                    bottom: 30, 
+                    left: 130
+                };
+                width = ($wrapper.width() - margin.right) / 2.1;
+                height = yLabels.length * 30;
                 rect = height / (keys.length);
 
                 for (j = keys.length; j--;) {
@@ -884,8 +889,7 @@ define([
                 chart = d3.select('.salaryChart')
                     .attr({
                         'width' : width + margin.left + margin.right,
-                        'height': height + margin.top + margin.bottom,
-                        'style' : 'padding: 150px'
+                        'height': height + margin.top + margin.bottom
                     })
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -964,8 +968,8 @@ define([
                         }) / 1000) * 1000;
 
                 $wrapper = $('#content-holder');
-                margin = {top: 20, right: 160, bottom: 30, left: 10};
-                width = ($wrapper.width() - margin.right) / 2;
+                margin = {top: 20, right: 160, bottom: 30, left: 130};
+                width = ($wrapper.width() - margin.right) / 2.1;
                 height = salary.length * 30;
                 rect = height / (salary.length);
 
@@ -994,8 +998,7 @@ define([
                 chart = d3.select('.salaryByDepartmentChart')
                     .attr({
                         'width' : width + margin.left + margin.right,
-                        'height': height + margin.top + margin.bottom,
-                        'style' : 'padding: 150px'
+                        'height': height + margin.top + margin.bottom
                     })
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');

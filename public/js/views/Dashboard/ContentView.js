@@ -2558,7 +2558,12 @@ define([
                     return obj2.pays - obj1.pays;
                 });
 
-                margin = {top: 20, right: 130, bottom: 30, left: 130};
+                margin = {
+                    top: 20,
+                    right: 130,
+                    bottom: 30,
+                    left: 130
+                };
                 width = ($wrapper.width() - margin.right) / 2.1;
                 height = $wrapper.width() / 4;
                 height1 = data.length * 20;
