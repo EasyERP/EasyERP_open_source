@@ -3130,6 +3130,40 @@ input:not([type="checkbox"]).inputBordered:focus {
 .collapsed .content_wrapper .top-bar {
   margin-left: 65px;
 }
+.noteMainContainer {
+  position: relative;
+}
+.noteContainer {
+  position: relative;
+  padding-left: 50px;
+}
+.noteContainer:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25px;
+  width: 1px;
+  height: calc(127%);
+  background: #c8c8d3;
+}
+.noteContainer:last-child:before {
+  height: 25px;
+}
+.noteContainer .itemCircle {
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  height: 28px;
+  width: 28px;
+  border: 1px solid #c8c8d3;
+  border-radius: 50%;
+  background: #ffffff;
+  font-size: 10px;
+  line-height: 28px;
+  text-align: center;
+  color: #c8c8d3;
+  z-index: 10;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
