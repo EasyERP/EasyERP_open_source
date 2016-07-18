@@ -413,6 +413,10 @@ module.exports = function (models, event) {
      * @apiName UpdateCompanyAndUploadFiles
      * @apiGroup Customers
      *
+     * @apiHeader (HeaderName=HeaderValue) {String} Content-Type="multipart/form-data"
+     * @apiHeader (HeaderName=HeaderValue) {String} modelid
+     * @apiHeader (HeaderName=HeaderValue) {String="Companies","Persons"} modelname
+     *
      * @apiSuccess {Object} Company Updated company
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
@@ -527,8 +531,6 @@ module.exports = function (models, event) {
   }
 }
      */
-
-    //todo: what must to be at apiParamExample in UpdateCompanyAndUploadFiles
 
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
     // router.get('/exportToXlsx', handler.exportToXlsx);

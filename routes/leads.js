@@ -344,6 +344,10 @@ module.exports = function (models, event) {
      * @apiName uploadFiles
      * @apiGroup Leads
      *
+     * @apiHeader (HeaderName=HeaderValue) {String} Content-Type="multipart/form-data"
+     * @apiHeader (HeaderName=HeaderValue) {String} modelid
+     * @apiHeader (HeaderName=HeaderValue) {String} modelname="Leads"
+     *
      * @apiSuccess {Object} UpdatedOpportunity
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
@@ -444,7 +448,6 @@ module.exports = function (models, event) {
   }
 }
      **/
-    //todo "@apiParamExample"
     router.post('/uploadFiles', multipartMiddleware, handler.uploadFile);
 
     /**

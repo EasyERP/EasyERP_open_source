@@ -440,6 +440,10 @@ module.exports = function (models, event) {
      * @apiName uploadFiles
      * @apiGroup Tasks
      *
+     * @apiHeader (HeaderName=HeaderValue) {String} Content-Type="multipart/form-data"
+     * @apiHeader (HeaderName=HeaderValue) {String} modelid
+     * @apiHeader (HeaderName=HeaderValue) {String} modelname="Tasks"
+     *
      * @apiSuccess {Object} Updated Task
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
@@ -492,7 +496,6 @@ module.exports = function (models, event) {
               }
             }
      */
-    //todo "@apiParamExample"
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
 
     /**
