@@ -33,10 +33,10 @@ define([
             this.responseObj = {};
             this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
             this.forSales = false;
-            this.editable = true;
+            this.editable = options.editable || true;
             this.balanceVissible = false;
             this.service = false;
-
+            this.onlyView = !!options.onlyView;
             this.render(options);
         },
 
@@ -346,19 +346,18 @@ define([
 
         render: function () {
             var self = this;
-            var formString = this.template({
-                model  : this.currentModel.toJSON(),
-                visible: this.visible
-            });
+            var buttons;
+            var formString;
             var model;
             var productItemContainer;
 
-            this.template = !this.onlyView ? _.template(EditTemplate) : _.template(ViewTemplate);
+            this.template = this.onlyView ? _.template(ViewTemplate) : _.template(EditTemplate);
 
             formString = this.template({
                 model   : this.currentModel.toJSON(),
                 visible : this.visible,
-                onlyView: this.onlyView
+                onlyView: this.onlyView,
+                forSales: this.forSales
             });
 
             if (!this.onlyView) {
@@ -425,6 +424,10 @@ define([
             });
 
             productItemContainer = this.$el.find('#productItemsHolder');
+
+            if (this.onlyView) {
+                this.editable = false;
+            }
 
             productItemContainer.append(
                 new ProductItemView({
