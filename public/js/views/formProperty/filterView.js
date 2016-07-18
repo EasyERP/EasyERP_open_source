@@ -30,7 +30,8 @@ define([
                 self.renderContent(self.e);
             }
 
-            this.contentType = options.contentType;
+            this.attribute = options.attribute;
+            this.saveDeal = options.saveDeal;
             this.collection = new CurrentCollection();
             this.filteredCollection = new CurrentCollection();
             this.filteredCollection.unbind();
@@ -79,8 +80,13 @@ define([
 
         changeSelected: function (e) {
             var $target = $(e.target);
-            this.model
+            var id = $target.closest('li').attr('data-id');
+            var saveObject = {};
+
+            saveObject[this.attribute] = id;
+            this.saveDeal(saveObject, 'formProperty');
         },
+
 
         renderContent: function () {
             var contentHolder = this.$el.find('#tagsList');
