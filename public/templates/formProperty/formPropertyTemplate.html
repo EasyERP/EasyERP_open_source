@@ -5,6 +5,7 @@
         </div>
     <%if (property) {%>
     <div>
+        <a class="btn" title="Remove <%=type%>" id="removeProperty">X</a>
         <dl class="person-info">
             <dt>Name </dt>
             <dd data-id="name" class="editable"><%=property.fullName%></dd>
@@ -35,7 +36,7 @@
 
     </div>
     <%} else {%>
-        <a class="btn" title="Add <%=type%>" id="add<%=type%>">Add <%=type%></a>
+        <a class="btn" title="Add <%=type%>" id="addProperty">Add <%=type%></a>
     <%}%>
 
 

@@ -21,6 +21,7 @@ define([
         initialize: function (options) {
             this.formModel = options.model;
             this.formModel.urlRoot = constants.URLS.OPPORTUNITIES;
+            _.bindAll(this, 'saveDeal');
             this.responseObj = {};
         },
 
@@ -199,13 +200,16 @@ define([
 
         },
 
-        saveDeal: function (changedAttrs) {
+        saveDeal: function (changedAttrs, cb) {
             var self = this;
             
             this.formModel.save(changedAttrs, {
                 patch  : true,
                 success: function () {
                     self.noteView.renderTimeline();
+                    if (cb &&  (typeof cb === 'function')){
+                        cb();
+                    };
                 },
                 error  : function (model, response) {
                     if (response) {
@@ -268,10 +272,8 @@ define([
                 companyModel = new CompanyModel(formModel.customer);
             }
 
-            $thisEl.find('#companyHolder').html(new formProperty({type : 'Company', model : companyModel, attribute: 'customer'}).render().el);
+            $thisEl.find('#companyHolder').html(new formProperty({type : 'Company', parentModel : this.formModel, model : companyModel, attribute: 'customer', saveDeal : self.saveDeal}).render().el);
 
-
-            
             this.noteView = new NoteView({
                 model      : this.formModel,
                 contentType: 'opportunities'
