@@ -11,18 +11,18 @@
                 <div class="itemCircle">
                     <i class="fa fa-circle-o" aria-hidden="true"></i>
                 </div>
-                <div class="noteType task" id="<%= val.task._id%>">
+                <div class="noteType task noteTopBox clearfix" id="<%= val.task._id%>">
                     <span class="noteUserTitle"><b><%= login %></b> created task</span>
                     <p class="dateNote"><%=val.date%></p>
-                    <div class="noteContent"><a href="javascript:;" ><%=val.task.description  %></a></div>
                 </div>
+                <div class="noteContent"><a href="javascript:;" ><%=val.task.description  %></a></div>
                 <div class="assignedTo">Assigned To <b><%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></b></div>
                 <%} else if (val.history) {%>
                 <div class="itemCircle">
                     <i class="fa fa-usd" aria-hidden="true"></i>
                 </div>
                 <div class="history_body">
-                    <div class="history_changed">
+                    <div class="history_changed singleNote clearfix">
                         <span class="dateNote"><%=val.date%></span>
                         <div class="changed_field">
                             <%if (val.history.prevValue){%>
@@ -41,7 +41,7 @@
                 <div class="itemCircle">
                     <i class="fa fa-calendar" aria-hidden="true"></i>
                 </div>
-                <div>
+                <div class="noteTopBox clearfix">
                     <span class="noteType"><b><%=login%></b> left a Note</span>
                     <span class="dateNote"><%=val.date%></span>
                 </div>

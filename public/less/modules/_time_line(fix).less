@@ -12,7 +12,7 @@
     top: 0;
     left: 25px;
     width: 1px;
-    height: calc(100% + 27px);
+    height: calc(~"100% + 27px");
     background: @lightgrey;
   }
 
@@ -26,6 +26,11 @@
     &:before {
       height: 25px;
     }
+  }
+
+  .noteTopBox {
+    padding: 10px 15px;
+    border-bottom: 1px solid @lightgrey;
   }
 
   .itemCircle {
@@ -45,12 +50,40 @@
   }
 
   .noteBody {
-    padding: 17px 10px !important;
+    padding: 0 0 17px !important;
+    border-radius: 3px;
+    border: 1px solid @lightgrey !important;
+    box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05);
+  }
+
+  .noteBtnBlock {
+    border: none;
+  }
+
+  .showButtons {
+    .noteBtnBlock {
+      border: 1px solid @lightgrey !important;
+    }
   }
 
   .noteText,
-  .noteContent {
-    padding: 10px 0 0;
+  .noteContent,
+  .changed_field,
+  .assignedTo {
+    padding: 10px 15px 0;
+  }
+
+  .dateNote {
+    line-height: 14px;
+    min-height: 15px;
+  }
+
+  .singleNote {
+    padding: 7px 15px 0 0;
+
+    .dateNote {
+      padding-top: 14px;
+    }
   }
 
   .noteText {

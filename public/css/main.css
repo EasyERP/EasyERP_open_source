@@ -3721,7 +3721,7 @@ dl.payrollDateBlock dt {
   top: 0;
   left: 25px;
   width: 1px;
-  height: calc(127%);
+  height: calc(100% + 27px);
   background: #c8c8d3;
 }
 .noteContainer:first-child:before {
@@ -3729,6 +3729,10 @@ dl.payrollDateBlock dt {
 }
 .noteContainer:last-child:before {
   height: 25px;
+}
+.noteContainer .noteTopBox {
+  padding: 10px 15px;
+  border-bottom: 1px solid #c8c8d3;
 }
 .noteContainer .itemCircle {
   position: absolute;
@@ -3746,11 +3750,32 @@ dl.payrollDateBlock dt {
   z-index: 10;
 }
 .noteContainer .noteBody {
-  padding: 17px 10px !important;
+  padding: 0 0 17px !important;
+  border-radius: 3px;
+  border: 1px solid #c8c8d3 !important;
+  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+.noteContainer .noteBtnBlock {
+  border: none;
+}
+.noteContainer .showButtons .noteBtnBlock {
+  border: 1px solid #c8c8d3 !important;
 }
 .noteContainer .noteText,
-.noteContainer .noteContent {
-  padding: 10px 0 0;
+.noteContainer .noteContent,
+.noteContainer .changed_field,
+.noteContainer .assignedTo {
+  padding: 10px 15px 0;
+}
+.noteContainer .dateNote {
+  line-height: 14px;
+  min-height: 15px;
+}
+.noteContainer .singleNote {
+  padding: 7px 15px 0 0;
+}
+.noteContainer .singleNote .dateNote {
+  padding-top: 14px;
 }
 .noteContainer .noteText:last-child {
   margin-bottom: 0 !important;
