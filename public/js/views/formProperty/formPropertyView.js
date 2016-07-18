@@ -50,7 +50,6 @@ define([
         initialize: function (options) {
             this.type = options.type;
             this.attribute = options.attribute;
-         /*   this.model = options.model;*/
             this.responseObj = options.responseObj || [];
         },
 
@@ -84,8 +83,9 @@ define([
         render: function () {
             var self = this;
             var urlType = this.type === 'Company' ? 'Companies' : 'Persons';
+            var property = this.model ? this.model.toJSON() : '';
 
-            this.$el.html( _.template(propertyTemplate, {type : this.type, property : this.model.toJSON(), urlType : urlType}) );
+            this.$el.html( _.template(propertyTemplate, {type : this.type, property : property, urlType : urlType}) );
 
             this.searchInput = this.$el.find('#selectInput');
 
