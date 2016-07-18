@@ -3565,6 +3565,24 @@ dl.payrollDateBlock dt {
 .collapsed .topbarLogo .sidebarToggler {
   margin-left: 10px;
 }
+.holidays.projectTimeCardCustomList {
+  left: 50%;
+  width: 415px !important;
+  margin-top: -31px;
+  margin-bottom: 10px;
+  margin-left: -180px;
+}
+#searchContainer.projectTimeCardCustomSearch {
+  top: -32px;
+  margin-right: 23px;
+  width: 20%;
+}
+@media screen and (max-width: 1300px) {
+  .holidays.projectTimeCardCustomList {
+    margin-top: 15px;
+    margin-left: -207px;
+  }
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;

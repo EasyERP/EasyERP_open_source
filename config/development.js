@@ -12,6 +12,6 @@ process.env.OXR_APP_ID = '20cee8fa50cb4cb09bc6e54c7e5b901c';
 process.env.OXR_APP_ID = '90432684fb4f46f483317e4ec2cd8bcc';
 
 process.env.SOCKET_DB_PORT = 6379;
-process.env.SOCKET_DB_HOST = 'localhost';
-// process.env.SOCKET_DB_HOST = '144.76.56.111';
+/// process.env.SOCKET_DB_HOST = 'localhost';
+ process.env.SOCKET_DB_HOST = '144.76.56.111';
 process.env.SOCKET_DB = 9;
