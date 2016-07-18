@@ -14,15 +14,15 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} WeeklySchedulerForDd
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-                "data": [
-                    {
-                        "_id": "57332c3b94ee1140b6bb49e2",
-                        "name": "UA-40"
-                    }
-                ]
-            }
+HTTP/1.1 200 OK
+{
+    "data": [
+        {
+            "_id": "57332c3b94ee1140b6bb49e2",
+            "name": "UA-40"
+        }
+    ]
+}
      */
     router.get('/forDd', handler.getForDd);
     router.get('/:viewType', function (req, res, next) {
@@ -44,34 +44,34 @@ module.exports = function (models) {
      * @apiGroup Weekly Scheduler
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "1": 0,
-          "2": 0,
-          "3": 0,
-          "4": 0,
-          "5": 0,
-          "6": 0,
-          "7": 0,
-          "name": "UA-55",
-          "totalHours": "0"
-       }
+{
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "name": "UA-55",
+      "totalHours": "0"
+}
      *
      * @apiSuccess {Object} newWeeklyScheduler
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "1": 0,
-              "2": 0,
-              "3": 0,
-              "4": 0,
-              "5": 0,
-              "6": 0,
-              "7": 0,
-              "__v": 0,
-              "_id": "5788aebfc88875ac75cee487",
-              "totalHours": 0,
-              "name": "UA-55"
-           }
+HTTP/1.1 200 OK
+{
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "__v": 0,
+      "_id": "5788aebfc88875ac75cee487",
+      "totalHours": 0,
+      "name": "UA-55"
+}
      */
     router.post('/', handler.create);
 
@@ -83,33 +83,33 @@ module.exports = function (models) {
      * @apiGroup Weekly Scheduler
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "1": 8,
-          "2": 8,
-          "3": 8,
-          "4": 10,
-          "5": 8,
-          "6": 0,
-          "7": 0,
-          "name": "UA-40",
-          "totalHours": "42"
-        }
+{
+      "1": 8,
+      "2": 8,
+      "3": 8,
+      "4": 10,
+      "5": 8,
+      "6": 0,
+      "7": 0,
+      "name": "UA-40",
+      "totalHours": "42"
+}
      *
      * @apiSuccess {Object} newWeeklyScheduler
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "1": 8,
-              "2": 8,
-              "3": 8,
-              "4": 8,
-              "5": 8,
-              "6": 0,
-              "7": 0,
-              "_id": "57332c3b94ee1140b6bb49e2",
-              "totalHours": 40,
-              "name": "UA-40"
-            }
+HTTP/1.1 200 OK
+{
+      "1": 8,
+      "2": 8,
+      "3": 8,
+      "4": 8,
+      "5": 8,
+      "6": 0,
+      "7": 0,
+      "_id": "57332c3b94ee1140b6bb49e2",
+      "totalHours": 40,
+      "name": "UA-40"
+}
      */
     router.patch('/:id', handler.update);
 
@@ -124,20 +124,20 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} deletedWeeklyScheduler
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-          "1": 0,
-          "2": 0,
-          "3": 0,
-          "4": 0,
-          "5": 0,
-          "6": 0,
-          "7": 0,
-          "_id": "5788aebfc88875ac75cee487",
-          "__v": 0,
-          "totalHours": 0,
-          "name": "UA-55"
-        }
+HTTP/1.1 200 OK
+{
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "_id": "5788aebfc88875ac75cee487",
+      "__v": 0,
+      "totalHours": 0,
+      "name": "UA-55"
+}
      */
     router.delete('/:id', handler.delete);
 

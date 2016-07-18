@@ -17,8 +17,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForEmployees
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *   {
+HTTP/1.1 200 OK
+{
           "_id": null,
           "name": [
             {
@@ -45,34 +45,34 @@ module.exports = function (models) {
             "name": "BusinessDev"
         },
         ...
-    ],
-    "jobPosition": [
-        {
-            "_id": "56cc7ba1541812c07197357a",
-            "name": "IT Researcher"
-        },
-        {
-            "_id": "5720700a7ddd4b42221d86e6",
-            "name": "IT researcher"
-        },
-        {
-            "_id": "57582457213bb78c75dfd40e",
-            "name": "SMM manager"
-        },
-        ...
-    ],
-    "manager": [
-        {
-            "_id": "564dac3e9b85f8b16b574fea",
-            "name": "Alex Filchak"
-        },
-        {
-            "_id": "55b92ad221e4b7c40f000031",
-            "name": "Alex Gleba"
-        },
-        ...
-    ]
-        }
+        ],
+        "jobPosition": [
+            {
+                "_id": "56cc7ba1541812c07197357a",
+                "name": "IT Researcher"
+            },
+            {
+                "_id": "5720700a7ddd4b42221d86e6",
+                "name": "IT researcher"
+            },
+            {
+                "_id": "57582457213bb78c75dfd40e",
+                "name": "SMM manager"
+            },
+            ...
+        ],
+        "manager": [
+            {
+                "_id": "564dac3e9b85f8b16b574fea",
+                "name": "Alex Filchak"
+            },
+            {
+                "_id": "55b92ad221e4b7c40f000031",
+                "name": "Alex Gleba"
+            },
+            ...
+        ]
+}
      * */
     router.get('/Employees', handler.getEmployeesFilters);
 
@@ -85,42 +85,42 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForPersons
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *  {
-          "_id": null,
-          "name": [
-            {
-              "_id": "575fcfa6d4aef4766ad9aae3",
-              "name": "Thijs Schnitger"
-            },
-            {
-              "_id": "575e6a257f3384556ae3d11d",
-              "name": "Till Schrader"
-            },
-            ...
-          ],
-          "country": [
-            {
-              "_id": "the Netherlands",
-              "name": "the Netherlands"
-            },
-            {
-              "_id": "Mexico",
-              "name": "Mexico"
-            },
-           ...
-          ],
-          "services": [
-            {
-              "name": "Supplier",
-              "_id": "isSupplier"
-            },
-            {
-              "name": "Customer",
-              "_id": "isCustomer"
-            }
-          ]
-        }
+HTTP/1.1 200 OK
+{
+    "_id": null,
+    "name": [
+    {
+      "_id": "575fcfa6d4aef4766ad9aae3",
+      "name": "Thijs Schnitger"
+    },
+    {
+      "_id": "575e6a257f3384556ae3d11d",
+      "name": "Till Schrader"
+    },
+    ...
+    ],
+    "country": [
+    {
+      "_id": "the Netherlands",
+      "name": "the Netherlands"
+    },
+    {
+      "_id": "Mexico",
+      "name": "Mexico"
+    },
+    ...
+    ],
+    "services": [
+    {
+      "name": "Supplier",
+      "_id": "isSupplier"
+    },
+    {
+      "name": "Customer",
+      "_id": "isCustomer"
+    }
+    ]
+}
      * */
     router.get('/Persons', handler.getPersonFilters);
 
@@ -133,46 +133,46 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForCompanies
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *{
-        "_id": null,
-        "name": [
-            {
-                "_id": "575e696a7f3384556ae3d11c",
-                "name": "Chilicon IT "
-            },
-            {
-                "_id": "575ab7eb3319da9d6ac1c140",
-                "name": "ITFarm "
-            },
-            {
-                "_id": "575987cb9c10be346a160f20",
-                "name": "Pazam "
-            },
-            ...
-        ],
-        "country": [
-            {
-                "_id": "Thailand",
-                "name": "Thailand"
-            },
-            {
-                "_id": "New Zeland",
-                "name": "New Zeland"
-            },
-            ...
-        ],
-        "services": [
-            {
-                "name": "Supplier",
-                "_id": "isSupplier"
-            },
-            {
-                "name": "Customer",
-                "_id": "isCustomer"
-            }
-        ]
-    }
+HTTP/1.1 200 OK
+{
+    "_id": null,
+    "name": [
+        {
+            "_id": "575e696a7f3384556ae3d11c",
+            "name": "Chilicon IT "
+        },
+        {
+            "_id": "575ab7eb3319da9d6ac1c140",
+            "name": "ITFarm "
+        },
+        {
+            "_id": "575987cb9c10be346a160f20",
+            "name": "Pazam "
+        },
+        ...
+    ],
+    "country": [
+        {
+            "_id": "Thailand",
+            "name": "Thailand"
+        },
+        {
+            "_id": "New Zeland",
+            "name": "New Zeland"
+        },
+        ...
+    ],
+    "services": [
+        {
+            "name": "Supplier",
+            "_id": "isSupplier"
+        },
+        {
+            "name": "Customer",
+            "_id": "isCustomer"
+        }
+    ]
+}
      * */
     router.get('/Companies', handler.getCompaniesFilters);
 
@@ -185,53 +185,52 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForApplications
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "_id": null,
-            "name": [
-            {
-                "_id": "5715ee359f1136bd3af3b662",
-                "name": "Vitaliy Driuchenko"
-            },
-            {
-                "_id": "56dd4b727bd21335130c4f95",
-                "name": "Andriy Merentsov"
-            },
-            {
-                "_id": "56cdd631541812c071973584",
-                "name": "Maryna Sheverya"
-            },
-                ...
-            ],
-            "department": [
-                {
-                    "_id": "55bb1f40cb76ca630b000007",
-                    "name": "PM"
-                },
-                {
-                    "_id": "55b92ace21e4b7c40f000015",
-                    "name": "HR"
-                },
-                ...
-            ],
-            "jobPosition": [
-                {
-                    "_id": "56b9cd808f23c5696159cd0a",
-                    "name": "PR Manager Assistant"
-                },
-                {
-                    "_id": "5629e3c284deb7cb59d61b61",
-                    "name": "Sysadmin"
-                },
-                {
-                    "_id": "566ee0c68453e8b464b70b72",
-                    "name": "Junior Ruby on Rails"
-                },
-               ...
-            ]
-        }
-     *
-     * */
+HTTP/1.1 200 OK
+{
+    "_id": null,
+    "name": [
+    {
+        "_id": "5715ee359f1136bd3af3b662",
+        "name": "Vitaliy Driuchenko"
+    },
+    {
+        "_id": "56dd4b727bd21335130c4f95",
+        "name": "Andriy Merentsov"
+    },
+    {
+        "_id": "56cdd631541812c071973584",
+        "name": "Maryna Sheverya"
+    },
+        ...
+    ],
+    "department": [
+        {
+            "_id": "55bb1f40cb76ca630b000007",
+            "name": "PM"
+        },
+        {
+            "_id": "55b92ace21e4b7c40f000015",
+            "name": "HR"
+        },
+        ...
+    ],
+    "jobPosition": [
+        {
+            "_id": "56b9cd808f23c5696159cd0a",
+            "name": "PR Manager Assistant"
+        },
+        {
+            "_id": "5629e3c284deb7cb59d61b61",
+            "name": "Sysadmin"
+        },
+        {
+            "_id": "566ee0c68453e8b464b70b72",
+            "name": "Junior Ruby on Rails"
+        },
+       ...
+    ]
+}
+     */
     router.get('/Applications', handler.getApplicationFilters);
 
     /**
@@ -243,8 +242,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForProjects
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "workflow": [
         {
@@ -303,8 +302,7 @@ module.exports = function (models) {
         }
     ]
 }
-     *
-     * */
+     */
     router.get('/Projects', handler.getProjectFilters);
 
     /**
@@ -316,8 +314,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForTasks
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "project": [
         {}
@@ -367,8 +365,7 @@ module.exports = function (models) {
         }
     ]
 }
-     *
-     * */
+     */
     router.get('/Tasks', handler.getTasksFilters);
 
     /**
@@ -380,8 +377,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForInvoices
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "workflow": [
         {
@@ -433,8 +430,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForSalesInvoices
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "workflow": [
         {
@@ -497,8 +494,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForSalesProforma
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "workflow": [
         {
@@ -552,8 +549,7 @@ module.exports = function (models) {
         ...
     ]
 }
-     *
-     * */
+     */
     router.get('/salesProforma', handler.getSalesProformaFilters);
 
     /**
@@ -565,8 +561,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForCustomerPayments
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "assigned": [
         {
@@ -617,8 +613,7 @@ module.exports = function (models) {
         ...
     ]
 }
-     *
-     * */
+     */
     router.get('/customerPayments', handler.getCustomerPaymentsFilters);
 
     /**
@@ -630,8 +625,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForSupplierPayments
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "supplier": [
         {
@@ -683,8 +678,7 @@ module.exports = function (models) {
         }
     ]
 }
-     *
-     * */
+     */
     router.get('/supplierPayments', handler.getSupplierPaymentsFilters);
     router.get('/Product', handler.getProductsFilters);
 
@@ -697,22 +691,22 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForQuotations
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "_id": null,
-            "supplier": [
-                {
-                    "_id": "55b92ad521e4b7c40f00061e",
-                    "name": "Luke Raskino "
-                }
-            ],
-            "workflow": [
-                {
-                    "_id": "55647b962e4aa3804a765ec6",
-                    "name": "Invoiced"
-                }
-            ]
+HTTP/1.1 200 OK
+{
+    "_id": null,
+    "supplier": [
+        {
+            "_id": "55b92ad521e4b7c40f00061e",
+            "name": "Luke Raskino "
         }
+    ],
+    "workflow": [
+        {
+            "_id": "55647b962e4aa3804a765ec6",
+            "name": "Invoiced"
+        }
+    ]
+}
      * */
     router.get('/Quotations', handler.getQuotationFilters);
 
@@ -725,8 +719,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForSalesQuotations
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *      {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "project": [
         {
@@ -776,8 +770,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForSalesOrders
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "project": [
         {
@@ -841,27 +835,27 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForOrders
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "_id": null,
-            "projectName": [
-                {}
-            ],
-            "supplier": [
-                {
-                    "name": null
-                }
-            ],
-            "projectmanager": [
-                {}
-            ],
-            "workflow": [
-                {
-                    "_id": "55647b962e4aa3804a765ec6",
-                    "name": "Invoiced"
-                }
-            ]
+HTTP/1.1 200 OK
+{
+    "_id": null,
+    "projectName": [
+        {}
+    ],
+    "supplier": [
+        {
+            "name": null
         }
+    ],
+    "projectmanager": [
+        {}
+    ],
+    "workflow": [
+        {
+            "_id": "55647b962e4aa3804a765ec6",
+            "name": "Invoiced"
+        }
+    ]
+}
      * */
     router.get('/Orders', handler.getOrdersFilters);
 
@@ -874,8 +868,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForLeads
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "contactName": [
         {
@@ -960,8 +954,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForOpportunities
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "customer": [
         {
@@ -1010,46 +1004,46 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForSalaryReport
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "_id": null,
-            "employee": [
-                {
-                    "_id": "577e59c98286c89d37076872",
-                    "name": "Vasya Pupkin",
-                    "isEmployee": false
-                },
-                {
-                    "_id": "577e52b73d3b1efd3422d4fc",
-                    "name": "sadas sadasdas",
-                    "isEmployee": false
-                },
-                {
-                    "_id": "5773bff2c51130066a4f3837",
-                    "name": "Ivan Chekan",
-                    "isEmployee": true
-                },
-                ...
-            ],
-            "department": [
-                {
-                    "name": "None"
-                },
-                {
-                    "_id": "560c0b83a5d4a2e20ba5068c",
-                    "name": "Finance"
-                },
-                {
-                    "_id": "56e175c4d62294582e10ca68",
-                    "name": "Unity"
-                },
-                ...
-            ],
-            "onlyEmployees": {
-                "_id": "true",
-                "name": "true"
-            }
-        }
+HTTP/1.1 200 OK
+{
+    "_id": null,
+    "employee": [
+        {
+            "_id": "577e59c98286c89d37076872",
+            "name": "Vasya Pupkin",
+            "isEmployee": false
+        },
+        {
+            "_id": "577e52b73d3b1efd3422d4fc",
+            "name": "sadas sadasdas",
+            "isEmployee": false
+        },
+        {
+            "_id": "5773bff2c51130066a4f3837",
+            "name": "Ivan Chekan",
+            "isEmployee": true
+        },
+        ...
+    ],
+    "department": [
+        {
+            "name": "None"
+        },
+        {
+            "_id": "560c0b83a5d4a2e20ba5068c",
+            "name": "Finance"
+        },
+        {
+            "_id": "56e175c4d62294582e10ca68",
+            "name": "Unity"
+        },
+        ...
+    ],
+    "onlyEmployees": {
+        "_id": "true",
+        "name": "true"
+    }
+}
      *
      * */
     router.get('/salaryReport', handler.getSalaryReportFilters);
@@ -1063,8 +1057,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForWTrack
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "jobs": [
         {}
@@ -1193,8 +1187,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForExpensesInvoice
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "workflow": [
         {
@@ -1227,8 +1221,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForDividendInvoice
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "workflow": [
         {
@@ -1250,8 +1244,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForDashVacation
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "name": [
         {
@@ -1312,8 +1306,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForExpensesPayments
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "supplier": [
         {
@@ -1356,8 +1350,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForDividendPayments
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "supplier": [
         {
@@ -1400,8 +1394,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForPayrollExpenses
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "year": [
         {
@@ -1461,8 +1455,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForJobsDashboard
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "type": [
         {
@@ -1537,8 +1531,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForJournalEntry
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "journalName": [
         {
             "_id": "Close month / Admin expenses",
@@ -1597,8 +1591,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} FilterForInventoryReport
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": null,
     "project": [
         {

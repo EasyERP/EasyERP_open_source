@@ -32,22 +32,22 @@ module.exports = function (models) {
      * @apiGroup Payroll Component Types
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "name": "PayrollEarningsType",
-          "description": "",
-          "type": "earnings"
-        }
+{
+    "name": "PayrollEarningsType",
+    "description": "",
+    "type": "earnings"
+}
      *
      * @apiSuccess {Object} PayrollComponentTypes
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "__v": 0,
-              "_id": "5788c71e62c88999010ca7d0",
-              "description": "",
-              "type": "earnings",
-              "name": "PayrollEarningsType"
-            }
+HTTP/1.1 200 OK
+{
+    "__v": 0,
+    "_id": "5788c71e62c88999010ca7d0",
+    "description": "",
+    "type": "earnings",
+    "name": "PayrollEarningsType"
+}
      */
     router.post('/', handler.create);
 
@@ -62,22 +62,22 @@ module.exports = function (models) {
      *
      * @apiParam {String} id Unique id of PayrollComponentType
      * @apiParamExample {json} Request-Example:
-     * {
-          "name": "PayrollEarningsType",
-          "description": "It is comment",
-          "type": "earnings"
-       }
+{
+    "name": "PayrollEarningsType",
+    "description": "It is comment",
+    "type": "earnings"
+}
      *
      * @apiSuccess {Object} updatedPayrollComponentType
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "_id": "5788c71e62c88999010ca7d0",
-              "__v": 0,
-              "description": "",
-              "type": "earnings",
-              "name": "PayrollEarningsType"
-           }
+HTTP/1.1 200 OK
+{
+    "_id": "5788c71e62c88999010ca7d0",
+    "__v": 0,
+    "description": "",
+    "type": "earnings",
+    "name": "PayrollEarningsType"
+}
      */
     router.patch('/:id', handler.update);
 

@@ -22,28 +22,28 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Workflows
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "data": [
-                {
-                    "_id": "528ce51cf3f67bc40b000015",
-                    "__v": 0,
-                    "attachments": [],
-                    "color": "#2C3E50",
-                    "name": "Initial Qualification",
-                    "sequence": 7,
-                    "status": "New",
-                    "wId": "Applications",
-                    "wName": "application",
-                    "source": "application",
-                    "targetSource": [
-                        "application"
-                    ],
-                    "visible": true
-                },
-                ...
-            ]
-        }
+HTTP/1.1 200 OK
+{
+    "data": [
+        {
+            "_id": "528ce51cf3f67bc40b000015",
+            "__v": 0,
+            "attachments": [],
+            "color": "#2C3E50",
+            "name": "Initial Qualification",
+            "sequence": 7,
+            "status": "New",
+            "wId": "Applications",
+            "wName": "application",
+            "source": "application",
+            "targetSource": [
+                "application"
+            ],
+            "visible": true
+        },
+        ...
+    ]
+}
      */
     router.get('/', authStackMiddleware, handler.get);
 
@@ -58,36 +58,36 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} RelatedStatus
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "data": [
-                {
-                    "_id": 1,
-                    "attachments": [],
-                    "status": "New"
-                },
-                {
-                    "_id": 2,
-                    "attachments": [],
-                    "status": "In Progress"
-                },
-                {
-                    "_id": 3,
-                    "attachments": [],
-                    "status": "Pending"
-                },
-                {
-                    "_id": 4,
-                    "attachments": [],
-                    "status": "Done"
-                },
-                {
-                    "_id": 5,
-                    "attachments": [],
-                    "status": "Cancelled"
-                }
-            ]
+HTTP/1.1 200 OK
+{
+    "data": [
+        {
+            "_id": 1,
+            "attachments": [],
+            "status": "New"
+        },
+        {
+            "_id": 2,
+            "attachments": [],
+            "status": "In Progress"
+        },
+        {
+            "_id": 3,
+            "attachments": [],
+            "status": "Pending"
+        },
+        {
+            "_id": 4,
+            "attachments": [],
+            "status": "Done"
+        },
+        {
+            "_id": 5,
+            "attachments": [],
+            "status": "Cancelled"
         }
+    ]
+}
      */
     router.get('/relatedStatus', authStackMiddleware, handler.relatedStatus);
     router.get('/getWorkflowsForDd', authStackMiddleware, handler.getWorkflowsForDd);
@@ -105,21 +105,21 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} FirstWorkflowForConvert
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "_id": "5555bf276a3f01acae0b5560",
-            "color": "#2C3E50",
-            "name": "Not Ordered",
-            "sequence": 3,
-            "status": "New",
-            "wId": "Purchase Order",
-            "wName": "order",
-            "source": "purchase",
-            "targetSource": [
-                "quotation"
-            ],
-            "visible": true
-        }
+HTTP/1.1 200 OK
+{
+    "_id": "5555bf276a3f01acae0b5560",
+    "color": "#2C3E50",
+    "name": "Not Ordered",
+    "sequence": 3,
+    "status": "New",
+    "wId": "Purchase Order",
+    "wName": "order",
+    "source": "purchase",
+    "targetSource": [
+        "quotation"
+    ],
+    "visible": true
+}
      */
     router.get('/getFirstForConvert', handler.getFirstForConvert);
     router.get('/fetch', handler.fetch);
@@ -135,31 +135,31 @@ module.exports = function (models, event) {
      *
      * @apiParam {String} id Unique id of Workflow
      * @apiParamExample {json} Request-Example:
-     * {
-          "_id": "528ce51cf3f67bc40b000015",
-          "__v": 0,
-          "attachments": [
-
-          ],
-          "color": "#2C3E50",
-          "name": "Initial Qualification",
-          "sequence": 7,
-          "status": "In Progress",
-          "wId": "Applications",
-          "wName": "application",
-          "source": "application",
-          "targetSource": [
-            "application"
-          ],
-          "visible": true
-       }
+{
+    "_id": "528ce51cf3f67bc40b000015",
+    "__v": 0,
+    "attachments": [
+    
+    ],
+    "color": "#2C3E50",
+    "name": "Initial Qualification",
+    "sequence": 7,
+    "status": "In Progress",
+    "wId": "Applications",
+    "wName": "application",
+    "source": "application",
+    "targetSource": [
+    "application"
+    ],
+    "visible": true
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "success": "WorkFlow update success"
-           }
+HTTP/1.1 200 OK
+{
+    "success": "WorkFlow update success"
+}
      */
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.updateWorkflow);
 
@@ -172,18 +172,18 @@ module.exports = function (models, event) {
      *
      * @apiParam {String} id Unique id of Workflow
      * @apiParamExample {json} Request-Example:
-     * {
-          "sequenceStart": 7,
-          "wId": "Applications",
-          "sequence": 6
-       }
+{
+    "sequenceStart": 7,
+    "wId": "Applications",
+    "sequence": 6
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "success": "WorkFlow update success"
-           }
+HTTP/1.1 200 OK
+{
+    "success": "WorkFlow update success"
+}
      */
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelectedFields);
 
@@ -198,10 +198,10 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *    {
-     *      "success":"workflow removed"
-     *    }
+HTTP/1.1 200 OK
+{
+    "success":"workflow removed"
+}
      */
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 

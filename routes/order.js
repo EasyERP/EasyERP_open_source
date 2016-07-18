@@ -22,11 +22,10 @@ module.exports = function (models, event) {
      * @apiParam {String} contentType="salesOrders"
      * @apiParam {String} id Unique id of Order
      *
-     *
      * @apiSuccess {Object} Orders
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": "5783acf5f810fcf53eb2f0a9",
     "__v": 0,
     "proformaCounter": 0,
@@ -123,17 +122,17 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} FilterOrders
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     [
-             {
-               "_id": null,
-               "Order date": [
-                 "2016-07-11T11:06:06.000Z",
-                 "2016-07-11T10:33:42.000Z",
-                 ...
-               ]
-             }
-        ]
+HTTP/1.1 200 OK
+[
+     {
+       "_id": null,
+       "Order date": [
+         "2016-07-11T11:06:06.000Z",
+         "2016-07-11T10:33:42.000Z",
+         ...
+       ]
+     }
+]
      */
     router.get('/getFilterValues', handler.getFilterValues);
 

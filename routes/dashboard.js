@@ -74,8 +74,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} DashboardVocation
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "weeksArray": [
         {
             "lastDate": "01.07",
@@ -162,8 +162,9 @@ module.exports = function (models) {
                ...
                ]
             }
-                        ]
-        }
+            ...
+    ]
+}
      */
     router.get('/vacation', authStackMiddleware, accessStackMiddlewareVacation, cacheRetriver, handler.composeForVacation);
     // router.get('/vacation', handler.getFromCache);
@@ -177,8 +178,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} DashboardHr
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     [
+HTTP/1.1 200 OK
+[
      {
        "_id": "hired",
        "data": [
@@ -237,7 +238,7 @@ module.exports = function (models) {
          },
          ...
          ]
-         },
+     },
      {
     "_id": "fired",
     "data": [
@@ -297,8 +298,8 @@ module.exports = function (models) {
       },
       ...
       ]
-      }
-     ]
+    }
+]
      */
     router.get('/hr', authStackMiddleware, accessStackMiddlewareHR, handler.composeForHr);
 

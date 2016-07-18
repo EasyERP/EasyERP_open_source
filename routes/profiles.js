@@ -21,45 +21,45 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} Profiles
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-          "data": [
+HTTP/1.1 200 OK
+{
+      "data": [
+        {
+          "_id": 1438768659000,
+          "__v": 0,
+          "profileAccess": [
             {
-              "_id": 1438768659000,
-              "__v": 0,
-              "profileAccess": [
-                {
-                  "module": {
-                    "_id": 1,
-                    "__v": 0,
-                    "attachments": [
-
-                    ],
-                    "link": false,
-                    "mname": "Settings",
-                    "parrent": null,
-                    "sequence": 1000,
-                    "visible": true,
-                    "ancestors": [
-
-                    ],
-                    "href": "Settings"
-                  },
-                  "_id": "52b0254ead08de381e000002",
-                  "access": {
-                    "del": false,
-                    "editWrite": false,
-                    "read": false
-                  }
-                },
-                ...
+              "module": {
+                "_id": 1,
+                "__v": 0,
+                "attachments": [
+    
                 ],
-                profileDescription": "test",
-                "profileName": "test"
+                "link": false,
+                "mname": "Settings",
+                "parrent": null,
+                "sequence": 1000,
+                "visible": true,
+                "ancestors": [
+    
+                ],
+                "href": "Settings"
               },
-              ...
-            ]
-          }
+              "_id": "52b0254ead08de381e000002",
+              "access": {
+                "del": false,
+                "editWrite": false,
+                "read": false
+              }
+            },
+            ...
+            ],
+            profileDescription": "test",
+            "profileName": "test"
+          },
+          ...
+        ]
+}
      */
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getProfile);
 
@@ -72,8 +72,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} ProfilesForDD
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "data": [
         {
             "_id": 1438768659000,
@@ -128,63 +128,63 @@ module.exports = function (models) {
      * @apiGroup Profiles
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "profileName": "Eduardo",
-          "profileDescription": "",
-          "profileAccess": [
-            {
-              "module": {
-                "_id": 1,
-                "__v": 0,
-                "attachments": [
+{
+      "profileName": "Eduardo",
+      "profileDescription": "",
+      "profileAccess": [
+        {
+          "module": {
+            "_id": 1,
+            "__v": 0,
+            "attachments": [
 
-                ],
-                "link": false,
-                "mname": "Settings",
-                "parrent": null,
-                "sequence": 1000,
-                "visible": true,
-                "ancestors": [
+            ],
+            "link": false,
+            "mname": "Settings",
+            "parrent": null,
+            "sequence": 1000,
+            "visible": true,
+            "ancestors": [
 
-                ],
-                "href": "Settings"
-              },
-              "_id": "52b0254ead08de381e000002",
-              "access": {
-                "del": false,
-                "editWrite": false,
-                "read": false
-              }
-            },
-            ...
-          ]
-        }
+            ],
+            "href": "Settings"
+          },
+          "_id": "52b0254ead08de381e000002",
+          "access": {
+            "del": false,
+            "editWrite": false,
+            "read": false
+          }
+        },
+        ...
+      ]
+}
      *
      * @apiSuccess {Object} createdProfile
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 201 Created
-     *     {
-              "success": "Profile Saved",
-              "data": {
-                "__v": 0,
-                "_id": 1468587887000,
-                "profileAccess": [
-                  {
-                    "module": 1,
-                    "_id": "52b0254ead08de381e000002",
-                    "access": {
-                      "del": false,
-                      "editWrite": false,
-                      "read": false
-                    }
-                  },
-                  ...
-                ],
-                "profileDescription": "",
-                "profileName": "Eduardo"
-              },
-              "id": 1468587887000
+HTTP/1.1 201 Created
+{
+      "success": "Profile Saved",
+      "data": {
+        "__v": 0,
+        "_id": 1468587887000,
+        "profileAccess": [
+          {
+            "module": 1,
+            "_id": "52b0254ead08de381e000002",
+            "access": {
+              "del": false,
+              "editWrite": false,
+              "read": false
             }
+          },
+          ...
+        ],
+        "profileDescription": "",
+        "profileName": "Eduardo"
+      },
+      "id": 1468587887000
+}
      */
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.createProfile);
 
@@ -197,46 +197,46 @@ module.exports = function (models) {
      *
      * @apiParam {Number} id Unique id of Profile
      * @apiParamExample {json} Request-Example:
-     * {
-          "_id": 1438768659000,
-          "__v": 0,
-          "profileAccess": [
-            {
-              "module": {
-                "_id": 1,
-                "__v": 0,
-                "attachments": [
-
-                ],
-                "link": false,
-                "mname": "Settings",
-                "parrent": null,
-                "sequence": 1000,
-                "visible": true,
-                "ancestors": [
-
-                ],
-                "href": "Settings"
-              },
-              "_id": "52b0254ead08de381e000002",
-              "access": {
-                "del": false,
-                "editWrite": false,
-                "read": true
-              }
-            },
-            ...
-          ],
-          "profileDescription": "No description",
-          "profileName": "Finance"
-        }
+{
+      "_id": 1438768659000,
+      "__v": 0,
+      "profileAccess": [
+        {
+          "module": {
+            "_id": 1,
+            "__v": 0,
+            "attachments": [
+    
+            ],
+            "link": false,
+            "mname": "Settings",
+            "parrent": null,
+            "sequence": 1000,
+            "visible": true,
+            "ancestors": [
+    
+            ],
+            "href": "Settings"
+          },
+          "_id": "52b0254ead08de381e000002",
+          "access": {
+            "del": false,
+            "editWrite": false,
+            "read": true
+          }
+        },
+        ...
+      ],
+      "profileDescription": "No description",
+      "profileName": "Finance"
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-     *      "success":"Profile updated"
-     *     }
+HTTP/1.1 200 OK
+{
+    "success":"Profile updated"
+}
      */
     router.put('/:_id', authStackMiddleware, accessStackMiddleware, handler.updateProfile);
 
@@ -251,10 +251,10 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-     *      "success":"Profile removed"
-     *     }
+HTTP/1.1 200 OK
+{
+    "success":"Profile removed"
+}
      */
     router.delete('/:_id', authStackMiddleware, accessStackMiddleware, handler.removeProfile);
 

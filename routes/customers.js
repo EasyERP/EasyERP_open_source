@@ -24,83 +24,83 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Customers
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
-        "data": [
-        {
-            "_id": "55b92ad521e4b7c40f000611",
-            "companyInfo": {
-                "industry": null
-            },
-            "editedBy": {
-                "date": "2016-07-08T14:20:10.766Z",
-                "user": null
-            },
-            "createdBy": {
-                "date": "2016-07-08T14:20:10.766Z",
-                "user": null
-            },
-            "history": [],
-            "attachments": [],
-            "notes": [],
-            "groups": {
-                "group": [],
-                "users": [],
-                "owner": null
-            },
-            "whoCanRW": "everyOne",
-            "social": {
-                "LI": "",
-                "FB": ""
-            },
-            "color": "#4d5a75",
-            "relatedUser": null,
-            "salesPurchases": {
-                "receiveMessages": 0,
-                "language": "English",
-                "reference": "",
-                "active": true,
-                "implementedBy": null,
-                "salesTeam": null,
-                "salesPerson": null,
-                "isSupplier": false,
-                "isCustomer": true
-            },
-            "title": "",
-            "internalNotes": "",
-            "contacts": [],
-            "phones": {
-                "fax": "",
-                "mobile": "",
-                "phone": ""
-            },
-            "skype": "",
-            "jobPosition": "",
-            "website": "",
-            "address": {
-                "country": "",
-                "zip": "",
-                "state": "",
-                "city": "",
-                "street": ""
-            },
-            "timezone": "UTC",
-            "department": null,
-            "company": null,
-            "email": "",
-            "imageSrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-            "name": {
-                "last": "",
-                "first": "demo"
-            },
-            "isOwn": false,
-            "type": "",
-            "fullName": "demo ",
-            "id": "55b92ad521e4b7c40f000611"
+HTTP/1.1 200 OK
+ {
+    "data": [
+    {
+        "_id": "55b92ad521e4b7c40f000611",
+        "companyInfo": {
+            "industry": null
         },
-        ...
-        ]
-      }
+        "editedBy": {
+            "date": "2016-07-08T14:20:10.766Z",
+            "user": null
+        },
+        "createdBy": {
+            "date": "2016-07-08T14:20:10.766Z",
+            "user": null
+        },
+        "history": [],
+        "attachments": [],
+        "notes": [],
+        "groups": {
+            "group": [],
+            "users": [],
+            "owner": null
+        },
+        "whoCanRW": "everyOne",
+        "social": {
+            "LI": "",
+            "FB": ""
+        },
+        "color": "#4d5a75",
+        "relatedUser": null,
+        "salesPurchases": {
+            "receiveMessages": 0,
+            "language": "English",
+            "reference": "",
+            "active": true,
+            "implementedBy": null,
+            "salesTeam": null,
+            "salesPerson": null,
+            "isSupplier": false,
+            "isCustomer": true
+        },
+        "title": "",
+        "internalNotes": "",
+        "contacts": [],
+        "phones": {
+            "fax": "",
+            "mobile": "",
+            "phone": ""
+        },
+        "skype": "",
+        "jobPosition": "",
+        "website": "",
+        "address": {
+            "country": "",
+            "zip": "",
+            "state": "",
+            "city": "",
+            "street": ""
+        },
+        "timezone": "UTC",
+        "department": null,
+        "company": null,
+        "email": "",
+        "imageSrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+        "name": {
+            "last": "",
+            "first": "demo"
+        },
+        "isOwn": false,
+        "type": "",
+        "fullName": "demo ",
+        "id": "55b92ad521e4b7c40f000611"
+    },
+    ...
+    ]
+  }
      */
     router.get('/', accessStackMiddleware, handler.getByViewType);
 
@@ -115,8 +115,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} CustomersImages
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "data": [
         {
             "_id": "55b92ad521e4b7c40f000611",
@@ -190,8 +190,8 @@ module.exports = function (models, event) {
             "id": "55b92ad521e4b7c40f000611"
         },
         ...
-        }
-     ]
+    ]
+}
      */
     router.get('/getCustomersImages', handler.getCustomersImages);
 
@@ -204,8 +204,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Customers for dropDown
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *{
+HTTP/1.1 200 OK
+{
     "data": [
         {
             "_id": "55ba0301d79a3a343900000d",
@@ -241,88 +241,88 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} CompaniesAlphabet
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
+HTTP/1.1 200 OK
+{
+    "data": [
      {
-"data": [
- {
-     "_id": "e"
- },
- {
-     "_id": "Z"
- },
- {
-     "_id": "E"
- },
- {
-     "_id": "H"
- },
- {
-     "_id": "U"
- },
- {
-     "_id": "Q"
- },
- {
-     "_id": "J"
- },
- {
-     "_id": "K"
- },
- {
-     "_id": "N"
- },
- {
-     "_id": "P"
- },
- {
-     "_id": "C"
- },
- {
-     "_id": "B"
- },
- {
-     "_id": "O"
- },
- {
-     "_id": "L"
- },
- {
-     "_id": "S"
- },
- {
-     "_id": "A"
- },
- {
-     "_id": "#"
- },
- {
-     "_id": "G"
- },
- {
-     "_id": "M"
- },
- {
-     "_id": "Y"
- },
- {
-     "_id": "T"
- },
- {
-     "_id": "F"
- },
- {
-     "_id": "D"
- },
- {
-     "_id": "I"
- },
- {
-     "_id": "W"
- },
- {
-     "_id": "V"
- }
-]
+         "_id": "e"
+     },
+     {
+         "_id": "Z"
+     },
+     {
+         "_id": "E"
+     },
+     {
+         "_id": "H"
+     },
+     {
+         "_id": "U"
+     },
+     {
+         "_id": "Q"
+     },
+     {
+         "_id": "J"
+     },
+     {
+         "_id": "K"
+     },
+     {
+         "_id": "N"
+     },
+     {
+         "_id": "P"
+     },
+     {
+         "_id": "C"
+     },
+     {
+         "_id": "B"
+     },
+     {
+         "_id": "O"
+     },
+     {
+         "_id": "L"
+     },
+     {
+         "_id": "S"
+     },
+     {
+         "_id": "A"
+     },
+     {
+         "_id": "#"
+     },
+     {
+         "_id": "G"
+     },
+     {
+         "_id": "M"
+     },
+     {
+         "_id": "Y"
+     },
+     {
+         "_id": "T"
+     },
+     {
+         "_id": "F"
+     },
+     {
+         "_id": "D"
+     },
+     {
+         "_id": "I"
+     },
+     {
+         "_id": "W"
+     },
+     {
+         "_id": "V"
+     }
+    ]
 }
      */
     router.get('/getCompaniesAlphabet', handler.getCompaniesAlphabet);
@@ -336,8 +336,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} SomeCustomer
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
     "_id": "55b92ad521e4b7c40f00060d",
     "editedBy": {
         "date": "2016-05-31T18:43:58.387Z",
@@ -419,8 +419,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Company Updated company
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
   "success": "Customers updated success",
   "data": {
     "_id": "55b92ad521e4b7c40f00061d",
@@ -543,8 +543,8 @@ module.exports = function (models, event) {
      * @apiName CreateNewCompany
      * @apiGroup Customers
      *
-     *  @apiParamExample {json} Request-Example:
-     *  {
+     * @apiParamExample {json} Request-Example:
+{
   "imageSrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
   "isOwn": false,
   "type": "Company",
@@ -606,8 +606,11 @@ module.exports = function (models, event) {
 }
      * @apiSuccess {Object} NewCompany Just created new company
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 201 Created
-     *     {"success":"A new Person crate success","id":"577fc8695651db3a56865d9c"}
+HTTP/1.1 201 Created
+{
+    "success":"A new Person crate success",
+    "id":"577fc8695651db3a56865d9c"
+}
      */
     router.post('/', accessStackMiddleware, handler.create);
     router.put('/:id', accessStackMiddleware, handler.update);
@@ -621,7 +624,7 @@ module.exports = function (models, event) {
      *
      * @apiParam {String} id Unique id of Company
      * @apiParamExample {json} Request-Example:
-     *{
+{
       "address": {
         "country": "Australia",
         "zip": "31212",
@@ -629,11 +632,11 @@ module.exports = function (models, event) {
         "city": "Richmond",
         "street": "Level 1, 225 - 227 Swan St"
       }
-    }
+}
      * @apiSuccess {Object} PartlyUpdatedCompany Just updated choosen fields in Company
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
       "success": "Customer updated",
       "notes": [
         {
@@ -643,7 +646,7 @@ module.exports = function (models, event) {
           "date": "2016-06-30T13:30:03.008Z"
         }
       ]
-    }
+}
      */
     router.patch('/:id', accessStackMiddleware, handler.udateOnlySelectedFields);
 
@@ -658,10 +661,10 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "success": "customer removed"
-            }
+HTTP/1.1 200 OK
+{
+    "success": "customer removed"
+}
      */
     router.delete('/:id', accessStackMiddleware, handler.remove);
 
@@ -673,21 +676,21 @@ module.exports = function (models, event) {
      * @apiGroup Customers
      *
      * @apiParamExample {json} Request-Example:
-     *{
-      "contentType": "Companies",
-      "ids": [
+{
+    "contentType": "Companies",
+    "ids": [
         "577fc8695651db3a56865d9c",
         "577fc84b5651db3a56865d9b"
-      ]
-    }
+    ]
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *    {
-     *      "ok":1,
-     *      "n":2
-     *    }
+HTTP/1.1 200 OK
+{
+    "ok":1,
+    "n":2
+}
      */
     router.delete('/', accessStackMiddleware, handler.bulkRemove);
 

@@ -51,42 +51,42 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} Payrolls
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *      {
-            "total": [
-                {
-                    "201408": {
-                        "date": "2014-08-31T13:01:00.999Z",
-                        "status": false,
-                        "calc": {
-                            "onCash": 37750.630000000005
-                        },
-                        "paid": {
-                            "onCash": 0
-                        },
-                        "diff": {
-                            "onCash": 37750.630000000005
-                        }
-                    }
+HTTP/1.1 200 OK
+{
+    "total": [
+        {
+            "201408": {
+                "date": "2014-08-31T13:01:00.999Z",
+                "status": false,
+                "calc": {
+                    "onCash": 37750.630000000005
                 },
-                {
-                    "201409": {
-                        "date": "2014-09-30T13:01:00.999Z",
-                        "status": false,
-                        "calc": {
-                            "onCash": 37644.003333333334
-                        },
-                        "paid": {
-                            "onCash": 0
-                        },
-                        "diff": {
-                            "onCash": 37644.003333333334
-                        }
-                    }
+                "paid": {
+                    "onCash": 0
                 },
-                ...
-            ]
-        }
+                "diff": {
+                    "onCash": 37750.630000000005
+                }
+            }
+        },
+        {
+            "201409": {
+                "date": "2014-09-30T13:01:00.999Z",
+                "status": false,
+                "calc": {
+                    "onCash": 37644.003333333334
+                },
+                "paid": {
+                    "onCash": 0
+                },
+                "diff": {
+                    "onCash": 37644.003333333334
+                }
+            }
+        },
+        ...
+    ]
+}
      */
     router.get('/', cacheRetriver, handler.getForView);
 
@@ -104,8 +104,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} Payroll
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     [
+HTTP/1.1 200 OK
+[
      {
          "_id": "5780bea7ce02eeb33ee969bc",
          "year": 2014,
@@ -224,8 +224,7 @@ module.exports = function (models) {
          }
      },
      ...
-
-     ]
+]
      */
     router.get('/:id', handler.getForView);
 

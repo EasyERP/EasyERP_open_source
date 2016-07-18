@@ -15,23 +15,23 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} InvoicingControls
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-        "data": [
-            {
-                "_id": "55536564475b7be475f335f3",
-                "name": "Based on Purchase Order lines"
-            },
-            {
-                "_id": "55536564475b7be475f335f4",
-                "name": "Based on generated draft invoice"
-            },
-            {
-                "_id": "55536564475b7be475f335f5",
-                "name": "Based on incoming shipments"
-            }
-        ]
-            }
+HTTP/1.1 200 OK
+{
+    "data": [
+        {
+            "_id": "55536564475b7be475f335f3",
+            "name": "Based on Purchase Order lines"
+        },
+        {
+            "_id": "55536564475b7be475f335f4",
+            "name": "Based on generated draft invoice"
+        },
+        {
+            "_id": "55536564475b7be475f335f5",
+            "name": "Based on incoming shipments"
+        }
+    ]
+}
      * */
     router.get('/', authStackMiddleware, handler.getForDd);
 

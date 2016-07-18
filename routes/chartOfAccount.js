@@ -25,45 +25,45 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} ChartOfAccount Chart Of Account
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
-         "total": 51,
-         "data": [
-             {
-                 "_id": "565eb53a6aa50532e5df0bc8",
-                 "code": 100000,
-                 "createdBy": {
-                     "date": "2016-07-08T12:38:27.116Z",
-                     "user": null
-                 },
-                 "editedBy": {
-                     "date": "2015-12-02T14:19:59.504Z",
-                     "user": "52203e707d4dba8813000003"
-                 },
-                 "payMethod": null,
-                 "type": "Fixed Assets",
-                 "name": "100000 Fixed Asset Account",
-                 "account": "Fixed Asset Account"
+HTTP/1.1 200 OK
+ {
+     "total": 51,
+     "data": [
+         {
+             "_id": "565eb53a6aa50532e5df0bc8",
+             "code": 100000,
+             "createdBy": {
+                 "date": "2016-07-08T12:38:27.116Z",
+                 "user": null
              },
-             {
-                 "_id": "565eb53a6aa50532e5df0bc9",
-                 "code": 101200,
-                 "createdBy": {
-                     "date": "2016-07-08T12:38:27.117Z",
-                     "user": null
-                 },
-                 "editedBy": {
-                     "date": "2016-05-06T10:04:35.796Z",
-                     "user": "563f673270bbc2b740ce89ae"
-                 },
-                 "payMethod": null,
-                 "type": "Current Assets",
-                 "name": "101200 Account Receivable",
-                 "account": "Account Receivable"
+             "editedBy": {
+                 "date": "2015-12-02T14:19:59.504Z",
+                 "user": "52203e707d4dba8813000003"
              },
-             ...
-         ]
-     }
+             "payMethod": null,
+             "type": "Fixed Assets",
+             "name": "100000 Fixed Asset Account",
+             "account": "Fixed Asset Account"
+         },
+         {
+             "_id": "565eb53a6aa50532e5df0bc9",
+             "code": 101200,
+             "createdBy": {
+                 "date": "2016-07-08T12:38:27.117Z",
+                 "user": null
+             },
+             "editedBy": {
+                 "date": "2016-05-06T10:04:35.796Z",
+                 "user": "563f673270bbc2b740ce89ae"
+             },
+             "payMethod": null,
+             "type": "Current Assets",
+             "name": "101200 Account Receivable",
+             "account": "Account Receivable"
+         },
+         ...
+     ]
+ }
      */
     router.get('/', accessStackMiddleware, handler.getForView);
 
@@ -76,8 +76,8 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} ChartOfAccountForDd Chart Of Account for dropDown
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
+HTTP/1.1 200 OK
+ {
     "data": [
         {
             "_id": "565eb53a6aa50532e5df0bc8",
@@ -113,7 +113,7 @@ module.exports = function (models) {
         },
         ...
         ]
-     }
+ }
      */
     router.get('/getForDd', accessStackMiddleware, handler.getForDd);
 
@@ -125,34 +125,34 @@ module.exports = function (models) {
      * @apiGroup Chart Of Account
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "code": 200000,
-          "account": " Mixed Asset Account",
-          "type": " Mixed Assets",
-          "name": "200000  Mixed Asset Account"
-        }
+{
+    "code": 200000,
+    "account": " Mixed Asset Account",
+    "type": " Mixed Assets",
+    "name": "200000  Mixed Asset Account"
+}
      *
      * @apiSuccess {Object} NewChartOfAccount Just created new chart Of Account
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 201 Created
-     {
+HTTP/1.1 201 Created
+{
       "success": {
-        "__v": 0,
-        "code": 200000,
-        "_id": "577fa97046d1b4bf451e0bd2",
-        "createdBy": {
-          "date": "2016-07-08T13:24:00.909Z",
-          "user": null
-        },
-        "editedBy": {
-          "user": null
-        },
-        "payMethod": null,
-        "type": " Mixed Assets",
-        "name": "200000  Mixed Asset Account",
-        "account": " Mixed Asset Account"
+            "__v": 0,
+            "code": 200000,
+            "_id": "577fa97046d1b4bf451e0bd2",
+            "createdBy": {
+              "date": "2016-07-08T13:24:00.909Z",
+              "user": null
+            },
+            "editedBy": {
+              "user": null
+            },
+            "payMethod": null,
+            "type": " Mixed Assets",
+            "name": "200000  Mixed Asset Account",
+            "account": " Mixed Asset Account"
       }
-    }
+}
      */
     router.post('/', accessStackMiddleware, handler.create);
 
@@ -164,18 +164,20 @@ module.exports = function (models) {
      * @apiGroup Chart Of Account
      *
      * @apiParamExample {json} Request-Example:
-     * [
-         {
-           "account": "Fixed Asset Account",
-           "name": "100000 Fixed Asset Account",
-           "_id": "565eb53a6aa50532e5df0bc8"
-         }
-     ]
+[
+     {
+       "account": "Fixed Asset Account",
+       "name": "100000 Fixed Asset Account",
+       "_id": "565eb53a6aa50532e5df0bc8"
+     }
+]
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {"success":"updated"}
+HTTP/1.1 200 OK
+{
+    "success":"updated"
+}
      */
     router.patch('/', accessStackMiddleware, handler.putchBulk);
     router.delete('/:id', accessStackMiddleware, handler.remove);
@@ -188,24 +190,24 @@ module.exports = function (models) {
      * @apiGroup Chart Of Account
      *
      * @apiParamExample {json} Request-Example:
-     * {
-      "contentType": "ChartOfAccount",
-      "ids": [
+{
+    "contentType": "ChartOfAccount",
+    "ids": [
         "565eb53a6aa50532e5df0bc9",
         "565eb53a6aa50532e5df0bca",
         "565eb53a6aa50532e5df0bcb",
         "565eb53a6aa50532e5df0bcc",
         "565eb53a6aa50532e5df0bcd"
-      ]
-    }
+    ]
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-     *      "ok":1,
-     *      "n":5
-     *     }
+HTTP/1.1 200 OK
+{
+    "ok":1,
+    "n":5
+}
      */
     router.delete('/', accessStackMiddleware, handler.bulkRemove);
 

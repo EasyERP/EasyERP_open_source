@@ -25,8 +25,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Departments
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 304 Not Modified
-     {
+HTTP/1.1 304 Not Modified
+{
      "data": [
          {
              "_id": "56cebdf6541812c07197358f",
@@ -67,7 +67,7 @@ module.exports = function (models, event) {
          },
          ...
      ]
- }
+}
      * */
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
 
@@ -82,8 +82,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} DepartmentsForDropDown
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
+HTTP/1.1 200 OK
+{
   "data": [
     {
       "_id": "55b92ace21e4b7c40f000012",
@@ -117,8 +117,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} DepartmentsForEditDd
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
+HTTP/1.1 200 OK
+{
   "data": [
     {
       "_id": "55b92ace21e4b7c40f000014",
@@ -146,25 +146,25 @@ module.exports = function (models, event) {
      * @apiGroup Departments
      *
      * @apiParamExample {json} Request-Example:
-     * {
-      "name": "C++",
-      "parentDepartment": null,
-      "departmentManager": "564dac3e9b85f8b16b574fea",
-      "nestingLevel": null,
-      "users": [
+{
+  "name": "C++",
+  "parentDepartment": null,
+  "departmentManager": "564dac3e9b85f8b16b574fea",
+  "nestingLevel": null,
+  "users": [
 
-      ],
-      "isDevelopment": true,
-      "sequence": 0
-    }
+  ],
+  "isDevelopment": true,
+  "sequence": 0
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 201 Created
-     {
-       "success": "A new Department create success",
-       "id": "57835523828f9c302171c2eb"
-     }
+HTTP/1.1 201 Created
+ {
+   "success": "A new Department create success",
+   "id": "57835523828f9c302171c2eb"
+ }
      * */
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
 
@@ -178,7 +178,7 @@ module.exports = function (models, event) {
      *
      * @apiParam {String} id Unique id of Department
      * @apiParamExample {json} Request-Example:
-     * {
+{
       "validate": false,
       "name": "C++",
       "parentDepartment": null,
@@ -199,11 +199,13 @@ module.exports = function (models, event) {
 
       ],
       "isAllUpdate": true
-    }
+}
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {"success":"Department updated success"}
+HTTP/1.1 200 OK
+{
+    "success":"Department updated success"
+}
      * */
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.update);
 
@@ -218,8 +220,10 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {"success":"Department removed"}
+HTTP/1.1 200 OK
+{
+    "success":"Department removed"
+}
      * */
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 

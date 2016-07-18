@@ -36,43 +36,43 @@ module.exports = function (event, models) {
      *
      * @apiSuccess {Object} Modules
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     [
+HTTP/1.1 200 OK
+[
+     {
+         "subModules": [
              {
-                 "subModules": [
-                     {
-                         "mname": "Leads",
-                         "href": "Leads",
-                         "link": true
-                     },
-                     {
-                         "mname": "Opportunities",
-                         "href": "Opportunities",
-                         "link": true
-                     },
-                     ...
-                 ],
-                 "_id": 19,
-                 "mname": "Sales",
-                 "href": "Sales",
-                 "link": false
+                 "mname": "Leads",
+                 "href": "Leads",
+                 "link": true
              },
              {
-                 "subModules": [
-                     {
-                         "mname": "Projects",
-                         "href": "Projects",
-                         "link": true
-                     },
-                     ...
-                 ],
-                 "_id": 36,
-                 "mname": "Project",
-                 "href": "Project",
-                 "link": false
+                 "mname": "Opportunities",
+                 "href": "Opportunities",
+                 "link": true
              },
              ...
-             ]
+         ],
+         "_id": 19,
+         "mname": "Sales",
+         "href": "Sales",
+         "link": false
+     },
+     {
+         "subModules": [
+             {
+                 "mname": "Projects",
+                 "href": "Projects",
+                 "link": true
+             },
+             ...
+         ],
+         "_id": 36,
+         "mname": "Project",
+         "href": "Project",
+         "link": false
+     },
+     ...
+]
      */
     router.get('/', cacheRetriver, handler.getAllModulesByProfile);
 

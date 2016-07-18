@@ -26,40 +26,40 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Journals
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
-      "total": 26,
-      "data": [
-        {
-          "_id": "565ef6ba270f53d02ee71d65",
-          "name": "Invoice Journal",
-          "__v": 0,
-          "creditAccount": {
-            "_id": "565eb53a6aa50532e5df0be0",
-            "name": "200000 Product Sales"
-          },
-          "debitAccount": {
-            "_id": "565eb53a6aa50532e5df0bc9",
-            "name": "101200 Account Receivable"
-          },
-          "editedBy": {
-            "user": null
-          },
-          "createdBy": {
-            "date": "2015-12-02T13:48:42.607Z",
-            "user": null
-          },
-          "description": "",
-          "currency": {
-            "name": "USD"
-          },
-          "transaction": "invoice",
-          "type": "",
-          "date": "2015-12-02T13:48:42.607Z"
-        },
-        ...
-        ]
-      }
+HTTP/1.1 200 OK
+{
+    "total": 26,
+    "data": [
+    {
+      "_id": "565ef6ba270f53d02ee71d65",
+      "name": "Invoice Journal",
+      "__v": 0,
+      "creditAccount": {
+        "_id": "565eb53a6aa50532e5df0be0",
+        "name": "200000 Product Sales"
+      },
+      "debitAccount": {
+        "_id": "565eb53a6aa50532e5df0bc9",
+        "name": "101200 Account Receivable"
+      },
+      "editedBy": {
+        "user": null
+      },
+      "createdBy": {
+        "date": "2015-12-02T13:48:42.607Z",
+        "user": null
+      },
+      "description": "",
+      "currency": {
+        "name": "USD"
+      },
+      "transaction": "invoice",
+      "type": "",
+      "date": "2015-12-02T13:48:42.607Z"
+    },
+    ...
+    ]
+}
      */
     router.get('/', _journalHandler.getForView);
 
@@ -72,20 +72,20 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} JournalsForDD
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-          "data": [
-            {
-              "_id": "57035ffd21f9b0c4313d414e",
-              "name": "Adjustment before invoice"
-            },
-            {
-              "_id": "56f3fac93fb451104c75a477",
-              "name": "Admin Salary Expenses"
-            },
-            ...
-          ]
-        }
+HTTP/1.1 200 OK
+{
+    "data": [
+    {
+      "_id": "57035ffd21f9b0c4313d414e",
+      "name": "Adjustment before invoice"
+    },
+    {
+      "_id": "56f3fac93fb451104c75a477",
+      "name": "Admin Salary Expenses"
+    },
+    ...
+    ]
+}
      */
     router.get('/getForDd', _journalHandler.getForDd);
 
@@ -98,19 +98,19 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} WriteOff
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "data": [
-                {
-                    "_id": "57767a427134263421caa841",
-                    "name": "Write off / Overhead"
-                },
-                {
-                    "_id": "57767be5ca7bd4d021041d34",
-                    "name": "Write off / R&D"
-                }
-            ]
+HTTP/1.1 200 OK
+{
+    "data": [
+        {
+            "_id": "57767a427134263421caa841",
+            "name": "Write off / Overhead"
+        },
+        {
+            "_id": "57767be5ca7bd4d021041d34",
+            "name": "Write off / R&D"
         }
+    ]
+}
      */
     router.get('/writeOff', _journalHandler.getWriteOff);
 
@@ -122,22 +122,22 @@ module.exports = function (models, event) {
      * @apiGroup Journals
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "name": "jour",
-          "transaction": "Invoice",
-          "debitAccount": "565eb53a6aa50532e5df0bca",
-          "creditAccount": "565eb53a6aa50532e5df0bc8"
-        }
+{
+    "name": "jour",
+    "transaction": "Invoice",
+    "debitAccount": "565eb53a6aa50532e5df0bca",
+    "creditAccount": "565eb53a6aa50532e5df0bc8"
+}
      *
      * @apiSuccess {Object} NewJournal Just created new journal
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 201 Created
-     {
-        "name": "Expenses Invoice Journal ",
-        "transaction": "Invoice",
-        "debitAccount": "565eb53a6aa50532e5df0bca",
-        "creditAccount": "565eb53a6aa50532e5df0bca"
-    }
+HTTP/1.1 201 Created
+{
+    "name": "Expenses Invoice Journal ",
+    "transaction": "Invoice",
+    "debitAccount": "565eb53a6aa50532e5df0bca",
+    "creditAccount": "565eb53a6aa50532e5df0bca"
+}
      */
     router.post('/', _journalHandler.create);
 
@@ -149,20 +149,20 @@ module.exports = function (models, event) {
      * @apiGroup Journals
      *
      * @apiParamExample {json} Request-Example:
-     * [
-         {
-           "name": "Invoice Journal ",
-           "debitAccount": "565eb53a6aa50532e5df0bca",
-           "_id": "565ef6ba270f53d02ee71d65"
-         }
-     ]
+[
+    {
+        "name": "Invoice Journal ",
+        "debitAccount": "565eb53a6aa50532e5df0bca",
+        "_id": "565ef6ba270f53d02ee71d65"
+    }
+]
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
-        "success":"updated"
-     }
+HTTP/1.1 200 OK
+{
+    "success":"updated"
+}
      */
     router.patch('/', _journalHandler.putchBulk);
 
@@ -176,21 +176,21 @@ module.exports = function (models, event) {
      * @apiGroup Journals
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "contentType": "journal",
-          "ids": [
-            "56cc727e541812c07197356c",
-            "56cc72a8541812c07197356e",
-            "56cc72c4541812c071973570"
-          ]
-        }
+{
+    "contentType": "journal",
+    "ids": [
+        "56cc727e541812c07197356c",
+        "56cc72a8541812c07197356e",
+        "56cc72c4541812c071973570"
+    ]
+}
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-         {
-          "ok": 1,
-          "n": 3
-         }
+HTTP/1.1 200 OK
+{
+    "ok": 1,
+    "n": 3
+}
      */
     router.delete('/', _journalHandler.bulkRemove);
 

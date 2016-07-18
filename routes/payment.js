@@ -26,8 +26,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Payments
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
+HTTP/1.1 200 OK
+{
   "data": [
     {
       "_id": "55ba0301d79a3a343900000d",
@@ -116,7 +116,7 @@ module.exports = function (models, event) {
     },
     ...
    ]
-  }
+}
      */
     router.get('/', handler.getForView);
     router.get('/amountLeftCalc', handler.amountLeftCalc);
@@ -137,18 +137,20 @@ module.exports = function (models, event) {
      * @apiGroup Payment
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "contentType": "DividendPayments",
-          "ids": [
+{
+      "contentType": "DividendPayments",
+      "ids": [
             "572ca04a55c631a239a57cfc",
             "572ca03c526c630639837960"
-          ]
-        }
+      ]
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {"success":true}
+HTTP/1.1 200 OK
+{
+    "success":true
+}
      */
     router.delete('/', handler.bulkRemove);
 

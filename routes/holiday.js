@@ -25,10 +25,10 @@ module.exports = function (event, models) {
      *
      * @apiSuccess {Object} Holidays
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *      {
-                "2": "H"
-            }
+HTTP/1.1 200 OK
+{
+   "2": "H"
+}
      * */
     router.get('/', handler.getForView);
     

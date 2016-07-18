@@ -22,20 +22,20 @@ module.exports = function (event, models) {
      *
      * @apiSuccess {Object} Vocation
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "data": [
-
-              ],
-              "stat": {
-                "leaveDays": 0,
-                "workingDays": 282,
-                "vacation": 0,
-                "personal": 0,
-                "sick": 0,
-                "education": 0
-              }
-            }
+HTTP/1.1 200 OK
+{
+      "data": [
+    
+      ],
+      "stat": {
+        "leaveDays": 0,
+        "workingDays": 282,
+        "vacation": 0,
+        "personal": 0,
+        "sick": 0,
+        "education": 0
+      }
+}
      */
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getForView);
     router.get('/getYears', authStackMiddleware, accessStackMiddleware, handler.getYears);

@@ -17,22 +17,22 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} Incoterms
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *{
-      "data": [
-        {
-          "_id": "55537115475b7be475f33602",
-          "code": "CIP",
-          "name": "CARRIAGE AND INSURANCE PAID TO"
-        },
-        {
-          "_id": "55537115475b7be475f33601",
-          "code": "CPT",
-          "name": "CARRIAGE PAID TO"
-        },
-        ...
-      ]
-    }
+HTTP/1.1 200 OK
+{
+  "data": [
+    {
+      "_id": "55537115475b7be475f33602",
+      "code": "CIP",
+      "name": "CARRIAGE AND INSURANCE PAID TO"
+    },
+    {
+      "_id": "55537115475b7be475f33601",
+      "code": "CPT",
+      "name": "CARRIAGE PAID TO"
+    },
+    ...
+  ]
+}
      * */
     router.get('/', handler.getForDd);
 

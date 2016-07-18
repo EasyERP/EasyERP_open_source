@@ -26,14 +26,14 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Opportunities
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-          "data": [
+HTTP/1.1 200 OK
+{
+      "data": [
 
-          ],
-          "workflowId": "528cdcb4f3f67bc40b000006",
-          "fold": false
-        }
+      ],
+      "workflowId": "528cdcb4f3f67bc40b000006",
+      "fold": false
+}
      */
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
 
@@ -46,8 +46,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} FilterValues
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     [
+HTTP/1.1 200 OK
+[
      {
          "_id": null,
          "Name": [
@@ -70,7 +70,7 @@ module.exports = function (models, event) {
              ...
          ]
      }
-     ]
+]
      */
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
 
@@ -89,10 +89,10 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} OpportunitiesForMiniView
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-                "listLength": 0
-            }
+HTTP/1.1 200 OK
+{
+    "listLength": 0
+}
      */
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddleware, handler.opportunitiesForMiniView);
 
@@ -109,41 +109,41 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} OpportunitiesForChart
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "data": [
-                {
-                    "_id": {
-                        "year": "2016",
-                        "mounth": "06",
-                        "day": "15"
-                    },
-                    "wonCount": 0,
-                    "lostCount": 0,
-                    "inProgressCount": 0
-                },
-                {
-                    "_id": {
-                        "year": "2016",
-                        "mounth": "06",
-                        "day": "21"
-                    },
-                    "wonCount": 0,
-                    "lostCount": 0,
-                    "inProgressCount": 0
-                },
-                {
-                    "_id": {
-                        "year": "2016",
-                        "mounth": "07",
-                        "day": "06"
-                    },
-                    "wonCount": 0,
-                    "lostCount": 0,
-                    "inProgressCount": 0
-                }
-            ]
+HTTP/1.1 200 OK
+{
+    "data": [
+        {
+            "_id": {
+                "year": "2016",
+                "mounth": "06",
+                "day": "15"
+            },
+            "wonCount": 0,
+            "lostCount": 0,
+            "inProgressCount": 0
+        },
+        {
+            "_id": {
+                "year": "2016",
+                "mounth": "06",
+                "day": "21"
+            },
+            "wonCount": 0,
+            "lostCount": 0,
+            "inProgressCount": 0
+        },
+        {
+            "_id": {
+                "year": "2016",
+                "mounth": "07",
+                "day": "06"
+            },
+            "wonCount": 0,
+            "lostCount": 0,
+            "inProgressCount": 0
         }
+    ]
+}
      */
     router.get('/OpportunitiesForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesForChart);
 
@@ -158,20 +158,20 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} OpportunitiesConversionForChart
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "data": [
-                {
-                  "_id": "Vasiliy Almashiy",
-                  "wonSum": 0,
-                  "wonCount": 0,
-                  "lostSum": 49000,
-                  "lostCount": 1,
-                  "sale": "Vasiliy Almashiy"
-                },
-                ...
-              ]
-            }
+HTTP/1.1 200 OK
+{
+      "data": [
+        {
+          "_id": "Vasiliy Almashiy",
+          "wonSum": 0,
+          "wonCount": 0,
+          "lostSum": 49000,
+          "lostCount": 1,
+          "sale": "Vasiliy Almashiy"
+        },
+        ...
+      ]
+}
      */
     router.get('/OpportunitiesConversionForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesConversionForChart);
 
@@ -184,42 +184,42 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} OpportunitiesAgingChart
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "data": [
-                {
-                    "0-7_Sum": 17000,
-                    "8-15_Sum": 0,
-                    "16-30_Sum": 0,
-                    "31-60_Sum": 0,
-                    "61-120_Sum": 0,
-                    ">120_Sum": 0,
-                    "0-7_Count": 1,
-                    "8-15_Count": 0,
-                    "16-30_Count": 0,
-                    "31-60_Count": 0,
-                    "61-120_Count": 0,
-                    ">120_Count": 0,
-                    "workflow": "Finalization"
-                },
-                {
-                    "0-7_Sum": 0,
-                    "8-15_Sum": 0,
-                    "16-30_Sum": 0,
-                    "31-60_Sum": 0,
-                    "61-120_Sum": 0,
-                    ">120_Sum": 0,
-                    "0-7_Count": 1,
-                    "8-15_Count": 0,
-                    "16-30_Count": 0,
-                    "31-60_Count": 0,
-                    "61-120_Count": 0,
-                    ">120_Count": 0,
-                    "workflow": "Waiting fo response"
-                },
-                ...
-            ]
-        }
+HTTP/1.1 200 OK
+{
+    "data": [
+        {
+            "0-7_Sum": 17000,
+            "8-15_Sum": 0,
+            "16-30_Sum": 0,
+            "31-60_Sum": 0,
+            "61-120_Sum": 0,
+            ">120_Sum": 0,
+            "0-7_Count": 1,
+            "8-15_Count": 0,
+            "16-30_Count": 0,
+            "31-60_Count": 0,
+            "61-120_Count": 0,
+            ">120_Count": 0,
+            "workflow": "Finalization"
+        },
+        {
+            "0-7_Sum": 0,
+            "8-15_Sum": 0,
+            "16-30_Sum": 0,
+            "31-60_Sum": 0,
+            "61-120_Sum": 0,
+            ">120_Sum": 0,
+            "0-7_Count": 1,
+            "8-15_Count": 0,
+            "16-30_Count": 0,
+            "31-60_Count": 0,
+            "61-120_Count": 0,
+            ">120_Count": 0,
+            "workflow": "Waiting fo response"
+        },
+        ...
+    ]
+}
      */
     router.get('/OpportunitiesAgingChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesAgingChart);
 
@@ -232,32 +232,32 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} LengthByWorkflows
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-            "showMore": true,
-            "arrayOfObjects": [
-                {
-                    "_id": "528cdd2af3f67bc40b000007",
-                    "count": 1
-                },
-                {
-                    "_id": "5773e332ba4ab32d0f4dc85e",
-                    "count": 1
-                },
-                {
-                    "_id": "56dd819ccc599b971852913b",
-                    "count": 16
-                },
-                {
-                    "_id": "528cdf1cf3f67bc40b00000b",
-                    "count": 29
-                },
-                {
-                    "_id": "528cdef4f3f67bc40b00000a",
-                    "count": 24
-                }
-            ]
+HTTP/1.1 200 OK
+{
+    "showMore": true,
+    "arrayOfObjects": [
+        {
+            "_id": "528cdd2af3f67bc40b000007",
+            "count": 1
+        },
+        {
+            "_id": "5773e332ba4ab32d0f4dc85e",
+            "count": 1
+        },
+        {
+            "_id": "56dd819ccc599b971852913b",
+            "count": 16
+        },
+        {
+            "_id": "528cdf1cf3f67bc40b00000b",
+            "count": 29
+        },
+        {
+            "_id": "528cdef4f3f67bc40b00000a",
+            "count": 24
         }
+    ]
+}
      */
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddleware, handler.getLengthByWorkflows);
 
@@ -271,31 +271,31 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Priorities
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-              "data": [
-                {
-                  "_id": "Trivial",
-                  "type": "Leads",
-                  "priority": "Trivial"
-                },
-                {
-                  "_id": "Low",
-                  "type": "Leads",
-                  "priority": "Low"
-                },
-                {
-                  "_id": "Medium",
-                  "type": "Leads",
-                  "priority": "Medium"
-                },
-                {
-                  "_id": "High",
-                  "type": "Leads",
-                  "priority": "High"
-                }
-              ]
-            }
+HTTP/1.1 200 OK
+{
+      "data": [
+        {
+          "_id": "Trivial",
+          "type": "Leads",
+          "priority": "Trivial"
+        },
+        {
+          "_id": "Low",
+          "type": "Leads",
+          "priority": "Low"
+        },
+        {
+          "_id": "Medium",
+          "type": "Leads",
+          "priority": "Medium"
+        },
+        {
+          "_id": "High",
+          "type": "Leads",
+          "priority": "High"
+        }
+      ]
+}
      */
     router.get('/priority', authStackMiddleware, accessStackMiddleware, handler.getLeadsPriority);
     router.get('/getFilteredOpportunities', authStackMiddleware, accessStackMiddleware, handler.getFilteredOpportunities);
@@ -308,67 +308,67 @@ module.exports = function (models, event) {
      * @apiGroup Opportunity
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "isOpportunitie": true,
-          "name": "Android",
-          "expectedRevenue": {
-            "value": "0",
-            "currency": "$"
-          },
-          "company": {
-            "id": "",
-            "name": ""
-          },
-          "contactName": {
-            "first": "",
-            "last": ""
-          },
-          "customer": "570b65d718efef5454b6b58d",
-          "address": {
-            "street": "201 W. Main Street, Suite 100",
-            "city": "Durham",
-            "state": "NC",
-            "zip": "27701",
-            "country": "USA"
-          },
-          "email": "",
-          "phones": {
-            "mobile": "",
-            "phone": "",
-            "fax": ""
-          },
-          "func": "",
-          "salesPerson": "56b8b99e6c411b590588feb9",
-          "salesTeam": null,
-          "internalNotes": "",
-          "nextAction": {
-            "desc": ""
-          },
-          "expectedClosing": "21 Jul, 2016",
-          "priority": "Low",
-          "categories": "",
-          "active": true,
-          "optout": false,
-          "reffered": "",
-          "workflow": "528cdcb4f3f67bc40b000006",
-          "whoCanRW": "everyOne",
-          "groups": {
-            "owner": null,
-            "users": [
+{
+      "isOpportunitie": true,
+      "name": "Android",
+      "expectedRevenue": {
+        "value": "0",
+        "currency": "$"
+      },
+      "company": {
+        "id": "",
+        "name": ""
+      },
+      "contactName": {
+        "first": "",
+        "last": ""
+      },
+      "customer": "570b65d718efef5454b6b58d",
+      "address": {
+        "street": "201 W. Main Street, Suite 100",
+        "city": "Durham",
+        "state": "NC",
+        "zip": "27701",
+        "country": "USA"
+      },
+      "email": "",
+      "phones": {
+        "mobile": "",
+        "phone": "",
+        "fax": ""
+      },
+      "func": "",
+      "salesPerson": "56b8b99e6c411b590588feb9",
+      "salesTeam": null,
+      "internalNotes": "",
+      "nextAction": {
+        "desc": ""
+      },
+      "expectedClosing": "21 Jul, 2016",
+      "priority": "Low",
+      "categories": "",
+      "active": true,
+      "optout": false,
+      "reffered": "",
+      "workflow": "528cdcb4f3f67bc40b000006",
+      "whoCanRW": "everyOne",
+      "groups": {
+        "owner": null,
+        "users": [
 
-            ],
-            "group": [
+        ],
+        "group": [
 
-            ]
-          }
-        }
+        ]
+      }
+}
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 201 Created
-     *     {
-              "success": "A new Opportunities create success",
-              "id": "578508a3b7c30f675048cdae"
-            }
+HTTP/1.1 201 Created
+{
+      "success": "A new Opportunities create success",
+      "id": "578508a3b7c30f675048cdae"
+}
      */
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
@@ -380,107 +380,110 @@ module.exports = function (models, event) {
      * @apiName uploadFiles
      * @apiGroup Opportunity
      *
+     * @apiHeader (HeaderName=HeaderValue) {String} Content-Type="multipart/form-data"
+     * @apiHeader (HeaderName=HeaderValue) {String} modelid
+     * @apiHeader (HeaderName=HeaderValue) {String} modelname="Opportunities"
+     *
      * @apiSuccess {Object} UpdatedOpportunity
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-          "success": "Opportunity updated success",
-          "data": {
-            "_id": "57693909e6b2b396201e2411",
-            "__v": 0,
-            "skype": "",
-            "social": {
-              "LI": "",
-              "FB": ""
-            },
-            "projectType": "fixed",
-            "attachments": [
-              {
-                "_id": "57850694b7c30f675048cdad",
-                "name": "united-kingdom-england-london-6527.jpg",
-                "shortPas": "uploads%2Fopportunities%2F57693909e6b2b396201e2411%2Funited-kingdom-england-london-6527.jpg",
-                "size": "0.309&nbsp;Mb",
-                "uploadDate": "2016-07-12T15:02:44.827Z",
-                "uploaderName": "admin"
-              }
-            ],
-            "notes": [
-
-            ],
-            "convertedDate": "2016-06-21T12:54:33.527Z",
-            "isConverted": false,
-            "source": "",
-            "campaign": "",
-            "editedBy": {
-              "date": "2016-07-12T14:55:12.973Z",
-              "user": "52203e707d4dba8813000003"
-            },
-            "createdBy": {
-              "date": "2016-06-21T12:54:33.527Z",
-              "user": "563f673270bbc2b740ce89ae"
-            },
-            "sequence": 10,
-            "groups": {
-              "group": [
-
-              ],
-              "users": [
-
-              ],
-              "owner": "560c099da5d4a2e20ba5068b"
-            },
-            "whoCanRW": "everyOne",
-            "workflow": "528cdcb4f3f67bc40b000006",
-            "reffered": "",
-            "optout": false,
-            "active": false,
-            "color": "#4d5a75",
-            "categories": {
-              "name": "",
-              "id": ""
-            },
-            "priority": "Select",
-            "expectedClosing": "",
-            "nextAction": {
-              "date": "2016-07-03T22:00:00.000Z",
-              "desc": ""
-            },
-            "internalNotes": "",
-            "salesTeam": null,
-            "salesPerson": "55b92ad221e4b7c40f000040",
-            "func": "",
-            "phones": {
-              "fax": "",
-              "phone": "",
-              "mobile": ""
-            },
-            "email": "",
-            "contactName": {
-              "last": "",
-              "first": ""
-            },
-            "address": {
-              "country": "USA",
-              "zip": "",
-              "state": "",
-              "city": "",
-              "street": ""
-            },
-            "customer": "574818d53ee88113675f3520",
-            "company": null,
-            "tempCompanyField": "",
-            "creationDate": "2016-06-21T12:54:33.526Z",
-            "expectedRevenue": {
-              "currency": "$",
-              "progress": 0,
-              "value": 0
-            },
-            "name": "iOS + Android",
-            "isOpportunitie": true
+HTTP/1.1 200 OK
+{
+      "success": "Opportunity updated success",
+      "data": {
+        "_id": "57693909e6b2b396201e2411",
+        "__v": 0,
+        "skype": "",
+        "social": {
+          "LI": "",
+          "FB": ""
+        },
+        "projectType": "fixed",
+        "attachments": [
+          {
+            "_id": "57850694b7c30f675048cdad",
+            "name": "united-kingdom-england-london-6527.jpg",
+            "shortPas": "uploads%2Fopportunities%2F57693909e6b2b396201e2411%2Funited-kingdom-england-london-6527.jpg",
+            "size": "0.309&nbsp;Mb",
+            "uploadDate": "2016-07-12T15:02:44.827Z",
+            "uploaderName": "admin"
           }
-        }
+        ],
+        "notes": [
+
+        ],
+        "convertedDate": "2016-06-21T12:54:33.527Z",
+        "isConverted": false,
+        "source": "",
+        "campaign": "",
+        "editedBy": {
+          "date": "2016-07-12T14:55:12.973Z",
+          "user": "52203e707d4dba8813000003"
+        },
+        "createdBy": {
+          "date": "2016-06-21T12:54:33.527Z",
+          "user": "563f673270bbc2b740ce89ae"
+        },
+        "sequence": 10,
+        "groups": {
+          "group": [
+
+          ],
+          "users": [
+
+          ],
+          "owner": "560c099da5d4a2e20ba5068b"
+        },
+        "whoCanRW": "everyOne",
+        "workflow": "528cdcb4f3f67bc40b000006",
+        "reffered": "",
+        "optout": false,
+        "active": false,
+        "color": "#4d5a75",
+        "categories": {
+          "name": "",
+          "id": ""
+        },
+        "priority": "Select",
+        "expectedClosing": "",
+        "nextAction": {
+          "date": "2016-07-03T22:00:00.000Z",
+          "desc": ""
+        },
+        "internalNotes": "",
+        "salesTeam": null,
+        "salesPerson": "55b92ad221e4b7c40f000040",
+        "func": "",
+        "phones": {
+          "fax": "",
+          "phone": "",
+          "mobile": ""
+        },
+        "email": "",
+        "contactName": {
+          "last": "",
+          "first": ""
+        },
+        "address": {
+          "country": "USA",
+          "zip": "",
+          "state": "",
+          "city": "",
+          "street": ""
+        },
+        "customer": "574818d53ee88113675f3520",
+        "company": null,
+        "tempCompanyField": "",
+        "creationDate": "2016-06-21T12:54:33.526Z",
+        "expectedRevenue": {
+          "currency": "$",
+          "progress": 0,
+          "value": 0
+        },
+        "name": "iOS + Android",
+        "isOpportunitie": true
+      }
+}
      */
-    //todo "@apiParamExample"
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
 
     /**
@@ -492,37 +495,37 @@ module.exports = function (models, event) {
      *
      * @apiParam {String} id Unique id of Opportunity
      * @apiParamExample {json} Request-Example:
-     * {
-          "customer": "574818d53ee88113675f3520",
-          "address": {
-            "street": "",
-            "city": "",
-            "state": "",
-            "zip": "",
-            "country": "USA"
-          },
-          "active": false,
-          "groups": {
-            "owner": "560c099da5d4a2e20ba5068b",
-            "users": [
+{
+      "customer": "574818d53ee88113675f3520",
+      "address": {
+        "street": "",
+        "city": "",
+        "state": "",
+        "zip": "",
+        "country": "USA"
+      },
+      "active": false,
+      "groups": {
+        "owner": "560c099da5d4a2e20ba5068b",
+        "users": [
 
-            ],
-            "group": [
+        ],
+        "group": [
 
-            ]
-          }
-        }
+        ]
+      }
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     *     {
-          "success": "Opportunities updated",
-          "notes": [
-
-          ],
-          "sequence": 10
-        }
+HTTP/1.1 200 OK
+{
+      "success": "Opportunities updated",
+      "notes": [
+    
+      ],
+      "sequence": 10
+}
      *
      */
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelectedFields);
@@ -539,10 +542,10 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-     {
-        "success":"Opportunities removed"
-     }
+HTTP/1.1 200 OK
+{
+    "success":"Opportunities removed"
+}
      */
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
@@ -554,18 +557,20 @@ module.exports = function (models, event) {
      * @apiGroup Opportunity
      *
      * @apiParamExample {json} Request-Example:
-     * {
-          "contentType": "Opportunities",
-          "ids": [
+{
+      "contentType": "Opportunities",
+      "ids": [
             "57153854eb8118dc63f02b7f",
             "574300a57c51918533cb200b"
-          ]
-        }
+      ]
+}
      *
      * @apiSuccess {Object} Status
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
-            {"success":true}
+HTTP/1.1 200 OK
+{
+    "success":true
+}
      */
     router.delete('/', authStackMiddleware, accessStackMiddleware, handler.bulkRemove);
 
