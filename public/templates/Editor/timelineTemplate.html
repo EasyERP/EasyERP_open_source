@@ -2,7 +2,6 @@
     <% notes = notes || [];%>
     <% notes.reverse();%>
     <%_.each(notes, function(val,key){ %>
-    <% console.log(App.currentUser._id)%>
     <% var login = val.user ? (App.currentUser._id === val.user._id) ? 'You': val.user.login : '' %>
     <div id="<%=val._id%>" class="noteContainer ">
         <div class="<%=val.history ? '' : 'contentHolder'%>">
@@ -36,7 +35,10 @@
                     <span class="dateNote"><%=val.date%></span>
                 </div>
                 <%}%>
+                <% if (val.note){%>
                 <div class="noteText"><%=val.note ? val.note.replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") : '' %> </div>
+
+                <%}%>
                 <% if (val.attachment){%>
 
                 <div class="noteType"><a href="download/<%= val.attachment.shortPas%>" id="<%= val.attachment._id%>"><%= val.attachment.name  %></a></div>
