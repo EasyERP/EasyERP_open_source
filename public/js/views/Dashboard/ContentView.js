@@ -2565,7 +2565,7 @@ define([
                     left: 130
                 };
                 width = ($wrapper.width() - margin.right) / 2.1;
-                height = $wrapper.width() / 4;
+                height =  parseInt($wrapper.width() / 4);
                 height1 = data.length * 20;
 
                 projection = d3.geo.mercator()
@@ -2811,7 +2811,7 @@ define([
 
                 margin = {top: 0, right: 10, bottom: 10, left: 125};
                 width = $wrapper.width() / 2 - margin.left - margin.right;
-                height = $wrapper.width() / 4;
+                height = parseInt($wrapper.width() / 4);
 
                 maxValue = d3.max(data, function (d) {
                     return d.payment / 100;
@@ -2834,7 +2834,8 @@ define([
 
                 div = d3.select('.treemap_sales')
                     .append('div')
-                    .style('height', height+'px');
+                    .style('height', height + 'px')
+                    .style('position', 'relative');
 
                 root = {
                     name    : 'tree',
