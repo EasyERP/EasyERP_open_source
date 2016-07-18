@@ -16,11 +16,11 @@
     background: @lightgrey;
   }
 
-  //&:first-child {
-  //  &:before {
-  //    height: 100%;
-  //  }
-  //}
+  &:first-child {
+    &:before {
+      top: -10px;
+    }
+  }
 
   &:last-child {
     &:before {
@@ -42,5 +42,13 @@
     text-align: center;
     color: @lightgrey;
     z-index: 10;
+  }
+
+  .noteBody {
+    padding: 17px 10px !important;
+  }
+
+  .noteContent {
+    margin: 10px 0;
   }
 }

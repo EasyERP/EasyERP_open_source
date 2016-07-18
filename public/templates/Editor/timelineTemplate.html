@@ -19,11 +19,11 @@
             <div class="noteBody">
                 <%if (val.task){%>
                 <div class="noteType task" id="<%= val.task._id%>">
-                    <span><%= login %> created task</span>
-                    <span class="dateNote"><%=val.date%></span>
-                    <div><a href="javascript:;" ><%=val.task.description  %></a></div>
+                    <span class="noteUserTitle"><b><%= login %></b> created task</span>
+                    <p class="dateNote"><%=val.date%></p>
+                    <div class="noteContent"><a href="javascript:;" ><%=val.task.description  %></a></div>
                 </div>
-                <div class="assignedTo">Assigned To <%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></div>
+                <div class="assignedTo">Assigned To <b><%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></b></div>
                 <%} else if (val.history) {%>
                 <div class="history_body">
                     <div class="history_changed">
@@ -42,7 +42,7 @@
                 </div>
                 <%} else {%>
                 <div>
-                    <span class="noteType"><%=login%> left a Note</span>
+                    <span class="noteType"><b><%=login%></b> left a Note</span>
                     <span class="dateNote"><%=val.date%></span>
                 </div>
                 <%}%>

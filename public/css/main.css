@@ -3146,6 +3146,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   height: calc(127%);
   background: #c8c8d3;
 }
+.noteContainer:first-child:before {
+  top: -10px;
+}
 .noteContainer:last-child:before {
   height: 25px;
 }
@@ -3163,6 +3166,12 @@ input:not([type="checkbox"]).inputBordered:focus {
   text-align: center;
   color: #c8c8d3;
   z-index: 10;
+}
+.noteContainer .noteBody {
+  padding: 17px 10px !important;
+}
+.noteContainer .noteContent {
+  margin: 10px 0;
 }
 .btn {
   border: 1px solid #7f7f80;
