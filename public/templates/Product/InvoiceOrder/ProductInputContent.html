@@ -22,7 +22,7 @@
 
     <% } %>
     <td data-name="quantity">
-        <% if (!quotations){ %>
+        <% if (!quotations && !forSales){ %>
         <input id="quantity" class="quantity statusInfo" maxlength="9" size=10 type="text"/>
         <% }else { %>
         <span>1</span>
