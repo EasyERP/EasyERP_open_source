@@ -18,6 +18,7 @@ define([
             this.balanceVissible = false;
             this.service = true;
             this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
+            this.onlyView = !!options.onlyView;
 
             _.bindAll(this, 'render', 'saveItem');
             _.bindAll(this, 'render', 'deleteItem');

@@ -4,6 +4,7 @@ define([
     'Underscore',
     'views/dialogViewBase',
     'text!templates/Orders/EditTemplate.html',
+    'text!templates/salesOrders/ViewTemplate.html',
     'views/Assignees/AssigneesView',
     'views/Products/InvoiceOrder/ProductItems',
     'common',
@@ -12,7 +13,7 @@ define([
     'populate',
     'constants',
     'helpers'
-], function (Backbone, $, _, ParentView, EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS, helpers) {
+], function (Backbone, $, _, ParentView, EditTemplate, ViewTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
     var EditView = ParentView.extend({
         contentType: 'Orders',
@@ -352,14 +353,16 @@ define([
             var model;
             var productItemContainer;
 
-            this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Order',
-                width        : '900px',
-                buttons      : [
+            this.template = !this.onlyView ? _.template(EditTemplate) : _.template(ViewTemplate);
+
+            formString = this.template({
+                model   : this.currentModel.toJSON(),
+                visible : this.visible,
+                onlyView: this.onlyView
+            });
+
+            if (!this.onlyView) {
+                buttons = [
                     {
                         text : 'Save',
                         click: function () {
@@ -377,9 +380,28 @@ define([
                         text : 'Delete',
                         click: self.deleteItem
                     }
-                ]
+                ];
+            } else {
+                buttons = [
+                    {
+                        text : 'Close',
+                        click: function () {
+                            self.hideDialog();
+                        }
+                    }
+                ];
+            }
 
+            this.$el = $(formString).dialog({
+                closeOnEscape: false,
+                autoOpen     : true,
+                resizable    : true,
+                dialogClass  : 'edit-dialog',
+                title        : 'Edit Order',
+                width        : '900px',
+                buttons      : buttons
             });
+
 
             this.renderAssignees(this.currentModel);
 

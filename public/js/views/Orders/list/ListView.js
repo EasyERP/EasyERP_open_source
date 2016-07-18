@@ -137,11 +137,12 @@ define([
             var id = tr.data('id');
             var notEditable = tr.hasClass('notEditable');
             var model = new QuotationModel({validate: false});
+            var onlyView = false;
 
             e.preventDefault();
 
             if (notEditable) {
-                return false;
+                onlyView = true;
             }
 
             model.urlRoot = '/orders/';
@@ -150,9 +151,9 @@ define([
                     id      : id,
                     viewType: 'form'
                 },
-                
+
                 success: function (model) {
-                    return new EditView({model: model});
+                    return new EditView({model: model, onlyView: onlyView});
                 },
 
                 error: function () {
