@@ -799,7 +799,6 @@ define([
                 month: this.month,
                 year : this.year
             }, function (data) {
-                data = data.data;
                 dataLength = data.length;
                 globalSalary = {
                     '>=$2250'   : [],
@@ -1127,9 +1126,8 @@ define([
             self.renderDepartmentsTree();
             self.renderDepartmentsTreeRadial();
             self.renderTreemap();
-            self.renderSalaryChart();
             self.renderSalaryByDepartmentChart();
-
+            self.renderSalaryChart();
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;
         }
