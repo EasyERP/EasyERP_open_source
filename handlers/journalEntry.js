@@ -1624,7 +1624,12 @@ var Module = function (models, event) {
         var parallelFuncs;
         var waterfallFuncs;
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var date = endDate;
+        var date = moment(endDate).set({
+            hour       : 20,
+            minute     : 0,
+            second     : 0,
+            millisecond: 0
+        });
         var dateByMonth = year * 100 + month;
 
         function parallelFuncFind(wfCb) {
@@ -2844,22 +2849,22 @@ var Module = function (models, event) {
                             startDate = moment(transfer[0].date);
                         }
                         /* for (i = transferLength - 1; i >= 0; i--) {
-                            transferObj = transfer[i];
+                         transferObj = transfer[i];
 
-                            if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
-                                if (transferObj.status === 'fired') {
-                                    if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
-                                        salaryForDate = transferObj.salary;
-                                        weeklyScheduler = transferObj.weeklyScheduler;
-                                        break;
-                                    }
-                                } else if (transferObj.status !== 'transfer') {
-                                    salaryForDate = transferObj.salary;
-                                    weeklyScheduler = transferObj.weeklyScheduler;
-                                    break;
-                                }
-                            }
-                        }*/
+                         if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                         if (transferObj.status === 'fired') {
+                         if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
+                         salaryForDate = transferObj.salary;
+                         weeklyScheduler = transferObj.weeklyScheduler;
+                         break;
+                         }
+                         } else if (transferObj.status !== 'transfer') {
+                         salaryForDate = transferObj.salary;
+                         weeklyScheduler = transferObj.weeklyScheduler;
+                         break;
+                         }
+                         }
+                         }*/
 
                         transfer = _.sortBy(transfer, 'date');
 
@@ -3156,7 +3161,8 @@ var Module = function (models, event) {
                                     });
                                 });
 
-                            };
+                            }
+                            ;
 
                         });
                     }, function () {

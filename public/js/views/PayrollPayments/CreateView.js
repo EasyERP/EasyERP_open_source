@@ -8,8 +8,9 @@ define([
     'populate',
     'helpers',
     'dataService',
-    'constants'
-], function (Backbone, $, _, Parent, CreateTemplate, moment, populate, helpers, dataService, CONSTANTS) {
+    'constants',
+    'helpers/keyCodeHelper'
+], function (Backbone, $, _, Parent, CreateTemplate, moment, populate, helpers, dataService, CONSTANTS, keyCodes) {
     'use strict';
 
     var CreateView = Parent.extend({
@@ -31,13 +32,23 @@ define([
         },
 
         events: {
-            'click .checkbox'      : 'checked',
-            'click td.editable'    : 'editRow',
-            'change .autoCalc'     : 'autoCalc',
-            'change .editable'     : 'setEditable',
-            'keydown input.editing': 'keyDown'
+            'click .checkbox'  : 'checked',
+            'click td.editable': 'editRow',
+            'change .autoCalc' : 'autoCalc',
+            'change .editable' : 'setEditable',
+            'keydown .editing' : 'onKeyDownInput'
             // 'click #deleteBtn'     : 'deleteItems'
         },
+
+        onKeyDownInput: function (e) {
+            var code = e.keyCode;
+            if (keyCodes.isEnter(e.keyCode)) {
+                this.setChangedValueToModel();
+            } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                e.preventDefault();
+            }
+        },
+
 
         savedNewModel: function () {
             this.removeDialog();
@@ -151,14 +162,12 @@ define([
             var journal = this.$el.find('#journal').attr('data-id') || null;
             var date = helpers.setTimeToDate(new Date(this.$el.find('#dateOfPayment').val()));
 
-            for (i = editCollectionJSON.length - 1; i >= 0; i--) {
-                editCollectionJSON[i].date = date;
-                editCollectionJSON[i].currency = currency;
-                editCollectionJSON[i].paymentMethod = paymentMethod;
-                editCollectionJSON[i].journal = journal;
-            }
-
-            this.editCollection.reset(editCollectionJSON);
+            this.editCollection.forEach(function(el){
+                el.set('date', date);
+                el.set('currency', currency);
+                el.set('paymentMethod', paymentMethod);
+                el.set('journal', journal);
+            });
 
             this.setChangedValueToModel();
 

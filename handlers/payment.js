@@ -592,6 +592,7 @@ var Module = function (models, event) {
                             date                : 1,
                             'paymentMethod.name': '$paymentMethod.name',
                             'paymentMethod._id' : '$paymentMethod._id',
+                            name                : 1,
                             isExpense           : 1,
                             bonus               : 1,
                             paymentRef          : 1,
@@ -603,12 +604,14 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             supplier               : 1,
+                            journal                : 1,
                             'currency.name'        : 1,
                             'currency._id'         : 1,
                             'currency.rate'        : 1,
                             'invoice._id'          : 1,
                             'invoice.name'         : 1,
                             'invoice.workflow.name': '$invoice.workflow.name',
+                            name                : 1,
                             salesmanagers          : {$arrayElemAt: ['$salesmanagers', 0]},
                             forSale                : 1,
                             differenceAmount       : 1,
@@ -635,6 +638,7 @@ var Module = function (models, event) {
                         $project: {
                             assigned          : {$arrayElemAt: ['$salesmanagers', 0]},
                             supplier          : 1,
+                            journal           : 1,
                             'currency.name'   : 1,
                             'currency._id'    : 1,
                             'currency.rate'   : 1,
@@ -661,6 +665,7 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             supplier          : 1,
+                            journal           : 1,
                             'currency.name'   : 1,
                             'currency._id'    : 1,
                             'currency.rate'   : 1,
@@ -1433,8 +1438,8 @@ var Module = function (models, event) {
                     return waterfallCallback(err);
                 }
 
-                Payment.findById(payment._id).populate('paymentMethod', 'chartAccount').populate('currency._id').exec(function (err, resultPayment){
-                    if (err){
+                Payment.findById(payment._id).populate('paymentMethod', 'chartAccount').populate('currency._id').exec(function (err, resultPayment) {
+                    if (err) {
                         return waterfallCallback(err);
                     }
 
@@ -1603,12 +1608,12 @@ var Module = function (models, event) {
 
                 if (differenceAmount > amountByInvoice) {
                     queryForJournal = {
-                        debitAccount: payment.paymentMethod ? payment.paymentMethod.chartAccount : null,
+                        debitAccount : payment.paymentMethod ? payment.paymentMethod.chartAccount : null,
                         creditAccount: MAIN_CONSTANTS.OTHER_INCOME_ACCOUNT
                     }
                 } else if (differenceAmount < amountByInvoice) {
                     queryForJournal = {
-                        debitAccount: MAIN_CONSTANTS.OTHER_INCOME_ACCOUNT,
+                        debitAccount : MAIN_CONSTANTS.OTHER_INCOME_ACCOUNT,
                         creditAccount: payment.paymentMethod ? payment.paymentMethod.chartAccount : null
                     }
                 }
@@ -2141,7 +2146,7 @@ var Module = function (models, event) {
                                         var invoiceType = invoice._type;
                                         var paymentDate = null;
 
-                                        if (paymentCurrency.name !== invoice.currency._id.name){
+                                        if (paymentCurrency.name !== invoice.currency._id.name) {
                                             paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
                                         } else {
                                             paid = removed.paidAmount;
