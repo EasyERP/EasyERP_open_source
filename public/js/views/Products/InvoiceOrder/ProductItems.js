@@ -111,11 +111,12 @@ define([
         renderMessage: function (e) {
             var $target = $(e.target);
             var $tr = $target.closest('tr');
+            var productOrJob = this.forSales ? 'job' : 'product';
 
             if ($tr.attr('data-error')) {
                 return App.render({
                     type   : 'error',
-                    message: 'Please, choose product first'
+                    message: 'Please, choose ' + productOrJob + ' first.'
                 });
             }
         },
@@ -214,6 +215,7 @@ define([
             }
 
             e.preventDefault();
+            e.stopPropagation();
 
             if (project && project.length >= 24) {
                 dataService.getData('/jobs/getForDD', {projectId: project, notPayed: this.notPayed}, function (jobs) {
