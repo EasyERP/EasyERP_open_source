@@ -180,7 +180,7 @@ define([
                 .datum(data)
                 .attr({
                     'd': line,
-                    'stroke': '#ff6666',
+                    'stroke': '#D96459',
                     'stroke-width': 2,
                     'fill': 'none',
                     'opacity': 1
@@ -339,7 +339,7 @@ define([
                     },
                     'width': 10,
                     'height': 10,
-                    'fill': '#ff6666', //red squares
+                    'fill': '#D96459', //red squares
                     'opacity': 1
                 })
                 .on('mouseover', function(d){
