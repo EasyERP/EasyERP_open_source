@@ -14,7 +14,11 @@
     </td>
     <% } else {%>
     <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>">
+        <% if (editable){ %>
         <textarea class="productDescr"><%=product.description%></textarea>
+        <% } else { %>
+        <span><%=product.description%></span>
+        <% } %>
     </td>
     <% } %>
     <!--<td data-name="scheduledDate" class="<%=editable && !forSales ? 'editable' : ''%>">
@@ -24,11 +28,11 @@
         <input type="text" class="datepicker notVisible" readonly>
     </td>--> <!--commented on 14 Mar, in quotationEdit commit -->
     <td data-name="quantity" class="<%=!forSales ? 'editable' : ''%>">
-        <% if (forSales){ %>
-        <span>1</span>
-        <% } else { %>
+        <% if (editable){ %>
         <input id="quantity" class="quantity statusInfo" maxlength="9" size=10 type="text"
                value="<%=product.quantity%>"/>
+        <% } else { %>
+        <span><%=product.quantity%></span>
         <% } %>
     </td>
     <%var currencyClassVal;%>

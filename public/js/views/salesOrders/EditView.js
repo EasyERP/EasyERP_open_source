@@ -14,7 +14,7 @@ define([
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
             this.visible = options.visible;
-            this.editable = false;
+            this.editable = options.editable || true;
             this.balanceVissible = false;
             this.service = true;
             this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
