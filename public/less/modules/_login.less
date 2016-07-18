@@ -1,4 +1,3 @@
-@font-light: 'Open Sans Light';
 @input-placeholder: #a0a9b4;
 @input-border: @input-placeholder;
 
@@ -6,6 +5,10 @@
   *{
     box-sizing: border-box;
   }
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
 }
 
 a{
@@ -126,7 +129,7 @@ h2 {
     color: #4e5a64;
     font-size: 30px;
     font-weight: 300;
-    font-family: @font-light;
+    font-family: @fontLight;
     white-space: nowrap;
 
     &Block {
@@ -431,9 +434,12 @@ input {
 
 @media (max-width: 992px) {
   .sliderWrap,
-  .sliderContainer,
   .loginContent {
     height: 50%;
+  }
+  .loginWrapper,
+  .sliderContainer {
+    height: 100%;
   }
 }
 
@@ -481,7 +487,7 @@ input {
 }
 
 //iphone6
-@media only screen and (max-device-width : 667px) {
+@media (max-width : 667px) {
   .sliderWrap {
     display: none;
   }
@@ -510,6 +516,20 @@ input {
   }
 }
 
+.opportunity-date {
+  &:after {
+    content: 'Due';
+  }
+}
+
+.errorContent {
+  .opportunity-date {
+    &:after {
+      content: 'OverDue';
+    }
+  }
+}
+
 .mainLogo {
   color: #fff;
   &:hover {
@@ -517,7 +537,7 @@ input {
   }
 
   span {
-    color: #FF3F3F;
+    color: #7eadcc;
   }
 }
 
@@ -531,7 +551,7 @@ input {
   .topbarLogo {
     float: left;
     display: block;
-    width: 235px;
+    width: 200px;
     height: 40px;
     padding-left: 39px;
     padding-right: 20px;
@@ -677,7 +697,6 @@ input {
     }
   }
 }
-
 
 .color {
   &Card {
@@ -937,9 +956,11 @@ input {
             background-color: #8c8c8c;
           }
           &:before {
+            -webkit-transform: rotate(-45deg);
             transform: rotate(-45deg);
           }
           &:after {
+            -webkit-transform: rotate(45deg);
             transform: rotate(45deg);
           }
           &:hover {
@@ -962,18 +983,256 @@ input {
 .opportunity-content {
   .fa-comment-o,
   .fa-paperclip {
-    color: #fff;
+    color: #2c3e50;
   }
-  .fa-paperclip {
-    margin-left: 10px;
+  .fa {
+    &:nth-child(n+2) {
+      margin-left: 10px;
+    }
   }
   .projectType {
     color: #549ecf;
   }
 }
+
+.commentWrap,
+.attachmentWrap {
+  color: #2c3e50;
+}
+
+//.commentWrap,
+//.attachmentWrap {
+//  position: relative;
+//
+//  span {
+//    position: absolute;
+//    right: 0;
+//    top: 0;
+//  }
+//}
+
 .kanban .column .item .inner {
   padding: 5px 5px 8px;
 }
 
+.graphicControlls {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
 
+.clearfixNew {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
 
+.content-holder {
+
+  .grid-conatiner {
+
+    &.revenue {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: calc(~"100% - 40px");
+      width: calc(~"100% - 55px");
+      overflow: auto;
+    }
+  }
+}
+//.opportunity-content {
+//  .saleName, .customerName {
+//    white-space: nowrap;
+//  }
+//  .saleName {
+//
+//  }
+//  .customerName {
+//
+//  }
+//}
+
+.borderBottom {
+  border-bottom: 1px solid #7f7f80;
+}
+
+.cashBalance {
+  margin-left: 75px;
+  margin-right: 88px;
+}
+.form-holder form dd.cashBalanceRow {
+  width: 390px;
+}
+
+.form-holder form.createJournalForm {
+  margin-top: 25px;
+}
+
+.editEmployeeForm {
+  .tableResponsive {
+    width: 926px;
+  }
+  .ui-dialog-buttonset {
+    margin-top: 15px;
+  }
+}
+
+dl.payrollDateBlock {
+  dd, dt {
+  }
+  dd {
+    line-height: normal;
+  }
+  dt {
+    margin-right: 15px;
+  }
+}
+
+.totalContainer {
+  .half-block {
+    width: 46%;
+  }
+}
+
+//.tableFixedWrap {
+//  height: 100%;
+//
+//  .tableFixed {
+//    height: 100%;
+//  }
+//
+//  table.payRoll-list #payRoll-Table .scrollit {
+//    height: 100%;
+//  }
+//}
+//
+//.absoluteContent {
+//  position: absolute;
+//  height: 100%;
+//  width: 100%;
+//
+//  table {
+//    height: 100%;
+//
+//    th {
+//      border-bottom: 1px solid #d7d7d7;
+//    }
+//  }
+//
+//  .scrollable {
+//    max-height: 100%;
+//    width: 100%;
+//    height: 100%;
+//    overflow-x: hidden;
+//    overflow-y: auto;
+//  }
+//}
+//
+//.flexTableWrap {
+//  flex-grow: 1;
+//  position: relative;
+//}
+//
+.flexActionsWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: start;
+  -moz-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+
+  .actionsItem {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+  }
+
+  .choseDateRange {
+    -webkit-box-ordinal-group: 1;
+    -moz-box-ordinal-group: 1;
+    -ms-flex-order: 1;
+    -webkit-order: 1;
+    order: 1;
+  }
+
+  .legend-box {
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -ms-flex-pack: justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+}
+//
+//.innerRow {
+//  border-top: none !important;
+//
+//  table {
+//    tr {
+//      &:first-child {
+//        border-top: none;
+//        td {
+//          border-top: none;
+//        }
+//      }
+//      &:last-child {
+//        td {
+//          border-bottom: none;
+//        }
+//      }
+//    }
+//  }
+//}
+//
+//.colspanFix {
+//  padding: 0!important;
+//  border: none !important;
+//}
+//
+//table {
+//  width: 100%;
+//  table-layout: fixed;
+//}
+
+.salesGraphWrap {
+
+  .treemap_sales {
+    > div {
+      &:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+    }
+  }
+  .salesByCountryChart {
+
+  }
+  .salesByCountryBarChart {
+
+  }
+}

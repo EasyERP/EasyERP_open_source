@@ -10,17 +10,17 @@ module.exports = function (models, event) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddleware);
 
-    router.get('/', _journalHandler.getForView);
+    router.get('/', accessStackMiddleware, _journalHandler.getForView);
     router.get('/getForDd', _journalHandler.getForDd);
     router.get('/writeOff', _journalHandler.getWriteOff);
+    router.get('/getByAccount', _journalHandler.getByAccount);
 
-    router.post('/', _journalHandler.create);
-    router.patch('/', _journalHandler.putchBulk);
+    router.post('/', accessStackMiddleware, _journalHandler.create);
+    router.patch('/', accessStackMiddleware, _journalHandler.putchBulk);
 
-    router.delete('/:id', _journalHandler.remove);
-    router.delete('/', _journalHandler.bulkRemove);
+    router.delete('/:id', accessStackMiddleware, _journalHandler.remove);
+    router.delete('/', accessStackMiddleware, _journalHandler.bulkRemove);
 
     return router;
 };

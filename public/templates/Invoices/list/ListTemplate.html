@@ -1,15 +1,22 @@
 <% invoiceCollection.forEach(function(Invoice, index){ %>
 <tr data-id="<%=Invoice._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox <%=Invoice.removable ? '' : 'notRemovable'%>"/>
-<td><%=startNumber + index + 1%></td>
-<td><%=(Invoice.supplier) ? Invoice.supplier.name.first + ' ' + Invoice.supplier.name.last : ' - - - '%></td>
-<td><%=Invoice.name%></td>
-<!--<td><%=Invoice.supplierInvoiceNumber%></td>-->
-<td><%=(Invoice.salesPerson && Invoice.salesPerson.name)? Invoice.salesPerson.name.first + ' ' + Invoice.salesPerson.name.last: ''%></td>
-<td><%=Invoice.dueDate%></td>
-<td class="<%=currencyClass(Invoice.currency._id)%>"><%=currencySplitter(Invoice.paymentInfo.balance)%></td>
-<td class="unTaxed <%=currencyClass(Invoice.currency._id)%>"><%=(Invoice.paymentInfo) ? currencySplitter(Invoice.paymentInfo.unTaxed) : '0.00'%></td>
-<td class="total <%=currencyClass(Invoice.currency._id)%>"><%=(Invoice.paymentInfo) ? currencySplitter(Invoice.paymentInfo.total) : '0.00'%></td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=Invoice._id%>"
+                                          class="checkbox <%=Invoice.removable ? '' : 'notRemovable'%>"/>
+    <td><%=startNumber + index + 1%></td>
+    <td><%=(Invoice.supplier) ? Invoice.supplier.name.first + ' ' + Invoice.supplier.name.last : ' - - - '%></td>
+    <td><%=Invoice.name%></td>
+    <!--<td><%=Invoice.supplierInvoiceNumber%></td>-->
+    <td><%=(Invoice.salesPerson && Invoice.salesPerson.name)? Invoice.salesPerson.name.first + ' ' +
+        Invoice.salesPerson.name.last: ''%>
+    </td>
+    <td><%=Invoice.dueDate%></td>
+    <td class="balance <%=currencyClass(Invoice.currency._id)%>"><%=currencySplitter(Invoice.paymentInfo.balance)%></td>
+    <td class="paid <%=currencyClass(Invoice.currency._id)%>"><%=(Invoice.paymentInfo && Invoice.paid) ?
+        currencySplitter(Invoice.paid.toFixed(2)) : '0.00'%>
+    </td>
+    <td class="total <%=currencyClass(Invoice.currency._id)%>"><%=(Invoice.paymentInfo) ?
+        currencySplitter(Invoice.paymentInfo.total) : '0.00'%>
+    </td>
     <td class="centerCell" id='<%=Invoice._id%>'>
         <%if(Invoice.workflow){%>
         <%if(Invoice.workflow.status === 'In Progress'){%>
@@ -25,7 +32,7 @@
         <span> </span>
         <%}%>
     </td>
-<td><%=Invoice.invoiceDate%></td>
-<!--<td class="validated"><a href="javascript:;" class="selectList <%=Invoice.validated%>"><%=Invoice.validated%></a></td>-->
+    <td><%=Invoice.invoiceDate%></td>
+    <!--<td class="validated"><a href="javascript:;" class="selectList <%=Invoice.validated%>"><%=Invoice.validated%></a></td>-->
 </tr>
 <% }) %>

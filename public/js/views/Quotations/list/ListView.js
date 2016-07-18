@@ -40,6 +40,7 @@ define([
         EditView         : EditView,
         viewType         : 'list', // needs in view.prototype.changeLocationHash
         forSales         : false,
+        hasPagination    : true,
 
         events: {
             'click .stageSelect'                 : selectService.showStageSelect,
@@ -64,7 +65,7 @@ define([
             self.page = options.collection.currentPage;
             self.contentCollection = contentCollection;
 
-            ListViewBase.prototype.initialize.call(this, options);
+            ListViewBase.prototype.initialize.call(self, options);
 
             self.stages = [];
         },

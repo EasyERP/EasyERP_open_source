@@ -84,7 +84,7 @@ define([
 
         recalcTotal: function () {
             var self = this;
-            var columns = ['total', 'unTaxed'];
+            var columns = ['total', 'paid', 'balance'];
 
             _.each(columns, function (col) {
                 var sum = 0;
@@ -119,7 +119,7 @@ define([
 
             $currentEl.append(itemView.render());
 
-            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 7}).render());
+            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 6, invoiceTemplate: true}).render());
 
             this.renderPagination($currentEl, this);
             this.renderFilter({name: 'forSales', value: {key: 'forSales', value: [false]}});

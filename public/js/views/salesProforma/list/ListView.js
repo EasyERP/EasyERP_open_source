@@ -178,7 +178,7 @@ define([
                 },
 
                 success: function (model) {
-                    return new EditView({model: model});
+                    return new EditView({model: model, forSales: true});
                 },
 
                 error: function () {

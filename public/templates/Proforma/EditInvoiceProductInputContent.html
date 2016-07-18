@@ -18,6 +18,6 @@
         <% } %>
     </td>
     <td class="taxes <%=currencyClass(currency._id._id)%>"><span><%=product.taxes%></span></td>
-    <td class="amount <%=currencyClass(currency._id._id)%>"><span><%=currencySplitter(product.subTotal.toString())%></span></td>
+    <td class="subtotal <%=currencyClass(currency._id._id)%>"><span><%=currencySplitter(product.subTotal.toString())%></span></td>
 </tr>
 <% }); %>

@@ -30,9 +30,11 @@ define([
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
-            this.forSales = false;
-
             this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
+            this.forSales = false;
+            this.editable = true;
+            this.balanceVissible = false;
+            this.service = false;
 
             this.render(options);
         },
@@ -97,10 +99,12 @@ define([
         receiveInvoice: function (e) {
             var self = this;
             var url = '/invoices/receive';
+            var journal = this.forSales ? CONSTANTS.INVOICE_JOURNAL : CONSTANTS.INVOICE_PURCHASE;
             var data = {
                 forSales: this.forSales,
                 orderId : this.currentModel.id,
-                currency: this.currentModel.currency
+                currency: this.currentModel.currency,
+                journal : journal
             };
 
             e.preventDefault();
@@ -402,9 +406,11 @@ define([
 
             productItemContainer.append(
                 new ProductItemView({
-                    editable       : false,
-                    editablePrice  : self.editablePrice,
-                    balanceVissible: false
+                    editable       : self.editable,
+                    editablePrice: self.editablePrice,
+                    balanceVissible: self.balanceVissible,
+                    forSales       : self.forSales,
+                    service        : self.service
                 }).render({model: model}).el
             );
 

@@ -39,19 +39,19 @@ define([
         template   : _.template(EditTemplate),
 
         events: {
-            'click #saveBtn'      : 'saveItem',
-            'click .details'      : 'showDetailsBox'
-           /* 'click .newPayment'   : 'newPayment',
-            'click .sendEmail'    : 'sendEmail',
-            'click .approve'      : 'approve',*/
-            /*'click .cancelInvoice': 'cancelInvoice',
-            'click .setDraft'     : 'setDraft'*/
+            'click #saveBtn': 'saveItem',
+            'click .details': 'showDetailsBox'
+            /* 'click .newPayment'   : 'newPayment',
+             'click .sendEmail'    : 'sendEmail',
+             'click .approve'      : 'approve',*/
+            /* 'click .cancelInvoice': 'cancelInvoice',
+             'click .setDraft'     : 'setDraft'*/
 
         },
 
         initialize: function (options) {
 
-            _.bindAll(this, 'render', 'deleteItem',  'saveItem');
+            _.bindAll(this, 'render', 'deleteItem', 'saveItem');
 
             this.eventChannel = options.eventChannel;
 
@@ -72,61 +72,61 @@ define([
             App.stopPreload();
         },
 
-        /*approve: function (e) {
-            var self = this;
-            var data;
-            var url;
-            var invoiceId;
-            var $li;
-            var $tr;
-            var $span;
-            var $buttons;
-            var $selfEl = self.$el;
-            var invoiceDate;
+        /* approve: function (e) {
+         var self = this;
+         var data;
+         var url;
+         var invoiceId;
+         var $li;
+         var $tr;
+         var $span;
+         var $buttons;
+         var $selfEl = self.$el;
+         var invoiceDate;
 
-            e.preventDefault();
+         e.preventDefault();
 
-            this.saveItem(function (err) {
-                if (!err) {
-                    $selfEl.find('button.approve').hide();
+         this.saveItem(function (err) {
+         if (!err) {
+         $selfEl.find('button.approve').hide();
 
-                    invoiceId = self.currentModel.get('_id');
-                    invoiceDate = self.$el.find('#invoice_date').val();
-                    $tr = $('tr[data-id=' + invoiceId + ']');
-                    $span = $tr.find('td').eq(10).find('span');
+         invoiceId = self.currentModel.get('_id');
+         invoiceDate = self.$el.find('#invoice_date').val();
+         $tr = $('tr[data-id=' + invoiceId + ']');
+         $span = $tr.find('td').eq(10).find('span');
 
-                    App.startPreload();
+         App.startPreload();
 
-                    $buttons = $selfEl.find('button.sendEmail, button.newPayment');
-                    url = '/invoices/approve';
-                    data = {
-                        invoiceId  : invoiceId,
-                        invoiceDate: helpers.setTimeToDate(invoiceDate)
-                    };
+         $buttons = $selfEl.find('button.sendEmail, button.newPayment');
+         url = '/invoices/approve';
+         data = {
+         invoiceId  : invoiceId,
+         invoiceDate: helpers.setTimeToDate(invoiceDate)
+         };
 
-                    dataService.patchData(url, data, function (err) {
-                        if (!err) {
-                            self.currentModel.set({approved: true});
-                            $buttons.show();
+         dataService.patchData(url, data, function (err) {
+         if (!err) {
+         self.currentModel.set({approved: true});
+         $buttons.show();
 
-                            App.stopPreload();
+         App.stopPreload();
 
-                            if (self.eventChannel) {
-                                self.eventChannel.trigger('invoiceUpdated');
-                            }
+         if (self.eventChannel) {
+         self.eventChannel.trigger('invoiceUpdated');
+         }
 
-                            self.$el.find('.input-file').remove();
-                            self.$el.find('a.deleteAttach').remove();
-                        } else {
-                            App.render({
-                                type   : 'error',
-                                message: 'Approve fail'
-                            });
-                        }
-                    });
-                }
-            });
-        },*/
+         self.$el.find('.input-file').remove();
+         self.$el.find('a.deleteAttach').remove();
+         } else {
+         App.render({
+         type   : 'error',
+         message: 'Approve fail'
+         });
+         }
+         });
+         }
+         });
+         },*/
 
         saveItem: function () {
             var self = this;
@@ -221,7 +221,7 @@ define([
                 dueDate       : dueDate,
                 account       : null,
                 journal       : journalId,
-                groups: {
+                groups        : {
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
@@ -251,10 +251,6 @@ define([
 
                     error: function (model, xhr) {
                         self.errorNotification(xhr);
-
-                        if (paymentCb && typeof paymentCb === 'function') {
-                            return paymentCb(xhr.text);
-                        }
                     }
                 });
 
@@ -307,42 +303,42 @@ define([
             });
         },
 
-       /* setDraft: function (e) {
-            var self = this;
-            var wId;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+        /* setDraft: function (e) {
+         var self = this;
+         var wId;
+         var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
-            e.preventDefault();
+         e.preventDefault();
 
-            if (self.forSales) {
-                wId = 'Sales Invoice';
-            } else {
-                wId = 'Purchase Invoice';
-            }
+         if (self.forSales) {
+         wId = 'Sales Invoice';
+         } else {
+         wId = 'Purchase Invoice';
+         }
 
-            populate.fetchWorkflow({
-                wId: wId
-            }, function (workflow) {
-                if (workflow && workflow.error) {
-                    return App.render({
-                        type   : 'error',
-                        message: workflow.error.statusText
-                    });
-                }
+         populate.fetchWorkflow({
+         wId: wId
+         }, function (workflow) {
+         if (workflow && workflow.error) {
+         return App.render({
+         type   : 'error',
+         message: workflow.error.statusText
+         });
+         }
 
-                self.currentModel.save({
-                    workflow: workflow._id
-                }, {
-                    headers: {
-                        mid: 57
-                    },
-                    patch  : true,
-                    success: function () {
-                        Backbone.history.navigate(redirectUrl, {trigger: true});
-                    }
-                });
-            });
-        },*/
+         self.currentModel.save({
+         workflow: workflow._id
+         }, {
+         headers: {
+         mid: 57
+         },
+         patch  : true,
+         success: function () {
+         Backbone.history.navigate(redirectUrl, {trigger: true});
+         }
+         });
+         });
+         },*/
 
         showDetailsBox: function (e) {
             $(e.target).parent().find('.details-box').toggle();
@@ -439,7 +435,6 @@ define([
                 isFinancial     : isFinancial
             });
 
-
             buttons = [
                 {
                     text : 'Close',
@@ -449,8 +444,6 @@ define([
                     click: self.deleteItem
                 }
             ];
-
-
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -486,29 +479,29 @@ define([
                     contentType: CONSTANTS.INVOICES
                 }).render().el
             );
-           /* populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);*/
+            /* populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);*/
 
-           /* if (model.approved) {*/
-                self.$el.find('.input-file').remove();
-                self.$el.find('a.deleteAttach').remove();
-           /* } else {
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : 'd M, yy',
-                    changeMonth: true,
-                    changeYear : true
-                }).datepicker('setDate', new Date());
+            /* if (model.approved) {*/
+            self.$el.find('.input-file').remove();
+            self.$el.find('a.deleteAttach').remove();
+            /* } else {
+             this.$el.find('#invoice_date').datepicker({
+             dateFormat : 'd M, yy',
+             changeMonth: true,
+             changeYear : true
+             }).datepicker('setDate', new Date());
 
-                this.$el.find('#due_date').datepicker({
-                    dateFormat : 'd M, yy',
-                    changeMonth: true,
-                    changeYear : true,
-                    onSelect    : function () {
-                        var targetInput = $(this);
+             this.$el.find('#due_date').datepicker({
+             dateFormat : 'd M, yy',
+             changeMonth: true,
+             changeYear : true,
+             onSelect    : function () {
+             var targetInput = $(this);
 
-                        targetInput.removeClass('errorContent');
-                    }
-                });
-            }*/
+             targetInput.removeClass('errorContent');
+             }
+             });
+             }*/
 
             return this;
         }

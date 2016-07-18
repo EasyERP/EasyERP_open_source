@@ -1,0 +1,38 @@
+<div id="searchContainer"></div>
+<%var length = accounts.length; %>
+<div class="containerContent">
+    <div>
+        <table class="list gl-list">
+            <thead>
+
+            <tr id="captionAssets">
+                <th class="centerCell">#</th>
+                <th>Date</th>
+                <th>Document</th>
+                <th>Name</th>
+
+                <% for (var i = 0; i < length; i++) { %>
+                <%var acc = accounts[i]; %>
+                <th data-id="<%= acc._id %>"><%= acc.name %></th>
+                <th>Balance</th>
+                <% }%>
+
+            </tr>
+            </thead>
+            <tfoot>
+
+            </tfoot>
+            <tbody id="listTable" class="enableTableOdd">
+            <tr>
+                <td colspan="4">Opening Balance</td>
+                <% for (var i = 0; i < length; i++) { %>
+                <%var acc = accounts[i]; %>
+                <td></td>
+                <td data-id="<%= acc._id %>" data-level="1" class="money"></td>
+                <% }%>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

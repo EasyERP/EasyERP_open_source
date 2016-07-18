@@ -1,25 +1,23 @@
 .sideMenu {
   display: block;
   width: auto;
-  max-width: 235px;
+  max-width: 200px;
   height: 100%;
   float: left;
   margin-right: -100%;
 }
 
 .content_wrapper {
-  width: 100%;
-  display: block;
-  float: left;
-  padding-top: 50px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: calc(~"100% - 40px");
+  width: calc(~"100% - 200px");
+  padding: 0 20px;
+}
 
-  .content-holder {
-    margin-left: 235px;
-  }
-
-  .top-bar {
-    margin-left: 235px;
-  }
+.template-switcher {
+  margin-top: 5px;
 }
 
 

@@ -2,13 +2,17 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/PayrollPayments/CreateTemplate.html',
     'moment',
-    'helpers'
-], function (Backbone, $, _, CreateTemplate, moment, helpers) {
+    'populate',
+    'helpers',
+    'dataService',
+    'constants'
+], function (Backbone, $, _, Parent, CreateTemplate, moment, populate, helpers, dataService, CONSTANTS) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = Parent.extend({
         el           : '#content-holder',
         template     : _.template(CreateTemplate),
         changedModels: {},
@@ -17,6 +21,7 @@ define([
             this.editCollection = options.collection;
             this.editCollection.url = 'payment/salary';
             this.editCollection.on('saved', this.savedNewModel, this);
+            this.responseObj = {};
 
             this.date = this.editCollection.length ? moment().isoWeekYear(this.editCollection.toJSON()[0].year).month(this.editCollection.toJSON()[0].month - 1).endOf('month') : new Date();
 
@@ -30,8 +35,8 @@ define([
             'click td.editable'    : 'editRow',
             'change .autoCalc'     : 'autoCalc',
             'change .editable'     : 'setEditable',
-            'keydown input.editing': 'keyDown',
-            'click #deleteBtn'     : 'deleteItems'
+            'keydown input.editing': 'keyDown'
+            // 'click #deleteBtn'     : 'deleteItems'
         },
 
         savedNewModel: function () {
@@ -48,6 +53,7 @@ define([
             var payRollId = tr.attr('data-id');
             var tempContainer;
             var insertedInput;
+            var self = this;
 
             var inputHtml;
 
@@ -58,14 +64,12 @@ define([
                     this.setChangedValueToModel();
                 }
                 this.payRollId = payRollId;
-                this.setChangedValueToModel();
             }
 
             if (!isInput) {
                 tempContainer = (target.text()).trim();
-                inputHtml = '<input class="editing" type="text" data-value="' +
-                    tempContainer + '" value="' + tempContainer +
-                    '"  maxLength="4" style="display: block;" />';
+                inputHtml = '<input class="editing autoCalc" type="text" data-value="' +
+                    tempContainer + '" value="' + tempContainer + '" />';
 
                 target.html(inputHtml);
 
@@ -74,9 +78,60 @@ define([
                 insertedInput = target.find('input');
                 insertedInput.focus();
                 insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
             }
 
             return false;
+        },
+
+        chooseOption: function (e) {
+            var self = this;
+            var target = $(e.target);
+            var targetElement = target.closest('a');
+            var attr = targetElement.attr('id');
+            var newCurrency = target.attr('id');
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+            var paymentMethods;
+            var el;
+
+            var array = this.$el.find('#paidAmountDd');
+            array.attr('class', newCurrencyClass);
+
+            if (attr === 'paymentMethod') {
+
+                paymentMethods = self.responseObj['#paymentMethod'];
+
+                el = _.find(paymentMethods, function (item) {
+                    return item._id === newCurrency;
+                });
+
+                if (el && el.chartAccount && el.chartAccount._id) {
+                    dataService.getData('/journals/getByAccount', {
+                        transaction  : 'Payment',
+                        creditAccount: el.chartAccount._id
+                    }, function (resp) {
+                        self.responseObj['#journal'] = resp.data || [];
+
+                        self.$el.find('#journalDiv').show();
+
+                        if (resp.data && resp.data.length) {
+                            (self.$el.find('#journal').text(resp.data[0].name)).attr('data-id', resp.data[0]._id);
+                        } else {
+                            (self.$el.find('#journal').text('Select')).attr('data-id', null);
+                            self.$el.find('#journal').addClass('errorContent');
+                        }
+
+                    });
+                } else {
+                    (self.$el.find('#journal').text('Select')).attr('data-id', null);
+                }
+
+                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            } else {
+                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            }
         },
 
         setChangedValue: function () {
@@ -89,7 +144,25 @@ define([
             var model;
             var id;
             var i;
-            var keys = Object.keys(this.changedModels);
+            var keys;
+            var editCollectionJSON = this.editCollection.toJSON();
+            var currency = this.$el.find('#currencyDd').attr('data-id');
+            var paymentMethod = this.$el.find('#paymentMethod').attr('data-id');
+            var journal = this.$el.find('#journal').attr('data-id') || null;
+            var date = helpers.setTimeToDate(new Date(this.$el.find('#dateOfPayment').val()));
+
+            for (i = editCollectionJSON.length - 1; i >= 0; i--) {
+                editCollectionJSON[i].date = date;
+                editCollectionJSON[i].currency = currency;
+                editCollectionJSON[i].paymentMethod = paymentMethod;
+                editCollectionJSON[i].journal = journal;
+            }
+
+            this.editCollection.reset(editCollectionJSON);
+
+            this.setChangedValueToModel();
+
+            keys = Object.keys(this.changedModels);
 
             for (i = keys.length - 1; i >= 0; i--) {
                 id = keys[i];
@@ -111,8 +184,8 @@ define([
             var total;
             var newTotal;
             var totalEl = this.$el.find('#total');
-            var payOld = editModel.changed.paidAmount ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
-            var diffOld = editModel.changed.differenceAmount ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
+            var payOld = (editModel.changed && editModel.changed.paidAmount) ? parseFloat(editModel.changed.paidAmount) : parseFloat(editModel.get('paidAmount'));
+            var diffOld = (editModel.changed && editModel.changed.differenceAmount) ? parseFloat(editModel.changed.differenceAmount) : parseFloat(editModel.get('differenceAmount'));
             var diffOnCash = tr.find('.differenceAmount[data-content="onCash"]');
             var value;
             var tdForUpdate;
@@ -142,20 +215,16 @@ define([
                 pay = payTD.attr('data-cash');
                 calc = calcTD.attr('data-cash');
 
-                pay = pay ? parseInt(pay, 10) : 0;
-                calc = calc ? parseInt(calc, 10) : 0;
-                newValue = parseInt(input.val(), 10);
+                pay = pay ? parseFloat(pay) : 0;
+                calc = calc ? parseFloat(calc) : 0;
+                newValue = parseFloat(helpers.spaceReplacer(input.val()));
 
-                if (payTD.text()) {
-                    pay = pay;
-                } else {
+                if (!payTD.text()) {
                     subValues = newValue - pay;
                     pay = newValue;
                 }
 
                 if (calcTD.text()) {
-                    calc = calc;
-                } else {
                     subValues = newValue - calc;
                     calc = newValue;
                 }
@@ -169,17 +238,17 @@ define([
 
                 if (subValues !== 0) {
 
-                    value = pay - calc;
+                    value = calc - pay;
 
                     payTD.attr('data-cash', pay);
                     payTD.text(pay);
                     calcTD.attr('data-cash', calc);
 
-                    tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
+                    tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value.toFixed(2)));
 
                     changedAttr = this.changedModels[editedElementRowId];
 
-                    changedAttr.differenceAmount = pay - calc;
+                    changedAttr.differenceAmount = calc - pay;
 
                 }
             }
@@ -253,14 +322,14 @@ define([
                 editedCol = editedElement.closest('td');
                 editedElementRow = editedElement.closest('tr');
                 editedElementRowId = editedElementRow.attr('data-id');
-                editedElementOldValue = parseInt(editedElement.attr('data-cash'), 10);
+                editedElementOldValue = parseFloat(editedElement.closest('td').attr('data-cash'));
 
-                editedElementValue = parseInt(editedElement.val(), 10);
+                editedElementValue = parseFloat(helpers.spaceReplacer(editedElement.val()));
+
                 editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
-
                 editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
 
-                differenceBettwenValues = editedElementValue - editedElementOldValue;
+                differenceBettwenValues = parseFloat((editedElementValue - editedElementOldValue).toFixed(2));
 
                 if (differenceBettwenValues !== 0) {
 
@@ -280,7 +349,7 @@ define([
                     changedAttr = this.changedModels[editedElementRowId];
 
                     if (changedAttr) {
-                        if (editedCol.hasClass('pay')) {
+                        if (editedCol.hasClass('paidAmount')) {
                             if (!changedAttr.paidAmount) {
                                 changedAttr.paidAmount = pay;
                             }
@@ -323,26 +392,26 @@ define([
             }
         },
 
-        deleteItems: function (e) {
-            var that = this;
-            var answer = confirm('Really DELETE items ?!');
-            var value;
-            var tr;
+        /* deleteItems: function (e) {
+         var that = this;
+         var answer = confirm('Really DELETE items ?!');
+         var value;
+         var tr;
 
-            e.preventDefault();
+         e.preventDefault();
 
-            this.collectionLength = this.editCollection.length;
+         this.collectionLength = this.editCollection.length;
 
-            if (answer) {
-                $.each(that.$el.find('input:checked'), function (index, checkbox) {
-                    checkbox = $(checkbox);
-                    value = checkbox.attr('id');
-                    tr = checkbox.closest('tr');
-                    that.deleteItem(tr, value);
-                });
-            }
+         if (answer) {
+         $.each(that.$el.find('input:checked'), function (index, checkbox) {
+         checkbox = $(checkbox);
+         value = checkbox.attr('id');
+         tr = checkbox.closest('tr');
+         that.deleteItem(tr, value);
+         });
+         }
 
-        },
+         },*/
 
         deleteItem: function (tr, id) {
             var self = this;
@@ -398,6 +467,7 @@ define([
             var formString;
 
             options.currencySplitter = helpers.currencySplitter;
+            date = moment(new Date(date)).format('DD MMM, YYYY');
             formString = this.template(options);
 
             this.$el = $(formString).dialog({
@@ -417,18 +487,28 @@ define([
                     text : 'Cancel',
                     click: function () {
                         self.removeDialog();
+                        self.changedModels = {};
                     }
                 }]
 
             });
-            this.dateOfPayment = this.$el.find('#dateOfPayment');
-            this.dateOfPayment.datepicker({
+
+            populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true);
+
+            this.$el.find('#journalDiv').hide();
+
+            this.$el.find('#dateOfPayment').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : self.date
-            });
-            this.dateOfPayment.datepicker('setDate', date.toString());
+                minDate    : new Date(self.date),
+                maxDate    : new Date(),
+                onSelect   : function () {
+                    // set date to model
+                }
+            }).datepicker('setDate', date);
+
             this.$el.find('#deleteBtn').hide();
             this.delegateEvents(this.events);
 

@@ -18,6 +18,7 @@ module.exports = function (models, event) {
     router.get('/getAsyncDataForGL', _journalEntryHandler.getAsyncDataForGL);
     router.get('/getAsyncCloseMonth', _journalEntryHandler.getAsyncCloseMonth);
     router.get('/getTrialBalance', _journalEntryHandler.getForGL);
+    router.get('/getCashBook', _journalEntryHandler.getCashBook);
     router.get('/getBalanceSheet', _journalEntryHandler.getBalanceSheet);
     router.get('/getCloseMonth', _journalEntryHandler.getCloseMonth);
     router.get('/getProfitAndLoss', _journalEntryHandler.getProfitAndLoss);
@@ -25,6 +26,7 @@ module.exports = function (models, event) {
     router.get('/getPayrollForReport', _journalEntryHandler.getPayrollForReport);
     router.get('/getInventoryReport', _journalEntryHandler.getInventoryReport);
     router.get('/getExpenses', _journalEntryHandler.getExpenses);
+    router.get('/getBalanceForAccount', _journalEntryHandler.getBalanceForAccount);
     router.get('/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/', _journalEntryHandler.getForView);

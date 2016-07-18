@@ -39,6 +39,7 @@ define([
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
+                this.writeOff = !!options.writeOff;
             }
 
             this.forSales = options.forSales;
@@ -288,7 +289,8 @@ define([
                     model     : options.model,
                     forSales  : self.forSales,
                     isPaid    : self.isPaid,
-                    notAddItem: this.notAddItem
+                    notAddItem: this.notAddItem,
+                    writeOff  : self.writeOff
                 }));
 
                 if (products) {
@@ -300,7 +302,9 @@ define([
                         notAddItem      : this.notAddItem,
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass,
-                        currency        : currency
+                        currency        : currency,
+                        writeOff        : self.writeOff
+
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
@@ -315,7 +319,8 @@ define([
                 this.$el.html(this.template({
                     forSales  : self.forSales,
                     isPaid    : self.isPaid,
-                    notAddItem: this.notAddItem
+                    notAddItem: this.notAddItem,
+                    writeOff  : self.writeOff
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {

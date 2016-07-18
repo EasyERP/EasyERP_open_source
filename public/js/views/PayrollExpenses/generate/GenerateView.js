@@ -2,22 +2,23 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/PayrollExpenses/generate/generate.html',
-    'moment'
-], function (Backbone, $, _, GenetareTemplate, moment) {
+    'moment',
+    'constants'
+], function (Backbone, $, _, Parent, GenetareTemplate, moment, CONSTANTS) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
-        template: _.template(GenetareTemplate),
+    var CreateView = Parent.extend({
+        template   : _.template(GenetareTemplate),
+        responseObj: {},
 
         events: {
-            'click input'   : 'setAttr',
-            'keyup input'   : 'onKeyUpInput',
-            'focusout input': 'onChangeInput',
-            'keydown input' : 'onKeyDownInput'
+            'click input': 'setAttr'
         },
 
         initialize: function (options) {
+            var i;
 
             this.keys = options.keys;
 
@@ -25,58 +26,20 @@ define([
 
             this.title = options.url ? 'Close Month' : 'Generate Payroll Expenses';
 
+            this.responseObj['#month'] = [];
+
+            for (i = 12; i >= 1; i--) {
+                this.responseObj['#month'].push({_id: i, name: i.toString()});
+            }
+
             this.render();
         },
 
-        setAttr: function (e) {
-            var input = $(e.target);
-            var id = input.attr('id');
+        chooseOption: function (e) {
+            $(e.target).parents('a').text($(e.target).text());
+            $(e.target).parents('a').attr('data-id', $(e.target).attr('data-id'));
 
-            if (id === 'month') {
-                input.attr({
-                    min      : 1,
-                    max      : 12,
-                    maxLength: 2
-                });
-            } else if (id === 'year') {
-                input.attr({
-                    min      : 1980,
-                    maxLength: 4
-                });
-            }
-        },
-        
-        onKeyDownInput: function (e) {
-            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 || (e.keyCode >= 35 && e.keyCode <= 39)) {
-                return;
-            }
-
-            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                e.preventDefault();
-            }
-        },
-
-        onKeyUpInput: function (e) {
-            var element = e.target;
-
-            if (element.maxLength && element.value.length > element.maxLength) {
-                element.value = element.value.slice(0, element.maxLength);
-            }
-        },
-
-        onChangeInput: function (e) {
-            var element = e.target;
-            var max = parseInt(element.max, 10);
-            var min = parseInt(element.min, 10);
-            var value = parseInt(element.value, 10);
-
-            if (max && value > max) {
-                element.value = max;
-            }
-
-            if (min && value < min) {
-                element.value = min;
-            }
+            this.hideNewSelect();
         },
 
         generate: function () {
@@ -89,12 +52,8 @@ define([
             var url;
             var key;
 
-            var editedElement = $('.edit');
-
-            if (editedElement.length) {
-                self.month = $('#month').val();
-                self.year = $('#year').val();
-            }
+            self.month = $.trim(this.$el.find('#month').text());
+            self.year = $.trim(this.$el.find('#year').text());
 
             key = parseInt(self.year, 10) * 100 + parseInt(self.month, 10);
 
@@ -102,6 +61,13 @@ define([
                 return App.render({
                     type   : 'error',
                     message: 'Please, choose empty month!'
+                });
+            }
+
+            if (key > this.maxKey) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, choose some previous month and year!'
                 });
             }
 
@@ -142,17 +108,27 @@ define([
             var month = moment(new Date()).get('month');
             var year = moment(new Date()).get('year');
             var newDialog;
+            var i;
+            var minDate = new Date(CONSTANTS.MIN_DATE);
+            var minYear = moment(minDate).get('year');
 
             var dialog = this.template({
                 month: month,
                 year : year
             });
 
+            this.responseObj['#year'] = [];
+            this.maxKey = year * 100 + month;
+
+            for (i = year; i >= minYear; i--) {
+                this.responseObj['#year'].push({_id: i, name: i.toString()});
+            }
+
             newDialog = $(dialog);
 
             this.$el = newDialog.dialog({
                 dialogClass: 'edit-dialog',
-                width      : 300,
+                width      : 500,
                 title      : self.title,
                 buttons    : {
                     save: {

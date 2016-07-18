@@ -59,7 +59,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            $target.parents('dd').find('.current-selected').text($target.text());
+            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $(e.target).attr('id'));
 
             this.hideNewSelect();
         },
@@ -69,6 +69,7 @@ define([
             var thisEl = this.$el;
             var name = thisEl.find('#paymentMethodName').val();
             var account = thisEl.find('#account').val();
+            var chartAccount = thisEl.find('#chartAccount').attr('data-id');
             var currency = $.trim(thisEl.find('#currency').text());
             var bank = thisEl.find('#bankName').val();
 
@@ -76,6 +77,7 @@ define([
                 currency: currency,
                 name    : name,
                 account : account,
+                chartAccount : chartAccount,
                 bank    : bank
             };
 
@@ -132,6 +134,7 @@ define([
             });
 
             populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            populate.get('#chartAccount', '/ChartOfAccount/getForDd', {}, 'name', this, true);
 
             App.stopPreload();
 

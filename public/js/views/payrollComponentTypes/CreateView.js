@@ -2,18 +2,17 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
+    'views/dialogViewBase',
     'text!templates/payrollComponentTypes/CreateTemplate.html',
-    'models/PayrollComponentTypeModel',
-    'common',
-    'populate',
-    'dataService',
-    'constants'
-], function ($, _, Backbone, CreateTemplate, PayrollComponentTypeModel, common, populate, dataService, CONSTANTS) {
+    'text!templates/payrollStructureTypes/structureElement/FormulaElementTemplate.html',
+    'models/PayrollComponentTypeModel'
+], function ($, _, Backbone, Parent, CreateTemplate, FormulaElementTemplate, PayrollComponentTypeModel) {
 
-    var CreateView = Backbone.View.extend({
-        el         : '#content-holder',
-        contentType: 'payrollComponentTypes',
-        template   : _.template(CreateTemplate),
+    var CreateView = Parent.extend({
+        el             : '#content-holder',
+        contentType    : 'payrollComponentTypes',
+        template       : _.template(CreateTemplate),
+        elementTemplate: _.template(FormulaElementTemplate),
 
         initialize: function (options) {
             var self = this;

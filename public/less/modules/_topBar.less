@@ -1,10 +1,10 @@
-.top-bar(@defaultHeight: 28px, @defaultPadding: 0 10px) {
+.top-bar(@defaultHeight: 40px, @defaultPadding: 0 10px) {
   display: block;
   height: @defaultHeight;
   clear: both;
   //overflow: hidden; /*dont work datapiker in dashboardVocation when overflow - enable*/
   h3 {
-    line-height: 28px;
+    line-height: 40px;
     padding: @defaultPadding;
     color: @top-font-color !important;
     font-family: @title-font;
@@ -28,7 +28,7 @@
     .dateFilter {
       width: 200px;
       position: absolute;
-      top: 0;
+      top: 8px;
       left: 0;
       z-index: 10;
       border: 1px solid @border-color-main;
@@ -68,7 +68,9 @@
       }
     }
   }
-
+  .btn {
+    margin-top: 4px;
+  }
   .createBtnHolder {
 
   }

@@ -183,12 +183,14 @@ define([
             var self = this;
             var url = '/proforma';
             var quotationId = this.currentModel.id;
+            var journal = this.forSales ? CONSTANTS.PROFORMA_JOURNAL : null;
             var data = {
                 forSales   : this.forSales,
                 quotationId: quotationId,
                 currency   : this.currentModel.toJSON().currency,
-                journal    : CONSTANTS.PROFORMA_JOURNAL
+                journal    : journal
             };
+            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/proforma/list';
 
             if (e) {
                 e.preventDefault();
@@ -215,7 +217,11 @@ define([
                             }
 
                             if (self.eventChannel) {
+                                $('.edit-dialog').remove();
                                 self.eventChannel.trigger('newProforma', response._id);
+                            } else {
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
 
                             tr = $('[data-id=' + quotationId + ']');
@@ -609,7 +615,11 @@ define([
             productItemContainer = this.$el.find('#productItemsHolder');
 
             productItemContainer.append(
-                new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
+                new ProductItemView({
+                    editable: true,
+                    canBeSold: true,
+                    service: service
+                }).render({model: model}).el
             );
 
             dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {

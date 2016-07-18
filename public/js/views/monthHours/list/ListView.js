@@ -134,6 +134,7 @@ define([
             var vacationExpenses;
             var idleExpenses;
             var adminSalary;
+            var marketingBudget;
 
             if (mothHoursId && el.prop('tagName') !== 'INPUT') {
                 if (this.modelId) {
@@ -154,6 +155,7 @@ define([
                     idleExpenses = result.idleExpenses;
                     adminSalary = result.adminSalary;
                     actualHours = result.actualHours;
+                    marketingBudget = result.marketingBudget;
 
                     if (result.error) {
                         return App.render({message: 'Some error'});
@@ -164,11 +166,13 @@ define([
                         tr.find('[data-content="vacationBudget"]').find('.editing').val(helpers.currencySplitter((vacationExpenses / 100).toFixed(2)));
                         tr.find('[data-content="idleBudget"]').find('.editing').val(helpers.currencySplitter((idleExpenses / 100).toFixed(2)));
                         tr.find('[data-content="adminSalaryBudget"]').find('.editing').val(helpers.currencySplitter((adminSalary / 100).toFixed(2)));
+                        tr.find('[data-content="marketingBudget"]').find('.editing').val(helpers.currencySplitter((marketingBudget / 100).toFixed(2)));
                         tr.find('[data-content="actualHours"]').find('.editing').val(helpers.currencySplitter(actualHours.toFixed()));
                     } else {
                         tr.find('[data-content="adminBudget"]').text(helpers.currencySplitter((adminExpenses / 100).toFixed(2)));
                         tr.find('[data-content="vacationBudget"]').text(helpers.currencySplitter((vacationExpenses / 100).toFixed(2)));
                         tr.find('[data-content="idleBudget"]').text(helpers.currencySplitter((idleExpenses / 100).toFixed(2)));
+                        tr.find('[data-content="marketingBudget"]').text(helpers.currencySplitter((marketingBudget / 100).toFixed(2)));
                         tr.find('[data-content="adminSalaryBudget"]').text(helpers.currencySplitter((adminSalary / 100).toFixed(2)));
                         tr.find('[data-content="actualHours"]').text(helpers.currencySplitter(actualHours.toFixed()));
                     }
@@ -183,6 +187,7 @@ define([
                     self.changedModels[mothHoursId].vacationBudget = parseFloat((vacationExpenses / 100).toFixed(2));
                     self.changedModels[mothHoursId].idleBudget = parseFloat((idleExpenses / 100).toFixed(2));
                     self.changedModels[mothHoursId].adminSalaryBudget = parseFloat((adminSalary / 100).toFixed(2));
+                    self.changedModels[mothHoursId].marketingBudget = parseFloat((marketingBudget / 100).toFixed(2));
                     self.changedModels[mothHoursId].actualHours = actualHours;
 
                     editModel = self.editCollection.get(mothHoursId);
@@ -192,9 +197,10 @@ define([
                     adminSalaryBudget = changedModels.adminSalaryBudget || editModel.get('adminSalaryBudget');
                     vacationBudget = changedModels.vacationBudget || editModel.get('vacationBudget');
                     idleBudget = changedModels.idleBudget || editModel.get('idleBudget');
+                    marketingBudget = changedModels.marketingBudget || editModel.get('marketingBudget');
                     actualHours = changedModels.actualHours || editModel.get('actualHours');
                     hours = actualHours || estimatedHours;
-                    sumBudget = parseFloat(adminExpenses) + parseFloat(vacationExpenses) + parseFloat(idleExpenses) + parseFloat(adminSalary);
+                    sumBudget = parseFloat(adminExpenses) + parseFloat(vacationExpenses) + parseFloat(idleExpenses) + parseFloat(adminSalary) + parseFloat(marketingBudget);
 
                     if (isFinite(sumBudget / 100 / actualHours)) {
                         self.changedModels[mothHoursId].overheadRate = sumBudget / 100 / actualHours;

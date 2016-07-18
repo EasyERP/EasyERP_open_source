@@ -43,6 +43,8 @@ module.exports = {
 
     INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
 
+    INVOICE_PURCHASE: '5788b4572bfddc9a494cce0a',
+
     ADMIN_SALARY_JOURNAL: '56f3fac93fb451104c75a477',
 
     VACATION_EXPENSES: '56c9d4c7c3b88f6d64490fb4',
@@ -52,6 +54,12 @@ module.exports = {
     ADMIN_SALARY_EXPENSES: '565eb53a6aa50532e5df0bed',
 
     INCOME_SUMMARY_ACCOUNT: '56f538149c85020807b4001f',
+
+    OTHER_INCOME_ACCOUNT: '565eb53a6aa50532e5df0bd5',
+
+    WRITE_OFF: '57767a427134263421caa841',
+
+    WRITE_OFF_RD: '57767be5ca7bd4d021041d34',
 
     BANK_AND_CASH: [
         '565eb53a6aa50532e5df0bd6', // bank and Cash
@@ -64,18 +72,20 @@ module.exports = {
         '565eb53a6aa50532e5df0bcd',
         '565eb53a6aa50532e5df0bcc',
         '565eb53a6aa50532e5df0bcb',
-        '565eb53a6aa50532e5df0bca'
+        '565eb53a6aa50532e5df0bca',
+        '577f983b5dc67c373fced537', // Privat EUR
+        'd577f98244b90ec163f270f1b' // Provat USD
     ],
 
     FINISHED_GOODS : '565eb53a6aa50532e5df0bd9',
     WORK_IN_PROCESS: '565eb53a6aa50532e5df0bda',
 
     LIABILITIES: [
-        '565eb53a6aa50532e5df0bde', //Reserve and Profit/Loss Account
-        '565eb53a6aa50532e5df0bdd', //tax received
-        '56c4444eb81fd51e19207f3e', //salary Payable
-        '56c9d555c3b88f6d64490fb5',//overtime Payable
-        '572346da8ba4fd1330062723' //dividends
+        '565eb53a6aa50532e5df0bde', // Reserve and Profit/Loss Account
+        '565eb53a6aa50532e5df0bdd', // tax received
+        '56c4444eb81fd51e19207f3e', // salary Payable
+        '56c9d555c3b88f6d64490fb5', // overtime Payable
+        '572346da8ba4fd1330062723' // dividends
     ],
 
     CURRENT_LIABILITIES: '565eb53a6aa50532e5df0bdb',
@@ -175,6 +185,6 @@ module.exports = {
         '1438158808000',
         '1438768659000'
     ],
-    
+
     SESSION_TTL: 120000
 };

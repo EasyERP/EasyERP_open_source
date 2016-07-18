@@ -82,7 +82,8 @@ define([
             var i;
             var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
             var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
-            var balance = parseFloat($currentEl.find('#balance').text()) * 100;
+            var balance = total; // parseFloat($currentEl.find('#balance').text()) * 100;
+            var journal = this.forSales ? CONSTANTS.INVOICE_JOURNAL : CONSTANTS.INVOICE_PURCHASE;
 
             var payments = {
                 total  : total,
@@ -106,7 +107,7 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {
-                        quantity = targetEl.find('[data-name="price"] input').val();
+                        quantity = targetEl.find('[data-name="quantity"] input').val();
                         price = targetEl.find('[data-name="price"] input').val() * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val();
                         taxes = targetEl.find('.taxes').text();
@@ -161,7 +162,7 @@ define([
                 invoiceDate          : helpers.setTimeToDate(invoiceDate),
                 dueDate              : dueDate,
                 account              : null,
-                journal              : null,
+                journal              : journal,
                 name                 : $.trim($('#supplier_invoice_num').val()),
                 salesPerson          : salesPersonId,
                 paymentTerms         : paymentTermId,
@@ -190,6 +191,8 @@ define([
                     wait   : true,
                     success: function () {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+
+                        //self.attachView.sendToServer(null, model.changed);
 
                         self.hideDialog();
                         Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -232,6 +235,7 @@ define([
             var paymentContainer;
             var $notDiv;
             var needNotes = false;
+            var invoiceDate;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -259,6 +263,10 @@ define([
 
             });
 
+            if (!this.model.approved) {
+                needNotes = true;
+            }
+
             this.renderAssignees(this.model);
 
             this.createProductView();
@@ -273,15 +281,23 @@ define([
                 new ListHederInvoice().render().el
             );
 
+            this.model.set('notes', []);
+            this.model.set('attachments', []);
+
             $notDiv = this.$el.find('#attach-container');
             $notDiv.append(
-                //new NoteView({
-                //    model      : this.model,
-                //    contentType: CONSTANTS.INVOICES,
-                //    needNotes  : needNotes
-                //}).render().el
+                new NoteView({
+                    model      : self.model,
+                    contentType: CONSTANTS.INVOICES,
+                    needNotes  : needNotes,
+                    isCreate   : true
+                }).render().el
             );
 
+            if (this.model.approved) {
+                self.$el.find('.input-file').remove();
+                self.$el.find('a.deleteAttach').remove();
+            }
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
@@ -297,14 +313,25 @@ define([
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
+                changeYear : true,
+                onSelect   : function () {
+                    invoiceDate = self.$el.find('#invoice_date').val();
+                    self.$el.find('#due_date').datepicker('option', 'minDate', invoiceDate);
+                }
             }).datepicker('setDate', new Date());
+
+            invoiceDate = this.$el.find('#invoice_date').val();
 
             this.$el.find('#due_date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
-            });
+                changeYear : true,
+                onSelect   : function () {
+                    var targetInput = $(this);
+
+                    targetInput.removeClass('errorContent');
+                }
+            }).datepicker('option', 'minDate', invoiceDate);
 
             this.delegateEvents(this.events);
 
