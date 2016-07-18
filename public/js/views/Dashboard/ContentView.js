@@ -2591,7 +2591,7 @@ define([
                     .attr({
                         'width' : width,
                         'height': height,
-                        'style' : 'background: #ACC7F2; margin-left: ' + margin.left + ''
+                        'style' : 'background: #ACC7F2'
                     })
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -2834,8 +2834,7 @@ define([
 
                 div = d3.select('.treemap_sales')
                     .append('div')
-                    .attr('height', height)
-                    .style('position', 'relative');
+                    .style('height', height+'px');
 
                 root = {
                     name    : 'tree',
