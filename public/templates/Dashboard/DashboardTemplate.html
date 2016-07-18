@@ -11,7 +11,6 @@
     <li><a href="javascript:;" class="">Leads by names</a></li>
 </ul>
 
-
 <div class="chart-tabs-items">
     <div class="chart-tabs-item active">
         <div class="clearfix"></div>
@@ -155,31 +154,38 @@
         <h3 class="dashboard">How long last activity was?</h3>
         <div class="legend-box opportunities medium">
             <div class="new">
-                <div style="background-color: yellow;" class="square">
+                <div style="background-color: #4CC3D9;" class="square">
                 </div>
                 <div class="text">
-                    New
+                    Waiting fo response
                 </div>
             </div>
             <div class="% 25-50">
-                <div style="background-color: rgb(86, 209, 181);" class="square">
+                <div style="background-color: #FFC65D;" class="square">
                 </div>
                 <div class="text">
-                    % 25-50
+                    In development
                 </div>
             </div>
             <div class="% 50-75">
-                <div style="background-color: rgb(38, 167, 222);" class="square">
+                <div style="background-color: #EB6E44;" class="square">
                 </div>
                 <div class="text">
-                    % 50-75
+                    To be done
                 </div>
             </div>
             <div class="% 75-100">
-                <div style="background-color: rgb(95, 186, 81);" class="square">
+                <div style="background-color: #7BC8A4;" class="square">
                 </div>
                 <div class="text">
-                    % 75-100
+                    To be discussed
+                </div>
+            </div>
+            <div class="% 75-100">
+                <div style="background-color: #93648D;" class="square">
+                </div>
+                <div class="text">
+                    Finalization
                 </div>
             </div>
         </div>
@@ -198,34 +204,39 @@
         <div class="clearfix"></div>
         <div class="legend-box opportunities">
             <div class="new">
-                <div style="background-color: yellow;" class="square">
+                <div style="background-color: #4CC3D9;" class="square">
                 </div>
                 <div class="text">
-                    New
+                    Waiting fo response
                 </div>
             </div>
             <div class="% 25-50">
-                <div style="background-color: rgb(86, 209, 181);" class="square">
+                <div style="background-color: #FFC65D;" class="square">
                 </div>
                 <div class="text">
-                    % 25-50
+                    In development
                 </div>
             </div>
             <div class="% 50-75">
-                <div style="background-color: rgb(38, 167, 222);" class="square">
+                <div style="background-color: #EB6E44;" class="square">
                 </div>
                 <div class="text">
-                    % 50-75
+                    To be done
                 </div>
             </div>
             <div class="% 75-100">
-                <div style="background-color: rgb(95, 186, 81);" class="square">
+                <div style="background-color: #7BC8A4;" class="square">
                 </div>
                 <div class="text">
-                    % 75-100
+                    To be discussed
                 </div>
             </div>
-
+            <div class="% 75-100">
+                <div style="background-color: #93648D;" class="square">
+                </div>
+                <div class="text">
+                    Finalization
+                </div>
             </div>
         </div>
         <svg class="opportunitiesChart"></svg>
@@ -255,38 +266,40 @@
                     In progress
                 </div>
             </div>
+       </div>
 
-                <div class="unconverted">
-                    <div class="square">
-                    </div>
-                    <div class="text">
-                        Won
-                    </div>
-                </div>
-
-                <div class="unconverted">
-                    <div style="background-color: red" class="square">
-                    </div>
-                    <div  class="text">
-                        Lost
-                    </div>
-                </div>
-
-                <div class="convertRate">
-                    <div style="background-color: #3E88B9" class="square">
-                    </div>
-                    <div class="text">
-                        Win %
-                    </div>
-                </div>
+        <div class="unconverted">
+            <div class="square">
+            </div>
+            <div class="text">
+                Won
             </div>
         </div>
+
+        <div class="unconverted">
+            <div style="background-color: red" class="square">
+            </div>
+            <div class="text">
+                Lost
+            </div>
+        </div>
+
+        <div class="convertRate">
+            <div style="background-color: #3E88B9" class="square">
+            </div>
+            <div class="text">
+                Win %
+            </div>
+
+        </div>
+
         <svg class="winAndLostOpportunitiesChart"></svg>
     </div>
     <div class="chart-tabs-item">
 
         <h3>Sales by country</h3>
         <div class="vocationFilter">
+
             <ul class="dateFilter">
                 <li class="dateRange">
                     <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
@@ -318,6 +331,7 @@
                 </li>
             </ul>
         </div>
+
         <div class="clearfix"></div>
         <div>
             <div class="treemap_sales" style="margin-left: 130px"></div>
@@ -418,5 +432,4 @@
 
     </div>
 </div>
-<div class="clearfix"></div>
-  
+

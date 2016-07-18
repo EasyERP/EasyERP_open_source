@@ -111,6 +111,9 @@ define([
             var y = d3.scale.linear().range([height, margin.bottom]);
             var now = new Date();
             var max = data.length;
+            var totalLength;
+            var path;
+
             var xAxis;
             var yAxis;
             var line;
@@ -172,14 +175,154 @@ define([
 
                 });*/
 
-            topChart.append('path')
+
+            path = topChart.append('path')
                 .datum(data)
                 .attr({
+                    'd': line,
                     'stroke': '#ff6666',
                     'stroke-width': 2,
                     'fill': 'none',
-                    'd': line,
                     'opacity': 1
+                });
+
+            totalLength = path.node().getTotalLength();
+
+            path
+                .attr('stroke-dasharray', totalLength + ' '+ totalLength)
+                .attr('stroke-dashoffset', totalLength)
+                .transition()
+                .duration(4000)
+                .ease('linear')
+                .attr('stroke-dashoffset', 0);
+
+            topChart
+                .selectAll('rect2')
+                .data(data)
+                .enter()
+                .append('svg:rect')
+                .attr({
+                    'class'       : 'bar',
+                    'x'           : function (datum) {
+                        return (x(datum.date));
+                    },
+                    'y'           : height,
+                    'height'      : 0,
+                    'width'       : x.rangeBand(),
+                    'fill'        : '#0aafd8', // blue  #0aafd8
+                    'opacity'     : 0.3,
+                    'stroke'      : '#045986',
+                    'stroke-width': 2
+                })
+                .transition()
+                .duration(1500)
+                .attr({
+                    'y'     : function (datum) {
+                        return y(1.2*datum.paid);
+                    },
+                    'height': function (datum) {
+                        return height - y(1.2*datum.paid);
+                    }
+                })
+                .transition()
+                .duration(1000)
+                .delay(1500)
+                .attr({
+                    'y'     : function (datum) {
+                        if(y(0.7*datum.paid)>0){
+                            return y(0.7*datum.paid);
+                        }else{
+                            return y(datum.paid);
+                        }
+                    },
+                    'height': function (datum) {
+                        if(height - y(0.7*datum.paid)>0){
+                            return height - y(0.7*datum.paid);
+                        }else{
+                            return height - y(datum.paid);
+                        }
+                    }
+                })
+                .transition()
+                .delay(2500)
+                .duration(1000)
+                .attr({
+                    'y'     : function (datum) {
+                        if(y(1.1*datum.paid)>0){
+                            return y(1.1*datum.paid);
+                        }else{
+                            return y(datum.paid);
+                        }
+                    },
+                    'height': function (datum) {
+                        if(height - y(1.1*datum.paid)>0){
+                            return height - y(1.1*datum.paid);
+                        }else{
+                            return height - y(datum.paid);
+                        }
+                    }
+                })
+                .transition()
+                .delay(3500)
+                .duration(1000)
+                .attr({
+                    'y'     : function (datum) {
+                        if(y(0.95*datum.paid)>0){
+                            return y(0.95*datum.paid);
+                        }else{
+                            return y(datum.paid);
+                        }
+                    },
+                    'height': function (datum) {
+                        if(height - y(0.95*datum.paid)>0){
+                            return height - y(0.95*datum.paid);
+                        }else{
+                            return height - y(datum.paid);
+                        }
+                    }
+                })
+                .transition()
+                .duration(500)
+                .delay(4500)
+                .attr({
+                    'y'     : function (datum) {
+                        return y(datum.paid);
+                    },
+                    'height': function (datum) {
+                        return height - y(datum.paid);
+                    }
+                });
+
+            d3.selectAll('rect.bar')
+                .on('mouseover', function (d) {
+                    d3.select(this)
+                        .attr({
+                            'opacity': 0.8
+                        });
+
+                    tooltip
+                        .transition()
+                        .duration(300)
+                        .style('border-color', '#0aafd8')
+                        .style('width', (x.rangeBand() * 2) + 'px')
+                        .style('left', (x(d.date) - x.rangeBand() / 2) + 'px')
+                        .style('top', (y(d.paid) - 40) + 'px')
+                        .style('display', 'block')
+                        .select('span')
+                        .text(d.paid);
+
+                })
+                .on('mouseleave', function (d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(600)
+                        .attr({
+                            'opacity': 0.3
+                        });
+
+                    tooltip.transition()
+                        .duration(200)
+                        .style('display', 'none');
                 });
 
             topChart
@@ -196,14 +339,14 @@ define([
                     },
                     'width': 10,
                     'height': 10,
-                    'fill': '#ff6666',
+                    'fill': '#ff6666', //red squares
                     'opacity': 1
                 })
                 .on('mouseover', function(d){
 
                     tooltip.transition()
                         .duration(300)
-                        .style('border-color', '#f9c2c2')
+                        .style('border-color', '#ff6666')
                         .style('width',  (x.rangeBand()*2) + 'px')
                         .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
                         .style('top', (y(d.invoiced) - 40) + 'px')
@@ -216,61 +359,6 @@ define([
                         .transition()
                         .delay(100)
                         .duration(500);
-
-                    tooltip.transition()
-                        .duration(200)
-                        .style('display', 'none');
-                });
-
-            topChart
-                .selectAll('rect2')
-                .data(data)
-                .enter()
-                .append('svg:rect')
-                .attr({
-                    'x'           : function (datum) {
-                        return (x(datum.date));
-                    },
-                    'y'           : function (datum) {
-                        return y(datum.paid);
-                    },
-                    'height'      : function (datum) {
-                        return height - y(datum.paid);
-                    },
-                    'width'       : x.rangeBand(),
-                    'fill'        : '#0aafd8', // blue  #0aafd8
-                    'opacity'     : 0.3,
-                    'stroke'      : '#045986',
-                    'stroke-width': 2
-                })
-                .on('mouseover', function (d) {
-                    d3.select(this)
-                        .transition()
-                        .duration(200)
-                        .attr({
-                            'opacity': 0.8
-                        });
-
-                    tooltip
-                        .transition()
-                        .duration(300)
-                        .style('border-color', '#b6e7f3')
-                        .style('width',  (x.rangeBand()*2) + 'px')
-                        .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
-                        .style('top', (y(d.paid) - 40) + 'px')
-                        .style('display', 'block')
-                        .select('span')
-                        .text(d.paid);
-
-                })
-                .on('mouseleave', function (d) {
-                    d3.select(this)
-                        .transition()
-                        .delay(100)
-                        .duration(500)
-                        .attr({
-                            'opacity'     : 0.3
-                        });
 
                     tooltip.transition()
                         .duration(200)
