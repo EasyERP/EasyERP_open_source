@@ -346,7 +346,7 @@ define([
 
                     tooltip.transition()
                         .duration(300)
-                        .style('border-color', '#ff6666')
+                        .style('border-color', '#D96459')
                         .style('width',  (x.rangeBand()*2) + 'px')
                         .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
                         .style('top', (y(d.invoiced) - 40) + 'px')
