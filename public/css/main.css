@@ -3170,8 +3170,15 @@ input:not([type="checkbox"]).inputBordered:focus {
 .noteContainer .noteBody {
   padding: 17px 10px !important;
 }
+.noteContainer .noteText,
 .noteContainer .noteContent {
-  margin: 10px 0;
+  padding: 10px 0 0;
+}
+.noteContainer .noteText:last-child {
+  margin-bottom: 0 !important;
+}
+.noteContainer .noteContent {
+  margin-bottom: 10px;
 }
 .btn {
   border: 1px solid #7f7f80;
