@@ -1,0 +1,18 @@
+<ul>
+    <% collection.forEach(function(item){ %>
+    <% var choosedTag = _.findWhere(model.tags, {_id : item._id}) %>
+    <li  data-id="<%= item._id %>"  >
+        <span data-color="<%= item.color%>" class="<%= choosedTag ? 'selected' : '' %>"><%= item.name || ' ' %></span>
+
+        <span class="editTag"></span>
+    </li>
+    <% }) %>
+
+</ul>
+
+
+
+
+
+
+

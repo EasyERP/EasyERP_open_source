@@ -6,7 +6,7 @@ define([
 ], function (Backbone, _, $, LeftMenuTemplate) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
-        el            : '#submenu-holder',
+        el            : '#submenuHolder',
         currentSection: null,
         selectedId    : null,
 
@@ -26,19 +26,13 @@ define([
         },
 
         events: {
-            'click .root'      : 'openRoot',
-            'click #loginPanel': 'openLogin'
+            'click .root': 'openRoot',
+            'click .root>a,.root ul li:first-child': 'preventOpen',
+
         },
 
-        openLogin: function (e) {
-            var $activeRoot = this.$el.find('.opened');
-
-            $(e.target).parent().find('#loginSelect').toggleClass('opened');
-            $activeRoot.find('ul').animate({height: 0}, 200, function () {
-                $activeRoot.removeClass('opened');
-            });
-
-
+        preventOpen: function (e) {
+            e.preventDefault();
         },
 
         openRoot: function (e) {
@@ -73,7 +67,7 @@ define([
             this.$el.find('li.active').removeClass('active');
             this.$el.find('li.selected').removeClass('selected');
 
-            $rootElement.find('li').eq(childIndex+1).addClass('selected');
+            $rootElement.find('li').eq(childIndex + 1).addClass('selected');
             $rootElement.addClass('active opened');
         },
 

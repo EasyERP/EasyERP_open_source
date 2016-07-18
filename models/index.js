@@ -9,6 +9,7 @@ module.exports = (function () {
     require('./employee.js');
     require('./jobPosition.js');
     require('./jobType.js');
+    require('./tag.js');
     require('./journal.js');
     require('./journalEntry.js');
     require('./incoterm.js');
@@ -57,7 +58,10 @@ module.exports = (function () {
     require('./projectMember.js');
     require('./weeklyScheduler.js');
     require('./scheduledPay.js');
+    require('./transfer.js');
     require('./payrollComponentType.js');
     require('./historyEntry.js');
     require('./dealTask.js');
+    require('./payrollStructureTypes.js');
+    require('./cashTransfer.js');
 })();

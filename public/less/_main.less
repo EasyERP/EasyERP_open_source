@@ -1,8 +1,10 @@
+@import "utilities/_variables";
 @import "_colors";
 @import "_darckColor";
 @import "_whiteColor";
 @import "generals/_index";
 @import "modules/_topBar";
+@import "layouts/_grid";
 @import "modules/_vacationList";
 /*== temp files==*/
 @import "tmp/_payRoll";
@@ -14,15 +16,9 @@
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
-//@body-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-//@lucida-font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-@body-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
-@lucida-font: 'Open Sans', 'Segoe UI', Helvetica, Verdana, san-serif;
 @icon-font: Icons;
 @title-font: Title;
-
 @metroicon-font: "Metrize-Icons";
-
 @bold-border: 3px solid;
 @thin-border: 1px solid;
 
@@ -236,9 +232,9 @@ textarea {
   }
 }
 
-.errorContent {
-  border: 1px solid red !important;
-}
+//.errorContent {
+//  border: 1px solid red !important;
+//}
 
 span.error {
   color: @unpaid-wtrack !important;
@@ -247,20 +243,8 @@ span.error {
 .kanban {
   .item {
     &.errorContent {
-      border: none !important;
-      background-color: #f78c8c !important;
-
-      .opportunity {
-        &-header {
-          h4, h3 {
-            color: #fff;
-          }
-        }
-        &-content {
-          p {
-            color: #fff;
-          }
-        }
+      .projectType {
+        color: #ff0000;
       }
     }
   }
@@ -547,7 +531,7 @@ input::-ms-clear {
       font-size: 24px;
       line-height: 30px;
       min-height: 24px;
-      font: @lucida-font;
+      font: @fontRegular;
     }
 
     p {
@@ -666,7 +650,7 @@ input::-ms-clear {
   }
 
   h2 {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     color: @mainText-color;
     .bold;
     font-size: 24px !important;
@@ -681,7 +665,7 @@ input::-ms-clear {
   }
 
   p {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     color: @mainText-color;
     font-size: 13px;
     line-height: 30px;
@@ -1088,6 +1072,10 @@ input::-ms-clear {
     right: 7px;
     position: absolute;
 
+    .icon {
+      font-size: 19px;
+    }
+
     a {
       &:hover {
         color: @mainText-color-selected;
@@ -1138,7 +1126,7 @@ input::-ms-clear {
   }
 
   span {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     position: relative;
     .thumbnail-text;
 
@@ -1171,7 +1159,7 @@ input::-ms-clear {
   }
 
   p {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     .thumbnail-text;
 
     span {
@@ -1180,7 +1168,7 @@ input::-ms-clear {
   }
 
   h2 {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     .thumbnail-text;
     .bold;
     margin: 0 0 8px;
@@ -1249,11 +1237,11 @@ input::-ms-clear {
     }
   }
 
-  tr {
-    &:last-child {
-      border-right: 10px solid @defaultBgHover-color;
-    }
-  }
+  //tr {
+  //  &:last-child {
+  //    border-right: 10px solid @defaultBgHover-color;
+  //  }
+  //}
 
   .column {
     //border-left: 10px solid @defaultBgHover-color; for darck Theme
@@ -1409,41 +1397,41 @@ input::-ms-clear {
         }
       }
 
-      &.cancelled .columnName {
-        border-bottom: 2px solid #FF5454 !important;
-      }
-
-      &.inprogress .columnName {
-        border-bottom: 2px solid #ffea73 !important;
-      }
-
-      &.fixed .columnName {
-        border-bottom: 2px solid #bef624 !important;
-      }
-
-      &.done .columnName {
-        border-bottom: 2px solid #BDEA74 !important;
-      }
-
-      &.testing .columnName {
-        border-bottom: 2px solid #D9FFC8 !important;
-      }
-
-      &.merge .columnName {
-        border-bottom: 2px solid #FFEA73;
-      }
-
-      &.development .columnName {
-        border-bottom: 2px solid #67C2EF;
-      }
-
-      &.specification .columnName {
-        border-bottom: 2px solid #EAE874;
-      }
-
-      &.analysis .columnName {
-        border-bottom: 2px solid #808080;
-      }
+      //&.cancelled .columnName {
+      //  border-bottom: 2px solid #FF5454 !important;
+      //}
+      //
+      //&.inprogress .columnName {
+      //  border-bottom: 2px solid #ffea73 !important;
+      //}
+      //
+      //&.fixed .columnName {
+      //  border-bottom: 2px solid #bef624 !important;
+      //}
+      //
+      //&.done .columnName {
+      //  border-bottom: 2px solid #BDEA74 !important;
+      //}
+      //
+      //&.testing .columnName {
+      //  border-bottom: 2px solid #D9FFC8 !important;
+      //}
+      //
+      //&.merge .columnName {
+      //  border-bottom: 2px solid #FFEA73;
+      //}
+      //
+      //&.development .columnName {
+      //  border-bottom: 2px solid #67C2EF;
+      //}
+      //
+      //&.specification .columnName {
+      //  border-bottom: 2px solid #EAE874;
+      //}
+      //
+      //&.analysis .columnName {
+      //  border-bottom: 2px solid #808080;
+      //}
 
       &:hover .foldUnfold img, &.selected .foldUnfold img {
         margin: -20px 6px 3px 0;
@@ -1497,7 +1485,7 @@ input::-ms-clear {
           border-width: 0;
           text-align: center;
           height: 17px;
-          border-bottom: 2px solid @defaultBgHover-color;
+          //border-bottom: 2px solid @defaultBgHover-color;
 
           .text {
             width: auto;
@@ -1620,7 +1608,7 @@ input::-ms-clear {
     font-size: 13px;
     font-weight: 600;
     line-height: 18px;
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     white-space: normal;
     span {
       .text-overflow;
@@ -1643,7 +1631,7 @@ input::-ms-clear {
       }
 
       p {
-        font-family: @lucida-font;
+        font-family: @fontRegular;
         color: #000;
         font-size: @font-size;
         font-weight: 200 !important;
@@ -1796,6 +1784,12 @@ input::-ms-clear {
     border: none;
     a {
       color: @tilte-color;
+      &.editTags {
+        color: #000;
+        &:hover {
+          text-decoration: none;
+        }
+      }
     }
   }
 
@@ -2054,11 +2048,9 @@ input::-ms-clear {
   input {
     height: 25px !important;
     line-height: 15px !important;
-    //background-image: url("@{imagesfolder}/bt-bg.png") !important;
     background-color: inherit !important;
     font-size: 11px;
     font-family: Tahoma, Arial, Helvetica, sans-serif;
-    //text-shadow: 0 1px 0 #FFF;
     color: @formColum-main-subText-color !important;
     border: @thin-border @border-color-main !important;
     padding: 5px 15px;
@@ -2163,10 +2155,15 @@ input::-ms-clear {
       dt, dd {
         line-height: 17px;
       }
-      dd.editable {
-        a {
-          line-height: 17px;
-          width: 100%;
+      dd {
+        &.editable {
+          a {
+            line-height: 17px;
+            width: 100%;
+          }
+        }
+        &.cashBalance {
+
         }
       }
       .no-long {
@@ -2591,7 +2588,7 @@ h3 {
 }
 
 body {
-  font-family: @body-font;
+  font-family: @fontRegular;
   font-size: 12px;
   height: 100%;
   //min-width: 1349px;//this return bug in login view
@@ -2925,18 +2922,26 @@ dl {
   box-sizing: border-box;
 
   #content-holder {
-    height: auto;
-    display: block;
-    background: inherit;
-    clear: both;
     position: relative;
-    padding: 0 5px;
+    height: calc(~"100% - 50px");
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
   }
 }
 
 #startLetter {
   margin: 0;
-  padding: 5px 0;
+  //padding: 5px 0;
   text-align: center;
   border-bottom: @thin-border @border-color-main;
 
@@ -3445,6 +3450,8 @@ button.red, a.red {
 
 /*----------------------------- Attachmetns ------------------------------*/
 .attachContainer {
+  margin-top: 10px;
+
   li {
     border-bottom: dashed 1px @lightgrey;
     line-height: 24px;
@@ -3812,7 +3819,7 @@ table#workflows {
   .mainmenu;
 }
 
-.side_menu {
+.sideMenu {
   .submenu;
 }
 
@@ -3822,7 +3829,7 @@ table#workflows {
 }
 
 .dashBoardVocationSearch {
-  margin-top: 4px !important; /*only for DashBoard vocation*/
+  margin-top: 7px !important; /*only for DashBoard vocation*/
 }
 
 .projectInfoTopBar {
@@ -3856,6 +3863,7 @@ table#workflows {
     font-size: 15px;
     text-decoration: none;
     text-align: center;
+    margin-right: 10px;
     &:before {
       line-height: 18px;
     }
@@ -3885,9 +3893,9 @@ table#workflows {
       }
     }
   }
-  .btn {
-    max-height: 26px;
-    line-height: 14px;
+  .btnRounded {
+    height: 26px;
+    line-height: 24px!important;
   }
 }
 
@@ -4010,7 +4018,7 @@ ul.dialog-tabs {
       float: right;
       width: 80px;
       .btn;
-      height: 15px;
+      //height: 15px;
       border-radius: 0;
       .gradient(#A02422);
       -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
@@ -4032,7 +4040,7 @@ ul.dialog-tabs {
       line-height: 20px;
       width: 8px;
       margin-left: -2px;
-      height: 17px;
+      min-height: 17px;
       display: block;
     }
   }
@@ -4193,7 +4201,7 @@ ul.chart-tabs {
 }
 
 .choseDateRange, .choseDateItem, .choseDateRangeSource {
-  padding: 5px;
+  padding: 3px 10px;
   border: @thin-border #efefef;
   float: right;
   margin-right: 10px;
@@ -4220,19 +4228,43 @@ ul.chart-tabs {
 
 .legend-box {
   border: @thin-border @border-color-main;
-  width: 525px;
-  height: 32px;
-  padding: 3px 0 0;
-  margin: -39px auto 0;
+  width: 555px;
+  margin: 0 auto;
   color: @mainText-color;
 
   &.small {
-    width: 255px;
+    width: 265px;
+    height: 28px;
+    line-height: 26px;
+    margin-top: 0!important;
+
+    &:before,&:after {
+      content: '';
+      display: table;
+    }
+    &:after {
+      clear: both;
+    }
+  }
+
+  &.medium {
+    width: 420px;
+    height: 28px;
+    line-height: 26px;
+  }
+
+  &:before,&:after {
+    content: '';
+    display: table;
+  }
+
+  &:after {
+    clear: both;
   }
 
   div {
     float: left;
-    padding: 5px 10px;
+    padding: 3px 10px;
 
     .square {
       width: 20px;
@@ -4649,7 +4681,7 @@ h3.dashboard {
   .opp-internal-create {
     height: 60px;
     margin-top: 5px;
-    border-bottom-color: transparent;
+    //border-bottom-color: transparent;
 
   }
 
@@ -6173,7 +6205,7 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: @lucida-font;
+  font-family: @fontRegular;
   padding: 5px 25px;
   position: absolute;
   z-index: 10;
@@ -6350,10 +6382,10 @@ textarea#editInput {
 }
 
 #searchContainer {
-  float: right;
+  position: absolute;
+  top: -35px;
+  right: 0;
   width: 35%;
-  position: relative;
-  margin-top: -35px;
   margin-right: 90px;
 
   .btn {
@@ -6619,7 +6651,7 @@ textarea#editInput {
 
 .invoiceChart-legend {
   position: absolute;
-  top: 20px;
+  top: -28px;
   left: 0;
   width: 100%;
   text-align: center;
@@ -6630,7 +6662,7 @@ textarea#editInput {
   }
   .legend-box {
     margin-top: 0;
-    padding: 3px;
+    padding: 0;
     .invoiced {
       .square {
         background-color: @invoiced;
@@ -6646,12 +6678,16 @@ textarea#editInput {
   }
   .choseDateItem {
     border: 1px solid @border-color-main;
-    button {
+    span {
       background: #fff;
       color: #4d5a75;
+      padding: 2px 5px;
+      font-size: 12px;
+      line-height: 16px;
       &:hover {
         background-color: #66b5d4;
         color: white;
+        cursor: pointer;
       }
     }
     .active {
@@ -6722,4 +6758,3 @@ textarea#editInput {
   position: absolute;
   text-indent: 2px;
 }
-

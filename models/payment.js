@@ -39,7 +39,10 @@ module.exports = (function () {
         editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        }
+        },
+
+        journal: {type: ObjectId, ref: 'journal', default: null}
+
     }, {collection: 'Payment', discriminatorKey: '_type'});
 
     var PaymentSchema = basePaymentSchema.extend({
@@ -71,7 +74,7 @@ module.exports = (function () {
 
         supplier: [{
             _id             : {type: ObjectId, ref: 'Employees', default: null},
-            fullName        : String,
+            name            : {type: Object, default: null},
             paidAmount      : Number,
             differenceAmount: {type: Number, default: 0, set: setPrice}
         }],

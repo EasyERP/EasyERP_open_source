@@ -5,9 +5,12 @@ var CurrencySchema = mongoose.Schemas.Currency;
 var wTrackSchema = mongoose.Schemas.wTrack;
 var employeeSchema = mongoose.Schemas.Employee;
 var jobsSchema = mongoose.Schemas.jobs;
-var invoiceSchema = mongoose.Schemas.Invoice;
+var invoiceSchema = mongoose.Schemas.wTrackInvoice;
 var holidaysSchema = mongoose.Schemas.Holiday;
 var vacationSchema = mongoose.Schemas.Vacation;
+var PaymentMethodSchema = mongoose.Schemas.PaymentMethod;
+var cashTransferSchema = mongoose.Schemas.cashTransfer;
+var PaymentSchema = mongoose.Schemas.Payment;
 var objectId = mongoose.Types.ObjectId;
 
 var oxr = require('open-exchange-rates');
@@ -663,6 +666,7 @@ var Module = function (models, event) {
         var findJobsFinished;
         var findPayments;
         var findSalaryPayments;
+        var findCashTransfer;
         var matchObject = {};
         // var filterArray;
         var parallelTasks;
@@ -749,6 +753,70 @@ var Module = function (models, event) {
                 }], function (err, result) {
                     if (err) {
                         return console.log(err);
+                    }
+
+                    cb(null, result);
+                });
+        };
+
+        findCashTransfer = function (cb) {
+            Model
+                .aggregate([{
+                    $match: matchObject
+                }, {
+                    $match: {
+                        'sourceDocument.model': 'cashTransfer',
+                        debit                 : {$gt: 0}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'chartOfAccount',
+                        localField  : 'account',
+                        foreignField: '_id',
+                        as          : 'account'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'cashTransfer',
+                        localField  : 'sourceDocument._id',
+                        foreignField: '_id',
+                        as          : 'sourceDocument._id'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'journals',
+                        localField  : 'journal',
+                        foreignField: '_id',
+                        as          : 'journal'
+                    }
+                }, {
+                    $project: {
+                        debit                 : 1,
+                        currency              : 1,
+                        journal               : {$arrayElemAt: ['$journal', 0]},
+                        account               : {$arrayElemAt: ['$account', 0]},
+                        'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
+                        'sourceDocument.model': 1,
+                        date                  : 1
+                    }
+                }, {
+                    $project: {
+                        debit                   : 1,
+                        'journal.name'          : 1,
+                        'journal.creditAccount' : 1,
+                        'sourceDocument._id'    : 1,
+                        'sourceDocument.subject': '$sourceDocument.model'
+                    }
+                }, {
+                    $match: filterObj
+                }, {
+                    $project: {
+                        _id  : 1,
+                        debit: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
                     }
 
                     cb(null, result);
@@ -1058,7 +1126,7 @@ var Module = function (models, event) {
             });
         };
 
-        parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
+        parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments, findCashTransfer];
 
         async.parallel(parallelTasks, function (err, result) {
             var invoices = result[0];
@@ -1067,8 +1135,9 @@ var Module = function (models, event) {
             var salaryEmployee = result[2];
             var paymentsResult = result[4];
             var salaryPaymentsResult = result[5];
+            var cashTransfer = result[6];
             var totalValue = 0;
-            var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult);
+            var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult, cashTransfer);
 
             if (err) {
                 return mainCallback(err);
@@ -1555,7 +1624,12 @@ var Module = function (models, event) {
         var parallelFuncs;
         var waterfallFuncs;
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var date = endDate;
+        var date = moment(endDate).set({
+            hour       : 20,
+            minute     : 0,
+            second     : 0,
+            millisecond: 0
+        });
         var dateByMonth = year * 100 + month;
 
         function parallelFuncFind(wfCb) {
@@ -1611,6 +1685,13 @@ var Module = function (models, event) {
                     $match: {
                         // 'department': {$nin: notDevArray},
                         hire: {$ne: []}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'transfer'
                     }
                 }, {
                     $project: {
@@ -2326,10 +2407,9 @@ var Module = function (models, event) {
         var jobsArray = options.jobId;
         var newReq = req;
 
-
         var cb = options.callback || function () {
-            return false;
-        };
+                return false;
+            };
 
         newReq.body.jobs = jobsArray;
 
@@ -2344,7 +2424,7 @@ var Module = function (models, event) {
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'journalEntry', journalEntrySchema);
         var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
-        var Invoice = models.get(dbName, 'Invoice', invoiceSchema);
+        var Invoice = models.get(dbName, 'wTrackInvoice', invoiceSchema);
         var Job = models.get(dbName, 'jobs', jobsSchema);
         var body = req.body;
         var month = parseInt(body.month, 10);
@@ -2353,7 +2433,7 @@ var Module = function (models, event) {
         var jobIds = body.jobs;
         var reconcileSalaryEntries;
         var reconcileInvoiceEntries;
-        var timeToSet = {hour: 15, minute: 1, second: 0};
+        var timeToSet = {hour: 15, minute: 1, second: 0, millisecond: 0};
         var parallelTasks;
         var resultArray = [];
         var parallelFunction;
@@ -2631,6 +2711,13 @@ var Module = function (models, event) {
                         hours       : 1
                     }
                 }, {
+                    $lookup: {
+                        from        : 'transfers',
+                        localField  : 'employee._id',
+                        foreignField: 'employee',
+                        as          : 'employee.transfer'
+                    }
+                }, {
                     $project: {
                         transfer    : '$employee.transfer',
                         employee    : '$employee._id',
@@ -2759,8 +2846,28 @@ var Module = function (models, event) {
                         transfer = _.sortBy(transfer, 'date');
 
                         if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[0].date).year() * 100 + moment(transfer[0].date).month() + 1)) {
-                            startDate = moment(transfer[transferLength - 1].date);
+                            startDate = moment(transfer[0].date);
                         }
+                        /* for (i = transferLength - 1; i >= 0; i--) {
+                         transferObj = transfer[i];
+
+                         if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                         if (transferObj.status === 'fired') {
+                         if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
+                         salaryForDate = transferObj.salary;
+                         weeklyScheduler = transferObj.weeklyScheduler;
+                         break;
+                         }
+                         } else if (transferObj.status !== 'transfer') {
+                         salaryForDate = transferObj.salary;
+                         weeklyScheduler = transferObj.weeklyScheduler;
+                         break;
+                         }
+                         }
+                         }*/
+
+                        transfer = _.sortBy(transfer, 'date');
+
                         for (i = transferLength - 1; i >= 0; i--) {
                             transferObj = transfer[i];
 
@@ -2893,9 +3000,15 @@ var Module = function (models, event) {
                         var callback = _.after(3, asyncCb);
                         var startMonthDate;
                         var endMonthDate;
+                        var checkWriteOff = false;
 
                         if (!model.invoice) {
                             return asyncCb();
+                        }
+
+                        if (model.invoice._type === 'writeOff') {
+                            callback = _.after(4, asyncCb);
+                            checkWriteOff = true;
                         }
 
                         date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
@@ -2914,6 +3027,7 @@ var Module = function (models, event) {
                         }], function (err, result) {
                             var bodyFinishedJob;
                             var bodyClosedJob;
+                            var bodyWriteOff;
 
                             if (err) {
                                 return console.log(err);
@@ -2938,12 +3052,25 @@ var Module = function (models, event) {
 
                                 amount: 0
                             };
+
+                            bodyWriteOff = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.WRITE_OFF,
+                                sourceDocument: {
+                                    model: 'writeOff'
+                                },
+
+                                amount: 0
+                            };
                             bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
                             bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyWriteOff.amount = result && result[0] ? result[0].amount : 0;
                             bodyFinishedJob.date = new Date(date);
                             bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
+                            bodyWriteOff.date = new Date(moment(date).subtract(1, 'seconds'));
                             bodyFinishedJob.sourceDocument._id = jobId;
                             bodyClosedJob.sourceDocument._id = jobId;
+                            bodyWriteOff.sourceDocument._id = model.invoice._id;
 
                             startMonthDate = moment(bodyClosedJob.date).startOf('month');
                             endMonthDate = moment(bodyClosedJob.date).endOf('month');
@@ -2971,6 +3098,71 @@ var Module = function (models, event) {
                             } else {
                                 callback();
                             }
+
+                            if (checkWriteOff && bodyWriteOff.amount > 0) {
+                                Model.remove({
+                                    journal             : {$in: [CONSTANTS.WRITE_OFF, CONSTANTS.WRITE_OFF_RD]},
+                                    'sourceDocument._id': model.invoice._id
+                                }, function (err, result) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+
+                                    Invoice.findById(model.invoice._id, {
+                                        products   : 1,
+                                        paymentInfo: 1
+                                    }, function (err, result) {
+                                        var products;
+                                        var paymentInfo;
+                                        var newProducts = [];
+                                        var newTotal = 0;
+
+                                        if (err) {
+                                            return callback(err);
+                                        }
+
+                                        result = result.toJSON();
+
+                                        products = result.products;
+                                        paymentInfo = result.paymentInfo;
+
+                                        products.forEach(function (prod) {
+                                            if (prod.jobs.toString() === jobId.toString()) {
+
+                                                prod.unitPrice = bodyFinishedJob.amount;
+                                                prod.subTotal = bodyFinishedJob.amount;
+
+                                                newProducts.push(prod);
+
+                                            } else {
+                                                newProducts.push(prod);
+                                            }
+
+                                            newTotal += parseInt(prod.unitPrice, 10);
+                                        });
+
+                                        paymentInfo.unTaxed = newTotal;
+                                        paymentInfo.total = newTotal;
+
+                                        Invoice.findByIdAndUpdate(model.invoice._id, {
+                                            $set: {
+                                                products   : newProducts,
+                                                paymentInfo: paymentInfo
+                                            }
+                                        }, function (err, resu) {
+                                            if (err) {
+                                                return callback(err);
+                                            }
+
+                                            createReconciled(bodyWriteOff, req.session.lastDb, callback, req.session.uId);
+
+                                        });
+
+                                    });
+                                });
+
+                            }
+                            ;
 
                         });
                     }, function () {
@@ -3023,10 +3215,9 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
-                if (cb && typeof(cb) === 'function'){
+                if (cb && typeof(cb) === 'function') {
                     cb();
                 }
-
 
             });
         });
@@ -3784,6 +3975,44 @@ var Module = function (models, event) {
         });
     };
 
+    this.getBalanceForAccount = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = req.query;
+        var account = query.account;
+        var date = query.date;
+
+        date = moment(new Date(date)).endOf('day');
+
+        Model.aggregate([{
+            $match: {
+                account: objectId(account),
+                date   : {
+                    $lte: new Date(date)
+                }
+            }
+        }, {
+            $project: {
+                date   : 1,
+                debit  : {$divide: ['$debit', '$currency.rate']},
+                credit : {$divide: ['$credit', '$currency.rate']},
+                account: 1
+            }
+        }, {
+            $group: {
+                _id   : '$account',
+                debit : {$sum: '$debit'},
+                credit: {$sum: '$credit'}
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({maxAmount: result && result.length ? result[0].debit - result[0].credit : 0})
+        });
+
+    };
+
     this.getExpenses = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -3911,12 +4140,37 @@ var Module = function (models, event) {
             });
         };
 
+        var marketingExpenses = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date                  : {$gte: new Date(startDate), $lte: new Date(endDate)},
+                    'sourceDocument.model': 'writeOff',
+                    journal               : objectId(CONSTANTS.WRITE_OFF),
+                    credit                : {$gt: 0}
+                }
+            }, {
+                $group: {
+                    _id: null,
+                    sum: {
+                        $sum: '$credit'
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result && result.length ? result[0].sum : 0);
+            });
+        };
+
         parallelTasks = {
             adminExpenses   : adminExpenses,
             vacationExpenses: vacationExpenses,
             idleExpenses    : idleExpenses,
             adminSalary     : adminSalary,
-            actualHours     : actualHours
+            actualHours     : actualHours,
+            marketingBudget : marketingExpenses
         };
 
         async.parallel(parallelTasks, function (err, result) {
@@ -4000,7 +4254,7 @@ var Module = function (models, event) {
             var getOpening = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                  : {$lt: matchObject.$gte},
+                        date                  : {$lte: matchObject.$gte},
                         debit                 : {$gt: 0},
                         'sourceDocument._id'  : {$in: jobs},
                         'sourceDocument.model': 'wTrack'
@@ -4289,10 +4543,10 @@ var Module = function (models, event) {
                     });
 
                     newElement._id = job;
-                    newElement.name = opening ? opening.name : (inwards ? inwards.name : '');
+                    newElement.name = opening ? opening.name : (inwards ? inwards.name : outwards ? outwards.name : '');
 
-                    project = opening ? opening.project : (inwards ? inwards.project : {});
-                    newElement.salesmanager = opening ? opening.salesmanager : (inwards ? inwards.salesmanager : '');
+                    project = opening ? opening.project : (inwards ? inwards.project : outwards ? outwards.name : {});
+                    newElement.salesmanager = opening ? opening.salesmanager : (inwards ? inwards.salesmanager : outwards ? outwards.salesmanager : '');
 
                     newElement.project = project ? project._id : null;
                     newElement.projectName = project ? project.name : '-----';
@@ -4304,6 +4558,8 @@ var Module = function (models, event) {
 
                     if (newElement.name && !(outwards && outwards.date < startDate)) {
                         resultArray.push(newElement);
+                    } else {
+                        console.log(outwards ? outwards.date : newElement.name, startDate);
                     }
 
                 });
@@ -5132,6 +5388,218 @@ var Module = function (models, event) {
         });
     };
 
+    this.getCashBook = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var PaymentMethod = models.get(req.session.lastDb, 'PaymentMethod', PaymentMethodSchema);
+        var cashTransferModel = models.get(req.session.lastDb, 'cashTransfer', cashTransferSchema);
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+        var query = req.query;
+        var startDate = query.startDate;
+        var endDate = query.endDate;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        PaymentMethod.aggregate([{
+            $group: {
+                _id: '$chartAccount'
+            }
+        }], function (err, result) {
+            var accounts;
+
+            if (err) {
+                return next(err);
+            }
+
+            accounts = _.pluck(result, '_id');
+
+            Model.aggregate([{
+                $match: {
+                    account: {$in: accounts},
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    }
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'account',
+                    foreignField: '_id',
+                    as          : 'account'
+                }
+            }, {
+                $project: {
+                    date          : 1,
+                    sourceDocument: 1,
+                    account       : {$arrayElemAt: ['$account', 0]},
+                    currency      : 1,
+                    debit         : 1,
+                    credit        : 1
+                }
+            }, {
+                $project: {
+                    date          : 1,
+                    sourceDocument: 1,
+                    'account.name': '$account.name',
+                    'account._id' : '$account._id',
+                    currency      : 1,
+                    debit         : 1,
+                    credit        : 1
+                }
+            }, {
+                $sort: {
+                    date: 1
+                }
+            }, {
+                $group: {
+                    _id     : '$sourceDocument.model',
+                    accounts: {$addToSet: '$account'},
+                    root    : {$push: '$$ROOT'}
+                }
+            }], function (err, result) {
+                var paymentResult;
+                var cashTransfer;
+                var populateCashTransfer;
+                var populateSalaryPayment;
+                var populatePayment;
+                var getOpeningBalance;
+                var salaryPayment;
+
+                if (err) {
+                    return next(err);
+                }
+
+                paymentResult = _.find(result, function (el) {
+                    return el._id === 'Payment';
+                });
+
+                cashTransfer = _.find(result, function (el) {
+                    return el._id === 'cashTransfer';
+                });
+
+                salaryPayment = _.find(result, function (el) {
+                    return el._id === 'salaryPayment';
+                });
+
+                cashTransfer = cashTransfer || {};
+                paymentResult = paymentResult || {};
+                salaryPayment = salaryPayment || {};
+
+                populatePayment = function (cb) {
+                    Payment.populate(paymentResult.root, {
+                        path  : 'sourceDocument._id',
+                        select: 'name',
+                        lean  : true
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    })
+                };
+
+                populateSalaryPayment = function (cb) {
+                    Employee.populate(salaryPayment.root, {
+                        path  : 'sourceDocument._id',
+                        select: 'name',
+                        lean  : true
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    })
+                };
+
+                getOpeningBalance = function (cb) {
+                    Model.aggregate([{
+                        $match: {
+                            account: {$in: accounts},
+                            date   : {
+                                $lt: new Date(startDate)
+                            }
+                        }
+                    }, {
+                        $project: {
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            account: 1
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account',
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $project: {
+                            balance: {$subtract: ['$debit', '$credit']}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                };
+
+                populateCashTransfer = function (cb) {
+                    cashTransferModel.populate(cashTransfer.root, {
+                        path  : 'sourceDocument._id',
+                        select: 'name',
+                        lean  : true
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    })
+                };
+
+                async.parallel([populatePayment, populateCashTransfer, populateSalaryPayment, getOpeningBalance], function (err, result) {
+                    var accounts;
+                    var newAccounts = [];
+                    var keys = {};
+
+                    if (err) {
+                        return next(err);
+                    }
+
+                    accounts = _.union(paymentResult.accounts || [], cashTransfer.accounts || [], salaryPayment.accounts || []);
+
+                    accounts.forEach(function (el) {
+                        if (!keys[el._id.toString()]) {
+                            newAccounts.push(el);
+                            keys[el._id.toString()] = true;
+                        }
+                    });
+
+                    newAccounts.forEach(function (acc) {
+                        var balance = _.find(result[3], function (el) {
+                            return el._id.toString() === acc._id.toString();
+                        });
+
+                        balance = balance || {};
+
+                        acc.balance = balance.balance || 0;
+                    });
+
+                    res.status(200).send({
+                        data    : _.union(paymentResult.root || [], cashTransfer.root || [], salaryPayment.root || []),
+                        accounts: newAccounts
+                    });
+                });
+            });
+        })
+
+    };
+
     this.getForGL = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = req.query;
@@ -5452,6 +5920,7 @@ var Module = function (models, event) {
         var findJobsFinished;
         var findPayments;
         var findSalaryPayments;
+        var findCashTransfer;
         var matchObject = {};
         // var filterArray;
         var parallelTasks;
@@ -5578,6 +6047,101 @@ var Module = function (models, event) {
                         'sourceDocument._id'         : 1,
                         'sourceDocument.name'        : 1,
                         'sourceDocument.subject.name': '$sourceDocument.subject.name'
+                    }
+                }, {
+                    $sort: sort
+                }, {
+                    $skip: skip
+                }, {
+                    $limit: limit
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, result);
+                });
+        };
+
+        findCashTransfer = function (cb) {
+            Model
+                .aggregate([{
+                    $match: matchObject
+                }, {
+                    $match: {
+                        'sourceDocument.model': 'cashTransfer',
+                        debit                 : {$gt: 0}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'chartOfAccount',
+                        localField  : 'account',
+                        foreignField: '_id',
+                        as          : 'account'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'cashTransfer',
+                        localField  : 'sourceDocument._id',
+                        foreignField: '_id',
+                        as          : 'sourceDocument._id'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'journals',
+                        localField  : 'journal',
+                        foreignField: '_id',
+                        as          : 'journal'
+                    }
+                }, {
+                    $project: {
+                        debit                 : 1,
+                        currency              : 1,
+                        journal               : {$arrayElemAt: ['$journal', 0]},
+                        account               : {$arrayElemAt: ['$account', 0]},
+                        'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
+                        'sourceDocument.model': 1,
+                        date                  : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'chartOfAccount',
+                        localField  : 'journal.debitAccount',
+                        foreignField: '_id',
+                        as          : 'journal.debitAccount'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'chartOfAccount',
+                        localField  : 'journal.creditAccount',
+                        foreignField: '_id',
+                        as          : 'journal.creditAccount'
+                    }
+                }, {
+                    $project: {
+                        debit                  : 1,
+                        currency               : 1,
+                        'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
+                        'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
+                        'journal.name'         : 1,
+                        date                   : 1,
+                        'sourceDocument._id'   : 1,
+                        'sourceDocument.name'  : '$sourceDocument._id.name',
+                        'sourceDocument.model' : 1,
+                        account                : 1
+                    }
+                }, {
+                    $match: filterObj
+                }, {
+                    $project: {
+                        debit                              : 1,
+                        currency                           : 1,
+                        journal                            : 1,
+                        date                               : 1,
+                        'sourceDocument.model'             : 1,
+                        'sourceDocument._id'               : 1,
+                        'sourceDocument.name'              : 1,
+                        'sourceDocument.subject.name.first': '$sourceDocument.model'
                     }
                 }, {
                     $sort: sort
@@ -6198,7 +6762,7 @@ var Module = function (models, event) {
             });
         };
 
-        parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
+        parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments, findCashTransfer];
 
         async.parallel(parallelTasks, function (err, result) {
             var invoices;
@@ -6208,6 +6772,7 @@ var Module = function (models, event) {
             var paymentsResult;
             var salaryPaymentResult;
             var models;
+            var cashTransfer;
 
             if (err) {
                 return mainCallback(err);
@@ -6218,7 +6783,8 @@ var Module = function (models, event) {
             jobsResult = result[3];
             paymentsResult = result[4];
             salaryPaymentResult = result[5];
-            models = _.union(invoices, salary, salaryEmployee, jobsResult, paymentsResult, salaryPaymentResult);
+            cashTransfer = result[6];
+            models = _.union(invoices, salary, salaryEmployee, jobsResult, paymentsResult, salaryPaymentResult, cashTransfer);
 
             mainCallback(null, models);
         });

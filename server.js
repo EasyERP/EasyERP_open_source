@@ -18,8 +18,8 @@ connectOptions = {
     db    : {native_parser: true},
     server: {poolSize: 5},
     // replset: { rs_name: 'myReplicaSetName' },
-    user  : process.env.DB_USER,
-    pass  : process.env.DB_PASS,
+    //user  : process.env.DB_USER,
+    //pass  : process.env.DB_PASS,
     w     : 1,
     j     : true
     // mongos: true
@@ -66,19 +66,19 @@ mainDb.once('open', function callback() {
                 db    : {native_parser: true},
                 server: {poolSize: 5},
                 // replset: { rs_name: 'myReplicaSetName' },
-                user  : _db.user,
-                pass  : _db.pass,
+                //user  : _db.user,
+                //pass  : _db.pass,
                 w     : 1,
                 j     : true
                 // mongos: true
             };
             var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
+            var Scheduler = require('./services/scheduler')(models);
 
             dbObject.on('error', function (err) {
                 console.error(err);
             });
             dbObject.once('open', function () {
-                var Scheduler = require('./services/scheduler')();
                 var scheduler = new Scheduler(_db.DBname);
 
                 console.log('Connection to ' + _db.DBname + ' is success' + index);

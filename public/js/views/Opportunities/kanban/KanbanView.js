@@ -369,6 +369,12 @@
                 context.foldUnfoldKanban(null, response.workflowId);
                 context.collapseLost = false;
             }
+            if (response.workflowId === '528cdef4f3f67bc40b00000a') {
+                context.foldUnfoldKanban(null, response.workflowId);
+            }
+            if (response.workflowId === '528cdf1cf3f67bc40b00000b') {
+                context.foldUnfoldKanban(null, response.workflowId);
+            }
         },
 
         editItem: function () {

@@ -1,0 +1,264 @@
+.dialog(@background: @dialog-bg, @color: @mainText-color, @borderColor: @border-color-main) {
+  background: @background;
+  color: @color;
+  z-index: 1000;
+  margin: 0 auto;
+  left: 50%;
+  top: 50%;
+  .border-radius(0px);
+
+  .ui-widget-content {
+    border: none;
+    a {
+      color: @tilte-color;
+    }
+  }
+
+  .avatar {
+    .avatar(140px, 5px, 5px, 5px, 0);
+    .box-shadow;
+    border: @thin-border @borderColor;
+  }
+
+  .ui-dialog-content {
+    position: relative;
+    border: 0;
+    padding: .5em 1em;
+    background: 0;
+  }
+
+  .ui-dialog-buttonpane {
+    margin-top: 30px !important;
+  }
+
+  .ui-dialog-titlebar {
+    display: none;
+  }
+
+  .app-block {
+    .half-block;
+  }
+
+  textarea {
+    .noPaddingMargin;
+    width: 95%;
+    resize: none;
+    &#description {
+      margin-top: 0 !important;
+      &.taskDescription {
+        height: 310px;
+      }
+      &.projectDescription {
+        height: 225px;
+        margin-top: 5px !important;
+      }
+      &.projectDescriptionEdit {
+        width: 98%;
+        height: 265px;
+      }
+      &.taskDescriptionCreate {
+        height: 205px;
+        margin-top: 8px !important;
+        margin-left: 1px;
+        width: 100%;
+      }
+      &.taskDescriptionEdit {
+        height: 188px;
+        margin-top: 8px !important;
+        margin-left: 1px;
+        width: 100%;
+      }
+      &.projectDescriptionCreate {
+        height: 230px;
+      }
+
+    }
+
+    &#otherInfo {
+      margin-top: 13px;
+      width: 300px;
+      height: 193px;
+      min-height: initial;
+      max-width: 300px;
+    }
+  }
+
+  .inner {
+    padding: 5px;
+    background: @background;
+  }
+
+  .form-holder {
+    position: relative;
+    padding: .5em 1em;
+    clear: both;
+    &.task-create-holder {
+      margin-bottom: -17px;
+    }
+  }
+
+  .app-empty-info {
+    .dl-auto(200px, 100%);
+    margin-top: -3px;
+
+    dd {
+      display: none;
+    }
+
+    dt {
+      margin-top: 11px;
+
+      input {
+        width: 95% !important;
+      }
+    }
+  }
+
+  .person-info-h3 {
+    width: auto;
+    .dl-auto(auto, 50%);
+    clear: none;
+
+    dt, dd {
+      clear: none;
+      margin-top: 0 !important;
+
+      a {
+        line-height: 22px;
+        margin-right: 3px;
+      }
+    }
+
+    dt {
+      width: 90px;
+    }
+
+    dd {
+      width: auto;
+    }
+
+  }
+
+  .summary-info {
+    width: 50%;
+    .dl-auto(none, 30%);
+    height: 30px;
+
+    #summary {
+      width: 89% !important;
+    }
+  }
+
+  input {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    border: 1px solid #E2E9EF;
+    border-top: 1px solid #CBD3E2;
+    max-width: 280px;
+    height: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    border: @thin-border @list-border-color;
+    line-height: 20px;
+    background-color: transparent;
+    padding: 0 2px;
+    color: @mainText-color;
+
+    &:focus {
+      outline: medium none;
+      border: @thin-border @border-color-selected;
+    }
+
+    &#summary {
+      width: 100%;
+      max-width: none;
+    }
+    &#summaryTask,
+    &#summaryEdit {
+      margin-top: 17px;
+      margin-bottom: 8px;
+      padding-left: 2px;
+      padding-right: 2px;
+      width: 544px;
+      max-width: none;
+    }
+    &#summaryTask {
+      width: 544px;
+    }
+
+    &#summaryEdit {
+      margin-top: 7px;
+    }
+
+  }
+
+  .ui-dialog-buttonpane {
+    border: @thin-border @border-color-main;
+    background: @background;
+    color: @color;
+    text-align: left;
+    border-width: 1px 0 0;
+    background-image: none;
+    margin: 0 1em;
+    margin-top: .7em;
+    padding: .3em 1em .5em .4em;
+
+    &:before {
+      content: "";
+      display: table;
+      border-collapse: collapse;
+    }
+
+    &:after {
+      clear: both;
+      content: "";
+      display: table;
+      border-collapse: collapse;
+    }
+
+    .ui-dialog-buttonset {
+      text-align: center;
+
+      button {
+        margin: .5em .4em .5em 0;
+        line-height: normal;
+      }
+    }
+  }
+
+  .ui-helper-clearfix:before, .ui-helper-clearfix:after {
+    content: "";
+    display: table;
+    border-collapse: collapse;
+  }
+
+  .ui-helper-clearfix:after {
+    clear: both;
+  }
+
+  .ui-helper-clearfix {
+    min-height: 0;
+  }
+
+  .ui-helper-zfix {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    opacity: 0;
+    filter: Alpha(Opacity=0);
+  }
+  &.task-edit-dialog {
+    .ui-dialog-buttonpane {
+      margin-left: 24px;
+      margin-right: 24px;
+      button {
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+}

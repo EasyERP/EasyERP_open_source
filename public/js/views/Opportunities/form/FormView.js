@@ -21,6 +21,7 @@ define([
         initialize: function (options) {
             this.formModel = options.model;
             this.formModel.urlRoot = constants.URLS.OPPORTUNITIES;
+            _.bindAll(this, 'saveDeal');
             this.responseObj = {};
         },
 
@@ -159,53 +160,21 @@ define([
             holder.text($target.text());
             changedObject[type] = id;
 
-            if (holder.attr('id') === 'customerDd') {
-                this.selectCustomer(id);
-            } else {
-                this.saveDeal(changedObject);
-            }
+            this.saveDeal(changedObject);
         },
 
-        selectCustomer: function (id) {
+        saveDeal: function (changedAttrs, type) {
             var self = this;
-            var $thisEl = this.$el;
-            dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
-                id: id
-            }, function (response) {
-                var customer = response;
-                self.formModel.set({customer: customer});
 
-                $thisEl.find('[data-id="email"]').text(customer.email);
-                $thisEl.find('[data-id="phones_phone"]').text(customer.phones.phone);
-                $thisEl.find('[data-id="phones_mobile"]').text(customer.phones.mobile);
-                $thisEl.find('[data-id="address_street"]').text(customer.address.street);
-                $thisEl.find('[data-id="address_city"]').text(customer.address.city);
-                $thisEl.find('[data-id="address_state"]').text(customer.address.state);
-                $thisEl.find('[data-id="address_zip"]').text(customer.address.zip);
-                $thisEl.find('[data-id="address_country"]').text(customer.address.country);
-
-                self.saveDeal({
-                    customer         : customer._id,
-                    email            : customer.email,
-                    'phones.phone'   : customer.phones.phone,
-                    'phones.mobile'  : customer.phones.mobile,
-                    'address.street' : customer.address.street,
-                    'address.city'   : customer.address.city,
-                    'address.state'  : customer.address.state,
-                    'address.zip'    : customer.address.zip,
-                    'address.country': customer.address.country
-                });
-            }, this);
-
-        },
-
-        saveDeal: function (changedAttrs) {
-            var self = this;
-            
             this.formModel.save(changedAttrs, {
                 patch  : true,
                 success: function () {
-                    self.noteView.renderTimeline();
+                    if (type === 'formProperty') {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
+                    } else {
+                        self.noteView.renderTimeline();
+                    }
                 },
                 error  : function (model, response) {
                     if (response) {
@@ -236,8 +205,8 @@ define([
             });
 
         },
-        
-        render     : function () {
+
+        render: function () {
             var formModel = this.formModel.toJSON();
             var self = this;
             var $thisEl = this.$el;
@@ -264,14 +233,22 @@ define([
                 self.responseObj['#salesPersonDd'] = employees;
             });
 
-            if (formModel.customer){
+            if (formModel.customer) {
                 companyModel = new CompanyModel(formModel.customer);
             }
 
-            $thisEl.find('#companyHolder').html(new formProperty({type : 'Company', model : companyModel, attribute: 'customer'}).render().el);
+            this.formProperty = new formProperty({
+                type       : 'Company',
+                parentModel: this.formModel,
+                model      : companyModel,
+                attribute  : 'customer',
+                saveDeal   : self.saveDeal
+            });
 
+            $thisEl.find('#companyHolder').html(
+                this.formProperty.render().el
+            );
 
-            
             this.noteView = new NoteView({
                 model      : this.formModel,
                 contentType: 'opportunities'

@@ -2,82 +2,62 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/formProperty/filterView',
     'text!templates/formProperty/formPropertyTemplate.html',
     'text!templates/selectView/selectContent.html'
-], function (Backbone, $, _, propertyTemplate, selectContent) {
+], function (Backbone, $, _, filterView, propertyTemplate, selectContent) {
     var selectView = Backbone.View.extend({
         template       : _.template(propertyTemplate),
         contentTemplate: _.template(selectContent),
 
         events: {
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
+            'click #addProperty'   : 'addProperty',
+            'click #removeProperty': 'removeProperty',
+            'click #saveSpan'      : 'saveClick'
         },
 
-        chooseOption: function (e) {
-            var id;
-            var data;
-            var $target = $(e.target);
-            var attrId = $target.parents('td').find('.current-selected').attr('id');
+        addProperty: function () {
+            new filterView({
+                model    : this.parentModel,
+                type     : this.type,
+                attribute: this.attribute,
+                saveDeal : this.saveDeal
+            });
+        },
 
-            $('.newSelectList').hide();
+        saveClick: function (e) {
 
-            if ($target.parents('dd').find('.current-selected').length) {
-                $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
-            } else {
-                id = $target.parents('td').closest('tr').attr('data-id');
+            var parent = $(e.target).parent().parent();
+            var field;
+            var value = this.$el.find('#editInput').val();
+            var newModel = {};
+            e.preventDefault();
 
-                if (attrId === 'workflow') {
-                    data = {_id: id, workflowId: $target.attr('id')};
-                } else if (attrId === 'type') {
-                    data = {_id: id, type: $target.text()};
-                }
+            field = parent.attr('data-id').replace('_', '.');
+            newModel[field] = value;
 
-                $target.parents('td').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            parent.text(value);
+            parent.removeClass('quickEdit');
 
-                dataService.postData('/jobs/update', data, function (err) {
-                    if (err) {
-                        return console.log(err);
-                    }
+            this.model.save(newModel,{
+                patch  : true,
+            });
+        },
 
-                });
-            }
+        removeProperty: function () {
+            var saveObject = {};
+            this.model = '';
 
-            this.showSaveButton();
+            saveObject[this.attribute] = null;
+            this.saveDeal(saveObject, 'formProperty');
         },
 
         initialize: function (options) {
             this.type = options.type;
             this.attribute = options.attribute;
+            this.parentModel = options.parentModel;
             this.responseObj = options.responseObj || [];
-        },
-
-        notHide: function () {
-            return false;
-        },
-
-        nextSelect: function (e) {
-            e.stopPropagation();
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            e.stopPropagation();
-            this.showNewSelect(e, true, false);
-        },
-
-        filterCollection: function (value) {
-            var resultCollection;
-            var regex;
-
-            regex = new RegExp(value, 'i');
-
-            resultCollection = this.collection.filter(function (model) {
-                return model.get('name').match(regex);
-            });
-
-            return resultCollection;
+            this.saveDeal = options.saveDeal;
         },
 
         render: function () {
@@ -85,7 +65,7 @@ define([
             var urlType = this.type === 'Company' ? 'Companies' : 'Persons';
             var property = this.model ? this.model.toJSON() : '';
 
-            this.$el.html( _.template(propertyTemplate, {type : this.type, property : property, urlType : urlType}) );
+            this.$el.html(_.template(propertyTemplate, {type: this.type, property: property, urlType: urlType}));
 
             this.searchInput = this.$el.find('#selectInput');
 

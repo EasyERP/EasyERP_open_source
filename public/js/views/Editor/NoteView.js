@@ -225,7 +225,7 @@ define([
 
                     } else {
                         newNotes = _.filter(notes, function (note) {
-                            if (note._id !== idInt && !note.task) {
+                            if (note._id !== idInt && !note.task && !note.history) {
                                 return note;
                             }
                         });

@@ -5,7 +5,8 @@ var connectOptions = {
     w   : 1,
     j   : true
 };
-var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
+// var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production');
 var url = 'mongodb://144.76.56.111:28017/pavlodb';
 var async = require('async');
 
@@ -14,7 +15,7 @@ var profiles = dbObject.collection('Profile');
 
 function childModule(callback) {
     var module = {
-        _id     : 105,
+        _id     : 107,
         mname   : 'WriteOff',
         href    : 'WriteOff',
         sequence: 105,

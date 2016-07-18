@@ -1322,17 +1322,29 @@ var Module = function (models, event) {
                     preserveNullAndEmptyArrays: true
                 }
             }, {
+                $sort: {
+                    'tCards.dateByWeek': 1,
+                    'tCards.1'         : -1,
+                    'tCards.2'         : -1,
+                    'tCards.3'         : -1,
+                    'tCards.4'         : -1,
+                    'tCards.5'         : -1
+                }
+            },
+                {
                 $group: {
-                    _id        : '$_id',
-                    name       : {$first: '$name'},
-                    invoice    : {$first: '$invoice'},
-                    type       : {$first: '$type'},
-                    quotation  : {$first: '$quotation'},
-                    workflow   : {$first: '$workflow'},
-                    cost       : {$first: '$cost'},
-                    jobPrice   : {$first: '$jobPrice'},
-                    totalWorked: {$sum: '$tCards.worked'},
-                    tCards     : {$push: '$tCards'}
+                    _id          : '$_id',
+                    name         : {$first: '$name'},
+                    invoice      : {$first: '$invoice'},
+                    type         : {$first: '$type'},
+                    quotation    : {$first: '$quotation'},
+                    workflow     : {$first: '$workflow'},
+                    cost         : {$first: '$cost'},
+                    jobPrice     : {$first: '$jobPrice'},
+                    totalWorked  : {$sum: '$tCards.worked'},
+                    tCards       : {$push: '$tCards'},
+                    tCardMinDate : {$first: '$tCards'},
+                    tCardMaxDate : {$last: '$tCards'}
                 }
             }, {
                 $unwind: {
@@ -1346,11 +1358,12 @@ var Module = function (models, event) {
                         employee  : '$tCards.employee',
                         department: '$tCards.department'
                     },
-
                     tCardDateByWeek: {$last: '$tCards.dateByWeek'},
                     name           : {$first: '$name'},
                     invoice        : {$first: '$invoice'},
                     type           : {$first: '$type'},
+                    tCardMinDate   : {$first: '$tCardMinDate'},
+                    tCardMaxDate   : {$last: '$tCardMaxDate'},
                     quotation      : {$first: '$quotation'},
                     workflow       : {$first: '$workflow'},
                     cost           : {$first: '$cost'},
@@ -1367,7 +1380,8 @@ var Module = function (models, event) {
                     workflow : 1,
                     cost     : 1,
                     jobPrice : 1,
-
+                    tCardMinDate  : 1,
+                    tCardMaxDate  : 1,
                     totalWorked: {
                         $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
                     },
@@ -1383,6 +1397,8 @@ var Module = function (models, event) {
                     quotation      : 1,
                     workflow       : 1,
                     cost           : 1,
+                    tCardMinDate   : 1,
+                    tCardMaxDate   : 1,
                     jobPrice       : 1,
                     totalWorked    : 1,
                     worked         : 1,
@@ -1412,12 +1428,21 @@ var Module = function (models, event) {
                     workflow       : 1,
                     cost           : 1,
                     jobPrice       : 1,
+                    tCardMinDate  : 1,
+                    tCardMaxDate  : 1,
                     totalWorked    : 1,
                     worked         : 1,
                     revenue        : 1,
                     tCardDateByWeek: 1,
                     employee       : {$arrayElemAt: ['$employee', 0]},
                     department     : {$arrayElemAt: ['$department', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : 'employee._id',
+                    foreignField: 'employee',
+                    as          : 'employee.transfer'
                 }
             }, {
                 $project: {
@@ -1429,6 +1454,8 @@ var Module = function (models, event) {
                     cost       : 1,
                     jobPrice   : 1,
                     totalWorked: 1,
+                    tCardMinDate  : 1,
+                    tCardMaxDate  : 1,
                     worked     : 1,
                     revenue    : 1,
                     employee   : 1,
@@ -1461,6 +1488,8 @@ var Module = function (models, event) {
                     workflow   : {$first: '$workflow'},
                     cost       : {$first: '$cost'},
                     jobPrice   : {$first: '$jobPrice'},
+                    tCardMinDate  : {$first: '$tCardMinDate'},
+                    tCardMaxDate  : {$first: '$tCardMaxDate'},
                     worked     : {$first: '$worked'},
                     totalWorked: {$first: '$totalWorked'},
                     revenue    : {$first: '$revenue'},
@@ -1483,6 +1512,8 @@ var Module = function (models, event) {
                     quotation  : 1,
                     workflow   : 1,
                     cost       : 1,
+                    tCardMinDate  : 1,
+                    tCardMaxDate  : 1,
                     jobPrice   : 1,
                     totalWorked: 1,
                     worked     : 1,
@@ -1500,6 +1531,8 @@ var Module = function (models, event) {
                     quotation   : {$first: '$quotation'},
                     workflow    : {$first: '$workflow'},
                     cost        : {$first: '$cost'},
+                    tCardMinDate  : {$first: '$tCardMinDate'},
+                    tCardMaxDate  : {$first: '$tCardMaxDate'},
                     jobPrice    : {$first: '$jobPrice'},
                     totalWorked : {$sum: '$worked'},
                     totalRevenue: {$sum: '$revenue'},
@@ -1526,6 +1559,8 @@ var Module = function (models, event) {
                     quotation   : 1,
                     workflow    : 1,
                     cost        : 1,
+                    tCardMinDate  : 1,
+                    tCardMaxDate  : 1,
                     jobPrice    : 1,
                     totalWorked : 1,
                     worked      : 1,
@@ -1562,6 +1597,8 @@ var Module = function (models, event) {
                     revenue     : '$root.revenue',
                     totalRevenue: '$root.totalRevenue',
                     profit      : '$root.profit',
+                    tCardMinDate  : '$root.tCardMinDate',
+                    tCardMaxDate  :'$root.tCardMaxDate',
                     revenueTotal: 1,
                     profitTotal : 1,
                     costTotal   : 1,

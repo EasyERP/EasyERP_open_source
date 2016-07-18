@@ -759,6 +759,10 @@ var Module = function (models, event) {
 
             if (resp._type !== 'Proforma') {
                 setWorkflow = function (callback) {
+
+                    journalEntryComposer(resp, req.session.lastDb, function () {
+                    }, req.session.uId);
+
                     var request = {
                         query: {
                             wId   : 'Proforma',
@@ -767,9 +771,6 @@ var Module = function (models, event) {
 
                         session: req.session
                     };
-
-                    journalEntryComposer(resp, req.session.lastDb, function () {
-                    }, req.session.uId);
 
                     workflowHandler.getFirstForConvert(request, function (err, workflow) {
                         Invoice.update({
@@ -2312,7 +2313,7 @@ var Module = function (models, event) {
             } else if (contentType === 'DividendInvoice') {
                 optionsObject.$and.push({_type: 'dividendInvoice'});
             } else {
-                optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
+                optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}, {_type: {$ne: 'writeOff'}}]});
             }
 
             Invoice

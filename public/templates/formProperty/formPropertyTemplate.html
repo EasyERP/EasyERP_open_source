@@ -5,9 +5,16 @@
         </div>
     <%if (property) {%>
     <div>
+
+        <div class="propertyBox">
+            <span><%=property.fullName%></span>
+                <a href="javascript:;"><%=property.website%></a>
+
+            <a  href="javascript:;" class="btn" title="Remove <%=type%>" id="removeProperty">X</a>
+        </div>
         <dl class="person-info">
             <dt>Name </dt>
-            <dd data-id="name" class="editable"><%=property.fullName%></dd>
+            <dd data-id="name_first" class="editable"><%=property.fullName%></dd>
 
             <dt>Address</dt>
             <dt>Street :</dt>
@@ -25,17 +32,11 @@
             <dt>Email:</dt>
             <dd class="editable"><%=property.email%></dd>
         </dl>
-        <a class="btn" title="Show More Info" href="<%='/#easyErp/' + urlType + '/form/'+ property._id%> " id="showMoreButton">Show More Info</a>
-        <div class="btnBlock">
-
-            <a href="javascript:;" class=" btn btnRounded saveBtn">Save</a>
-
-            <a href="javascript:;" class=" btn btnRounded cancelBtn">Cancel</a>
-        </div>
+        <a class="btn" title="View All Properties" href="<%='/#easyErp/' + urlType + '/form/'+ property._id%> " id="showMoreButton">View All Properties</a>
 
     </div>
     <%} else {%>
-        <a class="btn" title="Add <%=type%>" id="add<%=type%>">Add <%=type%></a>
+        <a class="btn" title="Add <%=type%>" id="addProperty">Add <%=type%></a>
     <%}%>
 
 

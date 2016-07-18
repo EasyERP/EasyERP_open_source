@@ -19,14 +19,12 @@
                     </div>
                     <dl class="person-info">
                         <dt>Assigned To</dt>
-                        <dd><a  class="current-selected" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a></dd>
+                        <dd><a  class="current-selected"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a></dd>
                         <dt>Next Action</dt>
                         <dd><span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
                         </dd>
                         <dt>Status</dt>
                         <dd><span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span></dd>
-                        <dt>Company</dt>
-                        <dd><a  class="current-selected" id="customerDd" data-id="customer"><%=(customer) ? customer.name.first + ' ' + customer.name.last : 'Select'%></a></dd>
                     </dl>
                 </div>
                 <div id="companyHolder"></div>
@@ -37,10 +35,6 @@
                 <div class="notes">
                 </div>
             </div>
-
-            <!--<dl class="person-info">-->
-            <!--</dl>-->
-            <!--</div>-->
         </div>
 
     </form>

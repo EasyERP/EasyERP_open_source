@@ -37,6 +37,7 @@ define([
             topBarView.bind('copyRow', contentView.copyRow, contentView);
             topBarView.bind('pay', contentView.newPayment, contentView);
             topBarView.bind('changeDateRange', contentView.changeDateRange, contentView);
+            topBarView.bind('recountAllEvent', contentView.recountAll, contentView);
         }
     };
 });

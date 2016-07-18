@@ -7,6 +7,7 @@
     'text!templates/Opportunities/editSelectTemplate.html',
     'text!templates/history.html',
     'views/Notes/NoteView',
+    'views/Tags/TagView',
     'common',
     'custom',
     'populate',
@@ -21,6 +22,7 @@
              editSelectTemplate,
              historyTemplate,
              noteView,
+             TagView,
              common,
              custom,
              populate,
@@ -44,6 +46,7 @@
 
             _.bindAll(this, 'render', 'saveItem', 'deleteItem');
             this.currentModel = options.model;
+            this.currentModel.on('change:tags', this.renderTags, this);
             this.currentModel.urlRoot = CONSTANTS.URLS.OPPORTUNITIES;
             this.responseObj = {};
             this.elementId = options.elementId || null;
@@ -170,6 +173,10 @@
 
                 address[el.attr('name')] = el.val();
             });
+            var objectTags = this.currentModel.get('tags');
+            var tags = objectTags.map(function (elem){
+                return elem._id;
+            });
 
             this.$el.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -231,6 +238,7 @@
             }
 
             this.currentModel.set(data);
+            this.currentModel.changed.tags = tags;
             this.currentModel.save(this.currentModel.changed, {
                 headers: {
                     mid: mid
@@ -287,6 +295,12 @@
                                 expectedRevenueHolder.removeClass('dollar');
                             }
 
+                            kanbanHolder.find('.tags').empty();
+                            if (objectTags.length) {
+                                objectTags.forEach(function (elem) {
+                                    kanbanHolder.find('.tags').append('<span class="left" data-id="' + elem._id + '" data-color="' + elem.color + '">' + elem.name + '</span>')
+                                });
+                            }
                             kanbanHolder.find('.opportunity-content p.right').text(nextAction.date);
 
                             if (customerId) {
@@ -404,6 +418,18 @@
             }
         },
 
+        renderTags : function (){
+            var notDiv = this.$el.find('.tags-container');
+            notDiv.empty();
+
+            notDiv.append(
+                new TagView({
+                    model      : this.currentModel,
+                    contentType: 'Opportunities'
+                }).render().el
+            );
+        },
+
         renderHistory: function () {
             var self = this;
             var historyString;
@@ -445,6 +471,8 @@
                 }
             });
 
+            this.renderTags();
+
             notDiv = this.$el.find('.attach-container');
 
             notDiv.append(
@@ -453,6 +481,8 @@
                     contentType: 'Opportunities'
                 }).render().el
             );
+
+
 
             this.renderAssignees(this.currentModel);
 

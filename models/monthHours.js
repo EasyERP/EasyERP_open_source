@@ -12,6 +12,7 @@ module.exports = (function () {
         idleBudget        : {type: Number, default: 0},
         vacationBudget    : {type: Number, default: 0},
         adminBudget       : {type: Number, default: 0},
+        marketingBudget   : {type: Number, default: 0},
         adminSalaryBudget : {type: Number, default: 0},
         estimatedHours    : {type: Number, default: 0},
         actualHours       : {type: Number, default: 0},

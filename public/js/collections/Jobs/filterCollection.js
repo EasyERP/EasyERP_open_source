@@ -2,8 +2,9 @@ define([
     'Backbone',
     'models/jobsModel',
     'collections/parent',
-    'constants'
-], function (Backbone, JobsModel, Parent, CONSTANTS) {
+    'constants',
+    'moment'
+], function (Backbone, JobsModel, Parent, CONSTANTS, moment) {
     'use strict';
 
     var JobsCollection = Parent.extend({
@@ -37,6 +38,38 @@ define([
             }
 
             this.getFirstPage(options);
+        },
+
+        parse: function (response) {
+            var jobs = response;
+
+            _.map(jobs, function (job) {
+                var i;
+                var minDate = job.tCardMinDate;
+                var maxDate = job.tCardMaxDate;
+
+                if (minDate) {
+                    for (i = 1; i <= 7; i++) {
+                        if ((typeof minDate[i] === 'number') && minDate[i] !== 0) {
+                            job.tCardMinDate = moment().year(minDate.year).week(minDate.week).isoWeekday(i).format('D/M/YYYY');
+                            break;
+                        }
+                    }
+                }
+                if (maxDate) {
+                    for (i = 7; i >= 1; i--) {
+                        if ((typeof maxDate[i] === 'number') && maxDate[i] !== 0) {
+                            job.tCardMaxDate = moment().year(maxDate.year).week(maxDate.week).isoWeekday(i).format('D/M/YYYY');
+                            break;
+                        }
+                    }
+                }
+
+                return job;
+            });
+
+            return Parent.prototype.parse.call(this, response);
+
         }
     });
 

@@ -13,33 +13,42 @@
     </div>
     <div class="opportunity-content">
         <div class="half-block left">
-            <p class="left"><%=(model.customer) && (model.customer.name) ? model.customer.name.first + ' ' +
+            <p class="opportunity-date"></p>
+            <p class="left customerName"><%=(model.customer) && (model.customer.name) ? model.customer.name.first + ' ' +
                 model.customer.name.last : ''%></p>
-
-            <p class="left"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
-                ''%></p>
             <%if (model.nextAction&&model.nextAction.desc){%>
             <br/>
 
-            <p class="left" style="text-align:left;"><%=model.nextAction?model.nextAction.desc:''%> </p>
+            <p class="left"><%=model.nextAction?model.nextAction.desc:''%> </p>
             <%}%>
 
-            <p class="left">Project Type</p>
-
-            <p class="left"><i class="fa fa-comment-o" aria-hidden="true"></i><span> </span></p>
+          <!--  <p class="left">Project Type</p>-->
+            <p class="left saleName"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
+                ''%></p>
         </div>
         <div class="half-block right">
-            <%if (model.nextAction&&model.nextAction.desc){%>
-            <%}%>
-            <p class="right" style="text-align:right;"> <%=model.nextAction?model.nextAction.date:''%></p>
+            <p class="right projectType" style="text-align:right;"> <%=model.nextAction?model.nextAction.date:''%></p>
 
-            <p class="right"><a data-id="<%=model.projectType?model.projectType:''%>"
+          <!--  <p class="right"><a data-id="<%=model.projectType?model.projectType:''%>"
                                 class="current-selected" href="javascript:;"><%=model.projectType?
-                model.projectType:'Select'%></a></p>
-            <p class="right">
-                <i class="fa fa-paperclip" aria-hidden="true"></i><span> </span></p>
+                model.projectType:'Select'%></a></p>-->
+            <span class="right commentWrap <%=model.notes.length ? '' : 'hidden' %>">
+                <i class="fa fa-comment-o" aria-hidden="true"></i>
+                <span> <%= model.notes.length %></span>
+            </span>
+            <span class="right attachmentWrap <%=model.attachments.length ? '' : 'hidden' %>">
+                <i class="fa fa-paperclip" aria-hidden="true"></i>
+                <span> <%= model.attachments.length %> </span>
+            </span>
         </div>
-
         <div class="clearfix"></div>
+    </div>
+
+    <div class="tags">
+        <%if (model.tags ){%>
+        <%model.tags.forEach(function(elem ){%>
+        <span class="left" data-id="<%=elem._id%>" data-color="<%=elem.color%>"><%=elem.name%> </span>
+        <%})%>
+        <%}%>
     </div>
 </div>

@@ -1,0 +1,8 @@
+<ul>
+    <% collection.forEach(function(item){ %>
+    <li  data-id="<%= item._id %>"  >
+        <span ><%= item.fullName || ' ' %></span>
+        <span ><%= item.website || ' ' %></span>
+    </li>
+    <% }) %>
+</ul>

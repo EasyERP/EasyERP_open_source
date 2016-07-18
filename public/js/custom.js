@@ -175,6 +175,8 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
+                    case CONTENT_TYPES.CASHBOOK:
+                    case CONTENT_TYPES.CASHTRANSFER:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -239,6 +241,8 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
+                    case CONTENT_TYPES.CASHBOOK:
+                    case CONTENT_TYPES.CASHTRANSFER:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

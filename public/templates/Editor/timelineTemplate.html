@@ -5,19 +5,12 @@
     <% var login = val.user ? (App.currentUser._id === val.user._id) ? 'You': val.user.login : '' %>
     <% var classType = val.task ? 'taskContent' : val.history ? 'historyContent' : 'noteContent' %>
     <div id="<%=val._id%>" class="noteContainer <%=classType%>">
-        <div class="itemCircle">
-            <i class="fa fa-circle-o" aria-hidden="true"></i>
-        </div>
-        <div class="itemCircle">
-            <i class="fa fa-calendar" aria-hidden="true"></i>
-        </div>
-        <div class="itemCircle">
-            <i class="fa fa-usd" aria-hidden="true"></i>
-        </div>
-
         <div class="<%=val.history ? '' : 'contentHolder'%>">
             <div class="noteBody">
                 <%if (val.task){%>
+                <div class="itemCircle">
+                    <i class="fa fa-circle-o" aria-hidden="true"></i>
+                </div>
                 <div class="noteType task noteTopBox clearfix" id="<%= val.task._id%>">
                     <span class="noteUserTitle"><b><%= login %></b> created task</span>
                     <p class="dateNote"><%=val.date%></p>
@@ -25,22 +18,29 @@
                 <div class="noteContent"><a href="javascript:;" ><%=val.task.description  %></a></div>
                 <div class="assignedTo">Assigned To <b><%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></b></div>
                 <%} else if (val.history) {%>
+                <div class="itemCircle">
+                    <i class="fa fa-usd" aria-hidden="true"></i>
+                </div>
                 <div class="history_body">
                     <div class="history_changed singleNote clearfix">
                         <span class="dateNote"><%=val.date%></span>
                         <div class="changed_field">
                             <%if (val.history.prevValue){%>
-                            <span class="changedFieldName"><%= login + ' changed ' + val.history.changedField %></span>
-                            <span>from <%= val.history.prevValue %></span>
+                            <span class="changedFieldName"><b><%= login %></b> changed <b><%= val.history.changedField %></b></span>
+                            <span>from <b><%= val.history.prevValue %></b></span>
                             <span> to </span>
                             <%} else {%>
-                            <span class="changedFieldName"><%=login + ' added ' + val.history.changedField %></span>
+                            <span class="changedFieldName"><b><%= login %></b> added <b><%= val.history.changedField %></b></span>
                             <%}%>
-                            <span><%= val.history.newValue || '' %></span>
+                            <span><b><%= val.history.newValue %></b></span>
                         </div>
                     </div>
                 </div>
                 <%} else {%>
+
+                <div class="itemCircle">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                </div>
                 <div class="noteTopBox clearfix">
                     <span class="noteType"><b><%=login%></b> left a Note</span>
                     <span class="dateNote"><%=val.date%></span>

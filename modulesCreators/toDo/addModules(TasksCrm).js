@@ -15,10 +15,10 @@ var profiles = dbObject.collection('Profile');
 
 function childModule(callback) {
     var module = {
-        _id     : 106,
+        _id     : 108,
         mname   : 'Tasks',
         href    : 'dealTasks',
-        sequence: 106,
+        sequence: 108,
         parrent : 19,
         link    : true,
         visible : true

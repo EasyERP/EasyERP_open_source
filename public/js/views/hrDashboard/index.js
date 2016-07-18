@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'text!templates/hrDashboard/index.html',
@@ -11,7 +12,7 @@ define([
     'moment',
     'common',
     'helpers'
-], function ($, _, mainTemplate, hrDashboard, dataService, CONSTANTS, async, d3, custom, moment, common, helpers) {
+], function (Backbone, $, _, mainTemplate, hrDashboard, dataService, CONSTANTS, async, d3, custom, moment, common, helpers) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -488,14 +489,14 @@ define([
                 d3.selectAll('.dashboard-stat')
                     .data(data)
                     .style('width', '200px')
-                    .style('height', '100px')
+                    .style('height', '127px')
                     .style('float', 'left')
                     .style('margin', '10px')
                     .style('background-color', function (d) {
                         return d.key === 'Employees' ? '#33F' : d.key === 'Hired' ? '#32c5d2' : '#FF3333';
                     })
                     .style('color', 'white')
-                    .style('padding-top', '50px')
+                    .style('padding-top', '35px')
                     .style('text-align', 'center')
                     .style('font-size', '20px')
                     .select('.number')
@@ -554,14 +555,14 @@ define([
                 d3.selectAll('.dashboard-vacation-stat')
                     .data(data)
                     .style('width', '200px')
-                    .style('height', '100px')
+                    .style('height', '127px')
                     .style('float', 'left')
                     .style('margin', '10px')
                     .style('background-color', function (d) {
                         return d.key === 'vacation' ? '#33F' : d.key === 'personal' ? '#32c5d2' : d.key === 'education' ? '#8E44AD' : '#FF3333';
                     })
                     .style('color', 'white')
-                    .style('padding-top', '50px')
+                    .style('padding-top', '35px')
                     .style('text-align', 'center')
                     .select('.number')
                     .append('span')
@@ -618,14 +619,14 @@ define([
                 d3.selectAll('.dashboard-hours-stat')
                     .data(data)
                     .style('width', '200px')
-                    .style('height', '100px')
+                    .style('height', '127px')
                     .style('float', 'left')
                     .style('margin', '10px')
                     .style('background-color', function (d) {
                         return d.key === 'total' ? '#33F' : d.key === 'actual' ? '#32c5d2' : d.key === 'idle' ? '#8E44AD' : '#FF3333';
                     })
                     .style('color', 'white')
-                    .style('padding-top', '50px')
+                    .style('padding-top', '35px')
                     .style('text-align', 'center')
                     .select('.number')
                     .append('span')
@@ -780,6 +781,7 @@ define([
             var dataLength;
             var $wrapper;
             var margin;
+            var yLabels;
             var xScale;
             var yScale;
             var height;
@@ -813,8 +815,12 @@ define([
                     '<$250'     : []
                 };
 
-                for (i = dataLength; i--;) {
+                yLabels = ['>=$2250', '$2250-2000', '$2000-1750', '$1750-1500', '$1500-1750',
+                    '$1250-1500', '$1000-1250', '$750-1000', '$500-750', '$250-500', '<$250'];
 
+            for (i = dataLength; i--;) {
+
+                if (data[i] >= 1500) {
                     if (data[i] >= 2250) {
                         globalSalary['>=$2250'].push(data[i]);
                     } else if (data[i] < 2250 && data[i] >= 2000) {
@@ -823,7 +829,9 @@ define([
                         globalSalary['$2000-1750'].push(data[i]);
                     } else if (data[i] < 1750 && data[i] >= 1500) {
                         globalSalary['$1750-1500'].push(data[i]);
-                    } else if (data[i] < 1500 && data[i] >= 1250) {
+                    }
+                } else if (data[i] < 1500) {
+                    if (data[i] < 1500 && data[i] >= 1250) {
                         globalSalary['$1250-1500'].push(data[i]);
                     } else if (data[i] < 1250 && data[i] >= 1000) {
                         globalSalary['$1000-1250'].push(data[i]);
@@ -837,8 +845,9 @@ define([
                         globalSalary['<$250'].push(data[i]);
                     }
                 }
+            }
 
-                $wrapper = $('#wrapper');
+                $wrapper = $('#content-holder');
                 keys = Object.keys(globalSalary);
                 margin = {top: 20, right: 160, bottom: 30, left: 10};
                 width = ($wrapper.width() - margin.right) / 2;
@@ -869,9 +878,9 @@ define([
                     .tickSize(0)
                     .tickPadding(offset)
                     .tickFormat(function (d, i) {
-                        return keys[i];
+                        return yLabels[i];
                     })
-                    .tickValues(d3.range(keys.length));
+                    .tickValues(d3.range(yLabels.length));
 
                 chart = d3.select('.salaryChart')
                     .attr({
@@ -883,13 +892,11 @@ define([
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
                 chart.selectAll('rect')
-                    .data(keys)
+                    .data(yLabels)
                     .enter()
                     .append('rect')
                     .attr({
-                        x     : function () {
-                            return 0;
-                        },
+                        x     : 0,
                         y     : function (d, i) {
                             return yScale(i);
                         },
@@ -928,8 +935,6 @@ define([
             var padding = 15;
             var salary = [];
             var offset = 4;
-            var globalSalary;
-            var dataLength;
             var $wrapper;
             var margin;
             var xScale;
@@ -941,14 +946,12 @@ define([
             var chart;
             var rect;
             var max;
-            var j;
             var i;
+
             common.getSalaryByDepartment({
                 month: this.month,
                 year : this.year
             }, function (data) {
-
-                data = data.data;
 
                 for (i = data.length; i--;) {
                     salary[i] = {
@@ -961,7 +964,7 @@ define([
                             return d.salary;
                         }) / 1000) * 1000;
 
-                $wrapper = $('#wrapper');
+                $wrapper = $('#content-holder');
                 margin = {top: 20, right: 160, bottom: 30, left: 10};
                 width = ($wrapper.width() - margin.right) / 2;
                 height = salary.length * 30;

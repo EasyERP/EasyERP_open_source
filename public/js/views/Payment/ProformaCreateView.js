@@ -2,6 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/dialogViewBase',
     'text!templates/Payment/ProformaCreateTemplate.html',
     'collections/Persons/PersonsCollection',
     'collections/Departments/DepartmentsCollection',
@@ -18,6 +19,7 @@ define([
 ], function (Backbone,
              $,
              _,
+             Parent,
              CreateTemplate,
              PersonCollection,
              DepartmentCollection,
@@ -31,7 +33,7 @@ define([
              CONSTANTS,
              keyValidator,
              helpers) {
-    var CreateView = Backbone.View.extend({
+    var CreateView = Parent.extend({
         el         : '#paymentHolder',
         contentType: 'Payment',
         template   : _.template(CreateTemplate),
@@ -63,22 +65,8 @@ define([
         },
 
         events: {
-            keypress                                                          : 'keypressHandler',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'keyup #paidAmount'                                               : 'changePaidAmount',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
-        },
-
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
-
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
+            keypress           : 'keypressHandler',
+            'keyup #paidAmount': 'changePaidAmount'
         },
 
         changePaidAmount: function (e) {
@@ -117,23 +105,52 @@ define([
             App.stopPreload();
         },
 
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },
-
-        notHide: function () {
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-        },
-
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            var self = this;
+            var target = $(e.target);
+            var targetElement = target.closest('a');
+            var attr = targetElement.attr('id');
+            var newCurrency = target.attr('id');
+            var paymentMethods;
+            var el;
 
-            this.changePaidAmount();
+            if (attr === 'paymentMethod') {
+
+                paymentMethods = self.responseObj['#paymentMethod'];
+
+                el = _.find(paymentMethods, function (item) {
+                    return item._id === newCurrency;
+                });
+
+                if (el && el.chartAccount && el.chartAccount._id) {
+                    dataService.getData('/journals/getByAccount', {
+                        transaction : 'Payment',
+                        debitAccount: el.chartAccount._id
+                    }, function (resp) {
+                        self.responseObj['#journal'] = resp.data || [];
+
+                        self.$el.find('#journalDiv').show();
+
+                        if (resp.data && resp.data.length) {
+                            (self.$el.find('#journal').text(resp.data[0].name)).attr('data-id', resp.data[0]._id);
+                        } else {
+                            (self.$el.find('#journal').text('Select')).attr('data-id', null);
+                            self.$el.find('#journal').addClass('errorContent');
+                        }
+
+                    });
+                } else {
+                    (self.$el.find('#journal').text('Select')).attr('data-id', null);
+                }
+
+                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+                this.changePaidAmount();
+            } else {
+                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+                this.changePaidAmount();
+            }
         },
 
         keypressHandler: function (e) {
@@ -160,6 +177,7 @@ define([
             var date = thisEl.find('#paymentDate').val();
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
+            var journal = thisEl.find('#journal').attr('data-id');
             var currency = {
                 _id : thisEl.find('#currencyDd').attr('data-id'),
                 name: $.trim(thisEl.find('#currencyDd').text())
@@ -180,7 +198,8 @@ define([
                 paidAmount      : paidAmount,
                 currency        : currency,
                 differenceAmount: this.differenceAmount,
-                proforma        : this.proforma
+                proforma        : this.proforma,
+                journal         : journal
             };
 
             if (supplier) {
@@ -249,8 +268,10 @@ define([
 
             populate.get2name('#supplierDd', '/supplier', {}, this, false, true);
             populate.get('#period', '/period', {}, 'name', this, true, true);
-            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, null, null, 2);
+            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, null);
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
+
+            this.$el.find('#journalDiv').hide();
 
             this.$el.find('#paymentDate').datepicker({
                 dateFormat : 'd M, yy',
