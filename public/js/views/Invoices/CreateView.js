@@ -205,7 +205,6 @@ define([
                     headers: {
                         mid: mid
                     },
-                    wait   : true,
                     success: function (savedModel) {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
@@ -251,7 +250,6 @@ define([
             var invoiceItemContainer;
             var paymentContainer;
             var $notDiv;
-            var needNotes = false;
             var invoiceDate;
 
             this.$el = $(formString).dialog({
@@ -280,10 +278,6 @@ define([
 
             });
 
-            if (!this.model.approved) {
-                needNotes = true;
-            }
-
             this.renderAssignees(this.model);
 
             this.createProductView();
@@ -305,11 +299,6 @@ define([
                 isCreate   : true
             });
             $notDiv.append(this.attachView.render().el);
-
-            if (this.model.approved) {
-                self.$el.find('.input-file').remove();
-                self.$el.find('a.deleteAttach').remove();
-            }
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
