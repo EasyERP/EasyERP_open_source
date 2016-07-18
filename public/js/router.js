@@ -1097,10 +1097,12 @@ define([
                             actionType: 'Content',
                             collection: collection
                         });
+
                         contentview = new contentView({
                             collection: collection,
                             startTime : startTime,
-                            filter    : filter
+                            filter    : filter,
+                            modelId   : modelId
                         });
 
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);

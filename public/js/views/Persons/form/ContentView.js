@@ -4,12 +4,15 @@ define([
     'views/listViewBase',
     'text!templates/Persons/form/ContentTemplate.html',
     'text!templates/Persons/form/ListItemTemplate.html',
+    'models/PersonsModel',
+    'views/Persons/form/FormView',
     'views/Persons/CreateView',
     'views/Persons/list/ListItemView',
     'views/Filter/filterView',
     'common',
-    'constants'
-], function ($, _, ListViewBase, ContentTemplate, ListItemTemplate, CreateView, ListItemView, FilterView, common, CONSTANTS) {
+    'constants',
+    'dataService'
+], function ($, _, ListViewBase, ContentTemplate, ListItemTemplate, PersonsModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS, dataService) {
     'use strict';
 
     var PersonsListView = ListViewBase.extend({
@@ -26,12 +29,15 @@ define([
         letterKey      : 'name.first',
         hasPagination  : true,
         hasAlphabet    : true,
+        formView       : null,
 
         events: {
-            'click .letter:not(.empty)': 'alpabeticalRender'
+            'click .compactView': 'renderFormView'
         },
 
         initialize: function (options) {
+            var modelId = options.modelId;
+
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -43,6 +49,44 @@ define([
             this.page = options.collection.currentPage;
 
             ListViewBase.prototype.initialize.call(this, options);
+
+            this.renderFormView(modelId);
+        },
+
+
+        renderFormView: function (e) {
+            var $target;
+            var modelId;
+            var model;
+            var self = this;
+
+            if (e.hasOwnProperty('target')) {
+                $target = $(e.target);
+                modelId = $target.closest('.compactView').data('id');
+
+            } else {
+                modelId = e;
+            }
+
+            model = new PersonsModel();
+
+            model.urlRoot = model.url() + modelId;
+
+            model.fetch({
+                success: function (model) {
+
+                    if (self.formView) {
+                        self.formView.undelegateEvents();
+                    }
+
+                    self.formView = new FormView({model: model, el: '#formContent'});
+                    self.formView.render();
+                },
+
+                error: function () {
+
+                }
+            });
         },
 
         render: function () {
