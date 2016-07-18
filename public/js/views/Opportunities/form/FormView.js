@@ -172,7 +172,7 @@ define([
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
-                    } else if (type === 'timeLine') {
+                    } else {
                         self.noteView.renderTimeline();
                     }
                 },

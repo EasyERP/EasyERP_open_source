@@ -19,7 +19,9 @@ define([
             var self = this;
             var CurrentCollection;
 
-            if (this.type === 'Companies') {
+            this.type = options.type;
+
+            if (this.type === 'Company') {
                 CurrentCollection = companyCollection;
             } else {
                 CurrentCollection = personCollection;
@@ -117,10 +119,9 @@ define([
         render: function () {
             var modelObj = this.model.toJSON();
             var self = this;
-            var type = (this.type === 'Companies') ? 'Company' : 'Person';
 
             var formString = this.template({
-                type : type
+                type : this.type
             });
 
             this.$el = $(formString).dialog({
