@@ -2956,6 +2956,12 @@ input:not([type="checkbox"]).inputBordered:focus {
     left: 20px;
   }
 }
+.opportunity-date:after {
+  content: 'Due';
+}
+.errorContent .opportunity-date:after {
+  content: 'OverDue';
+}
 .mainLogo {
   color: #fff;
 }

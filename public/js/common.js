@@ -555,7 +555,8 @@
     var getLeads = function(filter, callback){
         dataService.getData('/leads', {
             startDay: filter.startDay,
-            endDay: filter.endDay
+            endDay: filter.endDay,
+            stage: filter.stage
         }, function (response) {
             callback(response);
         });

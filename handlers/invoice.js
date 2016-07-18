@@ -772,9 +772,6 @@ var Module = function (models, event) {
                         session: req.session
                     };
 
-                    journalEntryComposer(resp, req.session.lastDb, function () {
-                    }, req.session.uId);
-
                     workflowHandler.getFirstForConvert(request, function (err, workflow) {
                         Invoice.update({
                             sourceDocument: objectId(resp.sourceDocument),
