@@ -3143,7 +3143,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   top: 0;
   left: 25px;
   width: 1px;
-  height: calc(127%);
+  height: calc(100% + 27px);
   background: #c8c8d3;
 }
 .noteContainer:first-child:before {
@@ -3173,8 +3173,9 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .noteContainer .noteBody {
   padding: 0 0 17px !important;
-  border: 1px solid #c8c8d3 !important;
   border-radius: 3px;
+  border: 1px solid #c8c8d3 !important;
+  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 .noteContainer .noteBtnBlock {
   border: none;

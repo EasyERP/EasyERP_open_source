@@ -12,7 +12,7 @@
     top: 0;
     left: 25px;
     width: 1px;
-    height: calc(100% + 27px);
+    height: calc(~"100% + 27px");
     background: @lightgrey;
   }
 
@@ -51,8 +51,9 @@
 
   .noteBody {
     padding: 0 0 17px !important;
-    border: 1px solid @lightgrey !important;
     border-radius: 3px;
+    border: 1px solid @lightgrey !important;
+    box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05);
   }
 
   .noteBtnBlock {
