@@ -3152,6 +3152,10 @@ input:not([type="checkbox"]).inputBordered:focus {
 .noteContainer:last-child:before {
   height: 25px;
 }
+.noteContainer .noteTopBox {
+  padding: 10px 15px;
+  border-bottom: 1px solid #c8c8d3;
+}
 .noteContainer .itemCircle {
   position: absolute;
   left: 9px;
@@ -3168,11 +3172,31 @@ input:not([type="checkbox"]).inputBordered:focus {
   z-index: 10;
 }
 .noteContainer .noteBody {
-  padding: 17px 10px !important;
+  padding: 0 0 17px !important;
+  border: 1px solid #c8c8d3 !important;
+  border-radius: 3px;
+}
+.noteContainer .noteBtnBlock {
+  border: none;
+}
+.noteContainer .showButtons .noteBtnBlock {
+  border: 1px solid #c8c8d3 !important;
 }
 .noteContainer .noteText,
-.noteContainer .noteContent {
-  padding: 10px 0 0;
+.noteContainer .noteContent,
+.noteContainer .changed_field,
+.noteContainer .assignedTo {
+  padding: 10px 15px 0;
+}
+.noteContainer .dateNote {
+  line-height: 14px;
+  min-height: 15px;
+}
+.noteContainer .singleNote {
+  padding: 7px 15px 0 0;
+}
+.noteContainer .singleNote .dateNote {
+  padding-top: 14px;
 }
 .noteContainer .noteText:last-child {
   margin-bottom: 0 !important;

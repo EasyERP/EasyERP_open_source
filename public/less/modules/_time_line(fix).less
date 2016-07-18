@@ -28,6 +28,11 @@
     }
   }
 
+  .noteTopBox {
+    padding: 10px 15px;
+    border-bottom: 1px solid @lightgrey;
+  }
+
   .itemCircle {
     position: absolute;
     left: 9px;
@@ -45,12 +50,39 @@
   }
 
   .noteBody {
-    padding: 17px 10px !important;
+    padding: 0 0 17px !important;
+    border: 1px solid @lightgrey !important;
+    border-radius: 3px;
+  }
+
+  .noteBtnBlock {
+    border: none;
+  }
+
+  .showButtons {
+    .noteBtnBlock {
+      border: 1px solid @lightgrey !important;
+    }
   }
 
   .noteText,
-  .noteContent {
-    padding: 10px 0 0;
+  .noteContent,
+  .changed_field,
+  .assignedTo {
+    padding: 10px 15px 0;
+  }
+
+  .dateNote {
+    line-height: 14px;
+    min-height: 15px;
+  }
+
+  .singleNote {
+    padding: 7px 15px 0 0;
+
+    .dateNote {
+      padding-top: 14px;
+    }
   }
 
   .noteText {
