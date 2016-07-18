@@ -22,7 +22,11 @@
 
     <% } %>
     <td data-name="quantity">
-        <input id="quantity" class="quantity statusInfo" maxlength="9" size=10 type="text" />
+        <% if (!quotations){ %>
+        <input id="quantity" class="quantity statusInfo" maxlength="9" size=10 type="text"/>
+        <% }else { %>
+        <span>1</span>
+        <% } %>
     </td>
     <% if (!writeOff){
         var currencyClassVal;

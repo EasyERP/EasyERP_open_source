@@ -90,6 +90,12 @@ define([
                 this.writeOff = options.writeOff;
             }
 
+            if (options && options.quotations) {
+                this.quotations = options.quotations;
+            } else {
+                this.quotations = false;
+            }
+
             this.forSales = options.service;
             this.notPayed = options.notPayed;
 
@@ -262,7 +268,8 @@ define([
                         products     : products,
                         currencyClass: helpers.currencyClass,
                         currency     : currency,
-                        writeOff     : self.writeOff
+                        writeOff     : self.writeOff,
+                        quotations: self.quotations
                     }));
                 }
                 $($trEll[$trEll.length - 1]).after(templ({
@@ -270,7 +277,8 @@ define([
                     products     : products,
                     currencyClass: helpers.currencyClass,
                     currency     : currency,
-                    writeOff     : self.writeOff
+                    writeOff     : self.writeOff,
+                    quotations: self.quotations
                 }));
             }
 
@@ -571,7 +579,8 @@ define([
                         forSales        : self.forSales,
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass,
-                        currency        : currency
+                        currency        : currency,
+                        quotations: self.quotations
                     }));
                     totalAmountContainer = $thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {

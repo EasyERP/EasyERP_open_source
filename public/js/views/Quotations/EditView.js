@@ -618,7 +618,8 @@ define([
                 new ProductItemView({
                     editable: true,
                     canBeSold: true,
-                    service: service
+                    service: service,
+                    quotations: true
                 }).render({model: model}).el
             );
 

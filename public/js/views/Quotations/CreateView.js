@@ -277,11 +277,11 @@ define([
             
             if (this.forSales) {
                 productItemContainer.append(
-                    new ProductItemView({canBeSold: true, service: true}).render().el
+                    new ProductItemView({canBeSold: true, service: true, quotations: true}).render().el
                 );
             } else {
                 productItemContainer.append(
-                    new ProductItemView({canBeSold: false}).render().el
+                    new ProductItemView({canBeSold: false, quotations: true}).render().el
                 );
             }
         },
