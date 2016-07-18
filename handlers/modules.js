@@ -220,6 +220,7 @@ var Module = function (models) {
                 if (err) {
                     return waterFallCb(err);
                 }
+                
                 if (!mod) {
                     err = new Error('Bad request');
                     err.status = 400;
