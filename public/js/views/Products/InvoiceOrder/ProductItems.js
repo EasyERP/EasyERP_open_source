@@ -51,7 +51,8 @@ define([
             'click #editSpan'                                                         : 'editClick',
             'click .fa-trash-o'                                                       : 'deleteRow',
             'keyup td[data-name=price],td[data-name=quantity] input'                  : 'priceChange',
-            'keypress  .forNum'                                                       : 'keypressHandler'
+            'keypress  .forNum'                                                       : 'keypressHandler',
+            'click .productItem'                                                      : 'renderMessage'
         },
 
         template: _.template(productItemTemplate),
@@ -105,6 +106,18 @@ define([
             }, this);
 
             this.priceChange = _.debounce(this.priceChange, 250);
+        },
+
+        renderMessage: function (e) {
+            var $target = $(e.target);
+            var $tr = $target.closest('tr');
+
+            if ($tr.attr('data-error')) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, choose product first'
+                });
+            }
         },
 
         generateJob: function () {
@@ -257,13 +270,18 @@ define([
 
             if (rowId === undefined || /* rowId !== 'false'*/ !hasError) {
                 if (!$trEll.length) {
-                    return $parrent.prepend(templ({
+                    $parrent.prepend(templ({
                         forSales     : self.forSales,
                         products     : products,
                         currencyClass: helpers.currencyClass,
                         currency     : currency,
                         writeOff     : self.writeOff
                     }));
+
+                    this.removeEditableCass($parrent.find('tr.productItem').last());
+
+                    return false;
+
                 }
                 $($trEll[$trEll.length - 1]).after(templ({
                     forSales     : self.forSales,
@@ -272,6 +290,9 @@ define([
                     currency     : currency,
                     writeOff     : self.writeOff
                 }));
+
+                this.removeEditableCass($parrent.find('tr').last());
+
             }
 
             return false;
@@ -424,6 +445,8 @@ define([
 
             $('.newSelectList').remove();
 
+            this.addEditableClass($trEl);
+
             this.calculateTotal(selectedProduct.info.salePrice);
             /* }*/
         },
@@ -464,7 +487,7 @@ define([
 
             $parent = $parent.closest('tr');
 
-            cost = $parent.find('[data-name="price"] input').val() || $parent.find('[data-name="price"]').text() ;
+            cost = $parent.find('[data-name="price"] input').val() || $parent.find('[data-name="price"]').text();
             cost = parseFloat(helpers.spaceReplacer(cost));
 
             total = quantity * cost;
@@ -544,6 +567,16 @@ define([
 
         prevSelect: function (e) {
             this.showProductsSelect(e, true, false);
+        },
+
+        removeEditableCass: function ($tr) {
+            $tr.find('input').attr('readonly', true);
+            $tr.find('textarea').attr('readonly', true);
+        },
+
+        addEditableClass: function ($tr) {
+            $tr.find('input').attr('readonly', false);
+            $tr.find('textarea').attr('readonly', false);
         },
 
         render: function (options) {
