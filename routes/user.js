@@ -377,10 +377,112 @@ module.exports = function (event, models) {
     router.post('/login', handler.login);
     router.post('/forgotPassword', handler.forgotPassword);
     router.post('/current', authStackMiddleware, accessStackMiddleware, handler.putchModel);
+
+    /**
+     *@api {patch} /users/:id Request for partly updating User
+     *
+     * @apiVersion 0.0.1
+     * @apiName updateUser
+     * @apiGroup User
+     *
+     * @apiParam {String} id Unique id of User
+     * @apiParamExample {json} Request-Example:
+     * {
+          "login": "Svatuk"
+        }
+     *
+     * @apiSuccess {Object} UpdatedUser
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "success": {
+                "_id": "560c099da5d4a2e20ba5068b",
+                "profile": 1387275504000,
+                "__v": 0,
+                "lastAccess": "2016-06-13T07:19:42.578Z",
+                "relatedEmployee": null,
+                "savedFilters": [
+
+                ],
+                "kanbanSettings": {
+                  "tasks": {
+                    "foldWorkflows": [
+
+                    ],
+                    "countPerPage": 10
+                  },
+                  "applications": {
+                    "foldWorkflows": [
+
+                    ],
+                    "countPerPage": 10
+                  },
+                  "opportunities": {
+                    "foldWorkflows": [
+
+                    ],
+                    "countPerPage": 10
+                  }
+                },
+                "credentials": {
+                  "access_token": "",
+                  "refresh_token": ""
+                },
+                "pass": "0bf84b7619214e1d2ae629a560c9c2f6ba469cbb6b1e08fef80e424b68879a89",
+                "email": "alex.svatuk@thinkmobiles.com",
+                "login": "Svatuk",
+                "imageSrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
+              }
+            }
+     *
+     */
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
     router.patch('/current/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
 
+
+    /**
+     *@api {delete} /users/:id Request for deleting User
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteUser
+     * @apiGroup User
+     *
+     * @apiParam {String} id Unique id of User
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success":"User remove success"
+     *     }
+     *
+     */
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
+
+    /**
+     *@api {delete} /users/ Request for deleting selected Users
+     *
+     * @apiVersion 0.0.1
+     * @apiName deleteUsers
+     * @apiGroup User
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+          "contentType": "Users",
+          "ids": [
+            "55ba28c8d79a3a3439000016",
+            "55ba2ef1d79a3a343900001c"
+          ]
+       }
+     *
+     * @apiSuccess {Object} Status
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+              "success": true
+           }
+     *
+     */
     router.delete('/', authStackMiddleware, accessStackMiddleware, handler.bulkRemove);
 
     return router;
