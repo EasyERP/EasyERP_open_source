@@ -3578,6 +3578,16 @@ dl.payrollDateBlock dt {
 .treemap_sales {
   position: relative;
 }
+.dashboardGraphicsWrap .halfWidth,
+.dashboardGraphicsWrap .fullWidth {
+  float: left;
+}
+.dashboardGraphicsWrap .halfWidth {
+  width: 50%;
+}
+.dashboardGraphicsWrap .fullWidth {
+  width: 100%;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
@@ -9646,7 +9656,7 @@ table#workflows tr td.edit-status {
 /*----------------------------- Login Form --------------------------------*/
 /*----------------------------- Tabs ------------------------------------*/
 ul.dialog-tabs {
-  height: 35px;
+  min-height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -11313,7 +11323,7 @@ ul.dialog-tabs li.right button {
   display: block;
 }
 ul.dialog-tabs {
-  height: 35px;
+  min-height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -11524,7 +11534,7 @@ ul.dialog-tabs .withEndContract .arrow {
   display: block;
 }
 ul.chart-tabs {
-  height: 35px;
+  min-height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.chart-tabs li {
@@ -14482,9 +14492,6 @@ textarea#editInput {
   stroke: #000000 !important;
 }
 .invoiceChart-legend {
-  position: absolute;
-  top: -28px;
-  left: 0;
   width: 100%;
   text-align: center;
 }
