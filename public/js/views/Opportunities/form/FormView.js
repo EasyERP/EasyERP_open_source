@@ -6,12 +6,15 @@ define([
     'views/Editor/NoteView',
     'views/Editor/AttachView',
     'views/Opportunities/EditView',
+    'views/formProperty/formPropertyView',
+    'models/CompaniesModel',
+    'models/PersonsModel',
     'constants',
     'dataService',
     'populate',
     'constants',
     'views/selectView/selectView'
-], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, constants, dataService, populate, CONSTANTS, SelectView) {
+], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, formProperty, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',
 
@@ -238,6 +241,8 @@ define([
             var formModel = this.formModel.toJSON();
             var self = this;
             var $thisEl = this.$el;
+            var personModel;
+            var companyModel;
 
             $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
 
@@ -247,7 +252,6 @@ define([
                     workflows: self.responseObj.workflows,
                     workflow : formModel.workflow
                 }));
-
             });
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, false, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
@@ -259,6 +263,14 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
+
+            if (formModel.customer){
+                companyModel = new CompanyModel(formModel.customer);
+            }
+
+            $thisEl.find('#companyHolder').html(new formProperty({type : 'Company', model : companyModel, attribute: 'customer'}).render().el);
+
+
             
             this.noteView = new NoteView({
                 model      : this.formModel,

@@ -3,7 +3,8 @@
     <% notes.reverse();%>
     <%_.each(notes, function(val,key){ %>
     <% var login = val.user ? (App.currentUser._id === val.user._id) ? 'You': val.user.login : '' %>
-    <div id="<%=val._id%>" class="noteContainer ">
+    <% var classType = val.task ? 'taskContent' : val.history ? 'historyContent' : 'noteContent' %>
+    <div id="<%=val._id%>" class="noteContainer <%=classType%>">
         <div class="<%=val.history ? '' : 'contentHolder'%>">
             <div class="noteBody">
                 <%if (val.task){%>

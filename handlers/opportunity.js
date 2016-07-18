@@ -2607,8 +2607,8 @@ var Module = function (models, event) {
             });
 
             query
-                .populate('company', 'name')
-                .populate('customer', 'name')
+                .populate('company')
+                .populate('customer')
                 .populate('salesPerson', 'name')
                 .populate('workflow', 'name sequence')
                 .populate('groups.users')

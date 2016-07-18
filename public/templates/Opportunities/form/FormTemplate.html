@@ -29,28 +29,7 @@
                         <dd><a  class="current-selected" id="customerDd" data-id="customer"><%=(customer) ? customer.name.first + ' ' + customer.name.last : 'Select'%></a></dd>
                     </dl>
                 </div>
-                <div>
-                    <div class="formTitle">
-                        <h3>Lead</h3>
-                    </div>
-                    <dl class="person-info">
-                        <dt>Address </dt>
-                        <dt>Street :</dt>
-                        <dd data-id="address_street"class="editable"><%=address.street%></dd>
-                        <dt>City :</dt>
-                        <dd data-id="address_city"class="editable"><%=address.city%></dd>
-                        <dt>State :</dt>
-                        <dd data-id="address_state"class="editable"><%=address.state%></dd>
-                        <dt>Zip :</dt>
-                        <dd data-id="address_zip"class="editable"><%=address.zip%></dd>
-                        <dt>Country: </dt>
-                        <dd data-id="address_country" class="editable"><%=address.country%></dd>
-                        <dt>Phone: </dt>
-                        <dd data-id="phones_phone"class="editable"><%=phones.phone%></dd>
-                        <dt>Email: </dt>
-                        <dd class="editable"><%=email%></dd>
-                    </dl>
-                </div>
+                <div id="companyHolder"></div>
                 <div class="attachments"></div>
             </div>
 
@@ -58,7 +37,7 @@
                 <div class="notes">
                 </div>
             </div>
-            <!--<div class="half-block left">-->
+
             <!--<dl class="person-info">-->
             <!--</dl>-->
             <!--</div>-->
