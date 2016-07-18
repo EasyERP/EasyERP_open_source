@@ -113,7 +113,6 @@ define([
             var max = data.length;
             var totalLength;
             var path;
-
             var xAxis;
             var yAxis;
             var line;
