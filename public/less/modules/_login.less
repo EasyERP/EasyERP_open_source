@@ -1236,3 +1236,32 @@ dl.payrollDateBlock {
 
   }
 }
+
+.compactView {
+  background-color: #f5f5f5;
+
+  td {
+    padding: 10px 10px 10px 0;
+  }
+}
+.compactRow {
+  overflow: hidden;
+  > div {
+    &:nth-child(odd) {
+      float: left;
+      clear: both;
+    }
+    &:nth-child(even) {
+      float: right;
+    }
+  }
+  &:nth-child(n+2) {
+    margin-top: 10px;
+  }
+}
+td.checkboxRow {
+  width: 40px;
+  padding: 10px;
+  vertical-align: top;
+  text-align: center;
+}
