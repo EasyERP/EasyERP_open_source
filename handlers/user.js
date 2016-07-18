@@ -672,7 +672,7 @@ var User = function (event, models) {
             sort = data.sort;
         } else {
             sort = {
-                login: 1
+                lastAccess: -1
             };
         }
 

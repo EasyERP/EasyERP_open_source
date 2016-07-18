@@ -130,6 +130,7 @@ define([
                 switch (option.contentType) {
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
+                    case CONTENT_TYPES.DEALTASKS:
                     case CONTENT_TYPES.PROFILES:
                     case CONTENT_TYPES.DEPARTMENTS:
                     case CONTENT_TYPES.USERS:
@@ -195,6 +196,7 @@ define([
                 switch (option.contentType) {
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
+                    case CONTENT_TYPES.DEALTASKS:
                     case CONTENT_TYPES.PROFILES:
                     case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.DEPARTMENTS:

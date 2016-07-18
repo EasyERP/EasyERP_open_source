@@ -69,6 +69,7 @@ module.exports = function (app, mainDb) {
     var profilesRouter = require('./profiles')(models);
     var tasksRouter = require('./tasks')(models, event);
     var tagRouter = require('./tags')(models, event);
+    var dealTasksRouter = require('./dealTasks')(models, event);
     var journalEntriesRouter = require('./journalEntries')(models, event);
     var writeOffRouter = require('./writeOff')(models, event);
     var payrollStructureTypesRouter = require('./payrollStructureTypes')(models);
@@ -160,6 +161,7 @@ module.exports = function (app, mainDb) {
     app.use('/modules', modulesRouter);
     app.use('/bonusType', bonusTypeRouter);
     app.use('/dashboard', dashboardRouter);
+    app.use('/dealTasks', dealTasksRouter);
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
     app.use('/companies', customersRouter);

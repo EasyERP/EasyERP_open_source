@@ -180,7 +180,17 @@ module.exports = (function () {
         source       : {type: String, default: ''},
         isConverted  : {type: Boolean, default: false},
         convertedDate: {type: Date, default: Date.now},
-        notes        : {type: Array, default: []},
+        notes        : [{
+            note        : String,
+            title       : String,
+            task        : {type: ObjectId, ref: 'DealTasks', default: null},
+            attachment  : {},
+            date        : {type: Date, default: Date.now},
+            user        : {
+                _id : {type: ObjectId, ref: 'Users', default: null},
+                login : String
+            }
+        }],
         attachments  : {type: Array, default: []},
         projectType  : {type: String, default: 'fixed'},
 

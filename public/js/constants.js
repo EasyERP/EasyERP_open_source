@@ -6,6 +6,7 @@ define([], function () {
         OPPORTUNITIES     : 'Opportunities',
         PROJECTS          : 'Projects',
         TASKS             : 'Tasks',
+        DEALTASKS         : 'DealTasks',
         EMPLOYEES         : 'Employees',
         APPLICATIONS      : 'Applications',
         JOBPOSITIONS      : 'JobPositions',
@@ -108,7 +109,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 25,
+        DEFAULT_ELEMENTS_PER_PAGE  : 50,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
@@ -192,7 +193,8 @@ define([], function () {
             WEEKLYSCHEDULER            : '/weeklyScheduler/forDd',
             SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
-            PAYMENT_METHOD_DD          : 'paymentMethod/'
+            PAYMENT_METHOD_DD          : 'paymentMethod/',
+            DEALTASKS                  : '/dealTasks/',
         },
 
         MID: {
@@ -204,11 +206,12 @@ define([], function () {
 
         MIN_DATE: '2014-08-01',
 
-        INVOICE_JOURNAL : '565ef6ba270f53d02ee71d65',
-        PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
-        PAYMENT_TERMS   : '55536e52475b7be475f335f6',
-        PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
-        END_OF_PROJECT  : 'To end of project',
+        INVOICE_JOURNAL     : '565ef6ba270f53d02ee71d65',
+        PROFORMA_JOURNAL    : '57035e4321f9b0c4313d4146',
+        PAYMENT_TERMS       : '55536e52475b7be475f335f6',
+        PAYMENT_METHOD      : '565f2e05ab70d49024242e07',
+        END_OF_PROJECT      : 'To end of project',
+        NOT_STARTED_WORKFLOW: '5783b351df8b918c31af24a8',
 
         DEFAULT_SCREEN_WIDTH: 1349,
         PAGINATION_ARRAY    : [25, 50, 100, 200]

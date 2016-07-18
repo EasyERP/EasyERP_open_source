@@ -1,0 +1,39 @@
+<div class="select<%=type%>">
+    <div>
+        <div class="formTitle">
+            <h3><%=type%></h3>
+        </div>
+    <%if (property) {%>
+    <div>
+        <a class="btn" title="Remove <%=type%>" id="removeProperty">X</a>
+        <dl class="person-info">
+            <dt>Name </dt>
+            <dd data-id="name" class="editable"><%=property.fullName%></dd>
+
+            <dt>Address</dt>
+            <dt>Street :</dt>
+            <dd data-id="address_street" class="editable"><%=property.address.street%></dd>
+            <dt>City :</dt>
+            <dd data-id="address_city" class="editable"><%=property.address.city%></dd>
+            <dt>State :</dt>
+            <dd data-id="address_state" class="editable"><%=property.address.state%></dd>
+            <dt>Zip :</dt>
+            <dd data-id="address_zip" class="editable"><%=property.address.zip%></dd>
+            <dt>Country:</dt>
+            <dd data-id="address_country" class="editable"><%=property.address.country%></dd>
+            <dt>Phone:</dt>
+            <dd data-id="phones_phone" class="editable"><%=property.phones.phone%></dd>
+            <dt>Email:</dt>
+            <dd class="editable"><%=property.email%></dd>
+        </dl>
+        <a class="btn" title="Show More Info" href="<%='/#easyErp/' + urlType + '/form/'+ property._id%> " id="showMoreButton">Show More Info</a>
+
+    </div>
+    <%} else {%>
+        <a class="btn" title="Add <%=type%>" id="addProperty">Add <%=type%></a>
+    <%}%>
+
+
+</div>
+</div>
+

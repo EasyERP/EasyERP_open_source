@@ -24,6 +24,7 @@ module.exports = function (models) {
     router.get('/salesQuotations', handler.getSalesQuotationFilters);
     router.get('/salesOrders', handler.getSalesOrdersFilters);
     router.get('/Orders', handler.getOrdersFilters);
+    router.get('/DealTasks', handler.getDealsTasksFilters);
     router.get('/Leads', handler.getLeadsFilters);
     router.get('/Opportunities', handler.getOpportunitiesFilters);
     router.get('/salaryReport', handler.getSalaryReportFilters);

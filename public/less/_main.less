@@ -362,7 +362,7 @@ input::-ms-clear {
   transform: rotate(@deg);
 }
 
-.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
+.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 18px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
   //overflow: hidden; //������ ������ attache �  Project ->add
@@ -465,11 +465,12 @@ input::-ms-clear {
   }
 
   .formTitle {
+    width: 100%;
+    border-bottom: @thin-border @border-color;
+
     &.withMargin {
       margin-bottom: 0;
     }
-    width: 100%;
-    border-bottom: @thin-border @border-color;
 
     .btnHolder {
       .right;
@@ -2084,7 +2085,7 @@ input::-ms-clear {
     min-width: 80px;
   }
 
-  .dl-auto(160px, 40%, 16px, 16px, 10px);
+  .dl-auto(160px, 40%, 18px, 18px, 10px);
 
   select {
     font-family: Arial, Helvetica, sans-serif;
@@ -2121,6 +2122,9 @@ input::-ms-clear {
     &:focus {
       outline: medium none;
       border: @thin-border @border-color-selected;
+    }
+    &#editInput {
+      padding: 2px 6px;
     }
   }
 
@@ -2720,7 +2724,7 @@ dl {
   .addNote {
     margin-top: 6px;
     background-color: inherit;
-    padding: 5px 0 10px 0;
+    //padding: 5px 0 10px 0;
     //margin-bottom: 5px;
 
     label {
@@ -2832,11 +2836,16 @@ dl {
     }
   }
 
+  .editedNote {
+    &.active {
+      padding: 0;
+    }
+  }
+
   #noteBody {
     .noteContainer {
-      padding: 10px;
-      border: @thin-border @border-color-main;
-      margin-bottom: 10px;
+      //padding: 10px;
+      margin: 10px 0;
 
       .name {
         margin-right: 15px;
@@ -2846,6 +2855,10 @@ dl {
       .date {
         font-size: 11px;
         color: #777;
+      }
+
+      .dateNote {
+        float: right;
       }
 
       .noteTitle {
@@ -2860,8 +2873,8 @@ dl {
 
       .right {
         float: right;
-        margin-right: 10px;
-        display: none;
+        //margin-right: 10px;
+        //display: none;
 
         .sep {
           padding: 0 3px;
@@ -2870,16 +2883,20 @@ dl {
         }
       }
 
-      &:hover {
-        background-color: @bg-hover-drop-down-color;
-        .right {
-          display: block;
-
-          a {
-            font-size: 11px;
-          }
-        }
+      &:after {
+        content: '';
+        display: table;
+        clear: both;
       }
+    }
+
+    //.noteBody,
+    //.noteBtnBlock {
+    //  border: @thin-border @border-color-main;
+    //}
+    .noteBody {
+      padding: 10px;
+      border: @thin-border @border-color-main;
     }
   }
 }
@@ -3971,7 +3988,7 @@ ul.dialog-tabs {
 }
 
 .tabs-items {
-  margin-bottom: -29px;
+  //margin-bottom: -29px;
 
   .dialog-tabs-item,
   .chart-tabs-item {

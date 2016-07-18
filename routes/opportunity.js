@@ -14,6 +14,8 @@ module.exports = function (models, event) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
+    router.get('/getForDd', authStackMiddleware, accessStackMiddleware, handler.getForDd);
+
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddleware, handler.opportunitiesForMiniView);
     router.get('/OpportunitiesForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesForChart);
@@ -22,7 +24,7 @@ module.exports = function (models, event) {
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddleware, handler.getLengthByWorkflows);
     router.get('/priority', authStackMiddleware, accessStackMiddleware, handler.getLeadsPriority);
     router.get('/getFilteredOpportunities', authStackMiddleware, accessStackMiddleware, handler.getFilteredOpportunities);
-   
+    router.get('/:id',authStackMiddleware, accessStackMiddleware, handler.getById);
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);

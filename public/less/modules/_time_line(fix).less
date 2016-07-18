@@ -1,0 +1,65 @@
+.noteMainContainer {
+  position: relative;
+}
+
+.noteContainer {
+  position: relative;
+  padding-left: 50px;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25px;
+    width: 1px;
+    height: calc(100% + 27px);
+    background: @lightgrey;
+  }
+
+  &:first-child {
+    &:before {
+      top: -10px;
+    }
+  }
+
+  &:last-child {
+    &:before {
+      height: 25px;
+    }
+  }
+
+  .itemCircle {
+    position: absolute;
+    left: 9px;
+    top: 10px;
+    height: 28px;
+    width: 28px;
+    border: 1px solid @lightgrey;
+    border-radius: 50%;
+    background: @white;
+    font-size: 10px;
+    line-height: 28px;
+    text-align: center;
+    color: @lightgrey;
+    z-index: 10;
+  }
+
+  .noteBody {
+    padding: 17px 10px !important;
+  }
+
+  .noteText,
+  .noteContent {
+    padding: 10px 0 0;
+  }
+
+  .noteText {
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  .noteContent {
+    margin-bottom: 10px;
+  }
+}
