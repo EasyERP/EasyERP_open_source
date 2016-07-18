@@ -30,7 +30,12 @@ define([
         },
 
         events: {
-            'click .details': 'showDetailsBox'
+            'click .details'     : 'showDetailsBox',
+            'click .fa-paperclip': 'clickInput'
+        },
+
+        clickInput: function () {
+            this.$el.find('.input-file .inputAttach').click();
         },
 
         chooseOption: function (e) {
@@ -71,6 +76,9 @@ define([
             var taxes;
             var subtotal;
             var description;
+            var notes = [];
+            var note;
+            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
 
             var forSales = this.forSales || false;
 
@@ -101,6 +109,14 @@ define([
             var whoCanRW;
             var data;
             var model;
+
+            if (internalNotes) {
+                note = {
+                    title: '',
+                    note : internalNotes
+                };
+                notes.push(note);
+            }
 
             if (selectedLength) {
                 for (i = selectedLength - 1; i >= 0; i--) {
@@ -166,6 +182,7 @@ define([
                 name                 : $.trim($('#supplier_invoice_num').val()),
                 salesPerson          : salesPersonId,
                 paymentTerms         : paymentTermId,
+                notes          : notes,
 
                 products   : products,
                 paymentInfo: payments,
@@ -189,10 +206,10 @@ define([
                         mid: mid
                     },
                     wait   : true,
-                    success: function () {
+                    success: function (savedModel) {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
-                        //self.attachView.sendToServer(null, model.changed);
+                        self.attachView.sendToServer(null, savedModel.changed);
 
                         self.hideDialog();
                         Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -281,18 +298,13 @@ define([
                 new ListHederInvoice().render().el
             );
 
-            this.model.set('notes', []);
-            this.model.set('attachments', []);
-
             $notDiv = this.$el.find('#attach-container');
-            $notDiv.append(
-                new NoteView({
-                    model      : self.model,
-                    contentType: CONSTANTS.INVOICES,
-                    needNotes  : needNotes,
-                    isCreate   : true
-                }).render().el
-            );
+            this.attachView = new AttachView({
+                model      : new InvoiceModel(),
+                contentType: self.contentType,
+                isCreate   : true
+            });
+            $notDiv.append(this.attachView.render().el);
 
             if (this.model.approved) {
                 self.$el.find('.input-file').remove();
