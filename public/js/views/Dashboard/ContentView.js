@@ -1170,11 +1170,11 @@ define([
                 };
 
                 colorMap = {
-                    'Waiting fo response': 'yellow',
-                    'To be discussed'    : '#26A7DE',
-                    'To be done'         : '#7546D7',
-                    'In development'     : '#86D1B5',
-                    'Finalization'       : '#5FBA51',
+                    'Waiting fo response': '#4CC3D9', //blue
+                    'To be discussed'    : '#7BC8A4', //green
+                    'To be done'         : '#EB6E44', //orange
+                    'In development'     : '#FFC65D', //yellow
+                    'Finalization'       : '#93648D', //violet
                     'barStroke'          : '#2378ae'
                 };
 
@@ -1262,13 +1262,6 @@ define([
                     .attr('y', innerHeight + 60)
                     .text(labelsMap.ySum);
 
-                tip = chart.append('text')
-                    .attr({
-                        'class'      : 'tip',
-                        'font-size'  : '12',
-                        'text-anchor': 'middle'
-                    });
-
                 data.forEach(function (dataEl) {
 
                     chart.selectAll('.' + barsMap[dataEl.workflow])
@@ -1298,15 +1291,18 @@ define([
                         })
                         .on('mouseover', function (d) {
                             var attrs = this.attributes;
+                            var xVal =  parseFloat(attrs.x.value) + attrs.width.value / 2;
+                            var yVal = parseFloat(attrs.y.value) + attrs.height.value / 2;
 
                             d3.select(this)
                                 .style('stroke-width', '3')
                                 .attr('stroke', colorMap.barStroke);
                             
                             tip
-                                .attr('x', +attrs.x.value + attrs.width.value / 2)
-                                .attr('y', +attrs.y.value + attrs.height.value / 2 + 5)
-                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()));
+                                .attr('x', xVal)
+                                .attr('y', (yVal + 5))
+                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()))
+                                .attr('transform', 'rotate(90,'+ xVal + ','+ yVal +')');
                         })
                         .on('mouseout', function (d) {
                             d3.select(this)
@@ -1315,6 +1311,13 @@ define([
                             tip.text('');
                         });
                 });
+
+                tip = chart.append('text')
+                    .attr({
+                        'class'      : 'tip',
+                        'font-size'  : '12',
+                        'text-anchor': 'middle'
+                    });
 
                 $('svg.opportunitieAgingCount').empty();
 
@@ -1383,13 +1386,6 @@ define([
                     '>120'  : 0
                 };
 
-                tip1 = chart1.append('text')
-                    .attr({
-                        'class'      : 'tip',
-                        'font-size'  : '12',
-                        'text-anchor': 'middle'
-                    });
-
                 data.forEach(function (dataEl) {
 
                     chart1.selectAll('.' + barsMap[dataEl.workflow])
@@ -1419,15 +1415,18 @@ define([
                         })
                         .on('mouseover', function (d) {
                             var attrs = this.attributes;
+                            var xVal =  parseFloat(attrs.x.value) + attrs.width.value / 2;
+                            var yVal = parseFloat(attrs.y.value) + attrs.height.value / 2;
 
                             d3.select(this)
                                 .style('stroke-width', '3')
                                 .attr('stroke', colorMap.barStroke);
 
                             tip1
-                                .attr('x', +attrs.x.value + attrs.width.value / 2)
-                                .attr('y', +attrs.y.value + attrs.height.value / 2 + 5)
-                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()));
+                                .attr('x', xVal)
+                                .attr('y', (yVal + 5))
+                                .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()))
+                                .attr('transform', 'rotate(90,'+ xVal + ','+ yVal +')');
                         })
                         .on('mouseout', function (d) {
                             d3.select(this)
@@ -1436,6 +1435,14 @@ define([
                             tip1.text('');
                         });
                 });
+
+                tip1 = chart1.append('text')
+                    .attr({
+                        'class'      : 'tip',
+                        'font-size'  : '12',
+                        'text-anchor': 'middle'
+                    });
+
             });
         },
 
@@ -2026,7 +2033,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', 'yellow')
+                    .style('fill', '#4CC3D9')
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar2')
@@ -2059,7 +2066,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#26A7DE')
+                    .style('fill', '#7BC8A4')
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar3')
@@ -2098,7 +2105,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#7546D7')
+                    .style('fill', '#EB6E44')
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar4')
@@ -2143,7 +2150,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#86D1B5')
+                    .style('fill', '#FFC65D')
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar5')
@@ -2194,7 +2201,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#5FBA51')
+                    .style('fill', '#93648D')
                     .style('opacity', '0.8');
 
                 chart.selectAll('.x .tick line')
