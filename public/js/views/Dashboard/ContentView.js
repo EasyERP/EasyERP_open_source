@@ -1124,6 +1124,7 @@ define([
 
             common.getOpportunitiesAgingChart(function (data) {
                 var verticalBarSpacing = 3;
+                var tooltip = d3.select('div.invoiceTooltip');
                 var margin;
                 var x;
                 var y;
@@ -1161,18 +1162,20 @@ define([
                 };
 
                 barsMap = {
-                    New       : 'bar6',
-                    '% 25-50' : 'bar7',
-                    '% 50-75' : 'bar5',
-                    '% 75-100': 'bar4'
+                    'Waiting fo response': 'bar6',
+                    'To be discussed'    : 'bar7',
+                    'To be done'         : 'bar9',
+                    'In development'     : 'bar4',
+                    'Finalization'       : 'bar8'
                 };
 
                 colorMap = {
-                    New        : 'yellow',
-                    '% 25-50'  : '#86D1B5',
-                    '% 50-75'  : '#26A7DE',
-                    '% 75-100' : '#5FBA51',
-                    'barStroke': '#2378ae'
+                    'Waiting fo response': 'yellow',
+                    'To be discussed'    : '#26A7DE',
+                    'To be done'         : '#7546D7',
+                    'In development'     : '#86D1B5',
+                    'Finalization'       : '#5FBA51',
+                    'barStroke'          : '#2378ae'
                 };
 
                 margin = {
@@ -1299,7 +1302,7 @@ define([
                             d3.select(this)
                                 .style('stroke-width', '3')
                                 .attr('stroke', colorMap.barStroke);
-
+                            
                             tip
                                 .attr('x', +attrs.x.value + attrs.width.value / 2)
                                 .attr('y', +attrs.y.value + attrs.height.value / 2 + 5)
@@ -1884,6 +1887,7 @@ define([
                 var data2;
                 var data3;
                 var data4;
+                var data5;
                 var arrData;
                 var arrSum;
                 var maxHeight;
@@ -1892,17 +1896,23 @@ define([
                 self.opportunitiesData = data;
 
                 data.forEach(function (item) {
-                    if (item._id === 'New') {
-                        data1 = item.data;
-                    }
-                    if (item._id === '% 25-50') {
-                        data2 = item.data;
-                    }
-                    if (item._id === '% 50-75') {
-                        data3 = item.data;
-                    }
-                    if (item._id === '% 75-100') {
-                        data4 = item.data;
+
+                    switch(item._id){
+                        case 'Waiting fo response':
+                            data1 = item.data;
+                            break;
+                        case 'To be discussed':
+                            data2 = item.data;
+                            break;
+                        case 'To be done':
+                            data3 = item.data;
+                            break;
+                        case 'In development':
+                            data4 = item.data;
+                            break;
+                        case 'Finalization':
+                            data4 = item.data;
+                            break;
                     }
                 });
 
@@ -1910,6 +1920,7 @@ define([
                 data2 = data2 || [];
                 data3 = data3 || [];
                 data4 = data4 || [];
+                data5 = data5 || [];
 
                 for (i = data1.length - 1; i >= 0; i--) {
                     if (data1[i] && !data1[i].sum || data1[i].sum === 0) {
@@ -2048,7 +2059,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#56D1B5')
+                    .style('fill', '#26A7DE')
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar3')
@@ -2087,7 +2098,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#26A7DE')
+                    .style('fill', '#7546D7')
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar4')
@@ -2111,6 +2122,57 @@ define([
                         });
 
                         data3.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        return x0;
+                    })
+                    .attr('y', function (d) {
+                        var range = y.rangeBand();
+                        var difference = range > 70 ? ((range - 70) / 2) : 0;
+
+                        return y(d.salesPerson) + difference;
+                    })
+                    .attr('height', function () {
+                        var range = y.rangeBand();
+
+                        return range > 70 ? 70 : range;
+                    })
+                    .attr('width', function (d) {
+                        return x(d.sum);
+                    })
+                    .style('fill', '#86D1B5')
+                    .style('opacity', '0.8');
+
+                chart.selectAll('.bar5')
+                    .data(data4)
+                    .enter()
+                    .append('rect')
+                    .attr('class', 'bar5')
+                    .attr('x', function (d) {
+                        var x0 = 0;
+
+                        data1.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data2.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data3.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data4.forEach(function (item) {
                             if (d.salesPerson === item.salesPerson) {
                                 x0 += x(item.sum);
                             }
