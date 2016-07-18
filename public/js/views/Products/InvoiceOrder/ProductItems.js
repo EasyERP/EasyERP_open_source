@@ -119,7 +119,7 @@ define([
             var $tr = $target.closest('tr');
             var productOrJob = this.forSales ? 'job' : 'product';
 
-            if ($tr.attr('data-error')) {
+            if ($tr.attr('data-error') || ($tr.find('a.jobs').attr('data-id') === 'jobs')) {
                 return App.render({
                     type   : 'error',
                     message: 'Please, choose ' + productOrJob + ' first.'
@@ -284,7 +284,7 @@ define([
                         currencyClass: helpers.currencyClass,
                         currency     : currency,
                         writeOff     : self.writeOff,
-                        quotations: self.quotations
+                        quotations   : self.quotations
                     }));
 
                     this.removeEditableCass($parrent.find('tr.productItem').last());
@@ -298,7 +298,7 @@ define([
                     currencyClass: helpers.currencyClass,
                     currency     : currency,
                     writeOff     : self.writeOff,
-                    quotations: self.quotations
+                    quotations   : self.quotations
                 }));
 
                 this.removeEditableCass($parrent.find('tr').last());
@@ -455,7 +455,13 @@ define([
 
             $('.newSelectList').remove();
 
-            this.addEditableClass($trEl);
+            if ($trEl.find('.jobs').length) {
+                if ($trEl.find('a.jobs').attr('data-id') !== 'jobs') {
+                    this.addEditableClass($trEl);
+                }
+            } else {
+                this.addEditableClass($trEl);
+            }
 
             this.calculateTotal(selectedProduct.info.salePrice);
             /* }*/
@@ -615,7 +621,7 @@ define([
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass,
                         currency        : currency,
-                        quotations: self.quotations
+                        quotations      : self.quotations
                     }));
                     totalAmountContainer = $thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
