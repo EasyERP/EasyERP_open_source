@@ -30,8 +30,6 @@
     <td data-name="quantity" class="<%=!forSales ? 'editable' : ''%>">
         <% if (forSales){ %>
         <span><%=product.quantity%></span>
-        <% } else if (quotations) { %>
-        <span><%=product.quantity%></span>
         <% } else if (!editable) { %>
         <span><%=product.quantity%></span>
         <% } else { %>
