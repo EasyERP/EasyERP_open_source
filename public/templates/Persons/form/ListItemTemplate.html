@@ -1,3 +1,23 @@
+<table>
+    <% persons.forEach(function(person, index){ %>
+        <tr class="compactView">
+                <td class="checkboxRow">
+                    <label>
+                        <input type="checkbox" />
+                    </label>
+                </td>
+                <td>
+                    <div class="compactRow">
+                        <div class="firstName"><%- person.fullName%></div>
+                        <div class="country"><%= person.country %></div>
+                        <div class="email"><%= person.email %></div>
+                        <div class="phone"><%= person.phone %></div>
+                    </div>
+                </td>
+        </tr>
+    <% }) %>
+</table>
+<!--
 <% personsCollection.forEach(function(person, index){ %>
 <div data-id="<%=person._id%>">
     <div>
@@ -12,3 +32,4 @@
     <td><%=person.address.country%></td>
 </div>
 <% }) %>
+-->
