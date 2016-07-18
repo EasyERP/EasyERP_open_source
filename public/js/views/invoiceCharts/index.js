@@ -180,7 +180,7 @@ define([
                 .datum(data)
                 .attr({
                     'd': line,
-                    'stroke': '#ff6666',
+                    'stroke': '#D96459',
                     'stroke-width': 2,
                     'fill': 'none',
                     'opacity': 1
@@ -339,14 +339,14 @@ define([
                     },
                     'width': 10,
                     'height': 10,
-                    'fill': '#ff6666', //red squares
+                    'fill': '#D96459', //red squares
                     'opacity': 1
                 })
                 .on('mouseover', function(d){
 
                     tooltip.transition()
                         .duration(300)
-                        .style('border-color', '#ff6666')
+                        .style('border-color', '#D96459')
                         .style('width',  (x.rangeBand()*2) + 'px')
                         .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
                         .style('top', (y(d.invoiced) - 40) + 'px')
