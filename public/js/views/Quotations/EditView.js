@@ -615,7 +615,11 @@ define([
             productItemContainer = this.$el.find('#productItemsHolder');
 
             productItemContainer.append(
-                new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
+                new ProductItemView({
+                    editable: true,
+                    canBeSold: true,
+                    service: service
+                }).render({model: model}).el
             );
 
             dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {

@@ -30,9 +30,11 @@ define([
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
-            this.forSales = false;
-
             this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
+            this.forSales = false;
+            this.editable = true;
+            this.balanceVissible = false;
+            this.service = false;
 
             this.render(options);
         },
@@ -404,9 +406,11 @@ define([
 
             productItemContainer.append(
                 new ProductItemView({
-                    editable       : true,
-                    editablePrice  : self.editablePrice,
-                    balanceVissible: false
+                    editable       : self.editable,
+                    editablePrice: self.editablePrice,
+                    balanceVissible: self.balanceVissible,
+                    forSales       : self.forSales,
+                    service        : self.service
                 }).render({model: model}).el
             );
 
