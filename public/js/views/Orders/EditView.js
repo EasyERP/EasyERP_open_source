@@ -241,6 +241,20 @@ define([
                         subTotal = helpers.spaceReplacer($.trim(targetEl.find('.subtotal').text()));
                         subTotal = parseFloat(subTotal) * 100;
 
+                        if (!quantity) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Quantity can\'t be empty'
+                            });
+                        }
+
+                        if (!price) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Unit price can\'t be empty'
+                            });
+                        }
+
                         products.push({
                             product      : productId,
                             unitPrice    : price,
@@ -401,7 +415,6 @@ define([
                 buttons      : buttons
             });
 
-
             this.renderAssignees(this.currentModel);
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
@@ -432,7 +445,7 @@ define([
             productItemContainer.append(
                 new ProductItemView({
                     editable       : self.editable,
-                    editablePrice: self.editablePrice,
+                    editablePrice  : self.editablePrice,
                     balanceVissible: self.balanceVissible,
                     forSales       : self.forSales,
                     service        : self.service

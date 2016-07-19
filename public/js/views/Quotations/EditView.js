@@ -390,6 +390,20 @@ define([
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subTotal = parseFloat(subTotal) * 100;
 
+                        if (!quantity) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Quantity can\'t be empty'
+                            });
+                        }
+
+                        if (!price) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Unit price can\'t be empty'
+                            });
+                        }
+
                         if (jobs) {
                             products.push({
                                 product      : productId,
@@ -616,9 +630,9 @@ define([
 
             productItemContainer.append(
                 new ProductItemView({
-                    editable: true,
-                    canBeSold: true,
-                    service: service,
+                    editable  : true,
+                    canBeSold : true,
+                    service   : service,
                     quotations: true
                 }).render({model: model}).el
             );

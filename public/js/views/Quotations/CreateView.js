@@ -184,10 +184,17 @@ define([
                 subTotal = parseFloat(subTotal) * 100;
                 jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                if (price === '') {
+                if (!price) {
                     return App.render({
                         type   : 'error',
                         message: 'Unit price can\'t be empty'
+                    });
+                }
+
+                if (!quantity) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Quantity can\'t be empty'
                     });
                 }
 
@@ -274,7 +281,7 @@ define([
             var productItemContainer;
 
             productItemContainer = this.$el.find('#productItemsHolder');
-            
+
             if (this.forSales) {
                 productItemContainer.append(
                     new ProductItemView({canBeSold: true, service: true, quotations: true}).render().el
