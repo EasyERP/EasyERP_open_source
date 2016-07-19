@@ -13,14 +13,14 @@ define([
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
+            //this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
         },
 
         render: function () {
             var collect = this.collection.toJSON();
             this.$el.append(_.template(listTemplate, {
                 monthHoursCollection: collect,
-                startNumber         : this.startNumber,
+                //startNumber         : this.startNumber,
                 currencySplitter    : helpers.currencySplitter
             }));
         }

@@ -1,6 +1,5 @@
 <% collection.forEach(function(invoiceAging, index){ %>
 <tr data-index="<%= index %>" data-id="<%=invoiceAging._id%>">
-    <td class="centerCell"><%=index + 1 %></td>
     <td><%=invoiceAging.name%></td>
     <td><%=dateToLocaleDate(invoiceAging.invoiceDate)%></td>
     <td><%=(invoiceAging.salesPerson) ? invoiceAging.salesPerson.name : ''%></td>
