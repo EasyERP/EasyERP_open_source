@@ -1,8 +1,8 @@
 <div class="form-holder">
     <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
         <div class="formTitle dealTitle">
-            <h3 class="editable" data-id="name"><%=name%></h3>
-            <h3 class="editable" data-id="expectedRevenue_value"><%=expectedRevenue.value%></h3>
+            <input class="editable"  data-id="name" value="<%=name%>"/>
+            <input class="editable" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/>
             <h3> <%=expectedRevenue.currency%></h3>
 
             <div class="clearfix">
@@ -17,15 +17,28 @@
                     <div class="formTitle">
                         <h3>About </h3>
                     </div>
-                    <dl class="person-info">
-                        <dt>Assigned To</dt>
-                        <dd><a  class="current-selected"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a></dd>
-                        <dt>Next Action</dt>
-                        <dd><span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
-                        </dd>
-                        <dt>Status</dt>
-                        <dd><span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span></dd>
-                    </dl>
+                    <div class="person-info">
+
+                        <label>Assigned To</label>
+                        <div  class="inputBox">
+                            <a  class="current-selected"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
+                        </div>
+                        <label>Next Action</label>
+                        <div  class="inputBox">
+                           <span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
+                        </div>
+                        <label>Status</label>
+                        <div  class="inputBox">
+                            <span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span>
+                        </div>
+
+                    </div>
+                    <div class="btnBlock">
+
+                        <a href="javascript:;" id="saveBtn" class=" btn btnRounded">Save</a>
+
+                        <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
+                    </div>
                 </div>
                 <div id="companyHolder"></div>
                 <div class="tags-container"></div>
