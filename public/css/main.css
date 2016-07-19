@@ -3478,16 +3478,16 @@ dl.payrollDateBlock dt {
 }
 .closeBtn {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
 }
 .closeBtn:before,
 .closeBtn:after {
   content: '';
   position: absolute;
-  top: 10px;
-  left: 0;
+  top: 12px;
+  left: 2px;
   width: 20px;
   height: 2px;
   background-color: #000;
@@ -3556,9 +3556,15 @@ dl.payrollDateBlock dt {
 .formContentTitle,
 .listContentTitle {
   min-height: 42px;
-  padding: 10px;
+  padding: 7px;
   border-top: 1px solid #ededed;
   border-bottom: 1px solid #ededed;
+}
+.listContentTitle #createBtnHolder {
+  float: right;
+}
+.listContentTitle #createBtnHolder .fa {
+  margin-right: 0;
 }
 .formContentTitle {
   border-left: 1px solid #ededed;
@@ -3597,6 +3603,37 @@ td.checkboxRow {
 }
 .list tr td.centerCell {
   text-align: right;
+}
+.listOpen .top-bar {
+  display: none !important;
+}
+.listOpen #content-holder {
+  height: 100% !important;
+  overflow: hidden;
+}
+.listOpen .listContentTitle h3 {
+  float: left;
+}
+.listOpen .pagination {
+  margin: 5px 0 10px;
+}
+#top-bar-createBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #fff;
+  line-height: 24px !important;
+  color: #fff;
+  border: 1px solid #7f7f80;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  border-radius: 3px;
+}
+#top-bar-createBtn:after {
+  content: 'New';
+  margin-left: 5px;
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000;
+  font-size: 13px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
