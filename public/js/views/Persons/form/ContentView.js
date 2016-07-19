@@ -31,7 +31,6 @@ define([
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
-        paginationEl   : '#listPagination',
         selectedId     : null,
 
         events: {
