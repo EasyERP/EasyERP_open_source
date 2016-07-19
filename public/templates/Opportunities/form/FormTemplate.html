@@ -1,12 +1,9 @@
 <div class="form-holder">
     <form class="form notDialog" id="leadForm" data-id="<%=_id%>">
         <div class="formTitle dealTitle">
-            <input class="editable"  data-id="name" value="<%=name%>"/>
-            <input class="editable" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/>
-            <h3> <%=expectedRevenue.currency%></h3>
-
-            <div class="clearfix">
-            </div>
+            <input class="editable dealTitleName"  data-id="name" value="<%=name%>"/>
+            <input class="editable dealTitlePrice" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/>
+            <span> <%=expectedRevenue.currency%></span>
         </div>
         <div id="workflowProgress" class="workflowProgress">
 

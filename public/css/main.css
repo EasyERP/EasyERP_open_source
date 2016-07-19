@@ -3950,6 +3950,34 @@ dl.payrollDateBlock dt {
   color: #000000;
   margin-bottom: 5px;
 }
+.ui-dialog .createNewCompany {
+  font-size: 13px;
+  color: #000000;
+}
+.ui-dialog .createNewCompany:hover {
+  text-decoration: none;
+}
+.newCompanyContainer {
+  padding: 40px;
+  text-align: center;
+  background: #f2f2f2;
+}
+.dealTitle input:not([type=checkbox]) {
+  border: none !important;
+}
+.dealTitle .dealTitleName,
+.dealTitle .dealTitlePrice,
+.dealTitle span {
+  font-size: 18px !important;
+}
+.dealTitle .dealTitleName {
+  width: 410px;
+  max-width: 410px !important;
+}
+.dealTitle .dealTitlePrice {
+  width: 80px;
+  text-align: right;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
