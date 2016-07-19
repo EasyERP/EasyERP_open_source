@@ -55,6 +55,7 @@ define([
 
 
         renderFormView: function (e) {
+            var $thisEl = this.$el;
             var $target;
             var modelId;
             var model;
@@ -69,7 +70,6 @@ define([
             }
 
             model = new PersonsModel();
-
             model.urlRoot = model.url() + modelId;
 
             model.fetch({
@@ -81,6 +81,9 @@ define([
 
                     self.formView = new FormView({model: model, el: '#formContent'});
                     self.formView.render();
+
+                    $thisEl.find('#listContent .selected').removeClass('selected');
+                    $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
                 },
 
                 error: function () {
