@@ -119,6 +119,7 @@ define([
             $currentEl = this.$el;
 
             $currentEl.html(this.contentTemplate());
+            $currentEl.addClass('isOpen');
             $currentEl.find('#listContent').append(this.listTemplate({
                 persons: persons
             }));
