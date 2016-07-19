@@ -3824,8 +3824,11 @@ dl.payrollDateBlock dt {
   margin-bottom: 10px;
 }
 .propertyFormList {
-  display: table;
+  display: table !important;
   width: 100%;
+}
+.propertyFormList.active {
+  border-left: 1px solid #3291c8;
 }
 .propertyFormList label,
 .propertyFormList .inputBox {

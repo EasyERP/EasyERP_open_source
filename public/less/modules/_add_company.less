@@ -47,8 +47,12 @@
 }
 
 .propertyFormList {
-  display: table;
+  display: table !important;
   width: 100%;
+
+  &.active {
+    border-left: 1px solid @blue-3;
+  }
 
   label,
   .inputBox {
