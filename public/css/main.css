@@ -3467,6 +3467,75 @@ dl.payrollDateBlock dt {
 .compactView td {
   padding: 10px 10px 10px 0;
 }
+.fontBold {
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.closeBtn {
+  position: relative;
+  width: 20px;
+  height: 22px;
+}
+.closeBtn:before,
+.closeBtn:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 2px;
+  background-color: #000;
+}
+.closeBtn:before {
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.closeBtn:after {
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.listWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.listWrap.personList .firstName {
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listContent,
+.formContent {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.formContentWrap,
+.listContentWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.formContentWrap {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+}
+.formContentTitle,
+.listContentTitle {
+  padding: 10px;
+}
+.formContentTitle .closeBtn {
+  float: right;
+}
 .compactRow {
   overflow: hidden;
 }
