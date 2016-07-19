@@ -20,8 +20,23 @@ define([
 
         setChangeValueToModel: function (e){
             var $target = $(e.target);
-          /*  var type = */
+            var property = $target.attr('data-id').replace('_', '.');
+            var parentDiv = $target.closest('div').addClass('active');
+            var value = $target.val();
 
+            if (!this.modelChanged){
+                this.modelChanged = {};
+            }
+            this.modelChanged[property] = value;
+            this.showButtons();
+        },
+
+        showButtons : function (){
+            this.$el.find('.btnBlock').addClass('showButtons');
+        },
+
+        hideButtons : function (){
+            this.$el.find('.btnBlock').removeClass('showButtons');
         },
 
         addProperty: function () {
@@ -34,22 +49,19 @@ define([
         },
 
         saveChanges: function (e) {
-            var $thisEl = this.$el;
-            var name = $thisEl.find('#supplierReference [data-id="first_name"]').val();
-            var field;
-            var value = this.$el.find('#editInput').val();
-            var newModel = {};
-            e.preventDefault();
-
-            field = parent.attr('data-id').replace('_', '.');
-            newModel[field] = value;
-
-            parent.text(value);
-            parent.removeClass('quickEdit');
-
-            this.model.save(newModel, {
-                patch  : true
+            var self = this;
+            this.model.save(this.modelChanged, {patch: true}, {
+                success : function (){
+                    self.modelChanged = '';
+                    self.hideButtons();
+                }
             });
+            this.$el.find('.active').removeClass('active');
+        },
+
+        cancelChanges : function (e) {
+            this.modelChanged = '';
+            this.render();
         },
 
         removeProperty: function () {
@@ -69,19 +81,10 @@ define([
         },
 
         render: function () {
-            var self = this;
             var urlType = this.type === 'Company' ? 'Companies' : 'Persons';
             var property = this.model ? this.model.toJSON() : '';
 
             this.$el.html(_.template(propertyTemplate, {type: this.type, property: property, urlType: urlType}));
-
-            this.searchInput = this.$el.find('#selectInput');
-
-            this.searchInput.keyup(function (e) {
-                e.stopPropagation();
-                self.inputEvent(e);
-            });
-
             return this;
         }
     });

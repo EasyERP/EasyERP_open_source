@@ -124,6 +124,7 @@ define([
             notes = notes.filter(function (elem) {
                 return !elem.task && !elem.history;
             });
+
             notes.push(optionsObj);
             formModel.save({notes: notes}, {
                 headers: {

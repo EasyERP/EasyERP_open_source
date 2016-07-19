@@ -25,21 +25,27 @@
 
             <dt>Address</dt>
             <dt>Street :</dt>
-            <dd data-id="address_street"><input class="editable" value="<%=property.address.street%>"/></dd>
+            <dd ><input class="editable" data-id="address_street" value="<%=property.address.street%>"/></dd>
             <dt>City :</dt>
-            <dd data-id="address_city"><input class="editable" value="<%=property.address.city%>"/></dd>
+            <dd ><input class="editable" data-id="address_city" value="<%=property.address.city%>"/></dd>
             <dt>State :</dt>
-            <dd data-id="address_state"><input class="editable" value="<%=property.address.state%>"/></dd>
+            <dd ><input class="editable" data-id="address_state" value="<%=property.address.state%>"/></dd>
             <dt>Zip :</dt>
-            <dd data-id="address_zip"><input class="editable" value="<%=property.address.zip%>"/></dd>
+            <dd><input class="editable"  data-id="address_zip" value="<%=property.address.zip%>"/></dd>
             <dt>Country:</dt>
-            <dd data-id="address_country"><input class="editable" value="<%=property.address.country%>"/></dd>
+            <dd ><input class="editable" data-id="address_country" value="<%=property.address.country%>"/></dd>
             <dt>Phone:</dt>
-            <dd data-id="phones_phone"><input class="editable" value="<%=property.phones.phone%>"/></dd>
+            <dd ><input class="editable" data-id="phones_phone"  value="<%=property.phones.phone%>"/></dd>
             <dt>Email:</dt>
-            <dd ><input class="editable" value="<%=property.email%>"/></dd>
+            <dd ><input class="editable" data-id="email" value="<%=property.email%>"/></dd>
         </dl>
         <a class="btn" title="View All Properties" href="<%='/#easyErp/' + urlType + '/form/'+ property._id%> " id="showMoreButton">View All Properties</a>
+        <div class="btnBlock">
+
+            <a href="javascript:;" id="saveBtn" class=" btn btnRounded">Save</a>
+
+            <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
+        </div>
 
     </div>
     <%} else {%>
