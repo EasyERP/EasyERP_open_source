@@ -110,6 +110,8 @@ module.exports = (function () {
         tempCompanyField: {type: String, default: ''},
         company         : {type: ObjectId, ref: 'Customers', default: null},
         customer        : {type: ObjectId, ref: 'Customers', default: null},
+
+
         tags            : [{type: ObjectId, ref: 'tags', default: null}],
 
         address: {
@@ -119,6 +121,8 @@ module.exports = (function () {
             zip    : {type: String, default: ''},
             country: {type: String, default: ''}
         },
+
+        contacts        : [{type: ObjectId, ref: 'Customers', default: null}],
 
         contactName: {
             first: {type: String, default: ''},

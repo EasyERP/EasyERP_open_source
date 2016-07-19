@@ -2,10 +2,10 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Companies/filterViewList.html',
-    'text!templates/Companies/filterViewContent.html',
-    'views/Companies/CreateView',
-    'collections/Companies/filterCollection'
+    'text!templates/Persons/formProperty/filterViewList.html',
+    'text!templates/Persons/formProperty/filterViewContent.html',
+    'views/Persons/CreateView',
+    'collections/Persons/filterCollection'
 ], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, filterCollection) {
     'use strict';
 
@@ -25,8 +25,8 @@ define([
 
             this.attribute = options.attribute;
             this.saveDeal = options.saveDeal;
-            this.collection = new filterCollection({type : 'Company'});
-            this.filteredCollection = new filterCollection({type : 'Company'});
+            this.collection = new filterCollection({type : 'Person'});
+            this.filteredCollection = new filterCollection({type : 'Person'});
             this.filteredCollection.unbind();
             this.filteredCollection.bind('reset', resetCollection);
 
@@ -52,7 +52,7 @@ define([
 
         events: {
             'click li'         : 'changeSelected',
-            'click #newCompany': 'createCustomer'
+            'click #newPerson' : 'createCustomer'
         },
 
         filterCollection: function (value) {
@@ -84,7 +84,7 @@ define([
         },
 
         renderContent: function () {
-            var contentHolder = this.$el.find('#companyList');
+            var contentHolder = this.$el.find('#contactList');
             contentHolder.html(this.contentTemplate({
                 collection: this.filteredCollection.toJSON(),
                 model     : this.model.toJSON()

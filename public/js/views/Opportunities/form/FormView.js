@@ -7,6 +7,7 @@ define([
     'views/Editor/AttachView',
     'views/Opportunities/EditView',
     'views/Companies/formPropertyView',
+    'views/Persons/formProperty/formPropertyView',
     'views/Tags/TagView',
     'models/CompaniesModel',
     'models/PersonsModel',
@@ -15,7 +16,7 @@ define([
     'populate',
     'constants',
     'views/selectView/selectView'
-], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, CompanyFormProperty, TagView, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
+], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, CompanyFormProperty, ContactFormProperty, TagView, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',
 
@@ -64,7 +65,7 @@ define([
             this.$el.find('.btnBlock').addClass('showButtons');
         },
 
-        hideButtons : function (){
+        hideButtons : function () {
             this.$el.find('.btnBlock').removeClass('showButtons');
         },
 
@@ -201,6 +202,7 @@ define([
             var self = this;
             var $thisEl = this.$el;
             var companyModel;
+            var contactModel;
 
             $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
 
@@ -213,14 +215,18 @@ define([
             });
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, false, true);
 
+            if (formModel.company) {
+                companyModel = new CompanyModel(formModel.company);
+            }
+
             if (formModel.customer) {
-                companyModel = new CompanyModel(formModel.customer);
+                contactModel = new PersonsModel(formModel.customer);
             }
 
             this.formProperty = new CompanyFormProperty({
                 parentModel: this.formModel,
                 model      : companyModel,
-                attribute  : 'customer',
+                attribute  : 'company',
                 saveDeal   : self.saveDeal
             });
 
@@ -228,6 +234,15 @@ define([
 
             $thisEl.find('#companyHolder').html(
                 this.formProperty.render().el
+            );
+
+            $thisEl.find('#contactHolder').html(
+                new ContactFormProperty({
+                    parentModel: this.formModel,
+                    model      : contactModel,
+                    attribute  : 'customer',
+                    saveDeal   : self.saveDeal
+                }).render().el
             );
 
             this.noteView = new NoteView({
