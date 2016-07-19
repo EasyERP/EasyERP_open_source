@@ -2,7 +2,6 @@
 <% var key = Object.keys(el)[0];%>
 <% var totalObj = el[key]; %>
 <tr class="mainRow" id="<%=key%>">
-    <td class="expand centerCell"><%=count + 1%></td>
     <td class="centerCell notForm"><input type="checkbox" data-id="<%=key%>" class="totalRowCB checkbox"/></td>
     <!--<td class = "notForm centerCell"><input type="checkbox" id="<%=key%>" class="checkAll" /></td>-->
     <td><%=weekSplitter(key)%></td>
