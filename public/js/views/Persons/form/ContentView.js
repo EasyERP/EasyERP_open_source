@@ -119,7 +119,7 @@ define([
             $currentEl = this.$el;
 
             $currentEl.html(this.contentTemplate());
-            $currentEl.addClass('isOpen');
+            $('.content_wrapper').addClass('listOpen');
             $currentEl.find('#listContent').append(this.listTemplate({
                 persons: persons
             }));
