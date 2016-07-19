@@ -1075,7 +1075,7 @@ define([
                     App.filtersObject.filter = filter;
 
                     collection = new contentCollection({
-                        viewType   : 'list',
+                        viewType   : 'tform',
                         page       : page,
                         reset      : true,
                         count      : count,
@@ -1093,17 +1093,20 @@ define([
 
                         collection.unbind('reset');
 
-                        topbarView = new topBarView({
-                            actionType: 'Content',
-                            collection: collection
-                        });
-
                         contentview = new contentView({
                             collection: collection,
                             startTime : startTime,
                             filter    : filter,
                             modelId   : modelId
                         });
+
+                        topbarView = new topBarView({
+                            actionType: 'Content',
+                            collection: collection,
+                            el        : '.listContentTitle'
+                        });
+
+                        $('#top-bar').html('');
 
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);
                         eventsBinder.subscribeCollectionEvents(collection, contentview);
