@@ -117,36 +117,6 @@ define([
             });
         },
 
-        saveNewNote: function (optionsObj) {
-            var formModel = this.model;
-            var self = this;
-            var notes = formModel.get('notes');
-            notes = notes.filter(function (elem) {
-                return !elem.task && !elem.history;
-
-             });
-            notes.push(optionsObj);
-            formModel.save({notes: notes}, {
-                headers: {
-                    mid: 39
-                },
-                patch  : true,
-                wait   : true,
-                success: function (models, data) {
-                    var formLeftColumn = self.$el.find('.formLeftColumn');
-                    var noteWrapper = formLeftColumn.find('.noteWrapper');
-
-                    noteWrapper.empty();
-                    formLeftColumn.append(self.render());
-                },
-
-                error: function (models, xhr) {
-                    self.errorNotification(xhr);
-
-                }
-            });
-        },
-
         clickInput: function () {
             $('.input-file .inputAttach').click();
         },
@@ -297,6 +267,7 @@ define([
             var formModel;
             var notes;
             var editNotes;
+            var noteObj;
 
             if ($noteArea.val().replace(/ /g, '') /*|| $noteTitleArea.val().replace(/ /g, '')*/) {
                 $noteArea.attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
@@ -317,12 +288,13 @@ define([
                 });
             }
             if (val.replace(/ /g, '') /*|| title.replace(/ /g, '')*/) {
+                formModel = this.model;
+                notes = formModel.get('notes');
+                notes = notes.filter(function (elem) {
+                    return !elem.task && !elem.history;
+                });
+                noteObj = {};
                 if (targetId) {
-                    formModel = this.model;
-                    notes = formModel.get('notes');
-                    notes = notes.filter(function (elem) {
-                        return !elem.task && !elem.history;
-                    });
                     editNotes = _.map(notes, function (note) {
                         if (note._id === targetId) {
                             note.note = val;
@@ -346,8 +318,26 @@ define([
                             }
                         });
                 } else {
-                    self.saveNewNote({
-                        note: val
+                    noteObj.note = val;
+                    notes.push(noteObj);
+                    formModel.save({notes: notes}, {
+                        headers: {
+                            mid: 39
+                        },
+                        patch  : true,
+                        wait   : true,
+                        success: function (models, data) {
+                            var formLeftColumn = self.$el.find('.formLeftColumn');
+                            var noteWrapper = formLeftColumn.find('.noteWrapper');
+
+                            noteWrapper.empty();
+                            formLeftColumn.append(self.render());
+                        },
+
+                        error: function (models, xhr) {
+                            self.errorNotification(xhr);
+
+                        }
                     });
                 }
             } else {

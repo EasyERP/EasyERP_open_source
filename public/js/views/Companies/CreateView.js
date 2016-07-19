@@ -60,6 +60,7 @@ define([
             var isCustomer = this.$el.find('#isCustomer').is(':checked');
             var isSupplier = this.$el.find('#isSupplier').is(':checked');
             var LI = $.trim(this.$el.find('#LI').val());
+            var viewType = custom.getCurrentVT();
             var FB = $.trim(this.$el.find('#FB').val());
 
             var active = this.$el.find('#active').is(':checked');
@@ -128,13 +129,14 @@ define([
 
                 wait: true,
 
-                success: function () {
-
+                success: function (model, res) {
+                    var navigateUrl;
                     self.hideDialog();
 
                     custom.getFiltersValues(true); // added for refreshing filters after creating
 
-                    Backbone.history.navigate('easyErp/Companies', {trigger: true});
+                    navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                    Backbone.history.navigate(navigateUrl, {trigger: true});
                 },
 
                 error: function (models, xhr) {

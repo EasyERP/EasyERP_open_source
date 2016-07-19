@@ -12,7 +12,6 @@ define([
             this.contentType = options.contentType;
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
-            this.saveNewNote = options.saveNewNote;
         },
 
         events: {
@@ -119,6 +118,7 @@ define([
                         var statusVal = '0%';
 
                         xhr.setRequestHeader('modelid', currentModelId);
+                        xhr.setRequestHeader('addNote', true);
                         xhr.setRequestHeader('modelname', self.contentType);
                         status.show();
                         bar.width(statusVal);
@@ -132,46 +132,11 @@ define([
                         status.html(statusVal);
                     },
 
-                    success: function (data) {
-                        var res;
-                        var attachments;
-                        var newAttachment;
+                    success: function () {
 
-                        if (self.isCreate) {
-                            status.hide();
-                            self.hideDialog();
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(window.location.hash, {trigger: true});
-                        } else if (self.import) {
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(window.location.hash, {trigger: true});
-                        } else {
-                            attachments = currentModel.get('attachments') || [];
-                            attachments.length = 0;
-                            $('.attachContainer').empty();
-                            res = data.data || data.result;
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
 
-                            if (!res) {
-                                res = data;
-                            }
-                            res.attachments.forEach(function (item) {
-                                var date = moment(item.uploadDate).format('DD MMM, YYYY, H:mm:ss');
-                                attachments.push(item);
-                                $thisEl.find('.attachContainer').prepend(_.template(addAttachTemplate, {
-                                    data: item,
-                                    date: date
-                                }));
-                            });
-                            if (self.saveNewNote && typeof(self.saveNewNote) === 'function'){
-                                newAttachment = attachments[attachments.length-1];
-                                self.saveNewNote({attachment : {name : newAttachment.name, shortPas :  newAttachment.shortPas }});
-                            }
-
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(window.location.hash, {trigger: true});
-                           /* addFrmAttach[0].reset();
-                            status.hide();*/
-                        }
                     },
 
                     error: function (xhr) {
@@ -224,7 +189,14 @@ define([
                             },
                             patch  : true, // Send only changed attr(add Roma)
                             success: function () {
+                                var othersAttaches = self.$el.find('.attachContainer li').length;
                                 self.$el.find('.attachFile_' + id).remove();
+
+                                if (!othersAttaches){
+                                    self.$el.find('.input-file').removeClass('smallBtn');
+                                }
+
+
                             }
                         });
                 }

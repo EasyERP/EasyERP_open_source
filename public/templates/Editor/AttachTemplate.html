@@ -7,8 +7,8 @@
     <form enctype="multipart/form-data" id="<%= elementId %>" action="" method="POST">
         <div id="attachBody">
             <ul class="attachContainer">
-                <% if (attachments){ attachments.reverse();
-                _.each(attachments, function(data,key){ %>
+                <% if (attachments){ attachments.reverse();%>
+                <% _.each(attachments, function(data,key){ %>
                 <li class="attachFile_<%=data['_id'] %>"><a href="download/<%=data.shortPas%>"><%=data.name %></a>
                     <a id="<%=data['_id'] %>" href="javascript:;" class="deleteAttach">Delete</a>
                 </li>
@@ -16,7 +16,7 @@
             </ul>
         </div>
 
-        <div class="input-file">
+        <div class="input-file <%=attachments ? 'smallBtn' : '' %>" >
             <span class="atachPlaceHolder"><i class="fa fa-plus" aria-hidden="true"></i> Attach</span>
             <input type="file" value="Choose File" id="inputAttach" class="inputAttach" name="attachfile" multiple="multiple" >
 

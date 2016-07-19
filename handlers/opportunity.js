@@ -536,6 +536,7 @@ var Module = function (models, event) {
         var headers = req.headers;
         var id = headers.modelid || 'empty';
         var contentType = headers.modelname || 'opportunities';
+        var addNote = headers.addNote || 'opportunities';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
@@ -551,11 +552,34 @@ var Module = function (models, event) {
         }
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            var notes = [];
             if (err) {
                 return next(err);
             }
 
-            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+            if (addNote) {
+                notes = file.map(function (elem) {
+                    return {
+                        _id       : mongoose.Types.ObjectId(),
+                        attachment: {
+                            name    : elem.name,
+                            shortPas: elem.shortPas
+                        },
+                        user      : {
+                            _id  : req.session.uId,
+                            login: req.session.uName
+                        },
+                        date      : new Date()
+                    }
+                });
+            }
+
+            Model.findByIdAndUpdate(id, {
+                $push: {
+                    attachments: {$each: file},
+                    notes      : {$each: notes}
+                }
+            }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
                 }

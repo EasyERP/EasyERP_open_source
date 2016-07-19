@@ -262,8 +262,7 @@ define([
             $thisEl.find('.attachments').append(
                 new AttachView({
                     model      : this.formModel,
-                    contentType: 'opportunities',
-                    saveNewNote: this.noteView.saveNewNote
+                    contentType: 'opportunities'
                 }).render().el
             );
 
