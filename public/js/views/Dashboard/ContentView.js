@@ -812,21 +812,8 @@ define([
                     return d.source;
                 });
 
-                scaleArray.sort();
                 var uniqueNamesArray = [];
-
-                for (var i = 0; i < scaleArray.length; i++){
-
-                    for (var j = i + 1; j < scaleArray.length;){
-
-                        if (!(scaleArray[i] === scaleArray[j])) {
-                            scaleArray.push(scaleArray[j]);
-                            j++;
-                        }
-                    }
-                }
-
-                console.log(uniqueNamesArray);
+                
                 var margin = {top: 20, right: 160, bottom: 30, left: 160},
                     width = $('#content-holder').width() - margin.left - margin.right,
                     height = scaleArray.length * 20;
