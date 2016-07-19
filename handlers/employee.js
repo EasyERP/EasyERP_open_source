@@ -1729,12 +1729,12 @@ var Employee = function (event, models) {
             event.emit('recalculate', req, null, next);
             event.emit('recollectVacationDash', {dbName: dbName});
 
-            res.status(200).send({success: 'Employees removed'});
-
             TransferModel.remove({employee: objectId(_id)}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
+
+                res.status(200).send({success: 'Employees removed'});
             });
         });
     };
@@ -2053,6 +2053,8 @@ var Employee = function (event, models) {
 
             return next(err);
         }
+
+
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
             if (err) {
