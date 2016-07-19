@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
+var async = require('async');
+var _ = require('lodash');
+
 var Categories = function (models, event) {
     var CategorySchema = mongoose.Schemas.ProductCategory;
+    var ProductsSchema = mongoose.Schemas.Products;
     var objectId = mongoose.Types.ObjectId;
     var MAINCONSTANTS = require('../constants/mainConstants');
 
@@ -64,9 +68,61 @@ var Categories = function (models, event) {
         getById(req, res, next);
     };
 
+    this.getProsterityForAncestor = function (req, res, next) {
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var id = req.params.id;
+
+        ProductCategory
+            .find({
+                ancestors: {
+                    $elemMatch: {$eq: id}
+                }
+            }, {_id: 1}, function (err, result) {
+                var ids = [];
+
+                if (err) {
+                    return next(err);
+                }
+
+                if (result && result.length) {
+                    ids = _.pluck(result, '_id');
+                }
+
+                ids.push(id);
+
+                res.status(200).send(ids);
+            });
+    };
+
+    function updateParentsCategory(req, newCategoryId, parentId, modifier, callback) {
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var id;
+        var updateCriterior;
+
+        if (modifier === 'add') {
+            updateCriterior = {$addToSet: {child: newCategoryId}};
+        } else {
+            updateCriterior = {$pull: {child: newCategoryId}};
+        }
+
+        ProductCategory.findOneAndUpdate({_id: parentId}, updateCriterior, function (err, result) {
+            if (err) {
+                return callback(err);
+            }
+
+            if (!result.parent) {
+                return callback(null);
+            }
+
+            id = result.parent;
+            updateParentsCategory(req, newCategoryId, id, modifier, callback);
+        });
+    }
+
     this.create = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var body = req.body;
+        var parentId = body.parent;
         var category;
 
         if (!Object.keys(body).length) {
@@ -83,11 +139,20 @@ var Categories = function (models, event) {
         category = new ProductCategory(body);
 
         category.save(function (err, category) {
+            var newModelId;
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(category);
+            newModelId = category._id;
+
+            updateParentsCategory(req, newModelId, parentId, 'add', function () {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(category);
+            });
         });
     };
 
@@ -214,101 +279,204 @@ var Categories = function (models, event) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var data = req.body;
         var _id = req.params.id;
+        var parentId;
+        var newParentId = data.parent;
 
         delete data.createdBy;
 
-        if (data.users && data.users[0] && data.users[0]._id) {
-            data.users = data.users.map(function (item) {
-                return item._id;
-            });
-        }
+        ProductCategory.findOneAndUpdate({_id: _id}, data, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-        if (data.sequenceStart) {
-            updateSequence(ProductCategory, 'sequence', data.sequenceStart, data.sequence, data.parentCategoryStart, data.parent, false, false, function (sequence) {
-                data.sequence = sequence;
-                ProductCategory.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                    if (err) {
-                        next(err);
-                    } else {
-                        // ToDo update fullName
-                        ProductCategory.populate(result, {path: 'parent'}, function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-                            if (data.isAllUpdate) {
-                                updateNestingLevel(req, _id, data.nestingLevel, function () {
-                                    res.send(200, {success: 'Category updated success'});
-                                });
-                            } else {
-                                res.send(200, {success: 'Category updated success'});
-                            }
+            parentId = result.parent;
 
-                            updateFullName(_id, ProductCategory, function () {
-                                console.log('fullName was updated');
-                            });
+            if (!data.isChangedLevel) {
+                res.send(200, {success: 'Category updated success'});
+                return;
+            }
 
-                        });
-                    }
-                });
-            });
-        } else {
-            ProductCategory.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                ProductCategory.populate(result, {path: 'parent'}, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
+            async.waterfall([
+                function (cb) {
+                    updateParentsCategory(req, _id, parentId, 'remove', cb);
+                },
 
-                updateFullName(_id, ProductCategory, function () {
-                    console.log('fullName was updated');
-                });
+                function (cb) {
+                    updateParentsCategory(req, _id, newParentId, 'add', cb);
+                },
 
+                function(cb) {
+                    updateFullName(_id, ProductCategory, cb);
+                }
+            ], function (err) {
                 if (err) {
                     return next(err);
                 }
-                if (data.isAllUpdate) {
-                    updateNestingLevel(req, _id, data.nestingLevel, function () {
-                        res.send(200, {success: 'Category updated success'});
-                    });
-                } else {
-                    res.send(200, {success: 'Category updated success'});
-                }
 
+                res.send(200, {success: 'Category updated success'});
             });
-        }
+        });
+
+
     };
 
-    function removeAllChild(req, arrId, callback) {
+    /*this.update = function (req, res, next) {
+     var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+     var data = req.body;
+     var _id = req.params.id;
+     var parentId;
+     var newParentId = data.parent;
+
+     delete data.createdBy;
+
+     if (data.users && data.users[0] && data.users[0]._id) {
+     data.users = data.users.map(function (item) {
+     return item._id;
+     });
+     }
+
+     if (data.sequenceStart) {
+     updateSequence(ProductCategory, 'sequence', data.sequenceStart, data.sequence, data.parentCategoryStart, data.parent, false, false, function (sequence) {
+     data.sequence = sequence;
+     ProductCategory.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+
+     if (err) {
+     next(err);
+     } else {
+     parentId = result.parent;
+     // ToDo update fullName
+     ProductCategory.populate(result, {path: 'parent'}, function (err, result) {
+     if (err) {
+     return next(err);
+     }
+     if (data.isAllUpdate) {
+     async.waterfall([
+     function (cb) {
+     updateNestingLevel(req, _id, data.nestingLevel, cb);
+     },
+
+     function(cb) {
+     updateParentsCategory(req, _id, parentId, 'remove', cb);
+     },
+
+     function(cb) {
+     updateParentsCategory(req, _id, newParentId, 'remove', cb);
+     },
+     ], function (err) {
+     if (err){
+     return next(err);
+     }
+
+     res.send(200, {success: 'Category updated success'});
+     });
+
+     } else {
+     res.send(200, {success: 'Category updated success'});
+     }
+
+     updateFullName(_id, ProductCategory, function () {
+     console.log('fullName was updated');
+     });
+
+     });
+     }
+     });
+     });
+     } else {
+     ProductCategory.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+     ProductCategory.populate(result, {path: 'parent'}, function (err, result) {
+     if (err) {
+     console.log(err);
+     }
+     });
+
+     updateFullName(_id, ProductCategory, function () {
+     console.log('fullName was updated');
+     });
+
+     if (err) {
+     return next(err);
+     }
+     if (data.isAllUpdate) {
+     updateNestingLevel(req, _id, data.nestingLevel, function () {
+     res.send(200, {success: 'Category updated success'});
+     });
+     } else {
+     res.send(200, {success: 'Category updated success'});
+     }
+
+     });
+     }
+     };*/
+
+    function removeAllChild(req, id, callback) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var Product = models.get(req.session.lastDb, 'Product', ProductsSchema);
 
-        if (arrId.length > 0) {
-            ProductCategory.find({parent: {$in: arrId}}, {_id: 1}, function (err, res) {
-                ProductCategory.find({parent: {$in: arrId}}, {multi: true}).remove().exec(function (err, result) {
-                    arrId = res.map(function (item) {
-                        return item._id;
-                    });
-                    removeAllChild(req, arrId, callback);
-                });
+        ProductCategory.find({
+            $or: [
+                {ancestors: {$elemMatch: {$eq: id}}},
+                {_id: id}
+            ]
+        }, {_id: 1}, function (err, result) {
+            var ids;
 
-            });
-        } else {
-            if (callback) {
-                callback();
+            if (err) {
+                return callback(err);
             }
-        }
+
+            ids = _.pluck(result, '_id');
+
+            function deleteCategories(parCb) {
+                ProductCategory.remove({_id: {$in: ids}}, function (err) {
+                    if (err) {
+                        return parCb(err);
+                    }
+
+                    parCb(null);
+                });
+            }
+
+            function deleteProducts(parCb) {
+                Product.remove({'accounting.category._id': {$in: ids}}, function (err) {
+                    if (err) {
+                        return parCb(err);
+                    }
+
+                    parCb(null);
+                });
+            }
+
+            async
+                .parallel([deleteCategories, deleteProducts], function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null);
+                });
+        });
     }
 
     this.remove = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var _id = req.param('id');
+        var parentId;
 
-        ProductCategory.remove({_id: _id}, function (err, result) {
+        ProductCategory.findOneAndRemove({_id: _id}, function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            removeAllChild(req, [_id].objectID(), function () {
-                res.status(200).send({success: 'Category was removed'});
+            parentId = result.parent;
+
+            updateParentsCategory(req, _id, parentId, 'remove', function () {
+                if (err) {
+                    return next(err);
+                }
+
+                //res.status(200).send({success: 'Category was removed'}
+                res.status(200).send(result);
             });
 
         });

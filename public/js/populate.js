@@ -62,7 +62,7 @@ define([
             });
         };
 
-        var getParrentCategory = function (id, url, data, content, isCreate, canBeEmpty) {
+        var getParrentCategory = function (id, url, data, content, isCreate, canBeEmpty, parrrentContentId) {
             dataService.getData(url, data, function (response) {
                 content.responseObj[id] = [];
                 if (canBeEmpty) {
@@ -77,6 +77,30 @@ define([
                         fullName: item.fullName
                     };
                 }));
+                if (isCreate) {
+                    $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
+                }
+
+
+            });
+        };
+
+        var getParrentCategoryById = function (id, url, data, content, isCreate, canBeEmpty) {
+            dataService.getData(url, data, function (response) {
+
+                content.responseObj[id] = [];
+                if (canBeEmpty) {
+                    content.responseObj[id].push({_id: "", name: "Select"});
+                }
+
+                content.responseObj[id][0] = {
+                    _id     : response._id,
+                    name    : response.name,
+                    level   : response.nestingLevel,
+                    parent  : response.parent,
+                    fullName: response.fullName
+                };
+
                 if (isCreate) {
                     $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
                 }
@@ -159,6 +183,37 @@ define([
                     });
                     $(id).text(current[0].name.first).attr("data-id", current[0]._id);
                 }
+            });
+        };
+
+        var getProductsInfo = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId, defaultId) {
+            dataService.getData(url, data, function (response) {
+                content.responseObj[id] = [];
+
+                if (canBeEmpty) {
+                    content.responseObj[id].push({_id: "", name: "Select"});
+                }
+
+                content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
+                    return {
+                        _id     : item._id,
+                        name    : item.name,
+                        level   : item.nestingLevel,
+                        parent  : item.parent,
+                        fullName: item.fullName
+                    };
+                }));
+
+
+                //$(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+
+                if (parrrentContentId) {
+                    var current = _.filter(response.data, function (item) {
+                        return item._id == parrrentContentId;
+                    });
+                    //$(id).text(current[0].[]).attr("data-id", current[0]._id);
+                }
+
             });
         };
 
@@ -365,28 +420,38 @@ define([
         };
 
         var showProductsSelect = function (e, prev, next, context) {
-            var data = context.responseObj[".productsDd"];
+            var data = context.responseObj['.productsDd'];
             var elementVisible = 10;
-            var newSel = $(e.target).parent().find(".newSelectList");
+            var $targetEl = $(e.target);
+            var newSel = $targetEl.parent().find('.newSelectList');
+            var parent;
+            var currentPage;
+            var allPages;
+            var start;
+            var end;
             var id;
+
             if (prev || next) {
-                newSel = $(e.target).closest(".newSelectList");
-                id = newSel.parent().find(".current-selected").attr("id") || newSel.parent().find(".current-selected").attr("data-id"); // add for Pagination
-                data = context.responseObj["#" + id];
+                newSel = $targetEl.closest('.newSelectList');
+                id = newSel.parent().find('.current-selected').attr('id') || newSel.parent().find('.current-selected').attr('data-id'); // add for Pagination
+                data = context.responseObj['#' + id];
             }
-            var parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
-            var currentPage = 1;
-            if (newSel.length && newSel.is(":visible") && !prev && !next) {
+
+            parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
+            currentPage = 1;
+
+            if (newSel.length && newSel.is(':visible') && !prev && !next) {
                 newSel.hide();
                 return;
             }
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
+
             if ((prev || next) && newSel.length) {
-                currentPage = newSel.data("page");
+                currentPage = newSel.data('page');
                 newSel.remove();
-            }
-            else if (newSel.length) {
+            } else if (newSel.length) {
                 newSel.show();
+
                 return;
             }
             if (prev) {
@@ -395,10 +460,10 @@ define([
             if (next) {
                 currentPage++;
             }
-            var s = "<ul class='newSelectList' data-page='" + currentPage + "'>";
-            var start = (currentPage - 1) * elementVisible;
-            var end = Math.min(currentPage * elementVisible, data.length);
-            var allPages = Math.ceil(data.length / elementVisible);
+
+            start = (currentPage - 1) * elementVisible;
+            end = Math.min(currentPage * elementVisible, data.length);
+            allPages = Math.ceil(data.length / elementVisible);
 
             parent.append(_.template(selectTemplate, {
                 collection    : data.slice(start, end),
@@ -466,16 +531,18 @@ define([
         };
 
         return {
-            get                 : get,
-            get2name            : get2name,
-            getPriority         : getPriority,
-            getWorkflow         : getWorkflow,
-            showSelect          : showSelect,
-            getParrentDepartment: getParrentDepartment,
-            getParrentCategory  : getParrentCategory,
-            getCompanies        : getCompanies,
-            showSelectPriority  : showSelectPriority,
-            showProductsSelect  : showProductsSelect,
-            fetchWorkflow       : fetchWorkflow
+            get                   : get,
+            get2name              : get2name,
+            getPriority           : getPriority,
+            getWorkflow           : getWorkflow,
+            showSelect            : showSelect,
+            getParrentDepartment  : getParrentDepartment,
+            getParrentCategory    : getParrentCategory,
+            getCompanies          : getCompanies,
+            showSelectPriority    : showSelectPriority,
+            showProductsSelect    : showProductsSelect,
+            fetchWorkflow         : fetchWorkflow,
+            getParrentCategoryById: getParrentCategoryById
+//            getProductsInfo       : getProductsInfo
         };
     });

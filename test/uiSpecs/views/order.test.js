@@ -16,7 +16,7 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai',
-    'constantsDir/filters'
+    'constants/filters'
 ], function (Backbone, _, modules, fixtures, OrderCollection, MainView, ListView, EditView, TopBarView, FilterView, FilterGroup, SavedFilters, eventsBinder, $, chai, chaiJquery, sinonChai, FILTER_CONSTANTS) {
     'use strict';
 

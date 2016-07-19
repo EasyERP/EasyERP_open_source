@@ -1207,8 +1207,8 @@ var Filters = function (models) {
 
     this.getProductsFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
-        var QuotationSchema = mongoose.Schemas.Quotation;
-        var Product = models.get(lastDB, 'Products', productSchema);
+        var ProductSchema = mongoose.Schemas.Products;
+        var Product = models.get(lastDB, 'Products', ProductSchema);
         var pipeLine;
         var aggregation;
 
@@ -1221,7 +1221,7 @@ var Filters = function (models) {
                         _id : '$_id',
                         name: '$name'
                     }
-                },
+                }/*,
 
                 productType: {
                     $addToSet: {
@@ -1230,7 +1230,7 @@ var Filters = function (models) {
                             $ifNull: ['$info.productType', 'None']
                         }
                     }
-                }
+                }*/
             }
         }];
 
@@ -1246,6 +1246,39 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+
+            result.canBePurchased = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
+
+            result.canBeSold = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
+
+            result.canBeExpensed = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
 
             res.status(200).send(result);
         });

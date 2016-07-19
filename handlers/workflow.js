@@ -52,6 +52,7 @@ var workflows = function (models, event) {
         var source = queryObject.source;
         var targetSource = queryObject.targetSource;
         var name = queryObject.name;
+        var visible = queryObject.visible;
 
         var err;
         var query;
@@ -85,6 +86,10 @@ var workflows = function (models, event) {
         }
         if (name) {
             query.name = name;
+        }
+
+        if (visible) {
+            query.visible = true;
         }
 
         Workflow

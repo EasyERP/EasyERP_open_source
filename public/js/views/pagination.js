@@ -5,7 +5,7 @@ define([
     'views/Filter/filterView',
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
-    'constantsDir/filters',
+    'constants/filters',
     'common',
     'async',
     'dataService',
@@ -70,6 +70,12 @@ define([
 
             if (this.hasPagination) {
                 this.renderPagination($curEl, this);
+            }
+
+            if (this.contentType === 'Products') {
+                this.$el.find('.product').draggable({
+                    revert: true
+                });
             }
 
             createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';

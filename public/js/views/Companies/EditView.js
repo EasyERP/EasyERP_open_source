@@ -71,7 +71,7 @@ define([
             var isCustomer = thisEl.find('#isCustomer').is(':checked');
             var isSupplier = thisEl.find('#isSupplier').is(':checked');
             var active = thisEl.find('#active').is(':checked');
-            var salesPerson = thisEl.find('#employeesDd').data('id');
+            var salesPerson = thisEl.find('#employeesDd').attr('data-id');
             var salesTeam = thisEl.find('#departmentDd').data('id');
             var implementedBy = thisEl.find('#implementedBy').data('id');
             var reference = thisEl.find('#reference').val();

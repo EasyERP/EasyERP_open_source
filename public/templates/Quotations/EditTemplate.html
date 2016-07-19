@@ -18,9 +18,9 @@
                         <!--<span>Cancel</span>-->
                         <!--</button>-->
                         <%} else {%>
-                        <button class="setDraft">
-                            <span>Set Draft</span>
-                        </button>
+                            <button class="setDraft">
+                                <span>Set Draft</span>
+                            </button>
                         <%}%>
                     </li>
                 </ul>
@@ -36,11 +36,11 @@
                                     <dt><label for="supplierDd">
 
                                         <%if(model.supplier){%>
-                                        <%if (this.forSales) {%>
-                                        Customer
-                                        <% } else { %>
-                                        Supplier
-                                        <% } %>
+                                            <%if (this.forSales) {%>
+                                                Customer
+                                            <% } else { %>
+                                                Supplier
+                                            <% } %>
                                         <% } %>
                                     </label></dt>
                                     <dd>
@@ -48,10 +48,10 @@
                                     </dd>
 
                                     <%if (this.forSales) {%>
-                                    <dt><label for="projectDd">Project</label></dt>
-                                    <dd>
-                                        <span id="projectDd" data-id="<%=model.project._id%>"><%=model.project.name%></span>
-                                    </dd>
+                                        <dt><label for="projectDd">Project</label></dt>
+                                        <dd>
+                                            <span id="projectDd" data-id="<%=model.project._id%>"><%=model.project.name%></span>
+                                        </dd>
                                     <% } %>
                                 </dl>
                             </div>
@@ -65,10 +65,10 @@
                                     <dt class="hidden"><label for="deliveryDd">Deliver To</label></dt>
                                     <dd class="hidden">
                                         <%if(model.deliverTo){%>
-                                        <a id="deliveryDd" class="current-selected" href="javascript:;"
-                                           data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>
+                                            <a id="deliveryDd" class="current-selected" href="javascript:;"
+                                               data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>
                                         <%} else {%>
-                                        <a id="deliveryDd" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                            <a id="deliveryDd" class="current-selected" href="javascript:;" data-id="">Select</a>
                                         <%}%>
                                     </dd>
 

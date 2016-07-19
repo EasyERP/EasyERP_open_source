@@ -7,7 +7,7 @@ define([
     'views/Filter/filterView',
     'views/Filter/filtersGroup',
     'views/Filter/savedFiltersView',
-    'constantsDir/filters'
+    'constants/filters'
 ], function ($, _, chai, chaiJquery, sinonChai, FilterView, FilterGroup, SavedFilters, FILTER_CONSTANTS) {
     return function (filterOptions) {
         var server = sinon.fakeServer.create();

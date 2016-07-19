@@ -140,7 +140,7 @@ module.exports = function (app, mainDb) {
     app.use('/scheduledPay', scheduledPayRouter);
     app.use('/payrollComponentTypes', payrollComponentTypesRouter);
     app.use('/workflows', workflowRouter);
-    app.use('/payment', paymentRouter);
+    app.use('/payments', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
     app.use('/importFile', importFileRouter);

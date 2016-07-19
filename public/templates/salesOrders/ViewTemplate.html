@@ -41,10 +41,12 @@
                                             + ' ' + model.supplier.name.last%></a>
                                         <%}%>
                                     </dd>
+                                   <% if (forSales){ %>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
                                         <a id="projectDd" class="" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.name%></a>
                                     </dd>
+                                   <% } %>
                                 </dl>
                             </div>
                             <div class="half-block left">

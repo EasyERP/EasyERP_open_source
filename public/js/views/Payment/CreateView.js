@@ -112,6 +112,10 @@ define([
             var newCurrencyClass = helpers.currencyClass(newCurrency);
             var paymentMethods;
             var el;
+            var accountName = this.forSales ? 'debitAccount' : 'creditAccount';
+            var query = {
+                transaction: 'Payment'
+            };
 
             var array = this.$el.find('#paidAmountDd');
             array.attr('class', newCurrencyClass);
@@ -125,10 +129,10 @@ define([
                 });
 
                 if (el && el.chartAccount && el.chartAccount._id) {
-                    dataService.getData('/journals/getByAccount', {
-                        transaction : 'Payment',
-                        debitAccount: el.chartAccount._id
-                    }, function (resp) {
+
+                    query[accountName] = el.chartAccount._id;
+
+                    dataService.getData('/journals/getByAccount', query, function (resp) {
                         self.responseObj['#journal'] = resp.data || [];
 
                         self.$el.find('#journalDiv').show();
@@ -194,8 +198,12 @@ define([
                 });
             }
 
-            paymentMethod = paymentMethod || null;
-            period = period || null;
+            if (!paymentMethodID) {
+                return App.render({
+                    type   : 'error',
+                    message: "Bank Account can't be empty."
+                });
+            }
 
             data = {
                 mid             : mid,
@@ -225,6 +233,10 @@ define([
                             redirectUrl = '#easyErp/ExpensesPayments/list';
                         } else if (mid === 100) {
                             redirectUrl = '#easyErp/DividendPayments/list';
+                        } else if (mid === 109) {
+                            redirectUrl = '#easyErp/purchasePayments/list';
+                        } else if (mid === 95) {
+                            redirectUrl = '#easyErp/purchasePayments/list';
                         } else {
                             redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';
                         }
