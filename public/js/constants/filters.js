@@ -350,6 +350,11 @@
             salesPerson: {
                 displayName: 'Sales Person',
                 backend    : 'salesPerson._id'
+            },
+
+            createdBy: {
+                displayName: 'Created By',
+                backend    : 'createdBy.user._id'
             }
         },
 

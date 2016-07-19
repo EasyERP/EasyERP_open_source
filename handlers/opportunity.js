@@ -2301,7 +2301,9 @@ var Module = function (models, event) {
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
                             workflow        : {$arrayElemAt: ['$workflow', 0]},
                             'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                             'createdBy.date': 1,
+                            'editedBy.date' : 1,
                             source          : 1,
                             address         : 1,
                             skype           : 1,
@@ -2331,6 +2333,8 @@ var Module = function (models, event) {
                             'workflow.status' : '$root.workflow.status',
                             'createdBy.user'  : '$root.createdBy.user.login',
                             'createdBy.date'  : '$root.createdBy.date',
+                            'editedBy.user'   : '$root.editedBy.user.login',
+                            'editedBy.date'   : '$root.editedBy.date',
                             name              : '$root.name',
                             source            : '$root.source',
                             'address.country' : '$root.address.country',
@@ -2595,7 +2599,7 @@ var Module = function (models, event) {
 
         });
     }
-    
+
     function getForChart(req, res, next) {
         var query = req.query;
         var starDate = query.startDay ? new Date(query.startDay) : null;

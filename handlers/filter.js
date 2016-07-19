@@ -1689,11 +1689,19 @@ var Filters = function (models) {
                 as          : 'salesPerson'
             }
         }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'createdBy.user',
+                foreignField: '_id',
+                as          : 'createdBy.user'
+            }
+        }, {
             $project: {
-                workflow   : {$arrayElemAt: ['$workflow', 0]},
-                source     : 1,
-                contactName: {$concat: ['$contactName.first', ' ', '$contactName.last']},
-                salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
+                workflow        : {$arrayElemAt: ['$workflow', 0]},
+                source          : 1,
+                contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
+                salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]}
             }
         }, {
             $project: {
@@ -1703,6 +1711,11 @@ var Filters = function (models) {
                 salesPerson: {
                     _id : '$salesPerson._id',
                     name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                },
+
+                createdBy: {
+                    _id : {$ifNull: ['$createdBy.user._id', 'None']},
+                    name: {$ifNull: ['$createdBy.user.login', 'None']}
                 }
             }
         }, {
@@ -1714,9 +1727,10 @@ var Filters = function (models) {
                         _id : '$contactName',
                         name: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$contactName', ' ']
                                 },
+
                                 then: 'None',
                                 else: '$contactName'
                             }
@@ -1741,15 +1755,14 @@ var Filters = function (models) {
                 salesPerson: {
                     $addToSet: {
                         _id : '$salesPerson._id',
-                        name: {
-                            $cond: {
-                                if  : {
-                                    $eq: ['$contactName', ' ']
-                                },
-                                then: 'None',
-                                else: '$contactName'
-                            }
-                        }
+                        name: '$salesPerson.name'
+                    }
+                },
+
+                createdBy: {
+                    $addToSet: {
+                        _id : '$createdBy._id',
+                        name: '$createdBy.name'
                     }
                 }
             }

@@ -5,7 +5,6 @@
     <td><span class="blue"><%=lead.name%></span></td>
     <td><%= lead.contactName || ''%></td>
     <!--    <td><%=lead.email%></td>-->
-    <td class="notForm"><a href="skype:<%=lead.skype%>?call"><%=lead.skype%></a></td>
     <td><%=lead.social.LI%></td>
     <td><%=lead.address.country%></td>
     <td><%=lead.source%></td>
@@ -17,9 +16,9 @@
     <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user +
         ')'):(lead.createdBy.date?lead.createdBy.date:'')%>
     </td>
-    <!--    <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' +
-            lead.editedBy.user + ')') : '')):''%>
-        </td>-->
+    <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' +
+        lead.editedBy.user + ')') : '')):''%>
+    </td>
 
 </tr>
 <% }) %>
