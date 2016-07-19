@@ -504,7 +504,7 @@ define([
             $parent = $parent.closest('tr');
 
             cost = $parent.find('[data-name="price"] input').val() || $parent.find('[data-name="price"]').text();
-            cost = parseFloat(helpers.spaceReplacer(cost));
+            cost = parseFloat(helpers.spaceReplacer(cost)) || 0;
 
             total = quantity * cost;
             taxes = total * this.taxesRate;
@@ -547,7 +547,7 @@ define([
                     cost = $currentEl.find('[data-name="price"] input').val() || $currentEl.find('[data-name="price"]').text() || '0';
                     quantity = this.quantityRetriver($currentEl);
                     cost = helpers.spaceReplacer(cost);
-                    cost = parseFloat(cost);
+                    cost = parseFloat(cost) || 0;
                     cost = quantity * cost;
                     totalUntax += cost;
                     date = $currentEl.find('.datepicker').text();
