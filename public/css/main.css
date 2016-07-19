@@ -3734,6 +3734,9 @@ dl.payrollDateBlock dt {
   padding: 10px 15px;
   border-bottom: 1px solid #c8c8d3;
 }
+.noteContainer .loadAttach {
+  padding: 10px 15px 0;
+}
 .noteContainer .itemCircle {
   position: absolute;
   left: 9px;
@@ -3920,12 +3923,28 @@ dl.payrollDateBlock dt {
 .selectCompany .input-file:hover {
   background: #f2f2f2;
 }
+.attachWrapper .input-file.small,
+.selectCompany .input-file.small {
+  display: block;
+  width: 90px;
+  margin: 15px auto 0;
+  padding: 6px 12px;
+  font-size: 13px;
+  float: none;
+}
 .attachWrapper .atachPlaceHolder i,
 .selectCompany .atachPlaceHolder i,
 .attachWrapper .addCompanyBtn i,
 .selectCompany .addCompanyBtn i {
   margin-right: 5px;
   font-size: 12px;
+}
+.attachWrapper .inputAttach,
+.selectCompany .inputAttach {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  cursor: pointer;
 }
 .ui-dialog .ui-dialog-content.addCompany {
   padding: 20px 20px 40px;
