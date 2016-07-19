@@ -5,19 +5,27 @@ define([
     'views/formProperty/filterView',
     'text!templates/formProperty/formPropertyTemplate.html',
     'text!templates/selectView/selectContent.html'
-], function (Backbone, $, _, filterView, propertyTemplate, selectContent) {
+], function (Backbone, $, _, FilterView,  propertyTemplate, selectContent) {
     var selectView = Backbone.View.extend({
         template       : _.template(propertyTemplate),
         contentTemplate: _.template(selectContent),
 
         events: {
+            'change .editable'     : 'setChangeValueToModel',
             'click #addProperty'   : 'addProperty',
             'click #removeProperty': 'removeProperty',
-            'click #saveSpan'      : 'saveClick'
+            'click #saveBtn'       : 'saveChanges',
+            'click #cancelBtn'     : 'cancelChanges'
+        },
+
+        setChangeValueToModel: function (e){
+            var $target = $(e.target);
+          /*  var type = */
+
         },
 
         addProperty: function () {
-            new filterView({
+            new FilterView({
                 model    : this.parentModel,
                 type     : this.type,
                 attribute: this.attribute,
@@ -25,9 +33,9 @@ define([
             });
         },
 
-        saveClick: function (e) {
-
-            var parent = $(e.target).parent().parent();
+        saveChanges: function (e) {
+            var $thisEl = this.$el;
+            var name = $thisEl.find('#supplierReference [data-id="first_name"]').val();
             var field;
             var value = this.$el.find('#editInput').val();
             var newModel = {};
@@ -39,8 +47,8 @@ define([
             parent.text(value);
             parent.removeClass('quickEdit');
 
-            this.model.save(newModel,{
-                patch  : true,
+            this.model.save(newModel, {
+                patch  : true
             });
         },
 

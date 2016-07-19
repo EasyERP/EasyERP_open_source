@@ -1,5 +1,7 @@
 <div class="tagsRow">
-    <span class="left" >Tags </span>
+    <div class="formTitle">
+        <h3>Tags</h3>
+    </div>
 
     <%  tags.forEach(function(elem,index){ %>
             <span data-id="<%= elem._id%>" class="<%= elem.color%> editTags"><%=elem.name %></span>

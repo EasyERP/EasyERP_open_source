@@ -7,6 +7,7 @@ define([
     'views/Editor/AttachView',
     'views/Opportunities/EditView',
     'views/formProperty/formPropertyView',
+    'views/Tags/TagView',
     'models/CompaniesModel',
     'models/PersonsModel',
     'constants',
@@ -14,13 +15,14 @@ define([
     'populate',
     'constants',
     'views/selectView/selectView'
-], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, formProperty, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
+], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, formProperty, TagView, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',
 
         initialize: function (options) {
             this.formModel = options.model;
             this.formModel.urlRoot = constants.URLS.OPPORTUNITIES;
+            this.formModel.on('change:tags', this.saveTags, this);
             _.bindAll(this, 'saveDeal');
             this.responseObj = {};
         },
@@ -187,6 +189,23 @@ define([
             });
         },
 
+        saveTags : function (){
+            this.saveDeal(this.formModel.changed);
+            this.renderTags();
+        },
+
+        renderTags : function (){
+            var notDiv = this.$el.find('.tags-container');
+            notDiv.empty();
+
+            notDiv.append(
+                new TagView({
+                    model      : this.formModel,
+                    contentType: 'Opportunities'
+                }).render().el
+            );
+        },
+
         editItem: function () {
             // create editView in dialog here
             return new EditView({model: this.formModel});
@@ -244,6 +263,8 @@ define([
                 attribute  : 'customer',
                 saveDeal   : self.saveDeal
             });
+
+            this.renderTags();
 
             $thisEl.find('#companyHolder').html(
                 this.formProperty.render().el

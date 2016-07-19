@@ -5,7 +5,6 @@ define([
     'text!templates/Editor/AttachTemplate.html',
     'text!templates/Editor/AddAttachments.html',
     'moment'
-
 ], function (Backbone, $, _, AttachTemplate, addAttachTemplate, moment) {
     var AttachView = Backbone.View.extend({
 

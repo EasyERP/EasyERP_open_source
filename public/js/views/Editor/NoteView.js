@@ -13,6 +13,8 @@ define([
     'populate',
     'constants'
 ], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, AttachView, SelectView, moment, populate, CONSTANTS) {
+    'use strict';
+
     var NoteView = Backbone.View.extend({
 
         template        : _.template(NoteTemplate),
