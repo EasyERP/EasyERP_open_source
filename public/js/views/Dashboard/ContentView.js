@@ -407,7 +407,7 @@ define([
         resizeHandler: function () {
             var self = this;
 
-            // self.renderPopulate();
+            //self.renderPopulate();
             self.renderPopulateByType(self, 'source', this.startDateLeadsBySource, this.endDateLeadsBySource);
             self.renderPopulateByType(self, 'sale', this.startDateLeadsBySale, this.endDateLeadsBySale);
             self.renderOpportunities();
@@ -726,8 +726,15 @@ define([
                     rectWidth = rectWidth - 2 * offset;
                 }
 
-                barChart.selectAll('rect')
-                    .data(data[self.dateItem.leadsChart])
+                var data2 = _.filter(data[self.dateItem.leadsChart], function (item) {
+                    return item.isOpp;
+                });
+                var data1 = _.filter(data[self.dateItem.leadsChart], function (item) {
+                    return !item.isOpp;
+                });
+                console.log(data1, data2)
+                barChart.selectAll('.rect1')
+                    .data(data1)
                     .enter()
                     .append('rect')
                     .attr({
