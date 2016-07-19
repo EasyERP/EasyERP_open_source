@@ -31,9 +31,9 @@ define([
         events: {
             click                                              : 'hideNewSelect',
             'click #tabList a'                                 : 'switchTab',
-            'click #editSpan'                                  : 'editClick',
-            'click #cancelSpan'                                : 'cancelClick',
-            'click #saveSpan'                                  : 'saveClick',
+            'keyup .editable'                                  : 'setChangeValueToModel',
+            'click #cancelBtn'                                 : 'cancelChanges',
+            'click #saveBtn'                                   : 'saveChanges',
             'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
@@ -52,8 +52,6 @@ define([
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
 
-            $target.closest('div').addClass('active');
-
             if (!this.modelChanged){
                 this.modelChanged = {};
             }
@@ -62,16 +60,15 @@ define([
         },
 
         showButtons : function (){
-            this.$el.find('.btnBlock').addClass('showButtons');
+            this.$el.find('#formBtnBlock').addClass('showButtons');
         },
 
         hideButtons : function () {
-            this.$el.find('.btnBlock').removeClass('showButtons');
+            this.$el.find('#formBtnBlock').removeClass('showButtons');
         },
 
         saveChanges: function (e) {
             this.saveDeal(this.modelChanged);
-            this.$el.find('.active').removeClass('active');
         },
 
         cancelChanges : function (e) {
@@ -121,10 +118,9 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.parents('.inputBox').find('.current-selected');
             var type = $target.closest('a').attr('data-id');
             var id = $target.attr('id');
-            var changedObject = {};
 
             holder.text($target.text());
 
@@ -213,7 +209,16 @@ define([
                     workflow : formModel.workflow
                 }));
             });
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, false, true);
+
+            dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
+
+                    return employee;
+                });
+
+                self.responseObj['#salesPersonDd'] = employees;
+            });
 
             if (formModel.company) {
                 companyModel = new CompanyModel(formModel.company);
