@@ -30,8 +30,6 @@ define([
         events: {
             click                                              : 'hideNewSelect',
             'click #tabList a'                                 : 'switchTab',
-            'mouseenter .editable:not(.quickEdit)'             : 'quickEdit',
-            'mouseleave .editable'                             : 'removeEdit',
             'click #editSpan'                                  : 'editClick',
             'click #cancelSpan'                                : 'cancelClick',
             'click #saveSpan'                                  : 'saveClick',
@@ -48,29 +46,36 @@ define([
             }
         },
 
-        saveClick: function (e) {
+        setChangeValueToModel: function (e){
+            var $target = $(e.target);
+            var property = $target.attr('data-id').replace('_', '.');
+            var value = $target.val();
 
-            var parent = $(e.target).parent().parent();
-            var field;
-            var value = this.$el.find('#editInput').val();
-            var newModel = {};
-            e.preventDefault();
+            $target.closest('div').addClass('active');
 
-            field = parent.attr('data-id').replace('_', '.');
-            newModel[field] = value;
-
-            parent.text(value);
-            parent.removeClass('quickEdit');
-
-            this.saveDeal(newModel);
+            if (!this.modelChanged){
+                this.modelChanged = {};
+            }
+            this.modelChanged[property] = value;
+            this.showButtons();
         },
 
-        cancelClick: function (e) {
-            e.preventDefault();
+        showButtons : function (){
+            this.$el.find('.btnBlock').addClass('showButtons');
+        },
 
-            var parent = $(e.target).closest('.editable');
-            parent.removeClass('quickEdit');
-            parent.text(this.text);
+        hideButtons : function (){
+            this.$el.find('.btnBlock').removeClass('showButtons');
+        },
+
+        saveChanges: function (e) {
+            this.saveDeal(this.modelChanged);
+            this.$el.find('.active').removeClass('active');
+        },
+
+        cancelChanges : function (e) {
+            this.modelChanged = '';
+            this.render();
         },
 
         showNewSelect: function (e) {
@@ -94,45 +99,6 @@ define([
             $target.append(this.selectView.render().el);
 
             return false;
-        },
-
-        removeEdit: function () {
-            var $thisEl = this.$el;
-            $thisEl.find('#editSpan').remove();
-            $thisEl.find('dd .no-long').css({width: 'auto'});
-        },
-
-        quickEdit: function (e) {
-            var trId = $(e.target);
-
-            if (trId.find('#editSpan').length === 0) {
-                trId.append('<span id="editSpan" class=""><a href="javascript:;">e</a></span>');
-            }
-        },
-
-        editClick: function (e) {
-            var $target = $(e.target);
-            var $thisEl = this.$el;
-            var maxlength = $target.closest('.editable').find('.no-long').attr('data-maxlength') || 32;
-            var parent;
-
-            e.preventDefault();
-
-            $thisEl.find('.quickEdit #editInput').remove();
-            $thisEl.find('.quickEdit #cancelSpan').remove();
-            $thisEl.find('.quickEdit #saveSpan').remove();
-            $thisEl.find('.quickEdit').text(this.text).removeClass('quickEdit');
-
-            parent = $target.closest('.editable');
-            parent.addClass('quickEdit');
-            $thisEl.find('#editSpan').remove();
-            this.text = parent.text();
-            parent.text('');
-            parent.append('<input id="editInput" maxlength="32" type="text" class="left"/>');
-            $thisEl.find('#editInput').val(this.text);
-            parent.append('<span id="saveSpan"><a href="#">c</a></span>');
-            parent.append('<span id="cancelSpan"><a href="#">x</a></span>');
-            parent.find('#editInput').width(parent.find('#editInput').width() - 50);
         },
 
         changeWorkflow: function (e) {
@@ -160,9 +126,11 @@ define([
             var changedObject = {};
 
             holder.text($target.text());
-            changedObject[type] = id;
 
-            this.saveDeal(changedObject);
+            if (!this.modelChanged){
+                this.modelChanged = {};
+            }
+            this.modelChanged[type] = id;
         },
 
         saveDeal: function (changedAttrs, type) {
@@ -176,6 +144,8 @@ define([
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else {
                         self.noteView.renderTimeline();
+                        self.modelChanged = '';
+                        self.hideButtons();
                     }
                 },
                 error  : function (model, response) {
