@@ -51,6 +51,7 @@ module.exports = function (app, mainDb) {
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    
     var personsRouter = require('./person')(models, event);
     var capacityRouter = require('./capacity')(models);
     var payRollRouter = require('./payroll')(models);
@@ -185,10 +186,73 @@ module.exports = function (app, mainDb) {
     app.use('/payrollStructureTypes', payrollStructureTypesRouter);
     app.use('/cashTransfer', cashTransferRouter);
 
+    /**
+     *@api {get} /getDBS/ Request DBS
+     *
+     * @apiVersion 0.0.1
+     * @apiName getDBS
+     * @apiGroup Index File
+     *
+     * @apiSuccess {String} DBS
+     * @apiSuccessExample Success-Response:
+HTTP/1.1 200 OK
+{
+    "dbsNames": {
+        "sergey": {
+            "DBname": "sergey",
+            "url": "144.76.56.111"
+        },
+        "pavlodb": {
+            "DBname": "pavlodb",
+            "url": "144.76.56.111"
+        },
+        "romadb": {
+            "DBname": "romadb",
+            "url": "144.76.56.111"
+        },
+        "vasyadb": {
+            "DBname": "vasyadb",
+            "url": "144.76.56.111"
+        },
+        "fabio_lunardi": {
+            "DBname": "fabio_lunardi",
+            "url": "144.76.56.111"
+        },
+        "alexKhutor": {
+            "DBname": "alexKhutor",
+            "url": "144.76.56.111"
+        },
+        "lilyadb": {
+            "DBname": "lilyadb",
+            "url": "144.76.56.111"
+        },
+        "micheldb": {
+            "DBname": "micheldb",
+            "url": "144.76.56.111"
+        },
+        "alex": {
+            "DBname": "alex",
+            "url": "144.76.56.111"
+        }
+    }
+}
+     */
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
 
+    /**
+     *@api {get} /currentDb/ Request CurrentDb
+     *
+     * @apiVersion 0.0.1
+     * @apiName getCurrentDb
+     * @apiGroup Index File
+     *
+     * @apiSuccess {String} CurrentDb
+     * @apiSuccessExample Success-Response:
+HTTP/1.1 200 OK
+    "vasyadb"
+     */
     app.get('/currentDb', function (req, res, next) {
         if (req.session && req.session.lastDb) {
             res.status(200).send(req.session.lastDb);
@@ -197,6 +261,18 @@ module.exports = function (app, mainDb) {
         }
     });
 
+    /**
+     *@api {get} /account/authenticated/ Request for checking authentication
+     *
+     * @apiVersion 0.0.1
+     * @apiName getAuthStatus
+     * @apiGroup Index File
+     *
+     * @apiSuccess {String} AuthStatus
+     * @apiSuccessExample Success-Response:
+HTTP/1.1 200 OK
+    "OK"
+     */
     app.get('/account/authenticated', function (req, res, next) {
         if (req.session && req.session.loggedIn) {
             res.send(200);
@@ -222,6 +298,7 @@ module.exports = function (app, mainDb) {
             });
 
         }
+
         res.clearCookie('lastDb');
         res.redirect('/#login');
     });
