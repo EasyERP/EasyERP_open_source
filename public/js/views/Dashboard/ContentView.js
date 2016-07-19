@@ -229,9 +229,6 @@ define([
             this.dateRange[type] = $(e.target).data('day');
 
             switch (type) {
-                case 'date':
-                    this.renderPopulate();
-                    break;
                 case 'source':
                     this.renderPopulateByType(this, type);
                     break;
@@ -260,9 +257,6 @@ define([
             this.dateItem[type] = $(e.target).data('item');
 
             switch (type) {
-                case 'date':
-                    this.renderPopulate();
-                    break;
                 case 'source':
                     this.renderPopulateByType(this, type);
                     break;
@@ -404,22 +398,9 @@ define([
             }
         },
 
-        resizeHandler: function () {
-            var self = this;
-
-            //self.renderPopulate();
-            self.renderPopulateByType(self, 'source', this.startDateLeadsBySource, this.endDateLeadsBySource);
-            self.renderPopulateByType(self, 'sale', this.startDateLeadsBySale, this.endDateLeadsBySale);
-            self.renderOpportunities();
-            self.renderTreemap();
-            self.renderOpportunitiesWinAndLost();
-            self.renderOpportunitiesConversion();
-            self.renderOpportunitiesAging();
-            self.renderSalesByCountry();
-        },
-
         render: function () {
             var date = moment(new Date());
+            var self = this;
 
             this.startDate = (date.startOf('month')).format('D MMM, YYYY');
             this.endDate = (moment(this.startDate).endOf('month')).format('D MMM, YYYY');
@@ -445,17 +426,22 @@ define([
                 endDateLeadsBySource  : this.endDateLeadsBySource
             }));
 
-            this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
             this.bindDatePickers(this.startDate, this.endDate, '');
             this.bindDatePickers(this.startDateLeadsByName, this.endDateLeadsByName, 'LeadsByName');
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'Leads');
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'LeadsBySale');
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'LeadsBySource');
-            this.resizeHandler();
-            this.renderSalesByCountry();
-            this.renderTreemap();
-            this.renderLeadsChart();
+            this.renderPopulateByType(self, 'source', this.startDateLeadsBySource, this.endDateLeadsBySource);
+            this.renderPopulateByType(self, 'sale', this.startDateLeadsBySale, this.endDateLeadsBySale);
+            this.renderOpportunitiesWinAndLost();
+            this.renderOpportunitiesConversion();
+            this.renderOpportunitiesAging();
             this.renderLeadsChartByName();
+            this.renderSalesByCountry();
+            this.renderOpportunities();
+            this.renderLeadsChart();
+            this.renderTreemap();
+            this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
             return this;
         },
@@ -655,17 +641,18 @@ define([
             var self = this;
             var offset = 0;
             var padding = 40;
-            var max;
             var rectWidth;
             var barChart;
+            var yScale2;
+            var height;
+            var margin;
             var xScale;
             var yScale;
+            var yAxis2;
             var xAxis;
             var yAxis;
             var width;
-            var height;
-            var margin;
-            var i;
+            var max;
 
             $('svg.leadsBarChart').empty();
 
@@ -705,6 +692,10 @@ define([
                     .domain([0, max])
                     .range([0, height]);
 
+                yScale2 = d3.scale.linear()
+                    .domain([0, 100])
+                    .range([height, 0]);
+
                 xAxis = d3.svg.axis()
                     .scale(xScale)
                     .orient('bottom')
@@ -716,7 +707,16 @@ define([
                     .tickSize(0)
                     .tickPadding(padding)
                     .tickFormat(function (d, i) {
-                        return -(d - max);
+                        return Math.abs(d - max);
+                    });
+
+                yAxis2 = d3.svg.axis()
+                    .scale(yScale2)
+                    .orient('right')
+                    .tickSize(0)
+                    .tickPadding(padding)
+                    .tickFormat(function(d, i){
+                        return d + '%';
                     });
 
                 rectWidth = width / Math.floor((new Date(self.endDateLeads) - new Date(self.startDateLeads)) / 24 / 60 / 60 / 1000);
@@ -732,7 +732,7 @@ define([
                 var data1 = _.filter(data[self.dateItem.leadsChart], function (item) {
                     return !item.isOpp;
                 });
-                console.log(data1, data2)
+
                 barChart.selectAll('.rect1')
                     .data(data1)
                     .enter()
@@ -756,6 +756,29 @@ define([
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
                     });
 
+                barChart.selectAll('.rect2')
+                    .data(data2)
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        x          : function (d) {
+                            var date = (d._id).toString();
+                            var year = date.substr(0, 4);
+                            var month = date.substr(4, 2);
+                            var day = date.substr(6, 2);
+                            return xScale(new Date(year + '-' + month + '-' + day));
+                        },
+                        y          : function (d) {
+                            return height - yScale(d.count)
+                        },
+                        width      : rectWidth,
+                        height     : function (d) {
+                            return yScale(d.count)
+                        },
+                        fill       : 'black',
+                        'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
+                    });
+
                 barChart.append('g')
                     .attr({
                         'class'    : 'x axis',
@@ -768,6 +791,17 @@ define([
                         'class': 'y axis'
                     })
                     .call(yAxis)
+                    .select('path.domain')
+                    .attr({
+                        'style': 'display: none'
+                    });
+
+                barChart.append('g')
+                    .attr({
+                        'class': 'y2 axis2',
+                        'transform': 'translate(' + (width) + ',0)'
+                    })
+                    .call(yAxis2)
                     .select('path.domain')
                     .attr({
                         'style': 'display: none'
@@ -1587,435 +1621,6 @@ define([
             });
         },
 
-        renderPopulate: function () {
-            var self = this;
-
-            $('.leadChart').empty();
-
-            common.getLeadsForChart('date', this.dateRange.date, this.dateItem.date, function (data) {
-                var maxval = d3.max(data, function (d) {
-                    return d.count;
-                });
-                var margin = {top: 20, right: 160, bottom: 190, left: 160};
-                var width = $('#content-holder').width() - margin.left - margin.right;
-                var height = 500 - margin.top - margin.bottom;
-                var x = d3.scale.ordinal()
-                    .rangeRoundBands([0, width], 0.6);
-
-                var y = d3.scale.linear()
-                    .range([height, 0]);
-
-                var y2 = d3.scale.linear()
-                    .range([height, 0]);
-
-                var x2 = d3.scale.linear()
-                    .range([0, width]);
-
-                var xAxis = d3.svg.axis()
-                    .scale(x)
-                    .orient('bottom')
-                    .tickFormat(function (d) {
-                        switch (self.dateItem.date) {
-                            case 'DW':
-                                return self.getDay(d);
-                            case 'M':
-                                return self.getMonth(d);
-                            case 'D':
-                                return self.getDateFromDayOfYear(d);
-                        }
-                        return d;
-
-                    });
-
-                var yAxis = d3.svg.axis()
-                    .scale(y)
-                    .ticks(maxval)
-                    .orient('left');
-
-                var yAxis2 = d3.svg.axis()
-                    .scale(y2)
-                    .orient('right')
-                    .tickFormat(function (d) {
-                        return d + '%';
-                    });
-                var chart = d3.select('.leadChart')
-                    .attr('width', width + margin.left + margin.right)
-                    .attr('height', height + margin.top + margin.bottom)
-                    .append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-                var line = d3.svg.line()
-                    .x(function (d) {
-                        return x(d.source) + x.rangeBand() / 2;
-                    })
-                    .y(function (d) {
-                        return y2(d.count);
-                    })
-                    .interpolate('monotone');
-
-                $('#timeBuildingDataFromServer').text('Server response in ' + self.buildTime + ' ms');
-
-                if (self.dateItem.date == 'DW') {
-                    var dt = _.unique(_.map(data, function (item) {
-                        return item.source;
-                    }));
-                    for (var i = 1; i < 8; i++) {
-                        if (dt.indexOf(i) === -1) {
-                            data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
-                        }
-                        data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
-                    }
-                    data.sort(function (a, b) {
-                        return d3.ascending(a.source, b.source);
-                    });
-
-                }
-                if (self.dateItem.date == 'DM') {
-                    var dt = _.unique(_.map(data, function (item) {
-                        return item.source;
-                    }));
-                    for (var i = 1; i < 32; i++) {
-                        if (dt.indexOf(i) === -1) {
-                            data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
-                        }
-                        data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
-                    }
-                    data.sort(function (a, b) {
-                        return d3.ascending(a.source, b.source);
-                    });
-
-                }
-                if (self.dateItem.date == 'M' && self.dateRange.date == 365) {
-                    var dt = _.unique(_.map(data, function (item) {
-                        return item.source;
-                    }));
-                    for (var i = 1; i < 13; i++) {
-                        if (dt.indexOf(i) === -1) {
-                            data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
-                        }
-                        data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
-                    }
-                    data.sort(function (a, b) {
-                        return d3.ascending(a.source, b.source);
-                    });
-
-                }
-                if (self.dateItem.date == 'D') {
-
-                    var dt = _.unique(_.map(data, function (item) {
-                        return item.source;
-                    }));
-                    for (var i = 0; i < self.dateRange.date; i++) {
-                        var now = new Date(new Date() - i * 24 * 60 * 60 * 1000);
-                        var start = new Date(now.getFullYear(), 0, 0);
-                        var diff = now - start;
-                        var oneDay = 1000 * 60 * 60 * 24;
-                        var dayofYera = Math.floor(diff / oneDay);
-                        if (dt.indexOf(dayofYera) === -1) {
-                            data.push({
-                                count : 0,
-                                date  : [now],
-                                isOpp : true,
-                                source: dayofYera,
-                                year  : now.getFullYear()
-                            });
-                        }
-                        // data.push({count: 0, date: [now], source: dayofYera, isOpp: true, year: now.getFullYear()});
-                    }
-                    data = _.map(data, function (item) {
-                        item.source = item.source + item.year * 10000;
-                        return item;
-                    });
-
-                    data.sort(function (a, b) {
-                        return d3.ascending(a.source, b.source);
-                    });
-
-                }
-                data.forEach(function (item) {
-                    self.numberToDate[item.source] = item.date[0];
-                });
-
-                var data1 = _.filter(data, function (item) {
-                    return item.isOpp;
-                });
-                var data2 = _.filter(data, function (item) {
-                    return !item.isOpp;
-                });
-
-                var percent = [];
-                var unicSource = _.map(data1, function (item) {
-                    return item.source;
-                });
-                unicSource = unicSource.concat(_.map(data2, function (item) {
-                    return item.source;
-                }));
-                unicSource = _.unique(unicSource);
-                unicSource.sort(function (a, b) {
-                    return d3.ascending(a, b);
-                });
-                var dataAll = [];
-                for (var z = 0; z < unicSource.length; z++) {
-                    var d1 = 0;
-                    for (var i = 0; i < data1.length; i++) {
-                        if (data1[i].source == unicSource[z]) {
-                            d1 = data1[i].count;
-                        }
-                    }
-                    var d2 = 0;
-                    for (var i = 0; i < data2.length; i++) {
-                        if (data2[i].source == unicSource[z]) {
-                            d2 = data2[i].count;
-                        }
-                    }
-                    if (d1 || d2) {
-                        d1 = d1 || 0;
-                        d2 = d2 || 0;
-                        percent.push({source: unicSource[z], count: d1 / (d1 + d2)});
-                    } else {
-                        percent.push({source: unicSource[z], count: 0});
-                    }
-                    dataAll.push(({source: unicSource[z], count: d1 + d2}));
-                }
-                maxval = d3.max(data1, function (d) {
-                    return d.count;
-                });
-                data1 = dataAll;
-                var scale = 1;
-                maxval = d3.max(data1, function (d) {
-                        return d.count;
-                    }) * scale;
-                var minval2 = d3.min(percent, function (d) {
-                        return d.count;
-                    }) * scale;
-
-                var maxval2 = d3.max(percent, function (d) {
-                    return d.count;
-                });
-                if (maxval2 == 0) {
-                    maxval2 = 1;
-                }
-                percent = _.map(percent, function (item) {
-                    item.count = (item.count) * 100;
-                    return item;
-
-                });
-                var maxval3 = d3.max(percent, function (d) {
-                    return d.count;
-                });
-                var minval3 = d3.min(percent, function (d) {
-                    return d.count;
-                });
-                x.domain(data.map(function (d) {
-                    return d.source;
-                }));
-                y.domain([0, d3.max(data1, function (d) {
-                    return d.count;
-                })]);
-                y2.domain([0, 100]);
-                x2.domain([0, d3.max(data, function (d) {
-                    return d.count;
-                })]);
-                if (self.dateItem.date != 'D') {
-                    chart.append('g')
-                        .attr('class', 'x axis')
-                        .attr('transform', 'translate(0,' + height + ')')
-                        .call(xAxis)
-                        .selectAll('text');
-
-                } else {
-                    if (self.dateRange.date == '7') {
-                        chart.append('g')
-                            .attr('class', 'x axis')
-                            .attr('transform', 'translate(0,' + height + ')')
-                            .call(xAxis)
-                            .selectAll('text');
-                    }
-                    if (self.dateRange.date == '30') {
-                        chart.append('g')
-                            .attr('class', 'x axis')
-                            .attr('transform', 'translate(0,' + height + ')')
-                            .call(xAxis)
-                            .selectAll('text')
-                            .attr('transform', 'rotate(-60)')
-                            .attr('x', '-10')
-                            .attr('y', '2')
-                            .attr('style', 'text-anchor:end');
-                    }
-                    if (self.dateRange.date == '90') {
-                        chart.append('g')
-                            .attr('class', 'x axis')
-                            .attr('transform', 'translate(0,' + height + ')')
-                            .call(xAxis)
-                            .selectAll('text')
-                            .attr('transform', 'rotate(-60)')
-                            .attr('x', function (d, i) {
-                                if (i % 2 != 0) {
-                                    return 1000;
-                                }
-                                return -10;
-                            })
-                            .attr('data-id', function () {
-                                return this.getComputedTextLength();
-                            })
-                            .attr('style', 'text-anchor:end;')
-                            .attr('y', '2');
-                    }
-                    if (self.dateRange.date == '365') {
-                        if (width > 1350) {
-                            chart.append('g')
-                                .attr('class', 'x axis')
-                                .attr('transform', 'translate(0,' + height + ')')
-                                .call(xAxis)
-                                .selectAll('text')
-                                .attr('transform', 'rotate(-90)')
-                                .attr('x', function (d, i) {
-                                    if (i % 5 != 0) {
-                                        return 1000;
-                                    }
-                                    return -10;
-                                })
-                                .attr('y', '2')
-                                .attr('style', 'text-anchor:end');
-
-                        }
-                        if (width > 1200 && width < 1350) {
-                            chart.append('g')
-                                .attr('class', 'x axis')
-                                .attr('transform', 'translate(0,' + height + ')')
-                                .call(xAxis)
-                                .selectAll('text')
-                                .attr('transform', 'rotate(-60)')
-                                .attr('x', function (d, i) {
-                                    if (i % 7 != 0) {
-                                        return 1000;
-                                    }
-                                    return -10;
-                                })
-                                .attr('y', '2')
-                                .attr('style', 'text-anchor:end');
-
-                        }
-                        if (width < 1200) {
-                            chart.append('g')
-                                .attr('class', 'x axis')
-                                .attr('transform', 'translate(0,' + height + ')')
-                                .call(xAxis)
-                                .selectAll('text')
-                                .attr('transform', 'rotate(-60)')
-                                .attr('x', function (d, i) {
-                                    if (i % 20 != 0) {
-                                        return 1000;
-                                    }
-                                    return -10;
-                                })
-                                .attr('y', '2')
-                                .attr('style', 'text-anchor:end');
-
-                        }
-                    }
-                }
-
-                chart.append('g')
-                    .attr('class', 'y axis')
-                    .call(yAxis)
-                    .selectAll('.tick line')
-                    .attr('x2', function (d) {
-                        return width;
-                    })
-                    .style('fill', '#1EBBEA');
-
-                chart.append('g')
-                    .attr('class', 'y2 axis')
-                    .attr('transform', 'translate(' + width + ',0)')
-                    .call(yAxis2);
-
-                chart.selectAll('.bar')
-                    .data(data1)
-                    .enter().append('rect')
-                    .attr('class', 'bar')
-                    .attr('x', function (d) {
-                        return x(d.source);
-                    })
-                    .attr('y', function (d) {
-                        return y(d.count);
-                    })
-                    .attr('height', function (d) {
-                        return height - y(d.count);
-                    })
-                    .attr('width', x.rangeBand());
-
-                chart.selectAll('.bar2')
-                    .data(data2)
-                    .enter().append('rect')
-                    .attr('class', 'bar2')
-                    .attr('x', function (d) {
-                        return x(d.source);
-                    })
-                    .attr('y', function (d) {
-                        return y(d.count);
-                    })
-                    .attr('height', function (d) {
-                        return height - y(d.count);
-                    })
-                    .attr('width', x.rangeBand());
-
-                /*chart.selectAll('.bar3')
-                    .data(data2)
-                    .enter().append('rect')
-                    .attr('class', 'bar3')
-                    .attr('x', function (d) {
-                        return x(d.source);
-                    })
-                    .attr('y', function (d) {
-                        return y(d.count);
-                    })
-                    .attr('height', function (d) {
-                        return 2;
-                    })
-                    .attr('width', x.rangeBand());*/
-
-                chart.append('path')
-                    .datum(percent)
-                    .attr('class', 'line')
-                    .attr('d', line);
-
-                chart.selectAll('.circle')
-                    .data(percent)
-                    .enter().append('circle')
-                    .attr('class', 'circle')
-                    .attr('cx', function (d) {
-                        return x(d.source) + x.rangeBand() / 2;
-                    })
-                    .attr('cy', function (d) {
-                        return y2(d.count);
-                    })
-                    .attr('r', function (d) {
-                        return 4;
-                    })
-                    .style('fill', '#1EBBEA')
-                    .style('stroke', '#fff')
-                    .style('stroke-width', '2');
-
-                chart.append('text')
-                    .attr('class', 'y label')
-                    .attr('text-anchor', 'end')
-                    .attr('y', -65)
-                    .attr('x', -height / 2 + 80)
-                    .attr('dy', '.75em')
-                    .attr('transform', 'rotate(-90)')
-                    .text('Number of Leads');
-
-                chart.append('text')
-                    .attr('class', 'y2 label')
-                    .attr('text-anchor', 'end')
-                    .attr('y', -width - 75)
-                    .attr('x', height / 2 + 120)
-                    .attr('dy', '.75em')
-                    .attr('transform', 'rotate(90)')
-                    .text('Opportunity Conversion Rate');
-            });
-        },
-
         renderOpportunities: function () {
             var self = this;
 
@@ -2376,7 +1981,6 @@ define([
             var diff;
             var line;
             var day;
-            var tip;
             var now;
             var y2;
             var x;
@@ -2386,7 +1990,7 @@ define([
 
             common.getOpportunitiesForChart('date', this.dateRange.winLost, this.dateItem['winLost'], function (data) {
 
-                data = [
+               /* data = [
                     {
                         "_id"            : {"year": "2016", "mounth": "05", "day": "27"},
                         "wonCount"       : 4,
@@ -2426,7 +2030,7 @@ define([
                         "lostCount"      : 3,
                         "inProgressCount": 1
                     }
-                ];
+                ];*/
 
                 $('#timeBuildingDataFromServer').text('Server response in ' + self.buildTime + ' ms');
 
