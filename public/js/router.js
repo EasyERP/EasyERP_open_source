@@ -1096,6 +1096,7 @@ define([
                         contentview = new contentView({
                             collection: collection,
                             startTime : startTime,
+                            viewType  : 'tform',
                             filter    : filter,
                             modelId   : modelId
                         });
@@ -1103,7 +1104,8 @@ define([
                         topbarView = new topBarView({
                             actionType: 'Content',
                             collection: collection,
-                            el        : '.listContentTitle'
+                            el        : '.listContentTitle',
+                            viewType  : 'tform'
                         });
 
                         $('#top-bar').html('');

@@ -40,7 +40,8 @@ define([
         },
 
         initialize: function (options) {
-            var modelId = options.modelId;
+            var modelId;
+
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -52,6 +53,8 @@ define([
             this.page = options.collection.currentPage;
 
             ListViewBase.prototype.initialize.call(this, options);
+
+            modelId = this.collection.at(0).id;
 
             this.renderFormView(modelId);
         },
