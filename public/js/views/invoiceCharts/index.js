@@ -222,10 +222,10 @@ define([
                 .duration(2000)
                 .attr({
                     'y'     : function (datum) {
-                        return y(1.2*datum.paid);
+                        return y(datum.paid);
                     },
                     'height': function (datum) {
-                        return height - y(1.2*datum.paid);
+                        return height - y(datum.paid);
                     }
                 });
 
