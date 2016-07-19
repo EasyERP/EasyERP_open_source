@@ -15,7 +15,7 @@
 
         render: function () {
             this.$el.append(_.template(ListTemplate, {
-                usersCollection: this.collection.toJSON(),
+                usersCollection: this.collection.toJSON()
                 //startNumber    : this.startNumber
             }));
         }
