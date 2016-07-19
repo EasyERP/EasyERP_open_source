@@ -20,7 +20,8 @@
   thead {
     tr {
       border: none;
-      vertical-align: top;
+      height: 30px;
+      vertical-align: middle;
     }
 
     th {
@@ -31,9 +32,6 @@
   }
 
   tbody {
-    tr {
-      border-top: @thin-border @defaultBorderColor;
-    }
 
     td {
       //border: @thin-border @defaultBorderColor;
@@ -43,6 +41,19 @@
         border-top: 2px solid @success;
         border-bottom: 2px solid @success;
       }
+    }
+
+    tr {
+      &:last-child {
+        border-bottom: @thin-border @defaultBorderColor;
+      }
+    }
+  }
+
+  tbody,
+  thead {
+    tr {
+      border-top: @thin-border @defaultBorderColor;
     }
   }
 

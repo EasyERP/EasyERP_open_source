@@ -3620,20 +3620,25 @@ td.checkboxRow {
 #top-bar-createBtn {
   height: 26px;
   padding: 0 12px;
-  background: #fff;
-  line-height: 24px !important;
+  background: #7eadcc;
+  line-height: 26px !important;
   color: #fff;
-  border: 1px solid #7f7f80;
   -webkit-transition: all .3s;
   transition: all .3s;
   border-radius: 3px;
+}
+#top-bar-createBtn:after,
+#top-bar-createBtn:before {
+  color: #fff;
 }
 #top-bar-createBtn:after {
   content: 'New';
   margin-left: 5px;
   font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000;
   font-size: 13px;
+}
+.top-bar #createBtnHolder {
+  margin-top: 6px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -3896,15 +3901,13 @@ td.checkboxRow {
 }
 .list2 thead tr {
   border: none;
-  vertical-align: top;
+  height: 30px;
+  vertical-align: middle;
 }
 .list2 thead th {
   font-size: 10px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
-}
-.list2 tbody tr {
-  border-top: 1px solid #d7d7d7;
 }
 .list2 tbody td {
   text-align: right;
@@ -3913,6 +3916,13 @@ td.checkboxRow {
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
   border-bottom: 2px solid #5cb85c;
+}
+.list2 tbody tr:last-child {
+  border-bottom: 1px solid #d7d7d7;
+}
+.list2 tbody tr,
+.list2 thead tr {
+  border-top: 1px solid #d7d7d7;
 }
 .list2 tfoot td {
   text-align: right;
@@ -4001,15 +4011,13 @@ td.checkboxRow {
 }
 .list2 thead tr {
   border: none;
-  vertical-align: top;
+  height: 30px;
+  vertical-align: middle;
 }
 .list2 thead th {
   font-size: 10px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
-}
-.list2 tbody tr {
-  border-top: 1px solid #d7d7d7;
 }
 .list2 tbody td {
   text-align: right;
@@ -4018,6 +4026,13 @@ td.checkboxRow {
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
   border-bottom: 2px solid #5cb85c;
+}
+.list2 tbody tr:last-child {
+  border-bottom: 1px solid #d7d7d7;
+}
+.list2 tbody tr,
+.list2 thead tr {
+  border-top: 1px solid #d7d7d7;
 }
 .list2 tfoot td {
   text-align: right;
@@ -7938,8 +7953,7 @@ dl dd span.ui-spinner {
   overflow: auto;
 }
 #startLetter {
-  margin: 0;
-  margin-top: 10px;
+  margin: 10px 0 -1px;
   text-align: center;
   border-bottom: 1px solid #7f7f80;
 }
@@ -9680,8 +9694,8 @@ table#workflows tr td.edit-status {
   margin: 15px 0;
   text-align: center;
 }
-#top-bar .btn {
-  margin-top: 4px;
+#top-bar #createBtnHolder {
+  margin-top: 6px;
 }
 .dashBoardVocationSearch {
   margin-top: 7px !important;
@@ -9751,8 +9765,8 @@ table#workflows tr td.edit-status {
   margin: 15px 0;
   text-align: center;
 }
-.projectInfoTopBar .btn {
-  margin-top: 4px;
+.projectInfoTopBar #createBtnHolder {
+  margin-top: 6px;
 }
 .noPadding {
   padding: 0 !important;
@@ -10033,15 +10047,13 @@ ul.dialog-tabs li.right button {
 }
 .list thead tr {
   border: none;
-  vertical-align: top;
+  height: 30px;
+  vertical-align: middle;
 }
 .list thead th {
   font-size: 10px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
-}
-.list tbody tr {
-  border-top: 1px solid #d7d7d7;
 }
 .list tbody td {
   text-align: right;
@@ -10050,6 +10062,13 @@ ul.dialog-tabs li.right button {
 .list tbody td.changeContent {
   border-top: 2px solid #5cb85c;
   border-bottom: 2px solid #5cb85c;
+}
+.list tbody tr:last-child {
+  border-bottom: 1px solid #d7d7d7;
+}
+.list tbody tr,
+.list thead tr {
+  border-top: 1px solid #d7d7d7;
 }
 .list tfoot td {
   text-align: right;
