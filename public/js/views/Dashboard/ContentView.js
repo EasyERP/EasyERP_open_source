@@ -60,7 +60,7 @@ define([
             'click #updateDate'                                                                                             : 'changeDateRange',
             'click #updateDateLeadsByName'                                                                                  : 'changeLeadsDateRangeByName',
             'click #updateDateLeadsBySale'                                                                                  : 'changeLeadsDateRangeBySale',
-            'click #updateDateLeadsBySource'                                                                                : 'changeLeadsDateRangeBySale',
+            'click #updateDateLeadsBySource'                                                                                : 'changeLeadsDateRangeBySource',
             'click #updateDateLeads'                                                                                        : 'changeLeadsDateRange',
             'click li.filterValues:not(#custom, #customLeads, #customLeadsByName, #customLeadsBySale, #customLeadsBySource)': 'setDateRange',
             'click .choseDateRange .item'                                                                                   : 'newRange',
@@ -69,7 +69,7 @@ define([
             'click #custom'                                                                                                 : 'showDatePickers',
             'click #customLeadsByName'                                                                                      : 'showDatePickersLeadsByName',
             'click #customLeadsBySale'                                                                                      : 'showDatePickersLeadsBySale',
-            'click #customLeadsBySourse'                                                                                    : 'showDatePickersLeadsBySource',
+            'click #customLeadsBySource'                                                                                    : 'showDatePickersLeadsBySource',
             'click #customLeads'                                                                                            : 'showDatePickersLeads',
             'click #cancelBtn'                                                                                              : 'cancel',
             'click #cancelBtnLeadsByName'                                                                                   : 'cancel',
@@ -89,6 +89,7 @@ define([
         },
 
         changeDateRange: function (e, type) {
+            var self = this;
             var dateFilter;
             var startDate;
             var endDate;
@@ -121,7 +122,13 @@ define([
                 case 'LeadsBySale':
                     this.startDateLeadsBySale = startDate;
                     this.endDateLeadsBySale = endDate;
-                    //this.renderLeadsChartByName();
+                    this.renderPopulateByType(self, 'sale', startDate, endDate);
+                    this.toggleDateRange(null, type);
+                    break;
+                case 'LeadsBySource':
+                    this.startDateLeadsBySource = startDate;
+                    this.endDateLeadsBySource = endDate;
+                    this.renderPopulateByType(self, 'source', startDate, endDate);
                     this.toggleDateRange(null, type);
                     break;
                 default:
@@ -142,6 +149,10 @@ define([
 
         changeLeadsDateRangeBySale: function (e) {
             this.changeDateRange(null, 'LeadsBySale')
+        },
+
+        changeLeadsDateRangeBySource: function (e) {
+            this.changeDateRange(null, 'LeadsBySource')
         },
 
         changeLeadsDateRange: function (e) {
@@ -166,6 +177,9 @@ define([
                     break;
                 case 'leadsSale':
                     type = 'LeadsBySale';
+                    break;
+                case 'leadsSource':
+                    type = 'LeadsBySource';
                     break;
                 default:
                     type = '';
@@ -305,6 +319,14 @@ define([
             this.$el.find('.customTimeLeadsBySale').toggleClass('hidden');
         },
 
+        showDatePickersLeadsBySource: function (e) {
+            var $target = $(e.target);
+            this.removeAllChecked('LeadsBySource');
+
+            $target.toggleClass('checkedValue');
+            this.$el.find('.customTimeLeadsBySource').toggleClass('hidden');
+        },
+
         showDatePickersLeads: function (e) {
             var $target = $(e.target);
             this.removeAllChecked('Leads');
@@ -386,9 +408,8 @@ define([
             var self = this;
 
             // self.renderPopulate();
-            // self.renderPopulateByType(self, 'source');
-            // self.renderPopulateByType(self, 'sale');
-
+            self.renderPopulateByType(self, 'source', this.startDateLeadsBySource, this.endDateLeadsBySource);
+            self.renderPopulateByType(self, 'sale', this.startDateLeadsBySale, this.endDateLeadsBySale);
             self.renderOpportunities();
             self.renderTreemap();
             self.renderOpportunitiesWinAndLost();
@@ -412,16 +433,16 @@ define([
             this.endDateLeads = this.endDate;
 
             this.$el.html(this.template({
-                startDate            : this.startDate,
-                endDate              : this.endDate,
-                startDateLeads       : this.startDateLeads,
-                endDateLeads         : this.endDateLeads,
-                startDateLeadsByNames: this.startDateLeadsByName,
-                endDateLeadsByNames  : this.endDateLeadsByName,
-                startDateLeadsBySale : this.startDateLeadsBySale,
-                endDateLeadsBySale   : this.endDateLeadsBySale,
+                startDate             : this.startDate,
+                endDate               : this.endDate,
+                startDateLeads        : this.startDateLeads,
+                endDateLeads          : this.endDateLeads,
+                startDateLeadsByNames : this.startDateLeadsByName,
+                endDateLeadsByNames   : this.endDateLeadsByName,
+                startDateLeadsBySale  : this.startDateLeadsBySale,
+                endDateLeadsBySale    : this.endDateLeadsBySale,
                 startDateLeadsBySource: this.startDateLeadsBySource,
-                endDateLeadsBySource: this.endDateLeadsBySource
+                endDateLeadsBySource  : this.endDateLeadsBySource
             }));
 
             this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
@@ -429,6 +450,7 @@ define([
             this.bindDatePickers(this.startDateLeadsByName, this.endDateLeadsByName, 'LeadsByName');
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'Leads');
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'LeadsBySale');
+            this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'LeadsBySource');
             this.resizeHandler();
             this.renderSalesByCountry();
             this.renderTreemap();
@@ -755,11 +777,12 @@ define([
             });
         },
 
-        renderPopulateByType: function (that, type) {
-            var self = this;
+        renderPopulateByType: function (that, type, startDay, endDay) {
             var chartClass = '.' + type + 'sChart';
-            var dateRange = self.dateRange[type];
+            var self = this;
             var scaleArray;
+            var gradient;
+            var gradient2;
 
             if (that) {
                 self = that;
@@ -767,8 +790,8 @@ define([
 
             $(chartClass).empty();
             common.getLeadsForChart(type, {
-                startDay: this.startDateLeads,
-                endDay  : this.endDateLeads
+                startDay: startDay,
+                endDay  : endDay
             }, function (data) {
 
                 $('#timeBuildingDataFromServer').text('Server response in ' + self.buildTime + ' ms');
@@ -778,15 +801,35 @@ define([
                         el.source = el.source || 'No User';
                         return el;
                     });
+                } else {
+                    data.map(function (el) {
+                        el.source = el.source || 'No Source';
+                        return el;
+                    });
                 }
 
                 scaleArray = data.map(function (d) {
                     return d.source;
                 });
 
+                scaleArray.sort();
+                var uniqueNamesArray = [];
+
+                for (var i = 0; i < scaleArray.length; i++){
+
+                    for (var j = i + 1; j < scaleArray.length;){
+
+                        if (!(scaleArray[i] === scaleArray[j])) {
+                            scaleArray.push(scaleArray[j]);
+                            j++;
+                        }
+                    }
+                }
+
+                console.log(uniqueNamesArray);
                 var margin = {top: 20, right: 160, bottom: 30, left: 160},
                     width = $('#content-holder').width() - margin.left - margin.right,
-                    height = scaleArray.length * 40;
+                    height = scaleArray.length * 20;
 
                 var y = d3.scale.ordinal()
                     .rangeRoundBands([0, height], 0.3);
@@ -819,6 +862,7 @@ define([
                     return d.count;
                 }) + 10]);
 
+
                 chart.append('g')
                     .attr('class', 'x axis')
                     .attr('transform', 'translate(0,' + height + ')')
@@ -831,9 +875,11 @@ define([
                 var data1 = _.filter(data, function (item) {
                     return item.isOpp;
                 });
+
                 var data2 = _.filter(data, function (item) {
                     return !item.isOpp;
                 });
+
                 for (var i = 0; i < data1.length; i++) {
                     for (var j = 0; j < data2.length; j++) {
                         if (data1[i].source == data2[j].source) {
@@ -841,6 +887,63 @@ define([
                         }
                     }
                 }
+
+                var maxLeads = d3.max(data2, function(d){
+                    return d.count
+                }) || 0;
+
+                var maxOpportunities = d3.max(data1, function(d){
+                    return d.count;
+                }) || 0;
+
+                gradient = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
+                    .attr({
+                        'y1'           : 0,
+                        'y2'           : 0,
+                        'x1'           : 0,
+                        'x2'           : width - x(maxOpportunities),
+                        'id'           : 'gradientBarForOpportunities',
+                        'gradientUnits': 'userSpaceOnUse'
+                    });
+
+                gradient
+                    .append('stop')
+                    .attr({
+                        'offset'    : '0',
+                        'stop-color': '#98aac4'
+                    });
+
+                gradient
+                    .append('stop')
+                    .attr({
+                        'offset'    : '0.8',
+                        'stop-color': '#6b456c'
+                    });
+
+
+                gradient2 = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
+                    .attr({
+                        'y1'           : 0,
+                        'y2'           : 0,
+                        'x1'           : 0,
+                        'x2'           : width - x(maxLeads),
+                        'id'           : 'gradientBarForTotalLeads',
+                        'gradientUnits': 'userSpaceOnUse'
+                    });
+
+                gradient2
+                    .append('stop')
+                    .attr({
+                        'offset'    : '0',
+                        'stop-color': '#FB8E00'
+                    });
+
+                gradient2
+                    .append('stop')
+                    .attr({
+                        'offset'    : '0.7',
+                        'stop-color': '#9F5D52'
+                    });
 
                 chart.selectAll('.bar2')
                     .data(data2)
@@ -855,7 +958,8 @@ define([
                     .attr('height', y.rangeBand())
                     .attr('width', function (d) {
                         return width - x(d.count);
-                    });
+                    })
+                    .attr('fill', 'url(#gradientBarForTotalLeads)');
 
                 chart.selectAll('.bar')
                     .data(data1)
@@ -870,7 +974,8 @@ define([
                     .attr('height', y.rangeBand())
                     .attr('width', function (d) {
                         return width - x(d.count);
-                    });
+                    })
+                    .attr('fill', 'url(#gradientBarForOpportunities)');
 
                 chart.selectAll('.x .tick line')
                     .data(data)

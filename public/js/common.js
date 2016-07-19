@@ -456,7 +456,7 @@
         });
     };
     
-    var getLeadsForChart = function (type, filter, callback) {
+    var getLeadsForChart = function (type, filter/*, dataRange, dataItem*/, callback) {
         dataService.getData('/leads/getLeadsForChart', {
            /* type     : type,
             dataRange: dataRange,
