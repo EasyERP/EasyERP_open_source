@@ -3888,15 +3888,18 @@ dl.payrollDateBlock dt {
 }
 .tagsRow,
 .attachWrapper,
-.selectCompany {
+.selectCompany,
+.moduleList {
   padding: 20px;
 }
 .tagsRow .tagsTitle,
 .attachWrapper .tagsTitle,
 .selectCompany .tagsTitle,
+.moduleList .tagsTitle,
 .tagsRow .formTitle,
 .attachWrapper .formTitle,
-.selectCompany .formTitle {
+.selectCompany .formTitle,
+.moduleList .formTitle {
   border-bottom: none !important;
   margin-bottom: 15px;
 }
@@ -3907,7 +3910,7 @@ dl.payrollDateBlock dt {
 .attachWrapper .input-file,
 .selectCompany .input-file {
   width: 100%;
-  margin: 0;
+  margin: 0 0 20px;
   padding: 20px;
   height: auto;
   color: #000000;
@@ -3953,6 +3956,9 @@ dl.payrollDateBlock dt {
 .ui-dialog .createNewCompany {
   font-size: 13px;
   color: #000000;
+  background: #f2f4f5;
+  padding: 6px 12px;
+  border-radius: 3px;
 }
 .ui-dialog .createNewCompany:hover {
   text-decoration: none;
@@ -3977,6 +3983,15 @@ dl.payrollDateBlock dt {
 .dealTitle .dealTitlePrice {
   width: 80px;
   text-align: right;
+}
+.moduleList,
+.tags-container,
+.attachments {
+  border-radius: 5px;
+  border: 1px solid #c8c8d3;
+}
+.attachments {
+  margin-bottom: 20px;
 }
 .btn {
   border: 1px solid #7f7f80;
