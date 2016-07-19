@@ -1,20 +1,23 @@
 <table>
     <% persons.forEach(function(person, index){ %>
-        <tr class="compactView" data-id="<%=person._id%>">
-                <td class="checkboxRow">
-                    <label>
-                        <input type="checkbox" />
-                    </label>
-                </td>
-                <td>
-                    <div class="compactRow">
-                        <div class="firstName"><%=person.fullName%></div>
-                        <div class="country"><%= person.country %></div>
-                        <div class="company"></div>
-                        <div class="email"><%= person.email %></div>
-                        <div class="phone"><%= person.phone %></div>
-                    </div>
-                </td>
-        </tr>
+    <tr class="compactView" data-id="<%=person._id%>">
+        <td class="checkboxRow">
+            <label>
+                <input type="checkbox" />
+            </label>
+        </td>
+        <td>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="firstName"><%- person.fullName%></div>
+                    <div class="country"><%= person.country %></div>
+                </div>
+                <div class="compactRow">
+                    <div class="email"><%= person.email %></div>
+                    <div class="phone"><%= person.phone %></div>
+                </div>
+            </div>
+        </td>
+    </tr>
     <% }) %>
 </table>

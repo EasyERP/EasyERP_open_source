@@ -3464,8 +3464,8 @@ dl.payrollDateBlock dt {
 .compactView {
   background-color: #f5f5f5;
 }
-.compactView td {
-  padding: 10px 10px 10px 0;
+.compactView:nth-child(n+2) {
+  border-top: 1px solid #ededed;
 }
 .fontBold {
   font-family: 'Open Sans Bold', sans-serif, Verdana;
@@ -3500,6 +3500,7 @@ dl.payrollDateBlock dt {
   transform: rotate(-45deg);
 }
 .listWrap {
+  margin: 0 -20px;
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -3509,10 +3510,19 @@ dl.payrollDateBlock dt {
 .listWrap.personList .firstName {
   font-family: 'Open Sans Bold', sans-serif, Verdana;
 }
+.listWrap .form-holder {
+  padding: 10px;
+}
 .listContent,
 .formContent {
   overflow-y: auto;
   overflow-x: hidden;
+}
+.listContent {
+  width: 400px;
+}
+.listContent table {
+  width: 100%;
 }
 .formContentWrap,
 .listContentWrap {
@@ -3536,8 +3546,9 @@ dl.payrollDateBlock dt {
 .formContentTitle .closeBtn {
   float: right;
 }
-.compactRow {
-  overflow: hidden;
+.compactRowWrap {
+  min-height: 100px;
+  padding: 15px 15px 15px 0;
 }
 .compactRow > div:nth-child(odd) {
   float: left;
@@ -3549,9 +3560,14 @@ dl.payrollDateBlock dt {
 .compactRow:nth-child(n+2) {
   margin-top: 10px;
 }
+.compactRow:after {
+  content: '';
+  display: table;
+  clear: both;
+}
 td.checkboxRow {
   width: 40px;
-  padding: 10px;
+  padding: 15px;
   vertical-align: top;
   text-align: center;
 }
