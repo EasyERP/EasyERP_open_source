@@ -1232,7 +1232,14 @@ dl.payrollDateBlock {
 }
 
 .compactView {
-  background-color: #f5f5f5;
+  cursor: pointer;
+
+  &.selected {
+    background-color: #f5f5f5;
+  }
+  &:hover {
+    background-color: #f0f0f0;
+  }
 
   &:nth-child(n+2) {
     border-top: 1px solid #ededed;
@@ -1246,13 +1253,14 @@ dl.payrollDateBlock {
 .closeBtn {
   position: relative;
   width: 20px;
-  height: 22px;
+  height: 20px;
+  cursor: pointer;
 
   &:before,
   &:after {
     content: '';
     position: absolute;
-    top: 0;
+    top: 10px;
     left: 0;
     width: 20px;
     height: 2px;
@@ -1285,8 +1293,22 @@ dl.payrollDateBlock {
   &.personList {
 
     .firstName {
+      color: #508bbd;
+      font-size: 15px;
       font-family: @fontBold;
     }
+
+    .email {
+      font-size: 10px;
+    }
+
+    .compactRowWrap {
+      min-height: 60px;
+      }
+  }
+
+  &.companiesList {
+
   }
 
   .form-holder {
@@ -1327,17 +1349,21 @@ dl.payrollDateBlock {
 
 .formContentTitle,
 .listContentTitle {
+  min-height: 42px;
   padding: 10px;
+  border-top: 1px solid #ededed;
+  border-bottom: 1px solid #ededed;
 }
+
 .formContentTitle {
+  border-left: 1px solid #ededed;
   .closeBtn {
     float: right;
   }
 }
 
 .compactRowWrap {
-  min-height: 100px;
-  padding: 15px 15px 15px 0;
+  padding: 12px 12px 12px 0;
 }
 
 .compactRow {

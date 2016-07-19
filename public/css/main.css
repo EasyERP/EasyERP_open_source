@@ -1967,7 +1967,6 @@ body {
 }
 .pagination {
   width: 100%;
-  margin: 5px 0;
   float: right;
 }
 .pagination > div {
@@ -3462,7 +3461,13 @@ dl.payrollDateBlock dt {
   clear: both;
 }
 .compactView {
+  cursor: pointer;
+}
+.compactView.selected {
   background-color: #f5f5f5;
+}
+.compactView:hover {
+  background-color: #f0f0f0;
 }
 .compactView:nth-child(n+2) {
   border-top: 1px solid #ededed;
@@ -3473,13 +3478,14 @@ dl.payrollDateBlock dt {
 .closeBtn {
   position: relative;
   width: 20px;
-  height: 22px;
+  height: 20px;
+  cursor: pointer;
 }
 .closeBtn:before,
 .closeBtn:after {
   content: '';
   position: absolute;
-  top: 0;
+  top: 10px;
   left: 0;
   width: 20px;
   height: 2px;
@@ -3508,7 +3514,15 @@ dl.payrollDateBlock dt {
   display: flex;
 }
 .listWrap.personList .firstName {
+  color: #508bbd;
+  font-size: 15px;
   font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.personList .email {
+  font-size: 10px;
+}
+.listWrap.personList .compactRowWrap {
+  min-height: 60px;
 }
 .listWrap .form-holder {
   padding: 10px;
@@ -3541,14 +3555,19 @@ dl.payrollDateBlock dt {
 }
 .formContentTitle,
 .listContentTitle {
+  min-height: 42px;
   padding: 10px;
+  border-top: 1px solid #ededed;
+  border-bottom: 1px solid #ededed;
+}
+.formContentTitle {
+  border-left: 1px solid #ededed;
 }
 .formContentTitle .closeBtn {
   float: right;
 }
 .compactRowWrap {
-  min-height: 100px;
-  padding: 15px 15px 15px 0;
+  padding: 12px 12px 12px 0;
 }
 .compactRow > div:nth-child(odd) {
   float: left;
@@ -11375,10 +11394,10 @@ ul.dialog-tabs li.right button {
   max-width: 100%;
 }
 #timeRecivingDataFromServer {
-  clear: both;
-  text-align: center;
-  color: #000000;
-  padding-bottom: 5px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .tabs-items {
   margin-bottom: -29px;
