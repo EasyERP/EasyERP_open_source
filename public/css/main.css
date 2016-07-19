@@ -3938,9 +3938,14 @@ dl.payrollDateBlock dt {
   outline: none;
   width: 100%;
 }
+.ui-dialog .tagsDropDown ul {
+  max-height: 191px;
+  overflow-y: auto;
+}
 .ui-dialog .tagsDropDown li {
   padding: 8px 12px;
   cursor: pointer;
+  margin-bottom: 5px !important;
 }
 .ui-dialog .tagsDropDown li:hover {
   background: #f2f2f2;
