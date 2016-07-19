@@ -3923,14 +3923,18 @@ dl.payrollDateBlock dt {
 .selectCompany .input-file:hover {
   background: #f2f2f2;
 }
-.attachWrapper .input-file.small,
-.selectCompany .input-file.small {
+.attachWrapper .input-file.smallBtn,
+.selectCompany .input-file.smallBtn {
   display: block;
   width: 90px;
   margin: 15px auto 0;
   padding: 6px 12px;
   font-size: 13px;
   float: none;
+}
+.attachWrapper .input-file .inputAttach,
+.selectCompany .input-file .inputAttach {
+  cursor: pointer !important;
 }
 .attachWrapper .atachPlaceHolder i,
 .selectCompany .atachPlaceHolder i,
@@ -3944,7 +3948,6 @@ dl.payrollDateBlock dt {
   width: 100% !important;
   height: 100% !important;
   max-width: 100% !important;
-  cursor: pointer;
 }
 .ui-dialog .ui-dialog-content.addCompany {
   padding: 20px 20px 40px;
