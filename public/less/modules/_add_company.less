@@ -44,11 +44,17 @@
 
   .propertyBody {
     padding-left: 15px;
+    font-size: 13px;
   }
 
   .propertyFullName {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  a {
+    color: @blue-3;
   }
 }
 
@@ -107,8 +113,25 @@
   }
 }
 
+.selectCompany {
+  .addCompanyBtn {
+    width: 100%;
+    margin: 0;
+    padding: 15px !important;
+    height: auto;
+    color: @black;
+    font-size: 16px;
+
+    &:hover {
+      background: @lightgray-3;
+      text-decoration: none;
+    }
+  }
+}
+
 .tagsRow,
-.attachWrapper {
+.attachWrapper,
+.selectCompany {
   padding: 20px;
 
   .tagsTitle,
@@ -118,7 +141,17 @@
   }
 }
 
-.attachWrapper {
+.tagsRow {
+  .editTags {
+    &:hover {
+      background: none;
+      text-decoration: none;
+    }
+  }
+}
+
+.attachWrapper,
+.selectCompany {
   .input-file {
     width: 100%;
     margin: 0;
@@ -126,12 +159,56 @@
     height: auto;
     color: @black;
     font-size: 16px;
+
+    &:hover {
+      background: @lightgray-3;
+    }
   }
 
-  .atachPlaceHolder {
+  .atachPlaceHolder,
+  .addCompanyBtn {
     i {
       margin-right: 5px;
       font-size: 12px;
     }
   }
 }
+
+.ui-dialog {
+  .ui-dialog-content.addCompany {
+    padding: 20px 20px 40px;
+
+    .tagsTitle {
+      border-bottom: none;
+      text-align: left;
+    }
+
+    input.searchTagInput {
+      outline: none;
+      width: 100%;
+    }
+  }
+
+  .tagsDropDown {
+    li {
+      padding: 8px 12px;
+      cursor: pointer;
+
+      &:hover {
+        background: @lightgray-3;
+      }
+    }
+
+    span {
+      display: block;
+      font-size: 12px;
+    }
+
+    .propertyNameList {
+      color: @black;
+      margin-bottom: 5px;
+    }
+  }
+}
+
+

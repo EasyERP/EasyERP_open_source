@@ -3821,10 +3821,15 @@ dl.payrollDateBlock dt {
 }
 .propertyBox .propertyBody {
   padding-left: 15px;
+  font-size: 13px;
 }
 .propertyBox .propertyFullName {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.propertyBox a {
+  color: #3291c8;
 }
 .propertyFormList {
   display: table !important;
@@ -3869,18 +3874,38 @@ dl.payrollDateBlock dt {
 .propertyEditBtn .btn + .btn {
   margin-left: 10px;
 }
+.selectCompany .addCompanyBtn {
+  width: 100%;
+  margin: 0;
+  padding: 15px !important;
+  height: auto;
+  color: #000000;
+  font-size: 16px;
+}
+.selectCompany .addCompanyBtn:hover {
+  background: #f2f2f2;
+  text-decoration: none;
+}
 .tagsRow,
-.attachWrapper {
+.attachWrapper,
+.selectCompany {
   padding: 20px;
 }
 .tagsRow .tagsTitle,
 .attachWrapper .tagsTitle,
+.selectCompany .tagsTitle,
 .tagsRow .formTitle,
-.attachWrapper .formTitle {
+.attachWrapper .formTitle,
+.selectCompany .formTitle {
   border-bottom: none !important;
   margin-bottom: 15px;
 }
-.attachWrapper .input-file {
+.tagsRow .editTags:hover {
+  background: none;
+  text-decoration: none;
+}
+.attachWrapper .input-file,
+.selectCompany .input-file {
   width: 100%;
   margin: 0;
   padding: 20px;
@@ -3888,9 +3913,42 @@ dl.payrollDateBlock dt {
   color: #000000;
   font-size: 16px;
 }
-.attachWrapper .atachPlaceHolder i {
+.attachWrapper .input-file:hover,
+.selectCompany .input-file:hover {
+  background: #f2f2f2;
+}
+.attachWrapper .atachPlaceHolder i,
+.selectCompany .atachPlaceHolder i,
+.attachWrapper .addCompanyBtn i,
+.selectCompany .addCompanyBtn i {
   margin-right: 5px;
   font-size: 12px;
+}
+.ui-dialog .ui-dialog-content.addCompany {
+  padding: 20px 20px 40px;
+}
+.ui-dialog .ui-dialog-content.addCompany .tagsTitle {
+  border-bottom: none;
+  text-align: left;
+}
+.ui-dialog .ui-dialog-content.addCompany input.searchTagInput {
+  outline: none;
+  width: 100%;
+}
+.ui-dialog .tagsDropDown li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.ui-dialog .tagsDropDown li:hover {
+  background: #f2f2f2;
+}
+.ui-dialog .tagsDropDown span {
+  display: block;
+  font-size: 12px;
+}
+.ui-dialog .tagsDropDown .propertyNameList {
+  color: #000000;
+  margin-bottom: 5px;
 }
 .btn {
   border: 1px solid #7f7f80;

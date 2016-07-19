@@ -19,23 +19,28 @@
                     </div>
                     <div class="person-info">
 
-                        <label>Assigned To</label>
-                        <div  class="inputBox">
-                            <a  class="current-selected"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
+                        <div class="propertyFormList">
+                            <label>Assigned To</label>
+                            <div  class="inputBox">
+                                <a  class="current-selected"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
+                            </div>
                         </div>
-                        <label>Next Action</label>
-                        <div  class="inputBox">
-                           <span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
+                        <div class="propertyFormList">
+                            <label>Next Action</label>
+                            <div  class="inputBox">
+                                <span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
+                            </div>
                         </div>
-                        <label>Status</label>
-                        <div  class="inputBox">
-                            <span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span>
+                        <div class="propertyFormList">
+                            <label>Status</label>
+                            <div  class="inputBox">
+                                <span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span>
+                            </div>
                         </div>
-
                     </div>
-                    <div class="btnBlock">
+                    <div class="btnBlock propertyEditBtn">
 
-                        <a href="javascript:;" id="saveBtn" class=" btn btnRounded">Save</a>
+                        <a href="javascript:;" id="saveBtn" class=" btn btnRounded btnSave">Save</a>
 
                         <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
                     </div>
