@@ -3467,6 +3467,27 @@ dl.payrollDateBlock dt {
 .compactView td {
   padding: 10px 10px 10px 0;
 }
+.fontBold {
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listContentWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.listContentWrap .listContent,
+.listContentWrap .formContent {
+  overflow: auto;
+}
+.listContentWrap .formContentTitle,
+.listContentWrap .listContentTitle {
+  padding: 10px;
+}
+.listContentWrap.personList .firstName {
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
 .compactRow {
   overflow: hidden;
 }

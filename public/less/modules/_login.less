@@ -1229,12 +1229,6 @@ dl.payrollDateBlock {
       }
     }
   }
-  .salesByCountryChart {
-
-  }
-  .salesByCountryBarChart {
-
-  }
 }
 
 .compactView {
@@ -1244,6 +1238,39 @@ dl.payrollDateBlock {
     padding: 10px 10px 10px 0;
   }
 }
+
+.fontBold {
+  font-family: @fontBold;
+}
+
+.listContentWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  .listContent,
+  .formContent {
+    overflow: auto;
+  }
+
+  .formContentWrap,
+  .listContentWrap {
+  }
+
+  .formContentTitle,
+  .listContentTitle {
+    padding: 10px;
+  }
+
+  &.personList {
+    .firstName {
+      font-family: @fontBold;
+    }
+  }
+}
+
 .compactRow {
   overflow: hidden;
   > div {
@@ -1259,6 +1286,7 @@ dl.payrollDateBlock {
     margin-top: 10px;
   }
 }
+
 td.checkboxRow {
   width: 40px;
   padding: 10px;
