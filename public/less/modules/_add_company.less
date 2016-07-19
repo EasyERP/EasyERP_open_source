@@ -1,5 +1,11 @@
 .propertyContainer {
   padding: 20px;
+
+  a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .propertyBox {
@@ -49,9 +55,10 @@
 .propertyFormList {
   display: table !important;
   width: 100%;
+  border-left: 1px solid transparent;
 
   &.active {
-    border-left: 1px solid @blue-3;
+    border-left-color: @blue-3;
   }
 
   label,
@@ -85,10 +92,46 @@
 .propertySubmit {
   text-align: center;
   margin-top: 20px;
-  
-  a {
-    &:hover {
-      text-decoration: none;
+}
+
+.propertyEditBtn {
+  display: none;
+  margin-top: 15px;
+
+  &.showButtons {
+    display: block;
+  }
+
+  .btn + .btn {
+    margin-left: 10px;
+  }
+}
+
+.tagsRow,
+.attachWrapper {
+  padding: 20px;
+
+  .tagsTitle,
+  .formTitle {
+    border-bottom: none !important;
+    margin-bottom: 15px;
+  }
+}
+
+.attachWrapper {
+  .input-file {
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    height: auto;
+    color: @black;
+    font-size: 16px;
+  }
+
+  .atachPlaceHolder {
+    i {
+      margin-right: 5px;
+      font-size: 12px;
     }
   }
 }

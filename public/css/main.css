@@ -3786,6 +3786,9 @@ dl.payrollDateBlock dt {
 .propertyContainer {
   padding: 20px;
 }
+.propertyContainer a:hover {
+  text-decoration: none;
+}
 .propertyBox {
   position: relative;
   display: table;
@@ -3826,9 +3829,10 @@ dl.payrollDateBlock dt {
 .propertyFormList {
   display: table !important;
   width: 100%;
+  border-left: 1px solid transparent;
 }
 .propertyFormList.active {
-  border-left: 1px solid #3291c8;
+  border-left-color: #3291c8;
 }
 .propertyFormList label,
 .propertyFormList .inputBox {
@@ -3855,8 +3859,38 @@ dl.payrollDateBlock dt {
   text-align: center;
   margin-top: 20px;
 }
-.propertySubmit a:hover {
-  text-decoration: none;
+.propertyEditBtn {
+  display: none;
+  margin-top: 15px;
+}
+.propertyEditBtn.showButtons {
+  display: block;
+}
+.propertyEditBtn .btn + .btn {
+  margin-left: 10px;
+}
+.tagsRow,
+.attachWrapper {
+  padding: 20px;
+}
+.tagsRow .tagsTitle,
+.attachWrapper .tagsTitle,
+.tagsRow .formTitle,
+.attachWrapper .formTitle {
+  border-bottom: none !important;
+  margin-bottom: 15px;
+}
+.attachWrapper .input-file {
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  height: auto;
+  color: #000000;
+  font-size: 16px;
+}
+.attachWrapper .atachPlaceHolder i {
+  margin-right: 5px;
+  font-size: 12px;
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -3884,6 +3918,9 @@ dl.payrollDateBlock dt {
 .btn:hover a {
   color: #000000;
 }
+.btn.btnRounded {
+  border-radius: 3px;
+}
 .btnAttention {
   border-color: #a22a2d;
 }
@@ -3903,6 +3940,14 @@ dl.payrollDateBlock dt {
 .btnSuccess:hover span,
 .btnSuccess:hover a {
   color: #000000;
+}
+.btnSave {
+  background: #3291c8;
+  color: #ffffff;
+  border-color: transparent;
+}
+.btnSave:hover {
+  background: #2d82b4;
 }
 /*== Begin Input type number =============*/
 .ui-spinner {
@@ -8613,6 +8658,9 @@ button:hover span,
 button:hover a {
   color: #000000;
 }
+button.btnRounded {
+  border-radius: 3px;
+}
 button.red,
 a.red {
   display: inline-block;
@@ -8728,6 +8776,10 @@ a.red:hover span,
 button.red:hover a,
 a.red:hover a {
   color: #000000;
+}
+button.red.btnRounded,
+a.red.btnRounded {
+  border-radius: 3px;
 }
 button.red:hover,
 a.red:hover {
@@ -11744,6 +11796,10 @@ ul.dialog-tabs .withEndContract .endContractReasonList:hover a,
 ul.dialog-tabs .withEndContract .arrow:hover a {
   color: #000000;
 }
+ul.dialog-tabs .withEndContract .endContractReasonList.btnRounded,
+ul.dialog-tabs .withEndContract .arrow.btnRounded {
+  border-radius: 3px;
+}
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
   background-color: #a13333;
@@ -11957,6 +12013,10 @@ ul.chart-tabs .withEndContract .arrow:hover span,
 ul.chart-tabs .withEndContract .endContractReasonList:hover a,
 ul.chart-tabs .withEndContract .arrow:hover a {
   color: #000000;
+}
+ul.chart-tabs .withEndContract .endContractReasonList.btnRounded,
+ul.chart-tabs .withEndContract .arrow.btnRounded {
+  border-radius: 3px;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
