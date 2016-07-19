@@ -102,7 +102,12 @@ define([
             var WIDTH = $chartContainer.width();
             var HEIGH = $chartContainer.height();
             var data = this.collection.toJSON();
-            var margin = {top: 20, right: 70, bottom: 50, left: 100};
+            var margin = {
+                top   : 20,
+                right : 70,
+                bottom: 70,
+                left  : 100
+            };
             var width = WIDTH - margin.left - margin.right - 15;
             var height = HEIGH - margin.top - margin.bottom;
             var topChart = d3.select('#chart');
