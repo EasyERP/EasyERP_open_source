@@ -2,7 +2,6 @@
 <tr data-index="<%=index%>" data-id="<%= task._id%>"
     class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
     <td class="centerCell"><input type="checkbox" value="<%=task._id%>" class="checkbox"/></td>
-    <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=(task.project) ? task.project.name : ''%><%=task.taskCount%></td>
     <td><%=task.summary%></td>
     <td>

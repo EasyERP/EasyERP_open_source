@@ -11,7 +11,6 @@
     <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"  <%if (!invoice.removable) { %>
         disabled='disabled'
         <% } %>/>
-<td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' + invoice.supplier.name.last:
     ''%>
 </td>

@@ -3478,16 +3478,16 @@ dl.payrollDateBlock dt {
 }
 .closeBtn {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
 }
 .closeBtn:before,
 .closeBtn:after {
   content: '';
   position: absolute;
-  top: 10px;
-  left: 0;
+  top: 12px;
+  left: 2px;
   width: 20px;
   height: 2px;
   background-color: #000;
@@ -3507,7 +3507,6 @@ dl.payrollDateBlock dt {
   transform: rotate(-45deg);
 }
 .listWrap {
-  margin: 0 -20px;
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -3557,9 +3556,15 @@ dl.payrollDateBlock dt {
 .formContentTitle,
 .listContentTitle {
   min-height: 42px;
-  padding: 10px;
+  padding: 7px;
   border-top: 1px solid #ededed;
   border-bottom: 1px solid #ededed;
+}
+.listContentTitle #createBtnHolder {
+  float: right;
+}
+.listContentTitle #createBtnHolder .fa {
+  margin-right: 0;
 }
 .formContentTitle {
   border-left: 1px solid #ededed;
@@ -3588,8 +3593,47 @@ dl.payrollDateBlock dt {
 td.checkboxRow {
   width: 40px;
   padding: 15px;
-  vertical-align: top;
+  vertical-align: middle;
   text-align: center;
+}
+.list .blue {
+  color: #3e88b9;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.list tr td.centerCell {
+  text-align: right;
+}
+.listOpen .top-bar {
+  display: none !important;
+}
+.listOpen #content-holder {
+  height: 100% !important;
+  overflow: hidden;
+}
+.listOpen .listContentTitle h3 {
+  float: left;
+}
+.listOpen .pagination {
+  margin: 5px 0 10px;
+}
+#top-bar-createBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #fff;
+  line-height: 24px !important;
+  color: #fff;
+  border: 1px solid #7f7f80;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  border-radius: 3px;
+}
+#top-bar-createBtn:after {
+  content: 'New';
+  margin-left: 5px;
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000;
+  font-size: 13px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -3828,6 +3872,14 @@ td.checkboxRow {
   width: 100%;
   table-layout: fixed;
 }
+.list2 .blue {
+  color: #3e88b9;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.list2 tr td.centerCell {
+  text-align: right;
+}
 .list2 td,
 .list2 th {
   height: 23px;
@@ -3835,25 +3887,28 @@ td.checkboxRow {
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
-  overflow: hidden;
   color: #000000;
   line-height: 23px;
-  font-size: 13px;
+  font-size: 10px;
+}
+.list2 td {
+  overflow: hidden;
 }
 .list2 thead tr {
   border: none;
   vertical-align: top;
 }
 .list2 thead th {
-  font-size: 13px;
+  font-size: 10px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list2 tbody tr {
   border-top: 1px solid #d7d7d7;
 }
 .list2 tbody td {
-  border: 1px solid #d7d7d7;
   text-align: right;
+  height: 50px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -3876,31 +3931,36 @@ td.checkboxRow {
 .list2 .oe_sortable_sub {
   cursor: pointer;
   position: relative;
-  padding-right: 15px;
 }
 .list2 .oe_sortable .arrow,
 .list2 .oe_sortable_sub .arrow {
   display: none;
   text-align: center;
   cursor: pointer;
-  font-family: Icons;
+  font-family: FontAwesome;
   position: absolute;
   top: 2px;
-  right: 3px;
+  right: -8px;
 }
 .list2 .oe_sortable.sortUp .up,
-.list2 .oe_sortable_sub.sortUp .up {
+.list2 .oe_sortable_sub.sortUp .up,
+.list2 .oe_sortable.sortUp .down,
+.list2 .oe_sortable_sub.sortUp .down {
   display: inline-block;
 }
-.list2 .oe_sortable.sortDn .down,
-.list2 .oe_sortable_sub.sortDn .down {
-  display: inline-block;
+.list2 .oe_sortable.sortUp .up:before,
+.list2 .oe_sortable_sub.sortUp .up:before,
+.list2 .oe_sortable.sortUp .down:before,
+.list2 .oe_sortable_sub.sortUp .down:before {
+  content: "\f176";
 }
-.list2 .enableTableOdd tr:nth-child(odd):not(.innerRow) {
-  background-color: #ededed;
+.list2 .oe_sortable.sortDn .down:before,
+.list2 .oe_sortable_sub.sortDn .down:before {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .list2 .enableTableOdd tr:not(.innerRow):hover {
-  background-color: #d9d9d9;
+  background-color: #ededed;
 }
 .list2 .centerCell {
   text-align: center;
@@ -3917,6 +3977,14 @@ td.checkboxRow {
 .list2 .overtime {
   background-color: #ffe332 !important;
 }
+.list2 .blue {
+  color: #3e88b9;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.list2 tr td.centerCell {
+  text-align: right;
+}
 .list2 td,
 .list2 th {
   height: 23px;
@@ -3924,25 +3992,28 @@ td.checkboxRow {
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
-  overflow: hidden;
   color: #000000;
   line-height: 23px;
-  font-size: 13px;
+  font-size: 10px;
+}
+.list2 td {
+  overflow: hidden;
 }
 .list2 thead tr {
   border: none;
   vertical-align: top;
 }
 .list2 thead th {
-  font-size: 13px;
+  font-size: 10px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list2 tbody tr {
   border-top: 1px solid #d7d7d7;
 }
 .list2 tbody td {
-  border: 1px solid #d7d7d7;
   text-align: right;
+  height: 50px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -3965,31 +4036,36 @@ td.checkboxRow {
 .list2 .oe_sortable_sub {
   cursor: pointer;
   position: relative;
-  padding-right: 15px;
 }
 .list2 .oe_sortable .arrow,
 .list2 .oe_sortable_sub .arrow {
   display: none;
   text-align: center;
   cursor: pointer;
-  font-family: Icons;
+  font-family: FontAwesome;
   position: absolute;
   top: 2px;
-  right: 3px;
+  right: -8px;
 }
 .list2 .oe_sortable.sortUp .up,
-.list2 .oe_sortable_sub.sortUp .up {
+.list2 .oe_sortable_sub.sortUp .up,
+.list2 .oe_sortable.sortUp .down,
+.list2 .oe_sortable_sub.sortUp .down {
   display: inline-block;
 }
-.list2 .oe_sortable.sortDn .down,
-.list2 .oe_sortable_sub.sortDn .down {
-  display: inline-block;
+.list2 .oe_sortable.sortUp .up:before,
+.list2 .oe_sortable_sub.sortUp .up:before,
+.list2 .oe_sortable.sortUp .down:before,
+.list2 .oe_sortable_sub.sortUp .down:before {
+  content: "\f176";
 }
-.list2 .enableTableOdd tr:nth-child(odd):not(.innerRow) {
-  background-color: #ededed;
+.list2 .oe_sortable.sortDn .down:before,
+.list2 .oe_sortable_sub.sortDn .down:before {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .list2 .enableTableOdd tr:not(.innerRow):hover {
-  background-color: #d9d9d9;
+  background-color: #ededed;
 }
 .list2 .centerCell {
   text-align: center;
@@ -4059,7 +4135,6 @@ td.checkboxRow {
   right: 0;
   height: calc(100% - 40px);
   width: calc(100% - 200px);
-  padding: 0 20px;
 }
 .template-switcher {
   margin-top: 5px;
@@ -7847,6 +7922,7 @@ dl dd span.ui-spinner {
 #wrapper #content-holder {
   position: relative;
   height: calc(100% - 50px);
+  width: 100%;
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -7859,6 +7935,7 @@ dl dd span.ui-spinner {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
+  overflow: auto;
 }
 #startLetter {
   margin: 0;
@@ -9932,6 +10009,14 @@ ul.dialog-tabs li.right button {
   font-family: 'Open Sans Regular', sans-serif, Verdana;
   width: 100%;
 }
+.list .blue {
+  color: #3e88b9;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.list tr td.centerCell {
+  text-align: right;
+}
 .list td,
 .list th {
   height: 23px;
@@ -9939,25 +10024,28 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
-  overflow: hidden;
   color: #000000;
   line-height: 23px;
-  font-size: 13px;
+  font-size: 10px;
+}
+.list td {
+  overflow: hidden;
 }
 .list thead tr {
   border: none;
   vertical-align: top;
 }
 .list thead th {
-  font-size: 13px;
+  font-size: 10px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list tbody tr {
   border-top: 1px solid #d7d7d7;
 }
 .list tbody td {
-  border: 1px solid #d7d7d7;
   text-align: right;
+  height: 50px;
 }
 .list tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -9980,31 +10068,36 @@ ul.dialog-tabs li.right button {
 .list .oe_sortable_sub {
   cursor: pointer;
   position: relative;
-  padding-right: 15px;
 }
 .list .oe_sortable .arrow,
 .list .oe_sortable_sub .arrow {
   display: none;
   text-align: center;
   cursor: pointer;
-  font-family: Icons;
+  font-family: FontAwesome;
   position: absolute;
   top: 2px;
-  right: 3px;
+  right: -8px;
 }
 .list .oe_sortable.sortUp .up,
-.list .oe_sortable_sub.sortUp .up {
+.list .oe_sortable_sub.sortUp .up,
+.list .oe_sortable.sortUp .down,
+.list .oe_sortable_sub.sortUp .down {
   display: inline-block;
 }
-.list .oe_sortable.sortDn .down,
-.list .oe_sortable_sub.sortDn .down {
-  display: inline-block;
+.list .oe_sortable.sortUp .up:before,
+.list .oe_sortable_sub.sortUp .up:before,
+.list .oe_sortable.sortUp .down:before,
+.list .oe_sortable_sub.sortUp .down:before {
+  content: "\f176";
 }
-.list .enableTableOdd tr:nth-child(odd):not(.innerRow) {
-  background-color: #ededed;
+.list .oe_sortable.sortDn .down:before,
+.list .oe_sortable_sub.sortDn .down:before {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .list .enableTableOdd tr:not(.innerRow):hover {
-  background-color: #d9d9d9;
+  background-color: #ededed;
 }
 .list .centerCell {
   text-align: center;
