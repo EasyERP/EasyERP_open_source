@@ -971,6 +971,7 @@ var Module = function (models, event) {
             }
             fromDateTicks = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
             fromDate = new Date(fromDateTicks);
+
             models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate(
                 {
                     $match: {
@@ -2636,6 +2637,8 @@ var Module = function (models, event) {
             });
         }
 
+
+        console.log(historyMatchObj);
         async
             .parallel({
                 assignedTo: function (parCb) {
@@ -2711,6 +2714,9 @@ var Module = function (models, event) {
             });
         }
 
+        console.log(JSON.stringify(historyMatchObj));
+
+
         if (stage === 'Qualified') {
             secondMatchObj = {'workflows.name': 'Qualified'};
         }
@@ -2770,23 +2776,31 @@ var Module = function (models, event) {
                             $project: {
                                 date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
                                 'sales._id' : 1,
-                                'sales.name': {$ifNull: ['$sales.name', 'Empty']}
+                                'sales.name': {$ifNull: ['$sales.name', 'Empty']},
+                                isOpp: '$lead.isOpportunitie',
+                                dateBy: {$dayOfYear: "$date"}
                             }
                         }, {
                             $project: {
                                 date       : 1,
                                 'sales._id': 1,
-                                salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]}
+                                salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]},
+                                isOpp: '$isOpp',
+                                dateBy: '$dateBy'
                             }
                         }, {
                             $group: {
                                 _id  : {date: '$date', sales: '$salesPerson'},
-                                count: {$sum: 1}
+                                count: {$sum: 1},
+                                dateBy: {$first: '$dateBy'},
+                                isOpp: {$first: '$isOpp'}
                             }
                         }, {
                             $project: {
                                 date       : '$_id.date',
                                 salesPerson: '$_id.sales',
+                                isOpp      : '$isOpp',
+                                dateBy     : '$dateBy',
                                 count      : 1,
                                 _id        : 0
                             }
@@ -2794,7 +2808,9 @@ var Module = function (models, event) {
                             $group: {
                                 _id       : '$date',
                                 salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                                count     : {$sum: '$count'}
+                                count     : {$sum: '$count'},
+                                isOpp     : {$first: '$isOpp'},
+                                source    : {$first: '$dateBy'}
                             }
                         }, {
                             $sort: {_id: -1}
