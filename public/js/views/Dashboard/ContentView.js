@@ -780,9 +780,34 @@ define([
         renderPopulateByType: function (that, type, startDay, endDay) {
             var chartClass = '.' + type + 'sChart';
             var self = this;
+            var margin = {
+                top   : 20,
+                right : 160,
+                bottom: 30,
+                left  : 160
+            };
+            var maxOpportunities;
+            var uniqueNames;
             var scaleArray;
-            var gradient;
             var gradient2;
+            var gradient;
+            var maxLeads;
+            var height;
+            var width;
+            var xAxis;
+            var yAxis;
+            var chart;
+            var data1;
+            var data2;
+            var x2;
+            var y;
+            var x;
+            var i;
+            var j;
+
+            function uniqueVal(value, index, self) {
+                return self.indexOf(value) === index;
+            }
 
             if (that) {
                 self = that;
@@ -803,7 +828,7 @@ define([
                     });
                 } else {
                     data.map(function (el) {
-                        el.source = el.source || 'No Source';
+                        el.source = el.source || 'No Source Name';
                         return el;
                     });
                 }
@@ -812,30 +837,29 @@ define([
                     return d.source;
                 });
 
-                var uniqueNamesArray = [];
-                
-                var margin = {top: 20, right: 160, bottom: 30, left: 160},
-                    width = $('#content-holder').width() - margin.left - margin.right,
-                    height = scaleArray.length * 20;
+                uniqueNames = scaleArray.slice().sort().filter(uniqueVal);
 
-                var y = d3.scale.ordinal()
+                width = $('#content-holder').width() - margin.left - margin.right;
+                height = uniqueNames.length * 20;
+
+                y = d3.scale.ordinal()
                     .rangeRoundBands([0, height], 0.3);
 
-                var x = d3.scale.linear()
+                x = d3.scale.linear()
                     .range([width, 0]);
 
-                var x2 = d3.scale.linear()
+                x2 = d3.scale.linear()
                     .range([0, width]);
 
-                var xAxis = d3.svg.axis()
+                xAxis = d3.svg.axis()
                     .scale(x2)
                     .orient('bottom');
 
-                var yAxis = d3.svg.axis()
+                yAxis = d3.svg.axis()
                     .scale(y)
                     .orient('left');
 
-                var chart = d3.select(chartClass)
+                chart = d3.select(chartClass)
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', height + margin.top + margin.bottom)
                     .append('g')
@@ -859,27 +883,29 @@ define([
                     .attr('class', 'y axis')
                     .call(yAxis);
 
-                var data1 = _.filter(data, function (item) {
+                data1 = _.filter(data, function (item) {
                     return item.isOpp;
                 });
 
-                var data2 = _.filter(data, function (item) {
+                data2 = _.filter(data, function (item) {
                     return !item.isOpp;
                 });
 
-                for (var i = 0; i < data1.length; i++) {
-                    for (var j = 0; j < data2.length; j++) {
+                /*for (i = 0; i < data1.length; i++) {
+
+                    for (j = 0; j < data2.length; j++) {
+
                         if (data1[i].source == data2[j].source) {
                             break;
                         }
                     }
-                }
+                }*/
 
-                var maxLeads = d3.max(data2, function(d){
+                maxLeads = d3.max(data2, function(d){
                     return d.count
                 }) || 0;
 
-                var maxOpportunities = d3.max(data1, function(d){
+                maxOpportunities = d3.max(data1, function(d){
                     return d.count;
                 }) || 0;
 
