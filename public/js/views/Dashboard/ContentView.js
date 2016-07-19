@@ -799,11 +799,8 @@ define([
             var chart;
             var data1;
             var data2;
-            var x2;
             var y;
             var x;
-            var i;
-            var j;
 
             function uniqueVal(value, index, self) {
                 return self.indexOf(value) === index;
@@ -814,6 +811,7 @@ define([
             }
 
             $(chartClass).empty();
+
             common.getLeadsForChart(type, {
                 startDay: startDay,
                 endDay  : endDay
@@ -826,6 +824,7 @@ define([
                         el.source = el.source || 'No User';
                         return el;
                     });
+
                 } else {
                     data.map(function (el) {
                         el.source = el.source || 'No Source Name';
@@ -837,22 +836,22 @@ define([
                     return d.source;
                 });
 
-                uniqueNames = scaleArray.slice().sort().filter(uniqueVal);
-
+                uniqueNames = scaleArray.slice().filter(uniqueVal);
                 width = $('#content-holder').width() - margin.left - margin.right;
                 height = uniqueNames.length * 20;
 
                 y = d3.scale.ordinal()
-                    .rangeRoundBands([0, height], 0.3);
+                    .rangeRoundBands([0, height], 0.3)
+                    .domain(uniqueNames);
 
                 x = d3.scale.linear()
-                    .range([width, 0]);
-
-                x2 = d3.scale.linear()
-                    .range([0, width]);
+                    .range([0, width])
+                    .domain([0, d3.max(data, function (d) {
+                        return d.count;
+                    }) + 10]);
 
                 xAxis = d3.svg.axis()
-                    .scale(x2)
+                    .scale(x)
                     .orient('bottom');
 
                 yAxis = d3.svg.axis()
@@ -864,15 +863,6 @@ define([
                     .attr('height', height + margin.top + margin.bottom)
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-                y.domain(scaleArray);
-                x.domain([0, d3.max(data, function (d) {
-                    return d.count;
-                }) + 10]);
-                x2.domain([0, d3.max(data, function (d) {
-                    return d.count;
-                }) + 10]);
-
 
                 chart.append('g')
                     .attr('class', 'x axis')
@@ -891,16 +881,6 @@ define([
                     return !item.isOpp;
                 });
 
-                /*for (i = 0; i < data1.length; i++) {
-
-                    for (j = 0; j < data2.length; j++) {
-
-                        if (data1[i].source == data2[j].source) {
-                            break;
-                        }
-                    }
-                }*/
-
                 maxLeads = d3.max(data2, function(d){
                     return d.count
                 }) || 0;
@@ -914,7 +894,7 @@ define([
                         'y1'           : 0,
                         'y2'           : 0,
                         'x1'           : 0,
-                        'x2'           : width - x(maxOpportunities),
+                        'x2'           : x(maxOpportunities),
                         'id'           : 'gradientBarForOpportunities',
                         'gradientUnits': 'userSpaceOnUse'
                     });
@@ -933,13 +913,12 @@ define([
                         'stop-color': '#6b456c'
                     });
 
-
                 gradient2 = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
                     .attr({
                         'y1'           : 0,
                         'y2'           : 0,
                         'x1'           : 0,
-                        'x2'           : width - x(maxLeads),
+                        'x2'           : x(maxLeads),
                         'id'           : 'gradientBarForTotalLeads',
                         'gradientUnits': 'userSpaceOnUse'
                     });
@@ -970,7 +949,7 @@ define([
                     })
                     .attr('height', y.rangeBand())
                     .attr('width', function (d) {
-                        return width - x(d.count);
+                        return x(d.count);
                     })
                     .attr('fill', 'url(#gradientBarForTotalLeads)');
 
@@ -986,7 +965,7 @@ define([
                     })
                     .attr('height', y.rangeBand())
                     .attr('width', function (d) {
-                        return width - x(d.count);
+                        return x(d.count);
                     })
                     .attr('fill', 'url(#gradientBarForOpportunities)');
 
@@ -995,7 +974,6 @@ define([
                     .attr('y2', function (d) {
                         return -height;
                     });
-
             });
         },
 
