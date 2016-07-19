@@ -3507,7 +3507,6 @@ dl.payrollDateBlock dt {
   transform: rotate(-45deg);
 }
 .listWrap {
-  margin: 0 -20px;
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -3901,18 +3900,27 @@ td.checkboxRow {
   display: none;
   text-align: center;
   cursor: pointer;
-  font-family: Icons;
+  font-family: FontAwesome;
   position: absolute;
   top: 2px;
   right: -8px;
 }
 .list2 .oe_sortable.sortUp .up,
-.list2 .oe_sortable_sub.sortUp .up {
+.list2 .oe_sortable_sub.sortUp .up,
+.list2 .oe_sortable.sortUp .down,
+.list2 .oe_sortable_sub.sortUp .down {
   display: inline-block;
 }
-.list2 .oe_sortable.sortDn .down,
-.list2 .oe_sortable_sub.sortDn .down {
-  display: inline-block;
+.list2 .oe_sortable.sortUp .up:before,
+.list2 .oe_sortable_sub.sortUp .up:before,
+.list2 .oe_sortable.sortUp .down:before,
+.list2 .oe_sortable_sub.sortUp .down:before {
+  content: "\f176";
+}
+.list2 .oe_sortable.sortDn .down:before,
+.list2 .oe_sortable_sub.sortDn .down:before {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .list2 .enableTableOdd tr:not(.innerRow):hover {
   background-color: #ededed;
@@ -3997,18 +4005,27 @@ td.checkboxRow {
   display: none;
   text-align: center;
   cursor: pointer;
-  font-family: Icons;
+  font-family: FontAwesome;
   position: absolute;
   top: 2px;
   right: -8px;
 }
 .list2 .oe_sortable.sortUp .up,
-.list2 .oe_sortable_sub.sortUp .up {
+.list2 .oe_sortable_sub.sortUp .up,
+.list2 .oe_sortable.sortUp .down,
+.list2 .oe_sortable_sub.sortUp .down {
   display: inline-block;
 }
-.list2 .oe_sortable.sortDn .down,
-.list2 .oe_sortable_sub.sortDn .down {
-  display: inline-block;
+.list2 .oe_sortable.sortUp .up:before,
+.list2 .oe_sortable_sub.sortUp .up:before,
+.list2 .oe_sortable.sortUp .down:before,
+.list2 .oe_sortable_sub.sortUp .down:before {
+  content: "\f176";
+}
+.list2 .oe_sortable.sortDn .down:before,
+.list2 .oe_sortable_sub.sortDn .down:before {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .list2 .enableTableOdd tr:not(.innerRow):hover {
   background-color: #ededed;
@@ -10019,18 +10036,27 @@ ul.dialog-tabs li.right button {
   display: none;
   text-align: center;
   cursor: pointer;
-  font-family: Icons;
+  font-family: FontAwesome;
   position: absolute;
   top: 2px;
   right: -8px;
 }
 .list .oe_sortable.sortUp .up,
-.list .oe_sortable_sub.sortUp .up {
+.list .oe_sortable_sub.sortUp .up,
+.list .oe_sortable.sortUp .down,
+.list .oe_sortable_sub.sortUp .down {
   display: inline-block;
 }
-.list .oe_sortable.sortDn .down,
-.list .oe_sortable_sub.sortDn .down {
-  display: inline-block;
+.list .oe_sortable.sortUp .up:before,
+.list .oe_sortable_sub.sortUp .up:before,
+.list .oe_sortable.sortUp .down:before,
+.list .oe_sortable_sub.sortUp .down:before {
+  content: "\f176";
+}
+.list .oe_sortable.sortDn .down:before,
+.list .oe_sortable_sub.sortDn .down:before {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .list .enableTableOdd tr:not(.innerRow):hover {
   background-color: #ededed;

@@ -76,19 +76,26 @@
       display: none;
       text-align: center;
       cursor: pointer;
-      font-family: Icons;
+      font-family: FontAwesome;
       position: absolute;
       top: 2px;
       right: -8px;
     }
     &.sortUp {
-      .up {
+      .up,
+      .down {
         display: inline-block;
+        &:before {
+          content: "\f176";
+        }
       }
     }
     &.sortDn {
       .down {
-        display: inline-block;
+        &:before {
+          -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+        }
       }
     }
 
@@ -111,7 +118,7 @@
   }
 
   .centerCell {
-  //(add to td)
+    //(add to td)
     text-align: center;
   }
 
@@ -207,13 +214,13 @@
 //Class for jobDashboard-jornalEntry
 
 .report-list {
-    tr {
-      td {
-        &:first-child {
-          padding: 0;
-        }
+  tr {
+    td {
+      &:first-child {
+        padding: 0;
       }
     }
+  }
 }
 
 .forCaption {
