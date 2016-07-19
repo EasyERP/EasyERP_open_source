@@ -851,6 +851,8 @@ var Module = function (models, event) {
 
     this.getLeadsForChart = function (req, res, next) {
         var data = req.query;
+        var startDate = data.startDay ? new Date(data.startDay) : null;
+        var endDate = data.endDay ? new Date(data.endDay) : null;
         var response = {};
         var type = data.type || 'sale';
         var myItem = {};
@@ -888,7 +890,10 @@ var Module = function (models, event) {
                         createdBy: {$ne: null},
                         source   : {$ne: ''},
                         $or      : [{isConverted: true}, {isOpportunitie: false}]
-                    }, {'createdBy.date': {$gte: fromDate}}]
+                    }, {'createdBy.date': {
+                        $gte: startDate,
+                        $lte: endDate
+                    }}]
                 }
             }, {
                 $group: {
@@ -918,7 +923,10 @@ var Module = function (models, event) {
                     $and: [{
                         createdBy: {$ne: null},
                         $or      : [{isConverted: true}, {isOpportunitie: false}]
-                    }, {'createdBy.date': {$gte: fromDate}}]
+                    }, {'createdBy.date': {
+                        $gte: startDate,
+                        $lte: endDate
+                    }}]
                 }
             }, {
                 $lookup: {
