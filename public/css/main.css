@@ -3823,6 +3823,38 @@ dl.payrollDateBlock dt {
   display: block;
   margin-bottom: 10px;
 }
+.propertyFormList {
+  display: table;
+  width: 100%;
+}
+.propertyFormList label,
+.propertyFormList .inputBox {
+  display: table-cell !important;
+}
+.propertyFormList label {
+  width: 140px !important;
+  text-align: right;
+  padding-right: 15px;
+}
+.propertyFormList .inputBox input:not([type=checkbox]) {
+  border: none ;
+  border-bottom: 1px solid #c8c8d3;
+  outline: none;
+  width: 100%;
+  padding: 6px 12px;
+}
+.propertyFormList .inputBox input:not([type=checkbox]):focus {
+  background: #fafafa;
+  border: none ;
+  border-bottom: 1px solid #c8c8d3;
+}
+.propertySubmit {
+  text-align: center;
+  margin-top: 20px;
+}
+.propertySubmit a:hover {
+  text-decoration: none;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
