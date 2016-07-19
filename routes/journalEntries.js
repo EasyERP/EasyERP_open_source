@@ -122,7 +122,7 @@ HTTP/1.1 200 OK
      * @apiParam (?Field=value) {Number} page=1 Number of page
      * @apiParam (?Field=value) {Boolean} reset=true
      * @apiParam (?Field=value) {Number} count=100
-     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {Object} filter={startDate:{key:"startDate",value:...},endDate:{key:"endDate",value:...}}
      * @apiParam (?Field=value) {String} contentType="trialBalance" Type of content
      * @apiParam (?Field=value) {Boolean} showMore=false
      * @apiParam (?Field=value) {String} parrentContentId
@@ -161,7 +161,7 @@ HTTP/1.1 200 OK
      * @apiParam (?Field=value) {Number} page=1 Number of page
      * @apiParam (?Field=value) {Boolean} reset=true
      * @apiParam (?Field=value) {Number} count=100
-     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {Object} filter={startDate:{key:"startDate",value:...},endDate:{key:"endDate",value:...}}
      * @apiParam (?Field=value) {String} contentType="balanceSheet" Type of content
      * @apiParam (?Field=value) {Boolean} showMore=false
      * @apiParam (?Field=value) {String} parrentContentId
@@ -291,7 +291,7 @@ HTTP/1.1 200 OK
      * @apiParam (?Field=value) {Number} page=1 Number of page
      * @apiParam (?Field=value) {Boolean} reset=true
      * @apiParam (?Field=value) {Number} count=100
-     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {Object} filter={startDate:{key:"startDate",value:...},endDate:{key:"endDate",value:...}}
      * @apiParam (?Field=value) {String} contentType="profitAndLoss" Type of content
      * @apiParam (?Field=value) {Boolean} showMore=false
      * @apiParam (?Field=value) {String} parrentContentId
@@ -332,7 +332,7 @@ HTTP/1.1 200 OK
      * @apiParam (?Field=value) {Number} page=1 Number of page
      * @apiParam (?Field=value) {Boolean} reset=true
      * @apiParam (?Field=value) {Number} count=100
-     * @apiParam (?Field=value) {Object} filter={startDate : {key : "startDate", value : ...}, endDate : {key : "endDate", value : ...}}
+     * @apiParam (?Field=value) {Object} filter={startDate:{key:"startDate",value:...},endDate:{key:"endDate",value:...}}
      * @apiParam (?Field=value) {String} contentType="cashFlow" Type of content
      * @apiParam (?Field=value) {Boolean} showMore=false
      * @apiParam (?Field=value) {String} parrentContentId
@@ -411,7 +411,7 @@ HTTP/1.1 200 OK
      * @apiParam (?Field=value) {String} viewType="list" Type of View
      * @apiParam (?Field=value) {Number} page=1 Number of page
      * @apiParam (?Field=value) {Number} count=100
-     * @apiParam (?Field=value) {Object} filter={date : [...]}
+     * @apiParam (?Field=value) {Object} filter
      * @apiParam (?Field=value) {String} contentType="inventoryReport" Type of content
      *
      * @apiSuccess {Object} InventoryReport

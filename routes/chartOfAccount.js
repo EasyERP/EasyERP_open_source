@@ -157,7 +157,7 @@ HTTP/1.1 201 Created
     router.post('/', accessStackMiddleware, handler.create);
 
     /**
-     *@api {potch} /chartOfAccount/ Request for partly updating Chart Of Account
+     *@api {patch} /chartOfAccount/ Request for partly updating Chart Of Account
      *
      * @apiVersion 0.0.1
      * @apiName updateChartOfAccount
