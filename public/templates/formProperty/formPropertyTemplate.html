@@ -8,11 +8,11 @@
 
         <div class="propertyBox">
             <div class="propertyImg">
-                <img src="https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-company-avatar.gif" title="property" alt="property">
+                <img alt="" src="<%=property.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-company-avatar.gif'%>" />
             </div>
             <div class="propertyBody">
                 <span class="propertyFullName"><%=property.fullName%></span>
-                <a href="javascript:;"><%=property.website%></a>
+                <a href=<%=property.website%>"><%=property.website%></a>
             </div>
 
             <a href="javascript:;" class="removeProperty" title="Remove <%=type%>" id="removeProperty">
@@ -88,9 +88,10 @@
         </div>
 
     </div>
-    <%} else {%>
-        <a class="btn addCompanyBtn" title="Add <%=type%>" id="addProperty"><i class="fa fa-plus" aria-hidden="true"></i> Add <%=type%></a>
-    <%}%>
+    <%} %>
+        <% if (type === 'Persons' || !property)  {%>
+        <a class="btn" title="Add <%=type%>" id="addProperty"><i class="fa fa-plus" aria-hidden="true"></i>Add <%=type%></a>
+        <%}%>
 
 
 </div>

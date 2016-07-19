@@ -2,12 +2,11 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/formProperty/filterViewList.html',
-    'text!templates/formProperty/filterViewContent.html',
+    'text!templates/Companies/filterViewList.html',
+    'text!templates/Companies/filterViewContent.html',
     'views/Companies/CreateView',
-    'views/Persons/CreateView',
-    'collections/Filter/filterCollection'
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, personCreateView, companyCreateView, companyCollection, filterCollection) {
+    'collections/Companies/filterCollection'
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, personCreateView, filterCollection) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -18,9 +17,6 @@ define([
         initialize: function (options) {
 
             var self = this;
-            var CurrentCollection;
-            var data = options.data;
-
             this.type = options.type;
 
 
@@ -75,11 +71,8 @@ define([
 
         createCustomer : function (){
             $('.tag-list-dialog').remove();
-            if (this.type === 'Company') {
-                return new companyCreateView();
-            } else {
-                new personCreateView();
-            }
+
+            new companyCreateView();
         },
 
         changeSelected: function (e) {
@@ -93,7 +86,7 @@ define([
 
 
         renderContent: function () {
-            var contentHolder = this.$el.find('#tagsList');
+            var contentHolder = this.$el.find('#companyList');
             contentHolder.html(this.contentTemplate({
                 collection: this.filteredCollection.toJSON(),
                 model     : this.model.toJSON()
@@ -105,7 +98,6 @@ define([
         },
 
         render: function () {
-            var modelObj = this.model.toJSON();
             var self = this;
 
             var formString = this.template({

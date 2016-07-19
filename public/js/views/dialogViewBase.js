@@ -115,11 +115,13 @@
             var itemActiveSelector = '.dialog-tabs-item' + dataClass + '.active';
             var itemSelector = '.dialog-tabs-item' + dataClass;
 
+
+
             closestEl.find('a.active').removeClass('active');
             $target.addClass('active');
 
             n = $target.parents('.dialog-tabs').find('li').index($target.parent());
-            dialogHolder = $(selector);
+            dialogHolder = this.$el.find(selector);
 
             dialogHolder.find(itemActiveSelector).removeClass('active');
             dialogHolder.find(itemSelector).eq(n).addClass('active');

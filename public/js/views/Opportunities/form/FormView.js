@@ -6,7 +6,7 @@ define([
     'views/Editor/NoteView',
     'views/Editor/AttachView',
     'views/Opportunities/EditView',
-    'views/formProperty/formPropertyView',
+    'views/Companies/formPropertyView',
     'views/Tags/TagView',
     'models/CompaniesModel',
     'models/PersonsModel',
@@ -15,7 +15,7 @@ define([
     'populate',
     'constants',
     'views/selectView/selectView'
-], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, formProperty, TagView, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
+], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, CompanyFormProperty, TagView, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',
 
@@ -131,6 +131,7 @@ define([
                 this.modelChanged = {};
             }
             this.modelChanged[type] = id;
+            this.showButtons();
         },
 
         saveDeal: function (changedAttrs, type) {
@@ -199,7 +200,6 @@ define([
             var formModel = this.formModel.toJSON();
             var self = this;
             var $thisEl = this.$el;
-            var personModel;
             var companyModel;
 
             $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
@@ -212,22 +212,12 @@ define([
                 }));
             });
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, false, true);
-            dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
-                employees = _.map(employees.data, function (employee) {
-                    employee.name = employee.name.first + ' ' + employee.name.last;
-
-                    return employee;
-                });
-
-                self.responseObj['#salesPersonDd'] = employees;
-            });
 
             if (formModel.customer) {
                 companyModel = new CompanyModel(formModel.customer);
             }
 
-            this.formProperty = new formProperty({
-                type       : 'Company',
+            this.formProperty = new CompanyFormProperty({
                 parentModel: this.formModel,
                 model      : companyModel,
                 attribute  : 'customer',
@@ -244,6 +234,7 @@ define([
                 model      : this.formModel,
                 contentType: 'opportunities'
             });
+
             $thisEl.find('.notes').append(
                 this.noteView.render().el
             );
