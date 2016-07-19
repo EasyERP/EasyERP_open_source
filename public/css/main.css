@@ -3467,9 +3467,6 @@ dl.payrollDateBlock dt {
 .compactView:nth-child(n+2) {
   border-top: 1px solid #ededed;
 }
-.compactView td {
-  padding: 15px 15px 15px 0;
-}
 .fontBold {
   font-family: 'Open Sans Bold', sans-serif, Verdana;
 }
@@ -3549,8 +3546,9 @@ dl.payrollDateBlock dt {
 .formContentTitle .closeBtn {
   float: right;
 }
-.compactRow {
-  overflow: hidden;
+.compactRowWrap {
+  min-height: 100px;
+  padding: 15px 15px 15px 0;
 }
 .compactRow > div:nth-child(odd) {
   float: left;
@@ -3561,6 +3559,11 @@ dl.payrollDateBlock dt {
 }
 .compactRow:nth-child(n+2) {
   margin-top: 10px;
+}
+.compactRow:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 td.checkboxRow {
   width: 40px;

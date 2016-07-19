@@ -1237,10 +1237,6 @@ dl.payrollDateBlock {
   &:nth-child(n+2) {
     border-top: 1px solid #ededed;
   }
-
-  td {
-    padding: 15px 15px 15px 0;
-  }
 }
 
 .fontBold {
@@ -1339,9 +1335,13 @@ dl.payrollDateBlock {
   }
 }
 
+.compactRowWrap {
+  min-height: 100px;
+  padding: 15px 15px 15px 0;
+}
 
 .compactRow {
-  overflow: hidden;
+
   > div {
     &:nth-child(odd) {
       float: left;
@@ -1353,6 +1353,12 @@ dl.payrollDateBlock {
   }
   &:nth-child(n+2) {
     margin-top: 10px;
+  }
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
   }
 }
 
