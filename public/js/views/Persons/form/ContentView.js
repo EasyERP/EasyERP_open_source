@@ -21,7 +21,7 @@ define([
         CreateView     : CreateView,
         ListItemView   : ListItemView,
         FilterView     : FilterView,
-        formUrl        : '#easyErp/Persons/form/',
+        listUrl        : '#easyErp/Persons/list/',
         contentType    : 'Persons', // needs in view.prototype.changeLocationHash
         viewType       : 'list', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
@@ -32,7 +32,8 @@ define([
         formView       : null,
 
         events: {
-            'click .compactView': 'renderFormView'
+            'click .compactView': 'renderFormView',
+            'click .closeBtn'   : 'returnToList'
         },
 
         initialize: function (options) {
@@ -53,6 +54,14 @@ define([
             this.renderFormView(modelId);
         },
 
+        returnToList: function (e) {
+            var url;
+            var currentPage =
+            e.preventDefault();
+
+            url = this.listUrl + '/p' + this.c
+
+        },
 
         renderFormView: function (e) {
             var $thisEl = this.$el;
