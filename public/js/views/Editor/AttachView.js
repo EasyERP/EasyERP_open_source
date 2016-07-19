@@ -189,9 +189,11 @@ define([
                             },
                             patch  : true, // Send only changed attr(add Roma)
                             success: function () {
-                                var othersAttaches = self.$el.find('.attachContainer li').length;
-                                self.$el.find('.attachFile_' + id).remove();
+                                var othersAttaches;
 
+                                self.$el.find('.attachFile_' + id).remove();
+                                othersAttaches = self.$el.find('.attachContainer li').length;
+                                
                                 if (!othersAttaches){
                                     self.$el.find('.input-file').removeClass('smallBtn');
                                 }
