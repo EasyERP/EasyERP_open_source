@@ -1967,6 +1967,7 @@ body {
 }
 .pagination {
   width: 100%;
+  margin-top: 5px;
   float: right;
 }
 .pagination > div {
@@ -7861,6 +7862,7 @@ dl dd span.ui-spinner {
 }
 #startLetter {
   margin: 0;
+  margin-top: 10px;
   text-align: center;
   border-bottom: 1px solid #7f7f80;
 }
@@ -11394,10 +11396,10 @@ ul.dialog-tabs li.right button {
   max-width: 100%;
 }
 #timeRecivingDataFromServer {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  clear: both;
+  text-align: center;
+  color: #000000;
+  margin-top: -15px;
 }
 .tabs-items {
   margin-bottom: -29px;
