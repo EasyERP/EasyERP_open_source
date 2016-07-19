@@ -6,7 +6,7 @@ define([
     'text!templates/Companies/filterViewContent.html',
     'views/Companies/CreateView',
     'collections/Companies/filterCollection'
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, personCreateView, filterCollection) {
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, filterCollection) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -18,7 +18,6 @@ define([
 
             var self = this;
             this.type = options.type;
-
 
             function resetCollection() {
                 self.renderContent(self.e);
@@ -52,8 +51,8 @@ define([
         },
 
         events: {
-            'click li'                                                        : 'changeSelected',
-            'click #newCustomer'                                              : 'createCustomer'
+            'click li'         : 'changeSelected',
+            'click #newCompany': 'createCustomer'
         },
 
         filterCollection: function (value) {
@@ -69,10 +68,10 @@ define([
             return resultCollection;
         },
 
-        createCustomer : function (){
+        createCustomer: function () {
             $('.tag-list-dialog').remove();
 
-            new companyCreateView();
+            new CreateView();
         },
 
         changeSelected: function (e) {
@@ -83,7 +82,6 @@ define([
             saveObject[this.attribute] = id;
             this.saveDeal(saveObject, 'formProperty');
         },
-
 
         renderContent: function () {
             var contentHolder = this.$el.find('#companyList');
@@ -101,7 +99,7 @@ define([
             var self = this;
 
             var formString = this.template({
-                type : this.type
+                type: this.type
             });
 
             this.$el = $(formString).dialog({
@@ -116,7 +114,7 @@ define([
                 width        : '300px',
                 buttons      : [
                     {
-                        class   : 'exitButton',
+                        class: 'exitButton',
                         click: function () {
                             self.hideDialog();
                         }

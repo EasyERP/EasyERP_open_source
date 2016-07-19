@@ -49,7 +49,8 @@ define([
 
         saveChanges: function (e) {
             var self = this;
-            this.model.save(this.modelChanged, {patch: true}, {
+            this.model.save(this.modelChanged, {
+                patch: true,
                 success : function (){
                     self.modelChanged = '';
                     self.hideButtons();
