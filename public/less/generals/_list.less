@@ -1,5 +1,5 @@
 .list(@font-size: 13px, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
-  font-family: @lucida-font;
+  font-family: @fontRegular;
   width: 100%;
 
   td, th {
@@ -8,10 +8,8 @@
     padding: 0 6px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
     box-sizing: border-box;
-
+    overflow: hidden;
     color: @mainText-color;
     line-height: 23px;
     font-size: @font-size;
@@ -96,10 +94,14 @@
     // class to enabled table odd color (add to tbody)
     tr {
       &:nth-child(odd) {
-        background-color: @defaultBgColorOdd-color;
+        &:not(.innerRow) {
+          background-color: @defaultBgColorOdd-color;
+        }
       }
-      &:hover {
-        background-color: @defaultBgHover-color;
+      &:not(.innerRow) {
+        &:hover {
+          background-color: @defaultBgHover-color;
+        }
       }
     }
   }

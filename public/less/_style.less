@@ -44,8 +44,6 @@
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
-@body-font: "Segoe UI", sans-serif;
-@lucida-font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
 @icon-font: Icons;
 @icon2-font: Icons2;
 @icon3-font: Icons3;
@@ -97,7 +95,7 @@ a {
 }
 
 body {
-  font-family: @body-font;
+  font-family: @fontRegular;
   font-size: 12px;
   height: 100%;
   overflow: hidden;
@@ -390,7 +388,6 @@ article {
 }
 
 #content-holder {
-
   position: inherit;
   height: auto;
   display: block;
@@ -1421,7 +1418,7 @@ h3 {
       font-size: 24px;
       line-height: 30px;
       min-height: 24px;
-      font: @lucida-font;
+      font: @fontRegular;
     }
 
     p {
@@ -1543,7 +1540,7 @@ h3 {
   }
 
   h2 {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     color: #4c4c4c;
     .bold;
     font-size: 24px !important;
@@ -1559,7 +1556,7 @@ h3 {
   }
 
   p {
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     color: #4c4c4c;
     font-size: 13px;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -1772,7 +1769,7 @@ input, textarea, select {
     font-weight: bold;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
     line-height: 18px;
-    font-family: @lucida-font;
+    font-family: @fontRegular;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -1791,7 +1788,7 @@ input, textarea, select {
       }
 
       P {
-        font-family: @lucida-font;
+        font-family: @fontRegular;
         color: #000;
         font-size: 13px;
         font-weight: 200 !important;

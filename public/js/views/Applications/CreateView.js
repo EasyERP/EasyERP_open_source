@@ -8,8 +8,9 @@ define([
     'populate',
     'views/Notes/AttachView',
     'views/dialogViewBase',
-    'constants'
-], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, ParentView, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, ParentView, CONSTANTS, helpers) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -40,7 +41,23 @@ define([
                     name: 'unmarried'
                 }
             ];
-            
+
+            this.responseObj['#sourceDd'] = [
+                {
+                    _id : 'www.rabota.ua',
+                    name: 'www.rabota.ua'
+                }, {
+                    _id : 'www.work.ua',
+                    name: 'www.work.ua'
+                }, {
+                    _id : 'www.ain.net',
+                    name: 'www.ain.net'
+                }, {
+                    _id : 'other',
+                    name: 'other'
+                }
+            ];
+
             this.render();
         },
 
@@ -127,6 +144,12 @@ define([
 
             var weeklyScheduler = weeklySchedulerDd.attr('data-id');
 
+            var payrollStructureTypeDd = $thisEl.find('#payrollStructureTypeDd');
+            var payrollStructureType = payrollStructureTypeDd.attr('data-id') || null;
+
+            var scheduledPayDd = $thisEl.find('#scheduledPayDd');
+            var scheduledPay = scheduledPayDd.attr('data-id') || null;
+
             var projectManagerDD = $thisEl.find('#projectManagerDD');
             var manager = projectManagerDD.attr('data-id') || null;
 
@@ -138,7 +161,7 @@ define([
 
             var homeAddress = {};
 
-            var dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
+            var dateBirthSt = $thisEl.find('#dateBirth').val() ? helpers.setTimeToDate($.trim($thisEl.find('#dateBirth').val())) : null;
 
             var sourceId = $thisEl.find('#sourceDd').attr('data-id');
 
@@ -153,9 +176,9 @@ define([
 
             var referredBy = $.trim($thisEl.find('#referredBy').val());
 
-            var expectedSalary = $.trim($thisEl.find('#expectedSalary').val());
+            var expectedSalary = parseInt(helpers.spaceReplacer($.trim($thisEl.find('#expectedSalary').val())), 10);
 
-            var proposedSalary = parseInt($.trim($thisEl.find('#proposedSalary').val()), 10);
+            var proposedSalary = parseInt(helpers.spaceReplacer($.trim($thisEl.find('#proposedSalary').val())), 10);
 
             var workflow = $thisEl.find('#workflowsDd').attr('data-id') || null;
 
@@ -164,7 +187,6 @@ define([
             var notes = [];
             var note;
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
-
 
             if (internalNotes) {
                 note = {
@@ -196,39 +218,41 @@ define([
             };
 
             this.model.save({
-                name           : name,
-                gender         : gender,
-                jobType        : jobType,
-                marital        : marital,
-                workAddress    : workAddress,
-                social         : social,
-                tags           : tags,
-                workEmail      : workEmail,
-                personalEmail  : personalEmail,
-                skype          : skype,
-                workPhones     : workPhones,
-                bankAccountNo  : bankAccountNo,
-                relatedUser    : relatedUser,
-                department     : department,
-                notes          : notes,
-                jobPosition    : jobPosition,
-                weeklyScheduler: weeklyScheduler,
-                manager        : manager,
-                identNo        : identNo,
-                passportNo     : passportNo,
-                otherId        : otherId,
-                homeAddress    : homeAddress,
-                dateBirth      : dateBirthSt,
-                source         : sourceId,
-                imageSrc       : this.imageSrc,
-                nationality    : nationality,
-                groups         : groups,
-                whoCanRW       : whoCanRW,
-                nextAction     : nextAction,
-                referredBy     : referredBy,
-                expectedSalary : expectedSalary,
-                proposedSalary : proposedSalary,
-                workflow       : workflow
+                name                : name,
+                gender              : gender,
+                jobType             : jobType,
+                marital             : marital,
+                workAddress         : workAddress,
+                social              : social,
+                tags                : tags,
+                workEmail           : workEmail,
+                personalEmail       : personalEmail,
+                skype               : skype,
+                workPhones          : workPhones,
+                bankAccountNo       : bankAccountNo,
+                relatedUser         : relatedUser,
+                department          : department,
+                jobPosition         : jobPosition,
+                weeklyScheduler     : weeklyScheduler,
+                notes               : notes,
+                payrollStructureType: payrollStructureType,
+                scheduledPay        : scheduledPay,
+                manager             : manager,
+                identNo             : identNo,
+                passportNo          : passportNo,
+                otherId             : otherId,
+                homeAddress         : homeAddress,
+                dateBirth           : dateBirthSt,
+                source              : sourceId,
+                imageSrc            : this.imageSrc,
+                nationality         : nationality,
+                groups              : groups,
+                whoCanRW            : whoCanRW,
+                nextAction          : nextAction,
+                referredBy          : referredBy,
+                expectedSalary      : expectedSalary,
+                proposedSalary      : proposedSalary,
+                workflow            : workflow
             }, {
                 headers: {
                     mid: mid
@@ -307,6 +331,8 @@ define([
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);
+            populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
+            populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
             $thisEl.find('#nextAction').datepicker({

@@ -7,145 +7,142 @@
     <li><a href="javascript:;" class="">Opportunities</a></li>
     <li><a href="javascript:;" class="">Won/Lost</a></li>
     <li><a href="javascript:;" class="">Sales by country</a></li>
+    <li><a href="javascript:;" class="">Leads</a></li>
+    <li><a href="javascript:;" class="">Leads by names</a></li>
 </ul>
-
 
 <div class="chart-tabs-items">
     <div class="chart-tabs-item active">
         <div class="clearfix"></div>
         <h3 class="dashboard">Who created most leads?</h3>
 
-        <div class="choseDateRange" data-type="sale">
-            <div class="item active" data-day="7">7D</div>
-            <div class="item" data-day="30">30D</div>
-            <div class="item" data-day="90">90D</div>
-            <div class="item" data-day="365">12M</div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="legend-box small">
-            <div class="total">
-                <div class="square">
-                </div>
-                <div class="text">
-                    Total Leads
-                </div>
+        <div class="graphicControlls">
+            <div class="choseDateRange" data-type="sale">
+                <div class="item active" data-day="7">7D</div>
+                <div class="item" data-day="30">30D</div>
+                <div class="item" data-day="90">90D</div>
+                <div class="item" data-day="365">12M</div>
             </div>
-            <div class="opportunities">
-                <div class="square">
+            <div class="legend-box small">
+                <div class="total">
+                    <div class="square">
+                    </div>
+                    <div class="text">
+                        Total Leads
+                    </div>
                 </div>
-                <div class="text">
-                    Opportunities
+                <div class="opportunities">
+                    <div class="square">
+                    </div>
+                    <div class="text">
+                        Opportunities
+                    </div>
                 </div>
-                <div class="clearfix"></div>
+
             </div>
-
         </div>
-
         <svg class="chart salesChart"></svg>
     </div>
     <div class="chart-tabs-item">
-        <div class="clearfix"></div>
         <h3 class="dashboard">How many leads have been created?</h3>
+        <div class="dashbordActions container">
+            <div class="row">
+                <div data-type="date" class="choseDateItem">
+                    <div class="item active" data-item="D">Day</div>
+                    <div class="item" data-item="W">Week</div>
+                    <div class="item" data-item="M">Month</div>
+                    <div class="item" data-item="DW">Day of Week</div>
+                    <div class="item" data-item="DM">Day of Month</div>
+                </div>
+                <div class="choseDateRange" data-type="date">
+                    <div class="item" data-day="7">7D</div>
+                    <div class="item active" data-day="30">30D</div>
+                    <div class="item" data-day="90">90D</div>
+                    <div class="item" data-day="365">12M</div>
+                </div>
+                <div class="legend-box">
+                    <div class="converted">
+                        <div class="square">
+                        </div>
+                        <div class="text">
+                            Converted Leads
+                        </div>
+                    </div>
 
-        <div data-type="date" class="choseDateItem">
-            <div class="item active" data-item="D">Day</div>
-            <div class="item" data-item="W">Week</div>
-            <div class="item" data-item="M">Month</div>
-            <div class="item" data-item="DW">Day of Week</div>
-            <div class="item" data-item="DM">Day of Month</div>
-        </div>
-        <div class="choseDateRange" data-type="date">
-            <div class="item" data-day="7">7D</div>
-            <div class="item active" data-day="30">30D</div>
-            <div class="item" data-day="90">90D</div>
-            <div class="item" data-day="365">12M</div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="legend-box">
-            <div class="converted">
-                <div class="square">
+                    <div class="unconverted">
+                        <div class="square">
+                        </div>
+                        <div class="text">
+                            Unconverted Leads
+                        </div>
+                    </div>
+
+                    <div class="convertRate">
+                        <div class="square">
+                        </div>
+                        <div class="text">
+                            Opportunity Conversion Rate
+                        </div>
+                    </div>
                 </div>
-                <div class="text">
-                    Converted Leads
-                </div>
-                <div class="clearfix"></div>
             </div>
-
-            <div class="unconverted">
-                <div class="square">
-                </div>
-                <div class="text">
-                    Unconverted Leads
-                </div>
-            </div>
-
-            <div class="convertRate">
-                <div class="square">
-                </div>
-                <div class="text">
-                    Opportunity Conversion Rate
-                </div>
-            </div>
         </div>
-
         <svg class="leadChart"></svg>
     </div>
     <div class="chart-tabs-item">
         <div class="clearfix"></div>
         <h3 class="dashboard">What are our best primary campaigs?</h3>
-
-        <div class="choseDateRange"  data-type="source">
-            <div class="item" data-day="7">7D</div>
-            <div class="item active" data-day="30">30D</div>
-            <div class="item" data-day="90">90D</div>
-            <div class="item" data-day="365">12M</div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="legend-box small">
-            <div class="total">
-                <div class="square">
-                </div>
-                <div class="text">
-                    Total Leads
-                </div>
+        <div class="dashbordActions">
+            <div class="choseDateRange"  data-type="source">
+                <div class="item" data-day="7">7D</div>
+                <div class="item active" data-day="30">30D</div>
+                <div class="item" data-day="90">90D</div>
+                <div class="item" data-day="365">12M</div>
             </div>
-            <div class="opportunities">
-                <div class="square">
+            <div class="legend-box small">
+                <div class="total">
+                    <div class="square">
+                    </div>
+                    <div class="text">
+                        Total Leads
+                    </div>
                 </div>
-                <div class="text">
-                    Opportunities
+                <div class="opportunities">
+                    <div class="square">
+                    </div>
+                    <div class="text">
+                        Opportunities
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
-                <div class="clearfix"></div>
+
             </div>
-
         </div>
-
         <svg class="chart sourcesChart"></svg>
     </div>
     <div class="chart-tabs-item">
-        <div class="clearfix"></div>
         <h3 class="dashboard">What is the conversion rate per Sale?</h3>
-
-        <div class="choseDateRange" data-type="opportunitieConversion">
-            <div class="item" data-day="7">7D</div>
-            <div class="item" data-day="30">30D</div>
-            <div class="item active" data-day="90">90D</div>
-            <div class="item" data-day="365">12M</div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="legend-box opportunities">
-            <div class="new">
-                <div style="background-color: rgb(38, 167, 222);" class="square">
-                </div>
-                <div class="text">
-                    Finished Opportinities
-                </div>
+        <div class="clearfixNew">
+            <div class="choseDateRange" data-type="opportunitieConversion">
+                <div class="item" data-day="7">7D</div>
+                <div class="item" data-day="30">30D</div>
+                <div class="item active" data-day="90">90D</div>
+                <div class="item" data-day="365">12M</div>
             </div>
-            <div class="convertRate">
-                <div style="background-color: #66ff66" class="square">
+            <div class="legend-box medium opportunities">
+                <div class="new">
+                    <div style="background-color: rgb(38, 167, 222);" class="square">
+                    </div>
+                    <div class="text">
+                        Finished Opportinities
+                    </div>
                 </div>
-                <div class="text">
-                    Opportunity Conversion Rate
+                <div class="convertRate">
+                    <div style="background-color: #66ff66" class="square">
+                    </div>
+                    <div class="text">
+                        Opportunity Conversion Rate
+                    </div>
                 </div>
             </div>
         </div>
@@ -155,10 +152,7 @@
     <div class="chart-tabs-item">
         <div class="clearfix"></div>
         <h3 class="dashboard">How long last activity was?</h3>
-        <br>
-        <br>
-        <div class="clearfix"></div>
-        <div class="legend-box opportunities">
+        <div class="legend-box opportunities medium">
             <div class="new">
                 <div style="background-color: yellow;" class="square">
                 </div>
@@ -172,7 +166,6 @@
                 <div class="text">
                     % 25-50
                 </div>
-                <div class="clearfix"></div>
             </div>
             <div class="% 50-75">
                 <div style="background-color: rgb(38, 167, 222);" class="square">
@@ -180,7 +173,6 @@
                 <div class="text">
                     % 50-75
                 </div>
-                <div class="clearfix"></div>
             </div>
             <div class="% 75-100">
                 <div style="background-color: rgb(95, 186, 81);" class="square">
@@ -188,14 +180,12 @@
                 <div class="text">
                     % 75-100
                 </div>
-                <div class="clearfix"></div>
             </div>
         </div>
         <svg class="opportunitieAgingSum"></svg>
         <svg class="opportunitieAgingCount"></svg>
     </div>
     <div class="chart-tabs-item">
-        <div class="clearfix"></div>
         <h3 class="dashboard">What stage are my opportunities in?</h3>
 
         <div class="choseDateRange" data-type="opportunitie">
@@ -219,7 +209,6 @@
                 <div class="text">
                     % 25-50
                 </div>
-                <div class="clearfix"></div>
             </div>
             <div class="% 50-75">
                 <div style="background-color: rgb(38, 167, 222);" class="square">
@@ -227,7 +216,6 @@
                 <div class="text">
                     % 50-75
                 </div>
-                <div class="clearfix"></div>
             </div>
             <div class="% 75-100">
                 <div style="background-color: rgb(95, 186, 81);" class="square">
@@ -235,15 +223,12 @@
                 <div class="text">
                     % 75-100
                 </div>
-                <div class="clearfix"></div>
             </div>
 
-        </div>
-
+            </div>
         <svg class="opportunitiesChart"></svg>
     </div>
     <div class="chart-tabs-item">
-        <div class="clearfix"></div>
         <h3 class="dashboard">How many of our opportunities do we win?</h3>
 
         <div data-type="winLost" class="choseDateItem">
@@ -267,32 +252,32 @@
                 <div class="text">
                     In progress
                 </div>
-                <div class="clearfix"></div>
+            </div>
+       </div>
+
+        <div class="unconverted">
+            <div class="square">
+            </div>
+            <div class="text">
+                Won
+            </div>
+        </div>
+
+        <div class="unconverted">
+            <div style="background-color: red" class="square">
+            </div>
+            <div class="text">
+                Lost
+            </div>
+        </div>
+
+        <div class="convertRate">
+            <div style="background-color: #3E88B9" class="square">
+            </div>
+            <div class="text">
+                Win %
             </div>
 
-            <div class="unconverted">
-                <div class="square">
-                </div>
-                <div class="text">
-                    Won
-                </div>
-            </div>
-
-            <div class="unconverted">
-                <div style="background-color: red" class="square">
-                </div>
-                <div  class="text">
-                    Lost
-                </div>
-            </div>
-
-            <div class="convertRate">
-                <div style="background-color: #3E88B9" class="square">
-                </div>
-                <div class="text">
-                    Win %
-                </div>
-            </div>
         </div>
 
         <svg class="winAndLostOpportunitiesChart"></svg>
@@ -301,6 +286,7 @@
 
         <h3>Sales by country</h3>
         <div class="vocationFilter">
+
             <ul class="dateFilter">
                 <li class="dateRange">
                     <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
@@ -308,12 +294,12 @@
                 </li>
                 <li>
                     <ul class="frameDetail hidden">
-                        <li id="thisMonth" class="filterValues checked">This Month</li>
-                        <li id="thisYear" class="filterValues checked">This Financial Year</li>
-                        <li id="lastMonth" class="filterValues checked">Last Month</li>
-                        <li id="lastQuarter" class="filterValues checked">Last Quarter</li>
-                        <li id="lastYear" class="filterValues checked">Last Financial Year</li>
-                        <li id="custom" class="filterValues checked">Custom Dates</li>
+                        <li id="thisMonth" class="filterValues checked checkedValue" data-type="">This Month</li>
+                        <li id="thisYear" class="filterValues checked" data-type="">This Financial Year</li>
+                        <li id="lastMonth" class="filterValues checked" data-type="">Last Month</li>
+                        <li id="lastQuarter" class="filterValues checked" data-type="">Last Quarter</li>
+                        <li id="lastYear" class="filterValues checked" data-type="">Last Financial Year</li>
+                        <li id="custom" class="filterValues checked" data-type="">Custom Dates</li>
                         <li class="customTime hidden">
                     <span>
                         <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>
@@ -332,15 +318,105 @@
                 </li>
             </ul>
         </div>
+
         <div class="clearfix"></div>
         <div>
             <div class="treemap_sales" style="margin-left: 130px"></div>
-            <div style="margin-left: 870px">
+            <div style="margin-left: 800px">
                 <svg class="salesByCountryChart"></svg>
             </div>
             <svg class="salesByCountryBarChart"></svg>
         </div>
     </div>
+    <div class="chart-tabs-item">
+
+        <h3>Leads</h3>
+        <div class="vocationFilter">
+            <ul class="dateFilterLeads">
+                <li class="dateRangeLeads">
+                    <span id="startTimeLeads"><%= startDateLeads%></span> - <span id="endTimeLeads"><%= endDateLeads%></span>
+                    <i class="fa fa-caret-down"></i>
+                </li>
+                <li>
+                    <ul class="frameDetail hidden">
+                        <li id="thisMonthLeads" class="leads filterValues checked checkedValue" data-type="leads">This Month</li>
+                        <li id="thisYearLeads" class="leads filterValues checked" data-type="leads">This Financial Year</li>
+                        <li id="lastMonthLeads" class="leads filterValues checked" data-type="leads">Last Month</li>
+                        <li id="lastQuarterLeads" class="leads filterValues checked" data-type="leads">Last Quarter</li>
+                        <li id="lastYearLeads" class="leads filterValues checked" data-type="leads">Last Financial Year</li>
+                        <li id="customLeads" class="leads filterValues checked" data-type="leads">Custom Dates</li>
+                        <li class="customTimeLeads hidden">
+                    <span>
+                        <label for="startDate">From </label><input readonly type="text" id="startDateLeads"><br/>
+                        <label for="endDate">To </label><input readonly type="text" id="endDateLeads">
+                    </span>
+                        </li>
+                        <li class="buttons">
+                            <button id="updateDateLeads" class="btn">
+                                <span>Update</span>
+                            </button>
+                            <button id="cancelBtnLeads" class="btn">
+                                <span>Cancel</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div data-type="leadsChart" class="choseDateItem">
+            <div class="item active" data-item="createdBy">Created By</div>
+            <div class="item" data-item="assignedTo">Assigned To</div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div>
+            <svg class="leadsBarChart"></svg>
+        </div>
+    </div>
+    <div class="chart-tabs-item">
+
+        <h3>Leads By Names</h3>
+        <div class="vocationFilter">
+            <ul class="dateFilterLeadsByName">
+                <li class="dateRangeLeadsByName">
+                    <span id="startTimeLeadsByName"><%= startDateLeadsByNames%></span> - <span id="endTimeLeadsByName"><%= endDateLeadsByNames%></span>
+                    <i class="fa fa-caret-down"></i>
+                </li>
+                <li>
+                    <ul class="frameDetail hidden">
+                        <li id="thisMonthLeadsByName" class="leadsName filterValues checked checkedValue" data-type="leadsName">This Month</li>
+                        <li id="thisYearLeadsByName" class="leadsName filterValues checked" data-type="leadsName">This Financial Year</li>
+                        <li id="lastMonthLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Month</li>
+                        <li id="lastQuarterLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Quarter</li>
+                        <li id="lastYearLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Financial Year</li>
+                        <li id="customLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Custom Dates</li>
+                        <li class="customTimeLeadsByName hidden">
+                    <span>
+                        <label for="startDateLeadsByName">From </label><input readonly type="text" id="startDateLeadsByName"><br/>
+                        <label for="endDateLeadsByName">To </label><input readonly type="text" id="endDateLeadsByName">
+                    </span>
+                        </li>
+                        <li class="buttons">
+                            <button id="updateDateLeadsByName" class="btn">
+                                <span>Update</span>
+                            </button>
+                            <button id="cancelBtnLeadsByName" class="btn">
+                                <span>Cancel</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div data-type="leadsByName" class="choseDateItem">
+            <div class="item active" data-item="">All</div>
+            <div class="item" data-item="Qualified">Qualified</div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <svg class="leadsByNameBarChart"></svg>
+
+    </div>
 </div>
-<div class="clearfix"></div>
-  
+

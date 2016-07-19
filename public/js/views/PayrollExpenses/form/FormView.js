@@ -6,6 +6,7 @@ define([
     'text!templates/PayrollExpenses/form/sortTemplate.html',
     'text!templates/PayrollExpenses/form/cancelEdit.html',
     'views/PayrollExpenses/form/dialogView',
+    'views/PayrollExpenses/EditView',
     'collections/PayrollExpenses/editCollection',
     'collections/PayrollExpenses/sortCollection',
     'collections/PayrollPayments/editCollection',
@@ -19,7 +20,7 @@ define([
     'dataService',
     'async',
     'constants'
-], function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, ReportView, editCollection, sortCollection, PaymentCollection, CurrentModel, selectView, PaymentCreateView, CreateView, helpers, moment, populate, dataService, async, CONSTANTS) {
+], function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, ReportView, EditView, editCollection, sortCollection, PaymentCollection, CurrentModel, selectView, PaymentCreateView, CreateView, helpers, moment, populate, dataService, async, CONSTANTS) {
     var PayrollExpanses = Backbone.View.extend({
 
         el           : '#content-holder',
@@ -35,28 +36,56 @@ define([
         },
 
         events: {
-            'click .checkbox'        : 'checked',
-            'click td.editable'      : 'editRow',
-            'click .newSelectList li': 'chooseOption',
-            'change .autoCalc'       : 'autoCalc',
-            'change .editable'       : 'setEditable',
-            'keydown input.editing'  : 'keyDown',
-            click                    : 'removeNewSelect',
-            'click .diff'            : 'newPayment',
-            'click .oe_sortable'     : 'goSort',
-            'click .expand'          : 'renderDialogView'
-
+            'click .checkbox'                                : 'checked',
+            'click td.editable'                              : 'editRow',
+            'click .newSelectList li'                        : 'chooseOption',
+            'change .autoCalc'                               : 'autoCalc',
+            'change .editable'                               : 'setEditable',
+            'keydown input.editing'                          : 'keyDown',
+            click                                            : 'removeNewSelect',
+            'click .diff'                                    : 'newPayment',
+            'click .oe_sortable'                             : 'goSort',
+            // 'click .expand'                           : 'renderDialogView',
+            'click .mainTr td:not(.expand, .checkbox, .diff)': 'goToForm'
         },
 
-        renderDialogView: function (e) {
-            var self = this;
-            var tr = $(e.target).closest('tr').find('[data-content="employee"]');
-            var id = tr.attr('data-id');
+        goToForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var model = new CurrentModel();
+            var month = (this.dataKey.toString()).slice(4);
+            var year = (this.dataKey.toString()).slice(0, 4);
 
-            App.startPreload();
+            e.preventDefault();
 
-            new ReportView({_id: id, dataKey: self.dataKey});
+            model.fetch({
+                data: {
+                    id   : id,
+                    month: month,
+                    year : year
+                },
+
+                success: function (model) {
+                    return new EditView({model: model});
+                },
+
+                error: function () {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please refresh browser'
+                    });
+                }
+            });
         },
+
+        /* renderDialogView: function (e) {
+         var self = this;
+         var tr = $(e.target).closest('tr').find('[data-content="employee"]');
+         var id = tr.attr('data-id');
+
+         App.startPreload();
+
+         new ReportView({_id: id, dataKey: self.dataKey});
+         },*/
 
         recount: function () {
             var self = this;
@@ -147,6 +176,7 @@ define([
                     target$.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
                     break;
+                // skip default;
             }
             sortObject[sortBy] = sortConst;
 
@@ -169,9 +199,9 @@ define([
             var $currentEl = this.$el;
             var tBody = $currentEl.find('#payRoll-TableBody');
 
-                tBody.empty();
-                $('#top-bar-deleteBtn').hide();
-                $('#checkAll').prop('checked', false);
+            tBody.empty();
+            $('#top-bar-deleteBtn').hide();
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 tBody.append(_.template(sortTemplate, {
@@ -450,7 +480,7 @@ define([
                 this.editCollection.add(model);
                 this.changed = true;
 
-                new CreateView({model: startData});
+                return new CreateView({model: startData});
             }
         },
 
@@ -487,7 +517,7 @@ define([
                     month = parseInt(oldStr.slice(0, 2), 10);
                     year = parseInt(oldStr.slice(3, 7), 10);
 
-                    editedElementValue = parseInt(newStr) ? parseInt(newStr) : 0;
+                    editedElementValue = parseInt(newStr, 10) ? parseInt(newStr, 10) : 0;
                 } else {
                     editedElementValue = parseInt(editedElement.val(), 10);
                     editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
@@ -649,7 +679,7 @@ define([
                     tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
                     diffOnCashRealValue = diffOnCash.attr('data-value');
-                    diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
+                    diffOnCashRealValue = diffOnCashRealValue || diffOnCash.text();
 
                     totalValue = parseInt(diffOnCashRealValue, 10);
 
@@ -1153,6 +1183,8 @@ define([
                     $('#top-bar-createBtn').show();
                 }
             });
+
+            $('#top-bar-recountAll').hide();
 
             setTimeout(function () {
                 self.editCollection = new editCollection(self.collection.models);

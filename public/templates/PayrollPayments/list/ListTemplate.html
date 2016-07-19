@@ -5,7 +5,6 @@
     <td><%=payment.date%></td>
     <td><%=(payment.name) ? payment.name : ''%></td>
     <td><%=payment.period%></td>
-    <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
     <td class="total money"><%=(payment.paidAmount) ? currencySplitter(payment.paidAmount) : '0.00'%></td>
     <td class="money"><%=(payment.differenceAmount) ? currencySplitter(payment.differenceAmount) : '0.00'%></td>
     <!--<td id='<%=payment._id%>' data-content="workflow" class="editable">

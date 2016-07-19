@@ -499,8 +499,11 @@
             callback(response);
         });
     };
-    var getEmployeesCount = function (data, callback) {
-        dataService.getData('employees/getEmployeesCountForDashboard', data, function (response) {
+    var getEmployeesCount = function (params, callback) {
+        dataService.getData('employees/getEmployeesCountForDashboard', {
+            month: params.month,
+            year : params.year
+        }, function (response) {
             callback(response);
         });
     };
@@ -547,6 +550,15 @@
     var getOpportunitiesAgingChart = function (callback) {
         dataService.getData("/opportunities/OpportunitiesAgingChart", {}, function (response) {
             callback(response.data);
+        });
+    };
+    var getLeads = function(filter, callback){
+        dataService.getData('/leads', {
+            startDay: filter.startDay,
+            endDay: filter.endDay,
+            stage: filter.stage
+        }, function (response) {
+            callback(response);
         });
     };
     var populateDepartmentsList = function (selectId, targetId, url, model, page, callback) {
@@ -1232,6 +1244,7 @@
         totalInvoiceBySales               : totalInvoiceBySales,
         getSalesByCountry                 : getSalesByCountry,
         getSalary                         : getSalary,
-        getSalaryByDepartment             : getSalaryByDepartment
+        getSalaryByDepartment             : getSalaryByDepartment,
+        getLeads                          : getLeads
     }
 });

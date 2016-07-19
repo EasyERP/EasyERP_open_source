@@ -10,7 +10,6 @@ define([
     'use strict';
 
     var CreateView = Backbone.View.extend({
-        el         : '#content-holder',
         template   : _.template(template),
         responseObj: {},
 
@@ -32,9 +31,8 @@ define([
         },
 
         render: function (options) {
-            var self = this;
             var wagesPayable = options.data;
-            var dialog = this.template({
+            var template = this.template({
                 wagesPayable    : wagesPayable,
                 currencySplitter: helpers.currencySplitter,
                 dateFormat      : common.utcDateToLocaleFullDateTime
@@ -42,22 +40,8 @@ define([
 
             this.data = options.data;
 
-            this.$el = $(dialog).dialog({
-                dialogClass: 'reportDialog',
-                width      : 1200,
-                title      : 'Report',
-                buttons    : {
-                    cancel: {
-                        text : 'Close',
-                        class: 'btn',
-                        click: function () {
-                            self.hideDialog();
-                        }
-                    }
-                }
-            });
-
-            this.delegateEvents(this.events);
+            this.$el.append(template);
+            
             App.stopPreload();
 
             return this;

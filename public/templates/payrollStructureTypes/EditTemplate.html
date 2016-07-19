@@ -1,0 +1,33 @@
+<div class="form-holder">
+    <div class="settings_modal">
+        <form method="post" action="" class="form" id="invoiceForm">
+            <fieldset>
+                <h3>Payroll Structure Type</h3>
+                <div class="setting_element half-block left">
+                    <span>Name: </span>
+                    <input id="payrollStructureName" maxlength="40" size="40" type="text" value="<%= model.name || '' %>">
+                </div>
+                <div class="clearfix"></div>
+                <div class="setting_element half-block left" id="earningComponents" data-id="earning">
+                    <div class="">
+                        <a href="javascript:;" class="fa fa-plus" data-id="earning" title="Create"></a>
+                        <!--<h3 class="setting_title">Earnings:</h3>-->
+                        <a id="earningTypeDd" class="selected" href="javascript:;">Earnings:</a>
+                    </div>
+                    <ul id="groupList" class="ui-sortable settings_list"></ul>
+                </div>
+                <div class="setting_element half-block right" id="deductionComponents"  data-id="deduction">
+                    <div class="">
+                        <a href="javascript:;" class="fa fa-plus" title="Create" data-id="deduction"></a>
+                        <!--<h3 class="setting_title">Deductions:</h3>-->
+                        <a id="deductionTypeDd" class="selected" href="javascript:;">Deductions:</a>
+                    </div>
+                    <ul id="groupList" class="ui-sortable settings_list"></ul>
+                </div>
+                <div class="clearfix"></div>
+                <p id="resultFormula" class="resultFormula"></p>
+            </fieldset>
+        </form>
+    </div>
+
+</div>

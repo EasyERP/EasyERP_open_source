@@ -86,7 +86,7 @@ var Module = function (models) {
         var Model = models.get(req.session.lastDb, 'journal', journalSchema);
 
         Model
-            .find({transaction : 'WriteOff'}, {_id: 1, name: 1})
+            .find({transaction: 'WriteOff'}, {_id: 1, name: 1})
             .sort({name: 1})
             .exec(function (err, result) {
                 if (err) {
@@ -95,6 +95,33 @@ var Module = function (models) {
 
                 res.status(200).send({data: result});
             });
+    };
+
+    this.getByAccount = function (req, res, next) {
+        var body = req.query;
+        var Model = models.get(req.session.lastDb, 'journal', journalSchema);
+        var transaction = body.transaction;
+        var debitAccount = body.debitAccount;
+        var creditAccount = body.creditAccount;
+        var query = {};
+
+        query.transaction = transaction;
+
+        if (debitAccount) {
+            query.debitAccount = debitAccount;
+        }
+
+        if (creditAccount) {
+            query.creditAccount = creditAccount;
+        }
+
+        Model.find(query, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result || []});
+        });
     };
 
     this.putchBulk = function (req, res, next) {

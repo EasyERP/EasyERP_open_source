@@ -15,18 +15,25 @@ define([
         initialize: function (options) {
             this.contentType = options ? options.contentType : null;
             this.render();
+
             this.collection = new MenuItemsCollection();
             this.collection.bind('reset', this.createMenuViews, this);
         },
 
         events: {
-            'click .sidebar_toggler': 'expandCollapse'
+            'click .sidebarToggler': 'expandCollapse',
+            'click #loginPanel'    : 'openLogin'
         },
 
         expandCollapse: function () {
-            $('body').toggleClass('collapsed');
+            $('#wrapper').toggleClass('collapsed');
+
         },
 
+        openLogin: function (e) {
+            e.stopPropagation();
+            $(e.target).closest('.loginPanel').toggleClass('open');
+        },
 
         createMenuViews: function () {
             var modules = this.collection.toJSON();
@@ -116,7 +123,7 @@ define([
                         }
                     } else {
                         $('#loginPanel .iconEmployee').attr('src', currentUser.imageSrc);
-                        $('#loginPanel  #userName').text(currentUser.login);
+                        $('#loginPanel  .userName').text(currentUser.login);
                     }
                 }, this);
 
@@ -125,7 +132,7 @@ define([
                 this.$el.html(_.template(MainTemplate));
 
                 icon = $('#loginPanel .iconEmployee');
-                log = $('#loginPanel  #userName');
+                log = $('#loginPanel  .userName');
 
                 if (App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName === 'baned') {
                     $('title').text('EasyERP');

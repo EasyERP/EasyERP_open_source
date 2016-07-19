@@ -1,47 +1,62 @@
-.submenu(@defaultColor: @bg-submenu, @height: 35px) {
-  display: block;
+.submenu(@defaultColor: @bg-submenu, @height: 40px) {
   position: fixed;
+  bottom: 0;
+  left: 0;
+  display: block;
   z-index: 100;
   width: auto;
-  height: 100%;
+  height: calc(~"100% - 40px");
   background-color: @defaultColor;
   box-sizing: border-box;
-  padding-top: 110px;
-  left: 0;
-  top: 0;
+  //padding-top: 60px;
+  font-family: @fontLight;
 
   nav {
     width: 200px;
+
     ul {
       .clearfix;
       li {
         position: relative;
+        display: block;
+        height: @height;
+        width: 100%;
         list-style: none;
         line-height: @height;
-        height: @height;
-        display: block;
-        width: 100%;
         background: @defaultColor;
         text-align: left;
+      }
+    }
+    > ul {
+      > li {
+        border-top: 1px solid #3d4957;
+        &:first-child {
+          border-top: none;
+        }
       }
     }
 
     .root {
       text-align: left;
-      border-bottom: 1px solid @submenu-border;
+      //border-bottom: 1px solid @submenu-border;
 
-       ul {
+      ul {
         display: none;
         height: auto;
+        padding: 8px 0;
+        background-color: #364150;
 
         li {
+          border-top: 1px solid #364150;
+          height: 31px;
+
           .sub_item {
             display: block;
             padding-left: 39px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 300;
-            line-height: @height;
+            line-height: 31px;
             color: @submenu-text-color;
           }
 
@@ -50,6 +65,7 @@
           }
 
           &:first-child {
+            border-top: none;
             display: none;
           }
         }
@@ -116,6 +132,11 @@
             content: "\e025";
           }
         }
+        &-Purchases {
+          &:before {
+            content: "\e04e";
+          }
+        }
       }
 
       &:hover, &.opened {
@@ -132,6 +153,18 @@
         &:before {
           color: @submenu-active-text-color;
         }
+        &:after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 8px;
+          background: 0 0;
+          width: 0;
+          height: 0;
+          border-top: 12px solid transparent;
+          border-bottom: 12px solid transparent;
+          border-right: 12px solid #fff;
+        }
         &.opened {
           &:before {
             transform: rotate(-90deg);
@@ -142,11 +175,11 @@
 
       &:before {
         float: right;
-        width: 20px;
+        width: 30px;
         text-align: center;
         display: inline;
         font-size: 16px;
-        font-family: FontAwesome;
+        font-family: 'FontAwesome';
         height: auto;
         content: "\f104";
         font-weight: 300;
@@ -154,7 +187,7 @@
         position: absolute;
         top: 0;
         right: 14px;
-        line-height: 35px;
+        line-height: 40px;
         color: @submenu-arrow;
         transition: all 0.3s;
       }

@@ -1,5 +1,11 @@
 <table class="list2">
     <colgroup>
+        <%if (writeOff) {%>
+        <col width="15%">
+        <col width="30%">
+        <col width="40%">
+        <col width="15%">
+        <% } else { %>
         <col width="2%">
         <col width="15%">
         <col width="25%">
@@ -8,6 +14,7 @@
         <col width="13%">
         <col width="10%">
         <col width="10%">
+        <% } %>
     </colgroup>
     <thead>
     <tr class="productListItemsColumns">
@@ -55,15 +62,15 @@
     <tbody>
     <tr></tr>
     <tr>
-        <td colspan="7" class="addProductItem">
+        <td colspan="<%=writeOff ? 4 : 7%>" class="addProductItem">
             <a href="javascript:;">Add an item</a>
         </td>
     </tr>
     <tr>
-        <td colspan="6" class="invisible_border">&nbsp;</td>
+        <td colspan="<%=writeOff ? 4 : 7%>" class="invisible_border">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="6" class="invisible_border">&nbsp;</td>
+        <td colspan="<%=writeOff ? 4 : 7%>" class="invisible_border">&nbsp;</td>
     </tr>
     </tbody>
 </table>
