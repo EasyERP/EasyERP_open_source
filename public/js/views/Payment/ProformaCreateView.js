@@ -183,8 +183,14 @@ define([
                 name: $.trim(thisEl.find('#currencyDd').text())
             };
 
-            paymentMethod = paymentMethod || null;
             period = period || null;
+
+            if (!paymentMethodID) {
+                return App.render({
+                    type   : 'error',
+                    message: "Bank Account can't be empty."
+                });
+            }
 
             data = {
                 mid             : mid,

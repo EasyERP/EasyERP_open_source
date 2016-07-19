@@ -417,7 +417,7 @@ define([
                     success: function (err, result) {
                         var $dueDateEl;
                         var url = window.location.hash;
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+                        var redirectUrl = self.forSales ? 'easyErp/salesProforma' : 'easyErp/proforma';
 
                         self.hideDialog();
 
@@ -429,6 +429,7 @@ define([
                             self.eventChannel.trigger('savedProforma');
                         }
 
+                        Backbone.history.navigate(redirectUrl, {trigger: true});
                     },
 
                     error: function (model, xhr) {
