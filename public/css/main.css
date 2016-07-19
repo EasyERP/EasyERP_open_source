@@ -3783,18 +3783,45 @@ dl.payrollDateBlock dt {
 .noteContainer .noteContent {
   margin-bottom: 10px;
 }
+.propertyContainer {
+  padding: 20px;
+}
 .propertyBox {
+  position: relative;
   display: table;
+  border: 1px solid #c8c8d3;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 .propertyBox .propertyImg,
 .propertyBox .propertyBody {
   display: table-cell;
+  vertical-align: top;
+}
+.propertyBox .removeProperty {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 20px;
+  height: 20px;
+  padding-top: 3px;
+  text-align: center;
+  font-size: 12px;
+  color: #c8c8d3;
 }
 .propertyBox .propertyImg {
   width: 40px;
 }
+.propertyBox .propertyImg img {
+  width: 100%;
+}
+.propertyBox .propertyBody {
+  padding-left: 15px;
+}
 .propertyBox .propertyFullName {
   display: block;
+  margin-bottom: 10px;
 }
 .btn {
   border: 1px solid #7f7f80;

@@ -4,7 +4,7 @@
             <h3><%=type%></h3>
         </div>
     <%if (property) {%>
-    <div>
+    <div class="propertyContainer">
 
         <div class="propertyBox">
             <div class="propertyImg">
@@ -15,7 +15,9 @@
                 <a href="javascript:;"><%=property.website%></a>
             </div>
 
-            <a  href="javascript:;" class="btn" title="Remove <%=type%>" id="removeProperty">X</a>
+            <a href="javascript:;" class="removeProperty" title="Remove <%=type%>" id="removeProperty">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
         </div>
         <dl class="person-info">
             <dt>Name </dt>
