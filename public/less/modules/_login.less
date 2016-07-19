@@ -1234,8 +1234,12 @@ dl.payrollDateBlock {
 .compactView {
   background-color: #f5f5f5;
 
+  &:nth-child(n+2) {
+    border-top: 1px solid #ededed;
+  }
+
   td {
-    padding: 10px 10px 10px 0;
+    padding: 15px 15px 15px 0;
   }
 }
 
@@ -1275,6 +1279,7 @@ dl.payrollDateBlock {
 }
 
 .listWrap {
+  margin: 0 -20px;
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -1287,11 +1292,24 @@ dl.payrollDateBlock {
       font-family: @fontBold;
     }
   }
+
+  .form-holder {
+    padding: 10px;
+  }
 }
+
 .listContent,
 .formContent {
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.listContent {
+  width: 400px;
+
+  table {
+    width: 100%;
+  }
 }
 
 .formContentWrap,
@@ -1340,7 +1358,7 @@ dl.payrollDateBlock {
 
 td.checkboxRow {
   width: 40px;
-  padding: 10px;
+  padding: 15px;
   vertical-align: top;
   text-align: center;
 }
