@@ -1,0 +1,19 @@
+<table>
+    <% companies.forEach(function(company, index){ %>
+    <tr class="compactView" data-id="<%=company._id%>">
+        <td class="checkboxRow">
+            <label>
+                <input type="checkbox" />
+            </label>
+        </td>
+        <td>
+            <div class="compactRow">
+                <div class="firstName"><%- company.fullName%></div>
+                <div class="country"><%= company.address.country %></div>
+                <div class="email"><%= company.email %></div>
+                <div class="phone"><%= company.phones.phone %></div>
+            </div>
+        </td>
+    </tr>
+    <% }) %>
+</table>

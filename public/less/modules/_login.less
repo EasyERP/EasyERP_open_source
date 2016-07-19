@@ -1243,33 +1243,84 @@ dl.payrollDateBlock {
   font-family: @fontBold;
 }
 
-.listContentWrap {
+.closeBtn {
+  position: relative;
+  width: 20px;
+  height: 22px;
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 2px;
+    background-color: #000;
+  }
+  &:before {
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  &:after {
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+}
+
+.listWrap {
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
 
-  .listContent,
-  .formContent {
-    overflow: auto;
-  }
-
-  .formContentWrap,
-  .listContentWrap {
-  }
-
-  .formContentTitle,
-  .listContentTitle {
-    padding: 10px;
-  }
-
   &.personList {
+
     .firstName {
       font-family: @fontBold;
     }
   }
 }
+.listContent,
+.formContent {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.formContentWrap,
+.listContentWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.formContentWrap {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+}
+
+.formContentTitle,
+.listContentTitle {
+  padding: 10px;
+}
+.formContentTitle {
+  .closeBtn {
+    float: right;
+  }
+}
+
 
 .compactRow {
   overflow: hidden;

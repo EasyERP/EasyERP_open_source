@@ -2,38 +2,37 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/Persons/form/ContentTemplate.html',
-    'text!templates/Persons/form/ListItemTemplate.html',
-    'models/PersonsModel',
-    'views/Persons/form/FormView',
-    'views/Persons/CreateView',
-    'views/Persons/list/ListItemView',
+    'text!templates/Companies/form/ContentTemplate.html',
+    'text!templates/Companies/form/ListItemTemplate.html',
+    'models/CompaniesModel',
+    'views/Companies/form/FormView',
+    'views/Companies/CreateView',
+    'views/Companies/list/ListItemView',
     'views/Filter/filterView',
     'common',
     'constants',
     'dataService',
-], function ($, _, ListViewBase, ContentTemplate, ListItemTemplate, PersonsModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS, dataService) {
+], function ($, _, ListViewBase, ContentTemplate, ListItemTemplate, CompaniesModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS, dataService) {
     'use strict';
 
-    var PersonsListView = ListViewBase.extend({
+    var CompaniesListView = ListViewBase.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
         FilterView     : FilterView,
-        listUrl        : '#easyErp/Persons/list/',
-        contentType    : 'Persons', // needs in view.prototype.changeLocationHash
+        formUrl        : '#easyErp/Companies/form/',
+        contentType    : 'Companies', // needs in view.prototype.changeLocationHash
         viewType       : 'list', // needs in view.prototype.changeLocationHash
-        exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
-        exportToCsvUrl : '/Customers/exportToCsv/?type=Persons',
-        letterKey      : 'name.first',
+        //exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
+        //exportToCsvUrl : '/Customers/exportToCsv/?type=Persons',
+        //letterKey      : 'name.first',
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
 
         events: {
-            'click .compactView': 'renderFormView',
-            'click .closeBtn'   : 'returnToList'
+            'click .compactView': 'renderFormView'
         },
 
         initialize: function (options) {
@@ -54,17 +53,8 @@ define([
             this.renderFormView(modelId);
         },
 
-        returnToList: function (e) {
-            var url;
-            var currentPage =
-            e.preventDefault();
-
-            url = this.listUrl + '/p' + this.c
-
-        },
 
         renderFormView: function (e) {
-            var $thisEl = this.$el;
             var $target;
             var modelId;
             var model;
@@ -78,7 +68,8 @@ define([
                 modelId = e;
             }
 
-            model = new PersonsModel();
+            model = new CompaniesModel();
+
             model.urlRoot = model.url() + modelId;
 
             model.fetch({
@@ -90,9 +81,6 @@ define([
 
                     self.formView = new FormView({model: model, el: '#formContent'});
                     self.formView.render();
-
-                    $thisEl.find('#listContent .selected').removeClass('selected');
-                    $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
                 },
 
                 error: function () {
@@ -103,7 +91,7 @@ define([
 
         render: function () {
             var $currentEl;
-            var persons = this.collection.toJSON();
+            var companies = this.collection.toJSON();
 
             $('.ui-dialog ').remove();
 
@@ -111,11 +99,11 @@ define([
 
             $currentEl.html(this.contentTemplate());
             $currentEl.find('#listContent').append(this.listTemplate({
-                persons: persons
+                companies: companies
             }));
 
         }
     });
 
-    return PersonsListView;
+    return CompaniesListView;
 });
