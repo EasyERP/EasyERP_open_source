@@ -54,7 +54,9 @@ define([
             var createdInTag;
             var $curEl = this.$el;
             var contentType = options.contentType || null;
+            var paginationEl = options.paginationEl || null;
             var ifFilter = FILTERS.hasOwnProperty(contentType);
+            var $paginationContainer;
 
             if (ifFilter) {
                 if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
@@ -69,7 +71,12 @@ define([
             }
 
             if (this.hasPagination) {
-                this.renderPagination($curEl, this);
+                if (paginationEl) {
+                    $paginationContainer = $curEl.find(paginationEl);
+                } else {
+                    $paginationContainer = $curEl;
+                }
+                this.renderPagination($paginationContainer, this);
             }
 
             createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
@@ -215,7 +222,7 @@ define([
                 // skip default case
             }
 
-            sortBy.forEach(function(sortField){
+            sortBy.forEach(function (sortField) {
                 sortObject[sortField] = sortConst;
             });
 
@@ -286,6 +293,10 @@ define([
             var url;
             var thumbnails;
             var value = false;
+
+            if (this.viewType === 'tform') {
+                mainLocation += '/' + this.selectedId;
+            }
 
             if (this.preventChangLocation) {
                 return false;

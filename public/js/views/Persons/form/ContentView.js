@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -11,8 +12,8 @@ define([
     'views/Filter/filterView',
     'common',
     'constants',
-    'dataService',
-], function ($, _, ListViewBase, ContentTemplate, ListItemTemplate, PersonsModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS, dataService) {
+    'dataService'
+], function (Backbone, $, _, ListViewBase, ContentTemplate, ListItemTemplate, PersonsModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS, dataService) {
     'use strict';
 
     var PersonsListView = ListViewBase.extend({
@@ -21,22 +22,24 @@ define([
         CreateView     : CreateView,
         ListItemView   : ListItemView,
         FilterView     : FilterView,
-        formUrl        : '#easyErp/Persons/form/',
+        listUrl        : 'easyErp/Persons/list/',
         contentType    : 'Persons', // needs in view.prototype.changeLocationHash
-        viewType       : 'list', // needs in view.prototype.changeLocationHash
+        viewType       : 'tform', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
         exportToCsvUrl : '/Customers/exportToCsv/?type=Persons',
         letterKey      : 'name.first',
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
+        selectedId     : null,
 
         events: {
-            'click .compactView': 'renderFormView'
+            'click .compactView': 'renderFormView',
+            'click .closeBtn'   : 'returnToList'
         },
 
         initialize: function (options) {
-            var modelId = options.modelId;
+            var modelId;
 
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
@@ -50,11 +53,24 @@ define([
 
             ListViewBase.prototype.initialize.call(this, options);
 
+            modelId = this.collection.at(0).id;
+
             this.renderFormView(modelId);
         },
 
+        returnToList: function (e) {
+            var url;
+            var currentPage = this.collection.currentPage;
+            var count = this.collection.pageSize;
+            e.preventDefault();
+
+            url = this.listUrl + 'p=' + currentPage + '/c=' + count;
+
+            Backbone.history.navigate(url, {trigger: true});
+        },
 
         renderFormView: function (e) {
+            var $thisEl = this.$el;
             var $target;
             var modelId;
             var model;
@@ -69,7 +85,6 @@ define([
             }
 
             model = new PersonsModel();
-
             model.urlRoot = model.url() + modelId;
 
             model.fetch({
@@ -81,6 +96,12 @@ define([
 
                     self.formView = new FormView({model: model, el: '#formContent'});
                     self.formView.render();
+
+                    $thisEl.find('#listContent .selected').removeClass('selected');
+                    $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
+                    self.selectedId = model.id;
+
+                    self.changeLocationHash(self.page, self.count, self.filter);
                 },
 
                 error: function () {

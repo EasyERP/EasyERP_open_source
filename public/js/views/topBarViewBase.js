@@ -30,6 +30,7 @@ define([
 
         initialize: function (options) {
             this.actionType = options.actionType || 'Content';
+            this.viewType = options.viewType || null;
 
             this.render();
         },
@@ -111,7 +112,7 @@ define([
             $('title').text(this.contentType);
 
             this.$el.html(this.template({
-                viewType     : viewType,
+                viewType     : this.viewType || viewType,
                 contentType  : this.contentType,
                 headerType   : this.headerType,
                 contentHeader: this.contentHeader
