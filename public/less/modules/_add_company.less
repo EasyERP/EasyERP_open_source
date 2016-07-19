@@ -45,3 +45,46 @@
     margin-bottom: 10px;
   }
 }
+
+.propertyFormList {
+  display: table;
+  width: 100%;
+
+  label,
+  .inputBox {
+    display: table-cell !important;
+  }
+  
+  label {
+    width: 140px !important;
+    text-align: right;
+    padding-right: 15px;
+  }
+
+  .inputBox {
+    input:not([type=checkbox]) {
+      border: none ;
+      border-bottom: 1px solid @lightgrey;
+      outline: none;
+      width: 100%;
+      padding: 6px 12px;
+
+      &:focus {
+        background: @lightgray-2;
+        border: none ;
+        border-bottom: 1px solid @lightgrey;
+      }
+    }
+  }
+}
+
+.propertySubmit {
+  text-align: center;
+  margin-top: 20px;
+  
+  a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}

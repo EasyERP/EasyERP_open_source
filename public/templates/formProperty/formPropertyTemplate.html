@@ -19,27 +19,67 @@
                 <i class="fa fa-times" aria-hidden="true"></i>
             </a>
         </div>
-        <dl class="person-info">
-            <dt>Name </dt>
-            <dd data-id="name_first" class="editable"><input value="<%=property.fullName%>"/></dd>
+        <div class="person-info">
+            <div class="propertyFormList">
+                <label>Name</label>
+                <div data-id="name_first" class="editable inputBox">
+                    <input value="<%=property.fullName%>"/>
+                </div>
+            </div>
 
-            <dt>Address</dt>
-            <dt>Street :</dt>
-            <dd ><input class="editable" data-id="address_street" value="<%=property.address.street%>"/></dd>
-            <dt>City :</dt>
-            <dd ><input class="editable" data-id="address_city" value="<%=property.address.city%>"/></dd>
-            <dt>State :</dt>
-            <dd ><input class="editable" data-id="address_state" value="<%=property.address.state%>"/></dd>
-            <dt>Zip :</dt>
-            <dd><input class="editable"  data-id="address_zip" value="<%=property.address.zip%>"/></dd>
-            <dt>Country:</dt>
-            <dd ><input class="editable" data-id="address_country" value="<%=property.address.country%>"/></dd>
-            <dt>Phone:</dt>
-            <dd ><input class="editable" data-id="phones_phone"  value="<%=property.phones.phone%>"/></dd>
-            <dt>Email:</dt>
-            <dd ><input class="editable" data-id="email" value="<%=property.email%>"/></dd>
-        </dl>
-        <a class="btn" title="View All Properties" href="<%='/#easyErp/' + urlType + '/form/'+ property._id%> " id="showMoreButton">View All Properties</a>
+            <div class="propertyFormList">
+                <label>Street:</label>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_street" value="<%=property.address.street%>"/>
+                </div>
+            </div>
+
+            <div class="propertyFormList">
+                <label>City:</label>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_city" value="<%=property.address.city%>"/>
+                </div>
+            </div>
+
+            <div class="propertyFormList">
+                <label>State:</label>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_state" value="<%=property.address.state%>"/>
+                </div>
+            </div>
+
+            <div class="propertyFormList">
+                <label>Zip:</label>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_zip" value="<%=property.address.zip%>"/>
+                </div>
+            </div>
+
+            <div class="propertyFormList">
+                <label>Country:</label>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_country" value="<%=property.address.country%>"/>
+                </div>
+            </div>
+
+            <div class="propertyFormList">
+                <label>Phone:</label>
+                <div  class="inputBox">
+                    <input class="editable" data-id="phones_phone" value="<%=property.phones.phone%>"/>
+                </div>
+            </div>
+
+            <div class="propertyFormList">
+                <label>Email:</label>
+                <div  class="inputBox">
+                    <input class="editable" data-id="phones_phone" value="<%=property.email%>"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="propertySubmit">
+            <a class="btn" title="View All Properties" href="<%='/#easyErp/' + urlType + '/form/'+ property._id%> " id="showMoreButton">View All Properties</a>
+        </div>
         <div class="btnBlock">
 
             <a href="javascript:;" id="saveBtn" class=" btn btnRounded">Save</a>
