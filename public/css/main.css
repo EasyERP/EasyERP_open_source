@@ -3783,6 +3783,19 @@ dl.payrollDateBlock dt {
 .noteContainer .noteContent {
   margin-bottom: 10px;
 }
+.propertyBox {
+  display: table;
+}
+.propertyBox .propertyImg,
+.propertyBox .propertyBody {
+  display: table-cell;
+}
+.propertyBox .propertyImg {
+  width: 40px;
+}
+.propertyBox .propertyFullName {
+  display: block;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;

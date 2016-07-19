@@ -7,8 +7,13 @@
     <div>
 
         <div class="propertyBox">
-            <span><%=property.fullName%></span>
+            <div class="propertyImg">
+                <img src="https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-company-avatar.gif" title="property" alt="property">
+            </div>
+            <div class="propertyBody">
+                <span class="propertyFullName"><%=property.fullName%></span>
                 <a href="javascript:;"><%=property.website%></a>
+            </div>
 
             <a  href="javascript:;" class="btn" title="Remove <%=type%>" id="removeProperty">X</a>
         </div>
