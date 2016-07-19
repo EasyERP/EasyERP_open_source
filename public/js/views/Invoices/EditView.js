@@ -79,6 +79,7 @@ define([
         newPayment: function (e) {
             var paymentView;
             var self = this;
+            var mid = this.forSales ? 56 : 109;
 
             e.preventDefault();
 
@@ -88,7 +89,7 @@ define([
                         model       : self.currentModel,
                         redirect    : self.redirect,
                         collection  : self.collection,
-                        mid         : 56,
+                        mid         : mid,
                         currency    : currency,
                         eventChannel: self.eventChannel
                     });
@@ -149,12 +150,12 @@ define([
 
                             if (self.eventChannel) {
                                 self.eventChannel.trigger('invoiceUpdated');
+                            } else {
+                                redirectUrl = window.location.hash;
+
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
-
-                            redirectUrl = window.location.hash;
-
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();

@@ -3,16 +3,15 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Notes/NoteTemplate.html',
-    'views/Notes/AttachView',
-    'moment'
-
-], function (Backbone, $, _, NoteTemplate, AttachView, moment) {
+    'views/Notes/AttachView'
+], function (Backbone, $, _, NoteTemplate, AttachView) {
     var NoteView = Backbone.View.extend({
 
         template: _.template(NoteTemplate),
-        
+
         initialize: function (options) {
             this.contentType = options.contentType;
+            this.isCreate = options.isCreate;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
         },
 
@@ -28,7 +27,6 @@ define([
         clickInput: function () {
             this.$el.find('.input-file .inputAttach').click();
         },
-
 
         editDelNote: function (e) {
             var id = e.target.id;
@@ -174,7 +172,7 @@ define([
                         });
                     }
                     /*this.$el.find('#noteArea').val('');
-                    this.$el.find('#noteTitleArea').val('');*/
+                     this.$el.find('#noteTitleArea').val('');*/
                 } else {
                     return false;
                 }
@@ -194,11 +192,11 @@ define([
             this.$el.html(this.template(modelObj));
             notDiv = this.$el.find('.attachments');
 
-
             notDiv.html(
                 new AttachView({
                     model      : this.model,
-                    contentType: this.contentType
+                    contentType: this.contentType,
+                    isCreate   : this.isCreate
                 }).render().el
             );
             return this;

@@ -1,0 +1,53 @@
+.dialog {
+  &-tabs {
+    @include clearfix();
+  }
+}
+
+.chart {
+  &-tabs {
+    @include clearfix();
+  }
+}
+
+.ui-dialog {
+  &-buttonpane {
+    padding: 0 0 10px !important;
+    margin-top: 0 !important;
+    margin-right: 20px !important;
+    margin-left: 20px !important;
+  }
+
+  .form-holder {
+    @include clearfix();
+    padding: 15px 20px 0;
+
+    form {
+      max-width: 100%;
+    }
+  }
+
+  .inner {
+    position: relative;
+    padding: 5px 0;
+    background-color: $ui-dialog-bg;
+  }
+
+
+  .attach_file {
+    position: absolute;
+    bottom: 25px;
+    right: 5px;
+    font-size: 16px;
+  }
+}
+
+.mainTabs {
+  ul.dialog-tabs {
+    padding-top: 10px;
+  }
+
+  .avatarInfoContainer {
+    margin-left: 160px;
+  }
+}

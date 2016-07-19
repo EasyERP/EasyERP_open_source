@@ -6,7 +6,7 @@ define([
     'text!templates/DividendInvoice/InvoiceProductInputContent.html',
     'text!templates/DividendInvoice/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
-    'collections/Product/products',
+    'collections/Products/products',
     'populate',
     'helpers'
 ], function ($, _, Backbone, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, helpers) {

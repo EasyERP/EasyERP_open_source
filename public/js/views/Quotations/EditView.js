@@ -6,7 +6,7 @@ define([
     'views/dialogViewBase',
     'views/Projects/projectInfo/proformas/proformaView',
     'views/Assignees/AssigneesView',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
     'collections/Quotations/filterCollection',
     'collections/Proforma/filterCollection',
@@ -57,7 +57,7 @@ define([
                 this.currentModel = options.collection.getElement();
             }
 
-            this.currentModel.urlRoot = '/quotation';
+            this.currentModel.urlRoot = '/quotations';
             this.responseObj = {};
             this.forSales = options.forSales;
 
@@ -117,15 +117,15 @@ define([
             } else {
                 wId = 'Purchase Order';
                 mid = 57;
-                status = 'New'; // todo workflow for purchase
+                status = 'In Progress'; // todo workflow for purchase
             }
 
             this.saveItem(function (err) {
                 if (!err) {
                     populate.fetchWorkflow({
-                        wId   : wId,
-                        source: 'purchase',
-                        status: status
+                        wId    : wId,
+                        status : status,
+                        visible: true
                         // targetSource: 'order'
                     }, function (workflow) {
                         var products;
@@ -179,100 +179,18 @@ define([
             });
         },
 
-        /* addAttachment: function (e) {
-         var self = this;
-         var $attachment;
-
-         e.preventDefault();
-
-         $attachment = self.$el.find('#proformaAttachment');
-
-         $attachment.remove();
-
-         self.$el.prepend('<form id="proformaAttachmentForm"><input type="file" id="proformaAttachment" accept="application/pdf" name="attachfile"></form>');
-         $attachment = self.$el.find('#proformaAttachment');
-
-         $attachment.click();
-         $attachment.hide();
-
-         },*/
-
-        /* uploadAttachment: function (event) {
-         var self = this;
-         var currentModel = this.model;
-         var currentModelId = currentModel ? currentModel.id : null;
-         var addFrmAttach = $('#proformaAttachmentForm');
-         var addInptAttach;
-
-         addInptAttach = self.$el.find("#proformaAttachment")[0].files[0];
-
-         if (!this.fileSizeIsAcceptable(addInptAttach)) {
-         this.$el.find('#inputAttach').val('');
-         return App.render({
-         type   : 'error',
-         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
-         });
-         }
-
-         addFrmAttach.submit(function (e) {
-         var formURL;
-
-         formURL = "http://" + window.location.host + ((self.url) ? self.url : "/invoices/attach");
-
-         e.preventDefault();
-         addFrmAttach.ajaxSubmit({
-         url        : formURL,
-         type       : "POST",
-         processData: false,
-         contentType: false,
-         data       : [addInptAttach],
-
-         beforeSend: function (xhr) {
-         xhr.setRequestHeader("id", currentModelId);
-         },
-
-         uploadProgress: function (event, position, total, statusComplete) {
-         //todo add code
-         },
-
-         success: function (data) {
-         self.createProforma();
-         },
-
-         error: function (xhr) {
-         App.stopPreload();
-         App.render({
-         type   : 'error',
-         message: 'Error occurred while image load'
-         });
-         }
-         });
-         });
-
-         App.startPreload();
-
-         addFrmAttach.submit();
-         addFrmAttach.off('submit');
-         },
-
-         fileSizeIsAcceptable: function (file) {
-         if (!file) {
-         return false;
-         }
-         return file.size < App.File.MAXSIZE;
-         },*/
-
         createProforma: function (e) {
             var self = this;
             var url = '/proforma';
             var quotationId = this.currentModel.id;
+            var journal = this.forSales ? CONSTANTS.PROFORMA_JOURNAL : null;
             var data = {
                 forSales   : this.forSales,
                 quotationId: quotationId,
                 currency   : this.currentModel.toJSON().currency,
-                journal    : CONSTANTS.PROFORMA_JOURNAL
+                journal    : journal
             };
-            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/Proforma/list';
+            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/proforma/list';
 
             if (e) {
                 e.preventDefault();
@@ -299,6 +217,7 @@ define([
                             }
 
                             if (self.eventChannel) {
+                                $('.edit-dialog').remove();
                                 self.eventChannel.trigger('newProforma', response._id);
                             } else {
                                 Backbone.history.fragment = '';
@@ -452,7 +371,7 @@ define([
                     productId = targetEl.data('id');
 
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"]').text();
+                        quantity = targetEl.find('[data-name="quantity"] input').val();
                         price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
 
@@ -466,10 +385,24 @@ define([
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subTotal = parseFloat(subTotal) * 100;
+
+                        if (!quantity) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Quantity can\'t be empty'
+                            });
+                        }
+
+                        if (!price) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Unit price can\'t be empty'
+                            });
+                        }
 
                         if (jobs) {
                             products.push({
@@ -478,16 +411,27 @@ define([
                                 quantity     : quantity,
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
-                                description  : description,
+                                description  : $.trim(description),
                                 subTotal     : subTotal,
                                 jobs         : jobs
                             });
-                        } else {
+                        } else if (this.forSales) {
                             return App.render({
                                 type   : 'notify',
                                 message: "Jobs can't be empty."
                             });
+                        } else {
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal
+                            });
                         }
+
                     }
                 }
             }
@@ -529,15 +473,13 @@ define([
                     },
                     wait   : true,
                     success: function (res) {
-                        var url = window.location.hash;
-
-                        if (url === '#easyErp/salesQuotations/list') {
-                            self.hideDialog();
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
-                        } else {
-                            self.hideDialog();
-                        }
+                        //if (url === '#easyErp/salesQuotations/list') {
+                        //    self.hideDialog();
+                        //    Backbone.history.fragment = '';
+                        //    Backbone.history.navigate(url, {trigger: true});
+                        //} else {
+                        //    self.hideDialog();
+                        //}
 
                         if (proformaCb && typeof proformaCb === 'function') {
                             return proformaCb(null, res);
@@ -546,6 +488,8 @@ define([
                         if (self.eventChannel) {
                             self.eventChannel.trigger('quotationUpdated');
                         }
+
+                        self.redirectAfter(self, res);
                     },
 
                     error: function (model, xhr) {
@@ -568,7 +512,6 @@ define([
         deleteItem: function (event) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
-            var url;
             var answer = confirm('Really DELETE items ?!');
 
             event.preventDefault();
@@ -578,18 +521,17 @@ define([
                     headers: {
                         mid: mid
                     },
-                    success: function () {
-                        $('.edit-product-dialog').remove();
-                        url = window.location.hash;
+                    wait   : true,
+                    success: function (model) {
 
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
 
-                        self.hideDialog();
-
                         if (self.eventChannel) {
                             self.eventChannel.trigger('quotationRemove');
                         }
+
+                        self.redirectAfter(self, model);
                     },
 
                     error: function (model, err) {
@@ -603,6 +545,14 @@ define([
                 });
             }
 
+        },
+
+        redirectAfter: function (content) {
+            var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
+
+            $('.edit-dialog').remove();
+            //content.hideDialog();
+            Backbone.history.navigate(redirectUrl, {trigger: true});
         },
 
         render: function () {
@@ -679,7 +629,12 @@ define([
             productItemContainer = this.$el.find('#productItemsHolder');
 
             productItemContainer.append(
-                new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
+                new ProductItemView({
+                    editable  : true,
+                    canBeSold : true,
+                    service   : service,
+                    quotations: true
+                }).render({model: model}).el
             );
 
             dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {

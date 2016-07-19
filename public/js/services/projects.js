@@ -92,7 +92,6 @@ define([
     return {
         chooseHealthDd: chooseHealthDd,
         showHealthDd  : showHealthDd,
-        showNewSelect : showNewSelect,
         chooseOption  : chooseOption,
         hideHealth    : hideHealth
     };

@@ -248,7 +248,7 @@
                 displayName: 'Journal',
                 backend    : 'journal._id'
             },
-            array: ['project', 'journal']
+            array  : ['project', 'journal']
         },
 
         DividendInvoice: {
@@ -497,17 +497,17 @@
          }
          },*/
 
-        Product: {
+        Products: {
             name: {
                 displayName: 'Product Name',
                 backend    : '_id'
             },
 
-            productType: {
+            /*productType: {
                 displayName: 'Product Type',
                 backend    : 'info.productType',
                 type       : 'string'
-            },
+            },*/
 
             canBeSold: {
                 displayName: 'Can be Sold',
@@ -525,7 +525,14 @@
                 displayName: 'Can be Purchased',
                 backend    : 'canBePurchased',
                 type       : 'boolean'
-            }
+            },
+
+            productCategory: {
+                displayName: 'Category',
+                backend    : 'accounting.category._id'
+            },
+
+            array: ['name', 'canBeSold', 'canBeExpensed', 'canBePurchased']
         },
 
         salesProduct: {
@@ -560,7 +567,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'
@@ -594,7 +601,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             project: {
                 displayName: 'Project',
                 backend    : 'project._id'
@@ -623,8 +630,8 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
-            project : {
+
+            project: {
                 displayName: 'Project',
                 backend    : 'project._id'
             },
@@ -652,7 +659,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'

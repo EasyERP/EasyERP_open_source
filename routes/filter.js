@@ -680,7 +680,7 @@ HTTP/1.1 200 OK
 }
      */
     router.get('/supplierPayments', handler.getSupplierPaymentsFilters);
-    router.get('/Product', handler.getProductsFilters);
+    router.get('/Products', handler.getProductsFilters);
 
     /**
      *@api {get} /filter/Quotations Request filter for Quotations

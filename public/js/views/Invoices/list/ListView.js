@@ -22,9 +22,12 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        contentType      : 'Invoice',
+        contentType      : CONSTANTS.INVOICES,
+        page             : null,
+        hasPagination    : true,
 
         initialize: function (options) {
+            //this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.filter = options.filter || {};
@@ -37,10 +40,13 @@ define([
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
+
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
             this.render();
+
+            //ListViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
         },
@@ -78,7 +84,7 @@ define([
 
         recalcTotal: function () {
             var self = this;
-            var columns = ['total', 'unTaxed'];
+            var columns = ['total', 'paid', 'balance'];
 
             _.each(columns, function (col) {
                 var sum = 0;
@@ -113,7 +119,7 @@ define([
 
             $currentEl.append(itemView.render());
 
-            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 7}).render());
+            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 6, invoiceTemplate: true}).render());
 
             this.renderPagination($currentEl, this);
             this.renderFilter({name: 'forSales', value: {key: 'forSales', value: [false]}});

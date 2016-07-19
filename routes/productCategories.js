@@ -102,6 +102,8 @@ HTTP/1.1 200 OK
 ]
      */
     router.get('/getExpenses', handler.getExpenses);
+    router.get('/posterity/:id', handler.getProsterityForAncestor);
+    router.get('/:id', handler.getById);
 
     /**
      *@api {get} /category/:id Request ProductCategory
@@ -155,7 +157,7 @@ HTTP/1.1 200 OK
       "name": "Bonus Card"
 }
      */
-    router.get('/:id', handler.getForDd);
+   // router.get('/:id', handler.getForDd);
 
     /**
      *@api {post} /category/ Request for creating new ProductCategory
