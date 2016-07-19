@@ -191,9 +191,15 @@
   }
 
   .tagsDropDown {
+
+    ul {
+      max-height: 191px;
+      overflow-y: auto;
+    }
     li {
       padding: 8px 12px;
       cursor: pointer;
+      margin-bottom: 5px !important;
 
       &:hover {
         background: @lightgray-3;
