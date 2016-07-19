@@ -4,13 +4,20 @@
             <h3><%=type%></h3>
         </div>
     <%if (property) {%>
-    <div>
+    <div class="propertyContainer">
 
         <div class="propertyBox">
-            <span><%=property.fullName%></span>
+            <div class="propertyImg">
+                <img src="https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-company-avatar.gif" title="property" alt="property">
+            </div>
+            <div class="propertyBody">
+                <span class="propertyFullName"><%=property.fullName%></span>
                 <a href="javascript:;"><%=property.website%></a>
+            </div>
 
-            <a  href="javascript:;" class="btn" title="Remove <%=type%>" id="removeProperty">X</a>
+            <a href="javascript:;" class="removeProperty" title="Remove <%=type%>" id="removeProperty">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
         </div>
         <dl class="person-info">
             <dt>Name </dt>

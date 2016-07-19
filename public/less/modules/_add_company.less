@@ -1,0 +1,47 @@
+.propertyContainer {
+  padding: 20px;
+}
+
+.propertyBox {
+  position: relative;
+  display: table;
+  border: 1px solid @lightgrey;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+
+  .propertyImg,
+  .propertyBody {
+    display: table-cell;
+    vertical-align: top;
+  }
+
+  .removeProperty {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    padding-top: 3px;
+    text-align: center;
+    font-size: 12px;
+    color: @lightgrey;
+  }
+
+  .propertyImg {
+    width: 40px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .propertyBody {
+    padding-left: 15px;
+  }
+
+  .propertyFullName {
+    display: block;
+    margin-bottom: 10px;
+  }
+}
