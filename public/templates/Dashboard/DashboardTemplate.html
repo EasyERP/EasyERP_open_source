@@ -16,31 +16,40 @@
         <div class="clearfix"></div>
         <h3 class="dashboard">Who created most leads?</h3>
 
-        <div class="graphicControlls">
-            <div class="choseDateRange" data-type="sale">
-                <div class="item active" data-day="7">7D</div>
-                <div class="item" data-day="30">30D</div>
-                <div class="item" data-day="90">90D</div>
-                <div class="item" data-day="365">12M</div>
-            </div>
-            <div class="legend-box small">
-                <div class="total">
-                    <div class="square">
-                    </div>
-                    <div class="text">
-                        Total Leads
-                    </div>
-                </div>
-                <div class="opportunities">
-                    <div class="square">
-                    </div>
-                    <div class="text">
-                        Opportunities
-                    </div>
-                </div>
+        <div class="vocationFilter">
 
-            </div>
+            <ul class="dateFilterLeadsBySale">
+                <li class="dateRangeLeadsBySale">
+                    <span id="startTimeLeadsBySale"><%= startDateLeadsBySale%></span> - <span id="endTimeLeadsBySale"><%= endDateLeadsBySale%></span>
+                    <i class="fa fa-caret-down"></i>
+                </li>
+                <li>
+                    <ul class="frameDetail hidden">
+                        <li id="thisMonthLeadsBySale" class="filterValues checked checkedValue" data-type="leadsSale">This Month</li>
+                        <li id="thisYearLeadsBySale" class="filterValues checked" data-type="leadsSale">This Financial Year</li>
+                        <li id="lastMonthLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Month</li>
+                        <li id="lastQuarterLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Quarter</li>
+                        <li id="lastYearLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Financial Year</li>
+                        <li id="customLeadsBySale" class="filterValues checked" data-type="leadsSale">Custom Dates</li>
+                        <li class="customTimeLeadsBySale hidden">
+                    <span>
+                        <label for="startDateLeadsBySale">From </label><input readonly type="text" id="startDateLeadsBySale"><br/>
+                        <label for="endDateLeadsBySale">To </label><input readonly type="text" id="endDateLeadsBySale">
+                    </span>
+                        </li>
+                        <li class="buttons">
+                            <button id="updateDateLeadsBySale" class="btn">
+                                <span>Update</span>
+                            </button>
+                            <button id="cancelBtnLeadsBySale" class="btn">
+                                <span>Cancel</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
+
         <svg class="chart salesChart"></svg>
     </div>
     <div class="chart-tabs-item">
@@ -93,12 +102,45 @@
         <div class="clearfix"></div>
         <h3 class="dashboard">What are our best primary campaigs?</h3>
         <div class="dashbordActions">
-            <div class="choseDateRange"  data-type="source">
+            <div class="vocationFilter">
+
+                <ul class="dateFilterLeadsBySource">
+                    <li class="dateRangeLeadsBySource">
+                        <span id="startTimeLeadsBySource"><%= startDateLeadsBySource%></span> - <span id="endTimeLeadsBySource"><%= endDateLeadsBySource%></span>
+                        <i class="fa fa-caret-down"></i>
+                    </li>
+                    <li>
+                        <ul class="frameDetail hidden">
+                            <li id="thisMonthLeadsBySource" class="filterValues checked checkedValue" data-type="leadsSource">This Month</li>
+                            <li id="thisYearLeadsBySource" class="filterValues checked" data-type="leadsSource">This Financial Year</li>
+                            <li id="lastMonthLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Month</li>
+                            <li id="lastQuarterLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Quarter</li>
+                            <li id="lastYearLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Financial Year</li>
+                            <li id="customLeadsBySource" class="filterValues checked" data-type="leadsSource">Custom Dates</li>
+                            <li class="customTimeLeadsBySource hidden">
+                    <span>
+                        <label for="startDateLeadsBySource">From </label><input readonly type="text" id="startDateLeadsBySource"><br/>
+                        <label for="endDateLeadsBySource">To </label><input readonly type="text" id="endDateLeadsBySource">
+                    </span>
+                            </li>
+                            <li class="buttons">
+                                <button id="updateDateLeadsBySource" class="btn">
+                                    <span>Update</span>
+                                </button>
+                                <button id="cancelBtnLeadsBySource" class="btn">
+                                    <span>Cancel</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!--<div class="choseDateRange"  data-type="source">
                 <div class="item" data-day="7">7D</div>
                 <div class="item active" data-day="30">30D</div>
                 <div class="item" data-day="90">90D</div>
                 <div class="item" data-day="365">12M</div>
-            </div>
+            </div>-->
             <div class="legend-box small">
                 <div class="total">
                     <div class="square">
@@ -281,31 +323,6 @@
                     - must be green circle
                 </div>
             </div>
-        </div>
-
-        <div class="unconverted">
-            <div class="square">
-            </div>
-            <div class="text">
-                Won
-            </div>
-        </div>
-
-        <div class="unconverted">
-            <div style="background-color: red" class="square">
-            </div>
-            <div class="text">
-                Lost
-            </div>
-        </div>
-
-        <div class="convertRate">
-            <div style="background-color: #3E88B9" class="square">
-            </div>
-            <div class="text">
-                Win %
-            </div>
-
         </div>
 
         <svg class="winAndLostOpportunitiesChart"></svg>
