@@ -1124,14 +1124,11 @@ define([
 
             common.getOpportunitiesAgingChart(function (data) {
                 var verticalBarSpacing = 3;
-                var tooltip = d3.select('div.invoiceTooltip');
                 var margin;
                 var x;
                 var y;
                 var xAxis;
                 var yAxis;
-                var xScaleDomain;
-                var baseY;
                 var baseX;
                 var chart;
                 var chart1;
@@ -2213,56 +2210,142 @@ define([
         },
 
         renderOpportunitiesWinAndLost: function () {
+            var percentCircleRadius = 12;
+            var verticalBarSpacing = 2;
             var self = this;
+            var difference;
+            var colorMap;
+            var percent;
+            var margin;
+            var height;
+            var format;
+            var barMap;
+            var yAxis2;
+            var oneDay;
+            var width;
+            var value;
+            var xAxis;
+            var yAxis;
+            var chart;
+            var range;
+            var start;
+            var diff;
+            var line;
+            var day;
+            var tip;
+            var now;
+            var y2;
+            var x;
+            var y;
 
             $('.winAndLostOpportunitiesChart').empty();
 
             common.getOpportunitiesForChart('date', this.dateRange.winLost, this.dateItem['winLost'], function (data) {
 
+               /* data = [
+                    {
+                        "_id"            : {"year": "2016", "mounth": "05", "day": "27"},
+                        "wonCount"       : 4,
+                        "lostCount"      : 1,
+                        "inProgressCount": 2
+                    }, {
+                        "_id"            : {"year": "2016", "mounth": "06", "day": "07"},
+                        "wonCount"       : 5,
+                        "lostCount"      : 1,
+                        "inProgressCount": 4
+                    }, {
+                        "_id"     : {"year": "2016", "mounth": "06", "day": "10"},
+                        "wonCount": 0, "lostCount": 0, "inProgressCount": 0
+                    }, {
+                        "_id"            : {"year": "2016", "mounth": "06", "day": "13"},
+                        "wonCount"       : 4,
+                        "lostCount"      : 1,
+                        "inProgressCount": 6
+                    }, {
+                        "_id"            : {"year": "2016", "mounth": "06", "day": "14"},
+                        "wonCount"       : 10,
+                        "lostCount"      : 4,
+                        "inProgressCount": 5
+                    }, {
+                        "_id"            : {"year": "2016", "mounth": "06", "day": "15"},
+                        "wonCount"       : 7,
+                        "lostCount"      : 9,
+                        "inProgressCount": 1
+                    }, {
+                        "_id"            : {"year": "2016", "mounth": "06", "day": "21"},
+                        "wonCount"       : 3,
+                        "lostCount"      : 1,
+                        "inProgressCount": 1
+                    }, {
+                        "_id"            : {"year": "2016", "mounth": "07", "day": "06"},
+                        "wonCount"       : 5,
+                        "lostCount"      : 3,
+                        "inProgressCount": 1
+                    }
+                ];*/
+
                 $('#timeBuildingDataFromServer').text('Server response in ' + self.buildTime + ' ms');
 
-                var margin = {top: 20, right: 160, bottom: 190, left: 160},
-                    width = $('#content-holder').width() - margin.left - margin.right,
-                    height = 500 - margin.top - margin.bottom;
+                margin = {
+                        top   : 20,
+                        right : 160,
+                        bottom: 190,
+                        left  : 160
+                    };
 
-                var x = d3.scale.ordinal()
+                width = $('#content-holder').width() - margin.left - margin.right;
+                height = 500 - margin.top - margin.bottom;
+
+                barMap = {
+                    'wonCount'       : 'bar4',
+                    'lostCount'      : 'bar5',
+                    'inProgressCount': 'bar6'
+                };
+
+                colorMap = {
+                    'wonCount'       : '#6CC062',
+                    'lostCount'      : '#F68065',
+                    'inProgressCount': '#00B4EA',
+                    'percentLine'    : '#6CC062'
+                };
+
+                x = d3.scale.ordinal()
                     .rangeRoundBands([0, width], 0.6);
 
-                var y = d3.scale.linear()
+                y = d3.scale.linear()
                     .range([height, 0]);
 
-                var y2 = d3.scale.linear()
+                y2 = d3.scale.linear()
                     .range([height, 0]);
 
-                var x2 = d3.scale.linear()
-                    .range([0, width]);
-
-                var xAxis = d3.svg.axis()
+                xAxis = d3.svg.axis()
                     .scale(x)
                     .orient('bottom')
                     .tickFormat(function (d) {
                         return d;
                     });
 
-                var yAxis = d3.svg.axis()
+                yAxis = d3.svg.axis()
                     .scale(y)
-                    .ticks(5)
+                    .ticks(10)
                     .orient('left');
 
-                var yAxis2 = d3.svg.axis()
+                yAxis2 = d3.svg.axis()
                     .scale(y2)
                     .orient('right')
                     .tickFormat(function (d) {
                         return d + '%';
                     });
 
-                var chart = d3.select('.winAndLostOpportunitiesChart')
-                    .attr('width', width + margin.left + margin.right)
-                    .attr('height', height + margin.top + margin.bottom)
+                chart = d3.select('.winAndLostOpportunitiesChart')
+                    .attr({
+                        'width': width + margin.left + margin.right,
+                        'height': height + margin.top + margin.bottom
+                    })
                     .append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-                var format;
+                    .attr({
+                        'transform': 'translate(' + margin.left + ',' + margin.top + ')'
+                    });
 
                 switch (self.dateItem['winLost']) {
                     case 'DW':
@@ -2287,11 +2370,11 @@ define([
                         break;
                     case 'D':
                         format = function (d) {
-                            var now = new Date(d.year, parseInt(d.mounth) - 1, d.day);
-                            var start = new Date(now.getFullYear(), 0, 0);
-                            var diff = now - start;
-                            var oneDay = 1000 * 60 * 60 * 24;
-                            var day = Math.floor(diff / oneDay);
+                            now = new Date(d.year, parseInt(d.mounth) - 1, d.day);
+                            start = new Date(now.getFullYear(), 0, 0);
+                            diff = now - start;
+                            oneDay = 1000 * 60 * 60 * 24;
+                            day = Math.floor(diff / oneDay);
 
                             //return dateFormat(new Date(d.year, parseInt(d.mounth) - 1, d.day).toString('MMMM ,yyyy'), 'mmmm dd, yyyy');
                             return moment(new Date(d.year, parseInt(d.mounth) - 1, d.day)).format('MMM DD, YYYY');
@@ -2299,7 +2382,7 @@ define([
                         break;
                 }
 
-                var line = d3.svg.line()
+                line = d3.svg.line()
                     .x(function (d) {
                         return x(format(d.date)) + x.rangeBand() / 2;
                     })
@@ -2308,7 +2391,7 @@ define([
                     })
                     .interpolate('monotone');
 
-                var percent = [];
+                percent = [];
 
                 data.forEach(function (d, i) {
                     if ((d.wonCount + d.inProgressCount + d.lostCount) === 0) {
@@ -2317,7 +2400,6 @@ define([
                 });
 
                 data.forEach(function (d, i) {
-                    var value;
 
                     d.wonCount = d.wonCount || 0;
                     d.lostCount = d.lostCount || 0;
@@ -2340,8 +2422,10 @@ define([
                 y2.domain([0, 100]);
 
                 chart.append('g')
-                    .attr('class', 'x axis')
-                    .attr('transform', 'translate(0,' + height + ')')
+                    .attr({
+                        'class': 'x axis',
+                        'transform': 'translate(0,' + height + ')'
+                    })
                     .call(xAxis)
                     .selectAll('text');
 
@@ -2355,121 +2439,139 @@ define([
                     .style('fill', '#1EBBEA');
 
                 chart.append('g')
-                    .attr('class', 'y2 axis')
-                    .attr('transform', 'translate(' + width + ',0)')
+                    .attr({
+                        'class': 'y2 axis',
+                        'transform': 'translate(' + width + ',0)'
+                    })
                     .call(yAxis2);
 
                 chart.append('text')
-                    .attr('class', 'y label')
-                    .attr('text-anchor', 'end')
-                    .attr('y', -50)
-                    .attr('x', -50)
-                    .attr('dy', '.75em')
-                    .attr('transform', 'rotate(-90)')
+                    .attr({
+                        'class'      : 'y label',
+                        'text-anchor': 'end',
+                        'y'          : -50,
+                        'x'          : -50,
+                        'dy'         : '.75em',
+                        'transform'  : 'rotate(-90)'
+                    })
                     .text('Number of Opportunities');
 
                 chart.append('text')
-                    .attr('class', 'y2 label')
-                    .attr('text-anchor', 'middle')
-                    .attr('y', -50)
-                    .attr('x', 120)
-                    .attr('dy', 0)
-                    .attr('transform', 'rotate(90), translate(0,' + (-width) + ')')
+                    .attr({
+                        'class'      : 'y2 label',
+                        'text-anchor': 'middle',
+                        'y'          : -50,
+                        'x'          : 120,
+                        'dy'         : 0,
+                        'transform'  : 'rotate(90), translate(0,' + (-width) + ')'
+                    })
                     .text('Win percent');
 
                 chart.selectAll('.bar4')
                     .data(data)
-                    .enter().append('rect')
-                    .attr('class', 'bar4')
-                    .attr('x', function (d) {
-                        var range = x.rangeBand();
-                        var difference = range > 70 ? (range - 70) / 2 : 0;
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        'class': 'bar4',
+                        'x': function (d) {
+                            range = x.rangeBand();
+                            difference = range > 70 ? (range - 70) / 2 : 0;
 
-                        return x(format(d._id)) + difference;
-                    })
-                    .attr('y', function (d) {
-                        return y(d.lostCount);
-                    })
-                    .attr('height', function (d) {
-                        return height - y(d.lostCount);
-                    })
-                    .attr('width', function () {
-                        var range = x.rangeBand();
+                            return x(format(d._id)) + difference;
+                        },
+                        'y': function (d) {
+                            return y(d.wonCount);
+                        },
+                        'height': function (d) {
+                            return height - y(d.wonCount);
+                        },
+                        'width': function () {
+                            range = x.rangeBand();
 
-                        return range < 70 ? range : 70;
-                    })
-                    .attr('fill', 'red')
-                    .style('opacity', '0.8');
+                            return range < 70 ? range : 70;
+                        },
+                        'fill': colorMap.wonCount
+                    });
 
                 chart.selectAll('.bar5')
                     .data(data)
-                    .enter().append('rect')
-                    .attr('class', 'bar5')
-                    .attr('x', function (d) {
-                        var range = x.rangeBand();
-                        var difference = range > 70 ? (range - 70) / 2 : 0;
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        'class': 'bar5',
+                        'x': function (d) {
+                            range = x.rangeBand();
+                            difference = range > 70 ? (range - 70) / 2 : 0;
 
-                        return x(format(d._id)) + difference;
-                    })
-                    .attr('y', function (d) {
-                        return y(d.inProgressCount + d.lostCount);
-                    })
-                    .attr('height', function (d) {
-                        return height - y(d.inProgressCount);
-                    })
-                    .attr('width', function () {
-                        var range = x.rangeBand();
+                            return x(format(d._id)) + difference;
+                        },
+                        'y': function (d) {
+                            return y(d.inProgressCount + d.wonCount) - verticalBarSpacing;
+                        },
+                        'height': function (d) {
+                            return height - y(d.inProgressCount);
+                        },
+                        'width': function () {
+                            range = x.rangeBand();
 
-                        return range < 70 ? range : 70;
-                    })
-                    .attr('fill', '#00B3E9')
-                    .style('opacity', '0.8');
+                            return range < 70 ? range : 70;
+                        },
+                        'fill': colorMap.inProgressCount
+                    });
 
                 chart.selectAll('.bar6')
                     .data(data)
-                    .enter().append('rect')
-                    .attr('class', 'bar6')
-                    .attr('x', function (d) {
-                        var range = x.rangeBand();
-                        var difference = range > 70 ? ((range - 70) / 2) : 0;
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        'class': 'bar6',
+                        'x': function (d) {
+                            range = x.rangeBand();
+                            difference = range > 70 ? ((range - 70) / 2) : 0;
 
-                        return x(format(d._id)) + difference;
-                    })
-                    .attr('y', function (d) {
-                        return y(d.inProgressCount + d.wonCount + d.lostCount);
-                    })
-                    .attr('height', function (d) {
-                        return height - y(d.wonCount);
-                    })
-                    .attr('width', function () {
-                        var range = x.rangeBand();
+                            return x(format(d._id)) + difference;
+                        },
+                        'y': function (d) {
+                            return y(d.inProgressCount + d.wonCount + d.lostCount) - 2*verticalBarSpacing;
+                        },
+                        'height': function (d) {
+                            return height - y(d.lostCount);
+                        },
+                        'width': function () {
+                            range = x.rangeBand();
 
-                        return range < 70 ? range : 70;
-                    })
-                    .attr('fill', '#6FC362')
-                    .style('opacity', '0.8');
+                            return range < 70 ? range : 70;
+                        },
+                        'fill': colorMap.lostCount
+                    });
 
                 chart.append('path')
                     .datum(percent)
-                    .attr('class', 'line')
-                    .attr('d', line).style('stroke', '#3E88B9');
+                    .attr({
+                        'class': 'line',
+                        'd'    : line
+                    })
+                    .style('stroke', colorMap.percentLine)
+                    .style('stroke-width', 5);
 
                 chart.selectAll('.circle')
                     .data(percent)
                     .enter().append('circle')
-                    .attr('class', 'circle')
-                    .attr('cx', function (d) {
-                        return x(format(d.date)) + x.rangeBand() / 2;
-                    })
-                    .attr('cy', function (d) {
-                        return y2(d.value);
-                    })
-                    .attr('r', function (d) {
-                        return 4;
-                    })
-                    .style('fill', '#3E88B9')
-                    .style('stroke', '#fff')
-                    .style('stroke-width', '2');
+                    .attr({
+                        'class'       : 'circle',
+                        'cx'          : function (d) {
+                            return x(format(d.date)) + x.rangeBand() / 2;
+                        },
+                        'cy'          : function (d) {
+                            return y2(d.value);
+                        },
+                        'r'           : function (d) {
+                            return percentCircleRadius * d.value / 100;
+                        },
+                        'fill'        : colorMap.percentLine,
+                        'stroke'      : '#fff',
+                        'stroke-width': '2'
+                    });
             });
         },
 
