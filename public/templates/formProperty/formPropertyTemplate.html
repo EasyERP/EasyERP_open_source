@@ -29,56 +29,62 @@
 
             <div class="propertyFormList">
                 <label>Street:</label>
-                <div data-id="address_street" class="inputBox">
-                    <input class="editable" value="<%=property.address.street%>"/>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_street" value="<%=property.address.street%>"/>
                 </div>
             </div>
 
             <div class="propertyFormList">
                 <label>City:</label>
-                <div data-id="address_city" class="inputBox">
-                    <input class="editable" value="<%=property.address.city%>"/>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_city" value="<%=property.address.city%>"/>
                 </div>
             </div>
 
             <div class="propertyFormList">
                 <label>State:</label>
-                <div data-id="address_state" class="inputBox">
-                    <input class="editable" value="<%=property.address.state%>"/>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_state" value="<%=property.address.state%>"/>
                 </div>
             </div>
 
             <div class="propertyFormList">
                 <label>Zip:</label>
-                <div data-id="address_zip" class="inputBox">
-                    <input class="editable" value="<%=property.address.zip%>"/>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_zip" value="<%=property.address.zip%>"/>
                 </div>
             </div>
 
             <div class="propertyFormList">
                 <label>Country:</label>
-                <div data-id="address_country" class="inputBox">
-                    <input class="editable" value="<%=property.address.country%>"/>
+                <div  class="inputBox">
+                    <input class="editable" data-id="address_country" value="<%=property.address.country%>"/>
                 </div>
             </div>
 
             <div class="propertyFormList">
                 <label>Phone:</label>
-                <div data-id="phones_phone" class="inputBox">
-                    <input class="editable" value="<%=property.phones.phone%>"/>
+                <div  class="inputBox">
+                    <input class="editable" data-id="phones_phone" value="<%=property.phones.phone%>"/>
                 </div>
             </div>
 
             <div class="propertyFormList">
                 <label>Email:</label>
-                <div data-id="phones_phone" class="inputBox">
-                    <input class="editable" value="<%=property.email%>"/>
+                <div  class="inputBox">
+                    <input class="editable" data-id="phones_phone" value="<%=property.email%>"/>
                 </div>
             </div>
         </div>
 
         <div class="propertySubmit">
             <a class="btn" title="View All Properties" href="<%='/#easyErp/' + urlType + '/form/'+ property._id%> " id="showMoreButton">View All Properties</a>
+        </div>
+        <div class="btnBlock">
+
+            <a href="javascript:;" id="saveBtn" class=" btn btnRounded">Save</a>
+
+            <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
         </div>
 
     </div>
