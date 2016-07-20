@@ -9,7 +9,7 @@ define([
 ], function (Backbone, $, _, BaseView, FilterView, common, CONSTANTS) {
     'use strict';
 
-    var PersonsListView = BaseView.extend({
+    var TFormBaseView = BaseView.extend({
         viewType     : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination: true,
         hasAlphabet  : false,
@@ -132,15 +132,13 @@ define([
         },
 
         showMoreContent: function (newModels) {
-            var persons = newModels.toJSON();
+            var collectionObj = newModels.toJSON();
             var $holder = this.$el;
             var $listHolder = $holder.find('#listContent');
 
             $listHolder.empty();
 
-            $listHolder.append(this.listTemplate({
-                persons: persons
-            }));
+            this.renderList(collectionObj);
 
             $holder.find('#timeRecivingDataFromServer').remove();
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
@@ -195,19 +193,16 @@ define([
 
         render: function () {
             var $currentEl;
-            var persons = this.collection.toJSON();
+            var collectionObj = this.collection.toJSON();
 
             $('.ui-dialog ').remove();
 
             $currentEl = this.$el;
 
             $currentEl.html(this.contentTemplate());
-            $currentEl.find('#listContent').append(this.listTemplate({
-                persons: persons
-            }));
-
+            this.renderList(collectionObj);
         }
     });
 
-    return PersonsListView;
+    return TFormBaseView;
 });

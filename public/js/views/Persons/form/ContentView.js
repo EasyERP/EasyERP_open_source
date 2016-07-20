@@ -23,15 +23,21 @@ define([
         listUrl        : 'easyErp/Persons/list/',
         contentType    : 'Persons', // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
-        exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
-        exportToCsvUrl : '/Customers/exportToCsv/?type=Persons',
-        letterKey      : 'name.first',
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
         selectedId     : null,
         ContentModel   : PersonsModel,
-        FormView       : FormView
+        FormView       : FormView,
+
+        renderList: function(persons){
+            var $thisEl = this.$el;
+            var $listHolder = $thisEl.find('#listContent');
+
+            $listHolder.append(this.listTemplate({
+                persons: persons
+            }));
+        }
     });
 
     return PersonsListView;
