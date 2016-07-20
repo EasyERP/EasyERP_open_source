@@ -30,7 +30,7 @@
         events: {
             'keypress #logged, #estimated': 'isNumberKey',
             'click #projectTopName'       : 'useProjectFilter',
-            'click .removeSelect'  : 'removeSelect'
+            'click .removeSelect'         : 'removeSelect'
         },
 
         initialize: function (options) {
@@ -39,6 +39,13 @@
             this.currentModel.urlRoot = CONSTANTS.URLS.DEALTASKS;
 
             this.render();
+        },
+
+        removeSelect: function (e) {
+            var $target = $(e.target);
+            var $div = $target.closest('.selectType');
+            $div.find('.showSelect').remove();
+            $div.find('a').show();
         },
 
         useProjectFilter: function (e) {

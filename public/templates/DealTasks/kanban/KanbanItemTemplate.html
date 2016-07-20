@@ -23,13 +23,15 @@
         </div>
         <div class="sources">
             <% if (model.company) { %>
-            <a href="<%='/#easyErp/Companies/form/' + model.company._id %>"><i></i> </a>
+            <a href="<%='/#easyErp/Companies/form/' + model.company._id %>" title="model.company.fullName"> <img alt=""
+                                                                                                             src="<%=model.company.imageSrc%>"/> </a>
             <% }%>
             <% if (model.deal) { %>
-            <a href="<%='/#easyErp/Deals/form/' + model.deal._id %>"><i></i> </a>
+            <a href="<%='/#easyErp/Deals/form/' + model.deal._id %>" title="model.deal.name"><i></i> </a>
             <% }%>
             <% if (model.contact) { %>
-            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>"><i></i> </a>
+            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>" title="model.contact.fullName"><img alt=""
+                                                                                                       src="<%=model.contact.imageSrc%>"/> </a>
             <% }%>
         </div>
 
