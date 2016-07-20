@@ -79,9 +79,9 @@ define([
                 position     : {
                     at: "top+38%"
                 },
-                dialogClass  : 'create-dialog',
+                dialogClass  : 'create-dialog task-dialog',
                 title        : 'Create Tag',
-                width        : '300px',
+                width        : 600,
                 buttons      : [
                     {
                         text : 'Save',

@@ -4,6 +4,7 @@
     'jQuery',
     'views/dialogViewBase',
     'text!templates/DealTasks/EditTemplate.html',
+    'text!templates/selectView/showSelectTemplate.html',
     'views/Notes/NoteView',
     'common',
     'populate',
@@ -14,6 +15,7 @@
              $,
              ParentView,
              EditTemplate,
+             showSelectTemplate,
              NoteView,
              common,
              populate,
@@ -27,7 +29,8 @@
 
         events: {
             'keypress #logged, #estimated': 'isNumberKey',
-            'click #projectTopName'       : 'useProjectFilter'
+            'click #projectTopName'       : 'useProjectFilter',
+            'click .removeSelect'  : 'removeSelect'
         },
 
         initialize: function (options) {
@@ -64,11 +67,17 @@
         },
 
         chooseOption: function (e) {
-            var target = $(e.target);
-            var endElem = target.parents('dd').find('.current-selected');
+            var $target = $(e.target);
+            var $div =  $target.closest('div.selectType');
 
-            endElem.text(target.text()).attr('data-id', target.attr('id'));
-            endElem.attr('data-shortdesc', target.data('level'));
+            if ($div.length){
+
+                $div.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text(), imageSrc:  $target.attr('data-img')}));
+                $div.find('a').hide();
+            } else {
+                $target.parents('.dataField').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            }
+
         },
 
         saveItem: function (event) {
@@ -84,9 +93,6 @@
             var company = this.$el.find('#companyDd').data('id');
             var description = $.trim(this.$el.find('#description').val());
             var contact = this.$el.find('#contactDd').data('id');
-            var companyObject;
-            var dealObject;
-            var contactObject;
 
 
 
@@ -115,21 +121,14 @@
                 assignedTo   : assignedTo || null,
                 description  : description,
                 dueDate    : $.trim(holder.find('#dueDate').val()),
-                sequenceStart: this.currentModel.toJSON().sequence
+                sequenceStart: this.currentModel.toJSON().sequence,
+                company      : company || null,
+                companyDate  : company ? new Date() : null,
+                contact      : contact || null,
+                contactDate  : contact ? new Date() : null,
+                deal         : deal || null,
+                dealDate     : deal ? new Date() : null
             };
-
-            if (company) {
-                data.company = company;
-                data.companyDate = new Date();
-            }
-            if (contact) {
-                data.contact = contact;
-                data.contactDate = new Date();
-            }
-            if (deal) {
-                data.deal = deal;
-                data.dealDate = new Date();
-            }
 
             currentWorkflow = this.currentModel.get('workflow');
 
@@ -147,9 +146,6 @@
                     var result;
                     var $trHolder;
                     var editHolder = self.$el;
-                    var newEstimated;
-                    var newLogged;
-                    var progress;
                     var $kanbanHolder;
                     var counter;
                     var $workflowStart;
@@ -265,7 +261,7 @@
             var notDiv;
 
             this.$el = $(formString).dialog({
-                dialogClass: 'edit-dialog  task-edit-dialog',
+                dialogClass: 'edit-dialog task-dialog task-edit-dialog',
                 width      : 600,
                 title      : this.currentModel.toJSON().description,
                 buttons    : {

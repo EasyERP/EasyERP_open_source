@@ -1,16 +1,11 @@
 <div class="inner" data-id="<%=model._id%>" data-sequence="<%=model.sequence%>">
     <div class="task-header">
-
-       <!-- <div class="left">
-            <div class="left"><span id="deal<%=model._id%>"><%=model.deal.name%></span><%=model.taskCount%>&nbsp;|&nbsp;
-            </div>
-        </div>-->
         <div class="clearfix"></div>
     </div>
     <div class="task-content">
         <div class="info">
             <p id="<%=model._id%>"><%=model.description%></p>
-            <% if (model.dueDate < new Date()) { %>
+            <% if (new Date(model.dueDate) < new Date()) { %>
             <h3 class="red">Overdue : </h3>
             <% }else {%>
             <h3>Due : </h3>

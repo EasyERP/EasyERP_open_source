@@ -2650,20 +2650,17 @@ var Module = function (models, event) {
         query.exec(function (err, result) {
 
             if (err) {
-                return net(err);
+                return next(err);
             }
             getTimeLine(req, result.toJSON(), function (err, model) {
                 if (err) {
-                    return net(err);
+                    return next(err);
                 }
 
                 res.status(200).send(model);
-            })
+            });
         });
-
-
-
-}
+    }
 
 this.getById = function (req, res, next) {
     getById(req, res, next);

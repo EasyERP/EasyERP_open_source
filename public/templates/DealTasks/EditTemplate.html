@@ -1,17 +1,31 @@
-﻿<div class="form-holder task-create-holder">
+﻿<div class="form-holder task-create-holder newTasksContainer">
     <form method="post" action="" id="createTaskForm" class="form notDialog">
-        <fieldset>
-            <dt><label for="workflowsDd">Stage </label></dt>
-            <dd>
-                <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefined'%></a>
-            </dd>
-            <dt><label for="dueDate">Due Date</label></dt>
-            <dd><input class="extrainfo blueback" type="text" name="dueDate" id="dueDate" value="<%=model.dueDate%>" readonly/></dd>
-            <dt><label>Assigned to :</label></dt>
-            <dd>
-                <a id="assignedToDd" data-id="<%=(model.assignedTo) ? model.assignedTo._id : ''%>" class="current-selected" href="javascript:;"><%=(model.assignedTo)?(model.assignedTo.name.first+' '+model.assignedTo.name.last):'Select'%></a>
-                </dd>
-            <div class="clearfix"></div>
+        <div>
+            <div class="taskTop">
+                <div class="topCell">
+                    <label for="workflowsDd">Stage</label>
+                    <div id="selectWorkflow" class="dataField">
+                        <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefined'%></a>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <div>
+                        <label for="dueDate">Due Date </label>
+                    </div>
+                    <div class="dataField">
+                        <input class="extrainfo blueback" type="text" name="dueDate" id="dueDate" value="<%=model.dueDate%>" readonly/>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <label>Assigned to</label>
+                    <div class="dataField">
+                        <a id="assignedToDd" data-id="<%=(model.assignedTo) ? model.assignedTo._id : ''%>" class="current-selected" href="javascript:;"><%=(model.assignedTo)?(model.assignedTo.name.first+' '+model.assignedTo.name.last):'Select'%></a>
+                    </div>
+                </div>
+            </div>
+
             <div class="withPaddingLeftProject">
                 <div class="inner">
                     <div class="textarea-wrapper">
@@ -19,31 +33,73 @@
                     </div>
                 </div>
             </div>
-            <div class="half-block left withPaddingRightProject">
+            <div class="withPaddingRightProject">
                 <div class="inner">
 
-                    <dl class="task-info">
+                    <div class="task-info taskBottom">
+                        <div class="topCell selectType">
+                            <label>Contact</label>
+                            <div>
 
-                        <dt><label>Contact</label></dt>
-                        <dd>
-                            <a id="contactDd"  data-id="<%=(model.contact) ? model.contact._id : ''%>"class="current-selected" href="javascript:;"><%=(model.contact && model.contact.name) ? model.contact.name.first + ' ' + model.contact.name.last :'Select'%></a>
-                        </dd>
+                                <%if (model.contact) {%>
+                                <a id="contactDd" class="current-selected" href="javascript:;" style="display: none">Add Contact</a>
+                                <div class="showSelect" data-id="<%=model.contact._id%>">
 
-                        <dt><label>Company</label></dt>
-                        <dd>
-                            <a id="companyDd"  data-id="<%=(model.company) ? model.company._id : ''%>" class="current-selected" href="javascript:;"><%=(model.company && model.company.name) ? model.company.name.first:'Select'%></a>
-                        </dd>
-                        <dt><label>Deal</label></dt>
-                        <dd>
-                            <a id="dealDd" class="current-selected"  data-id="<%=(model.deal) ? model.deal._id : ''%>" href="javascript:;"><%=(model.deal )?model.deal.name:'Select'%></a>
-                        </dd>
-                        <div class="clearfix"></div>
-                    </dl>
+                                    <img alt=""
+                                         src="<%=model.contact.imageSrc%>"/>
+
+                                    <span ><%=model.contact.fullName%></span>
+                                    <button class="removeSelect">X</button>
+                                </div>
+                                <%} else {%>
+                                <a id="contactDd" class="current-selected" href="javascript:;" >Add Contact</a>
+                                <%}%>
+
+                            </div>
+                        </div>
+
+                        <div class="topCell selectType">
+                            <label>Company</label>
+                            <div>
+                                <%if (model.company) {%>
+                                <a id="companyDd" class="current-selected" href="javascript:;"  style="display: none">Add Company</a>
+                                <div class="showSelect" data-id="<%=model.company._id%>">
+
+                                    <img alt=""
+                                         src="<%=model.company.imageSrc%>"/>
+
+                                    <span ><%=model.company.fullName%></span>
+                                    <button class="removeSelect">X</button>
+                                </div>
+                                <%} else {%>
+                                <a id="companyDd" class="current-selected" href="javascript:;"  >Add Company</a>
+                                <%}%>
+
+                            </div>
+                        </div>
+
+                        <div class="topCell selectType">
+                            <label>Deal</label>
+                            <div>
+
+                                <%if (model.deal) {%>
+                                <a id="dealDd" class="current-selected" href="javascript:;" style="display: none">Add Deal</a>
+                                <div class="showSelect" data-id="<%=model.deal._id%>">
+                                    <span ><%=model.deal.name%></span>
+                                    <button class="removeSelect">X</button>
+                                </div>
+                                <%} else {%>
+                                <a id="dealDd" class="current-selected" href="javascript:;">Add Deal</a>
+                                <%}%>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <div class="clearfix"></div>
             <div class="attach-container"></div>
-        </fieldset>
+        </div>
     </form>
 </div>
 
