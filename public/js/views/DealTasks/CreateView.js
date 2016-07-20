@@ -74,11 +74,11 @@ define([
 
         saveItem: function () {
             var self = this;
-            var deal = this.$el.find('#dealDd').attr('data-id');
+            var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
             var assignedTo = this.$el.find('#assignedToDd').attr('data-id');
-            var company = this.$el.find('#companyDd').attr('data-id');
+            var company = this.$el.find('#companyItem .showSelect').attr('data-id');
             var workflow = this.$el.find('#workflowsDd').attr('data-id');
-            var contact = this.$el.find('#contactDd').attr('data-id');
+            var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
             var saveObject;
