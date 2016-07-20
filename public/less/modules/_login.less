@@ -1329,6 +1329,22 @@ dl.payrollDateBlock {
   }
 }
 
+.listContentWrap {
+
+  .listContentTitle {
+    position: relative;
+
+    #searchContainer {
+      position: relative;
+      top: -26px;
+      right: auto;
+      float: right;
+      width: 230px;
+      margin-right: 0;
+    }
+  }
+}
+
 .formContentWrap,
 .listContentWrap {
   display: -webkit-box;
@@ -1340,6 +1356,7 @@ dl.payrollDateBlock {
   -ms-flex-direction: column;
   flex-direction: column;
 }
+
 
 .formContentWrap {
   -webkit-flex-grow: 1;
@@ -1355,6 +1372,8 @@ dl.payrollDateBlock {
 }
 
 .listContentTitle {
+  position: relative;
+
   #createBtnHolder {
     float: right;
     .fa {
@@ -1362,17 +1381,10 @@ dl.payrollDateBlock {
     }
   }
 }
+
 .content-holder {
   .formContentTitle {
     border-left: 1px solid #ededed;
-
-    #searchContainer {
-      position: relative;
-      top: auto;
-      right: auto;
-      float: right;
-      margin-right: 10px;
-    }
 
     .closeBtn {
       float: right;
@@ -1479,7 +1491,7 @@ td.checkboxRow {
   }
   &.position {
     position: absolute;
-    left: 318px;
+    left: 35px;
     z-index: 1;
 
     h3 {
@@ -1505,57 +1517,76 @@ td.checkboxRow {
     li {
       position: relative;
       min-width: 125px;
-      padding: 8px 22px 8px 12px;
+      padding: 0 22px 0 12px;
+      line-height: 32px;
       cursor: pointer;
-
-      transition: background-color .2s ease;
 
       &:nth-child(n+2) {
         border-top: 1px solid #bebebe;
       }
 
       &:hover {
-        background-color: #f0f0f0;
+        background-color: #7eadcc;
+        color: #fff;
+        transition: all .2s ease;
       }
 
       &.sortDn,
       &.sortUp {
         background-color: #7eadcc;
         color: #fff;
+
       }
       &.sortDn {
         .fa-caret-down {
-          color: #2b3643;
+          color: #fff;
         }
       }
       &.sortUp {
         .fa-caret-up {
-          color: #2b3643;
+          color: #fff;
         }
       }
 
       .fa-caret-up,
       .fa-caret-down {
         position: absolute;
+        color: #2b3643;
         right: 5px;
       }
 
       .fa-caret-up {
-        top: 0;
+        top: 5px;
       }
 
       .fa-caret-down {
-        bottom: 0;
+        bottom: 5px;
       }
     }
   }
-  
+
   &.open {
     ul {
       display: block;
     }
   }
 }
+
+.top-bar-deleteBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #7eadcc;
+  line-height: 26px !important;
+  color: #fff !important;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  border-radius: 3px;
+
+  &:after {
+    content: 'Delete';
+  }
+}
+
 .listContentTitle {
   .dropBtn {
     display: block;

@@ -1966,7 +1966,7 @@ body {
   color: white;
 }
 .pagination {
-  margin: 5px 10px 10px;
+  margin: 5px 10px 0;
 }
 .pagination > div {
   float: left;
@@ -2145,16 +2145,6 @@ body {
   background-color: #3e88b9;
   color: white;
   text-decoration: none;
-}
-.pagination + #timeRecivingDataFromServer {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-  transform: translateX(-50%);
 }
 .nextPrev button {
   position: relative;
@@ -3546,6 +3536,17 @@ dl.payrollDateBlock dt {
 .listContent table {
   width: 100%;
 }
+.listContentWrap .listContentTitle {
+  position: relative;
+}
+.listContentWrap .listContentTitle #searchContainer {
+  position: relative;
+  top: -26px;
+  right: auto;
+  float: right;
+  width: 230px;
+  margin-right: 0;
+}
 .formContentWrap,
 .listContentWrap {
   display: -webkit-box;
@@ -3568,6 +3569,9 @@ dl.payrollDateBlock dt {
   border-top: 1px solid #ededed;
   border-bottom: 1px solid #ededed;
 }
+.listContentTitle {
+  position: relative;
+}
 .listContentTitle #createBtnHolder {
   float: right;
 }
@@ -3576,13 +3580,6 @@ dl.payrollDateBlock dt {
 }
 .content-holder .formContentTitle {
   border-left: 1px solid #ededed;
-}
-.content-holder .formContentTitle #searchContainer {
-  position: relative;
-  top: auto;
-  right: auto;
-  float: right;
-  margin-right: 10px;
 }
 .content-holder .formContentTitle .closeBtn {
   float: right;
@@ -3656,7 +3653,7 @@ td.checkboxRow {
 }
 #top-bar.position {
   position: absolute;
-  left: 318px;
+  left: 35px;
   z-index: 1;
 }
 #top-bar.position h3 {
@@ -3680,15 +3677,17 @@ td.checkboxRow {
 .dropDown ul li {
   position: relative;
   min-width: 125px;
-  padding: 8px 22px 8px 12px;
+  padding: 0 22px 0 12px;
+  line-height: 32px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 .dropDown ul li:nth-child(n+2) {
   border-top: 1px solid #bebebe;
 }
 .dropDown ul li:hover {
-  background-color: #f0f0f0;
+  background-color: #7eadcc;
+  color: #fff;
+  transition: all .2s ease;
 }
 .dropDown ul li.sortDn,
 .dropDown ul li.sortUp {
@@ -3696,24 +3695,38 @@ td.checkboxRow {
   color: #fff;
 }
 .dropDown ul li.sortDn .fa-caret-down {
-  color: #2b3643;
+  color: #fff;
 }
 .dropDown ul li.sortUp .fa-caret-up {
-  color: #2b3643;
+  color: #fff;
 }
 .dropDown ul li .fa-caret-up,
 .dropDown ul li .fa-caret-down {
   position: absolute;
+  color: #2b3643;
   right: 5px;
 }
 .dropDown ul li .fa-caret-up {
-  top: 0;
+  top: 5px;
 }
 .dropDown ul li .fa-caret-down {
-  bottom: 0;
+  bottom: 5px;
 }
 .dropDown.open ul {
   display: block;
+}
+.top-bar-deleteBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #7eadcc;
+  line-height: 26px !important;
+  color: #fff !important;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  border-radius: 3px;
+}
+.top-bar-deleteBtn:after {
+  content: 'Delete';
 }
 .listContentTitle .dropBtn {
   display: block;
