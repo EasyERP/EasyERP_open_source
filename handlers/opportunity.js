@@ -87,8 +87,8 @@ var Module = function (models, event) {
                         history: elem,
                         user   : elem.editedBy,
                         _id    : ''
-                    }
-                })
+                    };
+                });
                 parallelCb(null, history);
 
             }, true);

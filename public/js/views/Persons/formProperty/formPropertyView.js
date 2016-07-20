@@ -21,8 +21,10 @@ define([
             });
         },
 
-        removeProperty: function () {
+        removeProperty: function (e) {
             var saveObject = {};
+
+            e.preventDefault();
             this.model = '';
 
             saveObject[this.attribute] = null;

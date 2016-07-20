@@ -4,13 +4,14 @@ define([
     'Underscore',
     'views/dialogViewBase',
     'text!templates/DealTasks/CreateTemplate.html',
+    'text!templates/selectView/showSelectTemplate.html',
     'models/DealTasksModel',
     'common',
     'populate',
     'views/Notes/AttachView',
     'views/selectView/selectView',
     'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, TaskModel, common, populate, AttachView, SelectView, CONSTANTS) {
+], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, SelectView, CONSTANTS) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -20,7 +21,9 @@ define([
 
         events: {
             'click #deadline'      : 'showDatePicker',
-            'change #workflowNames': 'changeWorkflows'
+            'click #deadline'      : 'showDatePicker',
+            'change #workflowNames': 'changeWorkflows',
+            'click .removeSelect'  : 'removeSelect'
         },
 
         initialize: function () {
@@ -28,6 +31,13 @@ define([
             this.model = new TaskModel();
             this.render();
             this.responseObj = {};
+        },
+
+        removeSelect : function (e){
+            var $target = $(e.target);
+            var $dd =  $target.closest('dd');
+            $dd.find('.showSelect').remove();
+            $dd.find('a').show();
         },
 
         addAttach: function () {
@@ -131,8 +141,10 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
+            var $dd =  $target.closest('dd');
 
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            $dd.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text()}));
+            $dd.find('a').hide();
         },
 
         render: function () {
@@ -178,8 +190,8 @@ define([
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this, true);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
             populate.get('#dealDd', 'opportunities/getForDd', {isOpportunitie: true}, 'name', this, false);
-            populate.get2name('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'}, this, true, true, (this.model) ? this.model._id : null);
-            populate.get2name('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'}, this, true, true, (this.model) ? this.model._id : null);
+            populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'},'fullName', this, false);
+            populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'},'fullName', this, false);
             this.$el.find('#dueDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
