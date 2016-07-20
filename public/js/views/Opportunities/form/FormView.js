@@ -26,6 +26,7 @@ define([
             this.formModel.on('change:tags', this.saveTags, this);
             _.bindAll(this, 'saveDeal');
             this.responseObj = {};
+            this.modelChanged = {};
         },
 
         events: {
@@ -52,9 +53,6 @@ define([
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
 
-            if (!this.modelChanged){
-                this.modelChanged = {};
-            }
             this.modelChanged[property] = value;
             this.showButtons();
         },
@@ -72,7 +70,7 @@ define([
         },
 
         cancelChanges : function (e) {
-            this.modelChanged = '';
+            this.modelChanged = {};
             this.render();
         },
 
@@ -124,9 +122,6 @@ define([
 
             holder.text($target.text());
 
-            if (!this.modelChanged){
-                this.modelChanged = {};
-            }
             this.modelChanged[type] = id;
             this.showButtons();
         },
@@ -142,7 +137,7 @@ define([
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else {
                         self.noteView.renderTimeline();
-                        self.modelChanged = '';
+                        self.modelChanged = {};
                         self.hideButtons();
                     }
                 },
@@ -265,7 +260,7 @@ define([
                 changeYear : true,
                 onSelect   : function (dateText) {
                     if (!self.modelChanged){
-                        self.modelChanged = {};
+
                     }
                     self.modelChanged.nextAction = dateText;
                     self.showButtons();
