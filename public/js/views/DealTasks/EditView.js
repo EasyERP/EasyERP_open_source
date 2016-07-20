@@ -89,12 +89,10 @@
             var workflow;
             var data;
             var currentWorkflow;
-            var deal = this.$el.find('#dealDd').data('id');
-            var company = this.$el.find('#companyDd').data('id');
+            var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
+            var company = this.$el.find('#companyItem .showSelect').attr('data-id');
+            var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
-            var contact = this.$el.find('#contactDd').data('id');
-
-
 
             event.preventDefault();
 
@@ -295,8 +293,8 @@
 
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
-            populate.get2name('#contactDd', CONSTANTS.URLS.COMPANIES, {type :'Person'}, this);
-            populate.get2name('#companyDd', CONSTANTS.URLS.COMPANIES, {type :'Company'}, this);
+            populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'},'fullName', this, false);
+            populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'},'fullName', this, false);
             populate.get('#dealDd', 'opportunities/getForDd', {isOpportunitie : true},  'name', this, false);
 
             this.delegateEvents(this.events);
