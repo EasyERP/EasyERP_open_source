@@ -1,11 +1,9 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var Module = function (models) {
+var Module = function (models, event) {
     'use strict';
-    /**
-     * @module Customer
-     */
+
     var CustomerSchema = mongoose.Schemas.Customer;
 
     var _ = require('../node_modules/underscore');
@@ -19,6 +17,8 @@ var Module = function (models) {
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
     var FilterMapper = require('../helpers/filterMapper');
+    //var app = require('./app');
+    //var io = app.get('io');
 
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
@@ -911,6 +911,7 @@ var Module = function (models) {
                 });
 
             }
+            event.emit('editModel', {id: result._id, currentUser: req.session.uId});
             res.status(200).send({success: 'Customer updated', notes: result.notes});
         });
     };

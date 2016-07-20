@@ -66,13 +66,16 @@ define([
         custom.removeFromCash('dashboardVacation');
     }
 
-    function editPerson() {
+    function editModel(data) {
         var fragment = Backbone.history.fragment;
+        var personIdServer = data.id;
+        var currentUserIdServer = data.currentUser;
 
-        console.log('editPerson');
+        var currentUserId = App.currentUser._id;
+        var personId = App.currentPerson;
 
-        if (fragment && fragment.indexOf('Persons') !== -1) {
-            App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
+        if (((fragment && fragment.indexOf('Persons') !== -1) && (personIdServer === personId)) && (currentUserIdServer !== currentUserId))  {
+                App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
         }
 
         //custom.removeFromCash('projectInfo');
@@ -82,7 +85,7 @@ define([
     socket.on('fetchJobsCollection', _.debounce(fetchJobs, 1000));
     socket.on('fetchInvoiceCollection', _.debounce(fetchInvoice, 1000));
     socket.on('sendMessage', _.debounce(sendMessage, 1000));
-    socket.on('editPerson', _.debounce(editPerson, 1000));
+    socket.on('editModel', _.debounce(editModel, 1000));
 
     socket.emit('custom');
 

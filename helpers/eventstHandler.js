@@ -271,6 +271,10 @@ eventsHandler = function (app, mainDb) {
         io.emit('fetchJobsCollection', options);
     });
 
+    event.on('editModel', function (options) {
+        io.emit('editModel', options);
+    });
+
     event.on('fetchInvoiceCollection', function (options) {
         io.emit('fetchInvoiceCollection', options);
     });
