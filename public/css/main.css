@@ -4059,6 +4059,7 @@ dl.payrollDateBlock dt {
 .addNote,
 .addTask {
   margin-top: 0 !important;
+  width: 100%;
 }
 .addNote.active,
 .addTask.active {
