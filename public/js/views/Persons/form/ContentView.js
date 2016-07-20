@@ -76,6 +76,79 @@ define([
             Backbone.history.navigate(url, {trigger: true});
         },
 
+        goSort: function (e) {
+            var newRows = this.$el.find('#false');
+            var filter = this.filter || {};
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+            var data;
+
+            this.startTime = new Date();
+
+            if ((this.changed && this.changedModels && Object.keys(this.changedModels).length) ||
+                (this.isNewRow ? this.isNewRow() : newRows.length)) {
+                return App.render({
+                    type   : 'notify',
+                    message: 'Please, save previous changes or cancel them!'
+                });
+            }
+
+            target$ = $(e.target).closest('th');
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort').split(' ');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortUp');
+                sortClass = 'sortUp';
+            }
+
+            switch (sortClass) {
+                case 'sortDn':
+                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                    break;
+                case 'sortUp':
+                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                    break;
+                // skip default case
+            }
+
+            sortBy.forEach(function (sortField) {
+                sortObject[sortField] = sortConst;
+            });
+
+            data = {
+                sort: sortObject
+            };
+
+            data.filter = filter;
+
+            if (this.viewType) {
+                data.viewType = this.viewType;
+            }
+            if (this.parrentContentId) {
+                data.parrentContentId = this.parrentContentId;
+            }
+            if (this.contentType) {
+                data.contentType = this.contentType;
+            }
+
+            data.page = 1;
+
+            this.changeLocationHash(null, this.collection.pageSize);
+            this.collection.getFirstPage(data);
+        },
+
         showMoreContent: function (newModels) {
             var persons = newModels.toJSON();
             var $holder = this.$el;
