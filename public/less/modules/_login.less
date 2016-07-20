@@ -1459,9 +1459,11 @@ td.checkboxRow {
   transition: all .3s;
   border-radius: 3px;
 
-  &:after,&:before {
+  &:after,
+  &:before {
     color: #fff;
   }
+
   &:after {
     content: 'New';
     margin-left: 5px;
@@ -1470,8 +1472,63 @@ td.checkboxRow {
   }
 }
 
-.top-bar {
+#top-bar {
   #createBtnHolder {
     margin-top: 6px;
   }
+  &.position {
+    position: absolute;
+    left: 318px;
+    z-index: 1;
+
+    h3 {
+      display: none;
+    }
+
+    #createBtnHolder {
+      margin-top: 8px;
+    }
+  }
+}
+.listContentTitle {
+  .sortBy {
+    display: block;
+    height: 26px;
+    width: 26px;
+    border: 1px solid #bebebe;
+    font-size: 19px;
+    line-height: 28px;
+    border-radius: 3px;
+  }
+}
+
+.dropDown {
+  position: relative;
+  ul {
+    display: none;
+    position: absolute;
+    top: 28px;
+    left: 0;
+    border: 1px solid #bebebe;
+    li {
+      padding: 5px 10px;
+      &:nth-child(n+2) {
+        border-top: 1px solid #bebebe;
+      }
+    }
+  }
+  &.open {
+    ul {
+      display: block;
+    }
+  }
+}
+.dropBtn {
+  display: block;
+  height: 26px;
+  width: 26px;
+  border: 1px solid #bebebe;
+  font-size: 19px;
+  line-height: 28px;
+  border-radius: 3px;
 }
