@@ -259,10 +259,7 @@ define([
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function (dateText) {
-                    if (!self.modelChanged){
-
-                    }
-                    self.modelChanged.nextAction = dateText;
+                    self.modelChanged["nextAction.date"] = new Date(dateText);
                     self.showButtons();
                 }
 
