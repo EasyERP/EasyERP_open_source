@@ -261,10 +261,9 @@
             var notDiv;
 
             this.$el = $(formString).dialog({
-                dialogClass: 'edit-dialog  task-edit-dialog',
+                dialogClass: 'edit-dialog task-dialog task-edit-dialog',
                 width      : 600,
                 title      : this.currentModel.toJSON().description,
-                dialogClass: 'task-dialog',
                 buttons    : {
                     save: {
                         text : 'Save',
