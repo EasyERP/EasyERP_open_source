@@ -11,9 +11,8 @@ define([
     'views/Persons/list/ListItemView',
     'views/Filter/filterView',
     'common',
-    'constants',
-    'dataService'
-], function (Backbone, $, _, ListViewBase, ContentTemplate, ListItemTemplate, PersonsModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS, dataService) {
+    'constants'
+], function (Backbone, $, _, ListViewBase, ContentTemplate, ListItemTemplate, PersonsModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS) {
     'use strict';
 
     var PersonsListView = ListViewBase.extend({
@@ -201,8 +200,11 @@ define([
                     $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
                 },
 
-                error: function (xhr, model) {
-
+                error: function (model, xhr) {
+                    App.render({
+                        type   : 'error',
+                        message: 'Server error'
+                    });
                 }
             });
         },
