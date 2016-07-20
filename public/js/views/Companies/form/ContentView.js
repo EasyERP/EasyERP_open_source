@@ -32,7 +32,16 @@ define([
         formView       : null,
 
         events: {
-            'click .compactView': 'renderFormView'
+            'click .compactView': 'renderFormView',
+            'click #sortBy'     : 'openSortDrop'
+        },
+
+        openSortDrop: function (e) {
+            var $target = $(e.target);
+
+            e.preventDefault();
+
+            $target.closest('.dropDown').toggleClass('open');
         },
 
         initialize: function (options) {
