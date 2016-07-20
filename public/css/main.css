@@ -2146,16 +2146,6 @@ body {
   color: white;
   text-decoration: none;
 }
-.pagination + #timeRecivingDataFromServer {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-  transform: translateX(-50%);
-}
 .nextPrev button {
   position: relative;
 }
@@ -3680,7 +3670,8 @@ td.checkboxRow {
 .dropDown ul li {
   position: relative;
   min-width: 125px;
-  padding: 8px 22px 8px 12px;
+  padding: 0 22px 0 12px;
+  line-height: 32px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -3696,14 +3687,15 @@ td.checkboxRow {
   color: #fff;
 }
 .dropDown ul li.sortDn .fa-caret-down {
-  color: #2b3643;
+  color: #fff;
 }
 .dropDown ul li.sortUp .fa-caret-up {
-  color: #2b3643;
+  color: #fff;
 }
 .dropDown ul li .fa-caret-up,
 .dropDown ul li .fa-caret-down {
   position: absolute;
+  color: #2b3643;
   right: 5px;
 }
 .dropDown ul li .fa-caret-up {
@@ -3714,6 +3706,19 @@ td.checkboxRow {
 }
 .dropDown.open ul {
   display: block;
+}
+.top-bar-deleteBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #7eadcc;
+  line-height: 26px !important;
+  color: #fff !important;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  border-radius: 3px;
+}
+.top-bar-deleteBtn:after {
+  content: 'Delete';
 }
 .listContentTitle .dropBtn {
   display: block;

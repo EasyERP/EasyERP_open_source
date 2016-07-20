@@ -1505,7 +1505,8 @@ td.checkboxRow {
     li {
       position: relative;
       min-width: 125px;
-      padding: 8px 22px 8px 12px;
+      padding: 0 22px 0 12px;
+      line-height: 32px;
       cursor: pointer;
 
       transition: background-color .2s ease;
@@ -1522,21 +1523,23 @@ td.checkboxRow {
       &.sortUp {
         background-color: #7eadcc;
         color: #fff;
+
       }
       &.sortDn {
         .fa-caret-down {
-          color: #2b3643;
+          color: #fff;
         }
       }
       &.sortUp {
         .fa-caret-up {
-          color: #2b3643;
+          color: #fff;
         }
       }
 
       .fa-caret-up,
       .fa-caret-down {
         position: absolute;
+        color: #2b3643;
         right: 5px;
       }
 
@@ -1549,13 +1552,29 @@ td.checkboxRow {
       }
     }
   }
-  
+
   &.open {
     ul {
       display: block;
     }
   }
 }
+
+.top-bar-deleteBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #7eadcc;
+  line-height: 26px !important;
+  color: #fff !important;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  border-radius: 3px;
+  
+  &:after {
+    content: 'Delete';
+  }
+}
+
 .listContentTitle {
   .dropBtn {
     display: block;
