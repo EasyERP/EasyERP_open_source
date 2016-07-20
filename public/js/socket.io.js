@@ -66,10 +66,23 @@ define([
         custom.removeFromCash('dashboardVacation');
     }
 
+    function editPerson() {
+        var fragment = Backbone.history.fragment;
+
+        console.log('editPerson');
+
+        if (fragment && fragment.indexOf('Persons') !== -1) {
+            App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
+        }
+
+        //custom.removeFromCash('projectInfo');
+    }
+
     socket.on('recollectVacationDash', _.debounce(fetchData, 1000));
     socket.on('fetchJobsCollection', _.debounce(fetchJobs, 1000));
     socket.on('fetchInvoiceCollection', _.debounce(fetchInvoice, 1000));
     socket.on('sendMessage', _.debounce(sendMessage, 1000));
+    socket.on('editPerson', _.debounce(editPerson, 1000));
 
     socket.emit('custom');
 
