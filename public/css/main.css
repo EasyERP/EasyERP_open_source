@@ -1966,9 +1966,7 @@ body {
   color: white;
 }
 .pagination {
-  width: 100%;
-  margin-top: 5px;
-  float: right;
+  margin: 5px 10px 10px;
 }
 .pagination > div {
   float: left;
@@ -2147,6 +2145,16 @@ body {
   background-color: #3e88b9;
   color: white;
   text-decoration: none;
+}
+.pagination + #timeRecivingDataFromServer {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 .nextPrev button {
   position: relative;
@@ -7989,7 +7997,6 @@ dl dd span.ui-spinner {
 }
 #wrapper #content-holder {
   position: relative;
-  height: calc(100% - 50px);
   width: 100%;
   display: -webkit-box;
   display: -moz-box;
@@ -8003,6 +8010,8 @@ dl dd span.ui-spinner {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 #startLetter {
   margin: 10px 0 -1px;
@@ -11556,7 +11565,6 @@ ul.dialog-tabs li.right button {
   clear: both;
   text-align: center;
   color: #000000;
-  margin-top: -15px;
 }
 .tabs-items {
   margin-bottom: -29px;
