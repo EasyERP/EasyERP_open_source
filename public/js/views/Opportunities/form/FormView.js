@@ -259,6 +259,13 @@ define([
                 this.noteView.render().el
             );
 
+            this.$el.find('#nextAction').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+
+            });
+
             $thisEl.find('.attachments').append(
                 new AttachView({
                     model      : this.formModel,

@@ -10,9 +10,7 @@ define([
 
         events: {
             'click #addProperty'   : 'addProperty',
-            'click #removeProperty': 'removeProperty',
-            'click #saveBtn'       : 'saveChanges',
-            'click #cancelBtn'     : 'cancelChanges'
+            'click #removeProperty': 'removeProperty'
         },
 
         addProperty: function () {
