@@ -176,6 +176,7 @@ define([
         },
 
         goSort: function (e) {
+            var $targetEl;
             var newRows = this.$el.find('#false');
             var filter = this.filter || {};
             var target$;
