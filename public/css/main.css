@@ -3566,17 +3566,17 @@ dl.payrollDateBlock dt {
 .listContentTitle #createBtnHolder .fa {
   margin-right: 0;
 }
-.formContentTitle {
+.content-holder .formContentTitle {
   border-left: 1px solid #ededed;
 }
-.formContentTitle #searchContainer {
+.content-holder .formContentTitle #searchContainer {
   position: relative;
   top: auto;
   right: auto;
   float: right;
   margin-right: 10px;
 }
-.formContentTitle .closeBtn {
+.content-holder .formContentTitle .closeBtn {
   float: right;
 }
 .compactRowWrap {
