@@ -82,8 +82,6 @@ define([
             }
 
             Backbone.history.navigate(url, {trigger: true});
-
-            $('#top-bar').removeClass('position');
         },
 
         goSort: function (e) {
@@ -110,15 +108,22 @@ define([
                 sortClass = 'sortUp';
             }
 
+            $target.closest('ul').find('.selected').removeClass('selected');
+            $target.addClass('selected');
+
+            $target.closest('ul').find('span.selected').removeClass('selected');
+
             switch (sortClass) {
                 case 'sortDn':
                     $target.parent().find('li').removeClass('sortDn').removeClass('sortUp');
                     $target.removeClass('sortDn').addClass('sortUp');
+                    $target.find('.sortDown').addClass('selected');
                     sortConst = 1;
                     break;
                 case 'sortUp':
                     $target.parent().find('li').removeClass('sortDn').removeClass('sortUp');
                     $target.removeClass('sortUp').addClass('sortDn');
+                    $target.find('.sortUp').addClass('selected');
                     sortConst = -1;
                     break;
                 // skip default case

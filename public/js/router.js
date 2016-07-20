@@ -1099,8 +1099,6 @@ define([
                             viewType  : 'tform'
                         });
 
-                        topbarView.$el.addClass('position');
-
                         contentview = new contentView({
                             collection: collection,
                             startTime : startTime,
