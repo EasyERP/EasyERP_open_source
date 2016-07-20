@@ -961,54 +961,6 @@ var Module = function (models, event) {
                 response.data = result;
                 res.send(response);
             });
-        } else if (type === 'date') {
-            myItem.$project = {isOpportunitie: 1, convertedDate: 1};
-            myItem.$project.dateBy = {};
-            myItem.$project.dateBy[data.dataItem] = '$convertedDate';
-            if (data.dataItem === '$dayOfYear') {
-                myItem.$project.year = {};
-                myItem.$project.year.$year = '$convertedDate';
-            }
-            fromDateTicks = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
-            fromDate = new Date(fromDateTicks);
-
-            models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate(
-                {
-                    $match: {
-                        $and: [{
-                            createdBy: {$ne: null},
-                            $or      : [{isConverted: true}, {isOpportunitie: false}]
-                        },
-                            {
-                                'createdBy.date': {$gte: fromDate}
-                            }]
-                    }
-                }, myItem, {
-                    $group: {
-                        _id  : {dateBy: '$dateBy', isOpportunitie: '$isOpportunitie', year: '$year'},
-                        count: {$sum: 1},
-                        date : {$push: '$convertedDate'}
-                    }
-                }, {
-                    $project: {
-                        source: '$_id.dateBy',
-                        count : 1,
-                        date  : 1,
-                        year  : '$_id.year',
-                        isOpp : '$_id.isOpportunitie',
-                        _id   : 0
-                    }
-                }, {
-                    $sort: {year: 1, source: 1}
-                }
-            ).exec(function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                response.data = result;
-                res.send(response);
-            });
         }
     };
 
