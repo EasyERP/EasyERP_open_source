@@ -4131,6 +4131,14 @@ dl.payrollDateBlock dt {
   border-top: 1px solid #c8c8d3;
   margin-top: 30px;
 }
+.newTasksContainer .taskBottom .hasDatepicker,
+.newTasksContainer .taskBottom .current-selected {
+  text-align: center;
+}
+.newTasksContainer .taskTop .hasDatepicker,
+.newTasksContainer .taskTop .current-selected {
+  padding-left: 10px;
+}
 .newTasksContainer .topCell {
   display: inline-block;
   vertical-align: middle;
@@ -4149,15 +4157,18 @@ dl.payrollDateBlock dt {
   margin-top: 10px;
   display: block;
   line-height: 38px !important;
-  padding-left: 10px;
   cursor: pointer;
   color: #000000;
+}
+.newTasksContainer .topCell .hasDatepicker i,
+.newTasksContainer .topCell .current-selected i {
+  margin-right: 5px;
 }
 .newTasksContainer .topCell .hasDatepicker:hover,
 .newTasksContainer .topCell .current-selected:hover {
   text-decoration: none;
 }
-.newTasksContainer .taskDescriptionCreate {
+.newTasksContainer .textarea-wrapper textarea {
   padding: 15px;
 }
 .newTasksContainer .showSelect {
@@ -4207,6 +4218,23 @@ dl.payrollDateBlock dt {
 }
 .ui-dialog-buttonset {
   border: none !important;
+}
+.task-content {
+  padding: 5px;
+}
+.tasksItemList {
+  margin-top: 13px;
+}
+.tasksItemIcon {
+  display: inline-block;
+  vertical-align: middle;
+  color: #3291c8;
+}
+.tasksItemIcon + .tasksItemIcon {
+  margin-left: 8px;
+}
+.tasksItemIcon img {
+  width: 20px;
 }
 .btn {
   border: 1px solid #7f7f80;

@@ -18,6 +18,20 @@
   .taskBottom {
     border-top: 1px solid @lightgrey;
     margin-top: 30px;
+
+
+    .hasDatepicker,
+    .current-selected {
+      text-align: center;
+
+    }
+  }
+
+  .taskTop {
+    .hasDatepicker,
+    .current-selected {
+      padding-left: 10px;
+    }
   }
 
   .topCell {
@@ -39,9 +53,12 @@
       margin-top: 10px;
       display: block;
       line-height: 38px !important;
-      padding-left: 10px;
       cursor: pointer;
       color: @black;
+
+      i {
+        margin-right: 5px;
+      }
 
       &:hover {
         text-decoration: none;
@@ -49,8 +66,10 @@
     }
   }
 
-  .taskDescriptionCreate {
-    padding: 15px;
+  .textarea-wrapper {
+    textarea {
+      padding: 15px;
+    }
   }
 
   .ui-dialog {
@@ -117,4 +136,30 @@
 
 .ui-dialog-buttonset {
   border: none !important;
+}
+
+.task-dialog {
+
+}
+
+.task-content {
+  padding: 5px;
+}
+
+.tasksItemList {
+  margin-top: 13px;
+}
+
+.tasksItemIcon {
+  display: inline-block;
+  vertical-align: middle;
+  color: @blue-3;
+
+  & + .tasksItemIcon {
+    margin-left: 8px;
+  }
+
+  img {
+    width: 20px;
+  }
 }
