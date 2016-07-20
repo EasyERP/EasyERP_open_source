@@ -35,7 +35,8 @@ define([
 
         events: {
             'click .compactView:not(.checkbox)': 'renderFormView',
-            'click .closeBtn'                  : 'returnToList'
+            'click .closeBtn'                  : 'returnToList',
+            'click #sortBy'                    : 'openSortDrop'
         },
 
         initialize: function (options) {
@@ -56,6 +57,13 @@ define([
             //modelId = this.collection.at(0).id;
 
             this.renderFormView(modelId);
+        },
+
+        openSortDrop: function (e) {
+            e.preventDefault();
+            var $target = $(e.target);
+
+            $target.closest('.dropDown').addClass('open');
         },
 
         returnToList: function (e) {
