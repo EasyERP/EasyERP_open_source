@@ -173,7 +173,7 @@
 
                             break;
                         case 'kanban':
-                            $kanbanHolder = $('#' + model._id);
+                            /*$kanbanHolder = $('#' + model._id);
                             $kanbanHolder.find('#' + model._id).text(model.description);
                             $kanbanHolder.find('.dueDate').text(model.dueDate);
                             $workflowStart = $('#' + data.workflowStart);
@@ -199,7 +199,10 @@
                                 counter.html(parseInt(counter.html(), 10) + 1);
                                 counter = $workflowStart.closest('.column').find('.totalCount');
                                 counter.html(parseInt(counter.html(), 10) - 1);
-                            }
+                            }*/
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                            break;
                         case 'form':
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
