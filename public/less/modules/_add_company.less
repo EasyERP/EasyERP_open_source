@@ -337,8 +337,16 @@
   margin-top: 0 !important;
   width: 100%;
 
+  .buttons {
+    display: none;
+  }
+
   &.active {
     padding: 0 !important;
+
+    .buttons {
+      display: block;
+    }
 
     textarea {
       padding: 10px 22px 15px 10px !important;
@@ -358,6 +366,7 @@
   .current-selected {
     font-weight: bold;
     margin-left: 5px;
+    display: inline-block;
   }
 }
 
@@ -371,5 +380,22 @@
   }
 }
 
+.amountBox {
+  position: relative;
+
+  .amountDollar {
+    position: absolute;
+    left: 11px;
+    top: 7px;
+  }
+
+  input:not([type=checkbox]) {
+    padding-left: 22px !important;
+  }
+}
+
+.assignName {
+  padding-left: 13px;
+}
 
 
