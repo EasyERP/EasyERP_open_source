@@ -4219,6 +4219,9 @@ dl.payrollDateBlock dt {
 .ui-dialog-buttonset {
   border: none !important;
 }
+.task-content {
+  padding: 5px;
+}
 .tasksItemList {
   margin-top: 13px;
 }

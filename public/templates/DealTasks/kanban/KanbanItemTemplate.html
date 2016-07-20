@@ -4,7 +4,7 @@
     </div>
     <div class="task-content">
         <div class="info">
-            <p id="<%=model._id%>"><%=model.description%></p>
+            <p id="<%=model._id%>" class=""><%=model.description%></p>
             <% if (new Date(model.dueDate) < new Date()) { %>
             <h3 class="red">Overdue : </h3>
             <% }else {%>
@@ -21,7 +21,12 @@
 
 
         </div>
-        <div class="sources">
+        <div class="sources tasksItemList">
+            <% if (model.contact) { %>
+            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>" class="tasksItemIcon" title="model.contact.fullName"><img alt=""
+                                                                                                              src="<%=model.contact.imageSrc%>"/> </a>
+            <% }%>
+
             <% if (model.company) { %>
             <a href="<%='/#easyErp/Companies/form/' + model.company._id %>" class="tasksItemIcon" title="model.company.fullName"> <img alt=""
                                                                                                              src="<%=model.company.imageSrc%>"/> </a>
@@ -29,10 +34,7 @@
             <% if (model.deal) { %>
             <a href="<%='/#easyErp/Deals/form/' + model.deal._id %>" class="tasksItemIcon"><i class="fa fa-usd" aria-hidden="true"></i></a>
             <% }%>
-            <% if (model.contact) { %>
-            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>" class="tasksItemIcon" title="model.contact.fullName"><img alt=""
-                                                                                                       src="<%=model.contact.imageSrc%>"/> </a>
-            <% }%>
+
         </div>
 
         <div class="bottom taskSelect">
