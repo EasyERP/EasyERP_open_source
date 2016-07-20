@@ -49,6 +49,8 @@ define([
             var formModel;
             var $thisEl = this.$el;
 
+            App.currentPerson = options.model.get('id');
+
             this.io = App.socket;
             this.mId = CONSTANTS.MID[this.contentType];
             this.formModel = options.model;
@@ -281,6 +283,10 @@ define([
                 newModel[objIndex[0]] = $('#editInput').val();
             }
 
+            //console.log(newModel);
+
+
+
             valid = this.formModel.save(newModel, {
                 headers: {
                     mid: this.mId
@@ -310,7 +316,7 @@ define([
                         }
                     }
 
-                    self.io.emit('editPerson');
+                    //self.io.emit('editPerson');
                     //Backbone.history.fragment = '';
                     //Backbone.history.navigate('#easyErp/Persons/form/' + model.id, {trigger: true});
                 },

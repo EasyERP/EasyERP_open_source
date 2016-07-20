@@ -41,6 +41,8 @@ define([
             this.mId = CONSTANTS.MID[this.contentType];
             _.bindAll(this, 'render');
             this.formModel = options.model;
+
+
             this.formModel.urlRoot = '/Companies';
             this.pageMini = 1;
             this.pageCount = 4;
