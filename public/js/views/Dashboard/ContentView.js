@@ -2104,7 +2104,7 @@ define([
 
             common.getOpportunitiesForChart('date', this.dateRange.winLost, this.dateItem['winLost'], function (data) {
 
-                data = [
+             /*   data = [
                     {
                         "_id"            : {"year": "2016", "mounth": "05", "day": "27"},
                         "wonCount"       : 4,
@@ -2144,7 +2144,7 @@ define([
                         "lostCount"      : 3,
                         "inProgressCount": 1
                     }
-                ];
+                ];*/
 
                 $('#timeBuildingDataFromServer').text('Server response in ' + self.buildTime + ' ms');
 
