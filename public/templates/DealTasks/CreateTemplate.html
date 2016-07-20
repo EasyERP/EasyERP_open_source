@@ -1,18 +1,31 @@
-<div class="form-holder task-create-holder">
+<div class="form-holder task-create-holder newTasksContainer">
     <form method="post" action="" id="createTaskForm" class="form notDialog">
-        <fieldset>
-            <dt><label for="workflowsDd">Stage</label></dt>
-            <dd id="selectWorkflow">
-                <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
-            </dd>
-            <dt><label for="dueDate">Due Date </label></dt>
-            <dd><input class="extrainfo" type="text" name="dueDate" id="dueDate" value="" readonly
-                       placeholder="Date"/></dd>
-            <dt><label>Assigned to</label></dt>
-            <dd>
-                <a id="assignedToDd" class="current-selected" href="javascript:;">Select</a>
-            </dd>
-            <div class="clearfix"></div>
+        <div>
+            <div class="taskTop">
+                <div class="topCell">
+                    <label for="workflowsDd">Stage</label>
+                    <div id="selectWorkflow" class="dataField">
+                        <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <div>
+                        <label for="dueDate">Due Date </label>
+                    </div>
+                    <div class="dataField">
+                        <input class="extrainfo" type="text" name="dueDate" id="dueDate" value="" readonly placeholder="Date"/>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <label>Assigned to</label>
+                    <div class="dataField">
+                        <a id="assignedToDd" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                </div>
+            </div>
+
             <div class="withPaddingLeftProject">
                 <div class="inner">
                     <div class="textarea-wrapper">
@@ -21,30 +34,36 @@
                     </div>
                 </div>
             </div>
-            <div class="half-block left withPaddingRightProject">
+            <div class="withPaddingRightProject">
                 <div class="inner">
 
-                    <dl class="task-info">
+                    <div class="task-info taskBottom">
+                        <div class="topCell">
+                            <label>Contact</label>
+                            <div>
+                                <a id="contactDd" class="current-selected" href="javascript:;">Add Contact</a>
+                            </div>
+                        </div>
 
-                        <dt><label>Contact</label></dt>
-                        <dd>
-                            <a id="contactDd" class="current-selected" href="javascript:;">Add Contact</a>
-                        </dd>
+                        <div class="topCell">
+                            <label>Company</label>
+                            <div>
+                                <a id="companyDd" class="current-selected" href="javascript:;">Add Company</a>
+                            </div>
+                        </div>
 
-                        <dt><label>Company</label></dt>
-                        <dd>
-                            <a id="companyDd" class="current-selected" href="javascript:;">Add Company</a>
-                        </dd>
-                        <dt><label>Deal</label></dt>
-                        <dd>
-                            <a id="dealDd" class="current-selected" href="javascript:;">Add Deal</a>
-                        </dd>
-                        <div class="clearfix"></div>
-                    </dl>
+                        <div class="topCell">
+                            <label>Deal</label>
+                            <div>
+                                <a id="dealDd" class="current-selected" href="javascript:;">Add Deal</a>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <div class="clearfix"></div>
             <div class="attach-container"></div>
-        </fieldset>
+        </div>
     </form>
 </div>
