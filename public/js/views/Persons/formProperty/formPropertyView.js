@@ -25,7 +25,6 @@ define([
             var saveObject = {};
 
             e.preventDefault();
-            this.model = '';
 
             saveObject[this.attribute] = null;
             this.saveDeal(saveObject, 'formProperty');
@@ -33,6 +32,7 @@ define([
 
         initialize: function (options) {
             this.type = options.type;
+            this.data = options.data;
             this.attribute = options.attribute;
             this.parentModel = options.parentModel;
             this.responseObj = options.responseObj || [];
@@ -40,9 +40,8 @@ define([
         },
 
         render: function () {
-            var property = this.model ? this.model.toJSON() : '';
 
-            this.$el.html(_.template(propertyTemplate, {property: property}));
+            this.$el.html(_.template(propertyTemplate, {property: this.data}));
             return this;
         }
     });

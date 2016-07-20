@@ -1,22 +1,21 @@
 define([
     'Backbone',
     'Underscore',
+    'jQuery',
     'text!templates/Opportunities/form/FormTemplate.html',
     'text!templates/Opportunities/workflowProgress.html',
     'views/Editor/NoteView',
     'views/Editor/AttachView',
-    'views/Opportunities/EditView',
     'views/Companies/formPropertyView',
     'views/Persons/formProperty/formPropertyView',
     'views/Tags/TagView',
     'models/CompaniesModel',
-    'models/PersonsModel',
     'constants',
     'dataService',
-    'populate',
-    'constants',
     'views/selectView/selectView'
-], function (Backbone, _, OpportunitiesFormTemplate, workflowProgress, NoteView, AttachView, EditView, CompanyFormProperty, ContactFormProperty, TagView, CompanyModel, PersonsModel, constants, dataService, populate, CONSTANTS, SelectView) {
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, CompanyModel, constants, dataService, SelectView) {
+    'use strict';
+
     var FormOpportunitiesView = Backbone.View.extend({
         el: '#content-holder',
 
@@ -48,7 +47,7 @@ define([
             }
         },
 
-        setChangeValueToModel: function (e){
+        setChangeValueToModel: function (e) {
             var $target = $(e.target);
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
@@ -57,19 +56,21 @@ define([
             this.showButtons();
         },
 
-        showButtons : function (){
+        showButtons: function () {
             this.$el.find('#formBtnBlock').addClass('showButtons');
         },
 
-        hideButtons : function () {
+        hideButtons: function () {
             this.$el.find('#formBtnBlock').removeClass('showButtons');
         },
 
         saveChanges: function (e) {
+            e.preventDefault();
             this.saveDeal(this.modelChanged);
         },
 
-        cancelChanges : function (e) {
+        cancelChanges: function (e) {
+            e.preventDefault();
             this.modelChanged = {};
             this.render();
         },
@@ -108,9 +109,9 @@ define([
             }
             wId = $target.find('span').attr('data-id');
             $tabs.removeClass('passed');
+            $tabs.removeClass('active');
             $target.prevAll().addClass('passed');
-            $target.addClass('passed');
-            $thisEl.find('#statusDd').text($target.text());
+            $target.addClass('active');
             this.saveDeal({workflow: wId});
         },
 
@@ -136,7 +137,7 @@ define([
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else {
-                        self.noteView.renderTimeline();
+                        self.editorView.renderTimeline();
                         self.modelChanged = {};
                         self.hideButtons();
                     }
@@ -152,12 +153,12 @@ define([
             });
         },
 
-        saveTags : function (){
+        saveTags: function () {
             this.saveDeal(this.formModel.changed);
             this.renderTags();
         },
 
-        renderTags : function (){
+        renderTags: function () {
             var notDiv = this.$el.find('.tags-container');
             notDiv.empty();
 
@@ -167,11 +168,6 @@ define([
                     contentType: 'Opportunities'
                 }).render().el
             );
-        },
-
-        editItem: function () {
-            // create editView in dialog here
-            return new EditView({model: this.formModel});
         },
 
         deleteItems: function () {
@@ -219,10 +215,6 @@ define([
                 companyModel = new CompanyModel(formModel.company);
             }
 
-            if (formModel.customer) {
-                contactModel = new PersonsModel(formModel.customer);
-            }
-
             this.formProperty = new CompanyFormProperty({
                 parentModel: this.formModel,
                 model      : companyModel,
@@ -239,19 +231,19 @@ define([
             $thisEl.find('#contactHolder').html(
                 new ContactFormProperty({
                     parentModel: this.formModel,
-                    model      : contactModel,
+                    data       : formModel.customer,
                     attribute  : 'customer',
                     saveDeal   : self.saveDeal
                 }).render().el
             );
 
-            this.noteView = new NoteView({
+            this.editorView = new EditorView({
                 model      : this.formModel,
                 contentType: 'opportunities'
             });
 
             $thisEl.find('.notes').append(
-                this.noteView.render().el
+                this.editorView.render().el
             );
 
             this.$el.find('#nextAction').datepicker({
@@ -259,7 +251,7 @@ define([
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function (dateText) {
-                    self.modelChanged["nextAction.date"] = new Date(dateText);
+                    self.modelChanged['nextAction.date'] = new Date(dateText);
                     self.showButtons();
                 }
 
