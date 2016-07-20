@@ -121,37 +121,7 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                if (fileName) {
-                    switch (osType) {
-                        case 'Windows':
-                            newDirname = __dirname.replace('\\Modules', '');
-                            while (newDirname.indexOf('\\') !== -1) {
-                                newDirname = newDirname.replace('\\', '\/');
-                            }
-                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                            dir = newDirname + '\/uploads\/' + _id;
-                            break;
-                        case 'Linux':
-                            newDirname = __dirname.replace('/Modules', '');
-                            while (newDirname.indexOf('\\') !== -1) {
-                                newDirname = newDirname.replace('\\', '\/');
-                            }
-                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                            dir = newDirname + '\/uploads\/' + _id;
-                    }
-
-                    fs.unlink(path, function (err) {
-                        console.log(err);
-                        fs.readdir(dir, function (err, files) {
-                            if (files && files.length === 0) {
-                                fs.rmdir(dir, function () {
-                                });
-                            }
-                        });
-                    });
-
-                }
-                res.send(200, {success: 'Tasks updated', notes: result.notes, sequence: result.sequence});
+                res.send(200, {success: 'Tasks updated', sequence: result.sequence});
             });
         }
 
@@ -228,7 +198,10 @@ var Module = function (models, event) {
         }
 
         query.find(optionsObject)
-            .select('_id assignedTo deal workflow editedBy.date taskCount sequence dueDate description')
+            .select('_id assignedTo deal company contact workflow editedBy.date taskCount sequence dueDate description')
+            .populate('assignedTo', 'name')
+            .populate('company', 'fullName imageSrc')
+            .populate('contact', 'fullName imageSrc')
             .populate('assignedTo', 'name')
             .populate('workflow', 'name sequence status')
             .populate('deal', 'name')

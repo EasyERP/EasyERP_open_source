@@ -1,6 +1,6 @@
 ﻿define([
     'Backbone',
-    'models/TasksModel',
+    'models/DealTasksModel',
     'constants',
     'collections/parent',
      'common'

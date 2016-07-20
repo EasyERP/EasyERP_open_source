@@ -20,8 +20,8 @@ define([
         responseObj: {},
 
         events: {
-            'click #deadline'      : 'showDatePicker',
-            'click .removeSelect'  : 'removeSelect'
+            'click #deadline'    : 'showDatePicker',
+            'click .removeSelect': 'removeSelect'
         },
 
         initialize: function () {
@@ -31,9 +31,9 @@ define([
             this.responseObj = {};
         },
 
-        removeSelect : function (e){
+        removeSelect: function (e) {
             var $target = $(e.target);
-            var $div =  $target.closest('.selectType');
+            var $div = $target.closest('.selectType');
             $div.find('.showSelect').remove();
             $div.find('a').show();
         },
@@ -94,9 +94,10 @@ define([
                 assignedTo: assignedTo || '',
 
                 description: description,
-                dueDate    : dueDate,
+                dueDate    : dueDate || new Date(),
                 workflow   : workflow
-            }
+            };
+
             if (company) {
                 saveObject.company = company;
                 saveObject.companyDate = new Date();
@@ -128,11 +129,15 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var $div =  $target.closest('div.selectType');
+            var $div = $target.closest('div.selectType');
 
-            if ($div.length){
+            if ($div.length) {
 
-                $div.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text(), imageSrc:  $target.attr('data-img')}));
+                $div.append(_.template(showSelectTemplate, {
+                    id      : $target.attr('id'),
+                    name    : $target.text(),
+                    imageSrc: $target.attr('data-img')
+                }));
                 $div.find('a').hide();
             } else {
                 $target.parents('.dataField').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
@@ -183,8 +188,8 @@ define([
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this, true);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
             populate.get('#dealDd', 'opportunities/getForDd', {isOpportunitie: true}, 'name', this, false);
-            populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'},'fullName', this, false);
-            populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'},'fullName', this, false);
+            populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'}, 'fullName', this, false);
+            populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'}, 'fullName', this, false);
             this.$el.find('#dueDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
