@@ -3,7 +3,7 @@
 <%if (quotation.workflow && quotation.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
 <%}%>>
-<td class="notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox listCB <%=quotation.proformaCounter ? 'notRemovable' : ''%>"  <%if (quotation.proformaCounter) { %>
+<td class="notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox listCB <%=quotation.proformaCounter ? 'notRemovable' : ''%>"  <%if (quotation.proformaCounter) { %>
     disabled='disabled'
     <% } %>/></td>
 <td><%=quotation.project ? quotation.project.name : '-------'%></td>

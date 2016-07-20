@@ -2,7 +2,7 @@
     var notRemovable = project.notRemovable%>
     <tr data-index="<%= index %>" data-id="<%=project._id%>"
         class="stage-<%=(project.workflow) ? project.workflow._id : ''%>">
-        <td class="notForm centerCell">
+        <td class="notForm">
             <input type="checkbox" value="<%=project._id%>"
                    class="checkbox  <%= notRemovable ? 'notRemovable' : ''%>" <%= notRemovable ? disabled='disabled': ''%>/></td>
        <!-- <td class="notForm centerCell <%= notRemovable ? 'notRemovable' : ''%>">

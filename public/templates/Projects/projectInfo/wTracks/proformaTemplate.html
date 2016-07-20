@@ -48,7 +48,7 @@
         <%} else if (invoice.workflow && invoice.workflow.status !== 'New'){ %>
         class="notRemovable"
         <% } %>>
-        <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
+        <td class="notForm"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
                 notRemovable
                 <% } %>"/>
         </td>

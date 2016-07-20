@@ -3609,7 +3609,6 @@ td.checkboxRow {
 }
 .listOpen #content-holder {
   height: 100% !important;
-  overflow: hidden;
 }
 .listOpen .listContentTitle h3 {
   float: left;
@@ -3893,7 +3892,6 @@ td.checkboxRow {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  line-height: 23px;
   font-size: 10px;
 }
 .list2 td {
@@ -4003,7 +4001,6 @@ td.checkboxRow {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  line-height: 23px;
   font-size: 10px;
 }
 .list2 td {
@@ -4152,7 +4149,7 @@ td.checkboxRow {
   width: calc(100% - 200px);
 }
 .template-switcher {
-  margin-top: 5px;
+  margin-top: 6px;
 }
 /************* Main Colors *************/
 /* errors, negativeMoney */
@@ -7950,7 +7947,6 @@ dl dd span.ui-spinner {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  overflow: auto;
 }
 #startLetter {
   margin: 10px 0 -1px;
@@ -10039,7 +10035,6 @@ ul.dialog-tabs li.right button {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  line-height: 23px;
   font-size: 10px;
 }
 .list td {
@@ -14487,7 +14482,7 @@ textarea#editInput {
 }
 #searchContainer {
   position: absolute;
-  top: -35px;
+  top: -40px;
   right: 0;
   width: 35%;
   margin-right: 90px;

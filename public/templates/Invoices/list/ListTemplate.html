@@ -1,6 +1,6 @@
 <% invoiceCollection.forEach(function(Invoice, index){ %>
 <tr data-id="<%=Invoice._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox <%=Invoice.removable ? '' : 'notRemovable'%>"/>
+    <td class="notForm"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox <%=Invoice.removable ? '' : 'notRemovable'%>"/>
 <td><%=(Invoice.supplier) ? Invoice.supplier.name.first + ' ' + Invoice.supplier.name.last : ' - - - '%></td>
 <td><%=Invoice.name%></td>
 <!--<td><%=Invoice.supplierInvoiceNumber%></td>-->
