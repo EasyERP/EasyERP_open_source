@@ -15,9 +15,9 @@
 
 
 
-        <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right"><img class="person"
+        <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right"><img title="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>" class="person"
                                                                                                      src=""
-                                                                                                     alt="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>"/>
+                                                                                                     alt=""/>
 
 
         </div>
