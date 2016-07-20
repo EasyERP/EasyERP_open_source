@@ -34,12 +34,12 @@ define([
         selectedId     : null,
 
         events: {
-            'click .compactView': 'renderFormView',
-            'click .closeBtn'   : 'returnToList'
+            'click .compactView:not(.checkbox)': 'renderFormView',
+            'click .closeBtn'                  : 'returnToList'
         },
 
         initialize: function (options) {
-            var modelId;
+            var modelId = options.modelId;
 
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
@@ -53,7 +53,7 @@ define([
 
             ListViewBase.prototype.initialize.call(this, options);
 
-            modelId = this.collection.at(0).id;
+            //modelId = this.collection.at(0).id;
 
             this.renderFormView(modelId);
         },
@@ -67,6 +67,23 @@ define([
             url = this.listUrl + 'p=' + currentPage + '/c=' + count;
 
             Backbone.history.navigate(url, {trigger: true});
+
+            $('.content_wrapper').removeClass('listOpen');
+        },
+
+        showMoreContent: function (newModels) {
+            var persons = newModels.toJSON();
+            var $holder = this.$el;
+            var $listHolder = $holder.find('#listContent');
+
+            $listHolder.empty();
+
+            $listHolder.append(this.listTemplate({
+                persons: persons
+            }));
+
+            $holder.find('#timeRecivingDataFromServer').remove();
+            $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         renderFormView: function (e) {
@@ -101,7 +118,7 @@ define([
                     $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
                     self.selectedId = model.id;
 
-                    self.changeLocationHash(self.page, self.count, self.filter);
+                    self.changeLocationHash(self.collection.currentPage, self.collection.pageSize, self.filter);
                 },
 
                 error: function () {
@@ -119,7 +136,6 @@ define([
             $currentEl = this.$el;
 
             $currentEl.html(this.contentTemplate());
-            $('.content_wrapper').addClass('listOpen');
             $currentEl.find('#listContent').append(this.listTemplate({
                 persons: persons
             }));
