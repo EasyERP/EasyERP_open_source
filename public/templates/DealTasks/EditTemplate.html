@@ -36,7 +36,7 @@
             <div class="withPaddingRightProject">
                 <div class="inner">
 
-                    <div class="task-info taskBottom">
+                    <div class="taskBottom">
                         <div class="topCell selectType">
                             <label>Contact</label>
                             <div>
@@ -49,7 +49,7 @@
                                          src="<%=model.contact.imageSrc%>"/>
 
                                     <span ><%=model.contact.fullName%></span>
-                                    <button class="removeSelect">X</button>
+                                    <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
                                 </div>
                                 <%} else {%>
                                 <a id="contactDd" class="current-selected" href="javascript:;" >Add Contact</a>
@@ -69,7 +69,7 @@
                                          src="<%=model.company.imageSrc%>"/>
 
                                     <span ><%=model.company.fullName%></span>
-                                    <button class="removeSelect">X</button>
+                                    <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
                                 </div>
                                 <%} else {%>
                                 <a id="companyDd" class="current-selected" href="javascript:;"  >Add Company</a>
@@ -86,7 +86,7 @@
                                 <a id="dealDd" class="current-selected" href="javascript:;" style="display: none">Add Deal</a>
                                 <div class="showSelect" data-id="<%=model.deal._id%>">
                                     <span ><%=model.deal.name%></span>
-                                    <button class="removeSelect">X</button>
+                                    <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
                                 </div>
                                 <%} else {%>
                                 <a id="dealDd" class="current-selected" href="javascript:;">Add Deal</a>
