@@ -3569,6 +3569,11 @@ dl.payrollDateBlock dt {
 .formContentTitle {
   border-left: 1px solid #ededed;
 }
+.formContentTitle #searchContainer {
+  position: static;
+  float: right;
+  margin-right: 10px;
+}
 .formContentTitle .closeBtn {
   float: right;
 }
