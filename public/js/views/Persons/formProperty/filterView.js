@@ -6,7 +6,7 @@ define([
     'text!templates/Persons/formProperty/filterViewContent.html',
     'views/Persons/CreateView',
     'collections/Persons/filterCollection'
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, filterCollection) {
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, FilterCollection) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -25,8 +25,8 @@ define([
 
             this.attribute = options.attribute;
             this.saveDeal = options.saveDeal;
-            this.collection = new filterCollection({type : 'Person'});
-            this.filteredCollection = new filterCollection({type : 'Person'});
+            this.collection = new FilterCollection({type: 'Person'});
+            this.filteredCollection = new FilterCollection({type: 'Person'});
             this.filteredCollection.unbind();
             this.filteredCollection.bind('reset', resetCollection);
 
@@ -51,8 +51,8 @@ define([
         },
 
         events: {
-            'click li'         : 'changeSelected',
-            'click #newPerson' : 'createCustomer'
+            'click li'        : 'changeSelected',
+            'click #newPerson': 'createCustomer'
         },
 
         filterCollection: function (value) {
@@ -98,21 +98,20 @@ define([
         render: function () {
             var self = this;
 
-            var formString = this.template({
-                type: this.type
-            });
+            var formString = this.template();
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
                 position     : {
-                    at: "top+35%"
+                    at: 'top+35%'
                 },
-                dialogClass  : 'tag-list-dialog',
-                title        : 'Tag List',
-                width        : '300px',
-                buttons      : [
+
+                dialogClass: 'tag-list-dialog',
+                title      : 'Tag List',
+                width      : '300px',
+                buttons    : [
                     {
                         class: 'exitButton',
                         click: function () {

@@ -3960,23 +3960,23 @@ dl.payrollDateBlock dt {
   outline: none;
   width: 100%;
 }
-.ui-dialog .tagsDropDown ul {
+.ui-dialog .dropDownList ul {
   max-height: 191px;
   overflow-y: auto;
 }
-.ui-dialog .tagsDropDown li {
+.ui-dialog .dropDownList li {
   padding: 8px 12px;
   cursor: pointer;
   margin-bottom: 5px !important;
 }
-.ui-dialog .tagsDropDown li:hover {
+.ui-dialog .dropDownList li:hover {
   background: #f2f2f2;
 }
-.ui-dialog .tagsDropDown span {
+.ui-dialog .dropDownList span {
   display: block;
   font-size: 12px;
 }
-.ui-dialog .tagsDropDown .propertyNameList {
+.ui-dialog .dropDownList .propertyNameList {
   color: #000000;
   margin-bottom: 5px;
 }

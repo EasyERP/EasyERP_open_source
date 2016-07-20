@@ -193,7 +193,7 @@ define([
 
                                 self.$el.find('.attachFile_' + id).remove();
                                 othersAttaches = self.$el.find('.attachContainer li').length;
-                                
+
                                 if (!othersAttaches){
                                     self.$el.find('.input-file').removeClass('smallBtn');
                                 }

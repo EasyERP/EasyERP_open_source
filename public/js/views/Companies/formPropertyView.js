@@ -72,10 +72,8 @@ define([
         },
 
         initialize: function (options) {
-            this.type = options.type;
             this.attribute = options.attribute;
             this.parentModel = options.parentModel;
-            this.responseObj = options.responseObj || [];
             this.saveDeal = options.saveDeal;
         },
 

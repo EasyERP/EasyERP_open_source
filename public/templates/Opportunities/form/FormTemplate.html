@@ -15,6 +15,12 @@
                         <h3>About </h3>
                     </div>
                     <div class="person-info">
+                        <div class="propertyFormList">
+                            <label>Name</label>
+                            <div  class="inputBox">
+                                <span><%=nextAction.date%></span>
+                            </div>
+                        </div>
 
                         <div class="propertyFormList">
                             <label>Assigned To</label>
@@ -23,15 +29,9 @@
                             </div>
                         </div>
                         <div class="propertyFormList">
-                            <label>Next Action</label>
+                            <label>Close Date</label>
                             <div  class="inputBox">
                                 <span><%=(nextAction && nextAction.date) ? nextAction.date : ''%></span>
-                            </div>
-                        </div>
-                        <div class="propertyFormList">
-                            <label>Status</label>
-                            <div  class="inputBox">
-                                <span  id="statusDd"><%=(workflow) ? workflow.name : ''%></span>
                             </div>
                         </div>
                     </div>

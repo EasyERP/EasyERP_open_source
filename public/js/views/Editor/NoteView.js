@@ -230,7 +230,7 @@ define([
             target.closest('.chart-tabs').find('a.active').removeClass('active');
             $aEllement.addClass('active');
             n = target.parents('.chart-tabs').find('li').index($aEllement.parent());
-            dialogHolder = $('.dialog-tabs-items');
+            dialogHolder = this.$el.find('.dialog-tabs-items');
             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
             dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
         },
