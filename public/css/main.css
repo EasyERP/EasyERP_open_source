@@ -4109,6 +4109,9 @@ dl.payrollDateBlock dt {
 .assignName {
   padding-left: 13px;
 }
+.ui-datepicker {
+  min-width: 175px;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -10657,6 +10660,7 @@ ul.dialog-tabs li.right button {
   display: none;
 }
 .ui-datepicker {
+  min-width: 175px;
   padding: .2em .2em 0;
   background-color: #ffffff;
 }
