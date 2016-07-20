@@ -507,7 +507,7 @@ define([
                 stage   : this.dateItem.leadsByName
             }, function (data) {
 
-                data = data.assignedTo;
+                data = data.salesByDate;
 
                 for (i = data.length; i--;) {
 
