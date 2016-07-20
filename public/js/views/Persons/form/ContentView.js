@@ -72,6 +72,7 @@ define([
                 url += '/filter=' + filter;
             }
 
+            $('#top-bar').removeClass('position');
             Backbone.history.navigate(url, {trigger: true});
         },
 
