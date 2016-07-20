@@ -1,8 +1,11 @@
 <div class="showSelect" data-id="<%=id%>">
     <%if (imageSrc) {%>
-    <img alt=""
-         src="<%=imageSrc%>"/>
+    <div class="imgContainer">
+        <img alt=""  src="<%=imageSrc%>"/>
+    </div>
     <%}%>
-    <span ><%=name%></span>
-    <button class="removeSelect">X</button>
+    <div class="bodyContainer">
+        <span ><%=name%></span>
+    </div>
+    <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
 </div>

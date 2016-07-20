@@ -4118,22 +4118,25 @@ dl.payrollDateBlock dt {
 .newTasksContainer .taskTitle {
   font-size: 23px;
   padding-left: 26px;
+  margin-bottom: 25px;
 }
 .newTasksContainer .taskTop,
 .newTasksContainer .taskBottom {
-  display: table;
   width: 100%;
   margin-bottom: 25px;
   border-bottom: 1px solid #c8c8d3;
+  font-size: 0;
 }
 .newTasksContainer .taskBottom {
   border-top: 1px solid #c8c8d3;
   margin-top: 30px;
 }
 .newTasksContainer .topCell {
-  display: table-cell;
+  display: inline-block;
+  vertical-align: middle;
   width: 33%;
   padding: 15px;
+  font-size: 14px;
 }
 .newTasksContainer .topCell + .topCell {
   border-left: 1px solid #c8c8d3;
@@ -4148,6 +4151,7 @@ dl.payrollDateBlock dt {
   line-height: 38px !important;
   padding-left: 10px;
   cursor: pointer;
+  color: #000000;
 }
 .newTasksContainer .topCell .hasDatepicker:hover,
 .newTasksContainer .topCell .current-selected:hover {
@@ -4155,6 +4159,51 @@ dl.payrollDateBlock dt {
 }
 .newTasksContainer .taskDescriptionCreate {
   padding: 15px;
+}
+.newTasksContainer .showSelect {
+  position: relative;
+  display: table;
+  width: 100%;
+  min-height: 40px;
+  margin-top: 10px;
+}
+.newTasksContainer .showSelect .imgContainer,
+.newTasksContainer .showSelect .bodyContainer {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 14px;
+}
+.newTasksContainer .showSelect .imgContainer {
+  max-width: 55px;
+}
+.newTasksContainer .showSelect .imgContainer img {
+  width: 40px;
+  margin-right: 15px;
+}
+.newTasksContainer .showSelect .imgContainer + .bodyContainer span {
+  display: block;
+  width: 90px;
+  overflow: hidden;
+  padding: 2px 0;
+}
+.newTasksContainer .showSelect .bodyContainer {
+  padding-right: 5px;
+}
+.newTasksContainer .showSelect .removeSelect {
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  width: 25px;
+  height: 25px;
+  border: none;
+  padding: 3px !important;
+  line-height: 13px !important;
+  transform: translate(0, -50%);
+  background: none;
+}
+.newTasksContainer .showSelect .removeSelect:hover {
+  background: none;
+  color: #c8c8d3;
 }
 .ui-dialog-buttonset {
   border: none !important;
