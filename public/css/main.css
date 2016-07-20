@@ -3678,10 +3678,39 @@ td.checkboxRow {
   z-index: 1;
 }
 .dropDown ul li {
-  padding: 5px 10px;
+  position: relative;
+  min-width: 125px;
+  padding: 8px 22px 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 .dropDown ul li:nth-child(n+2) {
   border-top: 1px solid #bebebe;
+}
+.dropDown ul li:hover {
+  background-color: #f0f0f0;
+}
+.dropDown ul li.sortDn,
+.dropDown ul li.sortUp {
+  background-color: #7eadcc;
+  color: #fff;
+}
+.dropDown ul li.sortDn .fa-caret-down {
+  color: #2b3643;
+}
+.dropDown ul li.sortUp .fa-caret-up {
+  color: #2b3643;
+}
+.dropDown ul li .fa-caret-up,
+.dropDown ul li .fa-caret-down {
+  position: absolute;
+  right: 5px;
+}
+.dropDown ul li .fa-caret-up {
+  top: 0;
+}
+.dropDown ul li .fa-caret-down {
+  bottom: 0;
 }
 .dropDown.open ul {
   display: block;
