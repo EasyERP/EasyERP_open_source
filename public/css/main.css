@@ -4221,6 +4221,13 @@ dl.payrollDateBlock dt {
 }
 .task-content {
   padding: 5px;
+  color: #000000;
+}
+.task-content .taskContentTitle {
+  margin-bottom: 10px;
+}
+.task-content .dateLabel {
+  font-size: 13px;
 }
 .tasksItemList {
   margin-top: 13px;
