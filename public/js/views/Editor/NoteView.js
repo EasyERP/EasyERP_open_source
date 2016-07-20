@@ -27,7 +27,7 @@ define([
         },
 
         events: {
-            'click #noteArea'                                  : 'expandNote',
+            'click #noteArea, #taskArea'                       : 'expandNote',
             'click .cancelNote, #cancelTask'                   : 'cancelNote',
             'click #addNote, .saveNote'                        : 'saveNote',
             'click .contentHolder'                             : 'showButtons',
@@ -56,9 +56,9 @@ define([
 
         expandNote: function (e) {
             var $target = $(e.target);
-            if (!$target.parents('.addNote').hasClass('active')) {
-                $target.attr('placeholder', '').parents('.addNote').addClass('active');
-                /*  this.$el.find('.addTitle').show();*/
+            var createHolder = $target.parents('.createHolder');
+            if (!createHolder.hasClass('active')) {
+                createHolder.addClass('active');
             }
         },
 
@@ -105,6 +105,7 @@ define([
                     self.model.fetch({
                         success: function () {
                             $thisEl.find('#taskArea').val('');
+                            $thisEl.find('.createHolder').removeClass('active');
                             self.renderTimeline();
                         }
                     });
@@ -237,19 +238,16 @@ define([
 
         cancelNote: function (e) {
             var $target = $(e.target);
+            var $addNote =  $target.closest('.addNote');
             var contentHolder = $target.closest('.noteContainer');
             if (contentHolder.length) {
                 contentHolder.find('.contentHolder').show();
                 contentHolder.find('.contentHolder').removeClass('showButtons');
-                $target.closest('.addNote').remove();
+                $addNote.remove();
             } else {
-                $target.parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
-                $target.parents('.addNote').find('#noteArea').val('');
+                $addNote.find('#noteArea').val('');
+                $target.parents('.createHolder').removeClass('active');
                 $target.parents('.addTask').find('#taskArea').val('');
-                /* this.$el.find('.title-wrapper').hide();*/
-                /* this.$el.find('.addTitle').hide();*/
-                this.$el.find('#noteArea').val('');
-                /*this.$el.find('#noteTitleArea').val('');*/
             }
 
         },
