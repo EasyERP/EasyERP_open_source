@@ -3571,6 +3571,8 @@ dl.payrollDateBlock dt {
 }
 .formContentTitle #searchContainer {
   position: relative;
+  top: auto;
+  right: auto;
   float: right;
   margin-right: 10px;
 }
