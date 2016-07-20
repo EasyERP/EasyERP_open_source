@@ -3771,7 +3771,7 @@ dl.payrollDateBlock dt {
   padding: 10px 15px 0;
 }
 .noteContainer .dateNote {
-  line-height: 14px;
+  line-height: 11px;
   min-height: 15px;
 }
 .noteContainer .singleNote {
@@ -3918,6 +3918,7 @@ dl.payrollDateBlock dt {
   height: auto;
   color: #000000;
   font-size: 16px;
+  border-radius: 3px;
 }
 .attachWrapper .input-file:hover,
 .selectCompany .input-file:hover {
@@ -3949,14 +3950,20 @@ dl.payrollDateBlock dt {
   height: 100% !important;
   max-width: 100% !important;
 }
-.ui-dialog .ui-dialog-content.addCompany {
+.ui-dialog .ui-dialog-content.opportunitiesModal {
   padding: 20px 20px 40px;
 }
-.ui-dialog .ui-dialog-content.addCompany .tagsTitle {
+.ui-dialog .ui-dialog-content.opportunitiesModal .tagsTitle {
   border-bottom: none;
   text-align: left;
 }
-.ui-dialog .ui-dialog-content.addCompany input.searchTagInput {
+.ui-dialog .ui-dialog-content.opportunitiesModal h2.tagsTitle {
+  font-size: 18px;
+}
+.ui-dialog .ui-dialog-content.opportunitiesModal h4.tagsTitle {
+  font-size: 13px;
+}
+.ui-dialog .ui-dialog-content.opportunitiesModal input.searchTagInput {
   outline: none;
   width: 100%;
 }
@@ -4020,6 +4027,65 @@ dl.payrollDateBlock dt {
 .attachments {
   margin-bottom: 20px;
 }
+.largeBtn {
+  width: 100%;
+  padding: 14px 20px !important;
+  height: auto;
+  color: #000000;
+  font-size: 16px !important;
+  border-radius: 3px;
+}
+.largeBtn:hover {
+  background: #f2f2f2;
+  text-decoration: none;
+}
+.largeBtn i {
+  margin-right: 5px;
+  font-size: 12px;
+}
+.area_holder {
+  position: relative;
+  margin-top: 15px;
+}
+.area_holder textarea {
+  padding: 10px !important;
+}
+.area_holder .attach_file {
+  position: absolute;
+  right: 15px !important;
+  bottom: 10px !important;
+  font-size: 18px;
+}
+.addNote,
+.addTask {
+  margin-top: 0 !important;
+  width: 100%;
+}
+.addNote.active,
+.addTask.active {
+  padding: 0 !important;
+}
+.addNote.active textarea,
+.addTask.active textarea {
+  padding: 10px 22px 15px 10px !important;
+}
+.addTask .hasDatepicker {
+  float: right;
+  border: none !important;
+  text-align: right;
+  cursor: pointer;
+  margin-top: 8px !important;
+}
+.addTask .current-selected {
+  font-weight: bold;
+  margin-left: 5px;
+}
+.noteWrapper .buttons {
+  margin-top: 10px !important;
+}
+.noteWrapper .buttons .btn + .btn {
+  margin-left: 10px;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -4074,8 +4140,16 @@ dl.payrollDateBlock dt {
   color: #ffffff;
   border-color: transparent;
 }
+.btnSave span,
+.btnSave a {
+  color: #ffffff;
+}
 .btnSave:hover {
   background: #2d82b4;
+}
+.btnSave:hover span,
+.btnSave:hover a {
+  color: #ffffff;
 }
 /*== Begin Input type number =============*/
 .ui-spinner {

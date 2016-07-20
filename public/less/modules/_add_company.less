@@ -160,6 +160,7 @@
     height: auto;
     color: @black;
     font-size: 16px;
+    border-radius: 3px;
 
     &:hover {
       background: @lightgray-3;
@@ -195,12 +196,20 @@
 }
 
 .ui-dialog {
-  .ui-dialog-content.addCompany {
+  .ui-dialog-content.opportunitiesModal {
     padding: 20px 20px 40px;
 
     .tagsTitle {
       border-bottom: none;
       text-align: left;
+    }
+
+    h2.tagsTitle {
+      font-size: 18px;
+    }
+
+    h4.tagsTitle {
+      font-size: 13px;
     }
 
     input.searchTagInput {
@@ -287,3 +296,80 @@
 .attachments {
   margin-bottom: 20px;
 }
+
+.largeBtn {
+  width: 100%;
+  padding: 14px 20px !important;
+  height: auto;
+  color: @black;
+  font-size: 16px !important;
+  border-radius: 3px;
+
+  &:hover {
+    background: @lightgray-3;
+    text-decoration: none;
+  }
+
+  i {
+    margin-right: 5px;
+    font-size: 12px;
+  }
+}
+
+.area_holder {
+  position: relative;
+  margin-top: 15px;
+
+  textarea {
+    padding: 10px !important;
+  }
+
+  .attach_file {
+    position: absolute;
+    right: 15px !important;
+    bottom: 10px !important;
+    font-size: 18px;
+  }
+}
+
+.addNote,
+.addTask {
+  margin-top: 0 !important;
+  width: 100%;
+
+  &.active {
+    padding: 0 !important;
+
+    textarea {
+      padding: 10px 22px 15px 10px !important;
+    }
+  }
+}
+
+.addTask {
+  .hasDatepicker {
+    float: right;
+    border: none !important;
+    text-align: right;
+    cursor: pointer;
+    margin-top: 8px !important;
+  }
+
+  .current-selected {
+    font-weight: bold;
+    margin-left: 5px;
+  }
+}
+
+.noteWrapper  {
+  .buttons {
+    margin-top: 10px !important;
+
+    .btn + .btn {
+      margin-left: 10px;
+    }
+  }
+}
+
+
+
