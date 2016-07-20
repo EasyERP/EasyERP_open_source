@@ -3570,7 +3570,7 @@ dl.payrollDateBlock dt {
   border-left: 1px solid #ededed;
 }
 .formContentTitle #searchContainer {
-  position: static;
+  position: relative;
   float: right;
   margin-right: 10px;
 }
