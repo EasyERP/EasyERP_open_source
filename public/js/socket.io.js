@@ -74,16 +74,8 @@ define([
         var currentUserId = App.currentUser._id;
         var personId = App.currentPerson;
 
-        /*console.log('personIdServer=> ', personIdServer);
-        console.log('currentUserIdServer=> ', currentUserIdServer);
-        console.log('currentUserId=> ', currentUserId);
-        console.log('personId=> ', personId);
-        console.log('APP=> ', App);*/
-
-        if ((fragment && fragment.indexOf('Persons') !== -1) && (personIdServer === personId))  {
-            if (currentUserIdServer !== currentUserId) {
+        if (((fragment && fragment.indexOf('Persons') !== -1) && (personIdServer === personId)) && (currentUserIdServer !== currentUserId))  {
                 App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
-            }
         }
 
         //custom.removeFromCash('projectInfo');
