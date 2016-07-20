@@ -7,12 +7,11 @@ define([
     'text!templates/Editor/editNote.html',
     'models/DealTasksModel',
     'views/DealTasks/EditView',
-    'views/Editor/AttachView',
     'views/selectView/selectView',
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, AttachView, SelectView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, SelectView, moment, populate, CONSTANTS) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -105,7 +104,7 @@ define([
 
             model.save(saveObject, {
                 wait   : true,
-                success: function (model, res) {
+                success: function () {
                     self.model.fetch({
                         success: function () {
                             $thisEl.find('#taskArea').val('');
@@ -253,7 +252,6 @@ define([
                 $target.parents('.createHolder').removeClass('active');
                 $target.parents('.addTask').find('#taskArea').val('');
             }
-
         },
 
         saveNote: function (e) {
@@ -328,7 +326,7 @@ define([
                         },
                         patch  : true,
                         wait   : true,
-                        success: function (models, data) {
+                        success: function () {
                             var formLeftColumn = self.$el.find('.formLeftColumn');
                             var noteWrapper = formLeftColumn.find('.noteWrapper');
 

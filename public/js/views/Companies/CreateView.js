@@ -173,7 +173,7 @@ define([
 
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            this.renderAssignees(this.currentModel);
+           /* this.renderAssignees(this.currentModel);*/
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({

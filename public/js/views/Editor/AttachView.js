@@ -3,9 +3,8 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Editor/AttachTemplate.html',
-    'text!templates/Editor/AddAttachments.html',
     'moment'
-], function (Backbone, $, _, AttachTemplate, addAttachTemplate, moment) {
+], function (Backbone, $, _, AttachTemplate, moment) {
     var AttachView = Backbone.View.extend({
 
         initialize: function (options) {

@@ -176,7 +176,7 @@ define([
             });
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            this.renderAssignees(personModel);
+            /*this.renderAssignees(personModel);*/
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({
