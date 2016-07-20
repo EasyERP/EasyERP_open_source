@@ -8,9 +8,9 @@
         data-level="<%= item.level%>" data-fullname="<%= item.fullName%>"
         data-status="<%= item.status?item.status.replace(' ','').toLowerCase():''%>"
         <% if (item.imageSrc) { %>
-        data-img="<%= item.imageSrc%>">
+        data-img="<%= item.imageSrc%>"
         <% } %>
-        <%= item.name %>
+    ><%= item.name %>
     </li>
     <% }) %>
 
