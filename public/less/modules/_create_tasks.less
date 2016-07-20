@@ -1,12 +1,22 @@
 .newTasksContainer {
   padding-top: 30px;
 
+  .taskTitle {
+    font-size: 23px;
+    padding-left: 26px;
+  }
+
   .taskTop,
   .taskBottom {
     display: table;
     width: 100%;
     margin-bottom: 25px;
     border-bottom: 1px solid @lightgrey;
+  }
+
+  .taskBottom {
+    border-top: 1px solid @lightgrey;
+    margin-top: 30px;
   }
 
   .topCell {
@@ -33,5 +43,9 @@
         text-decoration: none;
       }
     }
+  }
+
+  .taskDescriptionCreate {
+    padding: 15px;
   }
 }

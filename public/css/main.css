@@ -4115,12 +4115,20 @@ dl.payrollDateBlock dt {
 .newTasksContainer {
   padding-top: 30px;
 }
+.newTasksContainer .taskTitle {
+  font-size: 23px;
+  padding-left: 26px;
+}
 .newTasksContainer .taskTop,
 .newTasksContainer .taskBottom {
   display: table;
   width: 100%;
   margin-bottom: 25px;
   border-bottom: 1px solid #c8c8d3;
+}
+.newTasksContainer .taskBottom {
+  border-top: 1px solid #c8c8d3;
+  margin-top: 30px;
 }
 .newTasksContainer .topCell {
   display: table-cell;
@@ -4144,6 +4152,9 @@ dl.payrollDateBlock dt {
 .newTasksContainer .topCell .hasDatepicker:hover,
 .newTasksContainer .topCell .current-selected:hover {
   text-decoration: none;
+}
+.newTasksContainer .taskDescriptionCreate {
+  padding: 15px;
 }
 .btn {
   border: 1px solid #7f7f80;
