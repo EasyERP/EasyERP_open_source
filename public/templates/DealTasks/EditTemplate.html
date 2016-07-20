@@ -45,10 +45,13 @@
                                 <a id="contactDd" class="current-selected" href="javascript:;" style="display: none">Add Contact</a>
                                 <div class="showSelect" data-id="<%=model.contact._id%>">
 
-                                    <img alt=""
-                                         src="<%=model.contact.imageSrc%>"/>
+                                    <div class="imgContainer">
+                                        <img alt="company" title="company" src="<%=model.contact.imageSrc%>"/>
+                                    </div>
 
-                                    <span ><%=model.contact.fullName%></span>
+                                    <div class="bodyContainer">
+                                        <span ><%=model.contact.fullName%></span>
+                                    </div>
                                     <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
                                 </div>
                                 <%} else {%>
@@ -65,10 +68,13 @@
                                 <a id="companyDd" class="current-selected" href="javascript:;"  style="display: none">Add Company</a>
                                 <div class="showSelect" data-id="<%=model.company._id%>">
 
-                                    <img alt=""
-                                         src="<%=model.company.imageSrc%>"/>
+                                    <div class="imgContainer">
+                                        <img alt="company" title="company"  src="<%=model.company.imageSrc%>"/>
+                                    </div>
 
-                                    <span ><%=model.company.fullName%></span>
+                                    <div class="bodyContainer">
+                                        <span ><%=model.company.fullName%></span>
+                                    </div>
                                     <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
                                 </div>
                                 <%} else {%>

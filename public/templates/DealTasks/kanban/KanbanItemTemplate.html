@@ -21,15 +21,15 @@
 
 
         </div>
-        <div class="sources">
+        <div class="sources tasksItemList">
             <% if (model.company) { %>
-            <a href="<%='/#easyErp/Companies/form/' + model.company._id %>"><i></i> </a>
+            <a href="<%='/#easyErp/Companies/form/' + model.company._id %>" class="tasksItemIcon"><i></i> </a>
             <% }%>
             <% if (model.deal) { %>
-            <a href="<%='/#easyErp/Deals/form/' + model.deal._id %>"><i></i> </a>
+            <a href="<%='/#easyErp/Deals/form/' + model.deal._id %>" class="tasksItemIcon"><i class="fa fa-usd" aria-hidden="true"></i></a>
             <% }%>
             <% if (model.contact) { %>
-            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>"><i></i> </a>
+            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>" class="tasksItemIcon"><i></i> </a>
             <% }%>
         </div>
 
