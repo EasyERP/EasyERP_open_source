@@ -60,10 +60,11 @@ define([
         },
 
         openSortDrop: function (e) {
-            e.preventDefault();
             var $target = $(e.target);
 
-            $target.closest('.dropDown').addClass('open');
+            e.preventDefault();
+
+            $target.closest('.dropDown').toggleClass('open');
         },
 
         returnToList: function (e) {
@@ -80,14 +81,12 @@ define([
                 url += '/filter=' + filter;
             }
 
-            $('#top-bar').removeClass('position');
             Backbone.history.navigate(url, {trigger: true});
         },
 
         goSort: function (e) {
-            var newRows = this.$el.find('#false');
             var filter = this.filter || {};
-            var target$;
+            var $target;
             var currentParrentSortClass;
             var sortClass;
             var sortConst;
@@ -97,35 +96,27 @@ define([
 
             this.startTime = new Date();
 
-            if ((this.changed && this.changedModels && Object.keys(this.changedModels).length) ||
-                (this.isNewRow ? this.isNewRow() : newRows.length)) {
-                return App.render({
-                    type   : 'notify',
-                    message: 'Please, save previous changes or cancel them!'
-                });
-            }
-
-            target$ = $(e.target).closest('th');
-            currentParrentSortClass = target$.attr('class');
+            $target = $(e.target).closest('li');
+            currentParrentSortClass = $target.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
             sortConst = 1;
-            sortBy = target$.data('sort').split(' ');
+            sortBy = $target.data('sort').split(' ');
             sortObject = {};
 
             if (!sortClass) {
-                target$.addClass('sortUp');
+                $target.addClass('sortUp');
                 sortClass = 'sortUp';
             }
 
             switch (sortClass) {
                 case 'sortDn':
-                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-                    target$.removeClass('sortDn').addClass('sortUp');
+                    $target.parent().find('li').removeClass('sortDn').removeClass('sortUp');
+                    $target.removeClass('sortDn').addClass('sortUp');
                     sortConst = 1;
                     break;
                 case 'sortUp':
-                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-                    target$.removeClass('sortUp').addClass('sortDn');
+                    $target.parent().find('li').removeClass('sortDn').removeClass('sortUp');
+                    $target.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
                     break;
                 // skip default case
@@ -178,6 +169,7 @@ define([
             var modelId;
             var model;
             var self = this;
+            var date = new Date();
 
             if (e.hasOwnProperty('target')) {
                 $target = $(e.target);
@@ -205,6 +197,8 @@ define([
                     self.selectedId = model.id;
 
                     self.changeLocationHash(self.collection.currentPage, self.collection.pageSize, self.filter);
+                    $thisEl.find('#timeRecivingDataFromServer').remove();
+                    $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
                 },
 
                 error: function (xhr, model) {

@@ -1966,9 +1966,7 @@ body {
   color: white;
 }
 .pagination {
-  width: 100%;
-  margin-top: 5px;
-  float: right;
+  margin: 5px 10px 10px;
 }
 .pagination > div {
   float: left;
@@ -2147,6 +2145,16 @@ body {
   background-color: #3e88b9;
   color: white;
   text-decoration: none;
+}
+.pagination + #timeRecivingDataFromServer {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 .nextPrev button {
   position: relative;
@@ -3566,17 +3574,17 @@ dl.payrollDateBlock dt {
 .listContentTitle #createBtnHolder .fa {
   margin-right: 0;
 }
-.formContentTitle {
+.content-holder .formContentTitle {
   border-left: 1px solid #ededed;
 }
-.formContentTitle #searchContainer {
+.content-holder .formContentTitle #searchContainer {
   position: relative;
   top: auto;
   right: auto;
   float: right;
   margin-right: 10px;
 }
-.formContentTitle .closeBtn {
+.content-holder .formContentTitle .closeBtn {
   float: right;
 }
 .compactRowWrap {
@@ -3670,10 +3678,39 @@ td.checkboxRow {
   z-index: 1;
 }
 .dropDown ul li {
-  padding: 5px 10px;
+  position: relative;
+  min-width: 125px;
+  padding: 8px 22px 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 .dropDown ul li:nth-child(n+2) {
   border-top: 1px solid #bebebe;
+}
+.dropDown ul li:hover {
+  background-color: #f0f0f0;
+}
+.dropDown ul li.sortDn,
+.dropDown ul li.sortUp {
+  background-color: #7eadcc;
+  color: #fff;
+}
+.dropDown ul li.sortDn .fa-caret-down {
+  color: #2b3643;
+}
+.dropDown ul li.sortUp .fa-caret-up {
+  color: #2b3643;
+}
+.dropDown ul li .fa-caret-up,
+.dropDown ul li .fa-caret-down {
+  position: absolute;
+  right: 5px;
+}
+.dropDown ul li .fa-caret-up {
+  top: 0;
+}
+.dropDown ul li .fa-caret-down {
+  bottom: 0;
 }
 .dropDown.open ul {
   display: block;
@@ -7989,7 +8026,6 @@ dl dd span.ui-spinner {
 }
 #wrapper #content-holder {
   position: relative;
-  height: calc(100% - 50px);
   width: 100%;
   display: -webkit-box;
   display: -moz-box;
@@ -8003,6 +8039,8 @@ dl dd span.ui-spinner {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 #startLetter {
   margin: 10px 0 -1px;
@@ -11556,7 +11594,6 @@ ul.dialog-tabs li.right button {
   clear: both;
   text-align: center;
   color: #000000;
-  margin-top: -15px;
 }
 .tabs-items {
   margin-bottom: -29px;

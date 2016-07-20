@@ -1362,20 +1362,21 @@ dl.payrollDateBlock {
     }
   }
 }
+.content-holder {
+  .formContentTitle {
+    border-left: 1px solid #ededed;
 
-.formContentTitle {
-  border-left: 1px solid #ededed;
+    #searchContainer {
+      position: relative;
+      top: auto;
+      right: auto;
+      float: right;
+      margin-right: 10px;
+    }
 
-  #searchContainer {
-    position: relative;
-    top: auto;
-    right: auto;
-    float: right;
-    margin-right: 10px;
-  }
-
-  .closeBtn {
-    float: right;
+    .closeBtn {
+      float: right;
+    }
   }
 }
 
@@ -1502,12 +1503,53 @@ td.checkboxRow {
     border: 1px solid #bebebe;
     z-index: 1;
     li {
-      padding: 5px 10px;
+      position: relative;
+      min-width: 125px;
+      padding: 8px 22px 8px 12px;
+      cursor: pointer;
+
+      transition: background-color .2s ease;
+
       &:nth-child(n+2) {
         border-top: 1px solid #bebebe;
       }
+
+      &:hover {
+        background-color: #f0f0f0;
+      }
+
+      &.sortDn,
+      &.sortUp {
+        background-color: #7eadcc;
+        color: #fff;
+      }
+      &.sortDn {
+        .fa-caret-down {
+          color: #2b3643;
+        }
+      }
+      &.sortUp {
+        .fa-caret-up {
+          color: #2b3643;
+        }
+      }
+
+      .fa-caret-up,
+      .fa-caret-down {
+        position: absolute;
+        right: 5px;
+      }
+
+      .fa-caret-up {
+        top: 0;
+      }
+
+      .fa-caret-down {
+        bottom: 0;
+      }
     }
   }
+  
   &.open {
     ul {
       display: block;

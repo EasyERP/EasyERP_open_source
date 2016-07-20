@@ -2906,7 +2906,6 @@ dl {
 
   #content-holder {
     position: relative;
-    height: calc(~"100% - 50px");
     width: 100%;
     display: -webkit-box;
     display: -moz-box;
@@ -2920,6 +2919,8 @@ dl {
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
     //overflow: auto;
   }
 }
@@ -3968,12 +3969,6 @@ ul.dialog-tabs {
   clear: both;
   text-align: center;
   color: @mainText-color;
-  margin-top: -15px;
-
-  //position: absolute;
-  //bottom: 0;
-  //left: 50%;
-  //transform: translateX(-50%);
 }
 
 .tabs-items {
