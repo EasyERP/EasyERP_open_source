@@ -16,7 +16,7 @@ define([
                  content.responseObj[id].push({_id: "", name: "Select"});
                  }*/
                 content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
-                    return {_id: item._id, name: item[field], level: item.projectShortDesc || "", chartAccount: item.chartAccount || null, currency: item.currency || null};
+                    return {_id: item._id, name: item[field], level: item.projectShortDesc || "", imageSrc: item.imageSrc || "", chartAccount: item.chartAccount || null, currency: item.currency || null};
                 }));
 
                 if (isCreate) {

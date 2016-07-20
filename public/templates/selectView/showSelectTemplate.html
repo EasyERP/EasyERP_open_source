@@ -1,4 +1,8 @@
 <div class="showSelect" data-id="<%=id%>">
+    <%if (imageSrc) {%>
+    <img alt=""
+         src="<%=imageSrc%>"/>
+    <%}%>
     <span ><%=name%></span>
     <button class="removeSelect">X</button>
 </div>

@@ -22,18 +22,17 @@
                                 <input class="editable dealTitlePrice" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span class="amountDollar"> <%=expectedRevenue.currency%></span>
                             </div>
                         </div>
-
-                        <div class="propertyFormList">
-                            <label>Assigned To</label>
-                            <div  class="inputBox">
-                                <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
-                            </div>
-                        </div>
                         <div class="propertyFormList">
                             <label>Close Date</label>
                             <div  class="inputBox">
                                 <input class="extrainfo" type="text" name="Close Date" id="nextAction" value="<%=(nextAction && nextAction.date) ? nextAction.date : ''%>"
                                        readonly="">
+                            </div>
+                        </div>
+                        <div class="propertyFormList">
+                            <label>Assigned To</label>
+                            <div  class="inputBox">
+                                <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
                             </div>
                         </div>
                     </div>

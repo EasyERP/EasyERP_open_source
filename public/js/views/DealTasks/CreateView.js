@@ -21,7 +21,6 @@ define([
 
         events: {
             'click #deadline'      : 'showDatePicker',
-            'click #deadline'      : 'showDatePicker',
             'change #workflowNames': 'changeWorkflows',
             'click .removeSelect'  : 'removeSelect'
         },
@@ -143,7 +142,7 @@ define([
             var $target = $(e.target);
             var $dd =  $target.closest('dd');
 
-            $dd.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text()}));
+            $dd.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text(), imageSrc:  $target.attr('data-img')}));
             $dd.find('a').hide();
         },
 

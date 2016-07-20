@@ -10,8 +10,11 @@
     <div class="task-content">
         <div class="info">
             <p id="<%=model._id%>"><%=model.description%></p>
-
-            <h3> Due : </h3>
+            <% if (model.dueDate < new Date()) { %>
+            <h3 class="red">Overdue : </h3>
+            <% }else {%>
+            <h3>Due : </h3>
+            <% }%>
             <p class="dueDate"><%=model.dueDate%></p>
         </div>
 
