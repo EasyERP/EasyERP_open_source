@@ -18,15 +18,15 @@
                         </div>
                         <div class="propertyFormList">
                             <label>Amount</label>
-                            <div  class="inputBox">
-                                <input class="editable dealTitlePrice" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span> <%=expectedRevenue.currency%></span>
+                            <div class="inputBox amountBox">
+                                <input class="editable dealTitlePrice" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span class="amountDollar"> <%=expectedRevenue.currency%></span>
                             </div>
                         </div>
 
                         <div class="propertyFormList">
                             <label>Assigned To</label>
                             <div  class="inputBox">
-                                <a  class="current-selected"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
+                                <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
                             </div>
                         </div>
                         <div class="propertyFormList">

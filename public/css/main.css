@@ -4061,9 +4061,17 @@ dl.payrollDateBlock dt {
   margin-top: 0 !important;
   width: 100%;
 }
+.addNote .buttons,
+.addTask .buttons {
+  display: none;
+}
 .addNote.active,
 .addTask.active {
   padding: 0 !important;
+}
+.addNote.active .buttons,
+.addTask.active .buttons {
+  display: block;
 }
 .addNote.active textarea,
 .addTask.active textarea {
@@ -4079,12 +4087,27 @@ dl.payrollDateBlock dt {
 .addTask .current-selected {
   font-weight: bold;
   margin-left: 5px;
+  display: inline-block;
 }
 .noteWrapper .buttons {
   margin-top: 10px !important;
 }
 .noteWrapper .buttons .btn + .btn {
   margin-left: 10px;
+}
+.amountBox {
+  position: relative;
+}
+.amountBox .amountDollar {
+  position: absolute;
+  left: 11px;
+  top: 7px;
+}
+.amountBox input:not([type=checkbox]) {
+  padding-left: 22px !important;
+}
+.assignName {
+  padding-left: 13px;
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -4107,6 +4130,7 @@ dl.payrollDateBlock dt {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 .btn:hover span,
 .btn:hover a {
@@ -8855,6 +8879,7 @@ button:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 button:hover span,
 button:hover a {
@@ -8972,6 +8997,7 @@ a.red:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 button.red:hover span,
 a.red:hover span,
@@ -11991,6 +12017,7 @@ ul.dialog-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover span,
 ul.dialog-tabs .withEndContract .arrow:hover span,
@@ -12209,6 +12236,7 @@ ul.chart-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover span,
 ul.chart-tabs .withEndContract .arrow:hover span,
