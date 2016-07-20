@@ -108,9 +108,9 @@ define([
             }
             wId = $target.find('span').attr('data-id');
             $tabs.removeClass('passed');
+            $tabs.removeClass('active');
             $target.prevAll().addClass('passed');
-            $target.addClass('passed');
-            $thisEl.find('#statusDd').text($target.text());
+            $target.addClass('active');
             this.saveDeal({workflow: wId});
         },
 
