@@ -34,9 +34,9 @@ define([
 
         removeSelect : function (e){
             var $target = $(e.target);
-            var $dd =  $target.closest('dd');
-            $dd.find('.showSelect').remove();
-            $dd.find('a').show();
+            var $div =  $target.closest('.selectType');
+            $div.find('.showSelect').remove();
+            $div.find('a').show();
         },
 
         addAttach: function () {
@@ -140,10 +140,16 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var $dd =  $target.closest('dd');
+            var $div =  $target.closest('div.selectType');
 
-            $dd.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text(), imageSrc:  $target.attr('data-img')}));
-            $dd.find('a').hide();
+            if ($div.length){
+
+                $div.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text(), imageSrc:  $target.attr('data-img')}));
+                $div.find('a').hide();
+            } else {
+                $target.parents('.dataField').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            }
+
         },
 
         render: function () {
