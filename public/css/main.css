@@ -3643,8 +3643,56 @@ td.checkboxRow {
   font-family: 'Open Sans Regular', sans-serif, Verdana;
   font-size: 13px;
 }
-.top-bar #createBtnHolder {
+#top-bar #createBtnHolder {
   margin-top: 6px;
+}
+#top-bar.position {
+  position: absolute;
+  left: 318px;
+  z-index: 1;
+}
+#top-bar.position h3 {
+  display: none;
+}
+#top-bar.position #createBtnHolder {
+  margin-top: 8px;
+}
+.listContentTitle .sortBy {
+  display: block;
+  height: 26px;
+  width: 26px;
+  border: 1px solid #bebebe;
+  font-size: 19px;
+  line-height: 28px;
+  border-radius: 3px;
+}
+.dropDown {
+  position: relative;
+}
+.dropDown ul {
+  display: none;
+  position: absolute;
+  top: 28px;
+  left: 0;
+  border: 1px solid #bebebe;
+}
+.dropDown ul li {
+  padding: 5px 10px;
+}
+.dropDown ul li:nth-child(n+2) {
+  border-top: 1px solid #bebebe;
+}
+.dropDown.open ul {
+  display: block;
+}
+.dropBtn {
+  display: block;
+  height: 26px;
+  width: 26px;
+  border: 1px solid #bebebe;
+  font-size: 19px;
+  line-height: 28px;
+  border-radius: 3px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -9705,9 +9753,6 @@ table#workflows tr td.edit-status {
   margin: 15px 0;
   text-align: center;
 }
-#top-bar #createBtnHolder {
-  margin-top: 6px;
-}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
@@ -9775,9 +9820,6 @@ table#workflows tr td.edit-status {
   width: 100%;
   margin: 15px 0;
   text-align: center;
-}
-.projectInfoTopBar #createBtnHolder {
-  margin-top: 6px;
 }
 .noPadding {
   padding: 0 !important;
@@ -14509,6 +14551,9 @@ textarea#editInput {
 }
 #searchContainer .filter-check-list {
   margin-top: -1px;
+}
+.content-holder #searchContainer {
+  top: -34px;
 }
 .removeValues {
   cursor: pointer;
