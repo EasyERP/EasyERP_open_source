@@ -3665,7 +3665,9 @@ td.checkboxRow {
   position: absolute;
   top: 28px;
   left: 0;
+  background-color: #ffffff;
   border: 1px solid #bebebe;
+  z-index: 1;
 }
 .dropDown ul li {
   padding: 5px 10px;
