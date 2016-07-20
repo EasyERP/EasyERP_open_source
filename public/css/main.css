@@ -4113,7 +4113,7 @@ dl.payrollDateBlock dt {
   min-width: 175px;
 }
 .newTasksContainer {
-  padding-top: 30px;
+  padding-top: 30px !important;
 }
 .newTasksContainer .taskTitle {
   font-size: 23px;
@@ -4155,6 +4155,9 @@ dl.payrollDateBlock dt {
 }
 .newTasksContainer .taskDescriptionCreate {
   padding: 15px;
+}
+.ui-dialog-buttonset {
+  border: none !important;
 }
 .btn {
   border: 1px solid #7f7f80;
