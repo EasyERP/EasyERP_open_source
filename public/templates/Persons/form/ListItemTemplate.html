@@ -1,9 +1,9 @@
-<table>
+<table id="listTable">
     <% persons.forEach(function(person, index){ %>
     <tr class="compactView" data-id="<%=person._id%>">
         <td class="checkboxRow">
             <label>
-                <input type="checkbox" />
+                <input type="checkbox" value="<%=person._id%>" class="checkbox"/>
             </label>
         </td>
         <td>

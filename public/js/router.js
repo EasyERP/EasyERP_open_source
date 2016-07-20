@@ -1093,6 +1093,12 @@ define([
 
                         collection.unbind('reset');
 
+                        topbarView = new topBarView({
+                            actionType: 'Content',
+                            collection: collection,
+                            viewType  : 'tform'
+                        });
+
                         contentview = new contentView({
                             collection: collection,
                             startTime : startTime,
@@ -1100,15 +1106,6 @@ define([
                             filter    : filter,
                             modelId   : modelId
                         });
-
-                        topbarView = new topBarView({
-                            actionType: 'Content',
-                            collection: collection,
-                            el        : '.listContentTitle',
-                            viewType  : 'tform'
-                        });
-
-                        $('#top-bar').html('');
 
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);
                         eventsBinder.subscribeCollectionEvents(collection, contentview);

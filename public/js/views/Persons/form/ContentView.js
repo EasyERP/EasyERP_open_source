@@ -34,8 +34,8 @@ define([
         selectedId     : null,
 
         events: {
-            'click .compactView': 'renderFormView',
-            'click .closeBtn'   : 'returnToList'
+            'click .compactView:not(.checkbox)': 'renderFormView',
+            'click .closeBtn'                  : 'returnToList'
         },
 
         initialize: function (options) {
@@ -67,6 +67,8 @@ define([
             url = this.listUrl + 'p=' + currentPage + '/c=' + count;
 
             Backbone.history.navigate(url, {trigger: true});
+
+            $('.content_wrapper').removeClass('listOpen');
         },
 
         showMoreContent: function (newModels) {
@@ -134,7 +136,6 @@ define([
             $currentEl = this.$el;
 
             $currentEl.html(this.contentTemplate());
-            $('.content_wrapper').addClass('listOpen');
             $currentEl.find('#listContent').append(this.listTemplate({
                 persons: persons
             }));
