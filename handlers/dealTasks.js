@@ -259,8 +259,8 @@ var Module = function (models, event) {
 
         Tasks.findById(data.id || id)
             .populate('deal', '_id name')
-            .populate('company', '_id name')
-            .populate('contact', '_id name')
+            .populate('company', '_id name imageSrc')
+            .populate('contact', '_id name imageSrc')
             .populate(' assignedTo', '_id name imageSrc')
             .populate('createdBy.user')
             .populate('editedBy.user')

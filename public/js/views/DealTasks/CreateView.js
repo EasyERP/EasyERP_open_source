@@ -21,7 +21,6 @@ define([
 
         events: {
             'click #deadline'      : 'showDatePicker',
-            'change #workflowNames': 'changeWorkflows',
             'click .removeSelect'  : 'removeSelect'
         },
 
@@ -65,17 +64,6 @@ define([
             return file.size < App.File.MAXSIZE;
         },
 
-        getWorkflowValue: function (value) {
-            var workflows = [];
-            var i;
-
-            for (i = 0; i < value.length; i++) {
-                workflows.push({name: value[i].name, status: value[i].status, _id: value[i]._id});
-            }
-
-            return workflows;
-        },
-
         showDatePicker: function () {
             var $createDatePicker = $('.createFormDatepicker');
 
@@ -86,11 +74,11 @@ define([
 
         saveItem: function () {
             var self = this;
-            var deal = this.$el.find('#dealDd').data('id');
-            var assignedTo = this.$el.find('#assignedToDd').data('id');
-            var company = this.$el.find('#companyDd').data('id');
-            var workflow = this.$el.find('#workflowsDd').data('id');
-            var contact = this.$el.find('#contactDd').data('id');
+            var deal = this.$el.find('#dealDd').attr('data-id');
+            var assignedTo = this.$el.find('#assignedToDd').attr('data-id');
+            var company = this.$el.find('#companyDd').attr('data-id');
+            var workflow = this.$el.find('#workflowsDd').attr('data-id');
+            var contact = this.$el.find('#contactDd').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
             var saveObject;
