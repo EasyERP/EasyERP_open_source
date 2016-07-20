@@ -638,7 +638,7 @@ define([
 
         renderLeadsChart: function () {
             var $wrapper = $('#content-holder');
-            var verticalBarSpacing = 3;
+            var verticalBarSpacing = 1;
             var percentData = [];
             var percent = {};
             var padding = 40;
@@ -648,7 +648,9 @@ define([
             var rectWidth;
             var daysCount;
             var barChart;
+            var baseRect;
             var yScale2;
+            var yOffset;
             var height;
             var margin;
             var xScale;
@@ -657,13 +659,17 @@ define([
             var xAxis;
             var yAxis;
             var width;
+            var month;
             var data2;
             var data1;
+            var date;
             var base;
+            var year;
             var keys;
             var line;
             var max2;
             var max1;
+            var day;
             var max;
             var i;
             var j;
@@ -761,10 +767,11 @@ define([
                     .append('rect')
                     .attr({
                         x          : function (d) {
-                            var date = (d._id).toString();
-                            var year = date.substr(0, 4);
-                            var month = date.substr(4, 2);
-                            var day = date.substr(6, 2);
+                            date = (d._id).toString();
+                            year = date.substr(0, 4);
+                            month = date.substr(4, 2);
+                            day = date.substr(6, 2);
+
                             return xScale(new Date(year + '-' + month + '-' + day));
                         },
                         y          : function (d) {
@@ -787,18 +794,19 @@ define([
                     .append('rect')
                     .attr({
                         x          : function (d) {
-                            var date = (d._id).toString();
-                            var year = date.substr(0, 4);
-                            var month = date.substr(4, 2);
-                            var day = date.substr(6, 2);
+                            date = (d._id).toString();
+                            year = date.substr(0, 4);
+                            month = date.substr(4, 2);
+                            day = date.substr(6, 2);
+
                             return xScale(new Date(year + '-' + month + '-' + day));
                         },
                         y          : function (d, i) {
 
-                            var baseRect = d3.select('rect.total_' + d._id);
+                            baseRect = d3.select('rect.total_' + d._id);
 
                             if(baseRect[0][0]){
-                               var yOffset = baseRect.attr('y') - verticalBarSpacing
+                               yOffset = baseRect.attr('y') - verticalBarSpacing;
                             } else {
                                 yOffset = height;
                             }
@@ -807,7 +815,14 @@ define([
                         },
                         width      : rectWidth,
                         height     : function (d) {
-                            return yScale(d.count)
+
+                            baseRect = d3.select('rect.total_' + d._id);
+
+                            if(baseRect[0][0]){
+                                return yScale(d.count) - 2*verticalBarSpacing;
+                            }
+
+                            return yScale(d.count);
                         },
                         fill       : '#00B4EA',
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
@@ -849,56 +864,56 @@ define([
                 }
 
                 line = d3.svg.line()
-                        .x(function (d) {
+                    .x(function (d) {
+                        var date = d.date;
+                        var year = date.substr(0, 4);
+                        var month = date.substr(4, 2);
+                        var day = date.substr(6, 2);
+
+                        return xScale(new Date(year + '-' + month + '-' + day)) - 2 * offset || 0;
+                    })
+                    .y(function (d) {
+                        return yScale2(d.value * 100);
+                    })
+                    .interpolate('monotone');
+
+                barChart.append('path')
+                    .datum(percentData)
+                    .attr({
+                        'class': 'line1',
+                        'd'    : line,
+                        'fill' : 'none'
+                    })
+                    .style('stroke', '#00B4EA')
+                    .style('stroke-width', 2);
+
+                barChart.selectAll('.circle')
+                    .data(percentData)
+                    .enter().append('circle')
+                    .attr({
+                        'class'       : 'circle',
+                        'cx'          : function (d) {
                             var date = d.date;
                             var year = date.substr(0, 4);
                             var month = date.substr(4, 2);
                             var day = date.substr(6, 2);
+                            return xScale(new Date(year + '-' + month + '-' + day)) - 2 * offset || 0;
+                        },
+                        'cy'          : function (d) {
+                            return yScale2(d.value * 100);
+                        },
+                        'r'           : 3,
+                        'fill'        : '#00B4EA',
+                        'stroke'      : '#fff',
+                        'stroke-width': '1'
+                    });
 
-                            return xScale(new Date(year+'-'+month+'-'+day)) - 2*offset || 0;
-                        })
-                        .y(function (d) {
-                            return yScale2(d.value*100);
-                        })
-                        .interpolate('monotone');
-
-                    barChart.append('path')
-                        .datum(percentData)
-                        .attr({
-                            'class': 'line1',
-                            'd'    : line,
-                            'fill' : 'none'
-                        })
-                        .style('stroke', '#00B4EA')
-                        .style('stroke-width', 2);
-
-                    barChart.selectAll('.circle')
-                        .data(percentData)
-                        .enter().append('circle')
-                        .attr({
-                            'class'       : 'circle',
-                            'cx'          : function (d) {
-                                var date = d.date;
-                                var year = date.substr(0, 4);
-                                var month = date.substr(4, 2);
-                                var day = date.substr(6, 2);
-                                return xScale(new Date(year+'-'+month+'-'+day)) - 2*offset || 0;
-                            },
-                            'cy'          : function (d) {
-                                return yScale2(d.value*100);
-                            },
-                            'r'           : 3,
-                            'fill'        : '#00B4EA',
-                            'stroke'      : '#fff',
-                            'stroke-width': '1'
-                        });
-
-                    barChart.append('g')
-                        .attr({
-                            'class'    : 'x axis',
-                            'transform': 'translate(0,' + height + ')'
-                        })
-                        .call(xAxis);
+                barChart.append('g')
+                    .attr({
+                        'class'    : 'x axis',
+                        'transform': 'translate(0,' + height + ')'
+                    })
+                    .call(xAxis);
 
                 barChart.append('g')
                     .attr({
