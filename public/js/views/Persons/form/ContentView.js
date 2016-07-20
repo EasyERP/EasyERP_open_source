@@ -59,16 +59,20 @@ define([
         },
 
         returnToList: function (e) {
-            var url;
             var currentPage = this.collection.currentPage;
             var count = this.collection.pageSize;
+            var url;
+            var filter;
             e.preventDefault();
 
             url = this.listUrl + 'p=' + currentPage + '/c=' + count;
 
-            Backbone.history.navigate(url, {trigger: true});
+            if (this.filter) {
+                filter = encodeURI(JSON.stringify(this.filter));
+                url += '/filter=' + filter;
+            }
 
-            $('.content_wrapper').removeClass('listOpen');
+            Backbone.history.navigate(url, {trigger: true});
         },
 
         showMoreContent: function (newModels) {
@@ -121,7 +125,7 @@ define([
                     self.changeLocationHash(self.collection.currentPage, self.collection.pageSize, self.filter);
                 },
 
-                error: function () {
+                error: function (xhr, model) {
 
                 }
             });
