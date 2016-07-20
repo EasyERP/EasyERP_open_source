@@ -263,6 +263,13 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
+                onSelect   : function (dateText) {
+                    if (!self.modelChanged){
+                        self.modelChanged = {};
+                    }
+                    self.modelChanged.nextAction = dateText;
+                    self.showButtons();
+                }
 
             });
 

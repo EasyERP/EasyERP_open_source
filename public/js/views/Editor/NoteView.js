@@ -44,7 +44,7 @@ define([
             var hasClass = $target.hasClass('showButtons');
             var $thisEl = this.$el;
 
-            if ($thisEl.find('.editedNote').length) {
+            if ($thisEl.find('.editedNote').length || $thisEl.find('.createHolder').hasClass('active')) {
                 return false;
             }
 
@@ -57,6 +57,10 @@ define([
         expandNote: function (e) {
             var $target = $(e.target);
             var createHolder = $target.parents('.createHolder');
+
+            if (this.$el.find('.editedNote').length) {
+                return false;
+            }
             if (!createHolder.hasClass('active')) {
                 createHolder.addClass('active');
             }
