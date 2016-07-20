@@ -4149,9 +4149,13 @@ dl.payrollDateBlock dt {
   margin-top: 10px;
   display: block;
   line-height: 38px !important;
-  padding-left: 10px;
   cursor: pointer;
+  text-align: center;
   color: #000000;
+}
+.newTasksContainer .topCell .hasDatepicker i,
+.newTasksContainer .topCell .current-selected i {
+  margin-right: 5px;
 }
 .newTasksContainer .topCell .hasDatepicker:hover,
 .newTasksContainer .topCell .current-selected:hover {
