@@ -4112,6 +4112,39 @@ dl.payrollDateBlock dt {
 .ui-datepicker {
   min-width: 175px;
 }
+.newTasksContainer {
+  padding-top: 30px;
+}
+.newTasksContainer .taskTop,
+.newTasksContainer .taskBottom {
+  display: table;
+  width: 100%;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #c8c8d3;
+}
+.newTasksContainer .topCell {
+  display: table-cell;
+  width: 33%;
+  padding: 15px;
+}
+.newTasksContainer .topCell + .topCell {
+  border-left: 1px solid #c8c8d3;
+}
+.newTasksContainer .topCell .hasDatepicker,
+.newTasksContainer .topCell .current-selected {
+  height: 40px;
+  width: 100%;
+  border: 1px solid #c8c8d3;
+  margin-top: 10px;
+  display: block;
+  line-height: 38px !important;
+  padding-left: 10px;
+  cursor: pointer;
+}
+.newTasksContainer .topCell .hasDatepicker:hover,
+.newTasksContainer .topCell .current-selected:hover {
+  text-decoration: none;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
