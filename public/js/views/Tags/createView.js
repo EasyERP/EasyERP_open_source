@@ -81,7 +81,7 @@ define([
                 },
                 dialogClass  : 'create-dialog task-dialog',
                 title        : 'Create Tag',
-                width        : 600,
+                width        : '300px',
                 buttons      : [
                     {
                         text : 'Save',
