@@ -4,6 +4,7 @@ var Module = function (models, event) {
 
     var opportunitiesSchema = mongoose.Schemas.Opportunitie;
     var CustomerSchema = mongoose.Schemas.Customer;
+    var TasksSchema = mongoose.Schemas.DealTasks;
     var WorkflowSchema = mongoose.Schemas.workflow;
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
@@ -36,6 +37,95 @@ var Module = function (models, event) {
     function validBody(body) {
 
         return body.name ? true : false;
+    }
+
+    this.getForDd = function (req, res, next) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var query = req.query;
+        var isOpportunitie = query.isOpportunitie;
+        var queryObject = {};
+
+        if (isOpportunitie) {
+            queryObject.isOpportunitie = isOpportunitie;
+        }
+
+        if (query && query.id) {
+            queryObject._id = objectId(query.id);
+        }
+
+        Opportunity
+            .find(queryObject)
+            .sort({name: 1})
+            .exec(function (err, opportunities) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: opportunities});
+            });
+
+    };
+
+    function getTimeLine(req, model, cb) {
+        var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
+        var parallelTasks;
+
+        var historyOptions = {
+            req: req,
+            id : model._id
+        };
+
+        function getHistory(parallelCb) {
+            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                if (err) {
+                    return parallelCb(err);
+                }
+
+                history = history.map(function (elem) {
+                    return {
+                        date   : elem.date,
+                        history: elem,
+                        user   : elem.editedBy,
+                        _id    : ''
+                    };
+                });
+                parallelCb(null, history);
+
+            }, true);
+        }
+
+        function getTask(parallelCb) {
+            TasksSchema.find({'deal': model._id})
+                .populate('deal', '_id name')
+                .populate('company', '_id name')
+                .populate('contact', '_id name')
+                .populate('editedBy.user', '_id login')
+                .populate('assignedTo', '_id name fullName imageSrc')
+                .populate('workflow')
+                .exec(function (err, res) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+                    res = res.map(function (elem) {
+                        return {
+                            date: elem.dealDate,
+                            task: elem,
+                            _id : elem._id,
+                            user: elem.editedBy.user
+                        }
+                    });
+                    parallelCb(null, res);
+                });
+        }
+
+        parallelTasks = [getTask, getHistory];
+
+        async.parallel(parallelTasks, function (err, results) {
+            model.notes = model.notes.concat(results[0], results[1]);
+            model.notes = _.sortBy(model.notes, 'date');
+            cb(null, model);
+        });
+
     }
 
     function sendEmailToAssigned(req, opportunity) {
@@ -446,6 +536,7 @@ var Module = function (models, event) {
         var headers = req.headers;
         var id = headers.modelid || 'empty';
         var contentType = headers.modelname || 'opportunities';
+        var addNote = headers.addNote || 'opportunities';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
@@ -461,11 +552,34 @@ var Module = function (models, event) {
         }
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            var notes = [];
             if (err) {
                 return next(err);
             }
 
-            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+            if (addNote) {
+                notes = file.map(function (elem) {
+                    return {
+                        _id       : mongoose.Types.ObjectId(),
+                        attachment: {
+                            name    : elem.name,
+                            shortPas: elem.shortPas
+                        },
+                        user      : {
+                            _id  : req.session.uId,
+                            login: req.session.uName
+                        },
+                        date      : new Date()
+                    }
+                });
+            }
+
+            Model.findByIdAndUpdate(id, {
+                $push: {
+                    attachments: {$each: file},
+                    notes      : {$each: notes}
+                }
+            }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
                 }
@@ -500,8 +614,10 @@ var Module = function (models, event) {
 
             obj.date = new Date();
 
-            if (!obj.author) {
-                obj.author = req.session.uName;
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
             }
 
             data.notes[data.notes.length - 1] = obj;
@@ -534,6 +650,9 @@ var Module = function (models, event) {
                     data.sequence = sequence;
 
                     Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+
+                        var historyOptions;
+
                         if (err) {
                             return next(err);
                         }
@@ -553,6 +672,7 @@ var Module = function (models, event) {
                 Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                     var os = require('os');
                     var osType = (os.type().split('_')[0]);
+                    var historyOptions;
                     var path;
                     var dir;
 
@@ -592,10 +712,21 @@ var Module = function (models, event) {
                         });
 
                     }
-                    res.status(200).send({
-                        success : 'Opportunities updated',
-                        notes   : result.notes,
-                        sequence: result.sequence
+                    historyOptions = {
+                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                        data       : data,
+                        req        : req,
+                        contentId  : result._id
+                    };
+
+                    historyWriter.addEntry(historyOptions, function () {
+                        getTimeLine(req, result.toJSON(), function (err, model) {
+                            res.status(200).send({
+                                success : 'Opportunities updated',
+                                notes   : model.notes,
+                                sequence: model.sequence
+                            });
+                        });
                     });
                 });
             });
@@ -2087,63 +2218,6 @@ var Module = function (models, event) {
      * @instance
      */
 
-    /*function caseFilterOpp(data) {
-     var filter = {};
-     var tempObj = {};
-     var query = {};
-     var ids;
-     var keys = Object.keys(data);
-     var key;
-     var i;
-
-     query.$or = [];
-     filter.$and = [];
-
-     for (i = keys.length - 1; i >= 0; i--) {
-     key = keys[i];
-     ids = [];
-
-     if ((key !== 'workflowId') && (key !== 'viewType')) {
-
-     if (key === 'contactName') {
-
-     tempObj.contactName = {$in: data[key].value};
-
-     } else if (key === 'source') {
-
-     tempObj.source = {$in: data[key].value};
-
-     } else {
-
-     data[key].value.forEach(function (id) {
-     if (id !== 'Empty') {
-     ids.push(objectId(id));
-     } else {
-     tempObj[data[key].key] = {$exists: false};
-     query.$or.push(tempObj);
-     tempObj = {};
-     }
-     });
-
-     tempObj[data[key].key] = {$in: ids};
-     }
-
-     query.$or.push(tempObj);
-     tempObj = {};
-     }
-
-     if (query.$or.length) {
-     filter.$and.push(query);
-
-     query = {};
-     query.$or = [];
-     }
-
-     }
-
-     return filter;
-     }*/
-
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var data = req.query;
@@ -2167,7 +2241,7 @@ var Module = function (models, event) {
 
         switch (contentType) {
 
-            case ('Opportunities'):
+            case ('Deals'):
                 optionsObject.push({isOpportunitie: true});
                 break;
 
@@ -2532,7 +2606,7 @@ var Module = function (models, event) {
     }
 
     function getById(req, res, next) {
-        var id = req.query.id;
+        var id = req.query.id || req.params.id;
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var query;
 
@@ -2566,11 +2640,11 @@ var Module = function (models, event) {
         });
 
         query
-            .populate('company', 'name')
+            .populate('company')
             .populate('tags', 'name color')
-            .populate('customer', 'name')
+            .populate('customer')
             .populate('salesPerson', 'name')
-            .populate('workflow', 'name')
+            .populate('workflow', 'name sequence')
             .populate('groups.users')
             .populate('groups.group')
             .populate('createdBy.user', 'login')
@@ -2578,264 +2652,23 @@ var Module = function (models, event) {
             .populate('groups.owner', '_id login');
 
         query.exec(function (err, result) {
-            var historyOptions = {
-                req: req,
-                id : result._id
-            };
 
             if (err) {
                 return next(err);
             }
-
-            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+            getTimeLine(req, result.toJSON(), function (err, model) {
                 if (err) {
-                    return console.log(err);
+                    return next(err);
                 }
 
-                result = result.toJSON();
-                result.history = history;
-                res.status(200).send(result);
+                res.status(200).send(model);
             });
-
         });
     }
 
-    function getForChart(req, res, next) {
-        var query = req.query;
-        var starDate = query.startDay ? new Date(query.startDay) : null;
-        var endDate = query.endDay ? new Date(query.endDay) : null;
-        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-        var History = models.get(req.session.lastDb, 'History', historySchema);
-        var matchObj = {
-            $and: [{
-                isOpportunitie: false
-            }]
-        };
-
-        var historyMatchObj = {
-            $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
-        };
-
-        if (starDate && endDate) {
-            matchObj.$and.push({
-                creationDate: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
-            });
-
-            historyMatchObj.$and.push({
-                date: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
-            });
-        }
-
-        async
-            .parallel({
-                assignedTo: function (parCb) {
-                    History.aggregate([{
-                        $match: historyMatchObj
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$date', count: {$sum: 1}
-                        }
-                    }], parCb);
-                },
-
-                createdBy: function (parCb) {
-                    Opportunities.aggregate([{
-                        $match: matchObj
-                    }, {
-                        $sort: {'createdBy.date': 1}
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
-                        }
-                    }, {
-                        $group: {
-                            _id  : '$date',
-                            count: {$sum: 1}
-                        }
-                    }], parCb);
-                }
-            }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
-    }
-
-    function getForChart(req, res, next) {
-        var query = req.query;
-        var starDate = query.startDay ? new Date(query.startDay) : null;
-        var endDate = query.endDay ? new Date(query.endDay) : null;
-        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-        var History = models.get(req.session.lastDb, 'History', historySchema);
-        var stage = query.stage;
-        var secondMatchObj = {};
-        var matchObj = {
-            $and: [{
-                isOpportunitie: false
-            }]
-        };
-
-        var historyMatchObj = {
-            $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
-        };
-
-        if (starDate && endDate) {
-            matchObj.$and.push({
-                creationDate: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
-            });
-
-            historyMatchObj.$and.push({
-                date: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
-            });
-        }
-
-        if (stage === 'Qualified') {
-            secondMatchObj = {'workflows.name': 'Qualified'};
-        }
-
-        async
-            .parallel({
-                assignedTo: function (parCb) {
-                    History.aggregate([
-                        {
-                            $match: historyMatchObj
-                        },
-                        {
-                            $lookup: {
-                                from        : 'Opportunities',
-                                localField  : 'contentId',
-                                foreignField: '_id',
-                                as          : 'lead'
-                            }
-                        }, {
-                            $unwind: {
-                                path                      : '$lead',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from        : 'Employees',
-                                localField  : 'lead.salesPerson',
-                                foreignField: '_id',
-                                as          : 'sales'
-                            }
-                        },
-                        {
-                            $unwind: {
-                                path                      : '$sales',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from        : 'workflows',
-                                localField  : 'lead.workflow',
-                                foreignField: '_id',
-                                as          : 'workflows'
-                            }
-                        },
-                        {
-                            $unwind: {
-                                path                      : '$workflows',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $match: secondMatchObj
-                        },
-                        {
-                            $project: {
-                                date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                                'sales._id' : 1,
-                                'sales.name': {$ifNull: ['$sales.name', 'Empty']}
-                            }
-                        }, {
-                            $project: {
-                                date       : 1,
-                                'sales._id': 1,
-                                salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]}
-                            }
-                        }, {
-                            $group: {
-                                _id  : {date: '$date', sales: '$salesPerson'},
-                                count: {$sum: 1}
-                            }
-                        }, {
-                            $project: {
-                                date       : '$_id.date',
-                                salesPerson: '$_id.sales',
-                                count      : 1,
-                                _id        : 0
-                            }
-                        }, {
-                            $group: {
-                                _id       : '$date',
-                                salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                                count     : {$sum: '$count'}
-                            }
-                        }, {
-                            $sort: {_id: -1}
-                        }
-                    ], parCb);
-                },
-
-                createdBy: function (parCb) {
-                    Opportunities.aggregate([{
-                        $match: matchObj
-                    }, {
-                        $sort: {'createdBy.date': 1}
-                    }, {
-                        $lookup: {
-                            from        : 'workflows',
-                            localField  : 'workflow',
-                            foreignField: '_id',
-                            as          : 'workflows'
-                        }
-                    }, {
-                        $unwind: {
-                            path                      : '$workflows',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    }, {
-                        $match: secondMatchObj
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
-                        }
-                    }, {
-                        $group: {
-                            _id  : '$date',
-                            count: {$sum: 1}
-                        }
-                    }], parCb);
-                }
-            }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
-    }
+    this.getById = function (req, res, next) {
+        getById(req, res, next);
+    };
 
     function getForChart(req, res, next) {
         var query = req.query;
@@ -2869,47 +2702,46 @@ var Module = function (models, event) {
             });
         }
 
-        async
-            .parallel({
-                assignedTo: function (parCb) {
-                    History.aggregate([{
-                        $match: historyMatchObj
-                    },{
-                        $sort: {date: 1}
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$date', count: {$sum: 1}
-                        }
-                    }], parCb);
-                },
+        async.parallel({
+            assignedTo: function (parCb) {
+                History.aggregate([{
+                    $match: historyMatchObj
+                }, {
+                    $sort: {date: 1}
+                }, {
+                    $project: {
+                        date: {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$date', count: {$sum: 1}
+                    }
+                }], parCb);
+            },
 
-                createdBy: function (parCb) {
-                    Opportunities.aggregate([{
-                        $match: matchObj
-                    }, {
-                        $sort: {'createdBy.date': 1}
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
-                        }
-                    }, {
-                        $group: {
-                            _id  : '$date',
-                            count: {$sum: 1}
-                        }
-                    }], parCb);
-                }
-            }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
+            createdBy: function (parCb) {
+                Opportunities.aggregate([{
+                    $match: matchObj
+                }, {
+                    $sort: {'createdBy.date': 1}
+                }, {
+                    $project: {
+                        date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
+                    }
+                }, {
+                    $group: {
+                        _id  : '$date',
+                        count: {$sum: 1}
+                    }
+                }], parCb);
+            }
+        }, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-                res.status(200).send(result);
-            });
+            res.status(200).send(result);
+        });
     }
 
     this.getByViewType = function (req, res, next) {

@@ -1,0 +1,17 @@
+<ul>
+    <% collection.forEach(function(item){ %>
+    <li  data-id="<%= item._id %>"  class="propertyBox">
+        <div class="propertyImg">
+            <img src="<%=item.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-avatar.gif'%>" alt="property">
+        </div>
+        <div class="propertyBody">
+            <span class="propertyNameList"><%= item.fullName || ' ' %></span>
+            <span ><%= item.email || ' ' %></span>
+        </div>
+    </li>
+    <% }) %>
+
+</ul>
+<div class="newCompanyContainer">
+    <a href="javascript:;" id="newContact" class="btn btnrounded createNewCompany">Create New Contact</a>
+</div>

@@ -1,0 +1,111 @@
+﻿<div class="form-holder task-create-holder newTasksContainer">
+    <form method="post" action="" id="createTaskForm" class="form notDialog">
+        <div>
+            <div class="taskTop">
+                <div class="topCell">
+                    <label for="workflowsDd">Stage</label>
+                    <div id="selectWorkflow" class="dataField">
+                        <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefined'%></a>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <div>
+                        <label for="dueDate">Due Date </label>
+                    </div>
+                    <div class="dataField">
+                        <input class="extrainfo blueback" type="text" name="dueDate" id="dueDate" value="<%=model.dueDate%>" readonly/>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <label>Assigned to</label>
+                    <div class="dataField">
+                        <a id="assignedToDd" data-id="<%=(model.assignedTo) ? model.assignedTo._id : ''%>" class="current-selected" href="javascript:;"><%=(model.assignedTo)?(model.assignedTo.name.first+' '+model.assignedTo.name.last):'Select'%></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="withPaddingLeftProject">
+                <div class="inner">
+                    <div class="textarea-wrapper">
+                        <textarea type="text" name="description" class="taskDescriptionEdit" placeholder="Add a Description" id="description" required maxlength="500"><%=model.description%> </textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="withPaddingRightProject">
+                <div class="inner">
+
+                    <div class="taskBottom">
+                        <div class="topCell selectType" id="contactItem">
+                            <label>Contact</label>
+                            <div>
+
+                                <%if (model.contact) {%>
+                                <a id="contactDd" class="current-selected" href="javascript:;" style="display: none">Add Contact</a>
+                                <div class="showSelect" data-id="<%=model.contact._id%>">
+
+                                    <div class="imgContainer">
+                                        <img alt="company" title="company" src="<%=model.contact.imageSrc%>"/>
+                                    </div>
+
+                                    <div class="bodyContainer">
+                                        <span ><%=model.contact.fullName%></span>
+                                    </div>
+                                    <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                </div>
+                                <%} else {%>
+                                <a id="contactDd" class="current-selected" href="javascript:;" >Add Contact</a>
+                                <%}%>
+
+                            </div>
+                        </div>
+
+                        <div class="topCell selectType" id="companyItem">
+                            <label>Company</label>
+                            <div>
+                                <%if (model.company) {%>
+                                <a id="companyDd" class="current-selected" href="javascript:;"  style="display: none">Add Company</a>
+                                <div class="showSelect" data-id="<%=model.company._id%>">
+
+                                    <div class="imgContainer">
+                                        <img alt="company" title="company"  src="<%=model.company.imageSrc%>"/>
+                                    </div>
+
+                                    <div class="bodyContainer">
+                                        <span ><%=model.company.fullName%></span>
+                                    </div>
+                                    <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                </div>
+                                <%} else {%>
+                                <a id="companyDd" class="current-selected" href="javascript:;"  >Add Company</a>
+                                <%}%>
+
+                            </div>
+                        </div>
+
+                        <div class="topCell selectType" id="dealItem">
+                            <label>Deal</label>
+                            <div>
+
+                                <%if (model.deal) {%>
+                                <a id="dealDd" class="current-selected" href="javascript:;" style="display: none">Add Deal</a>
+                                <div class="showSelect" data-id="<%=model.deal._id%>">
+                                    <span ><%=model.deal.name%></span>
+                                    <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                </div>
+                                <%} else {%>
+                                <a id="dealDd" class="current-selected" href="javascript:;">Add Deal</a>
+                                <%}%>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="attach-container"></div>
+        </div>
+    </form>
+</div>
+

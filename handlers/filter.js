@@ -116,6 +116,96 @@ var Filters = function (models) {
         });
     };
 
+    this.getDealsTasksFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var TaskSchema = mongoose.Schemas.DealTasks;
+        var Task = models.get(lastDB, 'DealTasks', TaskSchema);
+        var pipeLine;
+        var aggregation;
+
+        pipeLine = [{
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'assignedTo',
+                foreignField: '_id',
+                as          : 'assignedTo'
+            }
+        }, {
+            $lookup: {
+                from        : 'Opportunities',
+                localField  : 'deal',
+                foreignField: '_id',
+                as          : 'deal'
+            }
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $project: {
+                description   : 1,
+                workflow  : {$arrayElemAt: ['$workflow', 0]},
+                assignedTo: {$arrayElemAt: ['$assignedTo', 0]},
+                deal      : {$arrayElemAt: ['$deal', 0]}
+            }
+        }, {
+            $group: {
+                _id    : null,
+                deal: {
+                    $addToSet: {
+                        _id : '$deal._id',
+                        name: '$deal.name'
+                    }
+                },
+                name : {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$description'
+                    }
+                },
+
+                assignedTo: {
+                    $addToSet: {
+                        _id : '$assignedTo._id',
+                        name: {
+                            $ifNull: [{
+                                $concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']
+                            }, 'None']
+                        }
+                    }
+                },
+
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: {
+                            $ifNull: ['$workflow.name', 'None']
+                        }
+                    }
+                }
+            }
+        }];
+
+        aggregation = Task.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getPersonFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var CustomerSchema = mongoose.Schemas.Customer;

@@ -1,0 +1,18 @@
+<h3>Tasks</h3>
+<div id="createBtnHolder">
+    <a href="#home/action-<%=contentType%>/Create" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
+    <a href="#home/action-<%=contentType%>/Edit" class="fa fa-wrench" title="Edit" id="top-bar-editBtn"></a>
+    <a href="#home/action-<%=contentType%>/Remove" class="fa fa-times" id="top-bar-deleteBtn" title="Remove"></a>
+    <%if(viewType === 'kanban') {%><a id="kanban-settings-Btn" class="fa fa-wrench" title="Kanban Settings"></a><%}%>
+</div>
+
+<div id="template-switcher" class="right">
+    <ul class="btn-list">
+        <li><a href="javascript:;"
+               class="changeContentView icon icon-btn dark <%= (viewType == 'kanban') ? 'selected' : ''%>"
+               data-view-type="kanban" id="kanbanBtn">r</a></li>
+        <li><a href="javascript:;"
+               class="changeContentView icon icon-btn dark <%= (viewType == 'list') ? 'selected' : ''%>"
+               data-view-type="list" id="listBtn">i</a></li>
+    </ul>
+</div>

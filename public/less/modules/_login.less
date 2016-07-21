@@ -1689,3 +1689,193 @@ table {
     margin-top: 4px;
   }
 }
+
+
+.tabList {
+
+  &Wrap {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+
+  &Item {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+
+    width: 10px;
+    position: relative;
+    padding: 3px 5px;
+    margin: 5px;
+    background-color: #e6e6e6;
+    font-size: 10px;
+
+    &.passed {
+      background-image: linear-gradient(to top, #158b0c,#18a815);
+
+      span {
+        color: #fff;
+      }
+    }
+
+    span {
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #666;
+      white-space: nowrap;
+    }
+  }
+}
+
+.clearLeft {
+  float: left!important;
+  clear: both!important;
+}
+
+.dealsLeadBlock {
+  margin-top: 30px;
+}
+
+.form-holder {
+  .form {
+    .dealTitle {
+      h3 {
+        display: inline-block;
+        float: left;
+        white-space: nowrap;
+
+        &.editable {
+          position: relative;
+          padding-left: 20px;
+
+          #editSpan {
+            position: absolute;
+            left: 0;
+            top: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.floatColumn {
+  display: inline-block;
+  float: left;
+  padding: 0 10px;
+  box-sizing: border-box;
+
+  > * {
+    float: left;
+    width: 100%;
+    clear: both;
+    &:nth-child(n+2) {
+      margin-top: 20px;
+    }
+  }
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  .dialog-tabs-items {
+    margin-bottom: 0;
+  }
+}
+
+.halfColumn {
+  width: 50%;
+}
+
+.noteBtnBlock,
+.editNoteBtnBlock {
+  height: 0;
+  margin-top: -1px;
+  border: @thin-border @border-color-main;
+  border-top: none;
+  overflow: hidden;
+  transition: all .2s ease;
+
+  .btn {
+    margin: 7px;
+    float: right;
+    height: 19px;
+    line-height: 18px!important;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.editedNote {
+  border: 1px solid #7f7f80;
+
+  .noteType {
+    float: left;
+  }
+
+  .noteText {
+    padding: 10px !important;
+    margin: 0 !important;
+    border: none;
+    border-top: @thin-border @border-color-main;
+
+    &:hover,
+    &:active,
+    &:focus {
+      outline: 0 !important;
+    }
+
+    &.active {
+      padding: 0;
+    }
+  }
+}
+
+.noteTitle {
+  margin-top: 10px;
+}
+
+.editedNoteTitle {
+  padding: 10px;
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.editNoteBtnBlock {
+  height: 34px;
+  border: none;
+  border-top: @thin-border @border-color-main;
+}
+
+.contentHolder {
+  &.showButtons {
+    .noteBtnBlock {
+      height: 34px;
+    }
+  }
+}
+
+.addTask {
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  .buttons {
+    margin-top: 10px;
+  }
+}
