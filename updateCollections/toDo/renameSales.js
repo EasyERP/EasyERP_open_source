@@ -6,7 +6,7 @@ require('../../models/index.js');
 var ModuleSchema = mongoose.Schemas.modules;
 
 var connectOptions = {
-    user: 'easyerp',
+    user: 'easyErp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
