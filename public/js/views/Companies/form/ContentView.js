@@ -24,8 +24,9 @@ define([
         formView       : null,
         ContentModel   : CompaniesModel,
         FormView       : FormView,
+        listUrl        : 'easyErp/Companies/list/',
 
-        renderList: function(companies){
+        renderList: function (companies) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
 

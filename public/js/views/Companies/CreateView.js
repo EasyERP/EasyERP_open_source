@@ -134,7 +134,8 @@ define([
 
                     custom.getFiltersValues(true); // added for refreshing filters after creating
 
-                    Backbone.history.navigate('easyErp/Companies', {trigger: true});
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(window.location.hash, {trigger: true});
                 },
 
                 error: function (models, xhr) {
