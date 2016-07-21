@@ -4,6 +4,7 @@ define([
     'jQuery',
     'text!templates/Opportunities/form/FormTemplate.html',
     'text!templates/Opportunities/workflowProgress.html',
+    'text!templates/Opportunities/aboutTemplate.html',
     'views/Editor/NoteView',
     'views/Editor/AttachView',
     'views/Companies/formPropertyView',
@@ -13,7 +14,7 @@ define([
     'constants',
     'dataService',
     'views/selectView/selectView'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, CompanyModel, constants, dataService, SelectView) {
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, CompanyModel, constants, dataService, SelectView) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -72,7 +73,7 @@ define([
         cancelChanges: function (e) {
             e.preventDefault();
             this.modelChanged = {};
-            this.render();
+            this.renderAbout();
         },
 
         showNewSelect: function (e) {
@@ -136,6 +137,8 @@ define([
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
+                    } else if (type === 'tags') {
+                        self.renderTags();
                     } else {
                         self.editorView.renderTimeline();
                         self.modelChanged = {};
@@ -154,8 +157,7 @@ define([
         },
 
         saveTags: function () {
-            this.saveDeal(this.formModel.changed);
-            this.renderTags();
+            this.saveDeal(this.formModel.changed, 'tags');
         },
 
         renderTags: function () {
@@ -184,12 +186,28 @@ define([
 
         },
 
+        renderAbout : function (){
+            var self = this;
+            var $thisEl = this.$el;
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            this.renderTags();
+            $thisEl.find('#nextAction').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged['nextAction.date'] = new Date(dateText);
+                    self.showButtons();
+                }
+
+            });
+        },
+
         render: function () {
             var formModel = this.formModel.toJSON();
             var self = this;
             var $thisEl = this.$el;
             var companyModel;
-            var contactModel;
 
             $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
 
@@ -246,7 +264,7 @@ define([
                 this.editorView.render().el
             );
 
-            this.$el.find('#nextAction').datepicker({
+            $thisEl.find('#nextAction').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,

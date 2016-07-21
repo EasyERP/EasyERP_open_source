@@ -205,11 +205,8 @@ define([
         },
 
         render: function () {
-            var attachments = null;
+            var attachments = this.model.get('attachments');
 
-            if (this.model && this.model.toJSON() && this.model.toJSON().attachments) {
-                attachments = this.model.toJSON().attachments;
-            }
             this.$el.html(this.template({
                 attachments: attachments,
                 elementId  : this.elementId || 'addAttachments',

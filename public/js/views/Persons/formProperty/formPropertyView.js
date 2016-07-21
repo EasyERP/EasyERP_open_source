@@ -4,9 +4,10 @@ define([
     'Underscore',
     'views/Persons/formProperty/filterView',
     'text!templates/Persons/formProperty/formPropertyTemplate.html'
-], function (Backbone, $, _, FilterView,  propertyTemplate) {
+], function (Backbone, $, _, FilterView, propertyTemplate) {
+    'use strict';
     var selectView = Backbone.View.extend({
-        template       : _.template(propertyTemplate),
+        template: _.template(propertyTemplate),
 
         events: {
             'click #addProperty'   : 'addProperty',
@@ -31,16 +32,13 @@ define([
         },
 
         initialize: function (options) {
-            this.type = options.type;
             this.data = options.data;
             this.attribute = options.attribute;
             this.parentModel = options.parentModel;
-            this.responseObj = options.responseObj || [];
             this.saveDeal = options.saveDeal;
         },
 
         render: function () {
-
             this.$el.html(_.template(propertyTemplate, {property: this.data}));
             return this;
         }
