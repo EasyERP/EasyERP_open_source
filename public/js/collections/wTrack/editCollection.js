@@ -50,7 +50,7 @@
                     week = modelObject.week || model.get('week');
 
                     models.push(modelObject);
-                } else if (model && !model.id) {
+                } else if (model && (!model.id)) {
                     cid = model.cid;
 
                     saveObject = {

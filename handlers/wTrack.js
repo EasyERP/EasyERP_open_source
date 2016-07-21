@@ -1877,10 +1877,12 @@ var TCard = function (event, models) {
                     },
 
                     employee: {
+                        _id : '$employee._id',
                         name: '$employee.name'
                     },
 
                     department: {
+                        _id : '$department._id',
                         name: '$department.name'
                     },
 
