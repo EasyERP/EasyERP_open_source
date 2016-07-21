@@ -3751,9 +3751,6 @@ dl.payrollDateBlock dt {
   display: inline-block;
   vertical-align: middle;
 }
-.leftMap {
-  padding-left: 128px;
-}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -11862,7 +11859,6 @@ ul.chart-tabs .withEndContract .arrow {
 .choseDateItem,
 .choseDateRangeSource {
   padding: 3px 10px;
-  border: 1px solid #efefef;
   float: right;
   margin-right: 10px;
 }
@@ -11889,15 +11885,14 @@ ul.chart-tabs .withEndContract .arrow {
   color: white;
 }
 .legend-box {
-  border: 1px solid #7f7f80;
-  width: 555px;
-  margin: 0 auto;
+  width: auto;
   height: auto;
+  margin: 0 auto;
   padding: 5px;
   color: #000000;
+  text-align: center;
 }
 .legend-box.small {
-  width: 265px;
   line-height: 26px;
   margin-top: 0!important;
 }
@@ -11910,7 +11905,6 @@ ul.chart-tabs .withEndContract .arrow {
   clear: both;
 }
 .legend-box.medium {
-  width: 420px;
   line-height: 26px;
 }
 .legend-box:before,
@@ -11922,8 +11916,13 @@ ul.chart-tabs .withEndContract .arrow {
   clear: both;
 }
 .legend-box div {
-  float: left;
+  display: inline-block;
   padding: 3px 10px;
+}
+.legend-box div .square,
+.legend-box div .text {
+  display: inline-block;
+  vertical-align: middle;
 }
 .legend-box div .square {
   width: 20px;

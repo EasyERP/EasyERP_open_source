@@ -4180,7 +4180,6 @@ ul.chart-tabs {
 
 .choseDateRange, .choseDateItem, .choseDateRangeSource {
   padding: 3px 10px;
-  border: @thin-border #efefef;
   float: right;
   margin-right: 10px;
 
@@ -4205,15 +4204,14 @@ ul.chart-tabs {
 }
 
 .legend-box {
-  border: @thin-border @border-color-main;
-  width: 555px;
-  margin: 0 auto;
+  width: auto;
   height: auto;
+  margin: 0 auto;
   padding: 5px;
   color: @mainText-color;
+  text-align: center;
 
   &.small {
-    width: 265px;
     line-height: 26px;
     margin-top: 0!important;
 
@@ -4227,7 +4225,6 @@ ul.chart-tabs {
   }
 
   &.medium {
-    width: 420px;
     line-height: 26px;
   }
 
@@ -4241,13 +4238,18 @@ ul.chart-tabs {
   }
 
   div {
-    float: left;
+    display: inline-block;
     padding: 3px 10px;
+
+    .square,
+    .text {
+      display: inline-block;
+      vertical-align: middle;
+    }
 
     .square {
       width: 20px;
       height: 20px;
-      //background-color: #26A7DD;
       padding: 0;
     }
 
