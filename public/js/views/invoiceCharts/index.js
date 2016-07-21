@@ -196,7 +196,7 @@ define([
                 .attr('stroke-dasharray', totalLength + ' '+ totalLength)
                 .attr('stroke-dashoffset', totalLength)
                 .transition()
-                .duration(4000)
+                .duration(2000)
                 .ease('linear')
                 .attr('stroke-dashoffset', 0);
 
@@ -219,75 +219,7 @@ define([
                     'stroke-width': 2
                 })
                 .transition()
-                .duration(1500)
-                .attr({
-                    'y'     : function (datum) {
-                        return y(1.2*datum.paid);
-                    },
-                    'height': function (datum) {
-                        return height - y(1.2*datum.paid);
-                    }
-                })
-                .transition()
-                .duration(1000)
-                .delay(1500)
-                .attr({
-                    'y'     : function (datum) {
-                        if(y(0.7*datum.paid)>0){
-                            return y(0.7*datum.paid);
-                        }else{
-                            return y(datum.paid);
-                        }
-                    },
-                    'height': function (datum) {
-                        if(height - y(0.7*datum.paid)>0){
-                            return height - y(0.7*datum.paid);
-                        }else{
-                            return height - y(datum.paid);
-                        }
-                    }
-                })
-                .transition()
-                .delay(2500)
-                .duration(1000)
-                .attr({
-                    'y'     : function (datum) {
-                        if(y(1.1*datum.paid)>0){
-                            return y(1.1*datum.paid);
-                        }else{
-                            return y(datum.paid);
-                        }
-                    },
-                    'height': function (datum) {
-                        if(height - y(1.1*datum.paid)>0){
-                            return height - y(1.1*datum.paid);
-                        }else{
-                            return height - y(datum.paid);
-                        }
-                    }
-                })
-                .transition()
-                .delay(3500)
-                .duration(1000)
-                .attr({
-                    'y'     : function (datum) {
-                        if(y(0.95*datum.paid)>0){
-                            return y(0.95*datum.paid);
-                        }else{
-                            return y(datum.paid);
-                        }
-                    },
-                    'height': function (datum) {
-                        if(height - y(0.95*datum.paid)>0){
-                            return height - y(0.95*datum.paid);
-                        }else{
-                            return height - y(datum.paid);
-                        }
-                    }
-                })
-                .transition()
-                .duration(500)
-                .delay(4500)
+                .duration(2000)
                 .attr({
                     'y'     : function (datum) {
                         return y(datum.paid);
@@ -313,7 +245,7 @@ define([
                         .style('top', (y(d.paid) - 40) + 'px')
                         .style('display', 'block')
                         .select('span')
-                        .text(d.paid);
+                        .text((d.paid/1000).toFixed(3));
 
                 })
                 .on('mouseleave', function (d) {
@@ -356,7 +288,7 @@ define([
                         .style('top', (y(d.invoiced) - 40) + 'px')
                         .style('display', 'block')
                         .select('span')
-                        .text(d.invoiced);
+                        .text((d.invoiced/1000).toFixed(3));
                 })
                 .on('mouseleave', function (d) {
                     d3.select(this)

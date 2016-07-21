@@ -458,9 +458,6 @@
     
     var getLeadsForChart = function (type, filter, callback) {
         dataService.getData('/leads/getLeadsForChart', {
-           /* type     : type,
-            dataRange: dataRange,
-            dataItem : dataItem*/
             type    : type,
             startDay: filter.startDay,
             endDay  : filter.endDay

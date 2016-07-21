@@ -1,13 +1,12 @@
 <ul class="chart-tabs dashboard">
-    <li><a class="active" href="javascript:;" class="">Leads by sale</a></li>
-    <li><a href="javascript:;">Leads by date</a></li>
+    <li><a class="active" href="javascript:;" class="">Leads by researcher</a></li>
     <li><a href="javascript:;" class="">Leads by source</a></li>
     <li><a href="javascript:;" class="">Opportunity Conversion</a></li>
     <li><a href="javascript:;" class="">Opportunity Aging</a></li>
     <li><a href="javascript:;" class="">Opportunities</a></li>
     <li><a href="javascript:;" class="">Won/Lost</a></li>
     <li><a href="javascript:;" class="">Sales by country</a></li>
-    <li><a href="javascript:;" class="">Leads</a></li>
+    <li><a href="javascript:;" class="">Leads by date</a></li>
     <li><a href="javascript:;" class="">Leads by names</a></li>
 </ul>
 
@@ -15,9 +14,23 @@
     <div class="chart-tabs-item active">
         <div class="clearfix"></div>
         <h3 class="dashboard">Who created most leads?</h3>
-
+        <div class="legend-box small">
+            <div class="total">
+                <div class="square">
+                </div>
+                <div class="text">
+                    Total Leads
+                </div>
+            </div>
+            <div class="opportunities">
+                <div class="square">
+                </div>
+                <div class="text">
+                    Opportunities
+                </div>
+            </div>
+        </div>
         <div class="vocationFilter">
-
             <ul class="dateFilterLeadsBySale">
                 <li class="dateRangeLeadsBySale">
                     <span id="startTimeLeadsBySale"><%= startDateLeadsBySale%></span> - <span id="endTimeLeadsBySale"><%= endDateLeadsBySale%></span>
@@ -49,54 +62,7 @@
                 </li>
             </ul>
         </div>
-
         <svg class="chart salesChart"></svg>
-    </div>
-    <div class="chart-tabs-item">
-        <h3 class="dashboard">How many leads have been created?</h3>
-        <div class="dashbordActions container">
-            <div class="row">
-                <div data-type="date" class="choseDateItem">
-                    <div class="item active" data-item="D">Day</div>
-                    <div class="item" data-item="W">Week</div>
-                    <div class="item" data-item="M">Month</div>
-                    <div class="item" data-item="DW">Day of Week</div>
-                    <div class="item" data-item="DM">Day of Month</div>
-                </div>
-                <div class="choseDateRange" data-type="date">
-                    <div class="item" data-day="7">7D</div>
-                    <div class="item active" data-day="30">30D</div>
-                    <div class="item" data-day="90">90D</div>
-                    <div class="item" data-day="365">12M</div>
-                </div>
-                <div class="legend-box">
-                    <div class="converted">
-                        <div class="square">
-                        </div>
-                        <div class="text">
-                            Converted Leads
-                        </div>
-                    </div>
-
-                    <div class="unconverted">
-                        <div class="square">
-                        </div>
-                        <div class="text">
-                            Unconverted Leads
-                        </div>
-                    </div>
-
-                    <div class="convertRate">
-                        <div class="square">
-                        </div>
-                        <div class="text">
-                            Opportunity Conversion Rate
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <svg class="leadChart"></svg>
     </div>
     <div class="chart-tabs-item">
         <div class="clearfix"></div>
@@ -376,7 +342,6 @@
         </div>
     </div>
     <div class="chart-tabs-item">
-
         <h3>Leads</h3>
         <div class="vocationFilter">
             <ul class="dateFilterLeads">
@@ -413,6 +378,31 @@
         <div data-type="leadsChart" class="choseDateItem">
             <div class="item active" data-item="createdBy">Created By</div>
             <div class="item" data-item="assignedTo">Assigned To</div>
+        </div>
+        <div class="legend-box">
+            <div class="converted">
+                <div class="square">
+                </div>
+                <div class="text">
+                    Converted Leads
+                </div>
+            </div>
+
+            <div class="unconverted">
+                <div class="square">
+                </div>
+                <div class="text">
+                    Unconverted Leads
+                </div>
+            </div>
+
+            <div class="convertRate">
+                <div class="square">
+                </div>
+                <div class="text">
+                    Opportunity Conversion Rate
+                </div>
+            </div>
         </div>
 
         <div class="clearfix"></div>
@@ -456,8 +446,8 @@
             </ul>
         </div>
         <div data-type="leadsByName" class="choseDateItem">
-            <div class="item active" data-item="">All</div>
-            <div class="item" data-item="Qualified">Qualified</div>
+            <div class="item active" data-item="">Assigned To</div>
+            <div class="item" data-item="Qualified">Qualified By</div>
         </div>
 
         <div class="clearfix"></div>
