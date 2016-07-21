@@ -349,7 +349,7 @@ define([
             var id = $(e.target).closest('a').attr('data-id');
 
             e.preventDefault();
-            window.location.hash = '#easyErp/Companies/form/' + id;
+            window.location.hash = '#easyErp/Companies/tform/' + id;
         },
 
         toggle: function () {
