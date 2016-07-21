@@ -1,0 +1,23 @@
+<table id="listTable">
+    <% opportunities.forEach(function(opportunity, index){ %>
+    <tr class="compactView" data-id="<%=opportunity._id%>">
+        <td class="checkboxRow">
+            <label>
+                <input type="checkbox" value="<%=opportunity._id%>" class="checkbox"/>
+            </label>
+        </td>
+        <td>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="firstName"><%= opportunity.fullName%></div>
+                    <div class="country"><%= opportunity.country %></div>
+                </div>
+                <div class="compactRow">
+                    <div class="email"><%= opportunity.email %></div>
+                    <div class="phone"><%= opportunity.phone %></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <% }); %>
+</table>
