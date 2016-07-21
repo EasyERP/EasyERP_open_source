@@ -260,7 +260,7 @@ define([
             }
         }
 
-        viewVariants = ['kanban', 'list', 'form', 'thumbnails'];
+        viewVariants = ['kanban', 'list', 'form', 'thumbnails', 'tform'];
 
         if ($.inArray(App.currentViewType, viewVariants) === -1) {
             App.currentViewType = 'thumbnails';

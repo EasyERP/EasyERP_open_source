@@ -1179,7 +1179,7 @@ define([
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
-                    custom.setCurrentVT('list');
+                    custom.setCurrentVT('tform');
 
                     function createViews() {
                         var topbarView;
@@ -1189,8 +1189,7 @@ define([
 
                         topbarView = new topBarView({
                             actionType: 'Content',
-                            collection: collection,
-                            viewType  : 'tform'
+                            collection: collection
                         });
 
                         contentview = new contentView({
