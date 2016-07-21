@@ -842,7 +842,7 @@ define([
                 delete self.changedModels[modelObjects.cid];
             });
 
-
+            delete modelObjects.cid;
 
             this.hideSaveCancelBtns();
             // this.hideOvertime();
