@@ -17,7 +17,7 @@ define([
             return hashItems[hashItems.length - 1];
         },
 
-        initialize: function (options) {
+       /* initialize: function (options) {
             this.actionType = options.actionType;
             this.render();
         },
@@ -28,7 +28,7 @@ define([
             Common.displayControlBtnsByActionType(this.actionType);
 
             return this;
-        }
+        }*/
     });
 
     return TopBarView;
