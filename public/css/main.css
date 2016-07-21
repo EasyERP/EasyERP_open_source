@@ -3739,7 +3739,7 @@ dl.payrollDateBlock dt {
 }
 .noteContainer .itemCircle {
   position: absolute;
-  left: 9px;
+  left: 10px;
   top: 10px;
   height: 28px;
   width: 28px;
@@ -4261,12 +4261,20 @@ dl.payrollDateBlock dt {
 .tabListWrap .tabListItem.active {
   background: #01579b;
 }
+.tabListWrap .tabListItem.active span {
+  color: #ffffff;
+}
+.tabListWrap .tabListItem.active:after {
+  border-left-color: #01579b;
+}
+.tabListWrap .tabListItem + .tabListItem {
+  padding-left: 25px;
+}
 .tabListWrap .tabListItem.passed {
   background: #4BCB81;
 }
 .tabListWrap .tabListItem.passed:after {
-  right: 4px;
-  border-left: 20px solid #4BCB81;
+  border-left-color: #4BCB81;
 }
 .tabListWrap .tabListItem:before,
 .tabListWrap .tabListItem:after {
@@ -4280,11 +4288,11 @@ dl.payrollDateBlock dt {
   border-bottom: 18px solid transparent;
 }
 .tabListWrap .tabListItem:after {
-  right: 4px;
+  right: -15px;
   border-left: 20px solid #e6e6e6;
 }
 .tabListWrap .tabListItem:before {
-  right: 0;
+  right: -20px;
   border-left: 20px solid #ffffff;
 }
 .tabListWrap .tabListItem span {
@@ -4298,6 +4306,10 @@ dl.payrollDateBlock dt {
 }
 .tabListWrap .tabListItem:last-child {
   border-radius: 0 30px 30px 0;
+}
+.tabListWrap .tabListItem:last-child:before,
+.tabListWrap .tabListItem:last-child:after {
+  content: none;
 }
 .btn {
   border: 1px solid #7f7f80;
