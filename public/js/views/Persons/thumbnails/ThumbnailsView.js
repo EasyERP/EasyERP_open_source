@@ -60,7 +60,7 @@
 
             e.preventDefault();
             App.ownContentType = true;
-            window.location.hash = '#easyErp/Persons/form/' + id;
+            window.location.hash = '#easyErp/Persons/tform/' + id;
         },
 
         gotoCompanyForm: function (e) {

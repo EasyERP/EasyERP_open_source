@@ -35,7 +35,7 @@ define([
 
             options.contentType = this.contentType;
 
-            if (this.paginationEl){
+            if (this.paginationEl) {
                 options.paginationEl = this.paginationEl;
             }
 
