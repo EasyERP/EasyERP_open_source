@@ -1,14 +1,14 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
-    'views/topBarViewBase',
     'text!templates/vacationDashboard/TopBarTemplate.html',
     'moment',
     'custom',
     'constants'
-], function ($, _, BaseView, ContentTopBarTemplate, moment, custom, CONSTANTS) {
+], function (Backbone, $, _, ContentTopBarTemplate, moment, custom, CONSTANTS) {
     'use strict';
-    var TopBarView = BaseView.extend({
+    var TopBarView = Backbone.View.extend({
         el         : '#top-bar',
         contentType: 'DashBoardVacation',
         template   : _.template(ContentTopBarTemplate),
@@ -111,8 +111,15 @@ define([
             var dateRange = custom.retriveFromCash('vacationDashDateRange') || {};
             var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day('Monday').format('DD MMM, YYYY');
             var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day('Sunday').format('DD MMM, YYYY');
+            var viewType = custom.getCurrentVT();
 
             $('title').text(this.contentType);
+
+            if (viewType && viewType === 'tform') {
+                this.$el.addClass('position');
+            } else {
+                this.$el.removeClass('position');
+            }
 
             this.$el.html(this.template({
                 contentType: this.contentType,
