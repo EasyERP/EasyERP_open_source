@@ -15,7 +15,7 @@ define([
         getIdFromHash: function (hash) {
             var hashItems = hash.split('/');
             return hashItems[hashItems.length - 1];
-        },
+        }
 
        /* initialize: function (options) {
             this.actionType = options.actionType;
