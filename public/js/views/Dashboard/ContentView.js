@@ -1097,45 +1097,48 @@ define([
                     .append('stop')
                     .attr({
                         'offset'    : '0',
-                        'stop-color': '#FB8E00'
+                        'stop-color': '#FFA17F'
                     });
 
                 gradient2
                     .append('stop')
                     .attr({
                         'offset'    : '0.7',
-                        'stop-color': '#9F5D52'
+                        'stop-color': '#ACC7F2'
                     });
 
                 chart.selectAll('.bar2')
                     .data(data2)
-                    .enter().append('rect')
-                    .attr('class', 'bar2')
-                    .attr('x', function (d) {
-                        return 0;
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        'class' : 'bar2',
+                        'x'     : 0,
+                        'y'     : function (d) {
+                            return y(d.source);
+                        },
+                        'height': y.rangeBand(),
+                        'width' : function (d) {
+                            return x(d.count);
+                        }
                     })
-                    .attr('y', function (d) {
-                        return y(d.source);
-                    })
-                    .attr('height', y.rangeBand())
-                    .attr('width', function (d) {
-                        return x(d.count);
-                    })
-                    .attr('fill', 'url(#gradientBarForTotalLeads)');
+                    .style('fill', 'url(#gradientBarForTotalLeads)')
+                    .style('opacity', 1);
 
                 chart.selectAll('.bar')
                     .data(data1)
-                    .enter().append('rect')
-                    .attr('class', 'bar')
-                    .attr('x', function (d) {
-                        return 0;
-                    })
-                    .attr('y', function (d) {
-                        return y(d.source);
-                    })
-                    .attr('height', y.rangeBand())
-                    .attr('width', function (d) {
-                        return x(d.count);
+                    .enter()
+                    .append('rect')
+                    .attr({
+                        'class' : 'bar',
+                        'x'     : 0,
+                        'y'     : function (d) {
+                            return y(d.source);
+                        },
+                        'height': y.rangeBand(),
+                        'width' : function (d) {
+                            return x(d.count);
+                        }
                     })
                     .attr('fill', 'url(#gradientBarForOpportunities)');
 
