@@ -2511,11 +2511,9 @@ body {
 .vocationFilter .dateFilter,
 .vocationFilter .dateFilterLeadsByName {
   width: 200px;
-  position: absolute;
   top: 8px;
   left: 0;
   z-index: 10;
-  border: 1px solid #7f7f80;
   background-color: #ffffff;
   padding: 0 5px;
 }
@@ -3691,6 +3689,68 @@ dl.payrollDateBlock dt {
 }
 .collapsed .topbarLogo .sidebarToggler {
   margin-left: 10px;
+}
+.vocationFilter {
+  padding: 5px;
+  border: 1px solid #000000;
+  cursor: pointer;
+}
+.vocationFilter.small {
+  padding: 0;
+}
+.vocationFilter .frameDetail {
+  position: absolute;
+  top: 30px;
+  background: #ffffff;
+  padding: 10px;
+  border: 1px solid #000000;
+  z-index: 10;
+}
+.vocationFilter .frameDetail .buttons {
+  margin-top: 10px;
+}
+.chartTopBox {
+  position: relative;
+  text-align: center;
+}
+.chartTopBox .legend-box {
+  display: inline-block;
+}
+.chartTopBox .vocationFilter {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 26px;
+  transform: translate(0, -50%);
+}
+.legend-box.medium {
+  height: auto;
+}
+.wonLegend {
+  margin-top: 20px !important;
+}
+.wonLegend .legendCircle {
+  border-radius: 50%;
+}
+.leadsTab .choseDateItem {
+  float: left;
+}
+.leadsTop {
+  margin: 15px 0;
+}
+.leadsTop .vocationFilter,
+.leadsTop .choseDateItem {
+  float: none !important;
+  display: inline-block;
+  vertical-align: middle;
+}
+.salesTab .tabTitle,
+.salesTab .vocationFilter {
+  display: inline-block;
+  vertical-align: middle;
+}
+.leftMap .nodeTree {
+  right: 6px;
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -9656,7 +9716,6 @@ table#workflows tr td.edit-status {
 /*----------------------------- Login Form --------------------------------*/
 /*----------------------------- Tabs ------------------------------------*/
 ul.dialog-tabs {
-  min-height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -11323,7 +11382,6 @@ ul.dialog-tabs li.right button {
   display: block;
 }
 ul.dialog-tabs {
-  min-height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -11534,7 +11592,6 @@ ul.dialog-tabs .withEndContract .arrow {
   display: block;
 }
 ul.chart-tabs {
-  min-height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.chart-tabs li {
@@ -11747,15 +11804,8 @@ ul.chart-tabs .withEndContract .arrow {
 .chart-tabs-items .chart-tabs-item.active {
   display: block;
 }
-.chart rect {
-  fill: steelblue;
-}
 .chart rect.bar2 {
-  fill: #6ec262;
   opacity: 0.3;
-}
-.chart rect.bar {
-  fill: #6ec262;
 }
 .chart text {
   fill: black;
@@ -11778,15 +11828,6 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .axis .domain {
   stroke: #fff;
-}
-.bar {
-  fill: #26a7dd;
-}
-.bar2 {
-  fill: #57D0b5;
-}
-.bar3 {
-  fill: #fff;
 }
 .x.axis path {
   display: none;
@@ -11849,11 +11890,11 @@ ul.chart-tabs .withEndContract .arrow {
   border: 1px solid #7f7f80;
   width: 555px;
   margin: 0 auto;
+  height: auto;
   color: #000000;
 }
 .legend-box.small {
   width: 265px;
-  height: 28px;
   line-height: 26px;
   margin-top: 0!important;
 }
@@ -11867,7 +11908,6 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .legend-box.medium {
   width: 420px;
-  height: 28px;
   line-height: 26px;
 }
 .legend-box:before,
@@ -11885,7 +11925,6 @@ ul.chart-tabs .withEndContract .arrow {
 .legend-box div .square {
   width: 20px;
   height: 20px;
-  background-color: #26A7DD;
   padding: 0;
 }
 .legend-box div .text {
@@ -11893,19 +11932,11 @@ ul.chart-tabs .withEndContract .arrow {
   height: 20px;
   padding: 0 10px;
 }
-.legend-box div.unconverted .square {
-  background-color: #57D0B5;
-}
 .legend-box div.total .square {
-  background-color: #6EC262;
   opacity: 0.3;
-}
-.legend-box div.opportunities .square {
-  background-color: #6EC262;
 }
 .legend-box div.convertRate .square {
   border-radius: 20px;
-  background-color: #26A7DD;
 }
 .choseDateItem {
   float: left;
@@ -14506,11 +14537,9 @@ textarea#editInput {
   padding: 0;
 }
 .invoiceChart-legend .legend-box .invoiced .square {
-  background-color: #01579b;
   opacity: .4;
 }
 .invoiceChart-legend .legend-box .paid .square {
-  background-color: #40c4ff;
   opacity: .4;
 }
 .invoiceChart-legend .choseDateItem {

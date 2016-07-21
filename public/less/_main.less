@@ -2184,7 +2184,6 @@ input::-ms-clear {
 }
 
 .tabs(@marginTop: 0, @marginLeft: -20px) {
-  min-height: 35px;
   border-bottom: @thin-border @border-color-main;
   li {
     float: left;
@@ -4090,15 +4089,15 @@ ul.chart-tabs {
 
 .chart {
   rect {
-    fill: steelblue;
+    //fill: steelblue;
 
     &.bar2 {
-      fill: #6ec262;
+      //fill: #6ec262;
       opacity: 0.3;
     }
 
     &.bar {
-      fill: #6ec262;
+      //fill: #6ec262;
     }
   }
 
@@ -4131,17 +4130,13 @@ ul.chart-tabs {
   }
 }
 
-.bar {
-  fill: #26a7dd;
-}
+
 
 .bar2 {
-  fill: #57D0b5;
+  //fill: #57D0b5;
 }
 
-.bar3 {
-  fill: #fff;
-}
+
 
 .x.axis path {
   display: none;
@@ -4213,11 +4208,11 @@ ul.chart-tabs {
   border: @thin-border @border-color-main;
   width: 555px;
   margin: 0 auto;
+  height: auto;
   color: @mainText-color;
 
   &.small {
     width: 265px;
-    height: 28px;
     line-height: 26px;
     margin-top: 0!important;
 
@@ -4232,7 +4227,6 @@ ul.chart-tabs {
 
   &.medium {
     width: 420px;
-    height: 28px;
     line-height: 26px;
   }
 
@@ -4252,7 +4246,7 @@ ul.chart-tabs {
     .square {
       width: 20px;
       height: 20px;
-      background-color: #26A7DD;
+      //background-color: #26A7DD;
       padding: 0;
     }
 
@@ -4264,27 +4258,27 @@ ul.chart-tabs {
 
     &.unconverted {
       .square {
-        background-color: #57D0B5;
+        //background-color: #57D0B5;
       }
     }
 
     &.total {
       .square {
-        background-color: #6EC262;
+        //background-color: #6EC262;
         opacity: 0.3;
       }
     }
 
     &.opportunities {
       .square {
-        background-color: #6EC262;
+        //background-color: #6EC262;
       }
     }
 
     &.convertRate {
       .square {
         border-radius: 20px;
-        background-color: #26A7DD;
+        //background-color: #26A7DD;
       }
     }
   }
@@ -6648,13 +6642,13 @@ textarea#editInput {
     padding: 0;
     .invoiced {
       .square {
-        background-color: @invoiced;
+        //background-color: @invoiced;
         opacity: .4;
       }
     }
     .paid {
       .square {
-        background-color: @paid;
+        //background-color: @paid;
         opacity: .4;
       }
     }

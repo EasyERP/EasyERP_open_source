@@ -638,12 +638,19 @@ define([
 
         renderLeadsChart: function () {
             var $wrapper = $('#content-holder');
+            var verticalBarSpacing = 1;
+            var percentData = [];
+            var percent = {};
+            var padding = 40;
             var self = this;
             var offset = 0;
-            var padding = 40;
+            var value = 0;
             var rectWidth;
+            var daysCount;
             var barChart;
+            var baseRect;
             var yScale2;
+            var yOffset;
             var height;
             var margin;
             var xScale;
@@ -652,7 +659,20 @@ define([
             var xAxis;
             var yAxis;
             var width;
+            var month;
+            var data2;
+            var data1;
+            var date;
+            var base;
+            var year;
+            var keys;
+            var line;
+            var max2;
+            var max1;
+            var day;
             var max;
+            var i;
+            var j;
 
             $('svg.leadsBarChart').empty();
 
@@ -660,11 +680,26 @@ define([
                 startDay: this.startDateLeads,
                 endDay  : this.endDateLeads
             }, function (data) {
-                max = d3.max(data[self.dateItem.leadsChart], function (d) {
-                    return d.count;
+
+                daysCount  = Math.floor((new Date(self.endDateLeads) - new Date(self.startDateLeads)) / 24 / 60 / 60 / 1000);
+
+                data2 = _.filter(data[self.dateItem.leadsChart], function (item) {
+                    return item.isOpp;
                 });
 
-                max = Math.ceil(max / 10) * 10;
+                data1 = _.filter(data[self.dateItem.leadsChart], function (item) {
+                    return !item.isOpp;
+                });
+
+                max1 = d3.max(data1, function (d) {
+                    return d.count;
+                }) || 0;
+
+                max2 = d3.max(data2, function (d) {
+                    return d.count;
+                }) || 0;
+
+                max = (max1 + max2) + 3;
 
                 margin = {
                     top   : 50,
@@ -719,19 +754,12 @@ define([
                         return d + '%';
                     });
 
-                rectWidth = width / Math.floor((new Date(self.endDateLeads) - new Date(self.startDateLeads)) / 24 / 60 / 60 / 1000);
+                rectWidth = width / daysCount;
 
                 if ((rectWidth - 4) > 0) {
                     offset = 2;
                     rectWidth = rectWidth - 2 * offset;
                 }
-
-                var data2 = _.filter(data[self.dateItem.leadsChart], function (item) {
-                    return item.isOpp;
-                });
-                var data1 = _.filter(data[self.dateItem.leadsChart], function (item) {
-                    return !item.isOpp;
-                });
 
                 barChart.selectAll('.rect1')
                     .data(data1)
@@ -739,10 +767,11 @@ define([
                     .append('rect')
                     .attr({
                         x          : function (d) {
-                            var date = (d._id).toString();
-                            var year = date.substr(0, 4);
-                            var month = date.substr(4, 2);
-                            var day = date.substr(6, 2);
+                            date = (d._id).toString();
+                            year = date.substr(0, 4);
+                            month = date.substr(4, 2);
+                            day = date.substr(6, 2);
+
                             return xScale(new Date(year + '-' + month + '-' + day));
                         },
                         y          : function (d) {
@@ -753,6 +782,9 @@ define([
                             return yScale(d.count)
                         },
                         fill       : '#57D0b5',
+                        class: function(d){
+                            return 'total_' + d._id;
+                        },
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
                     });
 
@@ -762,21 +794,118 @@ define([
                     .append('rect')
                     .attr({
                         x          : function (d) {
-                            var date = (d._id).toString();
-                            var year = date.substr(0, 4);
-                            var month = date.substr(4, 2);
-                            var day = date.substr(6, 2);
+                            date = (d._id).toString();
+                            year = date.substr(0, 4);
+                            month = date.substr(4, 2);
+                            day = date.substr(6, 2);
+
                             return xScale(new Date(year + '-' + month + '-' + day));
                         },
-                        y          : function (d) {
-                            return height - yScale(d.count)
+                        y          : function (d, i) {
+
+                            baseRect = d3.select('rect.total_' + d._id);
+
+                            if(baseRect[0][0]){
+                               yOffset = baseRect.attr('y') - verticalBarSpacing;
+                            } else {
+                                yOffset = height;
+                            }
+
+                            return yOffset  - yScale(d.count)
                         },
                         width      : rectWidth,
                         height     : function (d) {
-                            return yScale(d.count)
+
+                            baseRect = d3.select('rect.total_' + d._id);
+
+                            if(baseRect[0][0]){
+                                return yScale(d.count) - 2*verticalBarSpacing;
+                            }
+
+                            return yScale(d.count);
                         },
-                        fill       : 'black',
+                        fill       : '#00B4EA',
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
+                    });
+
+                for (i = 0; i < data1.length; i++) {
+                    percent[data1[i]._id] = 0;
+                }
+
+                for (i = data2.length; i--;) {
+
+                    base = data2[i].count;
+
+                    for (j = data1.length; j--;) {
+
+                        if (data1[j]._id === data2[i]._id) {
+                            base = data1[j].count;
+
+                            break;
+                        }
+                    }
+
+                    value = data2[i].count / base;
+
+                    if (value > 1) {
+                        value = 1;
+                    }
+
+                    percent[data2[i]._id] = value;
+                }
+
+                keys = Object.keys(percent).sort();
+
+                for (i = 0; i < keys.length; i++){
+                    percentData.push({
+                        date: keys[i],
+                        value: percent[keys[i]]
+                    })
+                }
+
+                line = d3.svg.line()
+                    .x(function (d) {
+                        var date = d.date;
+                        var year = date.substr(0, 4);
+                        var month = date.substr(4, 2);
+                        var day = date.substr(6, 2);
+
+                        return xScale(new Date(year + '-' + month + '-' + day)) - 2 * offset || 0;
+                    })
+                    .y(function (d) {
+                        return yScale2(d.value * 100);
+                    })
+                    .interpolate('monotone');
+
+                barChart.append('path')
+                    .datum(percentData)
+                    .attr({
+                        'class': 'line1',
+                        'd'    : line,
+                        'fill' : 'none'
+                    })
+                    .style('stroke', '#00B4EA')
+                    .style('stroke-width', 2);
+
+                barChart.selectAll('.circle')
+                    .data(percentData)
+                    .enter().append('circle')
+                    .attr({
+                        'class'       : 'circle',
+                        'cx'          : function (d) {
+                            var date = d.date;
+                            var year = date.substr(0, 4);
+                            var month = date.substr(4, 2);
+                            var day = date.substr(6, 2);
+                            return xScale(new Date(year + '-' + month + '-' + day)) - 2 * offset || 0;
+                        },
+                        'cy'          : function (d) {
+                            return yScale2(d.value * 100);
+                        },
+                        'r'           : 3,
+                        'fill'        : '#00B4EA',
+                        'stroke'      : '#fff',
+                        'stroke-width': '1'
                     });
 
                 barChart.append('g')
@@ -1959,12 +2088,12 @@ define([
         },
 
         renderOpportunitiesWinAndLost: function () {
-            var percentCircleRadius = 12;
             var verticalBarSpacing = 2;
+            var percent = [];
             var self = this;
+            var percentCircleRadius;
             var difference;
             var colorMap;
-            var percent;
             var margin;
             var height;
             var format;
@@ -1990,7 +2119,7 @@ define([
 
             common.getOpportunitiesForChart('date', this.dateRange.winLost, this.dateItem['winLost'], function (data) {
 
-               /* data = [
+             /*   data = [
                     {
                         "_id"            : {"year": "2016", "mounth": "05", "day": "27"},
                         "wonCount"       : 4,
@@ -2138,8 +2267,6 @@ define([
                         return y2(d.value);
                     })
                     .interpolate('monotone');
-
-                percent = [];
 
                 data.forEach(function (d, i) {
                     if ((d.wonCount + d.inProgressCount + d.lostCount) === 0) {
@@ -2301,6 +2428,8 @@ define([
                     })
                     .style('stroke', colorMap.percentLine)
                     .style('stroke-width', 5);
+
+                percentCircleRadius = (range < 70 ? range : 70)/7;
 
                 chart.selectAll('.circle')
                     .data(percent)
