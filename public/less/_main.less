@@ -6175,12 +6175,16 @@ textarea#editInput {
 
   .filter-dialog-tabs {
     box-sizing: border-box;
+    position: relative;
     border: 1px solid @border-color-main;
     border-bottom: 0;
-    position: relative;
-    float: left;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    width: 100%;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    .defaultBorRad;
+
     li {
       width: 100%;
       border-radius: 0;
@@ -6219,16 +6223,19 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: @fontRegular;
-  padding: 5px 25px;
   position: absolute;
-  z-index: 10;
-  width: ~"calc(100% - 52px)";
-  min-width: 178px;
-  background-color: @bg-drop-down-color;
-  border: 1px solid @filter-border-color;
-  right: 0;
   top: ~"calc(100% - 3px)";
+  right: 0;
+  min-width: 178px;
+  width: ~"calc(100% - 52px)";
+  padding: 5px 25px;
+  background-color: @bg-drop-down-color;
+  font-family: @fontRegular;
+  border: 1px solid @filter-border-color;
+  z-index: 10;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  .defaultBorRad;
+
   #applyFilter {
     text-align: center;
     width: ~"calc(100% - 30px)";
@@ -6238,13 +6245,6 @@ textarea#editInput {
     padding: 10px;
     border-radius: 5px;
   }
-  li {
-    cursor: pointer;
-    font-size: 12px;
-    padding: 5px 15px;
-    color: @filter-text-color;
-    position: relative;
-  }
   #filtersContent {
     .filterGroup {
       overflow: hidden;
@@ -6252,6 +6252,8 @@ textarea#editInput {
       border: 1px solid @border-color-main;
       background-color: @bg-main;
       margin: 5px;
+      .defaultBorRad;
+
       &:hover {
         border-color: @filter-border-hover;
       }
@@ -6365,6 +6367,21 @@ textarea#editInput {
         }
       }
     }
+  }
+  #favoritesContent {
+    .filter_name_wrapper {
+      button.btn {
+        padding: 0 !important;
+        line-height: 25px!important;
+      }
+    }
+  }
+  li {
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 15px;
+    color: @filter-text-color;
+    position: relative;
   }
 }
 
@@ -6499,7 +6516,7 @@ textarea#editInput {
   #saveFilterButton {
     border: 1px solid @border-color-main;
     box-sizing: border-box;
-    border-radius: 0 5px 5px 0;
+    border-radius: 0 3px 3px 0;
     line-height: 14px;
     padding-top: 5px;
     background-color: @bg-main;
