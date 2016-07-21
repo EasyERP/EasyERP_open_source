@@ -8,7 +8,7 @@ class="notEditable"
 <td class="notForm"><input type="checkbox" value="<%=order._id%>" class="checkbox <%if (order.workflow && order.workflow.name !== 'Not Invoiced') { %>
                 notRemovable
                 <% } %>"/></td>
-<td class="centerCell"><%=startNumber + index + 1%></td>
+<td><%=startNumber + index + 1%></td>
 <td><%=order.name ? order.name : '------'%></td>
 <td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : '------'%></td>
 <td><%=(order.salesPerson) ? order.salesPerson.name.first + ' ' + order.salesPerson.name.last : '------'%></td>
