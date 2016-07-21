@@ -1759,6 +1759,12 @@ table {
 .halfColumn {
   width: 50%;
 }
+.col1-3 {
+  width: 35%;
+}
+.col2-3 {
+  width: 65%;
+}
 
 .noteBtnBlock,
 .editNoteBtnBlock {
@@ -1770,10 +1776,11 @@ table {
   transition: all .2s ease;
 
   .btn {
-    margin: 7px;
-    float: right;
-    height: 19px;
-    line-height: 18px!important;
+    border: 0 !important;
+    margin: 8px 0;
+    height: 28px;
+    color: #fff;
+    line-height: 28px !important;
 
     &:hover {
       text-decoration: none;
@@ -1782,7 +1789,6 @@ table {
 }
 
 .editedNote {
-  border: 1px solid #7f7f80;
 
   .noteType {
     float: left;
@@ -1791,8 +1797,8 @@ table {
   .noteText {
     padding: 10px !important;
     margin: 0 !important;
-    border: none;
-    border-top: @thin-border @border-color-main;
+    border-top: none;
+    border: @thin-border #C8C9D3;
 
     &:hover,
     &:active,
@@ -1812,6 +1818,7 @@ table {
 
 .editedNoteTitle {
   padding: 10px;
+  border: 1px solid #C8C9D3;
 
   &:after {
     content: '';
@@ -1821,7 +1828,7 @@ table {
 }
 
 .editNoteBtnBlock {
-  height: 34px;
+  height: 44px;
   border: none;
   border-top: @thin-border @border-color-main;
 }
@@ -1829,7 +1836,7 @@ table {
 .contentHolder {
   &.showButtons {
     .noteBtnBlock {
-      height: 34px;
+      height: 44px;
     }
   }
 }
@@ -1845,4 +1852,7 @@ table {
   .buttons {
     margin-top: 10px;
   }
+}
+.addTaskTitle {
+  padding: 5px 0;
 }

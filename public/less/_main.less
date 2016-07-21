@@ -2083,7 +2083,7 @@ input::-ms-clear {
     font-weight: normal;
     border: none;
     //font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     display: inline;
     float: none;
     min-width: 80px;
@@ -2432,7 +2432,7 @@ input::-ms-clear {
 input, textarea, select {
   &:not([type="checkbox"]) {
     padding: 0 4px; //big cells in BonusType
-    border: 1px solid @border-color-main;
+    border: 1px solid #c8c8d3;
     background-color: inherit;
     color: @mainText-color;
     &:focus {
@@ -2786,6 +2786,14 @@ dl {
       &:focus {
         .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
         border: @thin-border @border-color-main;
+      }
+    }
+
+    .area_holder {
+      textarea {
+        height: 130px;
+        border-radius: 0;
+        border-top: 0;
       }
     }
 
@@ -3210,6 +3218,16 @@ dl {
 
   > button {
     margin: 5px 1px 4px 1px !important;
+  }
+}
+.form {
+  .noteWrapper,
+  .moduleList {
+    .formTitle {
+      h3 {
+        padding: 0;
+      }
+    }
   }
 }
 
@@ -3981,6 +3999,12 @@ ul.dialog-tabs {
   }
 }
 
+.attachWrapper {
+  .input-file {
+    border: 1px solid #c8c8d3;
+  }
+}
+
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
@@ -4049,7 +4073,7 @@ ul.dialog-tabs {
 
 .dialog-tabs-items {
   .tabs-items;
-  padding-top: 10px;
+
 }
 
 ul.chart-tabs {
@@ -4097,6 +4121,12 @@ ul.chart-tabs {
       height: 17px;
       display: block;
     }
+  }
+}
+
+.noteWrapper {
+  ul.chart-tabs {
+    border-bottom: 1px solid #c8c8d3;
   }
 }
 

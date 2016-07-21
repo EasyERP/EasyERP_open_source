@@ -3848,6 +3848,12 @@ table.kanban tbody td:nth-child(n+2) {
 .halfColumn {
   width: 50%;
 }
+.col1-3 {
+  width: 35%;
+}
+.col2-3 {
+  width: 65%;
+}
 .noteBtnBlock,
 .editNoteBtnBlock {
   height: 0;
@@ -3859,17 +3865,15 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteBtnBlock .btn,
 .editNoteBtnBlock .btn {
-  margin: 7px;
-  float: right;
-  height: 19px;
-  line-height: 18px!important;
+  border: 0 !important;
+  margin: 8px 0;
+  height: 28px;
+  color: #fff;
+  line-height: 28px !important;
 }
 .noteBtnBlock .btn:hover,
 .editNoteBtnBlock .btn:hover {
   text-decoration: none;
-}
-.editedNote {
-  border: 1px solid #7f7f80;
 }
 .editedNote .noteType {
   float: left;
@@ -3877,8 +3881,8 @@ table.kanban tbody td:nth-child(n+2) {
 .editedNote .noteText {
   padding: 10px !important;
   margin: 0 !important;
-  border: none;
-  border-top: 1px solid #7f7f80;
+  border-top: none;
+  border: 1px solid #c8c9d3;
 }
 .editedNote .noteText:hover,
 .editedNote .noteText:active,
@@ -3893,6 +3897,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .editedNoteTitle {
   padding: 10px;
+  border: 1px solid #C8C9D3;
 }
 .editedNoteTitle:after {
   content: '';
@@ -3900,12 +3905,12 @@ table.kanban tbody td:nth-child(n+2) {
   clear: both;
 }
 .editNoteBtnBlock {
-  height: 34px;
+  height: 44px;
   border: none;
   border-top: 1px solid #7f7f80;
 }
 .contentHolder.showButtons .noteBtnBlock {
-  height: 34px;
+  height: 44px;
 }
 .addTask:after {
   content: '';
@@ -3914,6 +3919,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .addTask .buttons {
   margin-top: 10px;
+}
+.addTaskTitle {
+  padding: 5px 0;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -4099,9 +4107,6 @@ table.kanban tbody td:nth-child(n+2) {
 .noteContainer .noteBtnBlock {
   border: none;
 }
-.noteContainer .showButtons .noteBtnBlock {
-  border: 1px solid #c8c8d3 !important;
-}
 .noteContainer .noteText,
 .noteContainer .noteContent,
 .noteContainer .changed_field,
@@ -4117,6 +4122,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteContainer .singleNote .dateNote {
   padding-top: 14px;
+  padding-left: 5px;
 }
 .noteContainer .noteText:last-child {
   margin-bottom: 0 !important;
@@ -4186,16 +4192,16 @@ table.kanban tbody td:nth-child(n+2) {
   display: table-cell !important;
 }
 .propertyFormList label {
-  width: 140px !important;
-  text-align: right;
+  width: 105px !important;
+  text-align: left;
   padding-right: 15px;
 }
 .propertyFormList .inputBox input:not([type=checkbox]) {
-  border: none ;
+  border: none;
   border-bottom: 1px solid #c8c8d3;
   outline: none;
   width: 100%;
-  padding: 6px 12px;
+  padding: 6px 0;
 }
 .propertyFormList .inputBox input:not([type=checkbox]):focus {
   background: #fafafa;
@@ -4232,7 +4238,7 @@ table.kanban tbody td:nth-child(n+2) {
 .attachWrapper,
 .selectCompany,
 .moduleList {
-  padding: 20px;
+  padding: 13px 20px 20px;
 }
 .tagsRow .tagsTitle,
 .attachWrapper .tagsTitle,
@@ -4243,11 +4249,14 @@ table.kanban tbody td:nth-child(n+2) {
 .selectCompany .formTitle,
 .moduleList .formTitle {
   border-bottom: none !important;
-  margin-bottom: 15px;
+  margin-bottom: 13px;
 }
 .tagsRow .editTags:hover {
   background: none;
   text-decoration: none;
+}
+.singleNote {
+  line-height: 20px;
 }
 .attachWrapper .input-file,
 .selectCompany .input-file {
@@ -4362,6 +4371,13 @@ table.kanban tbody td:nth-child(n+2) {
   border-radius: 5px;
   border: 1px solid #c8c8d3;
 }
+.moduleList .tags-container label {
+  float: left;
+}
+.moduleList .largeBtn,
+.attachments .largeBtn {
+  font-size: 16px !important;
+}
 .tags-container label {
   text-align: left;
 }
@@ -4386,7 +4402,6 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .area_holder {
   position: relative;
-  margin-top: 15px;
 }
 .area_holder textarea {
   padding: 10px !important;
@@ -4441,14 +4456,17 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .amountBox .amountDollar {
   position: absolute;
-  left: 11px;
+  left: 0;
   top: 7px;
 }
 .amountBox input:not([type=checkbox]) {
-  padding-left: 22px !important;
+  padding-left: 15px !important;
 }
 .assignName {
   padding-left: 13px;
+}
+.propertyFormList .assignName {
+  padding-left: 0;
 }
 .ui-datepicker {
   min-width: 175px;
@@ -4598,7 +4616,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .tabListWrap .tabListItem {
   position: relative;
-  padding: 13px 15px;
+  padding: 11px 15px;
   margin: 0;
   text-align: center;
   font-size: 11px;
@@ -4638,19 +4656,19 @@ table.kanban tbody td:nth-child(n+2) {
   height: 0;
 }
 .tabListWrap .tabListItem:before {
-  top: -3px;
-  right: -24px;
-  border-top: 22px solid transparent;
-  border-bottom: 22px solid transparent;
-  border-left: 24px solid #ffffff;
+  top: -4px;
+  right: -22px;
+  border-top: 21px solid transparent;
+  border-bottom: 21px solid transparent;
+  border-left: 22px solid #ffffff;
   z-index: 1;
 }
 .tabListWrap .tabListItem:after {
-  top: 1px;
-  right: -20px;
-  border-top: 18px solid transparent;
-  border-bottom: 18px solid transparent;
-  border-left: 20px solid #c8c8d3;
+  top: 0;
+  right: -18px;
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-left: 18px solid #c8c8d3;
   z-index: 2;
 }
 .tabListWrap .tabListItem span {
@@ -4673,7 +4691,7 @@ table.kanban tbody td:nth-child(n+2) {
   content: none;
 }
 .btn {
-  border: 1px solid #7f7f80;
+  border: 1px solid #c8c8d3;
   margin: 0;
   padding: .4em 1em;
   line-height: normal;
@@ -4701,6 +4719,16 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .btn.btnRounded {
   border-radius: 3px;
+}
+.btn.btnBlue {
+  background-color: #7eadcc;
+  border-radius: 3px;
+}
+.btn.btnBlue:hover {
+  background-color: #7eadcc;
+}
+.editorTab .btn {
+  min-width: 66px;
 }
 .btnAttention {
   border-color: #a22a2d;
@@ -6272,7 +6300,7 @@ input:not([type="checkbox"]),
 textarea:not([type="checkbox"]),
 select:not([type="checkbox"]) {
   padding: 0 4px;
-  border: 1px solid #7f7f80;
+  border: 1px solid #c8c8d3;
   background-color: inherit;
   color: #000000;
 }
@@ -7120,6 +7148,10 @@ dl dd span.ui-spinner {
   height: 160px;
   resize: none;
   line-height: 20px;
+}
+.form .noteWrapper .formTitle h3,
+.form .moduleList .formTitle h3 {
+  padding: 0;
 }
 .form .job-info {
   clear: both;
@@ -8760,6 +8792,11 @@ dl dd span.ui-spinner {
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   border: 1px solid #7f7f80;
 }
+.noteWrapper .addNote .area_holder textarea {
+  height: 130px;
+  border-radius: 0;
+  border-top: 0;
+}
 .noteWrapper .addNote.active {
   padding: 10px 0 10px 0;
   width: 100%;
@@ -9405,6 +9442,10 @@ dl dd span.ui-spinner {
 .formHeader > button {
   margin: 5px 1px 4px 1px !important;
 }
+.form .noteWrapper .formTitle h3,
+.form .moduleList .formTitle h3 {
+  padding: 0;
+}
 button {
   display: inline-block;
   height: 32px;
@@ -9425,7 +9466,7 @@ button {
   border-radius: 0;
   outline: 0!important;
   box-shadow: none!important;
-  border: 1px solid #7f7f80;
+  border: 1px solid #c8c8d3;
   margin: 0;
   padding: .4em 1em;
   line-height: normal;
@@ -9503,6 +9544,13 @@ button:hover a {
 button.btnRounded {
   border-radius: 3px;
 }
+button.btnBlue {
+  background-color: #7eadcc;
+  border-radius: 3px;
+}
+button.btnBlue:hover {
+  background-color: #7eadcc;
+}
 button.red,
 a.red {
   display: inline-block;
@@ -9524,7 +9572,7 @@ a.red {
   border-radius: 0;
   outline: 0!important;
   box-shadow: none!important;
-  border: 1px solid #7f7f80;
+  border: 1px solid #c8c8d3;
   margin: 0;
   padding: .4em 1em;
   line-height: normal;
@@ -9623,6 +9671,15 @@ a.red:hover a {
 button.red.btnRounded,
 a.red.btnRounded {
   border-radius: 3px;
+}
+button.red.btnBlue,
+a.red.btnBlue {
+  background-color: #7eadcc;
+  border-radius: 3px;
+}
+button.red.btnBlue:hover,
+a.red.btnBlue:hover {
+  background-color: #7eadcc;
 }
 button.red:hover,
 a.red:hover {
@@ -12307,7 +12364,7 @@ ul.dialog-tabs li.right button {
 .form-holder form label {
   font-weight: normal;
   border: none;
-  font-size: 14px;
+  font-size: 13px;
   display: inline;
   float: none;
   min-width: 80px;
@@ -12442,6 +12499,9 @@ ul.dialog-tabs li.right button {
   width: 100%;
   max-width: 100%;
 }
+.attachWrapper .input-file {
+  border: 1px solid #c8c8d3;
+}
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
@@ -12521,7 +12581,7 @@ ul.dialog-tabs .withEndContract .arrow {
   user-select: none;
   outline: 0!important;
   box-shadow: none!important;
-  border: 1px solid #7f7f80;
+  border: 1px solid #c8c8d3;
   margin: 0;
   padding: .4em 1em;
   line-height: normal;
@@ -12628,6 +12688,15 @@ ul.dialog-tabs .withEndContract .endContractReasonList.btnRounded,
 ul.dialog-tabs .withEndContract .arrow.btnRounded {
   border-radius: 3px;
 }
+ul.dialog-tabs .withEndContract .endContractReasonList.btnBlue,
+ul.dialog-tabs .withEndContract .arrow.btnBlue {
+  background-color: #7eadcc;
+  border-radius: 3px;
+}
+ul.dialog-tabs .withEndContract .endContractReasonList.btnBlue:hover,
+ul.dialog-tabs .withEndContract .arrow.btnBlue:hover {
+  background-color: #7eadcc;
+}
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
   background-color: #a13333;
@@ -12649,9 +12718,6 @@ ul.dialog-tabs .withEndContract .arrow {
   margin-left: -2px;
   min-height: 17px;
   display: block;
-}
-.dialog-tabs-items {
-  padding-top: 10px;
 }
 .dialog-tabs-items .dialog-tabs-item,
 .dialog-tabs-items .chart-tabs-item {
@@ -12730,7 +12796,7 @@ ul.chart-tabs .withEndContract .arrow {
   user-select: none;
   outline: 0!important;
   box-shadow: none!important;
-  border: 1px solid #7f7f80;
+  border: 1px solid #c8c8d3;
   margin: 0;
   padding: .4em 1em;
   line-height: normal;
@@ -12837,6 +12903,15 @@ ul.chart-tabs .withEndContract .endContractReasonList.btnRounded,
 ul.chart-tabs .withEndContract .arrow.btnRounded {
   border-radius: 3px;
 }
+ul.chart-tabs .withEndContract .endContractReasonList.btnBlue,
+ul.chart-tabs .withEndContract .arrow.btnBlue {
+  background-color: #7eadcc;
+  border-radius: 3px;
+}
+ul.chart-tabs .withEndContract .endContractReasonList.btnBlue:hover,
+ul.chart-tabs .withEndContract .arrow.btnBlue:hover {
+  background-color: #7eadcc;
+}
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
   background-color: #a13333;
@@ -12858,6 +12933,9 @@ ul.chart-tabs .withEndContract .arrow {
   margin-left: -2px;
   height: 17px;
   display: block;
+}
+.noteWrapper ul.chart-tabs {
+  border-bottom: 1px solid #c8c8d3;
 }
 .chart-tabs-items {
   margin-bottom: 0;
