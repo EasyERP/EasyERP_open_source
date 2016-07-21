@@ -17,9 +17,14 @@
     cursor: pointer;
     background-position: 0;
     background: @btn-main-color;
+    text-decoration: none;
     span, a {
       color: @btn-color-hover;
     }
+  }
+
+  &.btnRounded {
+    border-radius: 3px;
   }
 }
 
@@ -39,6 +44,26 @@
     background: @btnSuccessColor;
     span, a {
       color: @mainText-color;
+    }
+  }
+}
+
+.btnSave {
+  background: @btnSaveBgColor;
+  color: @white;
+  border-color: transparent;
+
+  span,
+  a {
+    color: @white;
+  }
+
+  &:hover {
+    background: @btnSaveBgColorHover;
+
+    span,
+    a {
+      color: @white;
     }
   }
 }

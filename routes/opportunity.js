@@ -72,6 +72,8 @@ HTTP/1.1 200 OK
      }
 ]
      */
+    router.get('/getForDd', authStackMiddleware, accessStackMiddleware, handler.getForDd);
+
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
 
     /**
@@ -299,77 +301,7 @@ HTTP/1.1 200 OK
      */
     router.get('/priority', authStackMiddleware, accessStackMiddleware, handler.getLeadsPriority);
     router.get('/getFilteredOpportunities', authStackMiddleware, accessStackMiddleware, handler.getFilteredOpportunities);
-
-    /**
-     *@api {post} /opportunities/ Request for creating new Opportunity
-     *
-     * @apiVersion 0.0.1
-     * @apiName createNewOpportunity
-     * @apiGroup Opportunity
-     *
-     * @apiParamExample {json} Request-Example:
-{
-      "isOpportunitie": true,
-      "name": "Android",
-      "expectedRevenue": {
-        "value": "0",
-        "currency": "$"
-      },
-      "company": {
-        "id": "",
-        "name": ""
-      },
-      "contactName": {
-        "first": "",
-        "last": ""
-      },
-      "customer": "570b65d718efef5454b6b58d",
-      "address": {
-        "street": "201 W. Main Street, Suite 100",
-        "city": "Durham",
-        "state": "NC",
-        "zip": "27701",
-        "country": "USA"
-      },
-      "email": "",
-      "phones": {
-        "mobile": "",
-        "phone": "",
-        "fax": ""
-      },
-      "func": "",
-      "salesPerson": "56b8b99e6c411b590588feb9",
-      "salesTeam": null,
-      "internalNotes": "",
-      "nextAction": {
-        "desc": ""
-      },
-      "expectedClosing": "21 Jul, 2016",
-      "priority": "Low",
-      "categories": "",
-      "active": true,
-      "optout": false,
-      "reffered": "",
-      "workflow": "528cdcb4f3f67bc40b000006",
-      "whoCanRW": "everyOne",
-      "groups": {
-        "owner": null,
-        "users": [
-
-        ],
-        "group": [
-
-        ]
-      }
-}
-     * @apiSuccess {Object} Status
-     * @apiSuccessExample Success-Response:
-HTTP/1.1 201 Created
-{
-      "success": "A new Opportunities create success",
-      "id": "578508a3b7c30f675048cdae"
-}
-     */
+    router.get('/:id',authStackMiddleware, accessStackMiddleware, handler.getById);
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
 
@@ -522,7 +454,7 @@ HTTP/1.1 200 OK
 {
       "success": "Opportunities updated",
       "notes": [
-    
+
       ],
       "sequence": 10
 }

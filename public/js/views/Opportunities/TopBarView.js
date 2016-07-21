@@ -8,7 +8,7 @@ define([
     var TopBarView = TopBarBase.extend({
         el         : '#top-bar',
         contentType: CONSTANTS.OPPORTUNITIES,
-        template   : _.template(ContentTopBarTemplate),
+        template   : _.template(ContentTopBarTemplate)
     });
 
     return TopBarView;

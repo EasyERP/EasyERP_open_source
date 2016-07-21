@@ -1,0 +1,409 @@
+.propertyContainer {
+  padding: 20px;
+
+  a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.propertyBox {
+  position: relative;
+  display: table;
+  border: 1px solid @lightgrey;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+
+  .propertyImg,
+  .propertyBody {
+    display: table-cell;
+    vertical-align: top;
+  }
+
+  .removeProperty {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    padding-top: 3px;
+    text-align: center;
+    font-size: 12px;
+    color: @lightgrey;
+  }
+
+  .propertyImg {
+    width: 40px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .propertyBody {
+    padding-left: 15px;
+    font-size: 13px;
+  }
+
+  .propertyFullName {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  a {
+    color: @blue-3;
+  }
+}
+
+.propertyFormList {
+  display: table !important;
+  width: 100%;
+  border-left: 1px solid transparent;
+
+  &.active {
+    border-left-color: @blue-3;
+  }
+
+  label,
+  .inputBox {
+    display: table-cell !important;
+  }
+  
+  label {
+    width: 140px !important;
+    text-align: right;
+    padding-right: 15px;
+  }
+
+  .inputBox {
+    input:not([type=checkbox]) {
+      border: none ;
+      border-bottom: 1px solid @lightgrey;
+      outline: none;
+      width: 100%;
+      padding: 6px 12px;
+
+      &:focus {
+        background: @lightgray-2;
+        border: none ;
+        border-bottom: 1px solid @lightgrey;
+      }
+    }
+  }
+}
+
+.propertySubmit {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.propertyEditBtn {
+  display: none;
+  margin-top: 15px;
+
+  &.showButtons {
+    display: block;
+  }
+
+  .btn + .btn {
+    margin-left: 10px;
+  }
+}
+
+.selectCompany {
+  .addCompanyBtn {
+    width: 100%;
+    margin: 0;
+    padding: 15px !important;
+    height: auto;
+    color: @black;
+    font-size: 16px;
+
+    &:hover {
+      background: @lightgray-3;
+      text-decoration: none;
+    }
+  }
+}
+
+.tagsRow,
+.attachWrapper,
+.selectCompany,
+.moduleList {
+  padding: 20px;
+
+  .tagsTitle,
+  .formTitle {
+    border-bottom: none !important;
+    margin-bottom: 15px;
+  }
+}
+
+.tagsRow {
+  .editTags {
+    &:hover {
+      background: none;
+      text-decoration: none;
+    }
+  }
+}
+
+.attachWrapper,
+.selectCompany {
+  .input-file {
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 20px;
+    height: auto;
+    color: @black;
+    font-size: 16px;
+    border-radius: 3px;
+
+    &:hover {
+      background: @lightgray-3;
+    }
+
+    &.smallBtn {
+      display: block;
+      width: 90px;
+      margin: 15px auto 0;
+      padding: 6px 12px;
+      font-size: 13px;
+      float: none;
+    }
+
+    .inputAttach {
+      cursor: pointer !important;
+    }
+  }
+
+  .atachPlaceHolder,
+  .addCompanyBtn {
+    i {
+      margin-right: 5px;
+      font-size: 12px;
+    }
+  }
+
+  .inputAttach {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+.ui-dialog {
+  .ui-dialog-content.opportunitiesModal {
+    padding: 20px 20px 40px;
+
+    .tagsTitle {
+      border-bottom: none;
+      text-align: left;
+    }
+
+    h2.tagsTitle {
+      font-size: 18px;
+    }
+
+    h4.tagsTitle {
+      font-size: 13px;
+    }
+
+    input.searchTagInput {
+      outline: none;
+      width: 100%;
+    }
+  }
+
+  .dropDownList {
+
+    ul {
+      max-height: 191px;
+      overflow-y: auto;
+    }
+    li {
+      padding: 8px 12px;
+      cursor: pointer;
+      margin-bottom: 5px !important;
+
+      &:hover {
+        background: @lightgray-3;
+      }
+    }
+
+    span {
+      display: block;
+      font-size: 12px;
+    }
+
+    .propertyNameList {
+      color: @black;
+      margin-bottom: 5px;
+    }
+  }
+
+  .createNewCompany {
+    font-size: 13px;
+    color: @black;
+    background: @lightgray-4;
+    padding: 6px 12px;
+    border-radius: 3px;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.newCompanyContainer {
+  padding: 40px;
+  text-align: center;
+  background: @lightgray-3;
+}
+
+.dealTitle {
+  input:not([type=checkbox]) {
+    border: none !important;
+  }
+
+  .dealTitleName,
+  .dealTitlePrice,
+  span {
+    font-size: 18px !important;
+  }
+
+  .dealTitleName {
+    width: 410px;
+    max-width: 410px !important;
+  }
+
+  .dealTitlePrice {
+    width: 80px;
+    text-align: right;
+  }
+}
+
+.moduleList,
+.attachments {
+  border-radius: 5px;
+  border: 1px solid @lightgrey;
+}
+
+.tags-container {
+  label {
+    text-align: left;
+  }
+}
+
+.attachments {
+  margin-bottom: 20px;
+}
+
+.largeBtn {
+  width: 100%;
+  padding: 14px 20px !important;
+  height: auto;
+  color: @black;
+  font-size: 16px !important;
+  border-radius: 3px;
+
+  &:hover {
+    background: @lightgray-3;
+    text-decoration: none;
+  }
+
+  i {
+    margin-right: 5px;
+    font-size: 12px;
+  }
+}
+
+.area_holder {
+  position: relative;
+  margin-top: 15px;
+
+  textarea {
+    padding: 10px !important;
+  }
+
+  .attach_file {
+    position: absolute;
+    right: 15px !important;
+    bottom: 10px !important;
+    font-size: 18px;
+  }
+}
+
+.addNote,
+.addTask {
+  margin-top: 0 !important;
+  width: 100%;
+
+  .buttons {
+    display: none;
+  }
+
+  &.active {
+    padding: 0 !important;
+
+    .buttons {
+      display: block;
+    }
+
+    textarea {
+      padding: 10px 22px 15px 10px !important;
+    }
+  }
+}
+
+.addTask {
+  .hasDatepicker {
+    float: right;
+    border: none !important;
+    text-align: right;
+    cursor: pointer;
+    margin-top: 8px !important;
+  }
+
+  .current-selected {
+    font-weight: bold;
+    margin-left: 5px;
+    display: inline-block;
+  }
+}
+
+.noteWrapper  {
+  .buttons {
+    margin-top: 10px !important;
+
+    .btn + .btn {
+      margin-left: 10px;
+    }
+  }
+}
+
+.amountBox {
+  position: relative;
+
+  .amountDollar {
+    position: absolute;
+    left: 11px;
+    top: 7px;
+  }
+
+  input:not([type=checkbox]) {
+    padding-left: 22px !important;
+  }
+}
+
+.assignName {
+  padding-left: 13px;
+}
+
+.ui-datepicker {
+  min-width: 175px;
+}
+

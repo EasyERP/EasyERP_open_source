@@ -71,9 +71,26 @@ var History = function (models) {
         var historyEntry;
         var key;
         var i;
-
+        var keyArray;
         for (i = dataKeys.length - 1; i >= 0; i--) {
             key = dataKeys[i];
+
+        }
+
+
+        for (i = dataKeys.length - 1; i >= 0; i--) {
+
+            key = dataKeys[i];
+
+            if (key.indexOf('.') !== -1) {
+                keyArray = key.split('.');
+                data[keyArray[0]] = {};
+                data[keyArray[0]][keyArray[1]] = data[key];
+                dataKeys.unshift(keyArray[0]);
+                i++;
+                continue;
+            }
+
             keyValue = {
                 key  : key,
                 value: data[key]
@@ -142,7 +159,7 @@ var History = function (models) {
         }
     };
 
-    this.getHistoryForTrackedObject = function (options, callback) {
+    this.getHistoryForTrackedObject = function (options, callback, forNote) {
         var id = options.id;
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
 
@@ -183,7 +200,8 @@ var History = function (models) {
                     }
                 }, {
                     $project: {
-                        editedBy    : '$editedBy.login',
+                        'editedBy.login'    : '$editedBy.login',
+                        'editedBy._id'    : '$editedBy._id',
                         newValue    : project,
                         prevValue   : 1,
                         date        : 1,
@@ -246,7 +264,8 @@ var History = function (models) {
                 }
             }, {
                 $project: {
-                    editedBy    : '$editedBy.login',
+                    'editedBy.login'    : '$editedBy.login',
+                    'editedBy._id'    : '$editedBy._id',
                     newValue    : 1,
                     prevValue   : 1,
                     date        : 1,
@@ -291,7 +310,11 @@ var History = function (models) {
                 async.parallel(parallel, function (errr, results) {
                     var responseArr = [].concat.apply([], results);
                     responseArr = _.sortBy(responseArr, 'date');
-                    responseArr = _.groupBy(responseArr, 'date');
+
+
+                    if (!forNote){
+                        responseArr = _.groupBy(responseArr, 'date');
+                    }
                     callback(errr, responseArr);
                 });
             } else {

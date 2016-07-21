@@ -1,0 +1,37 @@
+<div class="formTitle">
+    <h3>About </h3>
+</div>
+<div class="person-info">
+    <div class="propertyFormList">
+        <label>Name</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="name" value="<%=name%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Amount</label>
+        <div class="inputBox amountBox">
+            <input class="editable dealTitlePrice" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span class="amountDollar"> <%=expectedRevenue.currency%></span>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Close Date</label>
+        <div  class="inputBox">
+            <input class="extrainfo" type="text" name="Close Date" id="nextAction" value="<%=(nextAction && nextAction.date) ? nextAction.date : ''%>"
+                   readonly="">
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Assigned To</label>
+        <div  class="inputBox">
+            <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : ''%></a>
+        </div>
+    </div>
+    <div class="tags-container propertyFormList"></div>
+</div>
+<div class="propertyEditBtn" id="formBtnBlock">
+
+    <a href="javascript:;" id="saveBtn" class=" btn btnRounded btnSave">Save</a>
+
+    <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
+</div>

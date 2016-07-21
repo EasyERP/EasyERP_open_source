@@ -1,0 +1,69 @@
+<div class="noteWrapper">
+    <ul class="chart-tabs">
+        <li><a class="active" id="noteTab" href="javascript:;">New Note</a></li>
+        <li><a href="javascript:;" id="taskTab" class="">Create task</a></li>
+    </ul>
+    <div class="dialog-tabs-items">
+        <div class="editorTab dialog-tabs-item active" id="note">
+            <label>New Note</label>
+            <div class="addNote createHolder">
+                <div class="area_holder">
+                    <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
+                    <a href="javascript:;" class="attach_file">
+                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <!-- <div>
+                     <a class="addTitle" href="javascript:;">Add a title</a>
+                 </div>
+
+                 <div class="title-wrapper">
+                     <label>Note Title</label>
+                     <input type="text" id="noteTitleArea" value="" maxlength="64">
+                 </div>-->
+
+                <div class="buttons">
+                    <buttom class="btn btnRounded btnSave" id="addNote">
+                        <span>Save</span>
+                    </buttom>
+                    <buttom class="btn btnRounded cancelNote" id="cancelNote">
+                        <span>Cancel</span>
+                    </buttom>
+                    <div class="clearfix">
+                    </div>
+                </div>
+                <input type="hidden" id="getNoteKey" value="">
+            </div>
+        </div>
+
+        <div class="editorTab dialog-tabs-item" id="task">
+            <div class="addTask createHolder">
+                <label>Assigned To</label>
+                <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
+                <input type="text" class="date" id="taskDueDate"
+                       value="<%= date %>" maxlength="32"
+                       placeholder="Date"readonly/>
+                <div class="area_holder">
+                    <textarea id="taskArea" placeholder="Description..." maxlength="500"></textarea>
+                    <a href="javascript:;" class="attach_file">
+                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="buttons">
+                    <butto class="btn btnRounded btnSave" id="addTask">
+                        <span>Save</span>
+                    </butto>
+                    <buttom class="btn btnRounded" id="cancelTask">
+                        <span>Cancel</span>
+                    </buttom>
+                    <div class="clearfix">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="timeline">
+    </div>
+
+</div>
