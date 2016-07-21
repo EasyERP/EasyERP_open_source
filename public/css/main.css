@@ -3881,8 +3881,8 @@ table.kanban tbody td:nth-child(n+2) {
 .editedNote .noteText {
   padding: 10px !important;
   margin: 0 !important;
-  border-top: none;
   border: 1px solid #c8c9d3;
+  border-top: none;
 }
 .editedNote .noteText:hover,
 .editedNote .noteText:active,
@@ -3898,6 +3898,7 @@ table.kanban tbody td:nth-child(n+2) {
 .editedNoteTitle {
   padding: 10px;
   border: 1px solid #C8C9D3;
+  border-radius: 3px 3px 0 0;
 }
 .editedNoteTitle:after {
   content: '';
@@ -8791,6 +8792,9 @@ dl dd span.ui-spinner {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   border: 1px solid #7f7f80;
+}
+.noteWrapper .addNote textarea.noteText {
+  border-radius: 0 0 3px 3px;
 }
 .noteWrapper .addNote .area_holder textarea {
   height: 130px;
