@@ -1275,7 +1275,7 @@ define([
                     .attr('width', function (d) {
                         return x2(d.wonSum + d.lostSum);
                     })
-                    .attr('fill', '#6CC062');
+                    .attr('fill', '#26A7DE');
 
                 chart.selectAll('.ellipse')
                     .data(data)
@@ -1386,7 +1386,7 @@ define([
                     .attr('width', function (d) {
                         return x2(d.wonCount + d.lostCount);
                     })
-                    .attr('fill', '#6CC062');
+                    .attr('fill', '#26A7DE');
 
                 chart.selectAll('.ellipse')
                     .data(data)
