@@ -3857,7 +3857,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteInner {
   border: 1px solid #7f7f80;
-  padding: 5px 20px;
+  padding: 5px 20px 20px;
 }
 .noteInner .dateNote {
   float: none !important;

@@ -41,11 +41,11 @@
     <%}%>
     <div class="clearfix"></div>
 
-    <div id="noteBody" class="noteInner">
+    <div id="noteBody" class="">
         <% notes = notes || [];%>
         <% notes.reverse();
         _.each(notes, function(val,key){ %>
-        <div id="<%=val['_id'] %>" class="noteContainer">
+        <div id="<%=val['_id'] %>" class="noteContainer noteInner">
             <div class="noteTitle">
                 <span><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></span>
             </div>
