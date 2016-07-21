@@ -135,32 +135,6 @@ define([
             // this.renderPagination($currentEl, this);
 
             // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-        },
-
-        gotoForm: function (e) {
-            var id = $(e.target).closest('tr').data('id');
-            var model = new CurrentModel({validate: false});
-
-            e.preventDefault();
-
-            model.urlRoot = '/Opportunities';
-            model.fetch({
-                data: {
-                    id      : id,
-                    viewType: 'form'
-                },
-
-                success: function (model) {
-                    return new EditView({model: model});
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
         }
 
     });
