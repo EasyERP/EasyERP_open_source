@@ -1,0 +1,24 @@
+<table id="listTable">
+    <% orders.forEach(function(order, index){ %>
+    <tr class="compactView" data-id="<%=order._id%>">
+        <td class="checkboxRow">
+            <label>
+                <input type="checkbox" value="<%=order._id%>" class="checkbox"/>
+            </label>
+        </td>
+        <td>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="firstName"><%- quotation.name%></div>
+                    <div class="country"><%= quotation.supplier.name.first %> <%= quotation.supplier.name.last %></div>
+                    <div class="country"><%= quotation.orderDate %></div>
+                </div>
+                <div class="compactRow">
+                    <div class="email"><%= quotation.paymentInfo.total %></div>
+                    <div class="phone"><%= quotation.paymentInfo.unTaxed %></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <% }) %>
+</table>
