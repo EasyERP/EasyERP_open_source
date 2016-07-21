@@ -146,17 +146,22 @@
   padding: 5px;
   color: @black;
 
-  .taskContentTitle {
+  .info {
     margin-bottom: 10px;
+  }
+
+  .taskContentTitle {
+    margin-bottom: 5px;
   }
 
   .dateLabel {
     font-size: 13px;
+    font-weight: bold;
   }
 }
 
 .tasksItemList {
-  margin-top: 13px;
+  margin-top: 9px;
 }
 
 .tasksItemIcon {
@@ -170,5 +175,85 @@
 
   img {
     width: 20px;
+  }
+}
+
+.tabListWrap {
+  .tabListItem {
+    position: relative;
+    padding: 13px 15px;
+    margin: 0;
+    text-align: center;
+    font-size: 11px;
+    cursor: pointer;
+    overflow: visible;
+    background: @lightgrey;
+
+    &.active {
+      background: @blue;
+
+      span {
+        color: @white;
+      }
+
+      &:after {
+        border-left-color: @blue;
+      }
+    }
+
+    & + .tabListItem {
+      padding-left: 33px;
+    }
+
+    &.passed {
+      background: @green-2;
+
+      &:after {
+        border-left-color: @green-2;
+      }
+    }
+
+
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 0;
+      height: 0;
+      z-index: 1;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+    }
+
+    &:after {
+      right: -15px;
+      border-left: 20px solid @lightgrey;
+    }
+
+    &:before {
+      right: -20px;
+      border-left: 20px solid @white;
+    }
+
+    span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &:first-child {
+      border-radius: 30px 0 0 30px;
+    }
+
+    &:last-child {
+      border-radius: 0 30px 30px 0;
+
+      &:before,
+      &:after {
+        content: none;
+      }
+    }
   }
 }

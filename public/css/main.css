@@ -3739,7 +3739,7 @@ dl.payrollDateBlock dt {
 }
 .noteContainer .itemCircle {
   position: absolute;
-  left: 9px;
+  left: 10px;
   top: 10px;
   height: 28px;
   width: 28px;
@@ -4019,10 +4019,12 @@ dl.payrollDateBlock dt {
   text-align: right;
 }
 .moduleList,
-.tags-container,
 .attachments {
   border-radius: 5px;
   border: 1px solid #c8c8d3;
+}
+.tags-container label {
+  text-align: left;
 }
 .attachments {
   margin-bottom: 20px;
@@ -4223,14 +4225,18 @@ dl.payrollDateBlock dt {
   padding: 5px;
   color: #000000;
 }
-.task-content .taskContentTitle {
+.task-content .info {
   margin-bottom: 10px;
+}
+.task-content .taskContentTitle {
+  margin-bottom: 5px;
 }
 .task-content .dateLabel {
   font-size: 13px;
+  font-weight: bold;
 }
 .tasksItemList {
-  margin-top: 13px;
+  margin-top: 9px;
 }
 .tasksItemIcon {
   display: inline-block;
@@ -4242,6 +4248,69 @@ dl.payrollDateBlock dt {
 }
 .tasksItemIcon img {
   width: 20px;
+}
+.tabListWrap .tabListItem {
+  position: relative;
+  padding: 13px 15px;
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  cursor: pointer;
+  overflow: visible;
+  background: #c8c8d3;
+}
+.tabListWrap .tabListItem.active {
+  background: #01579b;
+}
+.tabListWrap .tabListItem.active span {
+  color: #ffffff;
+}
+.tabListWrap .tabListItem.active:after {
+  border-left-color: #01579b;
+}
+.tabListWrap .tabListItem + .tabListItem {
+  padding-left: 33px;
+}
+.tabListWrap .tabListItem.passed {
+  background: #4bcb81;
+}
+.tabListWrap .tabListItem.passed:after {
+  border-left-color: #4bcb81;
+}
+.tabListWrap .tabListItem:before,
+.tabListWrap .tabListItem:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 1;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+}
+.tabListWrap .tabListItem:after {
+  right: -15px;
+  border-left: 20px solid #c8c8d3;
+}
+.tabListWrap .tabListItem:before {
+  right: -20px;
+  border-left: 20px solid #ffffff;
+}
+.tabListWrap .tabListItem span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tabListWrap .tabListItem:first-child {
+  border-radius: 30px 0 0 30px;
+}
+.tabListWrap .tabListItem:last-child {
+  border-radius: 0 30px 30px 0;
+}
+.tabListWrap .tabListItem:last-child:before,
+.tabListWrap .tabListItem:last-child:after {
+  content: none;
 }
 .btn {
   border: 1px solid #7f7f80;
