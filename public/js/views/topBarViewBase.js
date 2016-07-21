@@ -30,6 +30,7 @@ define([
 
         initialize: function (options) {
             this.actionType = options.actionType || 'Content';
+            this.viewType = options.viewType || null;
 
             this.render();
         },
@@ -110,8 +111,14 @@ define([
 
             $('title').text(this.contentType);
 
+            if (this.viewType && this.viewType === 'tform') {
+                this.$el.addClass('position');
+            } else {
+                this.$el.removeClass('position');
+            }
+
             this.$el.html(this.template({
-                viewType     : viewType,
+                viewType     : this.viewType || viewType,
                 contentType  : this.contentType,
                 headerType   : this.headerType,
                 contentHeader: this.contentHeader

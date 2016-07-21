@@ -49,6 +49,9 @@ define([
             var formModel;
             var $thisEl = this.$el;
 
+            App.currentPerson = options.model.get('id');
+
+            this.io = App.socket;
             this.mId = CONSTANTS.MID[this.contentType];
             this.formModel = options.model;
             this.formModel.on('change', this.render, this);
@@ -143,10 +146,36 @@ define([
         },
 
         cancelClick: function (e) {
+            var $thisEl = this.$el;
+
             e.preventDefault();
 
-            Backbone.history.fragment = '';
-            Backbone.history.navigate('#easyErp/Persons/form/' + this.formModel.id, {trigger: true});
+            $thisEl.find('.quickEdit #editInput').remove();
+            $thisEl.find('.quickEdit #cancelSpan').remove();
+            $thisEl.find('.quickEdit #saveSpan').remove();
+
+            if (this.prevQuickEdit) {
+                if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('quickEdit')) {
+                    if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('with-checkbox')) {
+                        $thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
+                        $thisEl.find('.quickEdit').removeClass('quickEdit');
+                    } else if (this.prevQuickEdit.id === 'email') {
+                        $thisEl.find('#' + this.prevQuickEdit.id).append('<a href="mailto:' + this.text + '">' + this.text + '</a>');
+                        $thisEl.find('.quickEdit').removeClass('quickEdit');
+                    } else {
+                        $thisEl.find('.quickEdit').text(this.text || '').removeClass('quickEdit');
+                    }
+                }
+            }
+
+            /*
+            App.render({
+                type   : 'notify',
+                message: "Canceled is successfully"
+            });
+            */
+            //Backbone.history.fragment = '';
+            //Backbone.history.navigate('#easyErp/Persons/form/' + this.formModel.id, {trigger: true});
         },
 
         editClick: function (e) {
@@ -154,6 +183,8 @@ define([
             var $thisEl = this.$el;
             var parent;
             var objIndex;
+
+            //console.log(e);
 
             e.preventDefault();
             $thisEl.find('.quickEdit #editInput').remove();
@@ -231,6 +262,8 @@ define([
             var currentModel = this.model;
             var newModel = {};
             var oldvalue = {};
+            var $thisEl = this.$el;
+            var self = this;
             var param;
             var valid;
             var i;
@@ -240,7 +273,6 @@ define([
             if (objIndex.length > 1) {
                 for (i in this.formModel.toJSON()[objIndex[0]]) {
                     oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
-
                 }
 
                 param = currentModel.get(objIndex[0]) || {};
@@ -251,6 +283,10 @@ define([
                 newModel[objIndex[0]] = $('#editInput').val();
             }
 
+            //console.log(newModel);
+
+
+
             valid = this.formModel.save(newModel, {
                 headers: {
                     mid: this.mId
@@ -258,8 +294,31 @@ define([
 
                 patch  : true,
                 success: function (model) {
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/Persons/form/' + model.id, {trigger: true});
+                    App.render({
+                        type   : 'notify',
+                        message: "Saving is successfully"
+                    });
+                    $thisEl.find('.quickEdit #editInput').remove();
+                    $thisEl.find('.quickEdit #cancelSpan').remove();
+                    $thisEl.find('.quickEdit #saveSpan').remove();
+
+                    if (self.prevQuickEdit) {
+                        if ($thisEl.find('#' + self.prevQuickEdit.id).hasClass('quickEdit')) {
+                            if ($thisEl.find('#' + self.prevQuickEdit.id).hasClass('with-checkbox')) {
+                                $thisEl.find('#' + self.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($thisEl.find('#' + self.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
+                                $thisEl.find('.quickEdit').removeClass('quickEdit');
+                            } else if (self.prevQuickEdit.id === 'email') {
+                                $thisEl.find('#' + self.prevQuickEdit.id).append('<a href="mailto:' + self.text + '">' + self.text + '</a>');
+                                $thisEl.find('.quickEdit').removeClass('quickEdit');
+                            } else {
+                                $thisEl.find('.quickEdit').text(self.text || '').removeClass('quickEdit');
+                            }
+                        }
+                    }
+
+                    //self.io.emit('editPerson');
+                    //Backbone.history.fragment = '';
+                    //Backbone.history.navigate('#easyErp/Persons/form/' + model.id, {trigger: true});
                 },
 
                 error: function (model, response) {

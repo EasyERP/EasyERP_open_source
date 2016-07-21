@@ -14,7 +14,7 @@
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize;
+            //this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize;
         },
 
         render: function () {
@@ -151,7 +151,7 @@
                 currencySplitter: helpers.currencySplitter,
                 collection      : this.collection.toJSON(),
                 dateToLocaleDate: common.utcDateToLocaleDate,
-                startNumber     : this.startNumber
+                //startNumber     : this.startNumber
             }));
 
             async.parallel([calcTotalZero, calcTotalFifteen, calcTotalThirty, calcTotalSixty, calcTotalNinety, calcTotalMore], function () {

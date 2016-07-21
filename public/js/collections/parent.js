@@ -122,6 +122,11 @@ define([
             if (!data.contentType) {
                 delete data.contentType;
             }
+
+            if(data.viewType === 'tform') {
+                data.viewType = 'list';
+            }
+
             if (!data.parrentContentId) {
                 delete data.parrentContentId;
             }

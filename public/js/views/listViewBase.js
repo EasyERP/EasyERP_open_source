@@ -34,6 +34,11 @@ define([
             this.filter = options.filter;
 
             options.contentType = this.contentType;
+
+            if (this.paginationEl) {
+                options.paginationEl = this.paginationEl;
+            }
+
             this.makeRender(options);
             this.render();
         },

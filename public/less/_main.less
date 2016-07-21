@@ -2910,7 +2910,7 @@ dl {
 
   #content-holder {
     position: relative;
-    height: calc(~"100% - 50px");
+    width: 100%;
     display: -webkit-box;
     display: -moz-box;
     display: -webkit-flex;
@@ -2923,14 +2923,19 @@ dl {
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    //overflow: auto;
   }
 }
 
 #startLetter {
-  margin: 0;
-  //padding: 5px 0;
+  height: 20px;
+  margin: 10px 0 -1px;
   text-align: center;
   border-bottom: @thin-border @border-color-main;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 
   .letter {
     padding: 5px 10px;
@@ -3959,7 +3964,6 @@ ul.dialog-tabs {
   clear: both;
   text-align: center;
   color: @mainText-color;
-  padding-bottom: 5px;
 }
 
 .tabs-items {
@@ -5378,6 +5382,12 @@ textarea#editInput {
 }
 
 .grid-conatiner {
+
+  .attendanceTop,
+  .attendance {
+    margin: 0 20px;
+  }
+
   .attendanceTop {
     margin-bottom: 10px;
     > div {
@@ -5397,17 +5407,24 @@ textarea#editInput {
       }
 
       &.pull-left {
+        position: relative;
         margin-right: 10px;
-        height: 20px;
+        height: 32px;
+        line-height: 20px;
+
         > div {
           display: inline-block;
         }
         .editable {
-          position: relative;
           cursor: pointer;
+        }
+        .newSelectList {
+          right: 0;
+          top: 32px;
         }
       }
     }
+
     &:after {
       display: table;
       content: " ";
@@ -5511,6 +5528,7 @@ textarea#editInput {
       padding-top: 10px;
     }
   }
+
   table {
     .grid {
       border-color: @border-color-main;
@@ -6362,7 +6380,7 @@ textarea#editInput {
 
 #searchContainer {
   position: absolute;
-  top: -35px;
+  top: -40px;
   right: 0;
   width: 35%;
   margin-right: 90px;
@@ -6381,6 +6399,12 @@ textarea#editInput {
 
   .filter-check-list {
     margin-top: -1px;
+  }
+}
+
+.content-holder {
+  #searchContainer {
+    top: -34px;
   }
 }
 
