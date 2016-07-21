@@ -247,6 +247,10 @@ define([
                         .select('span')
                         .text((d.paid/1000).toFixed(3));
 
+                    tooltip.select('.arrow')
+                        .transition()
+                        .duration(300)
+                        .style('border-top-color', '#0aafd8')
                 })
                 .on('mouseleave', function (d) {
                     d3.select(this)
@@ -289,6 +293,11 @@ define([
                         .style('display', 'block')
                         .select('span')
                         .text((d.invoiced/1000).toFixed(3));
+
+                    tooltip.select('.arrow')
+                        .transition()
+                        .duration(300)
+                        .style('border-top-color', '#D96459')
                 })
                 .on('mouseleave', function (d) {
                     d3.select(this)

@@ -75,7 +75,7 @@ define([
             'click #cancelBtnLeadsByName'                                                                                   : 'cancel',
             'click #cancelBtnLeadsBySale'                                                                                   : 'cancel',
             'click #cancelBtnLeadsBySource'                                                                                 : 'cancel',
-            'click #leadsCancelBtn'                                                                                         : 'cancel'
+            'click #cancelBtnLeads'                                                                                         : 'cancel'
         },
 
         toggleDateRange: function (e, type) {
@@ -699,7 +699,7 @@ define([
                     return d.count;
                 }) || 0;
 
-                max = (max1 + max2) + 3;
+                max = Math.ceil((max1 + max2)/10)*10;
 
                 margin = {
                     top   : 50,
@@ -739,6 +739,7 @@ define([
                 yAxis = d3.svg.axis()
                     .scale(yScale)
                     .orient('left')
+                    .ticks(10)
                     .tickSize(0)
                     .tickPadding(padding)
                     .tickFormat(function (d, i) {
@@ -2456,7 +2457,8 @@ define([
         },
 
         renderSalesByCountry: function () {
-            var self = this;
+            var $wrapper = $('.content-holder');
+            var dataUrl = '../../maps/';
             var continentLabel = [
                 {
                     continent: 'Asia',
@@ -2489,22 +2491,20 @@ define([
                     latitude : -25
                 }
             ];
-            var dataUrl = '../../maps/';
-            var $wrapper = $('.content-holder');
-            var offset = 2;
             var padding = 15;
+            var offset = 2;
             var projection;
             var barChart;
             var gradient;
-            var margin;
-            var path;
-            var width;
-            var height;
             var height1;
             var xScale;
             var yScale;
+            var height;
+            var margin;
+            var width;
             var xAxis;
             var yAxis;
+            var path;
             var rect;
             var zoom;
             var max;
