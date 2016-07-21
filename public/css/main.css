@@ -3376,8 +3376,8 @@ input:not([type="checkbox"]).inputBordered:focus {
   position: absolute;
   right: 0;
   bottom: 0;
-  height: calc(100% - 40px);
-  width: calc(100% - 55px);
+  height: 100%;
+  width: 100%;
   overflow: auto;
 }
 .borderBottom {
@@ -3659,7 +3659,8 @@ td.checkboxRow {
   font-family: 'Open Sans Regular', sans-serif, Verdana;
   font-size: 13px;
 }
-#top-bar #createBtnHolder {
+#top-bar #createBtnHolder,
+#top-bar .createBtnHolder {
   margin-top: 6px;
 }
 #top-bar.position {
@@ -3697,7 +3698,7 @@ td.checkboxRow {
 .dropDown ul li:hover {
   background-color: #7eadcc;
   color: #fff;
-  transition: all .2s ease;
+  transition: all .1s ease;
 }
 .dropDown ul li.sortDn,
 .dropDown ul li.sortUp {
@@ -3726,7 +3727,7 @@ td.checkboxRow {
   right: 8px;
   color: #2b3643;
   font-family: 'FontAwesome';
-  font-size: 16px;
+  font-size: 12px;
 }
 .dropDown.open ul {
   display: block;
@@ -13820,6 +13821,10 @@ textarea#editInput {
 .grid.dashBoardMargin {
   margin-bottom: 45px;
 }
+.grid-conatiner .attendanceTop,
+.grid-conatiner .attendance {
+  margin: 0 20px;
+}
 .grid-conatiner .attendanceTop {
   margin-bottom: 10px;
 }
@@ -13842,15 +13847,20 @@ textarea#editInput {
   background-color: #ffffff;
 }
 .grid-conatiner .attendanceTop > div.pull-left {
+  position: relative;
   margin-right: 10px;
-  height: 20px;
+  height: 32px;
+  line-height: 20px;
 }
 .grid-conatiner .attendanceTop > div.pull-left > div {
   display: inline-block;
 }
 .grid-conatiner .attendanceTop > div.pull-left .editable {
-  position: relative;
   cursor: pointer;
+}
+.grid-conatiner .attendanceTop > div.pull-left .newSelectList {
+  right: 0;
+  top: 32px;
 }
 .grid-conatiner .attendanceTop:after {
   display: table;
