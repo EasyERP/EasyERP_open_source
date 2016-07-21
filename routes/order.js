@@ -112,6 +112,8 @@ HTTP/1.1 200 OK
 }
      */
     router.get('/', handler.getByViewType);
+
+    router.get('/:id', handler.getById);
     
     /**
      *@api {get} /orders/ Request FilterOrders

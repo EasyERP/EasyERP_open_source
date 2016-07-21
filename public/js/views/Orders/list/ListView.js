@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -14,7 +15,7 @@ define([
     'dataService',
     'helpers',
     'constants'
-], function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, common, dataService, helpers, CONSTANTS) {
+], function (Backbone, $, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, common, dataService, helpers, CONSTANTS) {
     'use strict';
     var OrdersListView = listViewBase.extend({
         CreateView       : createView,
@@ -135,6 +136,7 @@ define([
         goToEditDialog: function (e) {
             var tr = $(e.target).closest('tr');
             var id = tr.data('id');
+            var url = 'easyErp/' + this.contentType + '/form/' + id;
             var notEditable = tr.hasClass('notEditable');
             var model = new QuotationModel({validate: false});
             var onlyView = false;
@@ -145,7 +147,8 @@ define([
                 onlyView = true;
             }
 
-            model.urlRoot = '/orders/';
+
+            /*model.urlRoot = '/orders/';
             model.fetch({
                 data: {
                     id      : id,
@@ -162,7 +165,9 @@ define([
                         message: 'Please refresh browser'
                     });
                 }
-            });
+            });*/
+
+            Backbone.history.navigate(url, {trigger: true});
         }
 
     });
