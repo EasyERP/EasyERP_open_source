@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -11,7 +12,8 @@ define([
     'common',
     'dataService',
     'text!templates/stages.html'
-], function ($,
+], function (Backbone,
+             $,
              _,
              ListViewBase,
              listTemplate,
