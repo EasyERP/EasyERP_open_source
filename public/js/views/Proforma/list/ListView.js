@@ -6,13 +6,15 @@ define([
     'text!templates/stages.html',
     'views/salesInvoices/CreateView',
     'views/salesInvoices/EditView',
+    'views/Proforma/EditView',
     'models/InvoiceModel',
     'views/salesInvoices/list/ListItemView',
     'collections/salesInvoices/filterCollection',
     'common',
     'dataService',
-    'constants'
-], function ($, _, listViewBase, listTemplate, stagesTemplate, CreateView, editView, InvoiceModel, ListItemView, contentCollection, common, dataService, CONSTANTS) {
+    'constants',
+    'helpers'
+], function ($, _, listViewBase, listTemplate, stagesTemplate, CreateView, EditView, proformaEditView, InvoiceModel, ListItemView, contentCollection, common, dataService, CONSTANTS, helpers) {
     var InvoiceListView = listViewBase.extend({
         CreateView       : CreateView,
         listTemplate     : listTemplate,
@@ -21,26 +23,28 @@ define([
         contentType      : 'Proforma',
         changedModels    : {},
         hasPagination    : true,
-        baseFilter       : {
-            name : 'forSales',
-            value: {
-                key  : 'forSales',
-                type : 'boolean',
-                value: [true]
-            }
-        },
 
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.filter = options.filter ? options.filter : {};
-            this.filter.forSales = {key: 'forSales', value: [true]};
+            this.forSales = options.forSales;
+            this.filter.forSales = {key: 'forSales', value: [this.forSales], type: 'boolean'};
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.page;
+
+            this.baseFilter = {
+                name : 'forSales',
+                value: {
+                    key  : 'forSales',
+                    type : 'boolean',
+                    value: [this.forSales]
+                }
+            };
 
             listViewBase.prototype.initialize.call(this, options);
 
@@ -106,9 +110,37 @@ define([
 
         },
 
+        recalcTotal: function () {
+            var self = this;
+            var columns = ['balance', 'total', 'paid'];
+
+            _.each(columns, function (col) {
+                var sum = 0;
+
+                _.each(self.collection.toJSON(), function (model) {
+                    if (col === 'paid') {
+                        if (model.currency && model.currency.rate) {
+                            sum += parseFloat(model[col] / model.currency.rate);
+                        } else {
+                            sum += parseFloat(model[col]);
+                        }
+                    } else if (model.workflow.name !== 'Cancelled') {
+                        if (model.currency && model.currency.rate) {
+                            sum += parseFloat(model.paymentInfo[col] / model.currency.rate);
+                        } else {
+                            sum += parseFloat(model.paymentInfo[col]);
+                        }
+                    }
+                });
+
+                self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+            });
+        },
+
         render: function () {
             var self;
             var $currentEl;
+            var wId = this.forSales ? 'Sales Invoice' : 'Purchase Invoice';
 
             $('.ui-dialog ').remove();
 
@@ -119,18 +151,13 @@ define([
 
             currentEllistRenderer(self);
 
-            // self.renderPagination($currentEl, self);
-            // self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
-
             dataService.getData(CONSTANTS.WORKFLOWS_FETCH, {
-                wId         : 'Sales Invoice',
+                wId         : wId,
                 source      : 'purchase',
                 targetSource: 'invoice'
             }, function (stages) {
                 self.stages = stages;
             });
-
-            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             function currentEllistRenderer(self) {
                 var itemView;
@@ -147,25 +174,29 @@ define([
 
             }
 
+            this.recalcTotal();
+
         },
 
         goToEditDialog: function (e) {
-
+            var self = this;
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
+            var editView = this.forSales ? EditView : proformaEditView;
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoices';
+            model.urlRoot = '/invoices/';
             model.fetch({
                 data: {
                     id       : id,
+                    currentDb: App.currentDb,
                     viewType : 'form',
-                    currentDb: App.currentDb
+                    forSales : self.forSales
                 },
 
                 success: function (model) {
-                    return new editView({model: model});
+                    return new editView({model: model, forSales: self.forSales});
                 },
 
                 error: function () {

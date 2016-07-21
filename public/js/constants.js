@@ -6,6 +6,7 @@ define([], function () {
         OPPORTUNITIES     : 'Opportunities',
         PROJECTS          : 'Projects',
         TASKS             : 'Tasks',
+        DEALTASKS         : 'DealTasks',
         EMPLOYEES         : 'Employees',
         APPLICATIONS      : 'Applications',
         JOBPOSITIONS      : 'JobPositions',
@@ -22,7 +23,7 @@ define([], function () {
         SOURCEOFAPPLICANTS: 'SourceOfApplicants',
         LEADSWORKFLOW     : 'LeadsWorkflow',
         MYPROFILE         : 'myProfile',
-        PRODUCT           : 'Product',
+        PRODUCTS          : 'Products',
         SUPPLIERPAYMENTS  : 'supplierPayments',
         CUSTOMERPAYMENTS  : 'customerPayments',
         SALESQUOTATIONS   : 'salesQuotations',
@@ -57,17 +58,19 @@ define([], function () {
         CASHFLOW          : 'cashFlow',
         CLOSEMONTH        : 'closeMonth',
         SALESPROFORMA     : 'salesProforma',
+        PROFORMA          : 'proforma',
         EXPENSESINVOICE   : 'ExpensesInvoice',
         EXPENSESPAYMENTS  : 'ExpensesPayments',
         DIVIDENDINVOICE   : 'DividendInvoice',
         DIVIDENDPAYMENTS  : 'DividendPayments',
         SETTINGSEMPLOYEE  : 'settingsEmployee',
+        PURCHASEPAYMENTS  : 'purchasePayments',
         CASHBOOK          : 'cashBook', // cash book
         CASHTRANSFER      : 'cashTransfer',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
-            CREATE_QUOTATION        : 'Supplier and project fields can not be empty!',
+            CREATE_QUOTATION        : 'Supplier field can not be empty!',
             CREATE_WRITEOFF         : 'Project field can not be empty!',
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
@@ -108,7 +111,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 25,
+        DEFAULT_ELEMENTS_PER_PAGE  : 50,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
@@ -133,7 +136,7 @@ define([], function () {
             LEADS                      : '/leads/',
             MONTHHOURS                 : '/monthHours/',
             OPPORTUNITIES              : '/Opportunities/',
-            PAYMENT                    : '/payment/',
+            PAYMENT                    : '/payments/',
             PAYROLL                    : '/payroll/',
             PERSONS                    : '/persons/',
             PRODUCT                    : '/products/',
@@ -151,7 +154,7 @@ define([], function () {
             BONUSTYPE                  : '/bonusType/',
             BONUSTYPE_FORDD            : '/bonusType/getForDD',
             CAPACITY                   : '/capacity/',
-            PAYMENTCUSTOMERS           : '/payment/',
+            PAYMENTCUSTOMERS           : '/payments/',
             EMPLOYEES_PERSONSFORDD     : '/employees/getPersonsForDd',
             CUSTOMERS                  : '/customers/',
             DASHBOARD_HR               : 'dashboard/hr',
@@ -165,12 +168,12 @@ define([], function () {
             JOURNAL_ENTRY              : '/journalEntries/',
             WORKFLOWS                  : '/workflows/',
             MODULES                    : '/modules/',
-            PAYMENT_SALARY             : '/payment/',
+            PAYMENT_SALARY             : '/payments/',
             PRIORITY                   : '/Priority',
             PRODUCT_ALPHABET           : '/products/getProductsAlphabet',
             CATEGORY                   : '/category/',
             PROJECT_DASHBOARD          : 'project/getProjectPMForDashboard',
-            PAYMENT_SUPPLIER           : '/payment/',
+            PAYMENT_SUPPLIER           : '/payments/',
             APPLICATIONS_WFLENGTH      : '/applications/getApplicationsLengthByWorkflows',
             APPLICATIONS_KANBAN        : '/applications/',
             EMPLOYEES_NATIONALITY      : '/employees/nationality',
@@ -185,14 +188,16 @@ define([], function () {
             CURRENCY_FORDD             : '/currency/getForDd',
             SUPPLIER                   : '/supplier',
             WORKFLOWS_FETCH            : '/workflows/fetch',
-            PAYMENT_AMOUNT_LEFT        : '/payment/amountLeftCalc',
+            PAYMENT_AMOUNT_LEFT        : '/payments/amountLeftCalc',
             SALARY_REPORT              : '/salaryReport/',
             WRITE_OFF                  : '/writeOff/',
             WRITE_OFF_WAY              : '/journals/writeOff',
+            PURCHASE_PAYMENTS          : '/payments/',
             WEEKLYSCHEDULER            : '/weeklyScheduler/forDd',
             SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
-            PAYMENT_METHOD_DD          : 'paymentMethod/'
+            PAYMENT_METHOD_DD          : 'paymentMethod/',
+            DEALTASKS                  : '/dealTasks/',
         },
 
         MID: {
@@ -205,10 +210,12 @@ define([], function () {
         MIN_DATE: '2014-08-01',
 
         INVOICE_JOURNAL : '565ef6ba270f53d02ee71d65',
+        INVOICE_PURCHASE: '5788b4572bfddc9a494cce0a',
         PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
         PAYMENT_TERMS   : '55536e52475b7be475f335f6',
         PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
         END_OF_PROJECT  : 'To end of project',
+        NOT_STARTED_WORKFLOW: '5783b351df8b918c31af24a8',
 
         DEFAULT_SCREEN_WIDTH: 1349,
         PAGINATION_ARRAY    : [25, 50, 100, 200]

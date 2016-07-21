@@ -1,0 +1,28 @@
+// Fotns include
+$first: 1;
+
+@for $i from $first through $base-font-count {
+  @font-face {
+    font-family: map-get($base-font-name, $i);
+    src: url('#{$font-path}#{$base-font-path}#{map-get($base-font-file, $i)}.eot');
+    src: url('#{$font-path}#{$base-font-path}#{map-get($base-font-file, $i)}.eot?#iefix') format('embedded-opentype'),
+      //url('#{$font-path}#{$base-font-path}#{map-get($base-font-file, $i)}.woff2') format('woff2'),
+    url('#{$font-path}#{$base-font-path}#{map-get($base-font-file, $i)}.woff') format('woff'),
+    url('#{$font-path}#{$base-font-path}#{map-get($base-font-file, $i)}.ttf') format('truetype'),
+    url('#{$font-path}#{$base-font-path}#{map-get($base-font-file, $i)}.svg##{map-get($base-font-svg-id, $i)}') format('svg');
+    font-weight: map-get($base-font-weight, $i);
+  }
+}
+
+//@for $j from $first through $extra-font-count {
+//  @font-face {
+//    font-family: map-get($extra-font-name, $j);
+//    src: url('#{$font-path}#{$extra-font-path}#{map-get($extra-font-file, $j)}.eot');
+//    src: url('#{$font-path}#{$extra-font-path}#{map-get($extra-font-file, $j)}.eot?#iefix') format('embedded-opentype'),
+//    url('#{$font-path}#{$extra-font-path}#{map-get($extra-font-file, $j)}.woff2') format('woff2'),
+//    url('#{$font-path}#{$extra-font-path}#{map-get($extra-font-file, $j)}.woff') format('woff'),
+//    url('#{$font-path}#{$extra-font-path}#{map-get($extra-font-file, $j)}.ttf') format('truetype'),
+//    url('#{$font-path}#{$extra-font-path}#{map-get($extra-font-file, $j)}.svg##{map-get($extra-font-svg-id, $j)}') format('svg');
+//    font-weight: map-get($extra-font-weight, $j);
+//  }
+//}

@@ -362,7 +362,7 @@ input::-ms-clear {
   transform: rotate(@deg);
 }
 
-.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
+.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 18px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
   //overflow: hidden; //������ ������ attache �  Project ->add
@@ -465,11 +465,12 @@ input::-ms-clear {
   }
 
   .formTitle {
+    width: 100%;
+    border-bottom: @thin-border @border-color;
+
     &.withMargin {
       margin-bottom: 0;
     }
-    width: 100%;
-    border-bottom: @thin-border @border-color;
 
     .btnHolder {
       .right;
@@ -1255,17 +1256,17 @@ input::-ms-clear {
 
     .item {
       word-wrap: break-word;
-      margin: 5px auto;
-      width: 95%;
+      margin: 5px 15px;
+      width: calc(~"100% - 30px");
       min-height: 40px;
       text-align: left;
       border: @thin-border @border-color-main;
       background-color: @bg-main;
       color: @kanab-text-color;
       cursor: move;
-      transition: box-shadow 1s ease;
-      transition: border-color 1s ease;
-      .border-radius(0px);
+      //transition: box-shadow 1s ease;
+      transition: border-color 1s ease, box-shadow 1s ease;
+      .defaultBorRad;
 
       &.active {
         .box-shadow(0px, 0, 10px, rgba(50, 50, 50, 0.75));
@@ -1355,6 +1356,7 @@ input::-ms-clear {
       background: @bg-main;
       height: 35px;
       position: relative;
+
       &.task {
         height: 42px;
       }
@@ -1362,6 +1364,8 @@ input::-ms-clear {
       .columnName {
         padding-bottom: 5px;
         margin-bottom: 5px;
+        min-height: 30px;
+
         .totalCount {
           float: right;
           padding: 2px 5px;
@@ -1370,6 +1374,7 @@ input::-ms-clear {
           top: 4px;
           right: 28px;
           color: @fold-color;
+          .defaultBorRad;
         }
         .fold-unfold {
           display: block;
@@ -1805,9 +1810,9 @@ input::-ms-clear {
     background: 0;
   }
 
-  .ui-dialog-buttonpane {
-    margin-top: 30px !important;
-  }
+  //.ui-dialog-buttonpane {
+  //  margin-top: 30px !important;
+  //}
 
   .ui-dialog-titlebar {
     display: none;
@@ -1861,10 +1866,10 @@ input::-ms-clear {
     }
   }
 
-  .inner {
-    padding: 5px;
-    background: @background;
-  }
+  //.inner {
+  //  padding: 5px;
+  //  background: @background;
+  //}
 
   .form-holder {
     position: relative;
@@ -2084,7 +2089,7 @@ input::-ms-clear {
     min-width: 80px;
   }
 
-  .dl-auto(160px, 40%, 16px, 16px, 10px);
+  .dl-auto(160px, 40%, 18px, 18px, 10px);
 
   select {
     font-family: Arial, Helvetica, sans-serif;
@@ -2121,6 +2126,9 @@ input::-ms-clear {
     &:focus {
       outline: medium none;
       border: @thin-border @border-color-selected;
+    }
+    &#editInput {
+      padding: 2px 6px;
     }
   }
 
@@ -2184,7 +2192,7 @@ input::-ms-clear {
 }
 
 .tabs(@marginTop: 0, @marginLeft: -20px) {
-  height: 35px;
+  //height: 35px;
   border-bottom: @thin-border @border-color-main;
   li {
     float: left;
@@ -2720,7 +2728,7 @@ dl {
   .addNote {
     margin-top: 6px;
     background-color: inherit;
-    padding: 5px 0 10px 0;
+    //padding: 5px 0 10px 0;
     //margin-bottom: 5px;
 
     label {
@@ -2832,11 +2840,16 @@ dl {
     }
   }
 
+  .editedNote {
+    &.active {
+      padding: 0;
+    }
+  }
+
   #noteBody {
     .noteContainer {
-      padding: 10px;
-      border: @thin-border @border-color-main;
-      margin-bottom: 10px;
+      //padding: 10px;
+      margin: 10px 0;
 
       .name {
         margin-right: 15px;
@@ -2846,6 +2859,10 @@ dl {
       .date {
         font-size: 11px;
         color: #777;
+      }
+
+      .dateNote {
+        float: right;
       }
 
       .noteTitle {
@@ -2860,8 +2877,8 @@ dl {
 
       .right {
         float: right;
-        margin-right: 10px;
-        display: none;
+        //margin-right: 10px;
+        //display: none;
 
         .sep {
           padding: 0 3px;
@@ -2870,16 +2887,20 @@ dl {
         }
       }
 
-      &:hover {
-        background-color: @bg-hover-drop-down-color;
-        .right {
-          display: block;
-
-          a {
-            font-size: 11px;
-          }
-        }
+      &:after {
+        content: '';
+        display: table;
+        clear: both;
       }
+    }
+
+    //.noteBody,
+    //.noteBtnBlock {
+    //  border: @thin-border @border-color-main;
+    //}
+    .noteBody {
+      padding: 10px;
+      border: @thin-border @border-color-main;
     }
   }
 }
@@ -3330,19 +3351,6 @@ button.red, a.red {
       &:hover {
         opacity: 0.5;
       }
-    }
-  }
-}
-
-.tabs-items {
-  margin-bottom: -29px;
-
-  .dialog-tabs-item,
-  .chart-tabs-item {
-    display: none;
-
-    &.active {
-      display: block;
     }
   }
 }
@@ -3878,7 +3886,8 @@ table#workflows {
   }
   .btnRounded {
     height: 26px;
-    line-height: 24px!important;
+    line-height: 22px!important;
+    .defaultBorRad;
   }
 }
 
@@ -3971,7 +3980,7 @@ ul.dialog-tabs {
 }
 
 .tabs-items {
-  margin-bottom: -29px;
+  //margin-bottom: -29px;
 
   .dialog-tabs-item,
   .chart-tabs-item {
@@ -4188,6 +4197,7 @@ ul.chart-tabs {
   border: @thin-border #efefef;
   float: right;
   margin-right: 10px;
+  .defaultBorRad;
 
   .item {
     margin-left: 5px;
@@ -4197,6 +4207,7 @@ ul.chart-tabs {
     background-color: #f4f4f4;
     border: @thin-border @border-color-main;
     cursor: pointer;
+    .defaultBorRad;
 
     &:first-child {
       margin-left: 0;
@@ -4210,10 +4221,11 @@ ul.chart-tabs {
 }
 
 .legend-box {
-  border: @thin-border @border-color-main;
   width: 555px;
   margin: 0 auto;
   color: @mainText-color;
+  border: @thin-border @border-color-main;
+  .defaultBorRad;
 
   &.small {
     width: 265px;
@@ -4969,6 +4981,7 @@ textarea#editInput {
 }
 
 .openAll {
+  width: 100px;
   cursor: pointer;
   color: @mainText-color;
   .icon {
@@ -5509,8 +5522,8 @@ textarea#editInput {
     &.stick {
       position: fixed;
       bottom: 0;
-      left: 0;
-      width: 100%;
+      right: 0;
+      width: calc(~"100% - 200px");
       background-color: @bg-main;
       padding-top: 10px;
     }
@@ -6370,6 +6383,12 @@ textarea#editInput {
   right: 0;
   width: 35%;
   margin-right: 90px;
+
+  &.dashBoardVocationSearch {
+    position: static;
+    float: right;
+    margin-right: 0;
+  }
 
   .btn {
     background: @bg-main;

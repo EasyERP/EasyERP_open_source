@@ -1,0 +1,31 @@
+$colors-white: (
+    'light-blue'   : #00aeff,
+    'blue'         : #009fe3,
+    'dark-blue'    : #0084b4,
+    'lighter-gray' : #f9f9f9,
+    'light-gray'   : #a9a9a9,
+    'gray'         : #909090,
+    'dark-gray'    : #444,
+    'darker-gray'  : #373737,
+    'green'        : #43c17c,
+    'orange'       : #ff9524,
+);
+
+// Default --------------
+$black  : #000000 !default;
+$white  : #ffffff !default;
+// -----------------------
+
+$colors: (
+    'default'   : $colors-white,
+);
+
+// tmp colors
+$tree-item-bg: #E5EBFB;
+$tree-border: #ddd;
+$checkbox-border: #3e88b9;
+$checkbox-text: #5a5a5a;
+$input-border: #5a5a5a;
+$input-text: #3e88b9;
+$border-color: #7f7f80;
+$top-font-color: #666666;

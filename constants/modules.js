@@ -50,5 +50,6 @@ module.exports = {
     PROFORMA          : 99,
     CASHBOOK          : 105,
     CASHTRANSFER      : 106,
-    WRITEOFF          : 107
+    WRITEOFF          : 107,
+    DEALTASKS         : 110
 };

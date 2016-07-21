@@ -7,7 +7,7 @@ define([
     'text!templates/Projects/projectInfo/quotations/newRow.html',
     'collections/Persons/PersonsCollection',
     'collections/Departments/DepartmentsCollection',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'models/QuotationModel',
     'common',
     'populate',

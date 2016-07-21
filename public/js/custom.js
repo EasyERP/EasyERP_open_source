@@ -24,7 +24,7 @@ define([
 
     var runApplication = function (success) {
         var location = window.location.hash;
-        var emailRedirectRegExp = /password/;
+        var regExp = /password|home/;
         var url;
 
         if (!Backbone.History.started) {
@@ -32,7 +32,7 @@ define([
         }
         if (success) {
             url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
-            if ((url === '') || url === 'login' || emailRedirectRegExp.test(url)) {
+            if ((url === '') || url === 'login' || regExp.test(url)) {
                 url = 'easyErp';
             }
 
@@ -44,10 +44,10 @@ define([
             }
             Backbone.history.fragment = '';
 
-            if (emailRedirectRegExp.test(location)) {
+            if (regExp.test(location)) {
                 url = location;
             } else {
-                url = 'login'
+                url = 'login';
             }
 
             Backbone.history.navigate(url, {trigger: true});
@@ -130,6 +130,7 @@ define([
                 switch (option.contentType) {
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
+                    case CONTENT_TYPES.DEALTASKS:
                     case CONTENT_TYPES.PROFILES:
                     case CONTENT_TYPES.DEPARTMENTS:
                     case CONTENT_TYPES.USERS:
@@ -174,6 +175,8 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
+                    case CONTENT_TYPES.PURCHASEPAYMENTS:
+                    case CONTENT_TYPES.PROFORMA:
                     case CONTENT_TYPES.CASHBOOK:
                     case CONTENT_TYPES.CASHTRANSFER:
                         App.currentViewType = 'list';
@@ -195,6 +198,7 @@ define([
                 switch (option.contentType) {
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
+                    case CONTENT_TYPES.DEALTASKS:
                     case CONTENT_TYPES.PROFILES:
                     case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.DEPARTMENTS:
@@ -239,6 +243,8 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
+                    case CONTENT_TYPES.PURCHASEPAYMENTS:
+                    case CONTENT_TYPES.PROFORMA:
                     case CONTENT_TYPES.CASHBOOK:
                     case CONTENT_TYPES.CASHTRANSFER:
                         App.currentViewType = 'list';

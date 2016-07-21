@@ -53,112 +53,146 @@ var Proforma = function (models) {
 
         function findQuotation(callback) {
 
-            Quotation.aggregate([
-                {
-                    $match: {
-                        _id: objectId(id)
-                    }
-                },
-                {
-                    $unwind: '$products'
-                },
-                {
-                    $lookup: {
-                        from        : 'Products',
-                        localField  : 'products.product',
-                        foreignField: '_id',
-                        as          : 'products.product'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'jobs',
-                        localField  : 'products.jobs',
-                        foreignField: '_id',
-                        as          : 'products.jobs'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'Project',
-                        localField  : 'project',
-                        foreignField: '_id',
-                        as          : 'project'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'currency',
-                        localField  : 'currency._id',
-                        foreignField: '_id',
-                        as          : 'currency.obj'
-                    }
-                },
-                {
-                    $project: {
-                        'products.product'    : {$arrayElemAt: ['$products.product', 0]},
-                        'products.jobs'       : {$arrayElemAt: ['$products.jobs', 0]},
-                        'currency.obj'        : {$arrayElemAt: ['$currency.obj', 0]},
-                        project               : {$arrayElemAt: ['$project', 0]},
-                        'products.subTotal'   : 1,
-                        'products.unitPrice'  : 1,
-                        'products.taxes'      : 1,
-                        'products.description': 1,
-                        'products.quantity'   : 1,
-                        'currency._id'        : 1,
-                        forSales              : 1,
-                        type                  : 1,
-                        isOrder               : 1,
-                        supplier              : 1,
-                        deliverTo             : 1,
-                        orderDate             : 1,
-                        expectedDate          : 1,
-                        name                  : 1,
-                        destination           : 1,
-                        incoterm              : 1,
-                        invoiceControl        : 1,
-                        invoiceRecived        : 1,
-                        paymentTerm           : 1,
-                        paymentInfo           : 1,
-                        workflow              : 1,
-                        whoCanRW              : 1,
-                        groups                : 1,
-                        creationDate          : 1,
-                        createdBy             : 1,
-                        editedBy              : 1,
-                        attachments           : 1
-                    }
-                },
-                {
-                    $group: {
-                        _id           : '$_id',
-                        products      : {$push: '$products'},
-                        project       : {$first: '$project'},
-                        currency      : {$first: '$currency'},
-                        forSales      : {$first: '$forSales'},
-                        type          : {$first: '$forSales'},
-                        isOrder       : {$first: '$isOrder'},
-                        supplier      : {$first: '$supplier'},
-                        deliverTo     : {$first: '$deliverTo'},
-                        orderDate     : {$first: '$orderDate'},
-                        expectedDate  : {$first: '$expectedDate'},
-                        name          : {$first: '$name'},
-                        destination   : {$first: '$destination'},
-                        incoterm      : {$first: '$incoterm'},
-                        invoiceControl: {$first: '$invoiceControl'},
-                        invoiceRecived: {$first: '$invoiceRecived'},
-                        paymentTerm   : {$first: '$paymentTerm'},
-                        paymentInfo   : {$first: '$paymentInfo'},
-                        workflow      : {$first: '$workflow'},
-                        whoCanRW      : {$first: '$whoCanRW'},
-                        groups        : {$first: '$groups'},
-                        creationDate  : {$first: '$creationDate'},
-                        createdBy     : {$first: '$createdBy'},
-                        editedBy      : {$first: '$editedBy'},
-                        attachments   : {$first: '$attachments'}
-                    }
+            Quotation.aggregate([{
+                $match: {
+                    _id: objectId(id)
                 }
-            ], function (err, quotation) {
+            }, {
+                $unwind: '$products'
+            }, {
+                $lookup: {
+                    from        : 'Products',
+                    localField  : 'products.product',
+                    foreignField: '_id',
+                    as          : 'products.product'
+                }
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : 'products.jobs',
+                    foreignField: '_id',
+                    as          : 'products.jobs'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
+                }
+            }, {
+                $lookup: {
+                    from        : 'currency',
+                    localField  : 'currency._id',
+                    foreignField: '_id',
+                    as          : 'currency.obj'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'supplier',
+                    foreignField: '_id',
+                    as          : 'supplier'
+                }
+            }, {
+                $project: {
+                    'products.product'    : {$arrayElemAt: ['$products.product', 0]},
+                    'products.jobs'       : {$arrayElemAt: ['$products.jobs', 0]},
+                    'currency.obj'        : {$arrayElemAt: ['$currency.obj', 0]},
+                    project               : {$arrayElemAt: ['$project', 0]},
+                    supplier              : {$arrayElemAt: ['$supplier', 0]},
+                    'products.subTotal'   : 1,
+                    'products.unitPrice'  : 1,
+                    'products.taxes'      : 1,
+                    'products.description': 1,
+                    'products.quantity'   : 1,
+                    'currency._id'        : 1,
+                    forSales              : 1,
+                    type                  : 1,
+                    isOrder               : 1,
+                    deliverTo             : 1,
+                    orderDate             : 1,
+                    expectedDate          : 1,
+                    name                  : 1,
+                    destination           : 1,
+                    incoterm              : 1,
+                    invoiceControl        : 1,
+                    invoiceRecived        : 1,
+                    paymentTerm           : 1,
+                    paymentInfo           : 1,
+                    workflow              : 1,
+                    whoCanRW              : 1,
+                    groups                : 1,
+                    creationDate          : 1,
+                    createdBy             : 1,
+                    editedBy              : 1,
+                    attachments           : 1
+                }
+            }, {
+                $project: {
+                    'products.product'    : 1,
+                    'products.jobs'       : 1,
+                    'currency.obj'        : 1,
+                    project               : 1,
+                    supplier              : 1,
+                    'products.subTotal'   : 1,
+                    'products.unitPrice'  : 1,
+                    'products.taxes'      : 1,
+                    'products.description': 1,
+                    'products.quantity'   : 1,
+                    'currency._id'        : 1,
+                    salesPerson           : '$supplier.salesPurchases.salesPerson',
+                    forSales              : 1,
+                    type                  : 1,
+                    isOrder               : 1,
+                    deliverTo             : 1,
+                    orderDate             : 1,
+                    expectedDate          : 1,
+                    name                  : 1,
+                    destination           : 1,
+                    incoterm              : 1,
+                    invoiceControl        : 1,
+                    invoiceRecived        : 1,
+                    paymentTerm           : 1,
+                    paymentInfo           : 1,
+                    workflow              : 1,
+                    whoCanRW              : 1,
+                    groups                : 1,
+                    creationDate          : 1,
+                    createdBy             : 1,
+                    editedBy              : 1,
+                    attachments           : 1
+                }
+            }, {
+                $group: {
+                    _id           : '$_id',
+                    products      : {$push: '$products'},
+                    project       : {$first: '$project'},
+                    currency      : {$first: '$currency'},
+                    forSales      : {$first: '$forSales'},
+                    type          : {$first: '$forSales'},
+                    isOrder       : {$first: '$isOrder'},
+                    supplier      : {$first: '$supplier'},
+                    deliverTo     : {$first: '$deliverTo'},
+                    orderDate     : {$first: '$orderDate'},
+                    expectedDate  : {$first: '$expectedDate'},
+                    name          : {$first: '$name'},
+                    destination   : {$first: '$destination'},
+                    salesPerson   : {$first: '$salesPerson'},
+                    incoterm      : {$first: '$incoterm'},
+                    invoiceControl: {$first: '$invoiceControl'},
+                    invoiceRecived: {$first: '$invoiceRecived'},
+                    paymentTerm   : {$first: '$paymentTerm'},
+                    paymentInfo   : {$first: '$paymentInfo'},
+                    workflow      : {$first: '$workflow'},
+                    whoCanRW      : {$first: '$whoCanRW'},
+                    groups        : {$first: '$groups'},
+                    creationDate  : {$first: '$creationDate'},
+                    createdBy     : {$first: '$createdBy'},
+                    editedBy      : {$first: '$editedBy'},
+                    attachments   : {$first: '$attachments'}
+                }
+            }], function (err, quotation) {
                 if (err) {
                     return next(err);
                 }
@@ -218,7 +252,7 @@ var Proforma = function (models) {
             }
 
             proforma.supplier = quotation.supplier;
-            proforma.salesPerson = quotation.project.projectmanager || null;
+            proforma.salesPerson = quotation.project ? quotation.project.projectmanager : quotation.salesPerson;
 
             proforma.save(function (err, result) {
                 if (err) {

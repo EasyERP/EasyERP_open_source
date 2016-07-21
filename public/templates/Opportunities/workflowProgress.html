@@ -1,0 +1,5 @@
+﻿<div class="tabListWrap">
+    <% _.each(workflows, function(item){ %>
+    <div class="tabListItem <%= item.sequence > workflow.sequence ? 'passed' : item.sequence === workflow.sequence ? 'active' : '' %>"><span value="<%= item.status %>" data-id="<%= item._id %>" ><%= item.name %></span></div>
+    <%}); %>
+</div>

@@ -49,17 +49,11 @@
                 type       : 'string'
             },
 
-            isPaid: {
-                displayName: 'Status',
-                backend    : 'isPaid',
-                type       : 'boolean'
-            },
-
             jobs: {
                 backend: 'jobs'
             },
 
-            array: ['employee', 'customer', 'project', 'department', 'month', 'year', 'week', '_type', 'isPaid']
+            array: ['employee', 'customer', 'project', 'department', 'month', 'year', 'week', '_type']
         },
 
         Persons: {
@@ -105,6 +99,27 @@
             },
 
             array: ['name', 'department', 'projecttype', 'salesManager']
+        },
+
+        DealTasks: {
+            name: {
+                displayName: 'Name',
+                backend    : '_id'
+            },
+            assignedTo: {
+                displayName: 'Assigned To',
+                backend    : 'assignedTo'
+            },
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
+            },
+            deal : {
+                displayName: 'Deal',
+                backend    : 'deal'
+            },
+
+            array: ['name', 'assignedTo', 'workflow', 'deal']
         },
 
         Companies: {
@@ -248,7 +263,7 @@
                 displayName: 'Journal',
                 backend    : 'journal._id'
             },
-            array: ['project', 'journal']
+            array  : ['project', 'journal']
         },
 
         DividendInvoice: {
@@ -350,6 +365,11 @@
             salesPerson: {
                 displayName: 'Sales Person',
                 backend    : 'salesPerson._id'
+            },
+
+            createdBy: {
+                displayName: 'Created By',
+                backend    : 'createdBy.user._id'
             }
         },
 
@@ -492,17 +512,17 @@
          }
          },*/
 
-        Product: {
+        Products: {
             name: {
                 displayName: 'Product Name',
                 backend    : '_id'
             },
 
-            productType: {
+            /*productType: {
                 displayName: 'Product Type',
                 backend    : 'info.productType',
                 type       : 'string'
-            },
+            },*/
 
             canBeSold: {
                 displayName: 'Can be Sold',
@@ -520,7 +540,14 @@
                 displayName: 'Can be Purchased',
                 backend    : 'canBePurchased',
                 type       : 'boolean'
-            }
+            },
+
+            productCategory: {
+                displayName: 'Category',
+                backend    : 'accounting.category._id'
+            },
+
+            array: ['name', 'canBeSold', 'canBeExpensed', 'canBePurchased']
         },
 
         salesProduct: {
@@ -555,7 +582,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'
@@ -589,7 +616,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             project: {
                 displayName: 'Project',
                 backend    : 'project._id'
@@ -618,8 +645,8 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
-            project : {
+
+            project: {
                 displayName: 'Project',
                 backend    : 'project._id'
             },
@@ -647,7 +674,7 @@
                 backend: 'forSales',
                 type   : 'boolean'
             },
-            
+
             supplier: {
                 displayName: 'Supplier',
                 backend    : 'supplier._id'

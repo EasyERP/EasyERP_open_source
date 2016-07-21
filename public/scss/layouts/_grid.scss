@@ -1,0 +1,209 @@
+// Container wrap
+
+.clearfix {
+  @extend %clearfix;
+}
+
+.container {
+  @extend %container;
+  @extend %clearfix;
+
+  &-full {
+    @extend %container;
+    @extend %clearfix;
+  }
+
+  @media (min-width: $small-screen) {
+    max-width: $small-container;
+  }
+
+  @media (min-width: $medium-screen) {
+    max-width: $medium-container;
+  }
+
+  @media (min-width: $large-screen) {
+    max-width: $large-container;
+  }
+
+  @media (min-width: $xlarge-screen) {
+    max-width: $xlarge-container;
+  }
+}
+
+.row {
+  @extend %clearfix;
+  margin-left: ($gutter-width / -2);
+  margin-right: ($gutter-width / -2);
+}
+
+.col {
+  float: left;
+  width: 100%;
+  min-height: 1px;
+  position: relative;
+  box-sizing: border-box;
+  padding-left: ($gutter-width / 2);
+  padding-right: ($gutter-width / 2);
+}
+
+@media (max-width: $small-screen-down) {
+  .container {
+    padding-left: ($gutter-width / 2.5);
+    padding-right: ($gutter-width / 2.5);
+
+    &-full {
+      padding-left: ($gutter-width / 2.5);
+      padding-right: ($gutter-width / 2.5);
+    }
+  }
+
+  .row {
+    margin-left: ($gutter-width / -2.5);
+    margin-right: ($gutter-width / -2.5);
+  }
+
+  .col {
+    padding-left: ($gutter-width / 2.5);
+    padding-right: ($gutter-width / 2.5);
+  }
+}
+
+// Grid system
+
+$j: 1;
+
+@for $i from $j through $num-cols {
+  $width: percentage($i / $num-cols);
+
+  .xs-#{$i} {
+    width: $width;
+  }
+
+  .xs-offset-#{$i} {
+    margin-left: $width;
+  }
+
+  .xs-pull-#{$i} {
+    left: $width;
+  }
+
+  .xs-push-#{$i} {
+    right: $width;
+  }
+}
+
+.xs-offset-0 {
+  margin-left: 0;
+}
+
+@media (min-width: $small-screen) {
+  $j: 1;
+
+  @for $i from $j through $num-cols {
+    $width: percentage($i / $num-cols);
+
+    .s-#{$i} {
+      width: $width;
+    }
+
+    .s-offset-#{$i} {
+      margin-left: $width;
+    }
+
+    .s-pull-#{$i} {
+      left: $width;
+    }
+
+    .s-push-#{$i} {
+      right: $width;
+    }
+  }
+
+  .s-offset-0 {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: $medium-screen) {
+  $j: 1;
+
+  @for $i from $j through $num-cols {
+    $width: percentage($i / $num-cols);
+
+    .m-#{$i} {
+      width: $width;
+    }
+
+    .m-offset-#{$i} {
+      margin-left: $width;
+    }
+
+    .m-pull-#{$i} {
+      left: $width;
+    }
+
+    .m-push-#{$i} {
+      right: $width;
+    }
+  }
+
+  .m-offset-0 {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: $large-screen) {
+  $j: 1;
+
+  @for $i from $j through $num-cols {
+    $width: percentage($i / $num-cols);
+
+    .l-#{$i} {
+      width: $width;
+    }
+
+    .l-offset-#{$i} {
+      margin-left: $width;
+    }
+
+    .l-pull-#{$i} {
+      left: $width;
+    }
+
+    .l-push-#{$i} {
+      right: $width;
+    }
+  }
+
+  .l-offset-0 {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: $xlarge-screen) {
+  $j: 1;
+
+  @for $i from $j through $num-cols {
+    $width: percentage($i / $num-cols);
+
+    .xl-#{$i} {
+      width: $width;
+    }
+
+    .xl-offset-#{$i} {
+      margin-left: $width;
+    }
+
+    .xl-pull-#{$i} {
+      left: $width;
+    }
+
+    .xl-push-#{$i} {
+      right: $width;
+    }
+  }
+
+  .xl-offset-0 {
+    margin-left: 0;
+  }
+}

@@ -1,8 +1,10 @@
 define([
     'Backbone',
+    'Underscore',
     'Validation',
+    'moment',
     'constants'
-], function (Backbone, Validation, CONSTANTS) {
+], function (Backbone, _, Validation, moment, CONSTANTS) {
     'use strict';
 
     var ProductModel = Backbone.Model.extend({
@@ -21,6 +23,18 @@ define([
                     });
                 }
             });
+        },
+
+        parse : function (response) {
+            if (!response.data) {
+                if (response.attachments) {
+                    _.map(response.attachments, function (attachment) {
+                        attachment.uploadDate = moment(attachment.uploadDate).format('DD MMM, YYYY, H:mm:ss');
+                        return attachment;
+                    });
+                }
+                return response;
+            }
         },
 
         validate: function (attrs) {

@@ -1814,7 +1814,8 @@ body {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
-  padding: 2px 0px 2px 26px;
+  padding: 2px 0 2px 26px;
+  border-radius: 3px;
 }
 #searchFilterContainer {
   float: left;
@@ -1931,20 +1932,20 @@ body {
 .btn-list {
   height: 24px;
   border: 1px solid #7f7f80;
-  border-right: 0;
-  border-bottom: 0;
   float: left;
   margin: 0 12px 0 5px;
+  border-radius: 3px;
 }
 .btn-list li {
-  border-right: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
   padding: 3px;
   margin: 0;
   display: block;
   float: left;
   height: 23px;
   width: 24px;
+}
+.btn-list li:nth-child(n+2) {
+  border-left: 1px solid #7f7f80;
 }
 .btn-list li a {
   display: block;
@@ -2547,6 +2548,9 @@ body {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.3);
 }
+.defaultBorRad {
+  border-radius: 3px;
+}
 .loginContent * {
   box-sizing: border-box;
 }
@@ -2674,7 +2678,7 @@ h2.green {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 .loginForgot {
   color: #a4aab2;
@@ -2955,12 +2959,6 @@ input:not([type="checkbox"]).inputBordered:focus {
     right: auto;
     left: 20px;
   }
-}
-.opportunity-date:after {
-  content: 'Due';
-}
-.errorContent .opportunity-date:after {
-  content: 'OverDue';
 }
 .mainLogo {
   color: #fff;
@@ -3380,7 +3378,6 @@ input:not([type="checkbox"]).inputBordered:focus {
   bottom: 0;
   height: calc(100% - 40px);
   width: calc(100% - 55px);
-  overflow: auto;
 }
 .borderBottom {
   border-bottom: 1px solid #7f7f80;
@@ -3461,6 +3458,194 @@ dl.payrollDateBlock dt {
   display: table;
   clear: both;
 }
+.treemap_sales {
+  display: inline-block;
+}
+table.kanban tbody td {
+  margin: 0 5px;
+  -o-text-overflow: clip;
+  text-overflow: clip;
+  background: -webkit-linear-gradient(90deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%), -webkit-linear-gradient(0deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+  background: -moz-linear-gradient(0deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%), -moz-linear-gradient(90deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(0deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%), linear-gradient(90deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+  background-position: -1px -1px;
+  -webkit-background-origin: padding-box;
+  background-origin: padding-box;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-background-size: 7px 7px;
+  background-size: 7px 7px;
+}
+table.kanban tbody td:nth-child(n+2) {
+  border-left: 9px solid #fff;
+}
+#top-bar-createBtn {
+  height: 26px;
+  padding: 0 12px;
+  background: #ffffff;
+  line-height: 24px!important;
+  color: #fff;
+  border: 1px solid #7f7f80;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  border-radius: 3px;
+}
+#top-bar-createBtn:after {
+  content: 'New';
+  margin-left: 5px;
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000;
+  font-size: 13px;
+}
+#top-bar-createBtn:hover {
+  background: #f4f4f4;
+}
+.top-bar #top-bar-createBtn {
+  margin-top: 4px;
+}
+.tabListWrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+.tabListItem {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  width: 10px;
+  position: relative;
+  padding: 3px 5px;
+  margin: 5px;
+  background-color: #e6e6e6;
+  font-size: 10px;
+}
+.tabListItem.passed {
+  background-image: linear-gradient(to top, #158b0c, #18a815);
+}
+.tabListItem.passed span {
+  color: #fff;
+}
+.tabListItem span {
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+.clearLeft {
+  float: left!important;
+  clear: both!important;
+}
+.dealsLeadBlock {
+  margin-top: 30px;
+}
+.form-holder .form .dealTitle h3 {
+  display: inline-block;
+  float: left;
+  white-space: nowrap;
+}
+.form-holder .form .dealTitle h3.editable {
+  position: relative;
+  padding-left: 20px;
+}
+.form-holder .form .dealTitle h3.editable #editSpan {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.floatColumn {
+  display: inline-block;
+  float: left;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.floatColumn > * {
+  float: left;
+  width: 100%;
+  clear: both;
+}
+.floatColumn > *:nth-child(n+2) {
+  margin-top: 20px;
+}
+.floatColumn:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.floatColumn .dialog-tabs-items {
+  margin-bottom: 0;
+}
+.halfColumn {
+  width: 50%;
+}
+.noteBtnBlock,
+.editNoteBtnBlock {
+  height: 0;
+  margin-top: -1px;
+  border: 1px solid #7f7f80;
+  border-top: none;
+  overflow: hidden;
+  transition: all .2s ease;
+}
+.noteBtnBlock .btn,
+.editNoteBtnBlock .btn {
+  margin: 7px;
+  float: right;
+  height: 19px;
+  line-height: 18px!important;
+}
+.noteBtnBlock .btn:hover,
+.editNoteBtnBlock .btn:hover {
+  text-decoration: none;
+}
+.editedNote {
+  border: 1px solid #7f7f80;
+}
+.editedNote .noteType {
+  float: left;
+}
+.editedNote .noteText {
+  padding: 10px !important;
+  margin: 0 !important;
+  border: none;
+  border-top: 1px solid #7f7f80;
+}
+.editedNote .noteText:hover,
+.editedNote .noteText:active,
+.editedNote .noteText:focus {
+  outline: 0 !important;
+}
+.editedNote .noteText.active {
+  padding: 0;
+}
+.noteTitle {
+  margin-top: 10px;
+}
+.editedNoteTitle {
+  padding: 10px;
+}
+.editedNoteTitle:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.editNoteBtnBlock {
+  height: 34px;
+  border: none;
+  border-top: 1px solid #7f7f80;
+}
+.contentHolder.showButtons .noteBtnBlock {
+  height: 34px;
+}
+.addTask:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.addTask .buttons {
+  margin-top: 10px;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
@@ -3498,6 +3683,9 @@ dl.payrollDateBlock dt {
 }
 .collapsed .sideMenu nav > ul {
   height: auto;
+}
+.collapsed .sideMenu nav .root.active:after {
+  display: none;
 }
 .collapsed .sideMenu .root {
   position: relative;
@@ -3565,6 +3753,9 @@ dl.payrollDateBlock dt {
 .collapsed .topbarLogo .sidebarToggler {
   margin-left: 10px;
 }
+.collapsed .grid-conatiner .statisticsAtten.stick {
+  width: calc(100% - 40px);
+}
 .holidays.projectTimeCardCustomList {
   left: 50%;
   width: 415px !important;
@@ -3585,6 +3776,610 @@ dl.payrollDateBlock dt {
     margin-top: 15px;
     margin-left: -207px;
   }
+}
+.noteMainContainer {
+  position: relative;
+}
+.noteContainer {
+  position: relative;
+  padding-left: 50px;
+}
+.noteContainer:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25px;
+  width: 1px;
+  height: calc(100% + 27px);
+  background: #c8c8d3;
+}
+.noteContainer:first-child:before {
+  top: -10px;
+}
+.noteContainer:last-child:before {
+  height: 25px;
+}
+.noteContainer .noteTopBox {
+  padding: 10px 15px;
+  border-bottom: 1px solid #c8c8d3;
+}
+.noteContainer .loadAttach {
+  padding: 10px 15px 0;
+}
+.noteContainer .itemCircle {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  height: 28px;
+  width: 28px;
+  border: 1px solid #c8c8d3;
+  border-radius: 50%;
+  background: #ffffff;
+  font-size: 10px;
+  line-height: 28px;
+  text-align: center;
+  color: #c8c8d3;
+  z-index: 10;
+}
+.noteContainer .noteBody {
+  padding: 0 0 17px !important;
+  border-radius: 3px;
+  border: 1px solid #c8c8d3 !important;
+  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+.noteContainer .noteBtnBlock {
+  border: none;
+}
+.noteContainer .showButtons .noteBtnBlock {
+  border: 1px solid #c8c8d3 !important;
+}
+.noteContainer .noteText,
+.noteContainer .noteContent,
+.noteContainer .changed_field,
+.noteContainer .assignedTo {
+  padding: 10px 15px 0;
+}
+.noteContainer .dateNote {
+  line-height: 11px;
+  min-height: 15px;
+}
+.noteContainer .singleNote {
+  padding: 7px 15px 0 0;
+}
+.noteContainer .singleNote .dateNote {
+  padding-top: 14px;
+}
+.noteContainer .noteText:last-child {
+  margin-bottom: 0 !important;
+}
+.noteContainer .noteContent {
+  margin-bottom: 10px;
+}
+.propertyContainer {
+  padding: 20px;
+}
+.propertyContainer a:hover {
+  text-decoration: none;
+}
+.propertyBox {
+  position: relative;
+  display: table;
+  border: 1px solid #c8c8d3;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.propertyBox .propertyImg,
+.propertyBox .propertyBody {
+  display: table-cell;
+  vertical-align: top;
+}
+.propertyBox .removeProperty {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 20px;
+  height: 20px;
+  padding-top: 3px;
+  text-align: center;
+  font-size: 12px;
+  color: #c8c8d3;
+}
+.propertyBox .propertyImg {
+  width: 40px;
+}
+.propertyBox .propertyImg img {
+  width: 100%;
+}
+.propertyBox .propertyBody {
+  padding-left: 15px;
+  font-size: 13px;
+}
+.propertyBox .propertyFullName {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.propertyBox a {
+  color: #3291c8;
+}
+.propertyFormList {
+  display: table !important;
+  width: 100%;
+  border-left: 1px solid transparent;
+}
+.propertyFormList.active {
+  border-left-color: #3291c8;
+}
+.propertyFormList label,
+.propertyFormList .inputBox {
+  display: table-cell !important;
+}
+.propertyFormList label {
+  width: 140px !important;
+  text-align: right;
+  padding-right: 15px;
+}
+.propertyFormList .inputBox input:not([type=checkbox]) {
+  border: none ;
+  border-bottom: 1px solid #c8c8d3;
+  outline: none;
+  width: 100%;
+  padding: 6px 12px;
+}
+.propertyFormList .inputBox input:not([type=checkbox]):focus {
+  background: #fafafa;
+  border: none ;
+  border-bottom: 1px solid #c8c8d3;
+}
+.propertySubmit {
+  text-align: center;
+  margin-top: 20px;
+}
+.propertyEditBtn {
+  display: none;
+  margin-top: 15px;
+}
+.propertyEditBtn.showButtons {
+  display: block;
+}
+.propertyEditBtn .btn + .btn {
+  margin-left: 10px;
+}
+.selectCompany .addCompanyBtn {
+  width: 100%;
+  margin: 0;
+  padding: 15px !important;
+  height: auto;
+  color: #000000;
+  font-size: 16px;
+}
+.selectCompany .addCompanyBtn:hover {
+  background: #f2f2f2;
+  text-decoration: none;
+}
+.tagsRow,
+.attachWrapper,
+.selectCompany,
+.moduleList {
+  padding: 20px;
+}
+.tagsRow .tagsTitle,
+.attachWrapper .tagsTitle,
+.selectCompany .tagsTitle,
+.moduleList .tagsTitle,
+.tagsRow .formTitle,
+.attachWrapper .formTitle,
+.selectCompany .formTitle,
+.moduleList .formTitle {
+  border-bottom: none !important;
+  margin-bottom: 15px;
+}
+.tagsRow .editTags:hover {
+  background: none;
+  text-decoration: none;
+}
+.attachWrapper .input-file,
+.selectCompany .input-file {
+  width: 100%;
+  margin: 0 0 20px;
+  padding: 20px;
+  height: auto;
+  color: #000000;
+  font-size: 16px;
+  border-radius: 3px;
+}
+.attachWrapper .input-file:hover,
+.selectCompany .input-file:hover {
+  background: #f2f2f2;
+}
+.attachWrapper .input-file.smallBtn,
+.selectCompany .input-file.smallBtn {
+  display: block;
+  width: 90px;
+  margin: 15px auto 0;
+  padding: 6px 12px;
+  font-size: 13px;
+  float: none;
+}
+.attachWrapper .input-file .inputAttach,
+.selectCompany .input-file .inputAttach {
+  cursor: pointer !important;
+}
+.attachWrapper .atachPlaceHolder i,
+.selectCompany .atachPlaceHolder i,
+.attachWrapper .addCompanyBtn i,
+.selectCompany .addCompanyBtn i {
+  margin-right: 5px;
+  font-size: 12px;
+}
+.attachWrapper .inputAttach,
+.selectCompany .inputAttach {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+}
+.ui-dialog .ui-dialog-content.opportunitiesModal {
+  padding: 20px 20px 40px;
+}
+.ui-dialog .ui-dialog-content.opportunitiesModal .tagsTitle {
+  border-bottom: none;
+  text-align: left;
+}
+.ui-dialog .ui-dialog-content.opportunitiesModal h2.tagsTitle {
+  font-size: 18px;
+}
+.ui-dialog .ui-dialog-content.opportunitiesModal h4.tagsTitle {
+  font-size: 13px;
+}
+.ui-dialog .ui-dialog-content.opportunitiesModal input.searchTagInput {
+  outline: none;
+  width: 100%;
+}
+.ui-dialog .dropDownList ul {
+  max-height: 191px;
+  overflow-y: auto;
+}
+.ui-dialog .dropDownList li {
+  padding: 8px 12px;
+  cursor: pointer;
+  margin-bottom: 5px !important;
+}
+.ui-dialog .dropDownList li:hover {
+  background: #f2f2f2;
+}
+.ui-dialog .dropDownList span {
+  display: block;
+  font-size: 12px;
+}
+.ui-dialog .dropDownList .propertyNameList {
+  color: #000000;
+  margin-bottom: 5px;
+}
+.ui-dialog .createNewCompany {
+  font-size: 13px;
+  color: #000000;
+  background: #f2f4f5;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+.ui-dialog .createNewCompany:hover {
+  text-decoration: none;
+}
+.newCompanyContainer {
+  padding: 40px;
+  text-align: center;
+  background: #f2f2f2;
+}
+.dealTitle input:not([type=checkbox]) {
+  border: none !important;
+}
+.dealTitle .dealTitleName,
+.dealTitle .dealTitlePrice,
+.dealTitle span {
+  font-size: 18px !important;
+}
+.dealTitle .dealTitleName {
+  width: 410px;
+  max-width: 410px !important;
+}
+.dealTitle .dealTitlePrice {
+  width: 80px;
+  text-align: right;
+}
+.moduleList,
+.attachments {
+  border-radius: 5px;
+  border: 1px solid #c8c8d3;
+}
+.tags-container label {
+  text-align: left;
+}
+.attachments {
+  margin-bottom: 20px;
+}
+.largeBtn {
+  width: 100%;
+  padding: 14px 20px !important;
+  height: auto;
+  color: #000000;
+  font-size: 16px !important;
+  border-radius: 3px;
+}
+.largeBtn:hover {
+  background: #f2f2f2;
+  text-decoration: none;
+}
+.largeBtn i {
+  margin-right: 5px;
+  font-size: 12px;
+}
+.area_holder {
+  position: relative;
+  margin-top: 15px;
+}
+.area_holder textarea {
+  padding: 10px !important;
+}
+.area_holder .attach_file {
+  position: absolute;
+  right: 15px !important;
+  bottom: 10px !important;
+  font-size: 18px;
+}
+.addNote,
+.addTask {
+  margin-top: 0 !important;
+  width: 100%;
+}
+.addNote .buttons,
+.addTask .buttons {
+  display: none;
+}
+.addNote.active,
+.addTask.active {
+  padding: 0 !important;
+}
+.addNote.active .buttons,
+.addTask.active .buttons {
+  display: block;
+}
+.addNote.active textarea,
+.addTask.active textarea {
+  padding: 10px 22px 15px 10px !important;
+}
+.addTask .hasDatepicker {
+  float: right;
+  border: none !important;
+  text-align: right;
+  cursor: pointer;
+  margin-top: 8px !important;
+}
+.addTask .current-selected {
+  font-weight: bold;
+  margin-left: 5px;
+  display: inline-block;
+}
+.noteWrapper .buttons {
+  margin-top: 10px !important;
+}
+.noteWrapper .buttons .btn + .btn {
+  margin-left: 10px;
+}
+.amountBox {
+  position: relative;
+}
+.amountBox .amountDollar {
+  position: absolute;
+  left: 11px;
+  top: 7px;
+}
+.amountBox input:not([type=checkbox]) {
+  padding-left: 22px !important;
+}
+.assignName {
+  padding-left: 13px;
+}
+.ui-datepicker {
+  min-width: 175px;
+}
+.newTasksContainer {
+  padding-top: 30px !important;
+}
+.newTasksContainer .taskTitle {
+  font-size: 23px;
+  padding-left: 26px;
+  margin-bottom: 25px;
+}
+.newTasksContainer .taskTop,
+.newTasksContainer .taskBottom {
+  width: 100%;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #c8c8d3;
+  font-size: 0;
+}
+.newTasksContainer .taskBottom {
+  border-top: 1px solid #c8c8d3;
+  margin-top: 30px;
+}
+.newTasksContainer .taskBottom .hasDatepicker,
+.newTasksContainer .taskBottom .current-selected {
+  text-align: center;
+}
+.newTasksContainer .taskTop .hasDatepicker,
+.newTasksContainer .taskTop .current-selected {
+  padding-left: 10px;
+}
+.newTasksContainer .topCell {
+  display: inline-block;
+  vertical-align: middle;
+  width: 33%;
+  padding: 15px;
+  font-size: 14px;
+}
+.newTasksContainer .topCell + .topCell {
+  border-left: 1px solid #c8c8d3;
+}
+.newTasksContainer .topCell .hasDatepicker,
+.newTasksContainer .topCell .current-selected {
+  height: 40px;
+  width: 100%;
+  border: 1px solid #c8c8d3;
+  margin-top: 10px;
+  display: block;
+  line-height: 38px !important;
+  cursor: pointer;
+  color: #000000;
+}
+.newTasksContainer .topCell .hasDatepicker i,
+.newTasksContainer .topCell .current-selected i {
+  margin-right: 5px;
+}
+.newTasksContainer .topCell .hasDatepicker:hover,
+.newTasksContainer .topCell .current-selected:hover {
+  text-decoration: none;
+}
+.newTasksContainer .textarea-wrapper textarea {
+  padding: 15px;
+}
+.newTasksContainer .showSelect {
+  position: relative;
+  display: table;
+  width: 100%;
+  min-height: 40px;
+  margin-top: 10px;
+}
+.newTasksContainer .showSelect .imgContainer,
+.newTasksContainer .showSelect .bodyContainer {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 14px;
+}
+.newTasksContainer .showSelect .imgContainer {
+  max-width: 55px;
+}
+.newTasksContainer .showSelect .imgContainer img {
+  width: 40px;
+  margin-right: 15px;
+}
+.newTasksContainer .showSelect .imgContainer + .bodyContainer span {
+  display: block;
+  width: 90px;
+  overflow: hidden;
+  padding: 2px 0;
+}
+.newTasksContainer .showSelect .bodyContainer {
+  padding-right: 5px;
+}
+.newTasksContainer .showSelect .removeSelect {
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  width: 25px;
+  height: 25px;
+  border: none;
+  padding: 3px !important;
+  line-height: 13px !important;
+  transform: translate(0, -50%);
+  background: none;
+}
+.newTasksContainer .showSelect .removeSelect:hover {
+  background: none;
+  color: #c8c8d3;
+}
+.ui-dialog-buttonset {
+  border: none !important;
+}
+.task-content {
+  padding: 5px;
+  color: #000000;
+}
+.task-content .info {
+  margin-bottom: 10px;
+}
+.task-content .taskContentTitle {
+  margin-bottom: 5px;
+}
+.task-content .dateLabel {
+  font-size: 13px;
+  font-weight: bold;
+}
+.tasksItemList {
+  margin-top: 9px;
+}
+.tasksItemIcon {
+  display: inline-block;
+  vertical-align: middle;
+  color: #3291c8;
+}
+.tasksItemIcon + .tasksItemIcon {
+  margin-left: 8px;
+}
+.tasksItemIcon img {
+  width: 20px;
+}
+.tabListWrap .tabListItem {
+  position: relative;
+  padding: 13px 15px;
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  cursor: pointer;
+  overflow: visible;
+  background: #c8c8d3;
+}
+.tabListWrap .tabListItem.active {
+  background: #01579b;
+}
+.tabListWrap .tabListItem.active span {
+  color: #ffffff;
+}
+.tabListWrap .tabListItem.active:after {
+  border-left-color: #01579b;
+}
+.tabListWrap .tabListItem + .tabListItem {
+  padding-left: 33px;
+}
+.tabListWrap .tabListItem.passed {
+  background: #4bcb81;
+}
+.tabListWrap .tabListItem.passed:after {
+  border-left-color: #4bcb81;
+}
+.tabListWrap .tabListItem:before,
+.tabListWrap .tabListItem:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 1;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+}
+.tabListWrap .tabListItem:after {
+  right: -15px;
+  border-left: 20px solid #c8c8d3;
+}
+.tabListWrap .tabListItem:before {
+  right: -20px;
+  border-left: 20px solid #ffffff;
+}
+.tabListWrap .tabListItem span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tabListWrap .tabListItem:first-child {
+  border-radius: 30px 0 0 30px;
+}
+.tabListWrap .tabListItem:last-child {
+  border-radius: 0 30px 30px 0;
+}
+.tabListWrap .tabListItem:last-child:before,
+.tabListWrap .tabListItem:last-child:after {
+  content: none;
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -3607,10 +4402,14 @@ dl.payrollDateBlock dt {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 .btn:hover span,
 .btn:hover a {
   color: #000000;
+}
+.btn.btnRounded {
+  border-radius: 3px;
 }
 .btnAttention {
   border-color: #a22a2d;
@@ -3631,6 +4430,22 @@ dl.payrollDateBlock dt {
 .btnSuccess:hover span,
 .btnSuccess:hover a {
   color: #000000;
+}
+.btnSave {
+  background: #3291c8;
+  color: #ffffff;
+  border-color: transparent;
+}
+.btnSave span,
+.btnSave a {
+  color: #ffffff;
+}
+.btnSave:hover {
+  background: #2d82b4;
+}
+.btnSave:hover span,
+.btnSave:hover a {
+  color: #ffffff;
 }
 /*== Begin Input type number =============*/
 .ui-spinner {
@@ -4543,19 +5358,16 @@ input::-ms-clear {
 }
 .kanban .column .item {
   word-wrap: break-word;
-  margin: 5px auto;
-  width: 95%;
+  margin: 5px 15px;
+  width: calc(100% - 30px);
   min-height: 40px;
   text-align: left;
   border: 1px solid #7f7f80;
   background-color: #ffffff;
   color: #a9a9a9;
   cursor: move;
-  transition: box-shadow 1s ease;
-  transition: border-color 1s ease;
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
+  transition: border-color 1s ease, box-shadow 1s ease;
+  border-radius: 3px;
 }
 .kanban .column .item.active {
   box-shadow: 0px 0 10px rgba(50, 50, 50, 0.75);
@@ -4687,6 +5499,7 @@ input::-ms-clear {
 .kanban .column .columnNameDiv .columnName {
   padding-bottom: 5px;
   margin-bottom: 5px;
+  min-height: 30px;
 }
 .kanban .column .columnNameDiv .columnName .totalCount {
   float: right;
@@ -4696,6 +5509,7 @@ input::-ms-clear {
   top: 4px;
   right: 28px;
   color: #2c3e50;
+  border-radius: 3px;
 }
 .kanban .column .columnNameDiv .columnName .fold-unfold {
   display: block;
@@ -5237,7 +6051,7 @@ dl dt {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -5255,7 +6069,7 @@ dl dd {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -5982,7 +6796,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6000,7 +6814,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 70%;
   overflow: hidden;
@@ -6038,7 +6852,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6056,7 +6870,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -6097,7 +6911,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6115,7 +6929,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -6158,7 +6972,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -6176,7 +6990,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -7552,7 +8366,6 @@ dl dd span.ui-spinner {
 .noteWrapper .addNote {
   margin-top: 6px;
   background-color: inherit;
-  padding: 5px 0 10px 0;
 }
 .noteWrapper .addNote label {
   font: normal 12px arial;
@@ -7664,10 +8477,11 @@ dl dd span.ui-spinner {
   display: block;
   line-height: 30px;
 }
+.noteWrapper .editedNote.active {
+  padding: 0;
+}
 .noteWrapper #noteBody .noteContainer {
-  padding: 10px;
-  border: 1px solid #7f7f80;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 .noteWrapper #noteBody .noteContainer .name {
   margin-right: 15px;
@@ -7676,6 +8490,9 @@ dl dd span.ui-spinner {
 .noteWrapper #noteBody .noteContainer .date {
   font-size: 11px;
   color: #777;
+}
+.noteWrapper #noteBody .noteContainer .dateNote {
+  float: right;
 }
 .noteWrapper #noteBody .noteContainer .noteTitle {
   font-size: 15px;
@@ -7688,22 +8505,20 @@ dl dd span.ui-spinner {
 }
 .noteWrapper #noteBody .noteContainer .right {
   float: right;
-  margin-right: 10px;
-  display: none;
 }
 .noteWrapper #noteBody .noteContainer .right .sep {
   padding: 0 3px;
   font-size: 12px;
   color: #CCC;
 }
-.noteWrapper #noteBody .noteContainer:hover {
-  background-color: #ffffff;
+.noteWrapper #noteBody .noteContainer:after {
+  content: '';
+  display: table;
+  clear: both;
 }
-.noteWrapper #noteBody .noteContainer:hover .right {
-  display: block;
-}
-.noteWrapper #noteBody .noteContainer:hover .right a {
-  font-size: 11px;
+.noteWrapper #noteBody .noteBody {
+  padding: 10px;
+  border: 1px solid #7f7f80;
 }
 .text-overflow {
   overflow: hidden;
@@ -7784,7 +8599,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -7805,7 +8620,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -7854,7 +8669,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -7872,7 +8687,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -7916,7 +8731,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -7934,7 +8749,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -7972,7 +8787,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -7990,7 +8805,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 65%;
   overflow: hidden;
@@ -8031,7 +8846,7 @@ dl dd span.ui-spinner {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -8049,7 +8864,7 @@ dl dd span.ui-spinner {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -8335,10 +9150,14 @@ button:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 button:hover span,
 button:hover a {
   color: #000000;
+}
+button.btnRounded {
+  border-radius: 3px;
 }
 button.red,
 a.red {
@@ -8449,12 +9268,17 @@ a.red:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 button.red:hover span,
 a.red:hover span,
 button.red:hover a,
 a.red:hover a {
   color: #000000;
+}
+button.red.btnRounded,
+a.red.btnRounded {
+  border-radius: 3px;
 }
 button.red:hover,
 a.red:hover {
@@ -8614,17 +9438,6 @@ a.red:hover {
 }
 .birthday-item .info .readMore:hover {
   opacity: 0.5;
-}
-.tabs-items {
-  margin-bottom: -29px;
-}
-.tabs-items .dialog-tabs-item,
-.tabs-items .chart-tabs-item {
-  display: none;
-}
-.tabs-items .dialog-tabs-item.active,
-.tabs-items .chart-tabs-item.active {
-  display: block;
 }
 .ui-helper-clearfix::before,
 .ui-helper-clearfix::after {
@@ -9146,7 +9959,7 @@ table#workflows tr td.edit-status {
   bottom: 0;
   left: 0;
   display: block;
-  z-index: 100;
+  z-index: 200;
   width: auto;
   height: calc(100% - 40px);
   background-color: #364150;
@@ -9496,6 +10309,9 @@ table#workflows tr td.edit-status {
 #top-bar .btn {
   margin-top: 4px;
 }
+#top-bar #top-bar-createBtn {
+  margin-top: 4px;
+}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
@@ -9567,6 +10383,9 @@ table#workflows tr td.edit-status {
 .projectInfoTopBar .btn {
   margin-top: 4px;
 }
+.projectInfoTopBar #top-bar-createBtn {
+  margin-top: 4px;
+}
 .noPadding {
   padding: 0 !important;
 }
@@ -9631,12 +10450,12 @@ table#workflows tr td.edit-status {
 .createBtnHolder .btnRounded,
 #createBtnHolder .btnRounded {
   height: 26px;
-  line-height: 24px!important;
+  line-height: 22px!important;
+  border-radius: 3px;
 }
 /*----------------------------- Login Form --------------------------------*/
 /*----------------------------- Tabs ------------------------------------*/
 ul.dialog-tabs {
-  height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -9666,17 +10485,6 @@ ul.dialog-tabs li.right {
 }
 ul.dialog-tabs li.right button {
   margin-top: 4px;
-}
-.dialog-tabs-items {
-  margin-bottom: -29px;
-}
-.dialog-tabs-items .dialog-tabs-item,
-.dialog-tabs-items .chart-tabs-item {
-  display: none;
-}
-.dialog-tabs-items .dialog-tabs-item.active,
-.dialog-tabs-items .chart-tabs-item.active {
-  display: block;
 }
 .dialog-tabs-items .dialog-tabs-item,
 .dialog-tabs-items .chart-tabs-item {
@@ -10104,6 +10912,7 @@ ul.dialog-tabs li.right button {
   display: none;
 }
 .ui-datepicker {
+  min-width: 175px;
   padding: .2em .2em 0;
   background-color: #ffffff;
 }
@@ -10372,7 +11181,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10390,7 +11199,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 0%;
   overflow: hidden;
@@ -10439,7 +11248,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10457,7 +11266,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 50%;
   overflow: hidden;
@@ -10513,7 +11322,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10531,7 +11340,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 70%;
   overflow: hidden;
@@ -10724,9 +11533,6 @@ ul.dialog-tabs li.right button {
   padding: .5em 1em;
   background: 0;
 }
-.ui-dialog .ui-dialog-buttonpane {
-  margin-top: 30px !important;
-}
 .ui-dialog .ui-dialog-titlebar {
   display: none;
 }
@@ -10807,10 +11613,6 @@ ul.dialog-tabs li.right button {
   min-height: initial;
   max-width: 300px;
 }
-.ui-dialog .inner {
-  padding: 5px;
-  background: #ffffff;
-}
 .ui-dialog .form-holder {
   position: relative;
   padding: .5em 1em;
@@ -10832,7 +11634,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10850,7 +11652,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 0%;
   overflow: hidden;
@@ -10899,7 +11701,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10917,7 +11719,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 50%;
   overflow: hidden;
@@ -10973,7 +11775,7 @@ ul.dialog-tabs li.right button {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -10991,7 +11793,7 @@ ul.dialog-tabs li.right button {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 70%;
   overflow: hidden;
@@ -11165,8 +11967,8 @@ ul.dialog-tabs li.right button {
   max-width: 160px;
   float: left;
   clear: both;
-  line-height: 16px;
-  min-height: 16px;
+  line-height: 18px;
+  min-height: 18px;
   margin-top: 10px;
   overflow: hidden;
   white-space: nowrap;
@@ -11183,8 +11985,8 @@ ul.dialog-tabs li.right button {
   padding: 1px;
   margin: -1px;
   margin-top: 10px;
-  line-height: 16px;
-  min-height: 16px;
+  line-height: 18px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -11205,7 +12007,7 @@ ul.dialog-tabs li.right button {
   width: 137px;
 }
 .form-holder form dd a.formLink {
-  line-height: 16px;
+  line-height: 18px;
 }
 .form-holder form dd span.ui-spinner {
   width: 100%;
@@ -11242,6 +12044,9 @@ ul.dialog-tabs li.right button {
 .form-holder form input:not([type=checkbox]):focus {
   outline: medium none;
   border: 1px solid #3e88b9;
+}
+.form-holder form input:not([type=checkbox])#editInput {
+  padding: 2px 6px;
 }
 .form-holder form .canReadAndWrite {
   line-height: 22px;
@@ -11291,9 +12096,6 @@ ul.dialog-tabs li.right button {
   color: #000000;
   padding-bottom: 5px;
 }
-.tabs-items {
-  margin-bottom: -29px;
-}
 .tabs-items .dialog-tabs-item,
 .tabs-items .chart-tabs-item {
   display: none;
@@ -11303,7 +12105,6 @@ ul.dialog-tabs li.right button {
   display: block;
 }
 ul.dialog-tabs {
-  height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.dialog-tabs li {
@@ -11464,12 +12265,17 @@ ul.dialog-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover span,
 ul.dialog-tabs .withEndContract .arrow:hover span,
 ul.dialog-tabs .withEndContract .endContractReasonList:hover a,
 ul.dialog-tabs .withEndContract .arrow:hover a {
   color: #000000;
+}
+ul.dialog-tabs .withEndContract .endContractReasonList.btnRounded,
+ul.dialog-tabs .withEndContract .arrow.btnRounded {
+  border-radius: 3px;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
@@ -11494,7 +12300,6 @@ ul.dialog-tabs .withEndContract .arrow {
   display: block;
 }
 .dialog-tabs-items {
-  margin-bottom: -29px;
   padding-top: 10px;
 }
 .dialog-tabs-items .dialog-tabs-item,
@@ -11505,16 +12310,7 @@ ul.dialog-tabs .withEndContract .arrow {
 .dialog-tabs-items .chart-tabs-item.active {
   display: block;
 }
-.dialog-tabs-items .dialog-tabs-item,
-.dialog-tabs-items .chart-tabs-item {
-  display: none;
-}
-.dialog-tabs-items .dialog-tabs-item.active,
-.dialog-tabs-items .chart-tabs-item.active {
-  display: block;
-}
 ul.chart-tabs {
-  height: 35px;
   border-bottom: 1px solid #7f7f80;
 }
 ul.chart-tabs li {
@@ -11678,12 +12474,17 @@ ul.chart-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
   background: #f4f4f4;
+  text-decoration: none;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover span,
 ul.chart-tabs .withEndContract .arrow:hover span,
 ul.chart-tabs .withEndContract .endContractReasonList:hover a,
 ul.chart-tabs .withEndContract .arrow:hover a {
   color: #000000;
+}
+ul.chart-tabs .withEndContract .endContractReasonList.btnRounded,
+ul.chart-tabs .withEndContract .arrow.btnRounded {
+  border-radius: 3px;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
@@ -11708,16 +12509,7 @@ ul.chart-tabs .withEndContract .arrow {
   display: block;
 }
 .chart-tabs-items {
-  margin-bottom: -29px;
   margin-bottom: 0;
-}
-.chart-tabs-items .dialog-tabs-item,
-.chart-tabs-items .chart-tabs-item {
-  display: none;
-}
-.chart-tabs-items .dialog-tabs-item.active,
-.chart-tabs-items .chart-tabs-item.active {
-  display: block;
 }
 .chart-tabs-items .dialog-tabs-item,
 .chart-tabs-items .chart-tabs-item {
@@ -11802,6 +12594,7 @@ ul.chart-tabs .withEndContract .arrow {
   border: 1px solid #efefef;
   float: right;
   margin-right: 10px;
+  border-radius: 3px;
 }
 .choseDateRange .item,
 .choseDateItem .item,
@@ -11813,6 +12606,7 @@ ul.chart-tabs .withEndContract .arrow {
   background-color: #f4f4f4;
   border: 1px solid #7f7f80;
   cursor: pointer;
+  border-radius: 3px;
 }
 .choseDateRange .item:first-child,
 .choseDateItem .item:first-child,
@@ -11826,10 +12620,11 @@ ul.chart-tabs .withEndContract .arrow {
   color: white;
 }
 .legend-box {
-  border: 1px solid #7f7f80;
   width: 555px;
   margin: 0 auto;
   color: #000000;
+  border: 1px solid #7f7f80;
+  border-radius: 3px;
 }
 .legend-box.small {
   width: 265px;
@@ -12150,7 +12945,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12168,7 +12963,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -12209,7 +13004,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12227,7 +13022,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -12268,7 +13063,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12286,7 +13081,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 50%;
   overflow: hidden;
@@ -12330,7 +13125,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12348,7 +13143,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 58%;
   overflow: hidden;
@@ -12395,7 +13190,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12413,7 +13208,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 58%;
   overflow: hidden;
@@ -12471,7 +13266,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12489,7 +13284,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 90%;
   overflow: hidden;
@@ -12538,7 +13333,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12556,7 +13351,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -12604,7 +13399,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12622,7 +13417,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -12759,7 +13554,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12777,7 +13572,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 70%;
   overflow: hidden;
@@ -12815,7 +13610,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12833,7 +13628,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 60%;
   overflow: hidden;
@@ -12874,7 +13669,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12892,7 +13687,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 30px;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -12935,7 +13730,7 @@ a.cancelled {
   float: left;
   clear: both;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   margin-top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -12953,7 +13748,7 @@ a.cancelled {
   margin: -1px;
   margin-top: 0;
   line-height: 0;
-  min-height: 16px;
+  min-height: 18px;
   float: left;
   width: 80%;
   overflow: hidden;
@@ -13140,6 +13935,7 @@ textarea#editInput {
   padding: 0 !important;
 }
 .openAll {
+  width: 100px;
   cursor: pointer;
   color: #000000;
 }
@@ -13594,8 +14390,8 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten.stick {
   position: fixed;
   bottom: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: calc(100% - 200px);
   background-color: #ffffff;
   padding-top: 10px;
 }
@@ -14269,6 +15065,11 @@ textarea#editInput {
   right: 0;
   width: 35%;
   margin-right: 90px;
+}
+#searchContainer.dashBoardVocationSearch {
+  position: static;
+  float: right;
+  margin-right: 0;
 }
 #searchContainer .btn {
   background: #ffffff;

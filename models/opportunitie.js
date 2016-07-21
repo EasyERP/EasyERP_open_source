@@ -110,6 +110,8 @@ module.exports = (function () {
         tempCompanyField: {type: String, default: ''},
         company         : {type: ObjectId, ref: 'Customers', default: null},
         customer        : {type: ObjectId, ref: 'Customers', default: null},
+
+
         tags            : [{type: ObjectId, ref: 'tags', default: null}],
 
         address: {
@@ -119,6 +121,8 @@ module.exports = (function () {
             zip    : {type: String, default: ''},
             country: {type: String, default: ''}
         },
+
+        contacts        : [{type: ObjectId, ref: 'Customers', default: null}],
 
         contactName: {
             first: {type: String, default: ''},
@@ -180,7 +184,17 @@ module.exports = (function () {
         source       : {type: String, default: ''},
         isConverted  : {type: Boolean, default: false},
         convertedDate: {type: Date, default: Date.now},
-        notes        : {type: Array, default: []},
+        notes        : [{
+            note        : String,
+            title       : String,
+            task        : {type: ObjectId, ref: 'DealTasks', default: null},
+            attachment  : {},
+            date        : {type: Date, default: Date.now},
+            user        : {
+                _id : {type: ObjectId, ref: 'Users', default: null},
+                login : String
+            }
+        }],
         attachments  : {type: Array, default: []},
         projectType  : {type: String, default: 'fixed'},
 

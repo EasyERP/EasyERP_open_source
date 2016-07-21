@@ -16,6 +16,9 @@ var FilterMapper = function () {
 
         switch (type) {
             case 'ObjectId':
+                if (values.indexOf('None') !== -1) {
+                    values.push(null);
+                }
                 result.$in = values.objectID();
                 break;
             case 'string':
