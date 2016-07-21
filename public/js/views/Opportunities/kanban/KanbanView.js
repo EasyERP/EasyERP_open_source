@@ -281,7 +281,13 @@
 
             e.preventDefault();
             App.ownContentType = true;
-            window.location.hash = '#easyErp/Opportunities/form/' + id;
+
+            if (!Object.keys(this.filter)) {
+                window.location.hash = '#easyErp/Opportunities/tform/' + id;
+                return;
+            }
+
+            window.location.hash = '#easyErp/Opportunities/tform/' + id + '/filter=' + JSON.stringify(this.filter);
         },
 
         fetchFilteredOpportunities: function (e) {
