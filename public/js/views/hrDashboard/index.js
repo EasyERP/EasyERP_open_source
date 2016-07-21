@@ -387,91 +387,6 @@ define([
             });
         },
 
-        renderTreemap: function () {
-
-            common.totalInvoiceBySales({
-                startDay: '',
-                endDay: ''
-            }, function (data) {
-                console.log(data);
-
-                var margin = {top: 0, right: 10, bottom: 10, left: 10};
-                var width = 960 - margin.left - margin.right;
-                var height = 500 - margin.top - margin.bottom;
-
-                var maxValue = d3.max(data, function (d) {
-                    return d.payment;
-                });
-
-                var minValue = d3.min(data, function (d) {
-                    return d.payment;
-                });
-
-                var color = d3.scale.linear()
-                    .range(['#ACC7F2', '#FFA17F'])
-                    .domain([minValue, maxValue]);
-
-               /* var color = d3.scale.category10();*/
-                var treemap = d3.layout.treemap()
-                    .size([width, height])
-                    .sticky(true)
-                    .value(function (d) {
-                        return d.payment;
-                    });
-
-                var div = d3.select(".treemap").append("div")
-                    .style("position", "relative");
-
-                var root = {
-                    name    : 'tree',
-                    children: data
-                };
-
-                var node = div.datum(root).selectAll(".node")
-                    .data(treemap.nodes)
-                    .enter().append("div")
-                    .attr("class", "nodeTree")
-                    .call(position)
-                    .style("background", function (d) {
-                        return color(d.payment);
-                    })
-                    .text(function (d) {
-                        return d.children ? null : d.name + ',  $' + helpers.currencySplitter((d.payment / 100).toFixed(0));
-                    });
-
-                d3.selectAll("input").on("change", function change() {
-                    var value = this.value === "count"
-                        ? function () {
-                        return 1;
-                    }
-                        : function (d) {
-                        return d.size;
-                    };
-
-                    node
-                        .data(treemap.value(value).nodes)
-                        .transition()
-                        .duration(1500)
-                        .call(position);
-                });
-
-                function position() {
-                    this.style("left", function (d) {
-                        return d.x + "px";
-                    })
-                        .style("top", function (d) {
-                            return d.y + "px";
-                        })
-                        .style("width", function (d) {
-                            return Math.max(0, d.dx - 1) + "px";
-                        })
-                        .style("height", function (d) {
-                            return Math.max(0, d.dy - 1) + "px";
-                        });
-                }
-            });
-        },
-
         renderEmployeesDashbord: function () {
             var self = this;
 
@@ -1141,7 +1056,6 @@ define([
             self.renderVocationDashbord();
             self.renderDepartmentsTree();
             self.renderDepartmentsTreeRadial();
-            self.renderTreemap();
             self.renderSalaryByDepartmentChart();
             self.renderSalaryChart();
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
