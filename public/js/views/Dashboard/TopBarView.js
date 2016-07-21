@@ -1,12 +1,12 @@
 define([
-    'Backbone',
     'jQuery',
     'Underscore',
+    'views/topBarViewBase',
     'text!templates/Dashboard/TopBarTemplate.html',
     'custom',
     'common'
-], function (Backbone, $, _, TopBarTemplate, Custom, Common) {
-    var TopBarView = Backbone.View.extend({
+], function ($, _, BaseView, TopBarTemplate, Custom, Common) {
+    var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: 'Dashboard',
         actionType : null, // Content, Edit, Create

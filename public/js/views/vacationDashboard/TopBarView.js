@@ -1,14 +1,14 @@
 define([
-    'Backbone',
     'jQuery',
     'Underscore',
+    'views/topBarViewBase',
     'text!templates/vacationDashboard/TopBarTemplate.html',
     'moment',
     'custom',
     'constants'
-], function (Backbone, $, _, ContentTopBarTemplate, moment, custom, CONSTANTS) {
+], function ($, _, BaseView, ContentTopBarTemplate, moment, custom, CONSTANTS) {
     'use strict';
-    var TopBarView = Backbone.View.extend({
+    var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: 'DashBoardVacation',
         template   : _.template(ContentTopBarTemplate),
