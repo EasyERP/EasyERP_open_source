@@ -54,8 +54,10 @@
         },
 
         events: {
-            'click .letter:not(.empty)': 'alpabeticalRender'
+            'click .letter:not(.empty)': 'alpabeticalRender',
+            'click .gotoForm'          : 'gotoForm'
         },
+
 
         importFiles: function () {
             return new AttachView({
@@ -76,7 +78,7 @@
 
             e.preventDefault();
             App.ownContentType = true;
-            window.location.hash = '#easyErp/Companies/form/' + id;
+            window.location.hash = '#easyErp/Companies/tform/' + id + '/filter=' + JSON.stringify(this.filter);
         },
 
         render: function () {
