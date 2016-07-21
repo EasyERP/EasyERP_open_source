@@ -17,6 +17,11 @@
 
 a{
   text-decoration: none;
+  &.fa {
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 
@@ -819,9 +824,23 @@ input {
     }
   }
 }
+
 .createNewTag {
   line-height: 25px;
 }
+
+.tags-container {
+  .editTags {
+    padding: 2px 8px;
+    cursor: pointer;
+    .defaultBorRad;
+  }
+}
+
+.taskArea {
+  .defaultBorRad;
+}
+
 .ui-dialog {
   input {
     &.searchTagInput {
@@ -1290,6 +1309,7 @@ dl.payrollDateBlock {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  border-bottom: 1px solid #ededed;
 
   &.personList {
 
@@ -1324,6 +1344,19 @@ dl.payrollDateBlock {
     }
   }
 
+  &.opportunitiesList {
+
+    .opportunity {
+      color: #508bbd;
+      font-size: 15px;
+      font-family: @fontBold;
+    }
+
+    .revenue {
+      font-size: 10px;
+    }
+  }
+
   .form-holder {
     padding: 10px;
   }
@@ -1333,10 +1366,13 @@ dl.payrollDateBlock {
 .formContent {
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 
 .listContent {
   width: 400px;
+  border-right: 1px solid #ededed;
 
   table {
     width: 100%;
@@ -1379,10 +1415,12 @@ dl.payrollDateBlock {
 
 .formContentTitle,
 .listContentTitle {
-  min-height: 42px;
+  height: 42px;
   padding: 7px;
   border-top: 1px solid #ededed;
   border-bottom: 1px solid #ededed;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .listContentTitle {
@@ -1390,7 +1428,7 @@ dl.payrollDateBlock {
 
   #createBtnHolder {
     float: right;
-    float: right;
+
     .fa {
       margin-right: 0;
     }
@@ -1656,47 +1694,6 @@ table {
           border-left: 9px solid #fff;
         }
       }
-    }
-  }
-}
-
-
-.tabList {
-
-  &Wrap {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-
-    padding: 5px;
-    margin-bottom: 10px;
-  }
-
-  &Item {
-    -webkit-flex-grow: 1;
-    flex-grow: 1;
-
-    width: 10px;
-    position: relative;
-    padding: 3px 5px;
-    margin: 5px;
-    background-color: #e6e6e6;
-    font-size: 10px;
-
-    &.passed {
-      background-image: linear-gradient(to top, #158b0c,#18a815);
-
-      span {
-        color: #fff;
-      }
-    }
-
-    span {
-      text-transform: uppercase;
-      font-size: 12px;
-      color: #666;
-      white-space: nowrap;
     }
   }
 }

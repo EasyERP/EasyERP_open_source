@@ -179,6 +179,13 @@
 }
 
 .tabListWrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0 10px;
+  margin-bottom: 10px;
+
   .tabListItem {
     position: relative;
     padding: 13px 15px;
@@ -188,6 +195,9 @@
     cursor: pointer;
     overflow: visible;
     background: @lightgrey;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    width: 10px;
 
     &.active {
       background: @blue;
@@ -210,6 +220,10 @@
 
       &:after {
         border-left-color: @green-2;
+      }
+
+      span {
+        color: #fff;
       }
     }
 
@@ -244,6 +258,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #666;
     }
 
     &:first-child {
