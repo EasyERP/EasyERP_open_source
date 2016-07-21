@@ -5386,6 +5386,12 @@ textarea#editInput {
 }
 
 .grid-conatiner {
+
+  .attendanceTop,
+  .attendance {
+    margin: 0 20px;
+  }
+
   .attendanceTop {
     margin-bottom: 10px;
     > div {
@@ -5405,17 +5411,24 @@ textarea#editInput {
       }
 
       &.pull-left {
+        position: relative;
         margin-right: 10px;
-        height: 20px;
+        height: 32px;
+        line-height: 20px;
+
         > div {
           display: inline-block;
         }
         .editable {
-          position: relative;
           cursor: pointer;
+        }
+        .newSelectList {
+          right: 0;
+          top: 32px;
         }
       }
     }
+
     &:after {
       display: table;
       content: " ";
@@ -5519,6 +5532,7 @@ textarea#editInput {
       padding-top: 10px;
     }
   }
+
   table {
     .grid {
       border-color: @border-color-main;
