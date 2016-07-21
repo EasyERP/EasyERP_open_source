@@ -4257,6 +4257,7 @@ dl.payrollDateBlock dt {
   font-size: 11px;
   cursor: pointer;
   overflow: visible;
+  background: #c8c8d3;
 }
 .tabListWrap .tabListItem.active {
   background: #01579b;
@@ -4268,13 +4269,13 @@ dl.payrollDateBlock dt {
   border-left-color: #01579b;
 }
 .tabListWrap .tabListItem + .tabListItem {
-  padding-left: 25px;
+  padding-left: 33px;
 }
 .tabListWrap .tabListItem.passed {
-  background: #4BCB81;
+  background: #4bcb81;
 }
 .tabListWrap .tabListItem.passed:after {
-  border-left-color: #4BCB81;
+  border-left-color: #4bcb81;
 }
 .tabListWrap .tabListItem:before,
 .tabListWrap .tabListItem:after {
@@ -4289,7 +4290,7 @@ dl.payrollDateBlock dt {
 }
 .tabListWrap .tabListItem:after {
   right: -15px;
-  border-left: 20px solid #e6e6e6;
+  border-left: 20px solid #c8c8d3;
 }
 .tabListWrap .tabListItem:before {
   right: -20px;

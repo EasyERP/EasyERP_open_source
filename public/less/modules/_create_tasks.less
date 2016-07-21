@@ -187,6 +187,7 @@
     font-size: 11px;
     cursor: pointer;
     overflow: visible;
+    background: @lightgrey;
 
     &.active {
       background: @blue;
@@ -201,14 +202,14 @@
     }
 
     & + .tabListItem {
-      padding-left: 25px;
+      padding-left: 33px;
     }
 
     &.passed {
-      background: #4BCB81;
+      background: @green-2;
 
       &:after {
-        border-left-color: #4BCB81;
+        border-left-color: @green-2;
       }
     }
 
@@ -227,7 +228,7 @@
 
     &:after {
       right: -15px;
-      border-left: 20px solid #e6e6e6;
+      border-left: 20px solid @lightgrey;
     }
 
     &:before {
