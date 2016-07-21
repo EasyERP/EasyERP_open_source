@@ -3522,10 +3522,9 @@ dl.payrollDateBlock dt {
   left: 0;
   z-index: 2;
 }
-.invoiceTooltip:before {
-  content: '';
+.invoiceTooltip .arrow {
   position: absolute;
-  bottom: -11px;
+  top: 100%;
   left: 50%;
   width: 0;
   height: 0;
@@ -3538,6 +3537,9 @@ dl.payrollDateBlock dt {
   -o-transform: translateX(-50%);
   transform: translateX(-50%);
   z-index: 1;
+}
+.invoiceTooltip:before {
+  content: '';
 }
 .invoiceTooltip:after {
   content: '';

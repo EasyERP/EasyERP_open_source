@@ -1164,10 +1164,9 @@ dl.payrollDateBlock {
     z-index: 2;
   }
 
-  &:before {
-    content: '';
+  .arrow {
     position: absolute;
-    bottom: -11px;
+    top: 100%;
     left: 50%;
     width: 0;
     height: 0;
@@ -1180,6 +1179,11 @@ dl.payrollDateBlock {
     -o-transform: translateX(-50%);
     transform: translateX(-50%);
     z-index: 1;
+  }
+
+  &:before {
+    content: '';
+
   }
 
   &:after {
