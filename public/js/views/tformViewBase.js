@@ -178,8 +178,12 @@ define([
                     self.selectedId = model.id;
 
                     self.changeLocationHash(self.collection.currentPage, self.collection.pageSize, self.filter);
-                    //$thisEl.find('#timeRecivingDataFromServer').remove();
-                    //$thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
+
+                    if (e.hasOwnProperty('target')) {
+                        $thisEl.find('#timeRecivingDataFromServer').remove();
+                        $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
+                    }
+
                 },
 
                 error: function () {
