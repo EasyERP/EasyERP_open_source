@@ -11891,6 +11891,7 @@ ul.chart-tabs .withEndContract .arrow {
   width: 555px;
   margin: 0 auto;
   height: auto;
+  padding: 5px;
   color: #000000;
 }
 .legend-box.small {
