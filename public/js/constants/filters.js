@@ -101,6 +101,27 @@
             array: ['name', 'department', 'projecttype', 'salesManager']
         },
 
+        DealTasks: {
+            name: {
+                displayName: 'Name',
+                backend    : '_id'
+            },
+            assignedTo: {
+                displayName: 'Assigned To',
+                backend    : 'assignedTo'
+            },
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
+            },
+            deal : {
+                displayName: 'Deal',
+                backend    : 'deal'
+            },
+
+            array: ['name', 'assignedTo', 'workflow', 'deal']
+        },
+
         Companies: {
             name: {
                 displayName: 'Name',

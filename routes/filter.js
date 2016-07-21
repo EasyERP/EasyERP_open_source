@@ -943,6 +943,7 @@ HTTP/1.1 200 OK
 }
      *
      * */
+    router.get('/DealTasks', handler.getDealsTasksFilters);
     router.get('/Leads', handler.getLeadsFilters);
 
     /**

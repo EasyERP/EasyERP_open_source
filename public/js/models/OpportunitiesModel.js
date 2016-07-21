@@ -116,6 +116,13 @@
                 if (response.notes) {
                     _.map(response.notes, function (note) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+
+                        if (note.history && (note.history.changedField === 'Close Date')){
+                            note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
+                            note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
+                            note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
+                        }
+
                         return note;
                     });
                 }
