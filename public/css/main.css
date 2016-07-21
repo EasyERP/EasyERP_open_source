@@ -3522,6 +3522,17 @@ dl.payrollDateBlock dt {
 .listWrap.personList .compactRowWrap {
   min-height: 60px;
 }
+.listWrap.companiesList .firstName {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.companiesList .email {
+  font-size: 10px;
+}
+.listWrap.companiesList .compactRowWrap {
+  min-height: 60px;
+}
 .listWrap .form-holder {
   padding: 10px;
 }
@@ -3721,11 +3732,15 @@ td.checkboxRow {
   display: block;
 }
 .top-bar-deleteBtn {
+  display: block;
   height: 26px;
-  padding: 0 12px;
+  width: 68px;
+  padding: 0;
   background: #7eadcc;
   line-height: 26px !important;
+  font-size: 13px;
   color: #fff !important;
+  text-align: center;
   -webkit-transition: all .3s;
   transition: all .3s;
   border-radius: 3px;
@@ -8061,9 +8076,12 @@ dl dd span.ui-spinner {
   flex-grow: 1;
 }
 #startLetter {
+  height: 20px;
   margin: 10px 0 -1px;
   text-align: center;
   border-bottom: 1px solid #7f7f80;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 #startLetter .letter {
   padding: 5px 10px;

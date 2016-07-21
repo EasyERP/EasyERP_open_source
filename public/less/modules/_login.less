@@ -1307,7 +1307,19 @@ dl.payrollDateBlock {
   }
 
   &.companiesList {
+    .firstName {
+      color: #508bbd;
+      font-size: 15px;
+      font-family: @fontBold;
+    }
 
+    .email {
+      font-size: 10px;
+    }
+
+    .compactRowWrap {
+      min-height: 60px;
+    }
   }
 
   .form-holder {
@@ -1584,11 +1596,15 @@ td.checkboxRow {
 }
 
 .top-bar-deleteBtn {
+  display: block;
   height: 26px;
-  padding: 0 12px;
+  width: 68px;
+  padding: 0;
   background: #7eadcc;
   line-height: 26px !important;
+  font-size: 13px;
   color: #fff !important;
+  text-align: center;
   -webkit-transition: all .3s;
   transition: all .3s;
   border-radius: 3px;
