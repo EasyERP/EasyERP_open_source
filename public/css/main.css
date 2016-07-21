@@ -4118,7 +4118,7 @@ dl.payrollDateBlock dt {
   right: 0;
   height: calc(100% - 40px);
   width: calc(100% - 200px);
-  padding: 0 20px;
+  padding: 20px;
 }
 .template-switcher {
   margin-top: 5px;
