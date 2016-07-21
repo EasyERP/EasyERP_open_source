@@ -4082,7 +4082,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteContainer .itemCircle {
   position: absolute;
-  left: 10px;
+  left: 11px;
   top: 10px;
   height: 28px;
   width: 28px;
@@ -4624,20 +4624,24 @@ table.kanban tbody td:nth-child(n+2) {
 .tabListWrap .tabListItem:after {
   content: '';
   position: absolute;
-  top: 0;
   width: 0;
   height: 0;
-  z-index: 1;
-  border-top: 18px solid transparent;
-  border-bottom: 18px solid transparent;
-}
-.tabListWrap .tabListItem:after {
-  right: -15px;
-  border-left: 20px solid #c8c8d3;
 }
 .tabListWrap .tabListItem:before {
+  top: -3px;
+  right: -24px;
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  border-left: 24px solid #ffffff;
+  z-index: 1;
+}
+.tabListWrap .tabListItem:after {
+  top: 1px;
   right: -20px;
-  border-left: 20px solid #ffffff;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  border-left: 20px solid #c8c8d3;
+  z-index: 2;
 }
 .tabListWrap .tabListItem span {
   display: block;

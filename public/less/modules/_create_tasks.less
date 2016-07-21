@@ -213,27 +213,30 @@
       }
     }
 
-
     &:before,
     &:after {
       content: '';
       position: absolute;
-      top: 0;
       width: 0;
       height: 0;
-      z-index: 1;
-      border-top: 18px solid transparent;
-      border-bottom: 18px solid transparent;
-    }
-
-    &:after {
-      right: -15px;
-      border-left: 20px solid @lightgrey;
     }
 
     &:before {
+      top: -3px;
+      right: -24px;
+      border-top: 22px solid transparent;
+      border-bottom: 22px solid transparent;
+      border-left: 24px solid @white;
+      z-index: 1;
+    }
+
+    &:after {
+      top: 1px;
       right: -20px;
-      border-left: 20px solid @white;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+      border-left: 20px solid @lightgrey;
+      z-index: 2;
     }
 
     span {
