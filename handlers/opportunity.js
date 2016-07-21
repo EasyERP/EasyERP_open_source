@@ -2666,47 +2666,48 @@ var Module = function (models, event) {
         });
     }
 
-this.getById = function (req, res, next) {
-    getById(req, res, next);
-};
-
-function getForChart(req, res, next) {
-    var query = req.query;
-    var starDate = query.startDay ? new Date(query.startDay) : null;
-    var endDate = query.endDay ? new Date(query.endDay) : null;
-    var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-    var History = models.get(req.session.lastDb, 'History', historySchema);
-    var matchObj = {
-        $and: [{
-            isOpportunitie: false
-        }]
+    this.getById = function (req, res, next) {
+        getById(req, res, next);
     };
 
-    var historyMatchObj = {
-        $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
-    };
+    function getForChart(req, res, next) {
+        var query = req.query;
+        var starDate = query.startDay ? new Date(query.startDay) : null;
+        var endDate = query.endDay ? new Date(query.endDay) : null;
+        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+        var History = models.get(req.session.lastDb, 'History', historySchema);
+        var matchObj = {
+            $and: [{
+                isOpportunitie: false
+            }]
+        };
 
-    if (starDate && endDate) {
-        matchObj.$and.push({
-            creationDate: {
-                $gte: starDate,
-                $lte: endDate
-            }
-        });
+        var historyMatchObj = {
+            $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
+        };
 
-        historyMatchObj.$and.push({
-            date: {
-                $gte: starDate,
-                $lte: endDate
-            }
-        });
-    }
+        if (starDate && endDate) {
+            matchObj.$and.push({
+                creationDate: {
+                    $gte: starDate,
+                    $lte: endDate
+                }
+            });
 
-    async
-        .parallel({
+            historyMatchObj.$and.push({
+                date: {
+                    $gte: starDate,
+                    $lte: endDate
+                }
+            });
+        }
+
+        async.parallel({
             assignedTo: function (parCb) {
                 History.aggregate([{
                     $match: historyMatchObj
+                }, {
+                    $sort: {date: 1}
                 }, {
                     $project: {
                         date: {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]}
@@ -2741,322 +2742,158 @@ function getForChart(req, res, next) {
 
             res.status(200).send(result);
         });
-}
-
-function getForChart(req, res, next) {
-    var query = req.query;
-    var starDate = query.startDay ? new Date(query.startDay) : null;
-    var endDate = query.endDay ? new Date(query.endDay) : null;
-    var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-    var History = models.get(req.session.lastDb, 'History', historySchema);
-    var stage = query.stage;
-    var secondMatchObj = {};
-    var matchObj = {
-        $and: [{
-            isOpportunitie: false
-        }]
-    };
-
-    var historyMatchObj = {
-        $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
-    };
-
-    if (starDate && endDate) {
-        matchObj.$and.push({
-            creationDate: {
-                $gte: starDate,
-                $lte: endDate
-            }
-        });
-
-        historyMatchObj.$and.push({
-            date: {
-                $gte: starDate,
-                $lte: endDate
-            }
-        });
     }
 
-    if (stage === 'Qualified') {
-        secondMatchObj = {'workflows.name': 'Qualified'};
-    }
+    this.getByViewType = function (req, res, next) {
+        var viewType = req.query.viewType;
 
-    async
-        .parallel({
-            assignedTo: function (parCb) {
-                History.aggregate([
-                    {
-                        $match: historyMatchObj
-                    },
-                    {
-                        $lookup: {
-                            from        : 'Opportunities',
-                            localField  : 'contentId',
-                            foreignField: '_id',
-                            as          : 'lead'
-                        }
-                    }, {
-                        $unwind: {
-                            path                      : '$lead',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'lead.salesPerson',
-                            foreignField: '_id',
-                            as          : 'sales'
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path                      : '$sales',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from        : 'workflows',
-                            localField  : 'lead.workflow',
-                            foreignField: '_id',
-                            as          : 'workflows'
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path                      : '$workflows',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $match: secondMatchObj
-                    },
-                    {
-                        $project: {
-                            date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                            'sales._id' : 1,
-                            'sales.name': {$ifNull: ['$sales.name', 'Empty']}
-                        }
-                    }, {
-                        $project: {
-                            date       : 1,
-                            'sales._id': 1,
-                            salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]}
-                        }
-                    }, {
-                        $group: {
-                            _id  : {date: '$date', sales: '$salesPerson'},
-                            count: {$sum: 1}
-                        }
-                    }, {
-                        $project: {
-                            date       : '$_id.date',
-                            salesPerson: '$_id.sales',
-                            count      : 1,
-                            _id        : 0
-                        }
-                    }, {
-                        $group: {
-                            _id       : '$date',
-                            salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                            count     : {$sum: '$count'}
-                        }
-                    }, {
-                        $sort: {_id: -1}
-                    }
-                ], parCb);
-            },
+        switch (viewType) {
+            case 'list':
+                getFilter(req, res, next);
+                break;
+            case 'form':
+                getById(req, res, next);
+                break;
+            case 'kanban':
+                getForKanban(req, res, next);
+                break;
+            default:
+                getForChart(req, res, next);
+        }
+    };
 
-            createdBy: function (parCb) {
-                Opportunities.aggregate([{
-                    $match: matchObj
-                }, {
-                    $sort: {'createdBy.date': 1}
-                }, {
-                    $lookup: {
-                        from        : 'workflows',
-                        localField  : 'workflow',
-                        foreignField: '_id',
-                        as          : 'workflows'
-                    }
-                }, {
-                    $unwind: {
-                        path                      : '$workflows',
-                        preserveNullAndEmptyArrays: true
-                    }
-                }, {
-                    $match: secondMatchObj
-                }, {
-                    $project: {
-                        date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
-                    }
-                }, {
-                    $group: {
-                        _id  : '$date',
-                        count: {$sum: 1}
-                    }
-                }], parCb);
-            }
-        }, function (err, result) {
+    this.getLeadsPriority = function (req, res, next) {
+        var response = {};
+        response.data = [];
+        models.get(req.session.lastDb, 'Priority', prioritySchema).find({type: 'Leads'}, function (err, _priority) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(result);
+            response.data = _priority;
+            res.send(response);
         });
-}
-
-this.getByViewType = function (req, res, next) {
-    var viewType = req.query.viewType;
-
-    switch (viewType) {
-        case 'list':
-            getFilter(req, res, next);
-            break;
-        case 'form':
-            getById(req, res, next);
-            break;
-        case 'kanban':
-            getForKanban(req, res, next);
-            break;
-        default:
-            getForChart(req, res, next);
-    }
-};
-
-this.getLeadsPriority = function (req, res, next) {
-    var response = {};
-    response.data = [];
-    models.get(req.session.lastDb, 'Priority', prioritySchema).find({type: 'Leads'}, function (err, _priority) {
-        if (err) {
-            return next(err);
-        }
-
-        response.data = _priority;
-        res.send(response);
-    });
-};
-
-this.getFilteredOpportunities = function (req, res, next) {
-    var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-    var contentSearcher;
-    var waterfallTasks;
-    var accessRollSearcher;
-
-    var optionsObject = {};
-    var data = req.query;
-    var query;
-    var days = data.days;
-    var date = moment().subtract(days, 'days').calendar();
-
-    optionsObject.$and = [];
-
-    optionsObject.$and.push({isOpportunitie: true});
-
-    accessRollSearcher = function (cb) {
-        accessRoll(req, Opportunities, cb);
     };
 
-    contentSearcher = function (opportunitiesIds, waterfallCallback) {
-        var queryObject = {};
-        queryObject.$and = [];
-        queryObject.$and.push({_id: {$in: opportunitiesIds}});
+    this.getFilteredOpportunities = function (req, res, next) {
+        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+        var contentSearcher;
+        var waterfallTasks;
+        var accessRollSearcher;
 
-        if (optionsObject.$and.length) {
-            queryObject.$and.push(optionsObject);
-        }
+        var optionsObject = {};
+        var data = req.query;
+        var query;
+        var days = data.days;
+        var date = moment().subtract(days, 'days').calendar();
 
-        queryObject.$and.push({workflow: data.workflowId});
-        queryObject.$and.push({creationDate: {$gte: date}});
+        optionsObject.$and = [];
 
-        query = Opportunities
-            .find(queryObject, {
-                name           : 1,
-                sequence       : 1,
-                expectedRevenue: 1,
-                customer       : 1,
-                salesPerson    : 1,
-                nextAction     : 1,
-                workflow       : 1,
-                projectType    : 1,
-                attachments    : 1,
-                notes          : 1
-            })
-            .populate('customer', 'name')
-            .populate('salesPerson', 'name')
-            .populate('workflow', '_id')
-            .sort({sequence: -1})
-            .limit(req.session.kanbanSettings.opportunities.countPerPage);
+        optionsObject.$and.push({isOpportunitie: true});
 
-        query.exec(waterfallCallback);
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Opportunities, cb);
+        };
+
+        contentSearcher = function (opportunitiesIds, waterfallCallback) {
+            var queryObject = {};
+            queryObject.$and = [];
+            queryObject.$and.push({_id: {$in: opportunitiesIds}});
+
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
+            }
+
+            queryObject.$and.push({workflow: data.workflowId});
+            queryObject.$and.push({creationDate: {$gte: date}});
+
+            query = Opportunities
+                .find(queryObject, {
+                    name           : 1,
+                    sequence       : 1,
+                    expectedRevenue: 1,
+                    customer       : 1,
+                    salesPerson    : 1,
+                    nextAction     : 1,
+                    workflow       : 1,
+                    projectType    : 1,
+                    attachments    : 1,
+                    notes          : 1
+                })
+                .populate('customer', 'name')
+                .populate('salesPerson', 'name')
+                .populate('workflow', '_id')
+                .sort({sequence: -1})
+                .limit(req.session.kanbanSettings.opportunities.countPerPage);
+
+            query.exec(waterfallCallback);
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({
+                data      : result,
+                workflowId: data.workflowId,
+                fold      : (req.session.kanbanSettings.opportunities.foldWorkflows && req.session.kanbanSettings.opportunities.foldWorkflows.indexOf(data.workflowId.toString()) !== -1)
+            });
+        });
     };
 
-    waterfallTasks = [accessRollSearcher, contentSearcher];
-
-    async.waterfall(waterfallTasks, function (err, result) {
-        if (err) {
-            return next(err);
-        }
-
-        res.status(200).send({
-            data      : result,
-            workflowId: data.workflowId,
-            fold      : (req.session.kanbanSettings.opportunities.foldWorkflows && req.session.kanbanSettings.opportunities.foldWorkflows.indexOf(data.workflowId.toString()) !== -1)
-        });
-    });
-};
-
-/**
- * @module Leads
- */
-/**
- * __Type__ `GET`
- *
- * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/totalCollectionLength/Leads`
- *
- * This __method__ allows get count of Leads.
- *
- * @example {
+    /**
+     * @module Leads
+     */
+    /**
+     * __Type__ `GET`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/totalCollectionLength/Leads`
+     *
+     * This __method__ allows get count of Leads.
+     *
+     * @example {
      *         'count': 35
      *     }
- *
- * @method totalCollectionLength
- * @param {String} Leads - Content type
- * @instance
- */
-/**
- * __Type__ `GET`
- *
- * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/form/:id`
- *
- * This __method__ allows get all Leads for `form` viewType.
- * @method Leads
- * @param {String} form - View type
- * @param {String} id - Id of Lead
- * @instance
- */
+     *
+     * @method totalCollectionLength
+     * @param {String} Leads - Content type
+     * @instance
+     */
+    /**
+     * __Type__ `GET`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/form/:id`
+     *
+     * This __method__ allows get all Leads for `form` viewType.
+     * @method Leads
+     * @param {String} form - View type
+     * @param {String} id - Id of Lead
+     * @instance
+     */
 
-/**
- * __Type__ `GET`
- *
- * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/kanban`
- *
- * This __method__ allows get all Leads for `kanban` viewType.
- * @method Leads
- * @param {String} kanban - View type
- * @instance
- */
+    /**
+     * __Type__ `GET`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/kanban`
+     *
+     * This __method__ allows get all Leads for `kanban` viewType.
+     * @method Leads
+     * @param {String} kanban - View type
+     * @instance
+     */
 
-/**
- * __Type__ `GET`
- *
- * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/Leads/list`
- *
- * This __method__ allows get all Leads for `list` viewType.
- *
- * @example
- *        {'data':[{
+    /**
+     * __Type__ `GET`
+     *
+     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/Leads/list`
+     *
+     * This __method__ allows get all Leads for `list` viewType.
+     *
+     * @example
+     *        {'data':[{
      *        '_id':'5374c181503e85ec0e000010',
      *        '__v':0,
      *        'attachments':[],
@@ -3146,11 +2983,11 @@ this.getFilteredOpportunities = function (req, res, next) {
      *        'name':'Wildy Jimi',
      *        'isOpportunitie':false
      *        }]}
- *
- * @method Leads
- * @param {String} list - View type
- * @instance
- */
+     *
+     * @method Leads
+     * @param {String} list - View type
+     * @instance
+     */
 };
 
 module.exports = Module;
