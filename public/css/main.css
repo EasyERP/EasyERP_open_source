@@ -3672,7 +3672,9 @@ td.checkboxRow {
   left: 0;
   background-color: #ffffff;
   border: 1px solid #bebebe;
+  border-radius: 3px;
   z-index: 1;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 .dropDown ul li {
   position: relative;
@@ -3680,9 +3682,6 @@ td.checkboxRow {
   padding: 0 22px 0 12px;
   line-height: 32px;
   cursor: pointer;
-}
-.dropDown ul li:nth-child(n+2) {
-  border-top: 1px solid #bebebe;
 }
 .dropDown ul li:hover {
   background-color: #7eadcc;
@@ -3694,23 +3693,29 @@ td.checkboxRow {
   background-color: #7eadcc;
   color: #fff;
 }
-.dropDown ul li.sortDn .fa-caret-down {
+.dropDown ul li.sortDn .sortArrow {
+  color: #fff;
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.dropDown ul li.sortDn .sortArrow:before {
+  content: "\f176";
+}
+.dropDown ul li.sortUp .sortArrow {
   color: #fff;
 }
-.dropDown ul li.sortUp .fa-caret-up {
-  color: #fff;
+.dropDown ul li.sortUp .sortArrow:before {
+  content: "\f176";
 }
-.dropDown ul li .fa-caret-up,
-.dropDown ul li .fa-caret-down {
+.dropDown ul li .sortArrow {
   position: absolute;
+  right: 8px;
   color: #2b3643;
-  right: 5px;
-}
-.dropDown ul li .fa-caret-up {
-  top: 5px;
-}
-.dropDown ul li .fa-caret-down {
-  bottom: 5px;
+  font-family: 'FontAwesome';
+  font-size: 16px;
 }
 .dropDown.open ul {
   display: block;
