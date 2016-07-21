@@ -6,6 +6,7 @@
     <%if(viewType=='kanban') {%> <a id="kanban-settings-Btn" class="fa fa-wrench" title="Kanban Settings"></a><%}%>
 </div>
 
+<% if (viewType !== 'tform') {%>
 <div id="template-switcher" class="template-switcher right">
     <ul class="btn-list">
         <li><a href="javascript:;"
@@ -17,3 +18,4 @@
         <!-- <li><a href="javascript:;" class="changeContentView icon icon-btn dark <%= (viewType == 'form') ? 'selected' : ''%>" data-view-type="form" id="formBtn">m</a></li> -->
     </ul>
 </div>
+<%}%>
