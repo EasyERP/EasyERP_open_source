@@ -12,12 +12,12 @@ var ProductsSchema = mongoose.Schemas.Products;
 
 async = require('async');
 var connectOptions = {
-    user: 'easyErp',
+    user: 'easyerp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
 };
-dbObject = mongoose.createConnection('46.4.78.3', 'CRM', 27017/*, connectOptions*/);
+dbObject = mongoose.createConnection('erp.thinkmobiles.com', 'production');
 dbObject.on('error', function (err) {
     console.error(err);
 });
@@ -25,8 +25,8 @@ dbObject.once('open', function callback() {
     console.log('Connection to production is success');
 });
 
-var ProductCategories = dbObject.model('jobs', ProductsCategoriesSchema);
-var Product = dbObject.model('jobs', ProductsSchema);
+var ProductCategories = dbObject.model('ProductCategory', ProductsCategoriesSchema);
+var Product = dbObject.model('Product', ProductsSchema);
 var category = {
     _id: '564591f9624e48551dfe3b23',
     name: 'All'
