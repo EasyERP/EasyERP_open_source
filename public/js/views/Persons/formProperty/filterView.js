@@ -51,8 +51,8 @@ define([
         },
 
         events: {
-            'click li'        : 'changeSelected',
-            'click #newPerson': 'createCustomer'
+            'click li'         : 'changeSelected',
+            'click #newContact': 'createCustomer'
         },
 
         filterCollection: function (value) {

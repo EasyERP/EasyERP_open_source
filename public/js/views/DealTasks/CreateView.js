@@ -187,7 +187,7 @@ define([
 
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this, true);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
-            populate.get('#dealDd', 'opportunities/getForDd', {isOpportunitie: true}, 'name', this, false);
+            populate.get('#dealDd', 'opportunities/getForDd', {}, 'name', this, false);
             populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'}, 'fullName', this, false);
             populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'}, 'fullName', this, false);
             this.$el.find('#dueDate').datepicker({

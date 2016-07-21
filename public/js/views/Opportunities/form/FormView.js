@@ -120,11 +120,13 @@ define([
             var $target = $(e.target);
             var holder = $target.parents('.inputBox').find('.current-selected');
             var type = $target.closest('a').attr('data-id');
+            var text = $target.text();
             var id = $target.attr('id');
 
             holder.text($target.text());
 
             this.modelChanged[type] = id;
+            this.$el.find('#assignedToDd').text(text).attr('data-id', id);
             this.showButtons();
         },
 

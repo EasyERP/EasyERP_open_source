@@ -96,17 +96,6 @@ var Module = function (models, event) {
             }, true);
         }
 
-        function getHistory(parallelCb) {
-            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
-                if (err) {
-                    return parallelCb(err);
-                }
-
-                parallelCb(null, history);
-
-            });
-        }
-
         function getTask(parallelCb) {
             TasksSchema.find({'deal': model._id})
                 .populate('deal', '_id name')
@@ -131,15 +120,12 @@ var Module = function (models, event) {
                 });
         }
 
-        parallelTasks = [getTask, getHistoryNotes, getHistory];
+        parallelTasks = [getTask, getHistoryNotes];
 
         async.parallel(parallelTasks, function (err, results) {
 
-            if (model.isOpportunitie) {
-                model.notes = model.notes.concat(results[0], results[1]);
-            }
 
-            model.history = results[2];
+            model.notes = model.notes.concat(results[0], results[1]);
             model.notes = _.sortBy(model.notes, 'date');
             cb(null, model);
         });
