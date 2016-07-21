@@ -71,6 +71,7 @@ define([
         hasPagination    : true,
         exportToCsvUrl   : '/wTrack/exportToCsv',
         exportToXlsxUrl  : '/wTrack/exportToXlsx',
+        CurrentModel     : CurrentModel,
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -481,12 +482,12 @@ define([
                 year = year.slice(0, 4);
 
                 /* if (!isOvertime && holiday) {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please create Overtime tCard'
-                    });
-                    return false;
-                } */
+                 App.render({
+                 type   : 'error',
+                 message: 'Please create Overtime tCard'
+                 });
+                 return false;
+                 } */
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     this.wTrackId = wTrackId;
