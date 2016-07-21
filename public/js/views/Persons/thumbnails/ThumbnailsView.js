@@ -60,14 +60,14 @@
 
             e.preventDefault();
             App.ownContentType = true;
-            window.location.hash = '#easyErp/Persons/tform/' + id;
+            window.location.hash = '#easyErp/Persons/tform/' + id + '/filter=' + JSON.stringify(this.filter);
         },
 
         gotoCompanyForm: function (e) {
             var id = $(e.target).closest('a').data('id');
 
             e.preventDefault();
-            window.location.hash = '#easyErp/Companies/form/' + id;
+            window.location.hash = '#easyErp/Companies/tform/' + id;
         },
 
         render: function () {
