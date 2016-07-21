@@ -135,7 +135,7 @@ var Module = function (models, event) {
 
         async.parallel(parallelTasks, function (err, results) {
 
-            if (model.isOpportunity) {
+            if (model.isOpportunitie) {
                 model.notes = model.notes.concat(results[0], results[1]);
             }
 
@@ -2641,6 +2641,7 @@ var Module = function (models, event) {
             salesPerson     : 1,
             nextAction      : 1,
             expectedClosing : 1,
+            isOpportunitie  : 1,
             priority        : 1,
             workflow        : 1,
             address         : 1,

@@ -51,5 +51,5 @@ module.exports = {
     CASHBOOK          : 105,
     CASHTRANSFER      : 106,
     WRITEOFF          : 107,
-    DEALTASKS         : 108
+    DEALTASKS         : 110
 };
