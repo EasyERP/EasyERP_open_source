@@ -3749,8 +3749,8 @@ dl.payrollDateBlock dt {
   display: inline-block;
   vertical-align: middle;
 }
-.leftMap .nodeTree {
-  right: 6px;
+.leftMap {
+  padding-left: 128px;
 }
 .btn {
   border: 1px solid #7f7f80;
