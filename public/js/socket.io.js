@@ -68,14 +68,21 @@ define([
 
     function editModel(data) {
         var fragment = Backbone.history.fragment;
-        var personIdServer = data.id;
-        var currentUserIdServer = data.currentUser;
+
+        var personId = App.currentPerson;
+        var companyId = App.currentCompany;
+
+        var idServer = data.id;
 
         var currentUserId = App.currentUser._id;
-        var personId = App.currentPerson;
+        var currentUserIdServer = data.currentUser;
 
-        if (((fragment && fragment.indexOf('Persons') !== -1) && (personIdServer === personId)) && (currentUserIdServer !== currentUserId))  {
+        if (((fragment && fragment.indexOf('Persons') !== -1) && (idServer === personId)) && (currentUserIdServer !== currentUserId))  {
                 App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
+        }
+
+        if (((fragment && fragment.indexOf('Companies') !== -1) && (idServer === companyId)) && (currentUserIdServer !== currentUserId))  {
+            App.render({type: 'notify', message: 'Data was updated. Please refresh browser.'});
         }
 
         //custom.removeFromCash('projectInfo');

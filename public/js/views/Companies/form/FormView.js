@@ -42,6 +42,8 @@ define([
             _.bindAll(this, 'render');
             this.formModel = options.model;
 
+            App.currentCompany = options.model.get('id');
+
 
             this.formModel.urlRoot = '/Companies';
             this.pageMini = 1;
@@ -256,8 +258,13 @@ define([
 
         cancelClick: function (e) {
             e.preventDefault();
-            Backbone.history.fragment = '';
-            Backbone.history.navigate('#easyErp/Companies/form/' + this.formModel.id, {trigger: true});
+
+            $('.quickEdit #editInput').remove();
+            $('.quickEdit #cancelSpan').remove();
+            $('.quickEdit #saveSpan').remove();
+            $('.quickEdit').text(this.text).removeClass('quickEdit');
+            //Backbone.history.fragment = '';
+            //Backbone.history.navigate('#easyErp/Companies/form/' + this.formModel.id, {trigger: true});
         },
 
         editClick: function (e) {
@@ -290,9 +297,12 @@ define([
             var newModel = {};
             var oldvalue = {};
             var mid = this.mId;
+            var self = this;
             var param;
             var valid;
             var i;
+
+            this.text = $('#' + parent[0].id).find('#editInput').val();
 
             e.preventDefault();
 
@@ -315,8 +325,17 @@ define([
 
                 patch  : true,
                 success: function (model) {
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/Companies/form/' + model.id, {trigger: true});
+                    App.render({
+                        type   : 'notify',
+                        message: "Saving is successfully"
+                    });
+
+                    $('.quickEdit #editInput').remove();
+                    $('.quickEdit #cancelSpan').remove();
+                    $('.quickEdit #saveSpan').remove();
+                    $('.quickEdit').text(self.text).removeClass('quickEdit');
+                    //Backbone.history.fragment = '';
+                    //Backbone.history.navigate('#easyErp/Companies/form/' + model.id, {trigger: true});
                 },
 
                 error: function (model, response) {
