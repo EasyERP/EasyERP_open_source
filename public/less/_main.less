@@ -2781,6 +2781,8 @@ dl {
       padding: 2px 0 2px 3px;
       resize: none;
       box-sizing: border-box;
+      .defaultBorRad;
+
       &:focus {
         .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
         border: @thin-border @border-color-main;
@@ -2977,8 +2979,10 @@ dl {
 .person-info, .customer-info {
   .dl-auto;
   span {
-    padding: 0 !important;
-    color: @formColum-customer-info;
+    &:not(.editTags) {
+      padding: 0 !important;
+      color: @formColum-customer-info;
+    }
   }
 }
 

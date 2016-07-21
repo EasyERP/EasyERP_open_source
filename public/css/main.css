@@ -2560,6 +2560,9 @@ body {
 a {
   text-decoration: none;
 }
+a.fa:hover {
+  text-decoration: none;
+}
 h2.green {
   color: #32c5d2;
 }
@@ -3207,6 +3210,14 @@ input:not([type="checkbox"]).inputBordered:focus {
 .createNewTag {
   line-height: 25px;
 }
+.tags-container .editTags {
+  padding: 2px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.taskArea {
+  border-radius: 3px;
+}
 .ui-dialog input.searchTagInput {
   width: 235px;
   height: 30px;
@@ -3508,6 +3519,7 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  border-bottom: 1px solid #ededed;
 }
 .listWrap.personList .firstName {
   color: #508bbd;
@@ -3531,6 +3543,14 @@ dl.payrollDateBlock dt {
 .listWrap.companiesList .compactRowWrap {
   min-height: 60px;
 }
+.listWrap.opportunitiesList .opportunity {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.opportunitiesList .revenue {
+  font-size: 10px;
+}
 .listWrap .form-holder {
   padding: 10px;
 }
@@ -3538,9 +3558,12 @@ dl.payrollDateBlock dt {
 .formContent {
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 .listContent {
   width: 400px;
+  border-right: 1px solid #ededed;
 }
 .listContent table {
   width: 100%;
@@ -3573,10 +3596,12 @@ dl.payrollDateBlock dt {
 }
 .formContentTitle,
 .listContentTitle {
-  min-height: 42px;
+  height: 42px;
   padding: 7px;
   border-top: 1px solid #ededed;
   border-bottom: 1px solid #ededed;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 .listContentTitle {
   position: relative;
@@ -3776,36 +3801,6 @@ table.kanban tbody td {
 }
 table.kanban tbody td:nth-child(n+2) {
   border-left: 9px solid #fff;
-}
-.tabListWrap {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  padding: 5px;
-  margin-bottom: 10px;
-}
-.tabListItem {
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-  width: 10px;
-  position: relative;
-  padding: 3px 5px;
-  margin: 5px;
-  background-color: #e6e6e6;
-  font-size: 10px;
-}
-.tabListItem.passed {
-  background-image: linear-gradient(to top, #158b0c, #18a815);
-}
-.tabListItem.passed span {
-  color: #fff;
-}
-.tabListItem span {
-  text-transform: uppercase;
-  font-size: 12px;
-  color: #666;
-  white-space: nowrap;
 }
 .clearLeft {
   float: left!important;
@@ -4082,7 +4077,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteContainer .itemCircle {
   position: absolute;
-  left: 10px;
+  left: 11px;
   top: 10px;
   height: 28px;
   width: 28px;
@@ -4129,9 +4124,6 @@ table.kanban tbody td:nth-child(n+2) {
 .noteContainer .noteContent {
   margin-bottom: 10px;
 }
-.propertyContainer {
-  padding: 20px;
-}
 .propertyContainer a:hover {
   text-decoration: none;
 }
@@ -4142,6 +4134,7 @@ table.kanban tbody td:nth-child(n+2) {
   padding: 10px;
   margin-bottom: 20px;
   width: 100%;
+  border-radius: 3px;
 }
 .propertyBox .propertyImg,
 .propertyBox .propertyBody {
@@ -4158,6 +4151,9 @@ table.kanban tbody td:nth-child(n+2) {
   text-align: center;
   font-size: 12px;
   color: #c8c8d3;
+}
+.propertyBox .removeProperty .fa-times:hover {
+  color: #2b3643;
 }
 .propertyBox .propertyImg {
   width: 40px;
@@ -4592,6 +4588,14 @@ table.kanban tbody td:nth-child(n+2) {
 .tasksItemIcon img {
   width: 20px;
 }
+.tabListWrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
 .tabListWrap .tabListItem {
   position: relative;
   padding: 13px 15px;
@@ -4601,6 +4605,9 @@ table.kanban tbody td:nth-child(n+2) {
   cursor: pointer;
   overflow: visible;
   background: #c8c8d3;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  width: 10px;
 }
 .tabListWrap .tabListItem.active {
   background: #01579b;
@@ -4620,30 +4627,40 @@ table.kanban tbody td:nth-child(n+2) {
 .tabListWrap .tabListItem.passed:after {
   border-left-color: #4bcb81;
 }
+.tabListWrap .tabListItem.passed span {
+  color: #fff;
+}
 .tabListWrap .tabListItem:before,
 .tabListWrap .tabListItem:after {
   content: '';
   position: absolute;
-  top: 0;
   width: 0;
   height: 0;
-  z-index: 1;
-  border-top: 18px solid transparent;
-  border-bottom: 18px solid transparent;
-}
-.tabListWrap .tabListItem:after {
-  right: -15px;
-  border-left: 20px solid #c8c8d3;
 }
 .tabListWrap .tabListItem:before {
+  top: -3px;
+  right: -24px;
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  border-left: 24px solid #ffffff;
+  z-index: 1;
+}
+.tabListWrap .tabListItem:after {
+  top: 1px;
   right: -20px;
-  border-left: 20px solid #ffffff;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  border-left: 20px solid #c8c8d3;
+  z-index: 2;
 }
 .tabListWrap .tabListItem span {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #666;
 }
 .tabListWrap .tabListItem:first-child {
   border-radius: 30px 0 0 30px;
@@ -8735,6 +8752,7 @@ dl dd span.ui-spinner {
   padding: 2px 0 2px 3px;
   resize: none;
   box-sizing: border-box;
+  border-radius: 3px;
 }
 .noteWrapper .addNote textarea:focus {
   box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
@@ -8978,8 +8996,8 @@ dl dd span.ui-spinner {
 .customer-info dd span.ui-spinner {
   width: 100%;
 }
-.person-info span,
-.customer-info span {
+.person-info span:not(.editTags),
+.customer-info span:not(.editTags) {
   padding: 0 !important;
   color: #3e88b9;
 }
