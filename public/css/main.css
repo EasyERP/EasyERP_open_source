@@ -3211,7 +3211,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   line-height: 25px;
 }
 .tags-container .editTags {
+  display: inline-block;
   padding: 2px 8px;
+  margin-bottom: 5px;
   cursor: pointer;
   border-radius: 3px;
 }
@@ -4193,7 +4195,7 @@ table.kanban tbody td:nth-child(n+2) {
   display: table-cell !important;
 }
 .propertyFormList label {
-  width: 105px !important;
+  width: 90px !important;
   text-align: left;
   padding-right: 15px;
 }
@@ -4374,6 +4376,11 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .moduleList .tags-container label {
   float: left;
+}
+.tagsLabel {
+  display: inline-block;
+  padding-right: 10px;
+  color: #000;
 }
 .moduleList .largeBtn,
 .attachments .largeBtn {
