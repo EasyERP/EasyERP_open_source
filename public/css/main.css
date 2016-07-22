@@ -3780,11 +3780,11 @@ table.kanban tbody td:nth-child(n+2) {
 .noteMainContainer {
   position: relative;
 }
-.noteContainer {
+.timeNote .noteContainer {
   position: relative;
   padding-left: 50px;
 }
-.noteContainer:before {
+.timeNote .noteContainer:before {
   content: '';
   position: absolute;
   top: 0;
@@ -3793,20 +3793,20 @@ table.kanban tbody td:nth-child(n+2) {
   height: calc(100% + 27px);
   background: #c8c8d3;
 }
-.noteContainer:first-child:before {
+.timeNote .noteContainer:first-child:before {
   top: -10px;
 }
-.noteContainer:last-child:before {
+.timeNote .noteContainer:last-child:before {
   height: 25px;
 }
-.noteContainer .noteTopBox {
+.timeNote .noteContainer .noteTopBox {
   padding: 10px 15px;
   border-bottom: 1px solid #c8c8d3;
 }
-.noteContainer .loadAttach {
+.timeNote .noteContainer .loadAttach {
   padding: 10px 15px 0;
 }
-.noteContainer .itemCircle {
+.timeNote .noteContainer .itemCircle {
   position: absolute;
   left: 10px;
   top: 10px;
@@ -3821,39 +3821,54 @@ table.kanban tbody td:nth-child(n+2) {
   color: #c8c8d3;
   z-index: 10;
 }
-.noteContainer .noteBody {
+.timeNote .noteContainer .noteBody {
   padding: 0 0 17px !important;
   border-radius: 3px;
   border: 1px solid #c8c8d3 !important;
   box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
-.noteContainer .noteBtnBlock {
+.timeNote .noteContainer .noteBtnBlock {
   border: none;
 }
-.noteContainer .showButtons .noteBtnBlock {
+.timeNote .noteContainer .showButtons .noteBtnBlock {
   border: 1px solid #c8c8d3 !important;
 }
-.noteContainer .noteText,
-.noteContainer .noteContent,
-.noteContainer .changed_field,
-.noteContainer .assignedTo {
+.timeNote .noteContainer .noteText,
+.timeNote .noteContainer .noteContent,
+.timeNote .noteContainer .changed_field,
+.timeNote .noteContainer .assignedTo {
   padding: 10px 15px 0;
 }
-.noteContainer .dateNote {
+.timeNote .noteContainer .dateNote {
   line-height: 11px;
   min-height: 15px;
 }
-.noteContainer .singleNote {
+.timeNote .noteContainer .singleNote {
   padding: 7px 15px 0 0;
 }
-.noteContainer .singleNote .dateNote {
+.timeNote .noteContainer .singleNote .dateNote {
   padding-top: 14px;
 }
-.noteContainer .noteText:last-child {
+.timeNote .noteContainer .noteText:last-child {
   margin-bottom: 0 !important;
 }
-.noteContainer .noteContent {
+.timeNote .noteContainer .noteContent {
   margin-bottom: 10px;
+}
+.noteInner {
+  border: 1px solid #7f7f80;
+  padding: 5px 20px 20px;
+}
+.noteInner .dateNote {
+  float: none !important;
+  margin-left: 5px;
+}
+.noteBtn {
+  margin-top: 15px;
+  text-align: right;
+}
+.noteBtn span + span {
+  margin-left: 10px;
 }
 .propertyContainer {
   padding: 20px;
