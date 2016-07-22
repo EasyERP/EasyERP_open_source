@@ -852,6 +852,17 @@ define([
             this.resetCollection(modelObjects);
         },
 
+        resetCollection: function (model) {
+            if (model && model._id) {
+                model = new this.CurrentModel(model);
+
+                this.collection.add(model);
+                this.editCollection.add(model);
+            } else {
+                this.collection.set(this.editCollection.models, {remove: false});
+            }
+        },
+
         createItem: function () {
             var now = new Date();
             var year = now.getFullYear();
