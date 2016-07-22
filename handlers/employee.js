@@ -944,7 +944,6 @@ var Employee = function (event, models) {
     };
 
     this.updateTransfer = function (req, res, next) {
-
         var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
         var body = req.body;
 
@@ -952,7 +951,33 @@ var Employee = function (event, models) {
             var id = data._id;
 
             delete data._id;
-            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, updatedDoc) {
+                var transferKey = updatedDoc ? updatedDoc.transferKey : null;
+                var transferDate;
+                var employee;
+
+                if (err) {
+                    return cb(err);
+                }
+
+                if (!transferKey) {
+                    return cb();
+                }
+
+                transferDate = moment(new Date(updatedDoc.date)).subtract(1, 'days');
+                transferDate = transferDate.toDate();
+                employee = updatedDoc.employee;
+
+                Model.update({
+                    transferKey: transferKey,
+                    employee   : employee,
+                    status     : 'transfer'
+                }, {
+                    $set: {
+                        date: transferDate
+                    }
+                }, {new: true}, cb);
+            });
         }, function (err) {
             if (err) {
                 return next(err);
@@ -963,7 +988,6 @@ var Employee = function (event, models) {
     };
 
     this.removeTransfer = function (req, res, next) {
-
         var TransferModel = models.get(req.session.lastDb, 'Transfers', TransferSchema);
         var body = req.body;
         var removeIdArray = body.removeTransfer;
@@ -978,11 +1002,11 @@ var Employee = function (event, models) {
                     return cb(err);
                 }
 
-                transferKey = result.transferKey;
+                transferKey = result ? result.transferKey : null;
 
                 if (transferKey) {
                     employee = result.employee;
-                    TransferModel.remove({employee: employee, transferKey: transferKey}, cb);
+                    TransferModel.remove({employee: employee, transferKey: transferKey, status: 'transfer'}, cb);
                 }
             });
 
@@ -2053,7 +2077,6 @@ var Employee = function (event, models) {
 
             return next(err);
         }
-
 
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {

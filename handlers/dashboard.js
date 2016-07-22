@@ -338,34 +338,35 @@ var wTrack = function (models) {
                 function employeeByDepComposer(parallelCb) {
                     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-                Employee.aggregate([{
-                    $match: {
-                        hire: {$ne: []} // add by Liliya for new Application ToDO review
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'transfers',
-                        localField  : '_id',
-                        foreignField: 'employee',
-                        as          : 'transfer'
-                    }
-                }, {
-                    $project: {
-                        isEmployee  : 1,
-                        department  : 1,
-                        isLead      : 1,
-                        fire        : 1,
-                        hire        : 1,
-                        name        : 1,
-                        lastFire    : 1,
-                        transfer    : 1,
-                        lastTransfer: {$max: '$transfer.date'},
-                        hireCount   : {$size: '$hire'},
-                        lastHire    : {
-                            $let: {
-                                vars: {
-                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
-                                },
+                    Employee.aggregate([{
+                        $match: {
+                            _id : objectId('55b92ad221e4b7c40f00003b'),
+                            hire: {$ne: []} // add by Liliya for new Application ToDO review
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'transfers',
+                            localField  : '_id',
+                            foreignField: 'employee',
+                            as          : 'transfer'
+                        }
+                    }, {
+                        $project: {
+                            isEmployee  : 1,
+                            department  : 1,
+                            isLead      : 1,
+                            fire        : 1,
+                            hire        : 1,
+                            name        : 1,
+                            lastFire    : 1,
+                            transfer    : 1,
+                            lastTransfer: {$max: '$transfer.date'},
+                            hireCount   : {$size: '$hire'},
+                            lastHire    : {
+                                $let: {
+                                    vars: {
+                                        lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                    },
 
                                     in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
                                 }
@@ -426,19 +427,33 @@ var wTrack = function (models) {
                             lastTransferDate  : 1,
                             lastTransfer      : 1,
                             name              : 1,
+                            lastTransferObject: {$arrayElemAt: [{$slice: ['$isTransfer', -1]}, 0]},
                             _lastTransferDate : {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]},
                             _firstTransferDate: {$add: [{$multiply: [{$year: '$firstTransferDate'}, 100]}, {$week: '$firstTransferDate'}]}
+                        }
+                    }, {
+                        $project: {
+                            _id               : 1,
+                            isTransfer        : 1,
+                            firstTransferDate : 1,
+                            lastTransferDate  : 1,
+                            lastTransfer      : 1,
+                            name              : 1,
+                            lastTransferObject: 1,
+                            _lastTransferDate : 1,
+                            _firstTransferDate: 1,
+
+                            lastTransferObjectDate: {$add: [{$multiply: [{$year: '$lastTransferObject.date'}, 100]}, {$week: '$lastTransferObject.date'}]}
                         }
                     }, {
                         $match: {
                             $or: [
                                 {
-                                    _lastTransferDate  : {$gte: startDate},
-                                    _firstTransferDate : {$lte: endDate},
-                                    'isTransfer.status': 'transfer'
+                                    lastTransferObjectDate     : {$gte: startDate, $lte: endDate},
+                                    'lastTransferObject.status': 'transfer'
                                 }, {
-                                    'isTransfer.status': {$nin: ['transfer']},
-                                    _firstTransferDate : {$lte: endDate}
+                                    'lastTransferObject.status': {$nin: ['transfer']},
+                                    lastTransferObjectDate     : {$lte: endDate}
                                 }
                             ]
                         }
