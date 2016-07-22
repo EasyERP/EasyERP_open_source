@@ -3,6 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Quotations/EditTemplate.html',
+    'views/dialogViewBase',
     'views/Projects/projectInfo/proformas/proformaView',
     'views/Assignees/AssigneesView',
     'views/Products/InvoiceOrder/ProductItems',
@@ -20,6 +21,7 @@ define([
              $,
              _,
              EditTemplate,
+             BaseView,
              ProformaView,
              AssigneesView,
              ProductItemView,
@@ -35,7 +37,7 @@ define([
              helpers) {
     'use strict';
 
-    var EditView = Backbone.View.extend({
+    var EditView = BaseView.extend({
         contentType: CONSTANTS.QUOTATIONS,
         imageSrc   : '',
         template   : _.template(EditTemplate),
@@ -555,6 +557,7 @@ define([
 
         render: function () {
             var self = this;
+            var $thisEl = this.$el;
             var model = this.currentModel.toJSON();
             var formString = this.template({
                 model        : model,
@@ -564,7 +567,9 @@ define([
             var service = this.forSales;
             var productItemContainer;
 
-            this.renderAssignees(this.currentModel);
+            $thisEl.html(formString);
+
+            //this.renderAssignees(this.currentModel);
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
