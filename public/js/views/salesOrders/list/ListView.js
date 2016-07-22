@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -15,7 +16,8 @@ define([
     'constants',
     'helpers',
     'helpers'
-], function ($,
+], function (Backbone,
+             $,
              _,
              ListViewBase,
              listTemplate,
@@ -45,7 +47,7 @@ define([
         contentType: CONSTANTS.SALESORDERS, // needs in view.prototype.changeLocationHash
 
         events: {
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog'
+            'click  .list tbody td:not(.notForm)': 'gotoForm'
         },
 
         initialize: function (options) {
@@ -56,6 +58,7 @@ define([
                 value: ['true']
             };
 
+            this.formUrl = '/salesOrders/tform/';
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
@@ -134,6 +137,22 @@ define([
             // $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            console.log('url => ', url);
+            Backbone.history.navigate(url, {trigger: true});
+        },
+
+        /*
         goToEditDialog: function (event) {
             var self = this;
             var $eventTarget = $(event.target);
@@ -172,7 +191,7 @@ define([
                     });
                 }
             });
-        }
+        }*/
 
     });
 

@@ -54,7 +54,7 @@ define([
             var self = this;
             $(document).off('click');
 
-            self.formUrl = '/quotations/tform/';
+            self.formUrl = '/Quotations/tform/';
             self.startTime = options.startTime;
             self.collection = options.collection;
             self.parrentContentId = options.collection.parrentContentId;
