@@ -85,12 +85,10 @@ define([
             var self = this;
 
             saveObject[this.attribute] = null;
-
+            self.saveDeal(saveObject, 'formProperty');
 
             if (this.isLead && this.model.get('isHidden')){
-                this.model.destroy({success : function (){
-                    self.saveDeal(saveObject, 'formProperty');
-                }});
+                this.model.destroy();
             }
         },
 

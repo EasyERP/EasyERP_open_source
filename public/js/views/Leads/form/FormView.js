@@ -37,7 +37,7 @@ define([
             'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click #convertToOpportunity'                      : 'convertToOpp',
+            'click #convertToOpportunity'                      : 'convertToOpp'
         },
 
         hideNewSelect: function () {
@@ -48,7 +48,8 @@ define([
             }
         },
 
-        convertToOpp : function (){
+        convertToOpp : function (e){
+            e.preventDefault();
             this.saveDeal({
                 isOpportunitie : true,
                 isConverted    : true,
@@ -143,10 +144,6 @@ define([
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
-                validate: false,
-                headers : {
-                    mid: 24
-                },
                 success: function () {
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
@@ -154,7 +151,7 @@ define([
                     } else if (type === 'tags') {
                         self.renderTags();
                     } else if (type === 'converted'){
-                       /* Backbone.history.fragment = '';*/
+                        Backbone.history.fragment = '';
                         Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
                     } else {
                         self.editorView.renderTimeline();

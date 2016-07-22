@@ -991,17 +991,17 @@ var Module = function (models) {
 
     this.remove = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var Opportunity = models.get(req.session.lastDb, 'Opportunity', OpportunitySchema);
+        var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
         var _id = req.params.id;
 
-        Model.findByIdAndRemove({_id: _id}, function (err, res) {
+        Model.findByIdAndRemove({_id: _id}, function (err, response) {
             var findObject = {};
             var updateObject = {};
             if (err) {
                 return next(err);
             }
 
-            if (res.type === 'Company') {
+            if (response.type === 'Company') {
                 findObject.company = _id;
                 updateObject.company = null;
             } else {
@@ -1009,9 +1009,12 @@ var Module = function (models) {
                 updateObject.customer = null;
             }
 
-            Opportunity.update(findObject, {$set: updateObject}, {multi: true}, function (err, res) {
+            Opportunity.update(findObject, {$set: updateObject}, {multi: true}, function (err) {
+                if (err){
+                    return next(err);
+                }
                 res.status(200).send({success: 'customer removed'});
-            })
+            });
 
         });
     };
