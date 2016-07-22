@@ -30,7 +30,7 @@ define([
         ContentModel   : QuotationModel,
         FormView       : FormView,
 
-        renderList: function(quotations){
+        renderList: function (quotations) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
 

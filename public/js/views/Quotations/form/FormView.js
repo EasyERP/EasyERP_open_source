@@ -37,7 +37,7 @@ define([
              helpers) {
     'use strict';
 
-    var EditView = BaseView.extend({
+    var FormView = BaseView.extend({
         contentType: CONSTANTS.QUOTATIONS,
         imageSrc   : '',
         template   : _.template(EditTemplate),
@@ -61,7 +61,6 @@ define([
             this.responseObj = {};
             this.forSales = options.forSales;
 
-            //this.render(options);
         },
 
         events: {
@@ -509,50 +508,16 @@ define([
             }
         },
 
-        deleteItem: function (event) {
-            var self = this;
-            var mid = this.forSales ? 62 : 55;
-            var answer = confirm('Really DELETE items ?!');
-
-            event.preventDefault();
-
-            if (answer === true) {
-                this.currentModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
-                    wait   : true,
-                    success: function (model) {
-
-                        App.projectInfo = App.projectInfo || {};
-                        App.projectInfo.currentTab = 'quotations';
-
-                        if (self.eventChannel) {
-                            self.eventChannel.trigger('quotationRemove');
-                        }
-
-                        self.redirectAfter(self, model);
-                    },
-
-                    error: function (model, err) {
-                        if (err.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'You do not have permission to perform this action'
-                            });
-                        }
-                    }
-                });
-            }
-
-        },
-
         redirectAfter: function (content) {
-            var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
+          /*  var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
 
             $('.edit-dialog').remove();
             //content.hideDialog();
-            Backbone.history.navigate(redirectUrl, {trigger: true});
+            Backbone.history.navigate(redirectUrl, {trigger: true});*/
+
+            // todo check
+
+
         },
 
         render: function () {
@@ -569,7 +534,7 @@ define([
 
             $thisEl.html(formString);
 
-            //this.renderAssignees(this.currentModel);
+            this.renderAssignees(this.currentModel);
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
@@ -642,5 +607,5 @@ define([
         }
     });
 
-    return EditView;
+    return FormView;
 });
