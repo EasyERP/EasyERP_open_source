@@ -340,7 +340,6 @@ var wTrack = function (models) {
 
                     Employee.aggregate([{
                         $match: {
-                            _id : objectId('55b92ad221e4b7c40f00003b'),
                             hire: {$ne: []} // add by Liliya for new Application ToDO review
                         }
                     }, {
