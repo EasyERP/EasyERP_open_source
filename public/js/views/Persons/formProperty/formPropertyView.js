@@ -39,14 +39,18 @@ define([
 
         removeProperty: function (e) {
             var saveObject = {};
+            var self = this;
 
             e.preventDefault();
 
             saveObject[this.attribute] = null;
             this.saveDeal(saveObject, 'formProperty');
 
-            if (this.isLead){
-                this.model.destroy();
+
+            if (this.isLead && this.model.get('isHidden')){
+                this.model.destroy({success : function (){
+                    self.saveDeal(saveObject, 'formProperty');
+                }});
             }
         },
 

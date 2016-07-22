@@ -18,7 +18,7 @@ define([
         initialize: function (options) {
 
             var self = this;
-            this.type = options.type;
+            this.isLead = options.isLead;
 
             function resetCollection() {
                 self.renderContent(self.e);
@@ -81,8 +81,13 @@ define([
 
         createCustomer: function () {
             $('.tag-list-dialog').remove();
+            var optionsObject= {};
 
-            new CreateView();
+            if (this.isLead) {
+                optionsObject.lead = this.model;
+            }
+
+            new CreateView(optionsObject);
         },
 
         changeSelected: function (e) {

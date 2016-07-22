@@ -7,6 +7,7 @@ var Module = function (models) {
      * @module Customer
      */
     var CustomerSchema = mongoose.Schemas.Customer;
+    var OpportunitySchema = mongoose.Schemas.Opportunities;
 
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants');
@@ -77,48 +78,48 @@ var Module = function (models) {
     /*TODO remove after filters check*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-        var keys = Object.keys(filter);
-        var i;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
+     var keys = Object.keys(filter);
+     var i;
 
-        for (i = keys.length - 1; i >= 0; i--) {
-            filterName = keys[i];
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
+     for (i = keys.length - 1; i >= 0; i--) {
+     filterName = keys[i];
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-            switch (filterName) {
-                case 'country':
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'name':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'letter':
-                    filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                    resArray.push(filtrElement);
-                    break;
-                case 'services':
-                    if (condition.indexOf('isCustomer') !== -1) {
-                        filtrElement['salesPurchases.isCustomer'] = true;
-                        resArray.push(filtrElement);
-                    }
-                    if (condition.indexOf('isSupplier') !== -1) {
-                        filtrElement['salesPurchases.isSupplier'] = true;
-                        resArray.push(filtrElement);
-                    }
-                    break;
-                // skip default
-            }
-        }
+     switch (filterName) {
+     case 'country':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'name':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'letter':
+     filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+     resArray.push(filtrElement);
+     break;
+     case 'services':
+     if (condition.indexOf('isCustomer') !== -1) {
+     filtrElement['salesPurchases.isCustomer'] = true;
+     resArray.push(filtrElement);
+     }
+     if (condition.indexOf('isSupplier') !== -1) {
+     filtrElement['salesPurchases.isSupplier'] = true;
+     resArray.push(filtrElement);
+     }
+     break;
+     // skip default
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     this.getSuppliersForDD = function (req, res, next) {
         /**
@@ -337,7 +338,7 @@ var Module = function (models) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type;
-        var queryObject = {};
+        var queryObject = {isHidden: false};
 
         if (type) {
             queryObject.type = type;
@@ -496,7 +497,10 @@ var Module = function (models) {
     this.getCompaniesForDd = function (req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
-        Customers.find({type: 'Company'}, {'name.first': 1}).sort({'name.first': 1}).exec(function (err, result) {
+        Customers.find({
+            type    : 'Company',
+            isHidden: false
+        }, {'name.first': 1}).sort({'name.first': 1}).exec(function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -611,7 +615,7 @@ var Module = function (models) {
         contentSearcher = function (ids, cb) {
             var queryObject = {};
 
-            queryObject.$and = [];
+            queryObject.$and = [{isHidden: false}];
 
             if (optionsObject) {
                 queryObject.$and.push(optionsObject);
@@ -987,14 +991,28 @@ var Module = function (models) {
 
     this.remove = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var Opportunity = models.get(req.session.lastDb, 'Opportunity', OpportunitySchema);
         var _id = req.params.id;
 
-        Model.remove({_id: _id}, function (err) {
+        Model.findByIdAndRemove({_id: _id}, function (err, res) {
+            var findObject = {};
+            var updateObject = {};
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send({success: 'customer removed'});
+            if (res.type === 'Company') {
+                findObject.company = _id;
+                updateObject.company = null;
+            } else {
+                findObject.customer = _id;
+                updateObject.customer = null;
+            }
+
+            Opportunity.update(findObject, {$set: updateObject}, {multi: true}, function (err, res) {
+                res.status(200).send({success: 'customer removed'});
+            })
+
         });
     };
 

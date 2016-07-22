@@ -212,7 +212,7 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Person'};
+        var query = {type: 'Person', isHidden : false};
 
         pipeLine = [{
             $match: query
@@ -299,7 +299,7 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Company'};
+        var query = {type: 'Company', isHidden : false};
 
         pipeLine = [{
             $match: query

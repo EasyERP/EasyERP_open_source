@@ -10,11 +10,10 @@ define([
     'views/Companies/formPropertyView',
     'views/Persons/formProperty/formPropertyView',
     'views/Tags/TagView',
-    'models/CompaniesModel',
     'constants',
     'dataService',
     'views/selectView/selectView'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, CompanyModel, constants, dataService, SelectView) {
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -22,7 +21,7 @@ define([
 
         initialize: function (options) {
             this.formModel = options.model;
-            this.formModel.urlRoot = constants.URLS.OPPORTUNITIES;
+            this.formModel.urlRoot = constants.URLS.LEADS;
             this.formModel.on('change:tags', this.saveTags, this);
             _.bindAll(this, 'saveDeal');
             this.responseObj = {};
@@ -37,7 +36,8 @@ define([
             'click #saveBtn'                                   : 'saveChanges',
             'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click #convertToOpportunity'                      : 'convertToOpp',
         },
 
         hideNewSelect: function () {
@@ -46,6 +46,14 @@ define([
             if (this.selectView) {
                 this.selectView.remove();
             }
+        },
+
+        convertToOpp : function (){
+            this.saveDeal({
+                isOpportunitie : true,
+                isConverted    : true,
+                convertedDate  : new Date()
+            }, 'converted');
         },
 
         setChangeValueToModel: function (e) {
@@ -135,12 +143,19 @@ define([
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
+                validate: false,
+                headers : {
+                    mid: 24
+                },
                 success: function () {
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else if (type === 'tags') {
                         self.renderTags();
+                    } else if (type === 'converted'){
+                       /* Backbone.history.fragment = '';*/
+                        Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
                     } else {
                         self.editorView.renderTimeline();
                         self.modelChanged = {};
@@ -209,7 +224,6 @@ define([
             var formModel = this.formModel.toJSON();
             var self = this;
             var $thisEl = this.$el;
-            var companyModel;
 
             $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
 
@@ -231,15 +245,11 @@ define([
                 self.responseObj['#salesPersonDd'] = employees;
             });
 
-            if (formModel.company) {
-                companyModel = new CompanyModel(formModel.company);
-            }
-
             this.formProperty = new CompanyFormProperty({
                 parentModel: this.formModel,
-                model      : companyModel,
                 attribute  : 'company',
-                saveDeal   : self.saveDeal
+                saveDeal   : self.saveDeal,
+                isLead     : true
             });
 
             this.renderTags();
@@ -251,9 +261,9 @@ define([
             $thisEl.find('#contactHolder').html(
                 new ContactFormProperty({
                     parentModel: this.formModel,
-                    data       : formModel.customer,
                     attribute  : 'customer',
-                    saveDeal   : self.saveDeal
+                    saveDeal   : self.saveDeal,
+                    isLead     : true
                 }).render().el
             );
 

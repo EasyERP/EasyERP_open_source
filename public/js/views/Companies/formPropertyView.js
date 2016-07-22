@@ -23,6 +23,7 @@ define([
             this.attribute = options.attribute;
             this.parentModel = options.parentModel;
             this.saveDeal = options.saveDeal;
+            this.isLead = options.isLead;
 
             company = this.parentModel.get(this.attribute);
 
@@ -57,7 +58,8 @@ define([
             new FilterView({
                 model    : this.parentModel,
                 attribute: this.attribute,
-                saveDeal : this.saveDeal
+                saveDeal : this.saveDeal,
+                isLead   : this.isLead
             });
         },
 
@@ -80,10 +82,16 @@ define([
 
         removeProperty: function () {
             var saveObject = {};
-            this.model = '';
+            var self = this;
 
             saveObject[this.attribute] = null;
-            this.saveDeal(saveObject, 'formProperty');
+
+
+            if (this.isLead && this.model.get('isHidden')){
+                this.model.destroy({success : function (){
+                    self.saveDeal(saveObject, 'formProperty');
+                }});
+            }
         },
 
         render: function () {
