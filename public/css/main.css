@@ -4131,15 +4131,13 @@ table.kanban tbody td:nth-child(n+2) {
 .timeNote .noteContainer .assignedTo {
   padding: 10px 15px 0;
 }
-.timeNote .noteContainer .dateNote {
-  padding-top: 14px;
-  padding-left: 5px;
-}
 .timeNote .noteContainer .singleNote {
   padding: 7px 15px 0 0;
 }
 .timeNote .noteContainer .singleNote .dateNote {
-  padding-top: 14px;
+  float: right;
+  padding-top: 11px;
+  padding-left: 5px;
 }
 .timeNote .noteContainer .noteText:last-child {
   margin-bottom: 0 !important;
@@ -4303,6 +4301,8 @@ table.kanban tbody td:nth-child(n+2) {
 .attachWrapper .input-file:hover,
 .selectCompany .input-file:hover {
   background: #f2f2f2;
+  -webkit-transition: all .3s;
+  transition: all .3s;
 }
 .attachWrapper .input-file.smallBtn,
 .selectCompany .input-file.smallBtn {
