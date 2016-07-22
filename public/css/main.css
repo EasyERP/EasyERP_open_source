@@ -3699,6 +3699,14 @@ td.checkboxRow {
 #top-bar.position #createBtnHolder {
   margin-top: 8px;
 }
+#top-bar #createBtnHolder .btnBlue {
+  height: 26px;
+  width: 67px;
+  border: 0;
+  line-height: 26px !important;
+  font-size: 13px;
+  color: #fff;
+}
 .dropDown {
   position: relative;
 }
@@ -3749,6 +3757,7 @@ td.checkboxRow {
 }
 .dropDown ul li .sortArrow {
   position: absolute;
+  top: 0;
   right: 8px;
   color: #2b3643;
   font-family: 'FontAwesome';
@@ -3877,6 +3886,12 @@ table.kanban tbody td:nth-child(n+2) {
 .editNoteBtnBlock .btn:hover {
   text-decoration: none;
 }
+.noteBtnBlock .btnBlue {
+  width: 47px;
+}
+.editNoteBtnBlock .btnBlue {
+  width: 65px;
+}
 .editedNote .noteType {
   float: left;
 }
@@ -3910,7 +3925,6 @@ table.kanban tbody td:nth-child(n+2) {
 .editNoteBtnBlock {
   height: 44px;
   border: none;
-  border-top: 1px solid #7f7f80;
 }
 .contentHolder.showButtons .noteBtnBlock {
   height: 44px;
@@ -4730,6 +4744,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .btn.btnBlue {
   background-color: #7eadcc;
+  color: #fff;
   border-radius: 3px;
 }
 .btn.btnBlue:hover {
@@ -9557,6 +9572,7 @@ button.btnRounded {
 }
 button.btnBlue {
   background-color: #7eadcc;
+  color: #fff;
   border-radius: 3px;
 }
 button.btnBlue:hover {
@@ -9686,6 +9702,7 @@ a.red.btnRounded {
 button.red.btnBlue,
 a.red.btnBlue {
   background-color: #7eadcc;
+  color: #fff;
   border-radius: 3px;
 }
 button.red.btnBlue:hover,
@@ -12702,6 +12719,7 @@ ul.dialog-tabs .withEndContract .arrow.btnRounded {
 ul.dialog-tabs .withEndContract .endContractReasonList.btnBlue,
 ul.dialog-tabs .withEndContract .arrow.btnBlue {
   background-color: #7eadcc;
+  color: #fff;
   border-radius: 3px;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList.btnBlue:hover,
@@ -12917,6 +12935,7 @@ ul.chart-tabs .withEndContract .arrow.btnRounded {
 ul.chart-tabs .withEndContract .endContractReasonList.btnBlue,
 ul.chart-tabs .withEndContract .arrow.btnBlue {
   background-color: #7eadcc;
+  color: #fff;
   border-radius: 3px;
 }
 ul.chart-tabs .withEndContract .endContractReasonList.btnBlue:hover,

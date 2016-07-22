@@ -1273,6 +1273,10 @@ dl.payrollDateBlock {
   font-family: @fontBold;
 }
 
+#top-bar-deleteBtn {
+
+}
+
 .closeBtn {
   position: relative;
   width: 24px;
@@ -1558,7 +1562,16 @@ td.checkboxRow {
       margin-top: 8px;
     }
   }
-
+  #createBtnHolder {
+    .btnBlue {
+      height: 26px;
+      width: 67px;
+      border: 0;
+      line-height: 26px !important;
+      font-size: 13px;
+      color: #fff;
+    }
+  }
 }
 
 .dropDown {
@@ -1624,6 +1637,7 @@ td.checkboxRow {
 
       .sortArrow {
         position: absolute;
+        top: 0;
         right: 8px;
         color: #2b3643;
         font-family: 'FontAwesome';
@@ -1790,6 +1804,18 @@ table {
   }
 }
 
+.noteBtnBlock {
+  .btnBlue {
+    width: 47px;
+  }
+}
+
+.editNoteBtnBlock {
+  .btnBlue {
+    width: 65px;
+  }
+}
+
 .editedNote {
 
   .noteType {
@@ -1833,7 +1859,6 @@ table {
 .editNoteBtnBlock {
   height: 44px;
   border: none;
-  border-top: @thin-border @border-color-main;
 }
 
 .contentHolder {
