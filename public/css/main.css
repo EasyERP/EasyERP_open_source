@@ -4088,6 +4088,9 @@ table.kanban tbody td:nth-child(n+2) {
   height: calc(100% + 30px);
   background: #c8c8d3;
 }
+.timeNote .noteContainer:first-child {
+  margin-top: 12px;
+}
 .timeNote .noteContainer:first-child:before {
   top: -10px;
 }
@@ -4144,6 +4147,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .timeNote .noteContainer .noteContent {
   margin-bottom: 10px;
+}
+.timeNote .historyContent:first-child {
+  padding-top: 8px;
 }
 .noteInner {
   border: 1px solid #7f7f80;
@@ -4442,6 +4448,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .area_holder textarea {
   padding: 10px !important;
+  border-radius: 0 3px 3px 3px;
 }
 .area_holder .attach_file {
   position: absolute;
@@ -8835,7 +8842,7 @@ dl dd span.ui-spinner {
 }
 .noteWrapper .addNote .area_holder textarea {
   height: 130px;
-  border-radius: 0;
+  border-radius: 0 3px 3px 3px;
   border-top: 0;
 }
 .noteWrapper .addNote.active {
@@ -8877,7 +8884,6 @@ dl dd span.ui-spinner {
   color: #b4bcc8;
 }
 .noteWrapper .addNote.active textarea {
-  height: 60px;
   resize: none;
   color: #a9a9a9;
 }
