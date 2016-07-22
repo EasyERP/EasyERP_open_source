@@ -5959,7 +5959,7 @@ select:not([type="checkbox"]) {
   color: #000000;
 }
 .current-selected {
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
   line-height: 20px !important;
 }
