@@ -38,7 +38,6 @@ define([
         templateHeader      : _.template(wTrackTopBar),
         ListItemView        : listItemView,
         template            : _.template(wTrackTemplate),
-        changedModels       : {},
         preventChangLocation: true,
         cancelEdit          : cancelEdit,
 
@@ -64,6 +63,8 @@ define([
             this.project = options.project ? options.project : {};
 
             this.collection.url = CONSTANTS.URLS.WTRACK;
+
+            this.changedModels = {};
 
             eventsBinder.subscribeCollectionEvents(this.collection, this);
 
@@ -201,8 +202,6 @@ define([
             }
             this.editCollection.save();
 
-            this.changedModels = {};
-
             this.$el.find('.edited').removeClass('edited');
             this.rerenderNumbers(); // added rerender after saving too
         },
@@ -253,6 +252,7 @@ define([
             this.getAutoCalcField('monHours', '1');
             this.getAutoCalcField('tueHours', '2');
             this.getAutoCalcField('wedHours', '3');
+            this.getAutoCalcField('thuHours', '4');
             this.getAutoCalcField('thuHours', '4');
             this.getAutoCalcField('friHours', '5');
             this.getAutoCalcField('satHours', '6');
