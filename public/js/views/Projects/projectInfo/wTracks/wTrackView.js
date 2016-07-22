@@ -38,7 +38,6 @@ define([
         templateHeader      : _.template(wTrackTopBar),
         ListItemView        : listItemView,
         template            : _.template(wTrackTemplate),
-        changedModels       : {},
         preventChangLocation: true,
         cancelEdit          : cancelEdit,
 
@@ -64,6 +63,8 @@ define([
             this.project = options.project ? options.project : {};
 
             this.collection.url = CONSTANTS.URLS.WTRACK;
+
+            this.changedModels = {};
 
             eventsBinder.subscribeCollectionEvents(this.collection, this);
 
