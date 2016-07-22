@@ -51,8 +51,7 @@ define([
 
             $(document).off('click');
 
-            this.formUrl = '/salesProforma/tform/';
-            this.EditView = EditView;
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';            this.EditView = EditView;
             this.CreateView = CreateView;
 
             this.startTime = options.startTime;
