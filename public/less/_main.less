@@ -21,6 +21,7 @@
 @metroicon-font: "Metrize-Icons";
 @bold-border: 3px solid;
 @thin-border: 1px solid;
+@column-box-shadow-active: #656565;
 
 .spinner {
   background-color: yellow;
@@ -1269,7 +1270,7 @@ input::-ms-clear {
       .defaultBorRad;
 
       &.active {
-        .box-shadow(0px, 0, 10px, rgba(50, 50, 50, 0.75));
+        box-shadow: 0 1px 10px @column-box-shadow-active;
         transition: box-shadow 1s ease;
         transition: border-color 1s ease;
       }
@@ -2201,6 +2202,7 @@ input::-ms-clear {
       border: @thin-border rgba(0, 0, 0, 0);
       display: block;
       float: left;
+      border-radius: 3px 3px 0 0;
       padding-left: 20px;
       padding-right: 20px;
       height: 35px;
@@ -3868,13 +3870,12 @@ table#workflows {
   a {
     float: left;
     display: block;
-
     overflow: hidden;
     margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @top-font-color;
-    line-height: 40px; //it was 18px
+    line-height: 25px; //it was 18px
 
     &:hover {
       color: @top-font-color + #333;

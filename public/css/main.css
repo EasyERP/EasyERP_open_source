@@ -3212,6 +3212,8 @@ input:not([type="checkbox"]).inputBordered:focus {
 }
 .tags-container .editTags {
   display: inline-block;
+  vertical-align: middle;
+  min-height: 18px;
   padding: 2px 8px;
   margin-bottom: 5px;
   cursor: pointer;
@@ -3650,7 +3652,7 @@ td.checkboxRow {
   font-family: 'Open Sans Bold', sans-serif, Verdana;
 }
 .list tr td.centerCell {
-  text-align: right;
+  text-align: center;
 }
 .listOpen .top-bar {
   display: none !important;
@@ -4063,7 +4065,28 @@ table.kanban tbody td:nth-child(n+2) {
   width: 20%;
 }
 .kanban .column h2 span.text {
-  margin-right: 70px!important;
+  margin-right: 70px !important;
+}
+.deleteTasks span {
+  margin-left: 5px;
+}
+.tasksView .deleteTasks {
+  height: 26px;
+  font-size: 16px;
+  padding: 0 12px;
+  border: 1px solid #000000;
+}
+.task-list.withCheckbox th:first-child,
+.task-list.withCheckbox td:first-child {
+  width: 50px;
+  text-align: center;
+}
+.task-list.leadsCheckbox th:first-child,
+.task-list.leadsCheckbox td:first-child {
+  min-width: 50px;
+}
+.task-edit-dialog .ui-widget-content {
+  border-top: none !important;
 }
 @media screen and (max-width: 1300px) {
   .holidays.projectTimeCardCustomList {
@@ -4904,7 +4927,7 @@ table.kanban tbody td:nth-child(n+2) {
   font-family: 'Open Sans Bold', sans-serif, Verdana;
 }
 .list2 tr td.centerCell {
-  text-align: right;
+  text-align: center;
 }
 .list2 td,
 .list2 th {
@@ -5013,7 +5036,7 @@ table.kanban tbody td:nth-child(n+2) {
   font-family: 'Open Sans Bold', sans-serif, Verdana;
 }
 .list2 tr td.centerCell {
-  text-align: right;
+  text-align: center;
 }
 .list2 td,
 .list2 th {
@@ -5781,9 +5804,7 @@ input::-ms-clear {
   border-radius: 3px;
 }
 .kanban .column .item.active {
-  box-shadow: 0px 0 10px rgba(50, 50, 50, 0.75);
-  -moz-box-shadow: 0px 0 10px rgba(50, 50, 50, 0.75);
-  -webkit-box-shadow: 0px 0 10px rgba(50, 50, 50, 0.75);
+  box-shadow: 0 1px 10px #656565;
   transition: box-shadow 1s ease;
   transition: border-color 1s ease;
 }
@@ -10841,7 +10862,7 @@ table#workflows tr td.edit-status {
   cursor: pointer;
   vertical-align: baseline;
   color: #666666;
-  line-height: 40px;
+  line-height: 25px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
@@ -10903,6 +10924,7 @@ ul.dialog-tabs li a {
   border: 1px solid rgba(0, 0, 0, 0);
   display: block;
   float: left;
+  border-radius: 3px 3px 0 0;
   padding-left: 20px;
   padding-right: 20px;
   height: 35px;
@@ -11074,7 +11096,7 @@ ul.dialog-tabs li.right button {
   font-family: 'Open Sans Bold', sans-serif, Verdana;
 }
 .list tr td.centerCell {
-  text-align: right;
+  text-align: center;
 }
 .list td,
 .list th {
@@ -11532,7 +11554,7 @@ ul.dialog-tabs li.right button {
   background: 0;
 }
 .ui-dialog .ui-dialog-buttonpane {
-  margin-top: 30px !important;
+  margin-top: 10px !important;
 }
 .ui-dialog .ui-dialog-titlebar {
   display: none;
@@ -12574,6 +12596,7 @@ ul.dialog-tabs li a {
   border: 1px solid rgba(0, 0, 0, 0);
   display: block;
   float: left;
+  border-radius: 3px 3px 0 0;
   padding-left: 20px;
   padding-right: 20px;
   height: 35px;
@@ -12787,6 +12810,7 @@ ul.chart-tabs li a {
   border: 1px solid rgba(0, 0, 0, 0);
   display: block;
   float: left;
+  border-radius: 3px 3px 0 0;
   padding-left: 20px;
   padding-right: 20px;
   height: 35px;
