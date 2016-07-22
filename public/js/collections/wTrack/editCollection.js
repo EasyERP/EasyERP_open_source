@@ -64,8 +64,8 @@
 
                     options = {
                         success: function thisFunction(_model) {
-                            _model.cid = thisFunction.cid; // (in case of multi copying)
-                            self.trigger('saved', _model);
+                            _model[0].cid = thisFunction.cid; // (in case of multi copying)
+                            self.trigger('saved', _model[0]);
                         }
                     };
 
