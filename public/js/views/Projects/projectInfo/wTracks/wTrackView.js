@@ -201,8 +201,6 @@ define([
             }
             this.editCollection.save();
 
-            this.changedModels = {};
-
             this.$el.find('.edited').removeClass('edited');
             this.rerenderNumbers(); // added rerender after saving too
         },
@@ -253,6 +251,7 @@ define([
             this.getAutoCalcField('monHours', '1');
             this.getAutoCalcField('tueHours', '2');
             this.getAutoCalcField('wedHours', '3');
+            this.getAutoCalcField('thuHours', '4');
             this.getAutoCalcField('thuHours', '4');
             this.getAutoCalcField('friHours', '5');
             this.getAutoCalcField('satHours', '6');

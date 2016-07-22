@@ -141,6 +141,8 @@ define([
             editedCol.text(editedEl.val());
             editedEl.remove();
 
+            this.changedModels = {};
+
             this.resetCollection();
         },
 
