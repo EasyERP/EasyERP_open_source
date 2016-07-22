@@ -58,8 +58,7 @@ define([
                 value: ['true']
             };
 
-            this.formUrl = '/salesOrders/tform/';
-            this.startTime = options.startTime;
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';            this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.sort = options.sort;

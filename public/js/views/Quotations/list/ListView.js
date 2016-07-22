@@ -54,8 +54,7 @@ define([
             var self = this;
             $(document).off('click');
 
-            self.formUrl = '/Quotations/tform/';
-            self.startTime = options.startTime;
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';            self.startTime = options.startTime;
             self.collection = options.collection;
             self.parrentContentId = options.collection.parrentContentId;
             self.sort = options.sort;
