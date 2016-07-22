@@ -3,42 +3,42 @@ define([
     'jQuery',
     'Underscore',
     'views/tformViewBase',
-    'text!templates/Persons/form/ContentTemplate.html',
-    'text!templates/Persons/form/ListItemTemplate.html',
-    'models/PersonsModel',
-    'views/Persons/form/FormView',
-    'views/Persons/CreateView',
-    'views/Persons/list/ListItemView',
+    'text!templates/Quotations/form/ContentTemplate.html',
+    'text!templates/Quotations/form/ListItemTemplate.html',
+    'models/QuotationModel',
+    'views/Quotations/form/FormView',
+    'views/Quotations/CreateView',
+    'views/Quotations/list/ListItemView',
     'views/Filter/filterView',
     'common',
     'constants'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, PersonsModel, FormView, CreateView, ListItemView) {
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS) {
     'use strict';
 
-    var PersonsListView = TFormBaseView.extend({
+    var QuotationsListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/Persons/list/',
-        contentType    : 'Persons', // needs in view.prototype.changeLocationHash
+        listUrl        : 'easyErp/Quotations/list/',
+        contentType    : CONSTANTS.QUOTATIONS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
         selectedId     : null,
-        ContentModel   : PersonsModel,
+        ContentModel   : QuotationModel,
         FormView       : FormView,
 
-        renderList: function(persons){
+        renderList: function(quotations){
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
-                persons: persons
+                quotations: quotations
             }));
         }
     });
 
-    return PersonsListView;
+    return QuotationsListView;
 });

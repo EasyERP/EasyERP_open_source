@@ -68,7 +68,8 @@ define([
         },
 
         events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
+            //'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
+            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
@@ -176,9 +177,9 @@ define([
             App.ownContentType = true;
             console.log('url => ', url);
             Backbone.history.navigate(url, {trigger: true});
-        }
+        },
 
-        /*goToEditDialog: function (e) {
+        goToEditDialog: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
 
@@ -203,7 +204,7 @@ define([
                     });
                 }
             });
-        }*/
+        }
     });
 
     return InvoiceListView;
