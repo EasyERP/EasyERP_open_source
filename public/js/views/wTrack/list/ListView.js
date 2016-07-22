@@ -834,20 +834,33 @@ define([
 
             // modelObject = modelObject.success;
 
-            modelObjects.forEach(function (modelObject) { // now only one element from list? because we hav ot checkbox
-                modelId = modelObject._id;
+            if (modelObjects) { // now only one element from list? because we hav ot checkbox
+                modelId = modelObjects._id;
                 $savedRow.attr('data-id', modelId);
                 $savedRow.removeClass('false');
                 $checkbox.val(modelId);
                 $savedRow.removeAttr('id');
                 delete self.changedModels[modelObjects.cid];
-            });
+
+                this.editCollection.remove(modelObjects.cid);
+            }
 
             delete modelObjects.cid;
 
             this.hideSaveCancelBtns();
             // this.hideOvertime();
             this.resetCollection(modelObjects);
+        },
+
+        resetCollection: function (model) {
+            if (model && model._id) {
+                model = new this.CurrentModel(model);
+
+                this.collection.add(model);
+                this.editCollection.add(model);
+            } else {
+                this.collection.set(this.editCollection.models, {remove: false});
+            }
         },
 
         createItem: function () {
