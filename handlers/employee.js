@@ -1006,7 +1006,7 @@ var Employee = function (event, models) {
 
                 if (transferKey) {
                     employee = result.employee;
-                    TransferModel.remove({employee: employee, transferKey: transferKey}, cb);
+                    TransferModel.remove({employee: employee, transferKey: transferKey, status: 'transfer'}, cb);
                 }
             });
 

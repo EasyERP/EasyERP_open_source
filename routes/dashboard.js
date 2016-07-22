@@ -166,7 +166,7 @@ HTTP/1.1 200 OK
     ]
 }
      */
-    router.get('/vacation', authStackMiddleware, accessStackMiddlewareVacation, cacheRetriver, handler.composeForVacation);
+    router.get('/vacation', authStackMiddleware, accessStackMiddlewareVacation, /* cacheRetriver, */ handler.composeForVacation);
     // router.get('/vacation', handler.getFromCache);
 
     /**

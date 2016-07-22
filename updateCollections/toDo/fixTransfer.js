@@ -27,7 +27,7 @@ Module.find({transferKey: {$exists: false}}, function (err, transfers) {
 
         transferKey = transferKey.valueOf();
 
-        Module.findById(transfer._id, {transferKey: transferKey}, function (err, _transfer) {
+        Module.findByIdAndUpdate(transfer._id, {$set: {transferKey: transferKey}}, function (err, _transfer) {
             if (err) {
                 return console.error(err);
             }
