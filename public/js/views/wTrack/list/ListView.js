@@ -834,14 +834,16 @@ define([
 
             // modelObject = modelObject.success;
 
-            modelObjects.forEach(function (modelObject) { // now only one element from list? because we hav ot checkbox
-                modelId = modelObject._id;
+            if (modelObjects) { // now only one element from list? because we hav ot checkbox
+                modelId = modelObjects._id;
                 $savedRow.attr('data-id', modelId);
                 $savedRow.removeClass('false');
                 $checkbox.val(modelId);
                 $savedRow.removeAttr('id');
                 delete self.changedModels[modelObjects.cid];
-            });
+
+                this.editCollection.remove(modelObjects.cid);
+            }
 
             delete modelObjects.cid;
 
