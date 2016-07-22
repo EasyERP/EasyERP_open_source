@@ -4077,6 +4077,7 @@ table.kanban tbody td:nth-child(n+2) {
 .timeNote .noteContainer {
   position: relative;
   padding-left: 50px;
+  margin-top: 20px;
 }
 .timeNote .noteContainer:before {
   content: '';
@@ -4084,7 +4085,7 @@ table.kanban tbody td:nth-child(n+2) {
   top: 0;
   left: 25px;
   width: 1px;
-  height: calc(100% + 27px);
+  height: calc(100% + 30px);
   background: #c8c8d3;
 }
 .timeNote .noteContainer:first-child:before {
@@ -4123,9 +4124,6 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .timeNote .noteContainer .noteBtnBlock {
   border: none;
-}
-.timeNote .noteContainer .showButtons .noteBtnBlock {
-  border: 1px solid #c8c8d3 !important;
 }
 .timeNote .noteContainer .noteText,
 .timeNote .noteContainer .noteContent,
