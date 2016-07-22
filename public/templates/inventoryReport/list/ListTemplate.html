@@ -1,6 +1,5 @@
 <% collection.forEach(function(element, index){ %>
 <tr data-index="<%= index %>" data-id="<%=element._id%>">
-    <td class="centerCell"><%= startNumber + index + 1 %></td>
     <td ><a href='#easyErp/Projects/form/<%=element.project || null%>'><%=element.projectName || '-----'%></a></td>
     <td ><%=element.salesmanager%></td>
     <td ><%=element.name%></td>

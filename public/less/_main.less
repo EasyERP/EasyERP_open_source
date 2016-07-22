@@ -2083,7 +2083,7 @@ input::-ms-clear {
     font-weight: normal;
     border: none;
     //font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     display: inline;
     float: none;
     min-width: 80px;
@@ -2432,7 +2432,7 @@ input::-ms-clear {
 input, textarea, select {
   &:not([type="checkbox"]) {
     padding: 0 4px; //big cells in BonusType
-    border: 1px solid @border-color-main;
+    border: 1px solid #c8c8d3;
     background-color: inherit;
     color: @mainText-color;
     &:focus {
@@ -2781,9 +2781,23 @@ dl {
       padding: 2px 0 2px 3px;
       resize: none;
       box-sizing: border-box;
+      .defaultBorRad;
+
       &:focus {
         .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
         border: @thin-border @border-color-main;
+      }
+
+      &.noteText {
+        border-radius: 0 0 3px 3px;
+      }
+    }
+
+    .area_holder {
+      textarea {
+        height: 130px;
+        border-radius: 0;
+        border-top: 0;
       }
     }
 
@@ -2927,7 +2941,7 @@ dl {
 
   #content-holder {
     position: relative;
-    height: calc(~"100% - 50px");
+    width: 100%;
     display: -webkit-box;
     display: -moz-box;
     display: -webkit-flex;
@@ -2940,14 +2954,19 @@ dl {
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    //overflow: auto;
   }
 }
 
 #startLetter {
-  margin: 0;
-  //padding: 5px 0;
+  height: 20px;
+  margin: 10px 0 -1px;
   text-align: center;
   border-bottom: @thin-border @border-color-main;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 
   .letter {
     padding: 5px 10px;
@@ -2972,8 +2991,10 @@ dl {
 .person-info, .customer-info {
   .dl-auto;
   span {
-    padding: 0 !important;
-    color: @formColum-customer-info;
+    &:not(.editTags) {
+      padding: 0 !important;
+      color: @formColum-customer-info;
+    }
   }
 }
 
@@ -3201,6 +3222,16 @@ dl {
 
   > button {
     margin: 5px 1px 4px 1px !important;
+  }
+}
+.form {
+  .noteWrapper,
+  .moduleList {
+    .formTitle {
+      h3 {
+        padding: 0;
+      }
+    }
   }
 }
 
@@ -3972,11 +4003,16 @@ ul.dialog-tabs {
   }
 }
 
+.attachWrapper {
+  .input-file {
+    border: 1px solid #c8c8d3;
+  }
+}
+
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
   color: @mainText-color;
-  padding-bottom: 5px;
 }
 
 .tabs-items {
@@ -4041,7 +4077,7 @@ ul.dialog-tabs {
 
 .dialog-tabs-items {
   .tabs-items;
-  padding-top: 10px;
+
 }
 
 ul.chart-tabs {
@@ -4089,6 +4125,12 @@ ul.chart-tabs {
       height: 17px;
       display: block;
     }
+  }
+}
+
+.noteWrapper {
+  ul.chart-tabs {
+    border-bottom: 1px solid #c8c8d3;
   }
 }
 
@@ -5395,6 +5437,12 @@ textarea#editInput {
 }
 
 .grid-conatiner {
+
+  .attendanceTop,
+  .attendance {
+    margin: 0 20px;
+  }
+
   .attendanceTop {
     margin-bottom: 10px;
     > div {
@@ -5414,17 +5462,24 @@ textarea#editInput {
       }
 
       &.pull-left {
+        position: relative;
         margin-right: 10px;
-        height: 20px;
+        height: 32px;
+        line-height: 20px;
+
         > div {
           display: inline-block;
         }
         .editable {
-          position: relative;
           cursor: pointer;
+        }
+        .newSelectList {
+          right: 0;
+          top: 32px;
         }
       }
     }
+
     &:after {
       display: table;
       content: " ";
@@ -5528,6 +5583,7 @@ textarea#editInput {
       padding-top: 10px;
     }
   }
+
   table {
     .grid {
       border-color: @border-color-main;
@@ -6157,12 +6213,16 @@ textarea#editInput {
 
   .filter-dialog-tabs {
     box-sizing: border-box;
+    position: relative;
     border: 1px solid @border-color-main;
     border-bottom: 0;
-    position: relative;
-    float: left;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    width: 100%;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    .defaultBorRad;
+
     li {
       width: 100%;
       border-radius: 0;
@@ -6201,16 +6261,19 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: @fontRegular;
-  padding: 5px 25px;
   position: absolute;
-  z-index: 10;
-  width: ~"calc(100% - 52px)";
-  min-width: 178px;
-  background-color: @bg-drop-down-color;
-  border: 1px solid @filter-border-color;
-  right: 0;
   top: ~"calc(100% - 3px)";
+  right: 0;
+  min-width: 178px;
+  width: ~"calc(100% - 52px)";
+  padding: 5px 25px;
+  background-color: @bg-drop-down-color;
+  font-family: @fontRegular;
+  border: 1px solid @filter-border-color;
+  z-index: 10;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  .defaultBorRad;
+
   #applyFilter {
     text-align: center;
     width: ~"calc(100% - 30px)";
@@ -6220,13 +6283,6 @@ textarea#editInput {
     padding: 10px;
     border-radius: 5px;
   }
-  li {
-    cursor: pointer;
-    font-size: 12px;
-    padding: 5px 15px;
-    color: @filter-text-color;
-    position: relative;
-  }
   #filtersContent {
     .filterGroup {
       overflow: hidden;
@@ -6234,6 +6290,8 @@ textarea#editInput {
       border: 1px solid @border-color-main;
       background-color: @bg-main;
       margin: 5px;
+      .defaultBorRad;
+
       &:hover {
         border-color: @filter-border-hover;
       }
@@ -6348,6 +6406,21 @@ textarea#editInput {
       }
     }
   }
+  #favoritesContent {
+    .filter_name_wrapper {
+      button.btn {
+        padding: 0 !important;
+        line-height: 25px!important;
+      }
+    }
+  }
+  li {
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 15px;
+    color: @filter-text-color;
+    position: relative;
+  }
 }
 
 .filter-icons {
@@ -6379,7 +6452,7 @@ textarea#editInput {
 
 #searchContainer {
   position: absolute;
-  top: -35px;
+  top: -40px;
   right: 0;
   width: 35%;
   margin-right: 90px;
@@ -6398,6 +6471,12 @@ textarea#editInput {
 
   .filter-check-list {
     margin-top: -1px;
+  }
+}
+
+.content-holder {
+  #searchContainer {
+    top: -34px;
   }
 }
 
@@ -6475,7 +6554,7 @@ textarea#editInput {
   #saveFilterButton {
     border: 1px solid @border-color-main;
     box-sizing: border-box;
-    border-radius: 0 5px 5px 0;
+    border-radius: 0 3px 3px 0;
     line-height: 14px;
     padding-top: 5px;
     background-color: @bg-main;

@@ -45,14 +45,14 @@ require.config({
             exports: '$'
         },
 
-        jqueryui   : ['jQuery'],
-        ajaxForm   : ['jQuery'],
-        imageCrop  : ['jQuery'],
-        spinJs     : ['jQuery'],
-        backstratch: ['jQuery'],
-        Backbone   : ['Underscore', 'jQuery'],
-        app        : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
-        d3         : {
+        jqueryui    : ['jQuery'],
+        ajaxForm    : ['jQuery'],
+        imageCrop   : ['jQuery'],
+        spinJs      : ['jQuery'],
+        backstratch : ['jQuery'],
+        Backbone    : ['Underscore', 'jQuery'],
+        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
+        d3          : {
             exports: 'd3'
         },
         topojson   : {

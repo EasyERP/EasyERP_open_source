@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -11,7 +12,8 @@ define([
     'common',
     'dataService',
     'text!templates/stages.html'
-], function ($,
+], function (Backbone,
+             $,
              _,
              ListViewBase,
              listTemplate,
@@ -30,7 +32,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        formUrl          : '#easyErp/Opportunities/form/',
+        formUrl          : '#easyErp/Opportunities/tform/',
         contentType      : 'Opportunities', // needs in view.prototype.changeLocationHash
         hasPagination    : true,
 
@@ -135,6 +137,21 @@ define([
             // this.renderPagination($currentEl, this);
 
             // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+        },
+
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         }
 
     });
