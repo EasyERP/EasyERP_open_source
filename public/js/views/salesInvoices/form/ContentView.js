@@ -5,14 +5,14 @@ define([
     'views/tformViewBase',
     'text!templates/Invoices/form/ContentTemplate.html',
     'text!templates/Invoices/form/ListItemTemplate.html',
-    'models/QuotationModel',
+    'models/InvoiceModel',
     'views/Invoices/form/FormView',
     'views/Invoices/CreateView',
     'views/Invoices/list/ListItemView',
     'views/Filter/filterView',
     'common',
     'constants'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS) {
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, InvoiceModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS) {
     'use strict';
 
     var InvoicesListView = TFormBaseView.extend({
@@ -20,14 +20,14 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/Persons/list/',
+        listUrl        : 'easyErp/Invoices/list/',
         contentType    : CONSTANTS.SALESINVOICES, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
         selectedId     : null,
-        ContentModel   : QuotationModel,
+        ContentModel   : InvoiceModel,
         FormView       : FormView,
 
         renderList: function(quotations){
