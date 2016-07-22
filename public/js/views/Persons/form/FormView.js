@@ -51,7 +51,6 @@ define([
 
             App.currentPerson = options.model.get('id');
 
-            this.io = App.socket;
             this.mId = CONSTANTS.MID[this.contentType];
             this.formModel = options.model;
             this.formModel.on('change', this.render, this);
