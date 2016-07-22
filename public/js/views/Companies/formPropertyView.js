@@ -3,8 +3,9 @@ define([
     'jQuery',
     'Underscore',
     'views/Companies/filterView',
+    'models/CompaniesModel',
     'text!templates/Companies/formPropertyTemplate.html'
-], function (Backbone, $, _, FilterView,  propertyTemplate) {
+], function (Backbone, $, _, FilterView, CompaniesModel,  propertyTemplate) {
     var selectView = Backbone.View.extend({
         template       : _.template(propertyTemplate),
 
@@ -14,6 +15,20 @@ define([
             'click #removeProperty': 'removeProperty',
             'click #saveBtn'       : 'saveChanges',
             'click #cancelBtn'     : 'cancelChanges'
+        },
+
+        initialize: function (options) {
+            var company;
+
+            this.attribute = options.attribute;
+            this.parentModel = options.parentModel;
+            this.saveDeal = options.saveDeal;
+
+            company = this.parentModel.get(this.attribute);
+
+            if (company){
+                this.model = new CompaniesModel(company);
+            }
         },
 
         setChangeValueToModel: function (e){
@@ -69,12 +84,6 @@ define([
 
             saveObject[this.attribute] = null;
             this.saveDeal(saveObject, 'formProperty');
-        },
-
-        initialize: function (options) {
-            this.attribute = options.attribute;
-            this.parentModel = options.parentModel;
-            this.saveDeal = options.saveDeal;
         },
 
         render: function () {

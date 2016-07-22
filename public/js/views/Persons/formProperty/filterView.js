@@ -5,8 +5,9 @@ define([
     'text!templates/Persons/formProperty/filterViewList.html',
     'text!templates/Persons/formProperty/filterViewContent.html',
     'views/Persons/CreateView',
-    'collections/Persons/filterCollection'
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, FilterCollection) {
+    'dataService',
+    'collections/Filter/filterCollection'
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView,dataService, FilterCollection) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -25,10 +26,20 @@ define([
 
             this.attribute = options.attribute;
             this.saveDeal = options.saveDeal;
-            this.collection = new FilterCollection({type: 'Person'});
-            this.filteredCollection = new FilterCollection({type: 'Person'});
-            this.filteredCollection.unbind();
-            this.filteredCollection.bind('reset', resetCollection);
+
+            dataService.getData('/Persons/', {type : 'Person'}, function (res) {
+                res = _.map(res.data, function (elem) {
+                    elem.name = elem.fullName;
+
+                    return elem;
+                });
+
+                self.collection = new FilterCollection(res);
+                self.filteredCollection = new FilterCollection(res);
+                self.filteredCollection.unbind();
+                self.filteredCollection.bind('reset', resetCollection);
+                self.render();
+            });
 
             this.inputEvent = _.debounce(
                 function (e) {

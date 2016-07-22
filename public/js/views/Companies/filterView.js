@@ -5,8 +5,9 @@ define([
     'text!templates/Companies/filterViewList.html',
     'text!templates/Companies/filterViewContent.html',
     'views/Companies/CreateView',
-    'collections/Companies/filterCollection'
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, filterCollection) {
+    'dataService',
+    'collections/Filter/filterCollection'
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, dataService, filterCollection) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -23,12 +24,24 @@ define([
                 self.renderContent(self.e);
             }
 
+            dataService.getData('/Companies/', {type : 'Company'}, function (res) {
+                res = _.map(res.data, function (elem) {
+                    elem.name = elem.fullName;
+
+                    return elem;
+                });
+
+                self.collection = new filterCollection(res);
+                self.filteredCollection = new filterCollection(res);
+                self.filteredCollection.unbind();
+                self.filteredCollection.bind('reset', resetCollection);
+                self.render();
+            });
+
             this.attribute = options.attribute;
             this.saveDeal = options.saveDeal;
-            this.collection = new filterCollection({type : 'Company'});
-            this.filteredCollection = new filterCollection({type : 'Company'});
-            this.filteredCollection.unbind();
-            this.filteredCollection.bind('reset', resetCollection);
+
+
 
             this.inputEvent = _.debounce(
                 function (e) {
@@ -46,7 +59,7 @@ define([
 
             _.bindAll(this, 'inputEvent');
             _.bindAll(this, 'renderContent');
-            this.render();
+
 
         },
 
