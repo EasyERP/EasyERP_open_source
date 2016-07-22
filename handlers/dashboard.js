@@ -427,19 +427,33 @@ var wTrack = function (models) {
                             lastTransferDate  : 1,
                             lastTransfer      : 1,
                             name              : 1,
+                            lastTransferObject: {$arrayElemAt: [{$slice: ['$isTransfer', -1]}, 0]},
                             _lastTransferDate : {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]},
                             _firstTransferDate: {$add: [{$multiply: [{$year: '$firstTransferDate'}, 100]}, {$week: '$firstTransferDate'}]}
+                        }
+                    }, {
+                        $project: {
+                            _id               : 1,
+                            isTransfer        : 1,
+                            firstTransferDate : 1,
+                            lastTransferDate  : 1,
+                            lastTransfer      : 1,
+                            name              : 1,
+                            lastTransferObject: 1,
+                            _lastTransferDate : 1,
+                            _firstTransferDate: 1,
+
+                            lastTransferObjectDate: {$add: [{$multiply: [{$year: '$lastTransferObject.date'}, 100]}, {$week: '$lastTransferObject.date'}]}
                         }
                     }, {
                         $match: {
                             $or: [
                                 {
-                                    _lastTransferDate  : {$gte: startDate},
-                                    _firstTransferDate : {$lte: endDate},
-                                    'isTransfer.status': 'transfer'
+                                    lastTransferObjectDate     : {$gte: startDate, $lte: endDate},
+                                    'lastTransferObject.status': 'transfer'
                                 }, {
-                                    'isTransfer.status': {$nin: ['transfer']},
-                                    _firstTransferDate : {$lte: endDate}
+                                    'lastTransferObject.status': {$nin: ['transfer']},
+                                    lastTransferObjectDate     : {$lte: endDate}
                                 }
                             ]
                         }
