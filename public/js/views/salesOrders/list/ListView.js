@@ -47,7 +47,8 @@ define([
         contentType: CONSTANTS.SALESORDERS, // needs in view.prototype.changeLocationHash
 
         events: {
-            'click  .list tbody td:not(.notForm)': 'gotoForm'
+            //'click  .list tbody td:not(.notForm)': 'gotoForm'
+            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         initialize: function (options) {
@@ -151,7 +152,7 @@ define([
             Backbone.history.navigate(url, {trigger: true});
         },
 
-        /*
+
         goToEditDialog: function (event) {
             var self = this;
             var $eventTarget = $(event.target);
@@ -190,7 +191,7 @@ define([
                     });
                 }
             });
-        }*/
+        }
 
     });
 
