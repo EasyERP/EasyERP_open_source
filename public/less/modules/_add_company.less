@@ -1,3 +1,5 @@
+@dateRageBorderColor: #333;
+
 .propertyContainer {
   a {
     &:hover {
@@ -442,5 +444,56 @@
 
 .ui-datepicker {
   min-width: 175px;
+}
+
+.choseDateRange.dropDownDateRange {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  height: 22px;
+  width: 110px;
+  border: 1px solid @dateRageBorderColor;
+  padding: 1px 33px 3px 10px;
+  margin-right: 0;
+  overflow: hidden;
+
+  &.open {
+    height: auto;
+
+    .selectArrow {
+      transform: rotate(180deg);
+    }
+  }
+
+  .item {
+    padding: 0;
+    float: none;
+    margin-left: 0 !important;
+    min-height: 20px !important;
+    line-height: 18px;
+    margin-bottom: 5px;
+    text-align: center;
+    border: none;
+    background: none;
+    order: 1;
+
+    &.active {
+      order: 0;
+      background: none;
+      color: @black;
+    }
+  }
+
+  .selectArrow {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    height: 0;
+    width: 0;
+    border-top: 5px solid @dateRageBorderColor;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    cursor: pointer;
+  }
 }
 
