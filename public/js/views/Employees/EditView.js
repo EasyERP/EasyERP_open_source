@@ -43,6 +43,22 @@ define([
         changedModels : {},
         removeTransfer: [],
 
+        events: {
+            'mouseenter .avatar'                                   : 'showEdit',
+            'mouseleave .avatar'                                   : 'hideEdit',
+            'click .endContractReasonList, .withEndContract .arrow': 'showEndContractSelect',
+            'click .withEndContract .newSelectList li'             : 'endContract',
+            // 'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
+            'click td.editable'                                    : 'editJob',
+            'click #update'                                        : 'addNewRow',
+            'keydown .salary'                                      : 'validateNumbers',
+            'click .fa-trash'                                      : 'deleteRow',
+            'click #jobPosition,#department,#manager,#jobType'     : 'showNotification',
+            'change .editable '                                    : 'setEditable',
+            'keydown input.editing'                                : 'keyDown'
+
+        },
+
         initialize: function (options) {
             var isSalary;
             var transfers;
@@ -55,6 +71,7 @@ define([
             } else {
                 this.currentModel = options.model;
             }
+
             this.currentModel.urlRoot = '/employees';
             transfers = this.currentModel.get('transfer');
 
@@ -104,22 +121,6 @@ define([
             this.changedModels = {};
 
             this.render();
-        },
-
-        events: {
-            'mouseenter .avatar'                                   : 'showEdit',
-            'mouseleave .avatar'                                   : 'hideEdit',
-            'click .endContractReasonList, .withEndContract .arrow': 'showEndContractSelect',
-            'click .withEndContract .newSelectList li'             : 'endContract',
-            // 'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
-            'click td.editable'                                    : 'editJob',
-            'click #update'                                        : 'addNewRow',
-            'keydown .salary'                                      : 'validateNumbers',
-            'click .fa-trash'                                      : 'deleteRow',
-            'click #jobPosition,#department,#manager,#jobType'     : 'showNotification',
-            'change .editable '                                    : 'setEditable',
-            'keydown input.editing'                                : 'keyDown'
-
         },
 
         keyDown: function (e) {
@@ -275,12 +276,13 @@ define([
                 payrollStructureType: payrollStructureType,
                 scheduledPay        : scheduledPay
             };
+
             model = new TransferModel(transfer);
             newTr.attr('id', model.cid);
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
 
-            $('#update').hide();
+            $thisEl.find('#update').hide();
         },
 
         renderRemoveBtn: function () {
@@ -294,6 +296,7 @@ define([
             lastTr = trs.last();
 
             status = lastTr.attr('data-content');
+
             if (status !== 'hired' && status !== 'fired') {
                 lastTr.find('td').first().html(removeBtn);
             }
@@ -574,7 +577,6 @@ define([
             var gender;
             var coach;
             var event;
-            var quit;
             var data;
             var date;
             var info;
@@ -635,10 +637,6 @@ define([
                     hireArray.push(_date);
                 }
             });
-
-            if (quit) {
-                return;
-            }
 
             isEmployee = (event === 'hired') || (event === 'updated');
 
@@ -731,15 +729,14 @@ define([
                 wait   : true,
                 patch  : true,
                 success: function (model) {
-
-                    var modelChanged;
-                    var id;
+                    var keysChanged = Object.keys(self.changedModels);
                     var transferNewModel;
+                    var modelChanged;
                     var keys;
                     var key;
+                    var id;
                     var i;
                     var k;
-                    var keysChanged = Object.keys(self.changedModels);
 
                     for (k = keysChanged.length - 1; k >= 0; k--) {
                         id = keysChanged[k];
@@ -751,15 +748,18 @@ define([
                             modelChanged.changed.transferKey = new Date().getTime();
                             transferNewModel = new TransferModel(modelChanged.attributes);
                             keys = Object.keys(modelChanged.attributes);
+
                             for (i = keys.length - 1; i >= 0; i--) {
                                 key = keys[i];
                                 if (key !== '_id') {
                                     transferNewModel.changed[key] = modelChanged.attributes[key];
                                 }
                             }
+
                             delete transferNewModel.attributes._id;
                             delete transferNewModel._id;
                             delete transferNewModel.id;
+
                             transferNewModel.changed.date = moment(modelChanged.changed.date).subtract(1, 'day');
                             transferNewModel.changed.status = 'transfer';
                             transferNewModel.changed.transferKey = modelChanged.changed.transferKey;

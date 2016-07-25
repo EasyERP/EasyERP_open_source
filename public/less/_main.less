@@ -4099,15 +4099,15 @@ ul.chart-tabs {
 
 .chart {
   rect {
-    fill: steelblue;
+    //fill: steelblue;
 
     &.bar2 {
-      fill: #6ec262;
+      //fill: #6ec262;
       opacity: 0.3;
     }
 
     &.bar {
-      fill: #6ec262;
+      //fill: #6ec262;
     }
   }
 
@@ -4140,17 +4140,13 @@ ul.chart-tabs {
   }
 }
 
-.bar {
-  fill: #26a7dd;
-}
+
 
 .bar2 {
-  fill: #57D0b5;
+  //fill: #57D0b5;
 }
 
-.bar3 {
-  fill: #fff;
-}
+
 
 .x.axis path {
   display: none;
@@ -4194,7 +4190,6 @@ ul.chart-tabs {
 
 .choseDateRange, .choseDateItem, .choseDateRangeSource {
   padding: 3px 10px;
-  border: @thin-border #efefef;
   float: right;
   margin-right: 10px;
   .defaultBorRad;
@@ -4221,15 +4216,14 @@ ul.chart-tabs {
 }
 
 .legend-box {
-  width: 555px;
+  width: auto;
+  height: auto;
   margin: 0 auto;
+  padding: 5px;
   color: @mainText-color;
-  border: @thin-border @border-color-main;
-  .defaultBorRad;
+  text-align: center;
 
   &.small {
-    width: 265px;
-    height: 28px;
     line-height: 26px;
     margin-top: 0!important;
 
@@ -4243,8 +4237,6 @@ ul.chart-tabs {
   }
 
   &.medium {
-    width: 420px;
-    height: 28px;
     line-height: 26px;
   }
 
@@ -4258,13 +4250,18 @@ ul.chart-tabs {
   }
 
   div {
-    float: left;
+    display: inline-block;
     padding: 3px 10px;
+
+    .square,
+    .text {
+      display: inline-block;
+      vertical-align: middle;
+    }
 
     .square {
       width: 20px;
       height: 20px;
-      background-color: #26A7DD;
       padding: 0;
     }
 
@@ -4276,27 +4273,27 @@ ul.chart-tabs {
 
     &.unconverted {
       .square {
-        background-color: #57D0B5;
+        //background-color: #57D0B5;
       }
     }
 
     &.total {
       .square {
-        background-color: #6EC262;
+        //background-color: #6EC262;
         opacity: 0.3;
       }
     }
 
     &.opportunities {
       .square {
-        background-color: #6EC262;
+        //background-color: #6EC262;
       }
     }
 
     &.convertRate {
       .square {
         border-radius: 20px;
-        background-color: #26A7DD;
+        //background-color: #26A7DD;
       }
     }
   }
@@ -6652,9 +6649,9 @@ textarea#editInput {
 }
 
 .invoiceChart-legend {
-  position: absolute;
-  top: -28px;
-  left: 0;
+  //position: absolute;
+  //top: -28px;
+  //left: 0;
   width: 100%;
   text-align: center;
   .choseDateItem, .legend-box {
@@ -6667,13 +6664,13 @@ textarea#editInput {
     padding: 0;
     .invoiced {
       .square {
-        background-color: @invoiced;
+        //background-color: @invoiced;
         opacity: .4;
       }
     }
     .paid {
       .square {
-        background-color: @paid;
+        //background-color: @paid;
         opacity: .4;
       }
     }

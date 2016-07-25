@@ -47,9 +47,9 @@
         _.each(notes, function(val,key){ %>
         <div id="<%=val['_id'] %>" class="noteContainer noteInner">
             <div class="noteTitle">
-                <span><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></span>
+                <span><%=val.title ? val.title.replace(/</g,"&#60;").replace(/>/g,"&#62;") : '' %></span>
             </div>
-            <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %>
+            <div class="noteText"><%=val.note? val.note.replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") : '' %>
             </div>
             <div>
                 <div>

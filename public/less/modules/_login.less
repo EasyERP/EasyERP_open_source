@@ -1101,45 +1101,6 @@ dl.payrollDateBlock {
   }
 }
 
-//.tableFixedWrap {
-//  height: 100%;
-//
-//  .tableFixed {
-//    height: 100%;
-//  }
-//
-//  table.payRoll-list #payRoll-Table .scrollit {
-//    height: 100%;
-//  }
-//}
-//
-//.absoluteContent {
-//  position: absolute;
-//  height: 100%;
-//  width: 100%;
-//
-//  table {
-//    height: 100%;
-//
-//    th {
-//      border-bottom: 1px solid #d7d7d7;
-//    }
-//  }
-//
-//  .scrollable {
-//    max-height: 100%;
-//    width: 100%;
-//    height: 100%;
-//    overflow-x: hidden;
-//    overflow-y: auto;
-//  }
-//}
-//
-//.flexTableWrap {
-//  flex-grow: 1;
-//  position: relative;
-//}
-//
 .flexActionsWrap {
   display: -webkit-box;
   display: -moz-box;
@@ -1189,36 +1150,6 @@ dl.payrollDateBlock {
     align-items: center;
   }
 }
-//
-//.innerRow {
-//  border-top: none !important;
-//
-//  table {
-//    tr {
-//      &:first-child {
-//        border-top: none;
-//        td {
-//          border-top: none;
-//        }
-//      }
-//      &:last-child {
-//        td {
-//          border-bottom: none;
-//        }
-//      }
-//    }
-//  }
-//}
-//
-//.colspanFix {
-//  padding: 0!important;
-//  border: none !important;
-//}
-//
-//table {
-//  width: 100%;
-//  table-layout: fixed;
-//}
 
 .salesGraphWrap {
 
@@ -1236,6 +1167,105 @@ dl.payrollDateBlock {
   }
   .salesByCountryBarChart {
 
+  }
+}
+
+.invoiceTooltip {
+  position: relative;
+  text-align: center;
+  height: 28px;
+  background-color: #fff;
+  color: #000;
+  font: 14px sans-serif;
+  pointer-events: none;
+  display: none;
+  border: 2px solid;
+  z-index: 11;
+
+  > span {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    //padding: 0 5px;
+    top: 3px;
+    left: 0;
+    z-index: 2;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 11px 8px 0 8px;
+    border-color: #b6e7f3 transparent transparent transparent;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  &:before {
+    content: '';
+
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 6px 0 6px;
+    border-color: #fff transparent transparent transparent;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+}
+
+.filterWrap {
+  min-height: 26px;
+  margin-bottom: 15px;
+
+  .dateFilter {
+    top: 0;
+  }
+  h3 {
+    display: inline-block;
+    float: left;
+    margin-right: 20px;
+  }
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.treemap_sales {
+  position: relative;
+}
+
+.dashboardGraphicsWrap {
+  .halfWidth,
+  .fullWidth {
+    float: left;
+  }
+  .halfWidth {
+    width: 50%;
+  }
+  .fullWidth {
+    width: 100%;
   }
 }
 

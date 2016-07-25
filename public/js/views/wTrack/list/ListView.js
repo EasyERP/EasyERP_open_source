@@ -67,7 +67,6 @@ define([
         editCollection   : null,
         selectedProjectId: [],
         genInvoiceEl     : null,
-        changedModels    : {},
         hasPagination    : true,
         exportToCsvUrl   : '/wTrack/exportToCsv',
         exportToXlsxUrl  : '/wTrack/exportToXlsx',
@@ -81,6 +80,8 @@ define([
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.currentPage;
+
+            this.changedModels = {};
 
             ListViewBase.prototype.initialize.call(this, options);
 
@@ -846,6 +847,8 @@ define([
             }
 
             delete modelObjects.cid;
+
+            this.changedModels = {};
 
             this.hideSaveCancelBtns();
             // this.hideOvertime();
