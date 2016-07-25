@@ -4901,14 +4901,36 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .vocationFilter .frameDetail {
   position: absolute;
-  top: 30px;
+  top: 24px;
+  left: -1px;
+  width: 210px;
   background: #ffffff;
   padding: 10px;
   border: 1px solid #000000;
   z-index: 10;
 }
 .vocationFilter .frameDetail .buttons {
+  width: 100%;
   margin-top: 10px;
+}
+.customTimeLeadsBySource .customTimeItem,
+.customTimeLeadsBySale .customTimeItem {
+  padding: 4px 20px;
+}
+.customTimeLeadsBySource .customTimeItem > label,
+.customTimeLeadsBySale .customTimeItem > label {
+  float: left;
+}
+.customTimeLeadsBySource .customTimeItem > input,
+.customTimeLeadsBySale .customTimeItem > input {
+  width: 110px;
+  float: right;
+}
+.customTimeLeadsBySource .customTimeItem:after,
+.customTimeLeadsBySale .customTimeItem:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 .chartTopBox {
   position: relative;
@@ -9608,7 +9630,7 @@ dl dd span.ui-spinner {
   text-align: left !important;
   font-size: 14px !important;
   line-height: 16px;
-  padding-left: 20px;
+  padding: 0 0 2px 20px;
 }
 .filterValues.checked:hover {
   cursor: pointer;
