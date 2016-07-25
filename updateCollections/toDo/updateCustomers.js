@@ -15,14 +15,11 @@ var dbObject = mongoose.createConnection('144.76.56.111', 'sergey', 28017, conne
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 
 dbObject.once('open', function callback() {
-    var opportunitySchema;
     var customerSchema;
     var Customer;
-    var Opportunitie;
 
     console.log("Connection to db is success");
 
-    opportunitySchema = mongoose.Schemas.Opportunitie;
     customerSchema = mongoose.Schemas.Customer;
 
     Customer = dbObject.model('Customer', customerSchema);
