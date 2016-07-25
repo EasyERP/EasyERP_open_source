@@ -16,7 +16,7 @@ var bannedUser = {
 };
 
 
-require('../../config/development');
+require('.././development');
 
 describe('Workflow Specs', function () {
 
