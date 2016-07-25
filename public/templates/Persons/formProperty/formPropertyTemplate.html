@@ -12,13 +12,17 @@
                          src="<%=property.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-avatar.gif'%>"/>
                 </div>
                 <div class="propertyBody">
-                    <span class="propertyFullName"><%=property.fullName%></span>
+                    <a href="<%='/#easyErp/Persons/form/' + property._id %>"  class="propertyFullName"><%=property.fullName%></a>
                     <a href=<%=property.email%>"><%=property.email%></a>
                 </div>
 
                 <a href="javascript:;" class="removeProperty" title="Remove Contact" id="removeProperty">
                     <span class="fa fa-times" aria-hidden="true"></span>
                 </a>
+            </div>
+            <div class="propertySubmit">
+                <a class="btn" title="View All Properties" href="<%='/#easyErp/Persons/form/'+ property._id%> "
+                   id="showMoreButton">View All Properties</a>
             </div>
 
         </div>

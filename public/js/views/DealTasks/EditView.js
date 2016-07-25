@@ -305,7 +305,7 @@
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'},'fullName', this, false);
             populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'},'fullName', this, false);
-            populate.get('#dealDd', 'opportunities/getForDd', {isOpportunitie : true},  'name', this, false);
+            populate.get('#dealDd', 'opportunities/getForDd', {},  'name', this, false);
 
             this.delegateEvents(this.events);
 
