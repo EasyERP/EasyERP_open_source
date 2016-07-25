@@ -76,7 +76,7 @@ define([
             'click #cancelBtnLeadsBySale'                                                                                   : 'cancel',
             'click #cancelBtnLeadsBySource'                                                                                 : 'cancel',
             'click #cancelBtnLeads'                                                                                         : 'cancel',
-            'click .dropDownDateRangeContainer': 'toggleDateFilter'
+            'click .dropDownDateRangeContainer'                                                                             : 'toggleDateFilter'
         },
 
         toggleDateFilter: function(e){
@@ -1475,19 +1475,23 @@ define([
                 };
 
                 barsMap = {
+                    'To be done'         : 'bar9',
                     'Waiting fo response': 'bar6',
                     'To be discussed'    : 'bar7',
-                    'To be done'         : 'bar9',
                     'In development'     : 'bar4',
-                    'Finalization'       : 'bar8'
+                    'Finalization'       : 'bar8',
+                    'Proposal'           : 'bar10',
+                    'Lost'               : 'bar11'
                 };
 
                 colorMap = {
+                    'To be done'         : '#93648D', //violet
                     'Waiting fo response': '#4CC3D9', //blue
-                    'To be discussed'    : '#7BC8A4', //green
-                    'To be done'         : '#EB6E44', //orange
-                    'In development'     : '#FFC65D', //yellow
-                    'Finalization'       : '#93648D', //violet
+                    'To be discussed'    : '#F1DD9E', //brown green
+                    'In development'     : '#7BC8A4', //green
+                    'Finalization'       : '#FFC65D', //yellow
+                    'Proposal'           : '#EB6E44', //orange
+                    'Lost'               : '#93073E', //dark red
                     'barStroke'          : '#2378ae'
                 };
 
