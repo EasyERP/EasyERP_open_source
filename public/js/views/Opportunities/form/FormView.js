@@ -10,11 +10,10 @@ define([
     'views/Companies/formPropertyView',
     'views/Persons/formProperty/formPropertyView',
     'views/Tags/TagView',
-    'models/CompaniesModel',
     'constants',
     'dataService',
     'views/selectView/selectView'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, CompanyModel, constants, dataService, SelectView) {
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -120,11 +119,13 @@ define([
             var $target = $(e.target);
             var holder = $target.parents('.inputBox').find('.current-selected');
             var type = $target.closest('a').attr('data-id');
+            var text = $target.text();
             var id = $target.attr('id');
 
             holder.text($target.text());
 
             this.modelChanged[type] = id;
+            this.$el.find('#assignedToDd').text(text).attr('data-id', id);
             this.showButtons();
         },
 
@@ -229,13 +230,8 @@ define([
                 self.responseObj['#salesPersonDd'] = employees;
             });
 
-            if (formModel.company) {
-                companyModel = new CompanyModel(formModel.company);
-            }
-
             this.formProperty = new CompanyFormProperty({
                 parentModel: this.formModel,
-                model      : companyModel,
                 attribute  : 'company',
                 saveDeal   : self.saveDeal
             });

@@ -85,17 +85,17 @@
                         </div>
 
                         <div class="topCell selectType" id="dealItem">
-                            <label>Deal</label>
+                            <label>Lead/Opportunity</label>
                             <div>
 
                                 <%if (model.deal) {%>
-                                <a id="dealDd" class="current-selected" href="javascript:;" style="display: none">Add Deal</a>
+                                <a id="dealDd" class="current-selected" href="javascript:;" style="display: none">Add Lead/Opportunity</a>
                                 <div class="showSelect" data-id="<%=model.deal._id%>">
                                     <span ><%=model.deal.name%></span>
                                     <button class="removeSelect"><i class="fa fa-times" aria-hidden="true"></i></button>
                                 </div>
                                 <%} else {%>
-                                <a id="dealDd" class="current-selected" href="javascript:;">Add Deal</a>
+                                <a id="dealDd" class="current-selected" href="javascript:;">Add Lead/Opportunity</a>
                                 <%}%>
                             </div>
                         </div>

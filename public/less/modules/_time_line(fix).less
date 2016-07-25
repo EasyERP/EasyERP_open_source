@@ -8,6 +8,7 @@
   .noteContainer {
     position: relative;
     padding-left: 50px;
+    margin-top: 20px;
 
     &:before {
       content: '';
@@ -15,12 +16,13 @@
       top: 0;
       left: 25px;
       width: 1px;
-      height: calc(~"100% + 27px");
+      height: calc(~"100% + 30px");
       background: @lightgrey;
     }
 
-
     &:first-child {
+      margin-top: 12px;
+
       &:before {
         top: -10px;
       }
@@ -43,7 +45,7 @@
 
     .itemCircle {
       position: absolute;
-      left: 10px;
+      left: 11px;
       top: 10px;
       height: 28px;
       width: 28px;
@@ -61,17 +63,11 @@
       padding: 0 0 17px !important;
       border-radius: 3px;
       border: 1px solid @lightgrey !important;
-      box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05);
+      box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
     }
 
     .noteBtnBlock {
       border: none;
-    }
-
-    .showButtons {
-      .noteBtnBlock {
-        border: 1px solid @lightgrey !important;
-      }
     }
 
     .noteText,
@@ -81,16 +77,13 @@
       padding: 10px 15px 0;
     }
 
-    .dateNote {
-      line-height: 11px;
-      min-height: 15px;
-    }
-
     .singleNote {
       padding: 7px 15px 0 0;
 
       .dateNote {
-        padding-top: 14px;
+        float: right;
+        padding-top: 11px;
+        padding-left: 5px;
       }
     }
 
@@ -102,6 +95,12 @@
 
     .noteContent {
       margin-bottom: 10px;
+    }
+  }
+
+  .historyContent {
+    &:first-child {
+      padding-top: 8px;
     }
   }
 }
