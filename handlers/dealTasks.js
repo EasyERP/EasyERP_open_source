@@ -204,7 +204,7 @@ var Module = function (models, event) {
             .populate('contact', 'name imageSrc')
             .populate('assignedTo', 'name')
             .populate('workflow', 'name sequence status')
-            .populate('deal', 'name')
+            .populate('deal', 'name isOpportunitie')
             .sort({sequence: -1})
             .limit(req.session.kanbanSettings.tasks.countPerPage)
             .exec(function (err, result) {

@@ -3,8 +3,9 @@ define([
     'jQuery',
     'Underscore',
     'views/Persons/formProperty/filterView',
+    'models/PersonsModel',
     'text!templates/Persons/formProperty/formPropertyTemplate.html'
-], function (Backbone, $, _, FilterView, propertyTemplate) {
+], function (Backbone, $, _, FilterView, PersonsModel, propertyTemplate) {
     'use strict';
     var selectView = Backbone.View.extend({
         template: _.template(propertyTemplate),
@@ -14,32 +15,48 @@ define([
             'click #removeProperty': 'removeProperty'
         },
 
+        initialize: function (options) {
+            var person;
+            this.attribute = options.attribute;
+            this.parentModel = options.parentModel;
+            this.saveDeal = options.saveDeal;
+            this.isLead = options.isLead;
+            person = this.parentModel.get(this.attribute);
+            if (person){
+                this.model = new PersonsModel(person);
+            }
+
+        },
+
         addProperty: function () {
             new FilterView({
                 model    : this.parentModel,
                 attribute: this.attribute,
-                saveDeal : this.saveDeal
+                saveDeal : this.saveDeal,
+                isLead   : this.isLead
             });
         },
 
         removeProperty: function (e) {
             var saveObject = {};
+            var self = this;
 
             e.preventDefault();
 
             saveObject[this.attribute] = null;
             this.saveDeal(saveObject, 'formProperty');
-        },
 
-        initialize: function (options) {
-            this.data = options.data;
-            this.attribute = options.attribute;
-            this.parentModel = options.parentModel;
-            this.saveDeal = options.saveDeal;
+
+            if (this.isLead && this.model.get('isHidden')){
+                this.model.destroy({success : function (){
+                    self.saveDeal(saveObject, 'formProperty');
+                }});
+            }
         },
 
         render: function () {
-            this.$el.html(_.template(propertyTemplate, {property: this.data}));
+            var person = this.model ? this.model.toJSON() : '';
+            this.$el.html(_.template(propertyTemplate, {property: person}));
             return this;
         }
     });

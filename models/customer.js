@@ -94,6 +94,7 @@ module.exports = (function () {
 
         type : {type: String, default: ''},
         isOwn: {type: Boolean, default: false},
+        isHidden: {type: Boolean, default: false},
 
         name: {
             first: {type: String, default: 'demo'},

@@ -21,6 +21,8 @@ define([
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
 
+            this.lead = options.lead;
+
             _.bindAll(this, 'saveItem', 'render');
             this.model = new PersonModel();
             this.models = (options && options.model) ? options.model : null;
@@ -73,7 +75,6 @@ define([
                     first: $.trim(thisEl.find('#firstName').val()),
                     last : $.trim(thisEl.find('#lastName').val())
                 },
-
                 imageSrc  : this.imageSrc,
                 dateBirth : dateBirth,
                 company   : company,
@@ -121,6 +122,8 @@ define([
                 whoCanRW: whoCanRW
             };
 
+            data.isHidden = this.lead ? true : false;
+
             model = new PersonModel();
             model.save(data, {
                 headers: {
@@ -131,10 +134,23 @@ define([
                 success: function (model, res) {
                     var navigateUrl;
                     self.hideDialog();
-                    Backbone.history.fragment = '';
 
-                    navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
-                    Backbone.history.navigate(navigateUrl, {trigger: true});
+                    if (self.lead) {
+                        self.lead.save({customer : res.id}, {
+                            patch : true,
+                            success : function (){
+                                Backbone.history.fragment = '';
+                                navigateUrl = '#easyErp/Leads/form/' + self.lead.id;
+                                Backbone.history.navigate(navigateUrl, {trigger: true});
+                            }
+                        });
+                    } else {
+                        Backbone.history.fragment = '';
+
+                        navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
+                        Backbone.history.navigate(navigateUrl, {trigger: true});
+                    }
+
                 },
 
                 error: function (model, xhr) {
@@ -160,6 +176,7 @@ define([
                 buttons      : [
                     {
                         id   : 'create-person-dialog',
+                        class: 'btnRounded btnSave',
                         text : 'Create',
                         click: function () {
                             self.saveItem();
@@ -168,6 +185,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btnRounded',
                         click: function () {
                             self.hideDialog();
                         }
