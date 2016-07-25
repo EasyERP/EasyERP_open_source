@@ -91,7 +91,6 @@ HTTP/1.1 200 OK
 }
      **/
     router.get('/', handler.getByViewType);
-    router.get('/:id', handler.getById);
 
     /**
      *@api {get} /leads/getLeadsForChart Request LeadsForChart
@@ -337,6 +336,8 @@ HTTP/1.1 200 OK
 }
      **/
     router.get('/priority', handler.getLeadsPriority);
+
+    router.get('/:id', handler.getById);
 
     /**
      *@api {post} /leads/uploadFiles/ Request for uploading files and updating Opportunity
