@@ -2096,7 +2096,6 @@ var Filters = function (models) {
                 month     : 1,
                 year      : 1,
                 week      : 1,
-                isPaid    : 1,
                 _type     : 1
             }
         }, {
@@ -2115,7 +2114,6 @@ var Filters = function (models) {
                 month     : 1,
                 year      : 1,
                 week      : 1,
-                isPaid    : 1,
                 _type     : 1
             }
         }, {

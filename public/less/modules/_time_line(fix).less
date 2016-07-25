@@ -1,103 +1,126 @@
+@note-border-color: #7f7f80;
+
 .noteMainContainer {
   position: relative;
 }
 
-.noteContainer {
-  position: relative;
-  padding-left: 50px;
+.timeNote {
+  .noteContainer {
+    position: relative;
+    padding-left: 50px;
 
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 25px;
-    width: 1px;
-    height: calc(~"100% + 27px");
-    background: @lightgrey;
-  }
-
-
-  &:first-child {
     &:before {
-      top: -10px;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 25px;
+      width: 1px;
+      height: calc(~"100% + 27px");
+      background: @lightgrey;
     }
-  }
 
-  &:last-child {
-    &:before {
-      height: 25px;
+
+    &:first-child {
+      &:before {
+        top: -10px;
+      }
     }
-  }
 
-  .noteTopBox {
-    padding: 10px 15px;
-    border-bottom: 1px solid @lightgrey;
-  }
+    &:last-child {
+      &:before {
+        height: 25px;
+      }
+    }
 
-  .loadAttach {
-    padding: 10px 15px 0;
-  }
+    .noteTopBox {
+      padding: 10px 15px;
+      border-bottom: 1px solid @lightgrey;
+    }
 
-  .itemCircle {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    height: 28px;
-    width: 28px;
-    border: 1px solid @lightgrey;
-    border-radius: 50%;
-    background: @white;
-    font-size: 10px;
-    line-height: 28px;
-    text-align: center;
-    color: @lightgrey;
-    z-index: 10;
-  }
+    .loadAttach {
+      padding: 10px 15px 0;
+    }
 
-  .noteBody {
-    padding: 0 0 17px !important;
-    border-radius: 3px;
-    border: 1px solid @lightgrey !important;
-    box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05);
-  }
+    .itemCircle {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      height: 28px;
+      width: 28px;
+      border: 1px solid @lightgrey;
+      border-radius: 50%;
+      background: @white;
+      font-size: 10px;
+      line-height: 28px;
+      text-align: center;
+      color: @lightgrey;
+      z-index: 10;
+    }
 
-  .noteBtnBlock {
-    border: none;
-  }
-
-  .showButtons {
-    .noteBtnBlock {
+    .noteBody {
+      padding: 0 0 17px !important;
+      border-radius: 3px;
       border: 1px solid @lightgrey !important;
+      box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05);
     }
-  }
 
-  .noteText,
-  .noteContent,
-  .changed_field,
-  .assignedTo {
-    padding: 10px 15px 0;
-  }
+    .noteBtnBlock {
+      border: none;
+    }
 
-  .dateNote {
-    line-height: 11px;
-    min-height: 15px;
-  }
+    .showButtons {
+      .noteBtnBlock {
+        border: 1px solid @lightgrey !important;
+      }
+    }
 
-  .singleNote {
-    padding: 7px 15px 0 0;
+    .noteText,
+    .noteContent,
+    .changed_field,
+    .assignedTo {
+      padding: 10px 15px 0;
+    }
 
     .dateNote {
-      padding-top: 14px;
+      line-height: 11px;
+      min-height: 15px;
+    }
+
+    .singleNote {
+      padding: 7px 15px 0 0;
+
+      .dateNote {
+        padding-top: 14px;
+      }
+    }
+
+    .noteText {
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    .noteContent {
+      margin-bottom: 10px;
     }
   }
+}
 
-  .noteText {
-    &:last-child {
-      margin-bottom: 0 !important;
-    }
+.noteInner {
+  border: 1px solid @note-border-color;
+  padding: 5px 20px 20px;
+
+  .dateNote {
+    float: none !important;
+    margin-left: 5px;
   }
+}
 
-  .noteContent {
-    margin-bottom: 10px;
+.noteBtn {
+  margin-top: 15px;
+  text-align: right;
+
+  span + span {
+    margin-left: 10px;
   }
 }

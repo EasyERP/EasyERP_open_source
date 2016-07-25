@@ -75,13 +75,14 @@ var Module = function (models, event) {
             id : model._id
         };
 
-        function getHistory(parallelCb) {
+        function getHistoryNotes(parallelCb) {
             historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                var notes;
                 if (err) {
                     return parallelCb(err);
                 }
 
-                history = history.map(function (elem) {
+                notes = history.map(function (elem) {
                     return {
                         date   : elem.date,
                         history: elem,
@@ -89,9 +90,21 @@ var Module = function (models, event) {
                         _id    : ''
                     };
                 });
-                parallelCb(null, history);
+
+                parallelCb(null, notes);
 
             }, true);
+        }
+
+        function getHistory(parallelCb) {
+            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                if (err) {
+                    return parallelCb(err);
+                }
+
+                parallelCb(null, history);
+
+            });
         }
 
         function getTask(parallelCb) {
@@ -118,10 +131,15 @@ var Module = function (models, event) {
                 });
         }
 
-        parallelTasks = [getTask, getHistory];
+        parallelTasks = [getTask, getHistoryNotes, getHistory];
 
         async.parallel(parallelTasks, function (err, results) {
-            model.notes = model.notes.concat(results[0], results[1]);
+
+            if (model.isOpportunitie) {
+                model.notes = model.notes.concat(results[0], results[1]);
+            }
+
+            model.history = results[2];
             model.notes = _.sortBy(model.notes, 'date');
             cb(null, model);
         });
@@ -781,11 +799,7 @@ var Module = function (models, event) {
                         _opportunitie.notes = data.notes;
                     }
                     if (data.company) {
-                        if (data.company.id) {
-                            _opportunitie.company = data.company.id;
-                        } else if (data.company.name) {
-                            _opportunitie.tempCompanyField = data.company.name;
-                        }
+                        _opportunitie.company = data.company;
                     }
                     if (data.customer) {
                         _opportunitie.customer = data.customer;
@@ -839,7 +853,17 @@ var Module = function (models, event) {
                         _opportunitie.salesTeam = data.salesTeam;
                     }
                     if (data.internalNotes) {
-                        _opportunitie.internalNotes = data.internalNotes;
+
+                        _opportunitie.notes = [{
+                            _id : mongoose.Types.ObjectId(),
+                            date: new Date(),
+                            user: {
+                                _id  : req.session.uId,
+                                login: req.session.uName
+                            },
+                            note: data.internalNotes
+                        }];
+
                     }
                     if (data.nextAction) {
                         if (data.nextAction.desc) {
@@ -2617,6 +2641,7 @@ var Module = function (models, event) {
             salesPerson     : 1,
             nextAction      : 1,
             expectedClosing : 1,
+            isOpportunitie  : 1,
             priority        : 1,
             workflow        : 1,
             address         : 1,

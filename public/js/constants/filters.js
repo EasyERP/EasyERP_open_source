@@ -49,17 +49,11 @@
                 type       : 'string'
             },
 
-            isPaid: {
-                displayName: 'Status',
-                backend    : 'isPaid',
-                type       : 'boolean'
-            },
-
             jobs: {
                 backend: 'jobs'
             },
 
-            array: ['employee', 'customer', 'project', 'department', 'month', 'year', 'week', '_type', 'isPaid']
+            array: ['employee', 'customer', 'project', 'department', 'month', 'year', 'week', '_type']
         },
 
         Persons: {

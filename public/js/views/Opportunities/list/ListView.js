@@ -153,32 +153,6 @@ define([
             App.ownContentType = true;
             Backbone.history.navigate(url, {trigger: true});
         }
-        /*gotoForm: function (e) {
-            var id = $(e.target).closest('tr').data('id');
-            var model = new CurrentModel({validate: false});
-            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
-
-            e.preventDefault();
-
-            model.urlRoot = '/Opportunities';
-            model.fetch({
-                data: {
-                    id      : id,
-                    viewType: 'form'
-                },
-
-                success: function (model) {
-                    return new EditView({model: model});
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
-        }*/
 
     });
 

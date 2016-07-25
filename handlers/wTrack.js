@@ -204,89 +204,89 @@ var TCard = function (event, models) {
     };
 
     /*function convertType(array, type) {
-        var i;
+     var i;
 
-        if (type === 'integer') {
-            for (i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i], 10);
-            }
-        } else if (type === 'boolean') {
-            for (i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    }*/
+     if (type === 'integer') {
+     for (i = array.length - 1; i >= 0; i--) {
+     array[i] = parseInt(array[i], 10);
+     }
+     } else if (type === 'boolean') {
+     for (i = array.length - 1; i >= 0; i--) {
+     if (array[i] === 'true') {
+     array[i] = true;
+     } else if (array[i] === 'false') {
+     array[i] = false;
+     } else {
+     array[i] = null;
+     }
+     }
+     }
+     }*/
 
     /*function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
+     var condition;
+     var resArray = [];
+     var filtrElement = {};
+     var key;
+     var filterName;
 
-        for (filterName in filter) {
-            if (filter.hasOwnProperty(filterName)) {
-                condition = filter[filterName].value;
-                key = filter[filterName].key;
+     for (filterName in filter) {
+     if (filter.hasOwnProperty(filterName)) {
+     condition = filter[filterName].value;
+     key = filter[filterName].key;
 
-                switch (filterName) {
-                    case 'project':
-                        filtrElement['project._id'] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'customer':
-                        filtrElement['customer._id'] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'employee':
-                        filtrElement.employee = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'department':
-                        filtrElement.department = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'year':
-                        convertType(condition, 'integer');
-                        filtrElement[key] = {$in: condition};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'month':
-                        convertType(condition, 'integer');
-                        filtrElement[key] = {$in: condition};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'week':
-                        convertType(condition, 'integer');
-                        filtrElement[key] = {$in: condition};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'isPaid':
-                        convertType(condition, 'boolean');
-                        filtrElement[key] = {$in: condition};
-                        resArray.push(filtrElement);
-                        break;
-                    case '_type':
-                        filtrElement[key] = {$in: condition};
-                        resArray.push(filtrElement);
-                        break;
-                    case 'jobs':
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
-                    // skip default
-                }
-            }
-        }
+     switch (filterName) {
+     case 'project':
+     filtrElement['project._id'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'customer':
+     filtrElement['customer._id'] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'employee':
+     filtrElement.employee = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'department':
+     filtrElement.department = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     case 'year':
+     convertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'month':
+     convertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'week':
+     convertType(condition, 'integer');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'isPaid':
+     convertType(condition, 'boolean');
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case '_type':
+     filtrElement[key] = {$in: condition};
+     resArray.push(filtrElement);
+     break;
+     case 'jobs':
+     filtrElement[key] = {$in: condition.objectID()};
+     resArray.push(filtrElement);
+     break;
+     // skip default
+     }
+     }
+     }
 
-        return resArray;
-    }*/
+     return resArray;
+     }*/
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -1841,6 +1841,7 @@ var TCard = function (event, models) {
                     employee  : {$arrayElemAt: ['$employee', 0]},
                     department: {$arrayElemAt: ['$department', 0]},
                     project   : {$arrayElemAt: ['$project', 0]},
+                    dateByWeek: 1,
                     month     : 1,
                     year      : 1,
                     week      : 1,
@@ -1877,32 +1878,35 @@ var TCard = function (event, models) {
                     },
 
                     employee: {
+                        _id : '$employee._id',
                         name: '$employee.name'
                     },
 
                     department: {
+                        _id : '$department._id',
                         name: '$department.name'
                     },
 
-                    customer: {$arrayElemAt: ['$customer', 0]},
-                    month   : 1,
-                    year    : 1,
-                    week    : 1,
-                    revenue : 1,
-                    amount  : 1,
-                    rate    : 1,
-                    hours   : 1,
-                    cost    : 1,
-                    worked  : 1,
-                    isPaid  : 1,
-                    _type   : 1,
-                    1       : 1,
-                    2       : 1,
-                    3       : 1,
-                    4       : 1,
-                    5       : 1,
-                    6       : 1,
-                    7       : 1
+                    customer  : {$arrayElemAt: ['$customer', 0]},
+                    month     : 1,
+                    dateByWeek: 1,
+                    year      : 1,
+                    week      : 1,
+                    revenue   : 1,
+                    amount    : 1,
+                    rate      : 1,
+                    hours     : 1,
+                    cost      : 1,
+                    worked    : 1,
+                    isPaid    : 1,
+                    _type     : 1,
+                    1         : 1,
+                    2         : 1,
+                    3         : 1,
+                    4         : 1,
+                    5         : 1,
+                    6         : 1,
+                    7         : 1
                 }
             }, {
                 $project: {
@@ -1914,25 +1918,26 @@ var TCard = function (event, models) {
                         name: '$customer.name'
                     },
 
-                    project: 1,
-                    month  : 1,
-                    year   : 1,
-                    week   : 1,
-                    revenue: 1,
-                    amount : 1,
-                    rate   : 1,
-                    hours  : 1,
-                    cost   : 1,
-                    worked : 1,
-                    isPaid : 1,
-                    _type  : 1,
-                    1      : 1,
-                    2      : 1,
-                    3      : 1,
-                    4      : 1,
-                    5      : 1,
-                    6      : 1,
-                    7      : 1
+                    project   : 1,
+                    dateByWeek: 1,
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    revenue   : 1,
+                    amount    : 1,
+                    rate      : 1,
+                    hours     : 1,
+                    cost      : 1,
+                    worked    : 1,
+                    isPaid    : 1,
+                    _type     : 1,
+                    1         : 1,
+                    2         : 1,
+                    3         : 1,
+                    4         : 1,
+                    5         : 1,
+                    6         : 1,
+                    7         : 1
                 }
             }]);
 

@@ -208,6 +208,7 @@ define([
         render: function (options) {
             var $thisEl = this.$el;
             var $backStratch;
+            var self = this;
 
             $('title').text('Login');
 
@@ -224,6 +225,17 @@ define([
                 'images/imgs/front-img-2.jpg',
                 'images/imgs/front-img-3.jpg'
             ], {duration: 3000, fade: 750});
+
+            $(document).on('keydown', function (e) {
+
+                switch (e.which) {
+                    case 13:
+                        self.login(e);
+                        break;
+                    default:
+                        break;
+                }
+            });
 
             return this;
         }
