@@ -2445,7 +2445,7 @@ input, textarea, select {
 
 .current-selected {
   // color: @tilte-color !important;
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
   line-height: 20px !important;
 }
@@ -5046,9 +5046,17 @@ textarea#editInput {
       &.employee {
         min-width: 140px;
         width: 140px;
+        position: relative;
+        padding-right: 20px;
+
+        span {
+          white-space: nowrap;
+        }
 
         .icon {
-          float: right;
+          position: absolute;
+          top: 1px;
+          right: 10px;
           font-size: 14px;
           line-height: 21px;
           cursor: pointer;

@@ -3892,11 +3892,9 @@ table.kanban tbody td:nth-child(n+2) {
   width: calc(100% - 40px);
 }
 .holidays.projectTimeCardCustomList {
-  left: 50%;
+  float: none;
+  margin: -30px auto 20px;
   width: 415px !important;
-  margin-top: -31px;
-  margin-bottom: 10px;
-  margin-left: -180px;
 }
 #searchContainer.projectTimeCardCustomSearch {
   top: -32px;
@@ -3906,10 +3904,12 @@ table.kanban tbody td:nth-child(n+2) {
 .kanban .column h2 span.text {
   margin-right: 70px!important;
 }
-@media screen and (max-width: 1300px) {
+.list tbody td.errorContent {
+  border: 1px double #ff0000;
+}
+@media screen and (max-width: 1490px) {
   .holidays.projectTimeCardCustomList {
-    margin-top: 15px;
-    margin-left: -207px;
+    margin-top: 20px;
   }
 }
 .noteMainContainer {
@@ -4333,6 +4333,57 @@ table.kanban tbody td:nth-child(n+2) {
 .ui-datepicker {
   min-width: 175px;
 }
+.dropDownDateRangeContainer {
+  position: relative;
+  width: 110px;
+  height: 35px;
+  float: right;
+}
+.choseDateRange.dropDownDateRange {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  height: 22px;
+  width: 110px;
+  border: 1px solid #333333;
+  padding: 1px 33px 3px 10px;
+  margin-right: 0;
+  overflow: hidden;
+}
+.choseDateRange.dropDownDateRange.open {
+  height: auto;
+}
+.choseDateRange.dropDownDateRange.open .selectArrow {
+  transform: rotate(180deg);
+}
+.choseDateRange.dropDownDateRange .item {
+  padding: 0;
+  float: none;
+  margin-left: 0 !important;
+  min-height: 20px !important;
+  line-height: 18px;
+  margin-bottom: 5px;
+  text-align: center;
+  border: none;
+  background: none;
+  order: 1;
+}
+.choseDateRange.dropDownDateRange .item.active {
+  order: 0;
+  background: none;
+  color: #000000;
+}
+.choseDateRange.dropDownDateRange .selectArrow {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  height: 0;
+  width: 0;
+  border-top: 5px solid #333333;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  cursor: pointer;
+}
 .newTasksContainer {
   padding-top: 30px !important;
 }
@@ -4719,9 +4770,8 @@ table.kanban tbody td:nth-child(n+2) {
 /*== End Input type number =============*/
 .tableResponsive {
   min-height: .01%;
-  overflow-x: auto;
+  overflow: auto;
   width: 100%;
-  overflow-y: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 .tableResponsiveNew {
@@ -4742,6 +4792,9 @@ table.kanban tbody td:nth-child(n+2) {
   font-family: 'Open Sans Regular', sans-serif, Verdana;
   width: 100%;
   table-layout: fixed;
+}
+.list2 tbody td.errorContent {
+  border: 1px double #ff0000;
 }
 .list2 td,
 .list2 th {
@@ -4831,6 +4884,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .list2 .overtime {
   background-color: #ffe332 !important;
+}
+.list2 tbody td.errorContent {
+  border: 1px double #ff0000;
 }
 .list2 td,
 .list2 th {
@@ -6148,7 +6204,7 @@ select:not([type="checkbox"]) {
   color: #000000;
 }
 .current-selected {
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
   line-height: 20px !important;
 }
@@ -10753,6 +10809,9 @@ ul.dialog-tabs li.right button {
   font-family: 'Open Sans Regular', sans-serif, Verdana;
   width: 100%;
 }
+.list tbody td.errorContent {
+  border: 1px double #ff0000;
+}
 .list td,
 .list th {
   height: 23px;
@@ -14105,10 +14164,18 @@ textarea#editInput {
 .grid tr th.employee {
   min-width: 140px;
   width: 140px;
+  position: relative;
+  padding-right: 20px;
+}
+.grid tr td.employee span,
+.grid tr th.employee span {
+  white-space: nowrap;
 }
 .grid tr td.employee .icon,
 .grid tr th.employee .icon {
-  float: right;
+  position: absolute;
+  top: 1px;
+  right: 10px;
   font-size: 14px;
   line-height: 21px;
   cursor: pointer;

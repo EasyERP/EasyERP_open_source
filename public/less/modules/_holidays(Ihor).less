@@ -1,10 +1,10 @@
-@extra-large-screen: 1300px;
+@extra-large-screen: 1490px;
+@error-content-border: red;
+
 .holidays.projectTimeCardCustomList {
-  left: 50%;
+  float: none;
+  margin: -30px auto 20px;
   width: 415px !important;
-  margin-top: -31px;
-  margin-bottom: 10px;
-  margin-left: -180px;
 }
 
 #searchContainer.projectTimeCardCustomSearch {
@@ -12,7 +12,6 @@
   margin-right: 23px;
   width: 20%;
 }
-
 
 .kanban {
   .column {
@@ -22,12 +21,20 @@
       }
     }
   }
-
 }
+
+
+.list {
+  tbody {
+    td.errorContent {
+      border: 1px double @error-content-border;
+    }
+  }
+}
+
 
 @media screen and (max-width: @extra-large-screen) {
   .holidays.projectTimeCardCustomList {
-    margin-top: 15px;
-    margin-left: -207px;
+    margin-top: 20px;
   }
 }
