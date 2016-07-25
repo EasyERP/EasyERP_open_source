@@ -370,7 +370,7 @@ define([
                     productId = targetEl.data('id');
 
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"] input').val();
+                        quantity = targetEl.find('[data-name="quantity"] span').text();
                         price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
 
@@ -517,7 +517,7 @@ define([
 
             // todo check
 
-
+            this.trigger('itemSaved', this.currentModel.id);
         },
 
         render: function () {

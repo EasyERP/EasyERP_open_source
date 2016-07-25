@@ -46,55 +46,13 @@ define([
             this.formView.saveItem();
         },
 
-        renderFormView: function (e) {
-            var $thisEl = this.$el;
-            var $target;
-            var modelId;
-            var model;
+        addFormView: function (modelId) {
             var self = this;
-            var date = new Date();
 
-            if (e.hasOwnProperty('target')) {
-                $target = $(e.target);
-                modelId = $target.closest('.compactView').data('id');
-
-            } else {
-                modelId = e;
-            }
-
-            model = new this.ContentModel();
-            model.urlRoot = model.url() + modelId;
-
-            model.fetch({
-                success: function (model) {
-
-                    if (self.formView) {
-                        self.formView.undelegateEvents();
-                    }
-
-                    self.formView = new self.FormView({model: model, el: '#formContent'});
-                    self.formView.render();
-
-                    $thisEl.find('#listContent .selected').removeClass('selected');
-                    $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
-                    self.selectedId = model.id;
-
-                    self.changeLocationHash(self.collection.currentPage, self.collection.pageSize, self.filter);
-
-                    if (e.hasOwnProperty('target')) {
-                        $thisEl.find('#timeRecivingDataFromServer').remove();
-                        $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
-                    }
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Server error'
-                    });
-                }
+            this.renderFormView(modelId, function () {
+                self.listenTo(self.formView, 'itemSaved', self.renderFormView);
             });
-        },
+        }
 
     });
 
