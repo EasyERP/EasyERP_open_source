@@ -75,7 +75,12 @@ define([
             'click #cancelBtnLeadsByName'                                                                                   : 'cancel',
             'click #cancelBtnLeadsBySale'                                                                                   : 'cancel',
             'click #cancelBtnLeadsBySource'                                                                                 : 'cancel',
-            'click #cancelBtnLeads'                                                                                         : 'cancel'
+            'click #cancelBtnLeads'                                                                                         : 'cancel',
+            'click .dropDownDateRangeContainer': 'toggleDateFilter'
+        },
+
+        toggleDateFilter: function(e){
+           $(e.target).closest('.dropDownDateRangeContainer').find('.dropDownDateRange').toggleClass('open');
         },
 
         toggleDateRange: function (e, type) {
