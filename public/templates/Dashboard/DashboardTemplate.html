@@ -364,64 +364,68 @@
     <div class="chart-tabs-item leadsTab">
         <h3>Leads</h3>
         <div class="leadsTop align-left clearfix">
-            <div class="vocationFilter">
-                <ul class="dateFilterLeads">
-                    <li class="dateRangeLeads">
-                        <span id="startTimeLeads"><%= startDateLeads%></span> - <span id="endTimeLeads"><%= endDateLeads%></span>
-                        <i class="fa fa-caret-down"></i>
-                    </li>
-                    <li>
-                        <ul class="frameDetail hidden">
-                            <li id="thisMonthLeads" class="leads filterValues checked checkedValue" data-type="leads">This Month</li>
-                            <li id="thisYearLeads" class="leads filterValues checked" data-type="leads">This Financial Year</li>
-                            <li id="lastMonthLeads" class="leads filterValues checked" data-type="leads">Last Month</li>
-                            <li id="lastQuarterLeads" class="leads filterValues checked" data-type="leads">Last Quarter</li>
-                            <li id="lastYearLeads" class="leads filterValues checked" data-type="leads">Last Financial Year</li>
-                            <li id="customLeads" class="leads filterValues checked" data-type="leads">Custom Dates</li>
-                            <li class="customTimeLeads hidden">
+            <div class="col xs-4">
+                <div class="vocationFilter">
+                    <ul class="dateFilterLeads">
+                        <li class="dateRangeLeads">
+                            <span id="startTimeLeads"><%= startDateLeads%></span> - <span id="endTimeLeads"><%= endDateLeads%></span>
+                            <i class="fa fa-caret-down"></i>
+                        </li>
+                        <li>
+                            <ul class="frameDetail hidden">
+                                <li id="thisMonthLeads" class="leads filterValues checked checkedValue" data-type="leads">This Month</li>
+                                <li id="thisYearLeads" class="leads filterValues checked" data-type="leads">This Financial Year</li>
+                                <li id="lastMonthLeads" class="leads filterValues checked" data-type="leads">Last Month</li>
+                                <li id="lastQuarterLeads" class="leads filterValues checked" data-type="leads">Last Quarter</li>
+                                <li id="lastYearLeads" class="leads filterValues checked" data-type="leads">Last Financial Year</li>
+                                <li id="customLeads" class="leads filterValues checked" data-type="leads">Custom Dates</li>
+                                <li class="customTimeLeads hidden">
                     <span>
                         <label for="startDate">From </label><input readonly type="text" id="startDateLeads"><br/>
                         <label for="endDate">To </label><input readonly type="text" id="endDateLeads">
                     </span>
-                            </li>
-                            <li class="buttons">
-                                <button id="updateDateLeads" class="btn">
-                                    <span>Update</span>
-                                </button>
-                                <button id="cancelBtnLeads" class="btn">
-                                    <span>Cancel</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div data-type="leadsChart" class="choseDateItem">
-                <div class="item active" data-item="createdBy">Created By</div>
-                <div class="item" data-item="assignedTo">Assigned To</div>
-            </div>
-            <div class="legend-box">
-                <div class="converted">
-                    <div class="square" style="background: #57D0B5">
-                    </div>
-                    <div class="text">
-                        Converted Leads
-                    </div>
+                                </li>
+                                <li class="buttons">
+                                    <button id="updateDateLeads" class="btn">
+                                        <span>Update</span>
+                                    </button>
+                                    <button id="cancelBtnLeads" class="btn">
+                                        <span>Cancel</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
-
-                <div class="unconverted">
-                    <div class="square" style="background: #00B4EA">
-                    </div>
-                    <div class="text">
-                        Unconverted Leads
-                    </div>
+                <div data-type="leadsChart" class="choseDateItem">
+                    <div class="item active" data-item="createdBy">Created By</div>
+                    <div class="item" data-item="assignedTo">Assigned To</div>
                 </div>
-
-                <div class="convertRate">
-                    <div class="square" style="background: #00B4EA">
+            </div>
+            <div class="col xs-8">
+                <div class="legend-box">
+                    <div class="converted">
+                        <div class="square" style="background: #57D0B5">
+                        </div>
+                        <div class="text">
+                            Converted Leads
+                        </div>
                     </div>
-                    <div class="text">
-                        Opportunity Conversion Rate
+
+                    <div class="unconverted">
+                        <div class="square" style="background: #00B4EA">
+                        </div>
+                        <div class="text">
+                            Unconverted Leads
+                        </div>
+                    </div>
+
+                    <div class="convertRate">
+                        <div class="square" style="background: #00B4EA">
+                        </div>
+                        <div class="text">
+                            Opportunity Conversion Rate
+                        </div>
                     </div>
                 </div>
             </div>
