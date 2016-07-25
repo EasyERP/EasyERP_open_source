@@ -17,6 +17,11 @@
 
 a{
   text-decoration: none;
+  &.fa {
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 
@@ -819,9 +824,27 @@ input {
     }
   }
 }
+
 .createNewTag {
   line-height: 25px;
 }
+
+.tags-container {
+  .editTags {
+    display: inline-block;
+    vertical-align: middle;
+    min-height: 18px;
+    padding: 2px 8px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    .defaultBorRad;
+  }
+}
+
+.taskArea {
+  .defaultBorRad;
+}
+
 .ui-dialog {
   input {
     &.searchTagInput {
@@ -1101,45 +1124,6 @@ dl.payrollDateBlock {
   }
 }
 
-//.tableFixedWrap {
-//  height: 100%;
-//
-//  .tableFixed {
-//    height: 100%;
-//  }
-//
-//  table.payRoll-list #payRoll-Table .scrollit {
-//    height: 100%;
-//  }
-//}
-//
-//.absoluteContent {
-//  position: absolute;
-//  height: 100%;
-//  width: 100%;
-//
-//  table {
-//    height: 100%;
-//
-//    th {
-//      border-bottom: 1px solid #d7d7d7;
-//    }
-//  }
-//
-//  .scrollable {
-//    max-height: 100%;
-//    width: 100%;
-//    height: 100%;
-//    overflow-x: hidden;
-//    overflow-y: auto;
-//  }
-//}
-//
-//.flexTableWrap {
-//  flex-grow: 1;
-//  position: relative;
-//}
-//
 .flexActionsWrap {
   display: -webkit-box;
   display: -moz-box;
@@ -1189,36 +1173,6 @@ dl.payrollDateBlock {
     align-items: center;
   }
 }
-//
-//.innerRow {
-//  border-top: none !important;
-//
-//  table {
-//    tr {
-//      &:first-child {
-//        border-top: none;
-//        td {
-//          border-top: none;
-//        }
-//      }
-//      &:last-child {
-//        td {
-//          border-bottom: none;
-//        }
-//      }
-//    }
-//  }
-//}
-//
-//.colspanFix {
-//  padding: 0!important;
-//  border: none !important;
-//}
-//
-//table {
-//  width: 100%;
-//  table-layout: fixed;
-//}
 
 .salesGraphWrap {
 
@@ -1250,6 +1204,10 @@ dl.payrollDateBlock {
 
 .fontBold {
   font-family: @fontBold;
+}
+
+#top-bar-deleteBtn {
+
 }
 
 .closeBtn {
@@ -1290,6 +1248,7 @@ dl.payrollDateBlock {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  border-bottom: 1px solid #ededed;
 
   &.personList {
 
@@ -1324,6 +1283,19 @@ dl.payrollDateBlock {
     }
   }
 
+  &.opportunitiesList {
+
+    .opportunity {
+      color: #508bbd;
+      font-size: 15px;
+      font-family: @fontBold;
+    }
+
+    .revenue {
+      font-size: 10px;
+    }
+  }
+
   .form-holder {
     padding: 10px;
   }
@@ -1333,10 +1305,13 @@ dl.payrollDateBlock {
 .formContent {
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 
 .listContent {
   width: 400px;
+  border-right: 1px solid #ededed;
 
   table {
     width: 100%;
@@ -1379,10 +1354,12 @@ dl.payrollDateBlock {
 
 .formContentTitle,
 .listContentTitle {
-  min-height: 42px;
+  height: 42px;
   padding: 7px;
   border-top: 1px solid #ededed;
   border-bottom: 1px solid #ededed;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .listContentTitle {
@@ -1390,7 +1367,7 @@ dl.payrollDateBlock {
 
   #createBtnHolder {
     float: right;
-    float: right;
+
     .fa {
       margin-right: 0;
     }
@@ -1445,6 +1422,7 @@ td.checkboxRow {
 }
 
 .list {
+
   .blue {
     color: #3e88b9;
     font-size: 15px;
@@ -1453,7 +1431,7 @@ td.checkboxRow {
   tr {
     td {
       &.centerCell {
-        text-align: right;
+        text-align: center;
       }
     }
   }
@@ -1522,7 +1500,16 @@ td.checkboxRow {
       margin-top: 8px;
     }
   }
-
+  #createBtnHolder {
+    .btnBlue {
+      height: 26px;
+      width: 67px;
+      border: 0;
+      line-height: 26px !important;
+      font-size: 13px;
+      color: #fff;
+    }
+  }
 }
 
 .dropDown {
@@ -1588,6 +1575,7 @@ td.checkboxRow {
 
       .sortArrow {
         position: absolute;
+        top: 0;
         right: 8px;
         color: #2b3643;
         font-family: 'FontAwesome';
@@ -1634,6 +1622,105 @@ td.checkboxRow {
   }
 }
 
+.invoiceTooltip {
+  position: relative;
+  text-align: center;
+  height: 28px;
+  background-color: #fff;
+  color: #000;
+  font: 14px sans-serif;
+  pointer-events: none;
+  display: none;
+  border: 2px solid;
+  z-index: 11;
+
+  > span {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    //padding: 0 5px;
+    top: 3px;
+    left: 0;
+    z-index: 2;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 11px 8px 0 8px;
+    border-color: #b6e7f3 transparent transparent transparent;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  &:before {
+    content: '';
+
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 6px 0 6px;
+    border-color: #fff transparent transparent transparent;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+}
+
+.filterWrap {
+  min-height: 26px;
+  margin-bottom: 15px;
+
+  .dateFilter {
+    top: 0;
+  }
+  h3 {
+    display: inline-block;
+    float: left;
+    margin-right: 20px;
+  }
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.treemap_sales {
+  position: relative;
+}
+
+.dashboardGraphicsWrap {
+  .halfWidth,
+  .fullWidth {
+    float: left;
+  }
+  .halfWidth {
+    width: 50%;
+  }
+  .fullWidth {
+    width: 100%;
+  }
+}
+
 .treemap_sales {
   display: inline-block;
 }
@@ -1660,47 +1747,6 @@ table {
           border-left: 9px solid #fff;
         }
       }
-    }
-  }
-}
-
-
-.tabList {
-
-  &Wrap {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-
-    padding: 5px;
-    margin-bottom: 10px;
-  }
-
-  &Item {
-    -webkit-flex-grow: 1;
-    flex-grow: 1;
-
-    width: 10px;
-    position: relative;
-    padding: 3px 5px;
-    margin: 5px;
-    background-color: #e6e6e6;
-    font-size: 10px;
-
-    &.passed {
-      background-image: linear-gradient(to top, #158b0c,#18a815);
-
-      span {
-        color: #fff;
-      }
-    }
-
-    span {
-      text-transform: uppercase;
-      font-size: 12px;
-      color: #666;
-      white-space: nowrap;
     }
   }
 }
@@ -1766,6 +1812,12 @@ table {
 .halfColumn {
   width: 50%;
 }
+.col1-3 {
+  width: 35%;
+}
+.col2-3 {
+  width: 65%;
+}
 
 .noteBtnBlock,
 .editNoteBtnBlock {
@@ -1777,10 +1829,11 @@ table {
   transition: all .2s ease;
 
   .btn {
-    margin: 7px;
-    float: right;
-    height: 19px;
-    line-height: 18px!important;
+    border: 0 !important;
+    margin: 8px 0;
+    height: 28px;
+    color: #fff;
+    line-height: 28px !important;
 
     &:hover {
       text-decoration: none;
@@ -1788,8 +1841,19 @@ table {
   }
 }
 
+.noteBtnBlock {
+  .btnBlue {
+    width: 47px;
+  }
+}
+
+.editNoteBtnBlock {
+  .btnBlue {
+    width: 65px;
+  }
+}
+
 .editedNote {
-  border: 1px solid #7f7f80;
 
   .noteType {
     float: left;
@@ -1798,8 +1862,8 @@ table {
   .noteText {
     padding: 10px !important;
     margin: 0 !important;
-    border: none;
-    border-top: @thin-border @border-color-main;
+    border: @thin-border #C8C9D3;
+    border-top: none;
 
     &:hover,
     &:active,
@@ -1819,6 +1883,8 @@ table {
 
 .editedNoteTitle {
   padding: 10px;
+  border: 1px solid #C8C9D3;
+  border-radius: 3px 3px 0 0;
 
   &:after {
     content: '';
@@ -1828,15 +1894,14 @@ table {
 }
 
 .editNoteBtnBlock {
-  height: 34px;
+  height: 44px;
   border: none;
-  border-top: @thin-border @border-color-main;
 }
 
 .contentHolder {
   &.showButtons {
     .noteBtnBlock {
-      height: 34px;
+      height: 44px;
     }
   }
 }
@@ -1852,4 +1917,7 @@ table {
   .buttons {
     margin-top: 10px;
   }
+}
+.addTaskTitle {
+  padding: 5px 0;
 }

@@ -2,9 +2,11 @@ define([
         'Backbone',
         'jQuery',
         'models/LeadsModel',
-        'constants'
+        'constants',
+        'common'
+
     ],
-    function (Backbone, $, LeadModel, CONSTANTS) {
+    function (Backbone, $, LeadModel, CONSTANTS, common) {
         'use strict';
 
         var LeadsCollection = Backbone.Collection.extend({
@@ -26,8 +28,17 @@ define([
             },
 
             parse: function (response) {
+                if (response && response.data) {
+                    _.map(response.data, function (opportunity) {
+                        if (opportunity.nextAction) {
+                            opportunity.nextAction.date = (opportunity.nextAction) ? common.utcDateToLocaleDate(opportunity.nextAction.date) : '';
+                        }
+                        return opportunity;
+                    });
+                }
                 return response.data;
             }
         });
+
         return LeadsCollection;
     });

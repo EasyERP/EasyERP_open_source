@@ -8,7 +8,7 @@ module.exports = (function () {
         collection: 'Vacation',
         table     : 'Absence',
         comparator: {
-            'AbsenceType': [{
+            AbsenceType: [{
                 value     : '1',
                 field     : 'vacationType',
                 fieldValue: 'V'
@@ -26,7 +26,8 @@ module.exports = (function () {
                 fieldValue: 'E'
             }]
         },
-        aliases   : {
+
+        aliases: {
             ID          : 'ID',
             employee    : 'Employee',
             startDate   : 'StartDate',

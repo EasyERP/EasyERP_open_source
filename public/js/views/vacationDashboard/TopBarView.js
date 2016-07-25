@@ -111,8 +111,15 @@ define([
             var dateRange = custom.retriveFromCash('vacationDashDateRange') || {};
             var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day('Monday').format('DD MMM, YYYY');
             var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day('Sunday').format('DD MMM, YYYY');
+            var viewType = custom.getCurrentVT();
 
             $('title').text(this.contentType);
+
+            if (viewType && viewType === 'tform') {
+                this.$el.addClass('position');
+            } else {
+                this.$el.removeClass('position');
+            }
 
             this.$el.html(this.template({
                 contentType: this.contentType,

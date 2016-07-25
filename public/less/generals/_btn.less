@@ -1,5 +1,5 @@
 .btn {
-  border: @thin-border @border-color-main;
+  border: @thin-border #c8c8d3;
   margin: 0;
   padding: .4em 1em;
   line-height: normal;
@@ -26,7 +26,24 @@
   &.btnRounded {
     border-radius: 3px;
   }
+
+  &.btnBlue {
+    background-color: #7eadcc;
+    color: #fff;
+    .defaultBorRad;
+
+    &:hover {
+      background-color: #7eadcc;
+    }
+  }
 }
+
+.editorTab {
+  .btn {
+    min-width: 66px;
+  }
+}
+
 
 .btnAttention {
   border-color: @btnAttentionColor;
