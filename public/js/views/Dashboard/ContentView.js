@@ -1475,13 +1475,13 @@ define([
                 };
 
                 barsMap = {
-                    'To be done'         : 'bar9',
-                    'Waiting fo response': 'bar6',
-                    'To be discussed'    : 'bar7',
-                    'In development'     : 'bar4',
-                    'Finalization'       : 'bar8',
-                    'Proposal'           : 'bar10',
-                    'Lost'               : 'bar11'
+                    'To be done'         : 'bar8',
+                    'Waiting fo response': 'bar9',
+                    'To be discussed'    : 'bar10',
+                    'In development'     : 'bar11',
+                    'Finalization'       : 'bar12',
+                    'Proposal'           : 'bar13',
+                    'Lost'               : 'bar14'
                 };
 
                 colorMap = {
@@ -1799,8 +1799,11 @@ define([
                 var data3;
                 var data4;
                 var data5;
+                var data6;
+                var data7;
                 var arrData;
                 var arrSum;
+                var colorMap;
                 var maxHeight;
                 var i;
 
@@ -1809,29 +1812,48 @@ define([
                 data.forEach(function (item) {
 
                     switch(item._id){
-                        case 'Waiting fo response':
+                        case 'To be done':
                             data1 = item.data;
                             break;
-                        case 'To be discussed':
+                        case 'Waiting fo response':
                             data2 = item.data;
                             break;
-                        case 'To be done':
+                        case 'To be discussed':
                             data3 = item.data;
                             break;
                         case 'In development':
                             data4 = item.data;
                             break;
                         case 'Finalization':
-                            data4 = item.data;
+                            data5 = item.data;
+                            break;
+                        case 'Proposal':
+                            data6 = item.data;
+                            break;
+                        case 'Lost':
+                            data7 = item.data;
                             break;
                     }
                 });
+
+                colorMap = {
+                    'bar'         : '#93648D', //violet
+                    'bar2': '#4CC3D9', //blue
+                    'bar3'    : '#F1DD9E', //brown green
+                    'bar4'     : '#7BC8A4', //green
+                    'bar5'       : '#FFC65D', //yellow
+                    'bar6'           : '#EB6E44', //orange
+                    'bar7'               : '#93073E', //dark red
+                    'barStroke'          : '#2378ae'
+                };
 
                 data1 = data1 || [];
                 data2 = data2 || [];
                 data3 = data3 || [];
                 data4 = data4 || [];
                 data5 = data5 || [];
+                data6 = data6 || [];
+                data7 = data7 || [];
 
                 for (i = data1.length - 1; i >= 0; i--) {
                     if (data1[i] && !data1[i].sum || data1[i].sum === 0) {
@@ -1857,8 +1879,26 @@ define([
                     }
                 }
 
-                arrData = _.union(_.pluck(data1, 'salesPerson'), _.pluck(data2, 'salesPerson'), _.pluck(data3, 'salesPerson'), _.pluck(data4, 'salesPerson'));
-                arrSum = _.map(_.groupBy(_.union(data1, data2, data3, data4), 'salesPerson'), function (el) {
+                for (i = data5.length - 1; i >= 0; i--) {
+                    if (data5[i] && !data5[i].sum || data5[i].sum === 0) {
+                        data5.splice(i, 1);
+                    }
+                }
+
+                for (i = data6.length - 1; i >= 0; i--) {
+                    if (data6[i] && !data6[i].sum || data6[i].sum === 0) {
+                        data6.splice(i, 1);
+                    }
+                }
+
+                for (i = data7.length - 1; i >= 0; i--) {
+                    if (data7[i] && !data7[i].sum || data7[i].sum === 0) {
+                        data7.splice(i, 1);
+                    }
+                }
+
+                arrData = _.union(_.pluck(data1, 'salesPerson'), _.pluck(data2, 'salesPerson'), _.pluck(data3, 'salesPerson'), _.pluck(data4, 'salesPerson'), _.pluck(data5, 'salesPerson'), _.pluck(data6, 'salesPerson'), _.pluck(data7, 'salesPerson'));
+                arrSum = _.map(_.groupBy(_.union(data1, data2, data3, data4, data5, data6, data7), 'salesPerson'), function (el) {
                     return _.reduce(el, function (memo, num) {
                         return memo + num.sum;
                     }, 0);
@@ -1937,7 +1977,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#4CC3D9')
+                    .style('fill', colorMap.bar)
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar2')
@@ -1970,7 +2010,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#7BC8A4')
+                    .style('fill', colorMap.bar2)
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar3')
@@ -2009,7 +2049,7 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#EB6E44')
+                    .style('fill', colorMap.bar3)
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar4')
@@ -2054,11 +2094,11 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#FFC65D')
+                    .style('fill', colorMap.bar4)
                     .style('opacity', '0.8');
 
                 chart.selectAll('.bar5')
-                    .data(data4)
+                    .data(data5)
                     .enter()
                     .append('rect')
                     .attr('class', 'bar5')
@@ -2105,7 +2145,109 @@ define([
                     .attr('width', function (d) {
                         return x(d.sum);
                     })
-                    .style('fill', '#93648D')
+                    .style('fill', colorMap.bar5)
+                    .style('opacity', '0.8');
+
+                chart.selectAll('.bar6')
+                    .data(data6)
+                    .enter()
+                    .append('rect')
+                    .attr('class', 'bar6')
+                    .attr('x', function (d) {
+                        var x0 = 0;
+
+                        data1.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data2.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data3.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data4.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        return x0;
+                    })
+                    .attr('y', function (d) {
+                        var range = y.rangeBand();
+                        var difference = range > 70 ? ((range - 70) / 2) : 0;
+
+                        return y(d.salesPerson) + difference;
+                    })
+                    .attr('height', function () {
+                        var range = y.rangeBand();
+
+                        return range > 70 ? 70 : range;
+                    })
+                    .attr('width', function (d) {
+                        return x(d.sum);
+                    })
+                    .style('fill', colorMap.bar6)
+                    .style('opacity', '0.8');
+
+                chart.selectAll('.bar7')
+                    .data(data7)
+                    .enter()
+                    .append('rect')
+                    .attr('class', 'bar7')
+                    .attr('x', function (d) {
+                        var x0 = 0;
+
+                        data1.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data2.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data3.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data4.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        return x0;
+                    })
+                    .attr('y', function (d) {
+                        var range = y.rangeBand();
+                        var difference = range > 70 ? ((range - 70) / 2) : 0;
+
+                        return y(d.salesPerson) + difference;
+                    })
+                    .attr('height', function () {
+                        var range = y.rangeBand();
+
+                        return range > 70 ? 70 : range;
+                    })
+                    .attr('width', function (d) {
+                        return x(d.sum);
+                    })
+                    .style('fill', colorMap.bar7)
                     .style('opacity', '0.8');
 
                 chart.selectAll('.x .tick line')
