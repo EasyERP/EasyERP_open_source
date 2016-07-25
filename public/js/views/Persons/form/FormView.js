@@ -7,7 +7,7 @@ define([
     'views/Editor/NoteView',
     'views/Editor/AttachView',
     'views/Companies/formPropertyView',
-    'views/Opportunities/formProperty/formPropertyView',
+   /* 'views/Opportunities/formProperty/formPropertyView',*/
     'common',
     'constants',
     'dataService',
@@ -17,10 +17,10 @@ define([
              _,
              personFormTemplate,
              aboutTemplate,
-             NoteView,
+             EditorView,
              AttachView,
              CompanyFormProperty,
-             OpportunityFormProperty,
+           /*  OpportunityFormProperty,*/
              common,
              CONSTANTS,
              dataService,
@@ -50,76 +50,101 @@ define([
             'keyup .editable'                                  : 'setChangeValueToModel',
             'click #cancelBtn'                                 : 'cancelChanges',
             'click #saveBtn'                                   : 'saveChanges',
-            'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
+        hideNewSelect: function () {
+            this.$el.find('.newSelectList').hide();
 
-        saveClick: function (e) {
-            var parent = $(e.target).parent().parent();
-            var objIndex = parent[0].id.split('_'); // replace change to split;
-            var currentModel = this.model;
-            var newModel = {};
-            var oldvalue = {};
-            var $thisEl = this.$el;
-            var self = this;
-            var param;
-            var valid;
-            var i;
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+        },
 
+        setChangeValueToModel: function (e) {
+            var $target = $(e.target);
+            var property = $target.attr('data-id').replace('_', '.');
+            var value = $target.val();
+
+            this.modelChanged[property] = value;
+            this.showButtons();
+        },
+
+        showButtons: function () {
+            this.$el.find('#formBtnBlock').addClass('showButtons');
+        },
+
+        hideButtons: function () {
+            this.$el.find('#formBtnBlock').removeClass('showButtons');
+        },
+
+        saveChanges: function (e) {
             e.preventDefault();
+            this.savePerson(this.modelChanged);
+        },
 
-            if (objIndex.length > 1) {
-                for (i in this.formModel.toJSON()[objIndex[0]]) {
-                    oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
-                }
+        cancelChanges: function (e) {
+            e.preventDefault();
+            this.modelChanged = {};
+            this.renderAbout();
+        },
 
-                param = currentModel.get(objIndex[0]) || {};
-                param[objIndex[1]] = $('#editInput').val();
-                newModel[objIndex[0]] = param;
-            } else {
-                oldvalue = this.formModel.toJSON()[objIndex[0]];
-                newModel[objIndex[0]] = $('#editInput').val();
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
             }
 
-            //console.log(newModel);
+            if (this.selectView) {
+                this.selectView.remove();
+            }
 
-            valid = this.formModel.save(newModel, {
-                headers: {
-                    mid: this.mId
-                },
+            this.selectView = new SelectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
 
+            $target.append(this.selectView.render().el);
+
+            return false;
+        },
+
+        chooseOption: function (e) {
+            var $target = $(e.target);
+            var holder = $target.parents('.inputBox').find('.current-selected');
+            var type = $target.closest('a').attr('data-id');
+            var text = $target.text();
+            var id = $target.attr('id');
+
+            holder.text($target.text());
+
+            this.modelChanged[type] = id;
+            this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+            this.showButtons();
+        },
+
+        savePerson: function (changedAttrs, type) {
+            var self = this;
+
+            this.formModel.save(changedAttrs, {
                 patch  : true,
-                success: function (model) {
-                    App.render({
-                        type   : 'notify',
-                        message: "Saving is successfully"
-                    });
-                    $thisEl.find('.quickEdit #editInput').remove();
-                    $thisEl.find('.quickEdit #cancelSpan').remove();
-                    $thisEl.find('.quickEdit #saveSpan').remove();
-
-                    if (self.prevQuickEdit) {
-                        if ($thisEl.find('#' + self.prevQuickEdit.id).hasClass('quickEdit')) {
-                            if ($thisEl.find('#' + self.prevQuickEdit.id).hasClass('with-checkbox')) {
-                                $thisEl.find('#' + self.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($thisEl.find('#' + self.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
-                                $thisEl.find('.quickEdit').removeClass('quickEdit');
-                            } else if (self.prevQuickEdit.id === 'email') {
-                                $thisEl.find('#' + self.prevQuickEdit.id).append('<a href="mailto:' + self.text + '">' + self.text + '</a>');
-                                $thisEl.find('.quickEdit').removeClass('quickEdit');
-                            } else {
-                                $thisEl.find('.quickEdit').text(self.text || '').removeClass('quickEdit');
-                            }
-                        }
+                success: function () {
+                    if (type === 'formProperty') {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
+                    } else if (type === 'tags') {
+                        self.renderTags();
+                    } else {
+                        self.editorView.renderTimeline();
+                        self.modelChanged = {};
+                        self.hideButtons();
                     }
-
-                    //self.io.emit('editPerson');
-                    //Backbone.history.fragment = '';
-                    //Backbone.history.navigate('#easyErp/Persons/form/' + model.id, {trigger: true});
                 },
-
-                error: function (model, response) {
+                error  : function (model, response) {
                     if (response) {
                         App.render({
                             type   : 'error',
@@ -128,40 +153,85 @@ define([
                     }
                 }
             });
-
-            if (!valid) {
-                newModel[objIndex[0]] = oldvalue;
-                this.formModel.set(newModel);
-            }
         },
 
-        toggle: function () {
-            this.$('#details').animate({
-                height: 'toggle'
-            }, 250, function () {
+        deleteItems: function () {
+            var mid = 39;
+
+            this.formModel.destroy({
+                headers: {
+                    mid: mid
+                },
+                success: function () {
+                    Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
+                }
+            });
+
+        },
+
+        renderAbout : function (){
+            var self = this;
+            var $thisEl = this.$el;
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            this.renderTags();
+            $thisEl.find('#nextAction').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged['nextAction.date'] = new Date(dateText);
+                    self.showButtons();
+                }
 
             });
         },
 
         render: function () {
             var formModel = this.formModel.toJSON();
+            var self = this;
             var $thisEl = this.$el;
 
             $thisEl.html(_.template(personFormTemplate, formModel));
-            this.renderMiniOpp();
-            $thisEl.find('.formLeftColumn').append(
-                new NoteView({
+
+            this.formProperty = new CompanyFormProperty({
+                parentModel: this.formModel,
+                attribute  : 'company',
+                saveDeal   : self.savePerson
+            });
+
+            $thisEl.find('#companyHolder').html(
+                this.formProperty.render().el
+            );
+
+            /*$thisEl.find('#opportuntiesHolder').html(
+                new OpportunityFormProperty({
+                    parentModel: this.formModel,
+                    data       : formModel.customer,
+                    attribute  : 'contact',
+                    saveModel  : self.savePerson
+                }).render().el
+            );*/
+
+            this.editorView = new EditorView({
+                model      : this.formModel,
+                contentType: 'persons'
+            });
+
+            $thisEl.find('.notes').append(
+                this.editorView.render().el
+            );
+
+            $thisEl.find('.attachments').append(
+                new AttachView({
                     model      : this.formModel,
-                    contentType: 'Persons'
+                    contentType: 'opportunities'
                 }).render().el
             );
 
-            $(window).on('resize', function () {
-                $('#editInput').width($('#editInput').parent().width() - 55);
-
-            });
             return this;
-        },
+        }
+
+
 
     });
 
