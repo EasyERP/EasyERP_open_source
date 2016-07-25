@@ -4585,6 +4585,7 @@ table.kanban tbody td:nth-child(n+2) {
   line-height: 38px !important;
   cursor: pointer;
   color: #000000;
+  border-radius: 3px;
 }
 .newTasksContainer .topCell .hasDatepicker i,
 .newTasksContainer .topCell .current-selected i {
@@ -4599,9 +4600,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .newTasksContainer .showSelect {
   position: relative;
-  display: table;
   width: 100%;
-  min-height: 40px;
   margin-top: 10px;
 }
 .newTasksContainer .showSelect .imgContainer,
