@@ -9,14 +9,39 @@
 
   .frameDetail {
     position: absolute;
-    top: 30px;
+    top: 24px;
+    left: -1px;
+    width: 210px;
     background: @white;
     padding: 10px;
     border: 1px solid @black;
     z-index: 10;
 
     .buttons {
+      width: 100%;
       margin-top: 10px;
+    }
+  }
+}
+
+.customTimeLeadsBySource,
+.customTimeLeadsBySale {
+  .customTimeItem {
+    padding: 4px 20px;
+
+    > label {
+      float: left;
+    }
+
+    > input {
+      width: 110px;
+      float: right;
+    }
+
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
     }
   }
 }

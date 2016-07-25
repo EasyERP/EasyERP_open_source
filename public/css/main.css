@@ -4673,6 +4673,64 @@ table.kanban tbody td:nth-child(n+2) {
 .ui-datepicker {
   min-width: 175px;
 }
+.dropDownDateRangeContainer {
+  position: relative;
+  height: 22px;
+  width: 110px;
+  float: right;
+  margin: 0 20px;
+}
+.dropDownDateRangeContainer.left {
+  float: left;
+}
+.choseDateRange.dropDownDateRange {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  height: 22px;
+  min-width: 110px;
+  border: 1px solid #333333;
+  padding: 1px 33px 3px 10px;
+  margin-right: 0;
+  background: #ffffff;
+  overflow: hidden;
+  z-index: 10;
+}
+.choseDateRange.dropDownDateRange.open {
+  height: auto;
+}
+.choseDateRange.dropDownDateRange.open .selectArrow {
+  transform: rotate(180deg);
+}
+.choseDateRange.dropDownDateRange .item {
+  padding: 0;
+  float: none;
+  margin-left: 0 !important;
+  min-height: 20px !important;
+  line-height: 18px;
+  margin-bottom: 5px;
+  text-align: center;
+  border: none;
+  background: none;
+  white-space: nowrap;
+  order: 1;
+}
+.choseDateRange.dropDownDateRange .item.active {
+  order: 0;
+  background: none;
+  color: #000000;
+}
+.choseDateRange.dropDownDateRange .selectArrow {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  height: 0;
+  width: 0;
+  border-top: 5px solid #333333;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  cursor: pointer;
+}
 .newTasksContainer {
   padding-top: 30px !important;
 }
@@ -4901,14 +4959,36 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .vocationFilter .frameDetail {
   position: absolute;
-  top: 30px;
+  top: 24px;
+  left: -1px;
+  width: 210px;
   background: #ffffff;
   padding: 10px;
   border: 1px solid #000000;
   z-index: 10;
 }
 .vocationFilter .frameDetail .buttons {
+  width: 100%;
   margin-top: 10px;
+}
+.customTimeLeadsBySource .customTimeItem,
+.customTimeLeadsBySale .customTimeItem {
+  padding: 4px 20px;
+}
+.customTimeLeadsBySource .customTimeItem > label,
+.customTimeLeadsBySale .customTimeItem > label {
+  float: left;
+}
+.customTimeLeadsBySource .customTimeItem > input,
+.customTimeLeadsBySale .customTimeItem > input {
+  width: 110px;
+  float: right;
+}
+.customTimeLeadsBySource .customTimeItem:after,
+.customTimeLeadsBySale .customTimeItem:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 .chartTopBox {
   position: relative;
@@ -9608,7 +9688,7 @@ dl dd span.ui-spinner {
   text-align: left !important;
   font-size: 14px !important;
   line-height: 16px;
-  padding-left: 20px;
+  padding: 0 0 2px 20px;
 }
 .filterValues.checked:hover {
   cursor: pointer;
