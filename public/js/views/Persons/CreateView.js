@@ -176,6 +176,7 @@ define([
                 buttons      : [
                     {
                         id   : 'create-person-dialog',
+                        class: 'btnRounded btnSave',
                         text : 'Create',
                         click: function () {
                             self.saveItem();
@@ -184,6 +185,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btnRounded',
                         click: function () {
                             self.hideDialog();
                         }

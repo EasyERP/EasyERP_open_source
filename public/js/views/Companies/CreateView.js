@@ -176,12 +176,14 @@ define([
                 buttons      : [
                     {
                         text : 'Create',
+                        class: 'btnRounded btnSave',
                         click: function () {
                             self.saveItem();
                         }
                     },
                     {
                         text : 'Cancel',
+                        class: 'btnRounded',
                         click: self.hideDialog
                     }]
             });
