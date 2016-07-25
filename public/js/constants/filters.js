@@ -685,7 +685,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['workflow', 'supplier']
         },
 
         PayrollExpenses: {

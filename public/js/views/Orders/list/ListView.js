@@ -25,10 +25,6 @@ define([
         contentType      : 'Orders',
         hasPagination    : true,
 
-        events: {
-            'click .list tbody td:not(.notForm)': 'goToEditDialog'
-        },
-
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -38,6 +34,7 @@ define([
                 type : 'boolean',
                 value: ['false']
             };
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             this.forSales = false;
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -98,6 +95,20 @@ define([
 
         },
 
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
+        },
+
         hideNewSelect: function () {
             $('.newSelectList').remove();
         },
@@ -133,7 +144,7 @@ define([
             });
         },
 
-        goToEditDialog: function (e) {
+       /* goToEditDialog: function (e) {
             var tr = $(e.target).closest('tr');
             var id = tr.data('id');
             var url = 'easyErp/' + this.contentType + '/form/' + id;
@@ -148,7 +159,7 @@ define([
             }
 
 
-            /*model.urlRoot = '/orders/';
+            /!*model.urlRoot = '/orders/';
             model.fetch({
                 data: {
                     id      : id,
@@ -165,10 +176,10 @@ define([
                         message: 'Please refresh browser'
                     });
                 }
-            });*/
+            });*!/
 
             Backbone.history.navigate(url, {trigger: true});
-        }
+        }*/
 
     });
     return OrdersListView;

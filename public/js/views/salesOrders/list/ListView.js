@@ -59,7 +59,8 @@ define([
                 value: ['true']
             };
 
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';            this.startTime = options.startTime;
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.sort = options.sort;
@@ -148,7 +149,6 @@ define([
             }
 
             App.ownContentType = true;
-            console.log('url => ', url);
             Backbone.history.navigate(url, {trigger: true});
         },
 

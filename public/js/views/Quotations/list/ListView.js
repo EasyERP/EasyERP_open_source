@@ -46,7 +46,6 @@ define([
 
         events: {
             'click .stageSelect'                 : selectService.showStageSelect,
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
             'click .newSelectList li'            : 'chooseOption'
         },
 
@@ -54,7 +53,8 @@ define([
             var self = this;
             $(document).off('click');
 
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';            self.startTime = options.startTime;
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            self.startTime = options.startTime;
             self.collection = options.collection;
             self.parrentContentId = options.collection.parrentContentId;
             self.sort = options.sort;
