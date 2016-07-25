@@ -1612,7 +1612,7 @@ define([
                                 .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()))
                                 .attr('transform', 'rotate(90,'+ xVal + ','+ yVal +')');
                         })
-                        .on('mouseout', function (d) {
+                        .on('mouseleave', function (d) {
                             d3.select(this)
                                 .style('stroke-width', '0');
 
@@ -1625,6 +1625,10 @@ define([
                         'class'      : 'tip',
                         'font-size'  : '12',
                         'text-anchor': 'middle'
+                    })
+                    .on('mouseover', function(d, e){
+                        console.log(this.attributes)
+
                     });
 
                 $('svg.opportunitieAgingCount').empty();
@@ -2768,7 +2772,7 @@ define([
                 startDay: this.startDate,
                 endDay  : this.endDate
             }, function (data) {
-
+                console.log(data)
                 function position() {
                     this.style('left', function (d) {
                         return d.x + 'px';
