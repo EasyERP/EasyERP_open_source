@@ -260,7 +260,7 @@ define([
             }
         }
 
-        viewVariants = ['kanban', 'list', 'form', 'thumbnails'];
+        viewVariants = ['kanban', 'list', 'form', 'thumbnails', 'tform'];
 
         if ($.inArray(App.currentViewType, viewVariants) === -1) {
             App.currentViewType = 'thumbnails';
@@ -289,7 +289,7 @@ define([
     };
 
     var setCurrentVT = function (viewType) {
-        var viewVariants = ['kanban', 'list', 'form', 'thumbnails'];
+        var viewVariants = ['kanban', 'list', 'form', 'thumbnails', 'tform'];
 
         if (viewVariants.indexOf(viewType) !== -1) {
             App.currentViewType = viewType;

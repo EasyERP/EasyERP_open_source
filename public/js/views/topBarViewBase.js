@@ -110,6 +110,12 @@ define([
 
             $('title').text(this.contentType);
 
+            if (viewType && viewType === 'tform') {
+                this.$el.addClass('position');
+            } else {
+                this.$el.removeClass('position');
+            }
+
             this.$el.html(this.template({
                 viewType     : viewType,
                 contentType  : this.contentType,

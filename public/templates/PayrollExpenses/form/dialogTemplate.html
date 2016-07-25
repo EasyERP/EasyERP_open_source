@@ -24,7 +24,7 @@
         <%wagesPayable.forEach(function (journalEntry, index) {%>
         <% if (journalEntry.debit){ %>
         <tr data-id="<%=journalEntry._id%>" class="mainTr">
-            <td class="centerCell"><%=index + 1%></td>
+            <td><%=index + 1%></td>
             <td><%=journalEntry.employee%></td>
             <td><%=dateFormat(journalEntry.date)%></td>
             <td><%=journalEntry.journalName%></td>
@@ -35,7 +35,7 @@
         </tr>
         <%} else {%>
         <tr data-id="<%=journalEntry._id%>" class="mainTr">
-            <td class="centerCell"><%=index + 1%></td>
+            <td><%=index + 1%></td>
             <td><%=journalEntry.employee%></td>
             <td><%=dateFormat(journalEntry.date)%></td>
             <td><%=journalEntry.journalName%></td>
