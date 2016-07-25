@@ -49,7 +49,7 @@ dbObject.once('open', function callback() {
                         email  : data.email,
                         phones : data.phones,
                         company: company._id,
-                       /* social : data.social,*/
+                       /* social : data.social, //toDo mongoErr : 'writeEPIPE'*/
                         skype  : data.skype,
 
                         salesPurchases: {

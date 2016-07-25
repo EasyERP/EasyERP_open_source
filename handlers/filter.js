@@ -1813,6 +1813,13 @@ var Filters = function (models) {
             }
         }, {
             $lookup: {
+                from        : 'Customers',
+                localField  : 'customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $lookup: {
                 from        : 'Users',
                 localField  : 'createdBy.user',
                 foreignField: '_id',
@@ -1822,15 +1829,15 @@ var Filters = function (models) {
             $project: {
                 workflow        : {$arrayElemAt: ['$workflow', 0]},
                 source          : 1,
-                contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
                 salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                customer        : {$arrayElemAt: ['$customer', 0]},
                 'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]}
             }
         }, {
             $project: {
                 workflow   : 1,
                 source     : 1,
-                contactName: 1,
+                contactName:  {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
                 salesPerson: {
                     _id : '$salesPerson._id',
                     name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
