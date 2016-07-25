@@ -58,8 +58,8 @@
                             <div class="half-block left">
                                 <dl class="person-info">
                                     <dt><label for="orderDate">Order Date</label></dt>
-                                    <dd>
-                                        <input class="extrainfo" type="text" name="orderDate" id="orderDate"
+                                    <dd >
+                                        <input class="extrainfo editable" type="text" name="orderDate" id="orderDate"
                                                placeholder="Order Date" value="<%=model.orderDate%>">
                                     </dd>
                                     <dt class="hidden"><label for="deliveryDd">Deliver To</label></dt>
@@ -74,7 +74,7 @@
 
                                     <dt><label for="currencyDd">Currency</label></dt>
                                     <dd>
-                                        <a id="currencyDd" class="current-selected"
+                                        <a id="currencyDd" class="current-selected editable"
                                            data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
                                            href="javascript:;"><%= model.currency && model.currency._id ?
                                             model.currency._id.name : ''%></a>

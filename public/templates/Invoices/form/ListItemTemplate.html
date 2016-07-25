@@ -1,5 +1,5 @@
 <table id="listTable">
-    <% orders.forEach(function(order, index){ %>
+    <% invoices.forEach(function(invoice, index){ %>
     <tr class="compactView" data-id="<%=quotation._id%>">
         <td class="checkboxRow">
             <label>
@@ -9,13 +9,13 @@
         <td>
             <div class="compactRowWrap">
                 <div class="compactRow">
-                    <div class="firstName"><%- order.name%></div>
-                    <div class="country"><%= order.supplier.name.last %></div>
-                    <div class="country"><%= order.orderDate %></div>
+                    <div class="firstName"><%- invoice.name%></div>
+                    <div class="country"><%= invoice.supplier.name.last %></div>
+                    <div class="country"><%= invoice.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="email"><%= order.paymentInfo.total %></div>
-                    <div class="phone"><%= order.paymentInfo.unTaxed %></div>
+                    <div class="email"><%= invoice.paymentInfo.total %></div>
+                    <div class="phone"><%= invoice.paymentInfo.unTaxed %></div>
                 </div>
             </div>
         </td>
