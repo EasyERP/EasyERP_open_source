@@ -3,29 +3,25 @@
     <form method="post" action="" id="createPersonsForm" class="form">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    <li><a href="javascript:;">Assignees</a></li>
-                    <li class="right">
-                        <%if(model.workflow && model.workflow.name !== 'Canceled'){%>
-                        <button class="createProforma">
-                            <span>Create Proforma</span>
-                        </button>
-                        <button class="confirmOrder">
-                            <span>Confirm Order</span>
-                        </button>
-                        <!--<button class="cancelQuotation">-->
-                        <!--<span>Cancel</span>-->
-                        <!--</button>-->
-                        <%} else {%>
-                            <button class="setDraft">
-                                <span>Set Draft</span>
-                            </button>
-                        <%}%>
-                    </li>
-                </ul>
+                <div class="right">
+                    <%if(model.workflow && model.workflow.name !== 'Canceled'){%>
+                    <button class="createProforma">
+                        <span>Create Proforma</span>
+                    </button>
+                    <button class="confirmOrder">
+                        <span>Confirm Order</span>
+                    </button>
+                    <!--<button class="cancelQuotation">-->
+                    <!--<span>Cancel</span>-->
+                    <!--</button>-->
+                    <%} else {%>
+                    <button class="setDraft">
+                        <span>Set Draft</span>
+                    </button>
+                    <%}%>
+                </div>
                 <div class="clearfix"></div>
-                <div class="dialog-tabs-items mainTabs">
+                <div class="dialog-tabs-items mainTabs quotationsTabs">
                     <div class="dialog-tabs-item mainTabs active">
                         <div class="topInputHolder">
                             <%if(visible) {%>
