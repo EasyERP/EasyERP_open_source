@@ -4713,6 +4713,13 @@ table.kanban tbody td:nth-child(n+2) {
   right: 0;
   transform: translate(0, -50%);
 }
+.quotationsTabs .selectJobTd {
+  position: relative;
+  overflow: visible;
+}
+.quotationsTabs .selectJobTd .newSelectList {
+  right: 0;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
