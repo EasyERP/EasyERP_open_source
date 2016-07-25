@@ -173,6 +173,7 @@ define([
             model = new this.ContentModel();
             model.urlRoot = model.url() + modelId;
 
+
             model.fetch({
                 success: function (model) {
 

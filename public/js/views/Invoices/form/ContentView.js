@@ -21,7 +21,7 @@ define([
         CreateView     : CreateView,
         ListItemView   : ListItemView,
         listUrl        : 'easyErp/Invoices/list/',
-        contentType    : CONSTANTS.SALESINVOICES, // needs in view.prototype.changeLocationHash
+        contentType    : CONSTANTS.INVOICES, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
         hasAlphabet    : false,

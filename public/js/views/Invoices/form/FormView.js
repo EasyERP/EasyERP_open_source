@@ -71,7 +71,7 @@ define([
 
             this.notCreate = options.notCreate ? false : true;
 
-            this.render();
+            //this.render();
 
             App.stopPreload();
         },

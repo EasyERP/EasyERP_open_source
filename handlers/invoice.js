@@ -84,6 +84,8 @@ var Module = function (models, event) {
 
         function invoiceSaver(waterfallCb) {
 
+
+
             invoice = new Invoice(body);
 
             if (req.session.uId) {
