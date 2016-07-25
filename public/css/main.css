@@ -4680,16 +4680,21 @@ table.kanban tbody td:nth-child(n+2) {
   float: right;
   margin: 0 20px;
 }
+.dropDownDateRangeContainer.left {
+  float: left;
+}
 .choseDateRange.dropDownDateRange {
   position: absolute;
   display: flex;
   flex-direction: column;
   height: 22px;
-  width: 110px;
+  min-width: 110px;
   border: 1px solid #333333;
   padding: 1px 33px 3px 10px;
   margin-right: 0;
+  background: #ffffff;
   overflow: hidden;
+  z-index: 10;
 }
 .choseDateRange.dropDownDateRange.open {
   height: auto;
@@ -4707,6 +4712,7 @@ table.kanban tbody td:nth-child(n+2) {
   text-align: center;
   border: none;
   background: none;
+  white-space: nowrap;
   order: 1;
 }
 .choseDateRange.dropDownDateRange .item.active {

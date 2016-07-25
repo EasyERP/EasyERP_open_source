@@ -131,7 +131,7 @@
         <h3 class="dashboard">What is the conversion rate per Sale?</h3>
         <div class="clearfixNew">
             <div class="dropDownDateRangeContainer">
-                <div class="choseDateRange dropDownDateRange" data-type="sale">
+                <div class="choseDateRange dropDownDateRange" data-type="opportunitieConversion">
                     <div class="item active" data-day="7">7D</div>
                     <div class="item" data-day="30">30D</div>
                     <div class="item" data-day="90">90D</div>
@@ -206,7 +206,7 @@
         <h3 class="dashboard">What stage are my opportunities in?</h3>
         <div>
             <div class="dropDownDateRangeContainer">
-                <div class="choseDateRange dropDownDateRange" data-type="sale">
+                <div class="choseDateRange dropDownDateRange" data-type="opportunitie">
                     <div class="item active" data-day="7">7D</div>
                     <div class="item" data-day="30">30D</div>
                     <div class="item" data-day="90">90D</div>
@@ -257,16 +257,19 @@
     </div>
     <div class="chart-tabs-item">
         <h3 class="dashboard">How many of our opportunities do we win?</h3>
-
-        <div data-type="winLost" class="choseDateItem">
-            <div class="item active" data-item="D">Day</div>
-            <div class="item" data-item="W">Week</div>
-            <div class="item" data-item="M">Month</div>
-            <div class="item" data-item="DW">Day of Week</div>
-            <div class="item" data-item="DM">Day of Month</div>
+        <div class="dropDownDateRangeContainer left">
+            <div class="choseDateRange dropDownDateRange choseDateItem" data-type="winLost">
+                <div class="item active" data-item="D">Day</div>
+                <div class="item" data-item="W">Week</div>
+                <div class="item" data-item="M">Month</div>
+                <div class="item" data-item="DW">Day of Week</div>
+                <div class="item" data-item="DM">Day of Month</div>
+                <span class="selectArrow"></span>
+            </div>
         </div>
+
         <div class="dropDownDateRangeContainer">
-            <div class="choseDateRange dropDownDateRange" data-type="sale">
+            <div class="choseDateRange dropDownDateRange" data-type="winLost">
                 <div class="item active" data-day="7">7D</div>
                 <div class="item" data-day="30">30D</div>
                 <div class="item" data-day="90">90D</div>
