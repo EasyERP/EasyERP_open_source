@@ -19,7 +19,7 @@ define([
         FormView     : null,
 
         events: {
-            'click .compactView:not(.checkbox)': 'renderFormView',
+            'click .compactView:not(.checkbox)': 'goToForm',
             'click .closeBtn'                  : 'returnToList',
             'click #sortBy'                    : 'openSortDrop'
         },
@@ -39,7 +39,7 @@ define([
 
             BaseView.prototype.initialize.call(this, options);
 
-            this.renderFormView(modelId);
+            this.addFormView(modelId);
         },
 
         openSortDrop: function (e) {
@@ -144,21 +144,28 @@ define([
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        renderFormView: function (e) {
-            var $thisEl = this.$el;
-            var $target;
-            var modelId;
-            var model;
-            var self = this;
+        addFormView: function (modelId) {
+            this.renderFormView(modelId);
+        },
+
+        goToForm: function (e) {
             var date = new Date();
+            var $thisEl = this.$el;
+            var $target = $(e.target);
+            var modelId = $target.closest('.compactView').data('id');
 
-            if (e.hasOwnProperty('target')) {
-                $target = $(e.target);
-                modelId = $target.closest('.compactView').data('id');
+            e.preventDefault();
 
-            } else {
-                modelId = e;
-            }
+            this.renderFormView(modelId, function () {
+                $thisEl.find('#timeRecivingDataFromServer').remove();
+                $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
+            });
+        },
+
+        renderFormView: function (modelId, cb) {
+            var $thisEl = this.$el;
+            var self = this;
+            var model;
 
             model = new this.ContentModel();
             model.urlRoot = model.url() + modelId;
@@ -175,15 +182,12 @@ define([
 
                     $thisEl.find('#listContent .selected').removeClass('selected');
                     $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
+
                     self.selectedId = model.id;
 
-                    self.changeLocationHash(self.collection.currentPage, self.collection.pageSize, self.filter);
-
-                    if (e.hasOwnProperty('target')) {
-                        $thisEl.find('#timeRecivingDataFromServer').remove();
-                        $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
+                    if (cb && typeof cb === 'function') {
+                        cb();
                     }
-
                 },
 
                 error: function () {

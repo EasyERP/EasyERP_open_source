@@ -41,30 +41,33 @@
     <%}%>
     <div class="clearfix"></div>
 
-    <div id="noteBody">
+    <div id="noteBody" class="">
         <% notes = notes || [];%>
         <% notes.reverse();
         _.each(notes, function(val,key){ %>
-        <div id="<%=val['_id'] %>" class="noteContainer">
+        <div id="<%=val['_id'] %>" class="noteContainer noteInner">
             <div class="noteTitle">
-                <span><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></span>
+                <span><%=val.title ? val.title.replace(/</g,"&#60;").replace(/>/g,"&#62;") : '' %></span>
             </div>
-            <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %>
+            <div class="noteText"><%=val.note? val.note.replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") : '' %>
             </div>
             <div>
-                <!--<a class="name" href="javascript:;"><%=val['author'] %></a>--><a class="name" href="javascript:;"><%=val['author']%> </a><span
-                    class="dateNote"><%=val['date'] %></span>
-                <%if (needNotes) {%>
+                <div>
+                    <a class="name" href="javascript:;">
+                        <%=val['author']%> </a>
+                    <span class="dateNote"><%=val['date'] %></span>
+                    <%if (needNotes) {%>
+                </div>
 
-                <div class="right">
-          <span>
-            <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
-               class="editDelNote editNote">Edit</a>
-          </span>
-                    <span class="sep">|</span>
-          <span>
-            <a href="javascript:;" id="del_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote">Del</a>
-          </span>
+                <div class="noteBtn">
+                  <span>
+                    <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
+                       class="btn btnrounded editDelNote editNote">Edit</a>
+                  </span>
+
+                  <span>
+                    <a href="javascript:;" id="del_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote btn btnrounded">Del</a>
+                  </span>
 
                 </div>
                 <%}%>

@@ -8,8 +8,8 @@ define([
         idAttribute: '_id',
 
         defaults: {
-            date                : new Date,
-            salary              : 0
+            date  : new Date,
+            salary: 0
         },
 
         urlRoot: function () {

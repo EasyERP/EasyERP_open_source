@@ -17,7 +17,7 @@ function childModule(callback) {
     var module = {
         _id     : 110,
         mname   : 'Tasks',
-        href    : 'dealTasks',
+        href    : 'DealTasks',
         sequence: 110,
         parrent : 19,
         link    : true,

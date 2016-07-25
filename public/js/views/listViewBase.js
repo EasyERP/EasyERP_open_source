@@ -283,6 +283,7 @@ define([
             }
 
             this.editCollection.save();
+            this.changedModels = {};
 
             this.deleteEditable();
         },

@@ -74,97 +74,97 @@ module.exports = function (models) {
      *
      * @apiSuccess {Object} DashboardVocation
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-{
-    "weeksArray": [
-        {
-            "lastDate": "01.07",
-            "dateByWeek": 201626,
-            "week": 26,
-            "year": 2016
-        },
-        ...
-    ],
-    "sortDepartments": [
-        {
-            "employees": [
-                {
-                    "isEmployee": true,
-                    "firstTransferDate": "2016-06-12T21:00:00.000Z",
-                    "lastTransferDate": "2016-06-12T21:00:00.000Z",
-                    "_lastTransferDate": 201624,
-                    "_firstTransferDate": 201624,
-                    "lastTransfer": "2016-06-12T21:00:00.000Z",
-                    "name": "Ihor Kalashniuk",
-                    "isTransfer": [
-                        {
-                            "status": "hired",
-                            "date": "2016-06-12T21:00:00.000Z"
-                        }
-                    ],
-                    "transferArr": [],
-                    "_id": "575fc0bb7330dff16a340390",
-                    "weekData": [
-                        {
-                            "lastDate": "01.07",
-                            "dateByWeek": 201626,
-                            "week": 26,
-                            "year": 2016,
-                            "holidays": 1,
-                            "vacations": 0
-                        },
-                        ...
-                    ],
-                    "maxProjects": 0
-                },
-                {
-                    "isEmployee": true,
-                    "isLead": 0,
-                    "firstTransferDate": "2016-02-01T00:00:00.000Z",
-                    "lastTransferDate": "2016-06-01T00:00:00.000Z",
-                    "_lastTransferDate": 201622,
-                    "_firstTransferDate": 201605,
-                    "lastTransfer": "2016-06-01T00:00:00.000Z",
-                    "name": "Maxim Holubka",
-                    "isTransfer": [
-                        {
-                            "status": "updated",
-                            "date": "2016-02-01T00:00:00.000Z"
-                        },
-                        {
-                            "status": "updated",
-                            "date": "2016-06-01T00:00:00.000Z"
-                        }
-                    ],
-                    "transferArr": [],
-                    "_id": "55b92ad221e4b7c40f0000a5",
-                    "weekData": [
-                        {
-                            "lastDate": "01.07",
-                            "dateByWeek": 201626,
-                            "week": 26,
-                            "year": 2016,
-                            "holidays": 1,
-                            "vacations": 0
-                        },
-                        {
-                            "lastDate": "08.07",
-                            "dateByWeek": 201627,
-                            "week": 27,
-                            "year": 2016,
-                            "holidays": 0,
-                            "vacations": 0
-                        },
-                        ...
-                    ],
-                    "maxProjects": 0
-                },
-               ...
-               ]
-            }
-            ...
-    ]
-}
+     HTTP/1.1 200 OK
+     {
+         "weeksArray": [
+             {
+                 "lastDate": "01.07",
+                 "dateByWeek": 201626,
+                 "week": 26,
+                 "year": 2016
+             },
+             ...
+         ],
+         "sortDepartments": [
+             {
+                 "employees": [
+                     {
+                         "isEmployee": true,
+                         "firstTransferDate": "2016-06-12T21:00:00.000Z",
+                         "lastTransferDate": "2016-06-12T21:00:00.000Z",
+                         "_lastTransferDate": 201624,
+                         "_firstTransferDate": 201624,
+                         "lastTransfer": "2016-06-12T21:00:00.000Z",
+                         "name": "Ihor Kalashniuk",
+                         "isTransfer": [
+                             {
+                                 "status": "hired",
+                                 "date": "2016-06-12T21:00:00.000Z"
+                             }
+                         ],
+                         "transferArr": [],
+                         "_id": "575fc0bb7330dff16a340390",
+                         "weekData": [
+                             {
+                                 "lastDate": "01.07",
+                                 "dateByWeek": 201626,
+                                 "week": 26,
+                                 "year": 2016,
+                                 "holidays": 1,
+                                 "vacations": 0
+                             },
+                             ...
+                         ],
+                         "maxProjects": 0
+                     },
+                     {
+                         "isEmployee": true,
+                         "isLead": 0,
+                         "firstTransferDate": "2016-02-01T00:00:00.000Z",
+                         "lastTransferDate": "2016-06-01T00:00:00.000Z",
+                         "_lastTransferDate": 201622,
+                         "_firstTransferDate": 201605,
+                         "lastTransfer": "2016-06-01T00:00:00.000Z",
+                         "name": "Maxim Holubka",
+                         "isTransfer": [
+                             {
+                                 "status": "updated",
+                                 "date": "2016-02-01T00:00:00.000Z"
+                             },
+                             {
+                                 "status": "updated",
+                                 "date": "2016-06-01T00:00:00.000Z"
+                             }
+                         ],
+                         "transferArr": [],
+                         "_id": "55b92ad221e4b7c40f0000a5",
+                         "weekData": [
+                             {
+                                 "lastDate": "01.07",
+                                 "dateByWeek": 201626,
+                                 "week": 26,
+                                 "year": 2016,
+                                 "holidays": 1,
+                                 "vacations": 0
+                             },
+                             {
+                                 "lastDate": "08.07",
+                                 "dateByWeek": 201627,
+                                 "week": 27,
+                                 "year": 2016,
+                                 "holidays": 0,
+                                 "vacations": 0
+                             },
+                             ...
+                         ],
+                         "maxProjects": 0
+                     },
+                    ...
+                    ]
+                 }
+                 ...
+         ]
+     }
      */
     router.get('/vacation', authStackMiddleware, accessStackMiddlewareVacation, cacheRetriver, handler.composeForVacation);
     // router.get('/vacation', handler.getFromCache);
@@ -178,8 +178,8 @@ HTTP/1.1 200 OK
      *
      * @apiSuccess {Object} DashboardHr
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-[
+     HTTP/1.1 200 OK
+     [
      {
        "_id": "hired",
        "data": [
@@ -299,7 +299,7 @@ HTTP/1.1 200 OK
       ...
       ]
     }
-]
+     ]
      */
     router.get('/hr', authStackMiddleware, accessStackMiddlewareHR, handler.composeForHr);
 
