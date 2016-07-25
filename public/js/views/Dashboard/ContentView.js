@@ -1597,7 +1597,7 @@ define([
                             'height': y.rangeBand() - 2 * verticalBarSpacing,
                             'fill'  : colorMap[dataEl.workflow]
                         })
-                        .on('mouseover', function (d) {
+                        .on('mouseenter', function (d) {
                             var attrs = this.attributes;
                             var xVal =  parseFloat(attrs.x.value) + attrs.width.value / 2;
                             var yVal = parseFloat(attrs.y.value) + attrs.height.value / 2;
@@ -1605,14 +1605,22 @@ define([
                             d3.select(this)
                                 .style('stroke-width', '3')
                                 .attr('stroke', colorMap.barStroke);
-                            
+
                             tip
                                 .attr('x', xVal)
                                 .attr('y', (yVal + 5))
                                 .text('$' + helpers.currencySplitter(dataEl[d + '_Sum'].toString()))
                                 .attr('transform', 'rotate(90,'+ xVal + ','+ yVal +')');
                         })
-                        .on('mouseleave', function (d) {
+                        .on('mouseout', function (d) {
+
+                            if(d3.event.relatedTarget.attributes){
+
+                              if(d3.event.relatedTarget.attributes.class.value === 'tip'){
+                                  return;
+                              }
+                           }
+
                             d3.select(this)
                                 .style('stroke-width', '0');
 
@@ -1625,10 +1633,6 @@ define([
                         'class'      : 'tip',
                         'font-size'  : '12',
                         'text-anchor': 'middle'
-                    })
-                    .on('mouseover', function(d, e){
-                        console.log(this.attributes)
-
                     });
 
                 $('svg.opportunitieAgingCount').empty();
@@ -1741,6 +1745,14 @@ define([
                                 .attr('transform', 'rotate(90,'+ xVal + ','+ yVal +')');
                         })
                         .on('mouseout', function (d) {
+
+                            if(d3.event.relatedTarget.attributes){
+
+                                if(d3.event.relatedTarget.attributes.class.value === 'tip'){
+                                    return;
+                                }
+                            }
+
                             d3.select(this)
                                 .style('stroke-width', '0');
 
