@@ -67,171 +67,7 @@ define([
             'click .confirmOrder'   : 'confirmOrder',
             'click .createProforma' : 'createProforma',
             'click .cancelQuotation': 'cancelQuotation',
-            'click .setDraft'       : 'setDraft',
-            'click .editable'       : 'editItem',
-            'click #saveSpan'       : 'saveClick',
-            'click #cancelSpan'     : 'cancelClick'
-            //'click #editSpan'       : 'editClick',
-            //'click #cancelSpan'     : 'cancelClick',
-            //'click #saveSpan'       : 'saveClick'
-        },
-
-        cancelClick: function (e) {
-            e.preventDefault();
-
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
-            $('.quickEdit').text(this.text).removeClass('quickEdit');
-            //Backbone.history.fragment = '';
-            //Backbone.history.navigate('#easyErp/Companies/form/' + this.formModel.id, {trigger: true});
-        },
-
-        saveClick: function (e) {
-            var parent = $(e.target).parent().parent();
-            var objIndex = parent[0].id.split('_');
-            var currentModel = this.formModel;
-            var newModel = {};
-            var oldvalue = {};
-            var mid = this.mId;
-            var self = this;
-            var param;
-            var valid;
-            var i;
-
-            this.text = $('#' + parent[0].id).find('#editInput').val();
-
-            e.preventDefault();
-
-            if (objIndex.length > 1) {
-                for (i in this.formModel.toJSON()[objIndex[0]]) {
-                    oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
-                }
-                param = currentModel.get(objIndex[0]) || {};
-                param[objIndex[1]] = $('#editInput').val().replace('http://', '');
-                newModel[objIndex[0]] = param;
-            } else {
-                oldvalue = this.formModel.toJSON()[objIndex[0]];
-                newModel[objIndex[0]] = $('#editInput').val().replace('http://', '');
-            }
-
-            valid = this.formModel.save(newModel, {
-                headers: {
-                    mid: mid
-                },
-
-                patch  : true,
-                success: function (model) {
-                    App.render({
-                        type   : 'notify',
-                        message: "Saving is successfully"
-                    });
-
-                    $('.quickEdit #editInput').remove();
-                    $('.quickEdit #cancelSpan').remove();
-                    $('.quickEdit #saveSpan').remove();
-                    $('.quickEdit').text(self.text).removeClass('quickEdit');
-                    //Backbone.history.fragment = '';
-                    //Backbone.history.navigate('#easyErp/Companies/form/' + model.id, {trigger: true});
-                },
-
-                error: function (model, response) {
-                    if (response) {
-                        App.render({
-                            type   : 'error',
-                            message: response.error
-                        });
-                    }
-                }
-            });
-
-            if (!valid) {
-                newModel[objIndex[0]] = oldvalue;
-                this.formModel.set(newModel);
-            }
-        },
-
-        editItem: function (e) {
-            var maxlength = $('#' + $(e.target).parent().parent()[0].id).find('.no-long').attr('data-maxlength') || 32;
-            var parent;
-
-            e.preventDefault();
-
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
-            //$('.quickEdit').text(this.text).removeClass('quickEdit');
-
-            parent = $(e.target).parent().parent();
-            $('#' + parent[0].id).addClass('quickEdit');
-            $('#editSpan').remove();
-            this.text = $('#' + parent[0].id).text();
-            $('#' + parent[0].id).text('');
-            $('#' + parent[0].id).append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
-            $('#editInput').val(this.text);
-            $('#' + parent[0].id).append('<span id="saveSpan"><a href="#">c</a></span>');
-            $('#' + parent[0].id).append('<span id="cancelSpan"><a href="#">x</a></span>');
-            //$('#' + parent[0].id).find('#editInput').width($('#' + parent[0].id).find('#editInput').width() - 50);
-
-            /* var $currEl = $('#' + e.target.id);
-             var currentValue = $currEl.val();
-             var currentModel = this.currentModel;
-             var self = this;
-             var newModel = {};
-             var valid;
-             var otherValue;
-             var $parent = $('#' + e.target.id).parent().parent();
-
-             console.log($currEl.parent());
-
-             $parent.find('#saveItem').remove();
-             $parent.find('#canselSaveItem').remove();
-
-             $currEl.parent().append('<input style="position: fixed" type="button" id="saveItem">' + 'Save' + '</input>');
-             $currEl.parent().append('<input type="button" id="canselSaveItem">' + 'Cancel' + '</input>');
-            */ /*
-            //console.log('currentEl => ', $currEl);
-            //console.log('currentValue => ', currentValue);
-
-            $currEl.focusout(function() {
-                otherValue = $currEl.val();
-
-                if (currentValue !== otherValue) {
-                    console.log('value is changed');
-
-                    newModel[e.target.id] = otherValue;
-
-                    valid = currentModel.save(newModel, {
-                        /!*headers: {
-                            mid: this.mId
-                        },*!/
-
-                        patch  : true,
-                        success: function (model) {
-                            App.render({
-                                type   : 'notify',
-                                message: "Saving is successfully"
-                            });
-                        },
-
-                        error: function (model, response) {
-                            if (response) {
-                                App.render({
-                                    type   : 'error',
-                                    message: response.error
-                                });
-                            }
-                        }
-                    });
-
-                    if (!valid) {
-                        //newModel[objIndex[0]] = oldvalue;
-                        self.currentModel.set(newModel);
-                    }
-                }
-
-                $(this).unbind('focusout');
-            });*/
+            'click .setDraft'       : 'setDraft'
         },
 
         chooseOption: function (e) {
@@ -534,7 +370,7 @@ define([
                     productId = targetEl.data('id');
 
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"] span').text();
+                        quantity = targetEl.find('[data-name="quantity"] input').val() || targetEl.find('[data-name="quantity"] span').text();
                         price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
 
@@ -691,8 +527,6 @@ define([
 
             $thisEl.html(formString);
 
-            this.renderAssignees(this.currentModel);
-
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             populate.get('#destination', '/destination', {}, 'name', this, false, true);
@@ -740,23 +574,6 @@ define([
 
                 self.responseObj['#project'] = projects;
             });
-
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" +
-                            item.name + "</td><td class='text-right'></td></tr>");
-                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + "</li>");
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" +
-                            item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + "</li>");
-                    });
-
-                }
-            }
 
             App.stopPreload();
 

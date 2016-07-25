@@ -149,9 +149,9 @@ define([
         },
 
         goToForm: function (e) {
-            var date = new Date();
             var $thisEl = this.$el;
             var $target = $(e.target);
+            var date = new Date();
             var modelId = $target.closest('.compactView').data('id');
 
             e.preventDefault();
