@@ -1,6 +1,4 @@
 .propertyContainer {
-  padding: 20px;
-
   a {
     &:hover {
       text-decoration: none;
@@ -15,6 +13,7 @@
   padding: 10px;
   margin-bottom: 20px;
   width: 100%;
+  .defaultBorRad;
 
   .propertyImg,
   .propertyBody {
@@ -32,6 +31,12 @@
     text-align: center;
     font-size: 12px;
     color: @lightgrey;
+
+    .fa-times {
+      &:hover {
+        color: #2b3643;
+      }
+    }
   }
 
   .propertyImg {
@@ -71,20 +76,20 @@
   .inputBox {
     display: table-cell !important;
   }
-  
+
   label {
-    width: 140px !important;
-    text-align: right;
+    width: 90px !important;
+    text-align: left;
     padding-right: 15px;
   }
 
   .inputBox {
     input:not([type=checkbox]) {
-      border: none ;
-      border-bottom: 1px solid @lightgrey;
+      border: none;
+      border-bottom: 1px solid #c8c8d3;
       outline: none;
       width: 100%;
-      padding: 6px 12px;
+      padding: 6px 0;
 
       &:focus {
         background: @lightgray-2;
@@ -133,12 +138,12 @@
 .attachWrapper,
 .selectCompany,
 .moduleList {
-  padding: 20px;
+  padding: 13px 20px 20px;
 
   .tagsTitle,
   .formTitle {
     border-bottom: none !important;
-    margin-bottom: 15px;
+    margin-bottom: 13px;
   }
 }
 
@@ -149,6 +154,10 @@
       text-decoration: none;
     }
   }
+}
+
+.singleNote {
+  line-height: 20px;
 }
 
 .attachWrapper,
@@ -164,6 +173,8 @@
 
     &:hover {
       background: @lightgray-3;
+      -webkit-transition: all .3s;
+      transition: all .3s;
     }
 
     &.smallBtn {
@@ -292,6 +303,27 @@
   border: 1px solid @lightgrey;
 }
 
+.moduleList {
+  .tags-container {
+    label {
+      float: left;
+    }
+  }
+}
+
+.tagsLabel {
+  display: inline-block;
+  padding-right: 10px;
+  color: #000;
+}
+
+.moduleList,
+.attachments {
+  .largeBtn {
+    font-size: 16px !important;
+  }
+}
+
 .tags-container {
   label {
     text-align: left;
@@ -323,10 +355,10 @@
 
 .area_holder {
   position: relative;
-  margin-top: 15px;
 
   textarea {
     padding: 10px !important;
+    border-radius: 0 3px 3px 3px;
   }
 
   .attach_file {
@@ -390,17 +422,22 @@
 
   .amountDollar {
     position: absolute;
-    left: 11px;
+    left: 0;
     top: 7px;
   }
 
   input:not([type=checkbox]) {
-    padding-left: 22px !important;
+    padding-left: 15px !important;
   }
 }
 
 .assignName {
   padding-left: 13px;
+}
+.propertyFormList {
+  .assignName {
+    padding-left: 0;
+  }
 }
 
 .ui-datepicker {

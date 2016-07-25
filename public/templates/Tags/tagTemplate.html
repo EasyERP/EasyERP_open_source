@@ -1,11 +1,9 @@
-<div class="tagsRow">
-    <span class="left" >Tags </span>
+<div class="tagsLabel">Tags</div>
+<%  tags.forEach(function(elem,index){ %>
+<span data-id="<%= elem._id%>" class="<%= elem.color%> editTags"><%=elem.name %></span>
+<% }) %>
+<a href="javascript:;" class="fa fa-plus editTags" title="Create"></a>
 
-    <%  tags.forEach(function(elem,index){ %>
-            <span data-id="<%= elem._id%>" class="<%= elem.color%> editTags"><%=elem.name %></span>
-    <% }) %>
-    <a href="javascript:;" class="editTags" title="Create"> <i class="fa fa-plus" aria-hidden="true"></i></a>
-</div>
 
 
 
