@@ -21,6 +21,8 @@ define([
         template   : _.template(EditTemplate),
 
         initialize: function (options) {
+            var modelObj;
+
             if (options) {
                 this.visible = options.visible;
             }
@@ -36,8 +38,8 @@ define([
             this.editable = options.editable || true;
             this.balanceVissible = false;
             this.service = false;
-            this.onlyView = !!options.onlyView;
-            this.render(options);
+            modelObj = this.currentModel.toJSON();
+            this.onlyView = (modelObj.workflow && modelObj.workflow.status === 'Done');
         },
 
         events: {
@@ -360,6 +362,7 @@ define([
 
         render: function () {
             var self = this;
+            var $thisEl = this.$el;
             var buttons;
             var formString;
             var model;
@@ -374,7 +377,7 @@ define([
                 forSales: this.forSales
             });
 
-            this.renderAssignees(this.currentModel);
+            $thisEl.html(formString);
 
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
@@ -411,20 +414,6 @@ define([
                 }).render({model: model}).el
             );
 
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
-                    });
-
-                }
-            }
             return this;
         }
 

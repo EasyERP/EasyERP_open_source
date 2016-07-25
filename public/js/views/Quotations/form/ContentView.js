@@ -15,7 +15,7 @@ define([
 ], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS) {
     'use strict';
 
-    var QuotationsListView = TFormBaseView.extend({
+    var OrdersListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
@@ -48,5 +48,5 @@ define([
         }
     });
 
-    return QuotationsListView;
+    return OrdersListView;
 });
