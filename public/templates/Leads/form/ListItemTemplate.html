@@ -1,0 +1,24 @@
+<table id="listTable">
+    <% leads.forEach(function(lead, index){ %>
+    <tr class="compactView" data-id="<%=lead._id%>">
+        <td class="checkboxRow">
+            <label>
+                <input type="checkbox" value="<%=lead._id%>" class="checkbox"/>
+            </label>
+        </td>
+        <td>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="name"><%= lead.name%></div>
+                    <div class="stage"><%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%></div>
+
+                </div>
+                <div class="compactRow">
+                    <div class="assignedTo"><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></div>
+                    <div class="source"><%= lead.source %></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <% }); %>
+</table>

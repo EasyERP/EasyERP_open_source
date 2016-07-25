@@ -29,15 +29,16 @@ define([
         selectedId     : null,
         ContentModel   : InvoiceModel,
         FormView       : FormView,
-        renderList: function(invoices) {
+        forSales       : false,
+
+        renderList: function (invoices) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
                 invoices: invoices
-            }))
+            }));
         },
-
 
         renderFormView: function (modelId, cb) {
             var $thisEl = this.$el;
@@ -82,6 +83,10 @@ define([
                     });
                 }
             });
+        },
+
+        saveCurrentQuotation: function () {
+            this.formView.saveItem();
         }
     });
 

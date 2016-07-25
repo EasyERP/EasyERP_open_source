@@ -185,6 +185,8 @@ HTTP/1.1 200 OK
     router.get('/generateName', handler.generateName);
     router.get('/stats', handler.getStats);
 
+    router.get('/:id', handler.getStats);
+
     /**
      *@api {get} /invoices/stats/project Request stats for project
      *
