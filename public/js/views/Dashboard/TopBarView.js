@@ -1,12 +1,12 @@
 define([
-    'Backbone',
     'jQuery',
     'Underscore',
+    'views/topBarViewBase',
     'text!templates/Dashboard/TopBarTemplate.html',
     'custom',
     'common'
-], function (Backbone, $, _, TopBarTemplate, Custom, Common) {
-    var TopBarView = Backbone.View.extend({
+], function ($, _, BaseView, TopBarTemplate, Custom, Common) {
+    var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: 'Dashboard',
         actionType : null, // Content, Edit, Create
@@ -15,9 +15,9 @@ define([
         getIdFromHash: function (hash) {
             var hashItems = hash.split('/');
             return hashItems[hashItems.length - 1];
-        },
+        }
 
-        initialize: function (options) {
+       /* initialize: function (options) {
             this.actionType = options.actionType;
             this.render();
         },
@@ -28,7 +28,7 @@ define([
             Common.displayControlBtnsByActionType(this.actionType);
 
             return this;
-        }
+        }*/
     });
 
     return TopBarView;

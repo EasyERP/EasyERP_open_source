@@ -6,7 +6,6 @@
     <li><a href="javascript:;" class="">Hired/Fired</a></li>
     <li><a href="javascript:;" class="">Hierarchy</a></li>
     <li><a href="javascript:;" class="">Radial hierarchy</a></li>
-    <li><a href="javascript:;" class="">Treemap</a></li>
 </ul>
 <div class="chart-tabs-items">
     <div class="chart-tabs-item active">
@@ -15,29 +14,104 @@
 
         <div class="clearfix"></div>
 
-        <div style=" width: 700px; margin: 0 auto;" class="row">
-            <div id="totalEmployeesCont" class="col-md-4 ">
-                <div href="javascript:;" class="dashboard-stat">
-                    <div class="number">
-                        <span id="totalEmployees" data-counter="counterup" data-value="1349"></span>
+        <div class="row">
+            <div class="col s-12">
+                <div class="row">
+                    <div id="totalEmployeesCont" class="col-md-4 ">
+                        <div href="javascript:;" class="dashboard-stat">
+                            <div class="number">
+                                <span id="totalEmployees" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc"> Employees </div>
+                        </div>
                     </div>
-                    <div class="desc"> Employees </div>
+                    <div class="col-md-4">
+                        <div href="javascript:;" class="dashboard-stat">
+                            <div class="number">
+                                <span id="hired" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc"> Hired </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div href="javascript:;" class="dashboard-stat">
+                            <div class="number">
+                                <span id="fired" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc"> Fired </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div href="javascript:;" class="dashboard-stat">
-                    <div class="number">
-                        <span id="hired" data-counter="counterup" data-value="1349"></span>
+            <div class="col s-12">
+                <div style="text-align: center" class="row">
+                    <h3>Hours</h3>
+                    <div style="float: left" class="col-md-4 ">
+                        <div href="javascript:;" class="dashboard-hours-stat">
+                            <div class="number">
+                                <span id="actual" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc">  </div>
+                        </div>
                     </div>
-                    <div class="desc"> Hired </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div href="javascript:;" class="dashboard-stat">
-                    <div class="number">
-                        <span id="fired" data-counter="counterup" data-value="1349"></span>
+                    <div style="float: left" class="col-md-4">
+                        <div href="javascript:;" class="dashboard-hours-stat">
+                            <div class="number">
+                                <span id="ideal" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc">  </div>
+                        </div>
                     </div>
-                    <div class="desc"> Fired </div>
+                    <div class="col-md-4">
+                        <div href="javascript:;" class="dashboard-hours-stat">
+                            <div class="number">
+                                <span id="total" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc">  </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div href="javascript:;" class="dashboard-hours-stat">
+                            <div class="number">
+                                <span id="overtime" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc">  </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <h3>Vacation days</h3>
+                    <div class="col-md-4 ">
+                        <div href="javascript:;" class="dashboard-vacation-stat">
+                            <div class="number">
+                                <span id="personal" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc"> </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div href="javascript:;" class="dashboard-vacation-stat">
+                            <div class="number">
+                                <span id="sick" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc">  </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div href="javascript:;" class="dashboard-vacation-stat">
+                            <div class="number">
+                                <span id="education" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc">  </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div href="javascript:;" class="dashboard-vacation-stat">
+                            <div class="number">
+                                <span id="holiday" data-counter="counterup" data-value="1349"></span>
+                            </div>
+                            <div class="desc">  </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,8 +214,10 @@
 
         <div class="clearfix"></div>
 
-        <svg class="salaryChart"></svg>
-        <svg class="salaryByDepartmentChart"></svg>
+        <div>
+            <svg class="salaryChart"></svg>
+            <svg class="salaryByDepartmentChart"></svg>
+        </div>
     </div>
 
     <div class="chart-tabs-item grid-conatiner">
@@ -270,11 +346,6 @@
     </div>
     <div class="chart-tabs-item">
         <div class="radialTreeChart">
-
-        </div>
-    </div>
-    <div class="chart-tabs-item">
-        <div class="treemap">
 
         </div>
     </div>

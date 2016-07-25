@@ -131,9 +131,9 @@ define([
             }
             $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
             return false;
-        },
+        }
 
-        gotoForm: function (e) {
+        /*gotoForm: function (e) {
             var id;
             var currentModel;
 
@@ -159,7 +159,7 @@ define([
                     });
                 }
             });
-        }
+        }*/
     });
 
     return LeadsListView;

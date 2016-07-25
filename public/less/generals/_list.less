@@ -1,44 +1,57 @@
-.list(@font-size: 13px, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
+.list(@font-size: 10px, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
   font-family: @fontRegular;
   width: 100%;
 
   td, th {
-    //main themse for all list
     height: 23px;
     padding: 0 6px;
     white-space: nowrap;
     text-overflow: ellipsis;
     box-sizing: border-box;
-    overflow: hidden;
     color: @mainText-color;
-    line-height: 23px;
     font-size: @font-size;
+  }
+  td {
+    overflow: hidden;
   }
 
   thead {
     tr {
       border: none;
-      vertical-align: top;
+      height: 30px;
+      vertical-align: middle;
     }
 
     th {
       font-size: @font-size;
+      font-family: @fontSemiBold;
       text-align: right;
     }
   }
 
   tbody {
-    tr {
-      border-top: @thin-border @defaultBorderColor;
-    }
 
     td {
-      border: @thin-border @defaultBorderColor;
+      //border: @thin-border @defaultBorderColor;
       text-align: right;
+      height: 50px;
       &.changeContent {
         border-top: 2px solid @success;
         border-bottom: 2px solid @success;
       }
+    }
+
+    tr {
+      &:last-child {
+        border-bottom: @thin-border @defaultBorderColor;
+      }
+    }
+  }
+
+  tbody,
+  thead {
+    tr {
+      border-top: @thin-border @defaultBorderColor;
     }
   }
 
@@ -67,24 +80,31 @@
     //style for sort arrows in thead
     cursor: pointer;
     position: relative;
-    padding-right: 15px;
+    //padding-right: 15px;
     .arrow {
       display: none;
       text-align: center;
       cursor: pointer;
-      font-family: Icons;
+      font-family: FontAwesome;
       position: absolute;
       top: 2px;
-      right: 3px;
+      right: -8px;
     }
     &.sortUp {
-      .up {
+      .up,
+      .down {
         display: inline-block;
+        &:before {
+          content: "\f176";
+        }
       }
     }
     &.sortDn {
       .down {
-        display: inline-block;
+        &:before {
+          -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+        }
       }
     }
 
@@ -93,21 +113,21 @@
   .enableTableOdd {
     // class to enabled table odd color (add to tbody)
     tr {
-      &:nth-child(odd) {
-        &:not(.innerRow) {
-          background-color: @defaultBgColorOdd-color;
-        }
-      }
+      //&:nth-child(odd) {
+      //  &:not(.innerRow) {
+      //    background-color: @defaultBgColorOdd-color;
+      //  }
+      //}
       &:not(.innerRow) {
         &:hover {
-          background-color: @defaultBgHover-color;
+          background-color: @defaultBgColorOdd-color;
         }
       }
     }
   }
 
   .centerCell {
-  //(add to td)
+    //(add to td)
     text-align: center;
   }
 
@@ -203,13 +223,13 @@
 //Class for jobDashboard-jornalEntry
 
 .report-list {
-    tr {
-      td {
-        &:first-child {
-          padding: 0;
-        }
+  tr {
+    td {
+      &:first-child {
+        padding: 0;
       }
     }
+  }
 }
 
 .forCaption {

@@ -2,10 +2,11 @@
 <div id="createBtnHolder">
     <a href="javascript:;" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
   <!--  <a href="#home/action-<%=contentType%>/Edit" class="fa fa-wrench" title="Edit" id="top-bar-editBtn"></a>-->
-    <a href="javascript:;" class="fa fa-times" title="Remove" id="top-bar-deleteBtn"></a>
+    <a href="javascript:;" class="btn btnBlue" title="Remove" id="top-bar-deleteBtn">Delete</a>
     <%if(viewType=='kanban') {%> <a id="kanban-settings-Btn" class="fa fa-wrench" title="Kanban Settings"></a><%}%>
 </div>
 
+<% if (viewType !== 'tform') {%>
 <div id="template-switcher" class="template-switcher right">
     <ul class="btn-list">
         <li><a href="javascript:;"
@@ -17,3 +18,4 @@
         <!-- <li><a href="javascript:;" class="changeContentView icon icon-btn dark <%= (viewType == 'form') ? 'selected' : ''%>" data-view-type="form" id="formBtn">m</a></li> -->
     </ul>
 </div>
+<%}%>

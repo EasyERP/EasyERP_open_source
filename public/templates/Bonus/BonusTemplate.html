@@ -15,7 +15,7 @@
     </colgroup>
     <thead>
     <tr>
-        <th class="centerCell"><input type="checkbox" id="checkAll_bonus"/></th>
+        <th class=""><input type="checkbox" id="checkAll_bonus"/></th>
         <th class="centerCell">N</th>
         <th>Bonus Name</th>
         <th>Employee</th>
@@ -27,8 +27,8 @@
 
     <%bonus.forEach(function(bonus, index){ %>
     <tr data-index="<%= index %>" data-id="<%=bonus._id%>">
-        <td class="centerCell"><input type="checkbox" value="<%=bonus._id%>" class="bonus-checkbox"/></td>
-        <td class="centerCell"><%=index + 1 %></td>
+        <td><input type="checkbox" value="<%=bonus._id%>" class="bonus-checkbox"/></td>
+        <td><%=index + 1 %></td>
         <td data-content="bonus" class="choseType" data-id="<%=bonus.bonusId._id%>">
             <%=bonus.bonusId.name%>
         </td>

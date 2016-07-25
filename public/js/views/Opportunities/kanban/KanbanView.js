@@ -278,10 +278,17 @@
 
         gotoEditForm: function (e) {
             var id = $(e.target).closest('.inner').attr('data-id');
+            var url = '#easyErp/Opportunities/tform/' + id;
 
             e.preventDefault();
             App.ownContentType = true;
-            window.location.hash = '#easyErp/Opportunities/form/' + id;
+
+            if (!this.filter) {
+                window.location.hash = url;
+                return;
+            }
+
+            window.location.hash = url + '/filter=' + JSON.stringify(this.filter);
         },
 
         fetchFilteredOpportunities: function (e) {
