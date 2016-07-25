@@ -4198,6 +4198,57 @@ table.kanban tbody td:nth-child(n+2) {
 .ui-datepicker {
   min-width: 175px;
 }
+.dropDownDateRangeContainer {
+  position: relative;
+  width: 110px;
+  height: 35px;
+  float: right;
+}
+.choseDateRange.dropDownDateRange {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  height: 22px;
+  width: 110px;
+  border: 1px solid #333333;
+  padding: 1px 33px 3px 10px;
+  margin-right: 0;
+  overflow: hidden;
+}
+.choseDateRange.dropDownDateRange.open {
+  height: auto;
+}
+.choseDateRange.dropDownDateRange.open .selectArrow {
+  transform: rotate(180deg);
+}
+.choseDateRange.dropDownDateRange .item {
+  padding: 0;
+  float: none;
+  margin-left: 0 !important;
+  min-height: 20px !important;
+  line-height: 18px;
+  margin-bottom: 5px;
+  text-align: center;
+  border: none;
+  background: none;
+  order: 1;
+}
+.choseDateRange.dropDownDateRange .item.active {
+  order: 0;
+  background: none;
+  color: #000000;
+}
+.choseDateRange.dropDownDateRange .selectArrow {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  height: 0;
+  width: 0;
+  border-top: 5px solid #333333;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  cursor: pointer;
+}
 .newTasksContainer {
   padding-top: 30px !important;
 }
