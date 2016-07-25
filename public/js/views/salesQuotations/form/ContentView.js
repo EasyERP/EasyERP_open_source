@@ -44,14 +44,6 @@ define([
 
         saveCurrentQuotation: function () {
             this.formView.saveItem();
-        },
-
-        addFormView: function (modelId) {
-            var self = this;
-
-            this.renderFormView(modelId, function () {
-                self.listenTo(self.formView, 'itemSaved', self.renderFormView);
-            });
         }
 
     });

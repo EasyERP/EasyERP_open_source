@@ -509,15 +509,8 @@ define([
         },
 
         redirectAfter: function (content) {
-          /*  var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
-
-            $('.edit-dialog').remove();
-            //content.hideDialog();
-            Backbone.history.navigate(redirectUrl, {trigger: true});*/
-
-            // todo check
-
-            this.trigger('itemSaved', this.currentModel.id);
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(window.location.hash, {trigger: true});
         },
 
         render: function () {
