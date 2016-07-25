@@ -1045,10 +1045,12 @@ var Module = function (models, event) {
                         createdBy: {$ne: null},
                         source   : {$ne: ''},
                         $or      : [{isConverted: true}, {isOpportunitie: false}]
-                    }, {'createdBy.date': {
-                        $gte: startDate,
-                        $lte: endDate
-                    }}]
+                    }, {
+                        'createdBy.date': {
+                            $gte: startDate,
+                            $lte: endDate
+                        }
+                    }]
                 }
             }, {
                 $group: {
@@ -1078,10 +1080,12 @@ var Module = function (models, event) {
                     $and: [{
                         createdBy: {$ne: null},
                         $or      : [{isConverted: true}, {isOpportunitie: false}]
-                    }, {'createdBy.date': {
-                        $gte: startDate,
-                        $lte: endDate
-                    }}]
+                    }, {
+                        'createdBy.date': {
+                            $gte: startDate,
+                            $lte: endDate
+                        }
+                    }]
                 }
             }, {
                 $lookup: {
@@ -2669,7 +2673,7 @@ var Module = function (models, event) {
         };
 
         var historyMatchObjForAssignedTo = {
-            $and: [{"$and":[{"changedField":"salesPerson"},{$or:[ {"contentType": "opportunitie"} ,{"contentType":"lead"}]}]}]
+            $and: [{"$and": [{"changedField": "salesPerson"}, {$or: [{"contentType": "opportunitie"}, {"contentType": "lead"}]}]}]
         };
 
         var historyMatchObj = {
@@ -2703,185 +2707,185 @@ var Module = function (models, event) {
         //console.log(JSON.stringify(matchObj));
 
 
-
         if (stage === 'Qualified') {
             secondMatchObj = {'workflows.name': 'Qualified'};
         }
 
         async.parallel({
-                assignedTo: function (parCb) {
-                    History.aggregate([
-                        {
-                            $match: historyMatchObjForAssignedTo
-                        }, {
-                            $lookup: {
-                                from        : 'Opportunities',
-                                localField  : 'contentId',
-                                foreignField: '_id',
-                                as          : 'lead'
-                            }
-                        }, {
-                            $unwind: {
-                                path        : '$lead'
-                            }
-                        }, {
-                            $lookup: {
-                                from        : 'Employees',
-                                localField  : 'lead.salesPerson',
-                                foreignField: '_id',
-                                as          : 'sales'
-                            }
-                        }, {
-                            $project: {
-                                date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                                isOpp: '$lead.isConverted',
-                                dateBy: {$dayOfYear: "$date"}
-                            }
-                        }, {
-                            $project: {
-                                date       : 1,
-                                isOpp: '$isOpp',
-                                dateBy: '$dateBy',
-                            }
-                        }, {
-                            $group: {
-                                _id       : {date: '$date', isOpp: '$isOpp'},
-                                count     : {$sum: 1},
-                                isOpp     : {$first: '$isOpp'},
-                                source    : {$first: '$dateBy'}
-                            }
-                        },{
-                            $project: {_id: "$_id.date",  isOpp: "$isOpp", count: "$count", sourse: "$source"}}, {
-                            $sort: {_id: -1}
-                        }
-                    ], parCb);
-                },
-                createdBy: function (parCb) {
-                    Opportunities.aggregate([{
-                        $match: matchObj
-                    } ,{
-                        $sort: {'createdBy.date': 1}
+            assignedTo : function (parCb) {
+                History.aggregate([
+                    {
+                        $match: historyMatchObjForAssignedTo
                     }, {
                         $lookup: {
+                            from        : 'Opportunities',
+                            localField  : 'contentId',
+                            foreignField: '_id',
+                            as          : 'lead'
+                        }
+                    }, {
+                        $unwind: {
+                            path: '$lead'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'lead.salesPerson',
+                            foreignField: '_id',
+                            as          : 'sales'
+                        }
+                    }, {
+                        $project: {
+                            date  : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
+                            isOpp : '$lead.isConverted',
+                            dateBy: {$dayOfYear: "$date"}
+                        }
+                    }, {
+                        $project: {
+                            date  : 1,
+                            isOpp : '$isOpp',
+                            dateBy: '$dateBy',
+                        }
+                    }, {
+                        $group: {
+                            _id   : {date: '$date', isOpp: '$isOpp'},
+                            count : {$sum: 1},
+                            isOpp : {$first: '$isOpp'},
+                            source: {$first: '$dateBy'}
+                        }
+                    }, {
+                        $project: {_id: "$_id.date", isOpp: "$isOpp", count: "$count", sourse: "$source"}
+                    }, {
+                        $sort: {_id: -1}
+                    }
+                ], parCb);
+            },
+            createdBy  : function (parCb) {
+                Opportunities.aggregate([{
+                    $match: matchObj
+                }, {
+                    $sort: {'createdBy.date': 1}
+                }, {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflows'
+                    }
+                }, {
+                    $unwind: {
+                        path                      : '$workflows',
+                        preserveNullAndEmptyArrays: true
+                    }
+                }, {
+                    $project: {
+                        date  : {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]},
+                        source: {$dayOfYear: "$createdBy.date"},
+                        isOpp : "$isConverted"
+                    }
+                }, {
+                    $group: {
+                        _id   : {date: '$date', isOpp: "$isOpp"},
+                        count : {$sum: 1},
+                        source: {$first: "$source"}
+                    }
+                }, {$project: {_id: "$_id.date", isOpp: "$_id.isOpp", count: "$count", source: "$source"}}
+                ], parCb);
+            },
+            salesByDate: function (parCb) {
+                History.aggregate([
+                    {
+                        $match: historyMatchObj
+                    },
+                    {
+                        $lookup: {
+                            from        : 'Opportunities',
+                            localField  : 'contentId',
+                            foreignField: '_id',
+                            as          : 'lead'
+                        }
+                    }, {
+                        $unwind: {
+                            path                      : '$lead',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'lead.salesPerson',
+                            foreignField: '_id',
+                            as          : 'sales'
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path                      : '$sales',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
                             from        : 'workflows',
-                            localField  : 'workflow',
+                            localField  : 'lead.workflow',
                             foreignField: '_id',
                             as          : 'workflows'
                         }
-                    }, {
+                    },
+                    {
                         $unwind: {
                             path                      : '$workflows',
                             preserveNullAndEmptyArrays: true
                         }
+                    },
+                    {
+                        $match: secondMatchObj
+                    },
+                    {
+                        $project: {
+                            date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
+                            'sales._id' : 1,
+                            'sales.name': {$ifNull: ['$sales.name', 'Empty']},
+                            isOpp       : '$lead.isOpportunitie',
+                            dateBy      : {$dayOfYear: "$date"}
+                        }
                     }, {
                         $project: {
-                            date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]},
-                            source: {$dayOfYear: "$createdBy.date"},
-                            isOpp: "$isConverted"
+                            date       : 1,
+                            'sales._id': 1,
+                            salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]},
+                            isOpp      : '$isOpp',
+                            dateBy     : '$dateBy'
                         }
                     }, {
                         $group: {
-                            _id  : {date: '$date', isOpp: "$isOpp"},
-                            count: {$sum: 1},
-                            source: {$first: "$source"}
+                            _id   : {date: '$date', sales: '$salesPerson'},
+                            count : {$sum: 1},
+                            dateBy: {$first: '$dateBy'},
+                            isOpp : {$first: '$isOpp'}
                         }
-                    }, {$project: {_id: "$_id.date", isOpp: "$_id.isOpp", count: "$count", source: "$source"}}
-                    ], parCb);
-                },
-                salesByDate: function (parCb) {
-                    History.aggregate([
-                        {
-                            $match: historyMatchObj
-                        },
-                        {
-                            $lookup: {
-                                from        : 'Opportunities',
-                                localField  : 'contentId',
-                                foreignField: '_id',
-                                as          : 'lead'
-                            }
-                        }, {
-                            $unwind: {
-                                path                      : '$lead',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from        : 'Employees',
-                                localField  : 'lead.salesPerson',
-                                foreignField: '_id',
-                                as          : 'sales'
-                            }
-                        },
-                        {
-                            $unwind: {
-                                path                      : '$sales',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from        : 'workflows',
-                                localField  : 'lead.workflow',
-                                foreignField: '_id',
-                                as          : 'workflows'
-                            }
-                        },
-                        {
-                            $unwind: {
-                                path                      : '$workflows',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $match: secondMatchObj
-                        },
-                        {
-                            $project: {
-                                date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                                'sales._id' : 1,
-                                'sales.name': {$ifNull: ['$sales.name', 'Empty']},
-                                isOpp: '$lead.isOpportunitie',
-                                dateBy: {$dayOfYear: "$date"}
-                            }
-                        }, {
-                            $project: {
-                                date       : 1,
-                                'sales._id': 1,
-                                salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]},
-                                isOpp: '$isOpp',
-                                dateBy: '$dateBy'
-                            }
-                        }, {
-                            $group: {
-                                _id  : {date: '$date', sales: '$salesPerson'},
-                                count: {$sum: 1},
-                                dateBy: {$first: '$dateBy'},
-                                isOpp: {$first: '$isOpp'}
-                            }
-                        }, {
-                            $project: {
-                                date       : '$_id.date',
-                                salesPerson: '$_id.sales',
-                                count      : 1,
-                                _id        : 0
-                            }
-                        }, {
-                            $group: {
-                                _id       : '$date',
-                                salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                                count     : {$sum: '$count'},
-                            }
-                        }, {
-                            $sort: {_id: -1}
+                    }, {
+                        $project: {
+                            date       : '$_id.date',
+                            salesPerson: '$_id.sales',
+                            count      : 1,
+                            _id        : 0
                         }
-                    ], parCb);
-                },
-            }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
+                    }, {
+                        $group: {
+                            _id       : '$date',
+                            salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
+                            count     : {$sum: '$count'},
+                        }
+                    }, {
+                        $sort: {_id: -1}
+                    }
+                ], parCb);
+            },
+        }, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
             res.status(200).send(result);
         });
