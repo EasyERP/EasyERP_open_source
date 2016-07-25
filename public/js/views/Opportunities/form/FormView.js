@@ -13,7 +13,7 @@ define([
     'constants',
     'dataService',
     'views/selectView/selectView'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
