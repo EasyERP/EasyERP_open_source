@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Persons/form/FormTemplate.html',
-    'text!templates/Opportunities/aboutTemplate.html',
+    'text!templates/Persons/aboutTemplate.html',
     'views/Editor/NoteView',
     'views/Editor/AttachView',
     'views/Companies/formPropertyView',
@@ -42,10 +42,32 @@ define([
             this.formModel = options.model;
             //this.formModel.on('change', this.render, this);
             this.formModel.urlRoot = '/Persons';
+            _.bindAll(this, 'savePerson');
+
+            this.modelChanged = {};
+        },
+
+
+        showEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '20px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        hideEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '0px',
+                display: 'block'
+            }, 250);
+
         },
 
         events: {
             click                                              : 'hideNewSelect',
+            'mouseenter .avatar'                               : 'showEdit',
+            'mouseleave .avatar'                               : 'hideEdit',
             'click #tabList a'                                 : 'switchTab',
             'keyup .editable'                                  : 'setChangeValueToModel',
             'click #cancelBtn'                                 : 'cancelChanges',
@@ -173,13 +195,13 @@ define([
             var self = this;
             var $thisEl = this.$el;
             $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
-            this.renderTags();
-            $thisEl.find('#nextAction').datepicker({
+            common.canvasDraw({model: this.formModel.toJSON()}, this);
+            $thisEl.find('#dateBirth').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function (dateText) {
-                    self.modelChanged['nextAction.date'] = new Date(dateText);
+                    self.modelChanged.dateBirth = new Date(dateText);
                     self.showButtons();
                 }
 
@@ -214,17 +236,29 @@ define([
 
             this.editorView = new EditorView({
                 model      : this.formModel,
-                contentType: 'persons'
+                contentType: 'Persons'
             });
 
             $thisEl.find('.notes').append(
                 this.editorView.render().el
             );
+            common.canvasDraw({model: this.formModel.toJSON()}, this);
+
+            $thisEl.find('#dateBirth').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged.dateBirth = new Date(dateText);
+                    self.showButtons();
+                }
+
+            });
 
             $thisEl.find('.attachments').append(
                 new AttachView({
                     model      : this.formModel,
-                    contentType: 'opportunities'
+                    contentType: 'Persons'
                 }).render().el
             );
 

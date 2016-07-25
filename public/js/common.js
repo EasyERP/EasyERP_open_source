@@ -156,8 +156,12 @@
                                             imageSrc: imageSrcCrop
                                         };
                                     }
-
                                     canvasDrawing({model: model, canvas: canvas}, context);
+
+                                    if (context.modelChanged && context.showButtons && (typeof context.savePerson === 'function')){
+                                        context.savePerson({imageSrc : imageSrcCrop});
+                                    }
+
                                     $(this).dialog("close");
                                 }
 

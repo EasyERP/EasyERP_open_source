@@ -6,6 +6,7 @@ var Module = function (models, event) {
 
     var CustomerSchema = mongoose.Schemas.Customer;
     var OpportunitySchema = mongoose.Schemas.Opportunities;
+    var TasksSchema = mongoose.Schemas.DealTasks;
 
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants');
@@ -18,6 +19,8 @@ var Module = function (models, event) {
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
     var FilterMapper = require('../helpers/filterMapper');
+    var HistoryWriter = require('../helpers/historyWriter.js');
+    var historyWriter = new HistoryWriter(models);
     //var app = require('./app');
     //var io = app.get('io');
 
@@ -334,6 +337,71 @@ var Module = function (models, event) {
             });
     };
 
+    function getTimeLine(req, model, cb) {
+        var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
+        var parallelTasks;
+
+        var historyOptions = {
+            req: req,
+            id : model._id
+        };
+
+        function getHistoryNotes(parallelCb) {
+            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                var notes;
+                if (err) {
+                    return parallelCb(err);
+                }
+
+                notes = history.map(function (elem) {
+                    return {
+                        date   : elem.date,
+                        history: elem,
+                        user   : elem.editedBy,
+                        _id    : ''
+                    };
+                });
+
+                parallelCb(null, notes);
+
+            }, true);
+        }
+
+        function getTask(parallelCb) {
+            TasksSchema.find({'contact': model._id})
+                .populate('deal', '_id name')
+                .populate('company', '_id name')
+                .populate('contact', '_id name')
+                .populate('editedBy.user', '_id login')
+                .populate('assignedTo', '_id name fullName imageSrc')
+                .populate('workflow')
+                .exec(function (err, res) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+                    res = res.map(function (elem) {
+                        return {
+                            date: elem.contactDate,
+                            task: elem,
+                            _id : elem._id,
+                            user: elem.editedBy.user
+                        }
+                    });
+                    parallelCb(null, res);
+                });
+        }
+
+        parallelTasks = [getTask, getHistoryNotes];
+
+        async.parallel(parallelTasks, function (err, results) {
+
+            model.notes = model.notes.concat(results[0], results[1]);
+            model.notes = _.sortBy(model.notes, 'date');
+            cb(null, model);
+        });
+
+    }
+
     function getCustomers(req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
@@ -545,7 +613,7 @@ var Module = function (models, event) {
                 editedBy      : 1,
                 imageSrc      : 1
             })
-            .populate('company', '_id name')
+            .populate('company')
             .populate('salesPurchases.salesPerson', '_id name fullName')
             .populate('salesPurchases.salesTeam', '_id name')
             .populate('salesPurchases.implementedBy', '_id name fullName')
@@ -558,8 +626,15 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
+                getTimeLine(req, customer.toJSON(), function(err, result){
 
-                res.status(200).send(customer);
+                    if (err){
+                        return next(err);
+                    }
+                    res.status(200).send(result);
+                });
+
+
             });
     }
 
@@ -813,6 +888,7 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var headers = req.headers;
         var id = headers.modelid || 'empty';
+        var addNote = headers.addnote;
         var contentType = headers.modelname || 'persons';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
@@ -829,11 +905,35 @@ var Module = function (models, event) {
         }
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            var notes = [];
+
             if (err) {
                 return next(err);
             }
 
-            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+            if (addNote) {
+                notes = file.map(function (elem) {
+                    return {
+                        _id       : mongoose.Types.ObjectId(),
+                        attachment: {
+                            name    : elem.name,
+                            shortPas: elem.shortPas
+                        },
+                        user      : {
+                            _id  : req.session.uId,
+                            login: req.session.uName
+                        },
+                        date      : new Date()
+                    }
+                });
+            }
+
+            Model.findByIdAndUpdate(id, {
+                $push: {
+                    attachments: {$each: file},
+                    notes      : {$each: notes}
+                }
+            }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
                 }

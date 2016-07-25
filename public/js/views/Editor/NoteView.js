@@ -68,7 +68,7 @@ define([
         saveTask: function () {
             var self = this;
             var $thisEl = this.$el;
-            var assignedTo = $thisEl.find('#assignedToDd').data('id');
+            var assignedTo = $thisEl.find('#assignedToDd').attr('data-id');
             var $description = $thisEl.find('#taskArea');
             var description = $.trim($description.val());
             var dueDate = $.trim($thisEl.find('#taskDueDate').val());
@@ -303,7 +303,7 @@ define([
                         return note;
                     });
                     formModel.save({notes: editNotes},
-                        {
+                        { validate : false,
                             headers: {
                                 mid: 39
                             },
@@ -325,6 +325,7 @@ define([
                             mid: 39
                         },
                         patch  : true,
+                        validate : false,
                         wait   : true,
                         success: function () {
                             var formLeftColumn = self.$el.find('.formLeftColumn');
