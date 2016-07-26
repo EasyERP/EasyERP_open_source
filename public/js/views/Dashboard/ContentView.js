@@ -1436,28 +1436,38 @@ define([
         },
 
         renderOpportunitiesAging: function () {
+            var verticalBarSpacing = 3;
+            var sortedData = [];
             var self = this;
+            var yScaleDomain;
+            var workflowArr;
+            var outerHeight;
+            var innerHeight;
+            var outerWidth;
+            var innerWidth;
+            var labelsMap;
+            var colorMap;
+            var barsMap;
+            var margin;
+            var chart1;
+            var xAxis;
+            var yAxis;
+            var baseX;
+            var chart;
+            var tip1;
+            var tip;
+            var x;
+            var y;
 
             common.getOpportunitiesAgingChart(function (data) {
-                var verticalBarSpacing = 3;
-                var margin;
-                var x;
-                var y;
-                var xAxis;
-                var yAxis;
-                var baseX;
-                var chart;
-                var chart1;
-                var tip;
-                var tip1;
-                var colorMap;
-                var yScaleDomain;
-                var outerWidth;
-                var outerHeight;
-                var innerWidth;
-                var innerHeight;
-                var barsMap;
-                var labelsMap;
+
+                function sortByWorkflow(a, b) {
+                    if (workflowArr.indexOf(a.workflow) > workflowArr.indexOf(b.workflow)) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
 
                 labelsMap = {
                     ySum  : 'Opportunities Expected Revenue Sum',
@@ -1501,6 +1511,11 @@ define([
                     bottom: 100,
                     left  : 140
                 };
+
+                workflowArr = ['To be done',  'Waiting fo response', 'To be discussed',
+                    'In development', 'Finalization', 'Proposal', 'Lost'];
+
+                data.sort(sortByWorkflow);
 
                 yScaleDomain = ['>120', '61-120', '31-60', '16-30', '8-15', '0-7'];
                 outerWidth = $('#content-holder').width() - 40;
@@ -1606,7 +1621,7 @@ define([
                             'height': y.rangeBand() - 2 * verticalBarSpacing,
                             'fill'  : colorMap[dataEl.workflow]
                         })
-                        .on('mouseenter', function (d) {
+                        .on('mouseover', function (d) {
                             var attrs = this.attributes;
                             var xVal =  parseFloat(attrs.x.value) + attrs.width.value / 2;
                             var yVal = parseFloat(attrs.y.value) + attrs.height.value / 2;
@@ -1622,13 +1637,6 @@ define([
                                 .attr('transform', 'rotate(90,'+ xVal + ','+ yVal +')');
                         })
                         .on('mouseout', function (d) {
-
-                            if(d3.event.relatedTarget.attributes){
-
-                              if(d3.event.relatedTarget.attributes.class.value === 'tip'){
-                                  return;
-                              }
-                           }
 
                             d3.select(this)
                                 .style('stroke-width', '0');
@@ -1811,7 +1819,7 @@ define([
 
                 data.forEach(function (item) {
 
-                    switch(item._id){
+                    switch (item._id) {
                         case 'To be done':
                             data1 = item.data;
                             break;
@@ -1837,14 +1845,14 @@ define([
                 });
 
                 colorMap = {
-                    'bar'         : '#93648D', //violet
-                    'bar2': '#4CC3D9', //blue
-                    'bar3'    : '#F1DD9E', //brown green
+                    'bar'      : '#93648D', //violet
+                    'bar2'     : '#4CC3D9', //blue
+                    'bar3'     : '#F1DD9E', //brown green
                     'bar4'     : '#7BC8A4', //green
-                    'bar5'       : '#FFC65D', //yellow
-                    'bar6'           : '#EB6E44', //orange
-                    'bar7'               : '#93073E', //dark red
-                    'barStroke'          : '#2378ae'
+                    'bar5'     : '#FFC65D', //yellow
+                    'bar6'     : '#EB6E44', //orange
+                    'bar7'     : '#93073E', //dark red
+                    'barStroke': '#2378ae'
                 };
 
                 data1 = data1 || [];
@@ -2935,7 +2943,7 @@ define([
                 startDay: this.startDate,
                 endDay  : this.endDate
             }, function (data) {
-                console.log(data)
+
                 function position() {
                     this.style('left', function (d) {
                         return d.x + 'px';
