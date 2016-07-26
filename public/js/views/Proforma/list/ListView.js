@@ -15,7 +15,22 @@ define([
     'dataService',
     'constants',
     'helpers'
-], function ($, _, listViewBase, listTemplate, stagesTemplate, CreateView, EditView, proformaEditView, InvoiceModel, ListItemView, contentCollection, common, dataService, CONSTANTS, helpers) {
+], function (Backbone,
+             $,
+             _,
+             listViewBase,
+             listTemplate,
+             stagesTemplate,
+             CreateView,
+             EditView,
+             proformaEditView,
+             InvoiceModel,
+             ListItemView,
+             contentCollection,
+             common,
+             dataService,
+             CONSTANTS,
+             helpers) {
     var InvoiceListView = listViewBase.extend({
         CreateView       : CreateView,
         listTemplate     : listTemplate,

@@ -8,18 +8,16 @@ define([
     'models/InvoiceModel',
     'views/Invoices/form/FormView',
     'views/Invoices/CreateView',
-    'views/Invoices/list/ListItemView',
-    'views/Filter/filterView',
     'common',
-    'constants'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, InvoiceModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, InvoiceModel, FormView, CreateView, common, CONSTANTS, helpers) {
     'use strict';
 
     var InvoicesListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
-        ListItemView   : ListItemView,
         listUrl        : 'easyErp/Invoices/list/',
         contentType    : CONSTANTS.INVOICES, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
@@ -36,7 +34,9 @@ define([
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
-                invoices: invoices
+                invoices        : invoices,
+                currencyClass   : helpers.currencyClass,
+                currencySplitter: helpers.currencySplitter
             }));
         },
 
@@ -50,13 +50,13 @@ define([
             //model.urlRoot = model.url() + modelId;
 
             data = {
-                viewType   : 'form',
-                id         : modelId,
-                forSales   : this.forSales
+                viewType: 'form',
+                id      : modelId,
+                forSales: this.forSales
             };
 
             model.fetch({
-                data: data,
+                data   : data,
                 success: function (model) {
 
                     if (self.formView) {
@@ -72,7 +72,6 @@ define([
                     self.selectedId = model.id;
 
 
-
                     if (cb && typeof cb === 'function') {
                         cb();
                     }
@@ -85,10 +84,6 @@ define([
                     });
                 }
             });
-        },
-
-        saveCurrentQuotation: function () {
-            this.formView.saveItem();
         }
     });
 
