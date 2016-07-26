@@ -16,11 +16,14 @@ define([
         contentType: CONSTANTS.SALESQUOTATIONS,
 
         initialize: function (options) {
+            var modelObj;
+
             this.forSales = true;
             this.currentModel = options.model || options.collection.getElement();
             this.currentModel.urlRoot = '/quotations';
             this.responseObj = {};
-            this.salesManager = this.currentModel.toJSON().project.salesmanager;
+            modelObj = this.currentModel.toJSON();
+            this.salesManager = modelObj.project && modelObj.project.salesmanager;
             this.customerId = options.customerId;
             this.pId = options.pId;
             this.redirect = options.redirect;
