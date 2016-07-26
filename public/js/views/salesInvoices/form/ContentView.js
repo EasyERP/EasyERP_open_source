@@ -3,8 +3,8 @@ define([
     'jQuery',
     'Underscore',
     'views/tformViewBase',
-    'text!templates/Invoices/form/ContentTemplate.html',
-    'text!templates/Invoices/form/ListItemTemplate.html',
+    'text!templates/salesInvoices/form/ContentTemplate.html',
+    'text!templates/salesInvoices/form/ListItemTemplate.html',
     'models/InvoiceModel',
     'views/Invoices/form/FormView',
     'views/Invoices/CreateView',
@@ -29,6 +29,7 @@ define([
         selectedId     : null,
         ContentModel   : InvoiceModel,
         FormView       : FormView,
+        forSales       : true,
         renderList: function(invoices) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
@@ -49,7 +50,7 @@ define([
             //model.urlRoot = model.url() + modelId;
 
             data = {
-                contentType: this.contentType,
+                viewType   : 'form',
                 id         : modelId,
                 forSales   : this.forSales
             };
@@ -82,6 +83,10 @@ define([
                     });
                 }
             });
+        },
+
+        saveCurrentQuotation: function () {
+            this.formView.saveItem();
         }
     });
 

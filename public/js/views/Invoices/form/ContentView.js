@@ -50,13 +50,13 @@ define([
             //model.urlRoot = model.url() + modelId;
 
             data = {
-                contentType: this.contentType,
+                viewType   : 'form',
                 id         : modelId,
                 forSales   : this.forSales
             };
 
             model.fetch({
-                data   : data,
+                data: data,
                 success: function (model) {
 
                     if (self.formView) {
@@ -70,6 +70,8 @@ define([
                     $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
 
                     self.selectedId = model.id;
+
+
 
                     if (cb && typeof cb === 'function') {
                         cb();
