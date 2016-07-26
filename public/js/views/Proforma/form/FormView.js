@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'views/dialogViewBase',
-    'text!templates/Proforma/EditTemplate.html',
+    'text!templates/Proforma/form/FormTemplate.html',
     'views/Assignees/AssigneesView',
     'views/Notes/NoteView',
     'views/Proforma/InvoiceProductItems',
@@ -558,27 +558,6 @@ define([
 
             $thisEl.html(formString);
 
-            if (this.isWtrack || this.isPaid) {
-                buttons = [
-                    {
-                        text : this.isPaid ? 'Close' : 'Cancel',
-                        click: self.hideDialog
-                    }
-                ];
-            } else {
-                buttons = [
-                    {
-                        text : 'Save',
-                        click: self.saveItem
-                    }, {
-                        text : 'Cancel',
-                        click: self.hideDialog
-                    }, {
-                        text : 'Delete',
-                        click: self.deleteItem
-                    }
-                ];
-            }
 
             /*
             this.$el = $(formString).dialog({
