@@ -1248,6 +1248,7 @@ dl.payrollDateBlock {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  height: 100%;
   border-bottom: 1px solid #ededed;
 
   &.personList {
@@ -1310,8 +1311,6 @@ dl.payrollDateBlock {
 }
 
 .listContent {
-  width: 400px;
-  border-right: 1px solid #ededed;
 
   table {
     width: 100%;
@@ -1319,6 +1318,10 @@ dl.payrollDateBlock {
 }
 
 .listContentWrap {
+  width: 400px;
+  border-right: 1px solid #ededed;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 
   .listContentTitle {
     position: relative;
@@ -1376,7 +1379,7 @@ dl.payrollDateBlock {
 
 .content-holder {
   .formContentTitle {
-    border-left: 1px solid #ededed;
+    //border-left: 1px solid #ededed;
 
     .closeBtn {
       float: right;
@@ -1479,10 +1482,12 @@ td.checkboxRow {
 }
 
 #top-bar {
+
   #createBtnHolder,
   .createBtnHolder {
     margin-top: 6px;
   }
+
   &.position {
     position: absolute;
     left: 35px;
@@ -1496,10 +1501,11 @@ td.checkboxRow {
       margin-top: 8px;
     }
   }
+
   #createBtnHolder {
     .btnBlue {
       height: 26px;
-      width: 67px;
+      width: 68px;
       border: 0;
       line-height: 26px !important;
       font-size: 13px;

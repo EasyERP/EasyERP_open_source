@@ -1969,6 +1969,11 @@ body {
 .pagination {
   margin: 5px 10px 0;
 }
+.pagination:after {
+  content: '';
+  display: table;
+  clear: both;
+}
 .pagination > div {
   float: left;
   padding: 0 5px;
@@ -3571,6 +3576,7 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  height: 100%;
   border-bottom: 1px solid #ededed;
 }
 .listWrap.personList .firstName {
@@ -3613,12 +3619,14 @@ dl.payrollDateBlock dt {
   -webkit-flex-grow: 1;
   flex-grow: 1;
 }
-.listContent {
-  width: 400px;
-  border-right: 1px solid #ededed;
-}
 .listContent table {
   width: 100%;
+}
+.listContentWrap {
+  width: 400px;
+  border-right: 1px solid #ededed;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 .listContentWrap .listContentTitle {
   position: relative;
@@ -3663,9 +3671,6 @@ dl.payrollDateBlock dt {
 }
 .listContentTitle #createBtnHolder .fa {
   margin-right: 0;
-}
-.content-holder .formContentTitle {
-  border-left: 1px solid #ededed;
 }
 .content-holder .formContentTitle .closeBtn {
   float: right;
@@ -3751,7 +3756,7 @@ td.checkboxRow {
 }
 #top-bar #createBtnHolder .btnBlue {
   height: 26px;
-  width: 67px;
+  width: 68px;
   border: 0;
   line-height: 26px !important;
   font-size: 13px;
@@ -9193,6 +9198,7 @@ dl dd span.ui-spinner {
 }
 #wrapper #content-holder {
   position: relative;
+  height: calc(100% - 41px);
   width: 100%;
 }
 #startLetter {
@@ -10919,9 +10925,6 @@ table#workflows tr td.edit-status {
 #top-bar #reconcileDate {
   color: #000000;
 }
-#top-bar .btn {
-  margin-top: 4px;
-}
 #top-bar .vocationFilter {
   padding: 0;
   height: 26px;
@@ -10951,9 +10954,6 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar #reconcileDate {
   color: #000000;
-}
-.projectInfoTopBar .btn {
-  margin-top: 4px;
 }
 .projectInfoTopBar .vocationFilter {
   padding: 0;
