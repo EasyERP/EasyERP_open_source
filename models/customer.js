@@ -181,6 +181,7 @@ module.exports = (function () {
             size    : String,
             industry: {type: ObjectId, ref: 'Industries', default: null}
         },
+        isHidden : {type: Boolean, default: false},
 
         ID: Number
     }, {collection: 'Customers'});

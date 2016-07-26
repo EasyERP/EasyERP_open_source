@@ -4,7 +4,7 @@ var url = 'http://localhost:8089/';
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
 
-require('../../config/development');
+require('.././development');
 
 describe('Capacity Specs', function () {
     'use strict';

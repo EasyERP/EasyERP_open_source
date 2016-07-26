@@ -14,7 +14,7 @@ var bannedUser = {
     dbId : dbId
 };
 
-require('../../config/development');
+require('.././development');
 
 describe('Vacation Specs', function () {
     'use strict';
