@@ -4909,6 +4909,11 @@ table.kanban tbody td:nth-child(n+2) {
 .vocationFilter .frameDetail .buttons {
   margin-top: 10px;
 }
+.top-bar .vocationFilter {
+  padding: 0;
+  height: 26px;
+  margin-top: 7px;
+}
 .chartTopBox {
   position: relative;
   text-align: center;
@@ -10917,6 +10922,11 @@ table#workflows tr td.edit-status {
 #top-bar .btn {
   margin-top: 4px;
 }
+#top-bar .vocationFilter {
+  padding: 0;
+  height: 26px;
+  margin-top: 7px;
+}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
@@ -10944,6 +10954,11 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar .btn {
   margin-top: 4px;
+}
+.projectInfoTopBar .vocationFilter {
+  padding: 0;
+  height: 26px;
+  margin-top: 7px;
 }
 .noPadding {
   padding: 0 !important;
