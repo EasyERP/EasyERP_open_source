@@ -68,7 +68,7 @@ define([
         saveTask: function () {
             var self = this;
             var $thisEl = this.$el;
-            var assignedTo = $thisEl.find('#assignedToDd').data('id');
+            var assignedTo = $thisEl.find('#assignedToDd').attr('data-id');
             var $description = $thisEl.find('#taskArea');
             var description = $.trim($description.val());
             var dueDate = $.trim($thisEl.find('#taskDueDate').val());
