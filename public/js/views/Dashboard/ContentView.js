@@ -1594,6 +1594,14 @@ define([
                     .attr('y', innerHeight + 60)
                     .text(labelsMap.ySum);
 
+                tip = chart.append('text')
+                    .attr({
+                        'class'      : 'tip',
+                        'font-size'  : '14',
+                        'text-anchor': 'middle',
+                        'font-weight': 'bolder'
+                    });
+
                 data.forEach(function (dataEl) {
 
                     chart.selectAll('.' + barsMap[dataEl.workflow])
@@ -1628,7 +1636,10 @@ define([
 
                             d3.select(this)
                                 .style('stroke-width', '3')
-                                .attr('stroke', colorMap.barStroke);
+                                .attr({
+                                    'stroke': colorMap.barStroke,
+                                    'opacity': 0.5
+                                });
 
                             tip
                                 .attr('x', xVal)
@@ -1639,18 +1650,12 @@ define([
                         .on('mouseout', function (d) {
 
                             d3.select(this)
-                                .style('stroke-width', '0');
+                                .style('stroke-width', '0')
+                                .attr('opacity', 1);
 
                             tip.text('');
                         });
                 });
-
-                tip = chart.append('text')
-                    .attr({
-                        'class'      : 'tip',
-                        'font-size'  : '12',
-                        'text-anchor': 'middle'
-                    });
 
                 $('svg.opportunitieAgingCount').empty();
 
@@ -1719,6 +1724,14 @@ define([
                     '>120'  : 0
                 };
 
+                tip1 = chart1.append('text')
+                    .attr({
+                        'class'      : 'tip',
+                        'font-size'  : '14',
+                        'text-anchor': 'middle',
+                        'font-weight': 'bolder'
+                    });
+
                 data.forEach(function (dataEl) {
 
                     chart1.selectAll('.' + barsMap[dataEl.workflow])
@@ -1753,7 +1766,10 @@ define([
 
                             d3.select(this)
                                 .style('stroke-width', '3')
-                                .attr('stroke', colorMap.barStroke);
+                                .attr({
+                                    'stroke': colorMap.barStroke,
+                                    'opacity': 0.5
+                                });
 
                             tip1
                                 .attr('x', xVal)
@@ -1763,27 +1779,13 @@ define([
                         })
                         .on('mouseout', function (d) {
 
-                            if(d3.event.relatedTarget.attributes){
-
-                                if(d3.event.relatedTarget.attributes.class.value === 'tip'){
-                                    return;
-                                }
-                            }
-
                             d3.select(this)
-                                .style('stroke-width', '0');
+                                .style('stroke-width', '0')
+                                .attr('opacity', 1);
 
                             tip1.text('');
                         });
                 });
-
-                tip1 = chart1.append('text')
-                    .attr({
-                        'class'      : 'tip',
-                        'font-size'  : '12',
-                        'text-anchor': 'middle'
-                    });
-
             });
         },
 
