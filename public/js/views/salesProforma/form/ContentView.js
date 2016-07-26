@@ -10,9 +10,10 @@ define([
     //'views/Proforma/CreateView',
     'views/Proforma/list/ListItemView',
     'views/Filter/filterView',
+    'helpers',
     'common',
     'constants'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, InvoiceModel, FormView, ListItemView, FilterView, common, CONSTANTS) {
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, InvoiceModel, FormView, ListItemView, FilterView, helpers, common, CONSTANTS) {
     'use strict';
 
     var InvoicesListView = TFormBaseView.extend({
@@ -35,7 +36,9 @@ define([
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
-                proforms: proforms
+                proforms: proforms,
+                currencySplitter : helpers.currencySplitter,
+                currencyClass    : helpers.currencyClass
             }))
         },
 
