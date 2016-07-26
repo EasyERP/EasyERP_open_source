@@ -3,7 +3,7 @@ define([
     'Underscore',
     'Backbone',
     'views/dialogViewBase',
-    'text!templates/Invoices/EditTemplate.html',
+    'text!templates/Invoices/form/FormTemplate.html',
     'views/Notes/AttachView',
     'views/Notes/NoteView',
     'views/Invoices/InvoiceProductItems',
@@ -37,7 +37,7 @@ define([
              helpers) {
     'use strict';
 
-    var EditView = ParentView.extend({
+    var FormView = ParentView.extend({
         contentType: CONSTANTS.INVOICES, // 'Invoices',
         template   : _.template(EditTemplate),
 
@@ -49,7 +49,8 @@ define([
             'click .sendEmail'    : 'sendEmail',
             'click .approve'      : 'approve',
             'click .cancelInvoice': 'cancelInvoice',
-            'click .setDraft'     : 'setDraft'
+            'click .setDraft'     : 'setDraft',
+            'click .saveBtn'      : 'saveItem'
         },
 
         initialize: function (options) {
@@ -70,8 +71,6 @@ define([
             this.collection = options.collection;
 
             this.notCreate = options.notCreate ? false : true;
-
-            //this.render();
 
             App.stopPreload();
         },
@@ -612,5 +611,5 @@ define([
 
     });
 
-    return EditView;
+    return FormView;
 });

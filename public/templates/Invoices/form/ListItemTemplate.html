@@ -10,8 +10,13 @@
         </td>
         <td>
             <div class="compactRow">
+                <div class="firstName"><%=invoice.name%></div>
                 <div class="supplier"><%= invoice.supplier.name.first %> <%= invoice.supplier.name.last %></div>
-                <div class="assignedTo"><%- invoice.salesPerson.name.first %> <%- invoice.salesPerson.name.last %></div>
+
+            </div>
+            <div class="compactRow">
+                <div class="balance <%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance)%></div>
+                <div class="paymentTotal"><%= invoice.paymentInfo.total %> $</div>
                 <div class="status"><%if(invoice.workflow){%>
                     <%if(invoice.workflow.status === 'In Progress'){%>
                     <span class="<%= invoice.workflow.status.toLowerCase().replace(' ', '') %>"><%= invoice.workflow.name %></span>
@@ -25,10 +30,6 @@
                     <% } else {%>
                     <span> </span>
                     <%}%></div>
-            </div>
-            <div class="compactRow">
-                <div class="paymentTotal"><%= invoice.paymentInfo.total %> $</div>
-                <div class="date"><%= invoice.dueDate %></div>
             </div>
         </td>
     </tr>

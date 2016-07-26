@@ -30,10 +30,6 @@ define([
         ContentModel   : QuotationModel,
         FormView       : FormView,
 
-        events: {
-            'click .saveBtn': 'saveCurrentQuotation'
-        },
-
         renderList: function (quotations) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
@@ -41,10 +37,6 @@ define([
             $listHolder.append(this.listTemplate({
                 quotations: quotations
             }));
-        },
-
-        saveCurrentQuotation: function () {
-            this.formView.saveItem();
         }
     });
 

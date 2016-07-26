@@ -3,8 +3,8 @@ define([
     'jQuery',
     'Underscore',
     'views/dialogViewBase',
-    'text!templates/Orders/EditTemplate.html',
-    'text!templates/salesOrders/ViewTemplate.html',
+    'text!templates/Orders/form/FormTemplate.html',
+    'text!templates/Orders/form/ViewTemplate.html',
     'views/Assignees/AssigneesView',
     'views/Products/InvoiceOrder/ProductItems',
     'common',
@@ -19,6 +19,8 @@ define([
         contentType: 'Orders',
         imageSrc   : '',
         template   : _.template(EditTemplate),
+        forSales   : false,
+        service    : false,
 
         initialize: function (options) {
             var modelObj;
@@ -34,10 +36,8 @@ define([
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
             this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
-            this.forSales = false;
             this.editable = options.editable || true;
             this.balanceVissible = false;
-            this.service = false;
             modelObj = this.currentModel.toJSON();
             this.onlyView = (modelObj.workflow && modelObj.workflow.status === 'Done');
         },
@@ -45,7 +45,8 @@ define([
         events: {
             'click .receiveInvoice': 'receiveInvoice',
             'click .cancelOrder'   : 'cancelOrder',
-            'click .setDraft'      : 'setDraft'
+            'click .setDraft'      : 'setDraft',
+            'click .saveBtn'       : 'saveOrder'
         },
 
         chooseOption: function (e) {
@@ -159,6 +160,12 @@ define([
                     }
                 });
             });
+        },
+
+        saveOrder: function (e) {
+            e.preventDefault();
+
+            this.saveItem();
         },
 
         saveItem: function (invoiceCb) {
@@ -363,10 +370,15 @@ define([
         render: function () {
             var self = this;
             var $thisEl = this.$el;
-            var buttons;
             var formString;
             var model;
             var productItemContainer;
+
+            if (this.onlyView) {
+                $('.saveBtn').addClass('hidden');
+            } else {
+                $('.saveBtn').removeClass('hidden');
+            }
 
             this.template = this.onlyView ? _.template(ViewTemplate) : _.template(EditTemplate);
 

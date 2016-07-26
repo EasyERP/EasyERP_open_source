@@ -46,11 +46,6 @@ define([
         viewType   : 'list',
         contentType: CONSTANTS.SALESORDERS, // needs in view.prototype.changeLocationHash
 
-        events: {
-            //'click  .list tbody td:not(.notForm)': 'gotoForm'
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
-        },
-
         initialize: function (options) {
             this.filter = options.filter || {};
             this.filter.forSales = {
@@ -150,49 +145,7 @@ define([
 
             App.ownContentType = true;
             Backbone.history.navigate(url, {trigger: true});
-        },
-
-
-        goToEditDialog: function (event) {
-            var self = this;
-            var $eventTarget = $(event.target);
-            var $closestTr = $eventTarget.closest('tr');
-            var dataId = $closestTr.data('id');
-            var isNotEditable = $closestTr.hasClass('notEditable');
-            var quotationModel = new QuotationModel({
-                validate: false
-            });
-            var onlyView;
-
-            event.preventDefault();
-
-            if (isNotEditable) {
-                onlyView = true;
-            }
-
-            quotationModel.urlRoot = '/orders/';
-            quotationModel.fetch({
-                data: {
-                    contentType: self.contentType,
-                    id         : dataId
-                },
-
-                success: function (model) {
-                    return new self.EditView({
-                        model   : model,
-                        onlyView: onlyView
-                    });
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
         }
-
     });
 
     return OrdersListView;

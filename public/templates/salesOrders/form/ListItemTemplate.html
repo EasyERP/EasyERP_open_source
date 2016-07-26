@@ -1,21 +1,31 @@
 <table id="listTable">
     <% orders.forEach(function(order, index){ %>
-    <tr class="compactView" data-id="<%=quotation._id%>">
+    <tr class="compactView" data-id="<%=order._id%>"
+    <%if (order.workflow && order.workflow.status === 'Done') { %>
+    class="compactView notRemovable"
+    <% } else { %>
+    class="compactView"
+    <%}%>
+    >
         <td class="checkboxRow">
             <label>
-                <input type="checkbox" value="<%=quotation._id%>" class="checkbox"/>
+                <input type="checkbox" value="<%=order._id%>" class="checkbox"
+                <%if (order.workflow && order.workflow.status === 'Done') { %>
+                disabled
+                <% } %>
+                />
             </label>
         </td>
         <td>
             <div class="compactRowWrap">
                 <div class="compactRow">
-                    <div class="firstName"><%- order.name%></div>
-                    <div class="country"><%= order.supplier.name.last %></div>
-                    <div class="country"><%= order.orderDate %></div>
+                    <div class="firstName"><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></div>
+                    <div><%= order.name %></div>
+                    <div><%= order.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="email"><%= order.paymentInfo.total %></div>
-                    <div class="phone"><%= order.paymentInfo.unTaxed %></div>
+                    <div><%= order.paymentInfo.total %></div>
+                    <div><%= order.paymentInfo.unTaxed %></div>
                 </div>
             </div>
         </td>
