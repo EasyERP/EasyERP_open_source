@@ -26,11 +26,11 @@
                         <span class="dateNote"><%=val.date%></span>
                         <div class="changed_field">
                             <%if (val.history.prevValue){%>
-                            <span class="changedFieldName"><b><%= login %></b> changed <b><%= val.history.changedField %></b></span>
+                            <span class="changedFieldName"><b><%= login %></b> changed <%= val.name ? 'on opportunity ' + val.name + ' : ' : '' %><b><%= val.history.changedField %></b></span>
                             <span>from <b><%= val.history.prevValue %></b></span>
                             <span> to </span>
                             <%} else {%>
-                            <span class="changedFieldName"><b><%= login %></b> added <b><%= val.history.changedField %></b></span>
+                            <span class="changedFieldName"><b><%= login %></b> added <%= val.name ? 'on opportunity ' + val.name + ' : ' : '' %> <b><%= val.history.changedField %></b></span>
                             <%}%>
                             <span><b><%= val.history.newValue %></b></span>
                         </div>

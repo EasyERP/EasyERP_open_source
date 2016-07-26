@@ -7,7 +7,7 @@ define([
     'views/Editor/NoteView',
     'views/Editor/AttachView',
     'views/Companies/formPropertyView',
-   /* 'views/Opportunities/formProperty/formPropertyView',*/
+    'views/Opportunities/formProperty/formPropertyView',
     'common',
     'constants',
     'dataService',
@@ -20,7 +20,7 @@ define([
              EditorView,
              AttachView,
              CompanyFormProperty,
-           /*  OpportunityFormProperty,*/
+             OpportunityFormProperty,
              common,
              CONSTANTS,
              dataService,
@@ -31,18 +31,14 @@ define([
         el: '#content-holder',
 
         initialize: function (options) {
-            var self = this;
-            var formModel;
-            var $thisEl = this.$el;
 
             App.currentPerson = options.model.get('id');
 
             this.io = App.socket;
             this.mId = CONSTANTS.MID[this.contentType];
             this.formModel = options.model;
-            //this.formModel.on('change', this.render, this);
             this.formModel.urlRoot = '/Persons';
-            _.bindAll(this, 'savePerson');
+            _.bindAll(this, 'saveModel');
 
             this.modelChanged = {};
         },
@@ -89,6 +85,8 @@ define([
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
 
+            $target.closest('.propertyFormList').addClass('active');
+
             this.modelChanged[property] = value;
             this.showButtons();
         },
@@ -103,7 +101,7 @@ define([
 
         saveChanges: function (e) {
             e.preventDefault();
-            this.savePerson(this.modelChanged);
+            this.saveModel(this.modelChanged);
         },
 
         cancelChanges: function (e) {
@@ -149,19 +147,19 @@ define([
             this.showButtons();
         },
 
-        savePerson: function (changedAttrs, type) {
+        saveModel: function (changedAttrs, type) {
             var self = this;
 
             this.formModel.save(changedAttrs, {
+                wait   : true,
                 patch  : true,
                 success: function () {
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
-                    } else if (type === 'tags') {
-                        self.renderTags();
-                    } else {
+                    }  else {
                         self.editorView.renderTimeline();
+                        self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();
                     }
@@ -218,21 +216,20 @@ define([
             this.formProperty = new CompanyFormProperty({
                 parentModel: this.formModel,
                 attribute  : 'company',
-                saveDeal   : self.savePerson
+                saveDeal   : self.saveModel
             });
 
             $thisEl.find('#companyHolder').html(
                 this.formProperty.render().el
             );
 
-            /*$thisEl.find('#opportuntiesHolder').html(
+            $thisEl.find('#opportunitiesHolder').html(
                 new OpportunityFormProperty({
                     parentModel: this.formModel,
-                    data       : formModel.customer,
                     attribute  : 'contact',
-                    saveModel  : self.savePerson
+                    saveModel  : self.saveModel
                 }).render().el
-            );*/
+            );
 
             this.editorView = new EditorView({
                 model      : this.formModel,

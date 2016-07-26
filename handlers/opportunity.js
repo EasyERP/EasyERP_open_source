@@ -2236,7 +2236,7 @@ var Module = function (models, event) {
 
         switch (contentType) {
 
-            case ('Deals'):
+            case ('Opportunities'):
                 optionsObject.push({isOpportunitie: true});
                 break;
 

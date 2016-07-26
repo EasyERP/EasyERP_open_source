@@ -337,13 +337,40 @@ var Module = function (models, event) {
             });
     };
 
+    function getByCustomer (req, customer, cb) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
+
+        Opportunity
+            .find({$or: [{company: customer._id}, {customer: customer._id}]})
+            .populate('salesPerson', 'name')
+            .populate('workflow', 'name')
+            .sort({'name.first': 1})
+            .exec(function (err, opps) {
+                if (err) {
+                    return next(err);
+                }
+
+                customer.opportunities = opps;
+
+               cb(null, customer);
+            });
+    }
+
     function getTimeLine(req, model, cb) {
         var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
         var parallelTasks;
 
+        var opps = model.opportunities.map(function(elem){
+            return elem._id;
+        });
+
+        var ids = [model._id];
+
+        ids = ids.concat(opps);
+
         var historyOptions = {
             req: req,
-            id : model._id
+            id : {$in : ids}
         };
 
         function getHistoryNotes(parallelCb) {
@@ -354,11 +381,16 @@ var Module = function (models, event) {
                 }
 
                 notes = history.map(function (elem) {
+
+                    var oppObject = _.find(model.opportunities, function(opp){
+                        return (opp._id.toJSON() === elem.contentId.toJSON());
+                    });
+
                     return {
                         date   : elem.date,
                         history: elem,
                         user   : elem.editedBy,
-                        _id    : ''
+                        name   : oppObject ? oppObject.name : ''
                     };
                 });
 
@@ -611,7 +643,8 @@ var Module = function (models, event) {
                 company       : 1,
                 createdBy     : 1,
                 editedBy      : 1,
-                imageSrc      : 1
+                imageSrc      : 1,
+                isHidden      : 1
             })
             .populate('company')
             .populate('salesPurchases.salesPerson', '_id name fullName')
@@ -626,13 +659,20 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
-                getTimeLine(req, customer.toJSON(), function(err, result){
-
+                getByCustomer (req, customer.toJSON(), function(err, customer){
                     if (err){
                         return next(err);
                     }
-                    res.status(200).send(result);
+
+                    getTimeLine(req, customer, function(err, result){
+
+                        if (err){
+                            return next(err);
+                        }
+                        res.status(200).send(result);
+                    });
                 });
+
 
 
             });
@@ -865,6 +905,11 @@ var Module = function (models, event) {
             obj = data.notes[data.notes.length - 1];
             obj._id = mongoose.Types.ObjectId();
             obj.date = new Date();
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
+            }
             data.notes[data.notes.length - 1] = obj;
         }
 
@@ -960,8 +1005,10 @@ var Module = function (models, event) {
             }
             obj.date = new Date();
 
-            if (!obj.author) {
-                obj.author = req.session.uName;
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
             }
             data.notes[data.notes.length - 1] = obj;
         }
@@ -978,6 +1025,7 @@ var Module = function (models, event) {
             var osType = (os.type().split('_')[0]);
             var path;
             var dir;
+            var historyOptions;
 
             if (err) {
                 return next(err);
@@ -1016,7 +1064,31 @@ var Module = function (models, event) {
 
             }
             event.emit('editModel', {id: result._id, currentUser: req.session.uId});
-            res.status(200).send({success: 'Customer updated', notes: result.notes});
+
+            historyOptions = {
+                contentType: 'person',
+                data       : data,
+                req        : req,
+                contentId  : result._id
+            };
+
+            historyWriter.addEntry(historyOptions, function () {
+                getByCustomer (req, result.toJSON(), function(err, customer){
+                    if (err){
+                        return next(err);
+                    }
+                    getTimeLine(req, customer, function(err, result){
+
+                        if (err){
+                            return next(err);
+                        }
+                        res.status(200).send(result);
+                    });
+                });
+            });
+
+
+
         });
     };
 
