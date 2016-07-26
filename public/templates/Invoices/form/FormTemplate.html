@@ -1,5 +1,7 @@
 <div class="form-holder">
-    <span class="btn btnSave btnRounded saveBtn">Save</span>
+    <% if(!isPaid){%>
+        <span class="btn btnSave btnRounded saveBtn">Save</span>
+    <%}%>
     <form method="post" action="" class="form" id="invoiceForm">
         <fieldset>
             <div class="inner">

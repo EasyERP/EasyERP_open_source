@@ -16,7 +16,8 @@
             </div>
             <div class="compactRow">
                 <div class="balance <%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance)%></div>
-                <div class="paymentTotal"><%= invoice.paymentInfo.total %> $</div>
+                <div class="total <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ?
+                    currencySplitter(invoice.paymentInfo.total) : '0.00'%></div>
                 <div class="status"><%if(invoice.workflow){%>
                     <%if(invoice.workflow.status === 'In Progress'){%>
                     <span class="<%= invoice.workflow.status.toLowerCase().replace(' ', '') %>"><%= invoice.workflow.name %></span>
