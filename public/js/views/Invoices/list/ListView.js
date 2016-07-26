@@ -142,8 +142,6 @@ define([
 
             App.ownContentType = true;
 
-            console.log(url);
-
             Backbone.history.navigate(url, {trigger: true});
         }
 
