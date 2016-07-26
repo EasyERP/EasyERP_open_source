@@ -289,6 +289,15 @@ input {
     }
   }
 
+  &Blue {
+    border: 0 !important;
+
+    &.slim {
+      height: 26px;
+      line-height: 26px !important;
+    }
+  }
+
   &Rounded {
     background-color: #fff;
     color: #000;
@@ -1305,6 +1314,16 @@ dl.payrollDateBlock {
   flex-grow: 1;
 }
 
+.formContent {
+  .form-holder {
+    form {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+    }
+  }
+}
+
 .listContent {
   width: 400px;
   border-right: 1px solid #ededed;
@@ -1916,4 +1935,12 @@ table {
 }
 .addTaskTitle {
   padding: 5px 0;
+}
+
+.formContent {
+  .btn.positioned {
+    position: absolute;
+    top: 8px;
+    left: 408px;
+  }
 }

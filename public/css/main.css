@@ -2835,6 +2835,13 @@ input:not([type="checkbox"]).inputBordered:focus {
   border-color: #4d5a75;
   text-decoration: none;
 }
+.btnBlue {
+  border: 0 !important;
+}
+.btnBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
+}
 .btnRounded {
   background-color: #fff;
   color: #000;
@@ -3614,6 +3621,11 @@ dl.payrollDateBlock dt {
   -webkit-flex-grow: 1;
   flex-grow: 1;
 }
+.formContent .form-holder form {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
 .listContent {
   width: 400px;
   border-right: 1px solid #ededed;
@@ -4079,6 +4091,11 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .addTaskTitle {
   padding: 5px 0;
+}
+.formContent .btn.positioned {
+  position: absolute;
+  top: 8px;
+  left: 408px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -9812,6 +9829,13 @@ button.blue:hover {
   border-color: #4d5a75;
   text-decoration: none;
 }
+buttonBlue {
+  border: 0 !important;
+}
+buttonBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
+}
 buttonRounded {
   background-color: #fff;
   color: #000;
@@ -9929,6 +9953,15 @@ a.red.blue:hover {
   background-color: #4d5a75;
   border-color: #4d5a75;
   text-decoration: none;
+}
+button.redBlue,
+a.redBlue {
+  border: 0 !important;
+}
+button.redBlue.slim,
+a.redBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
 }
 button.redRounded,
 a.redRounded {
@@ -12869,6 +12902,15 @@ ul.dialog-tabs .withEndContract .arrow.blue:hover {
   border-color: #4d5a75;
   text-decoration: none;
 }
+ul.dialog-tabs .withEndContract .endContractReasonListBlue,
+ul.dialog-tabs .withEndContract .arrowBlue {
+  border: 0 !important;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListBlue.slim,
+ul.dialog-tabs .withEndContract .arrowBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
+}
 ul.dialog-tabs .withEndContract .endContractReasonListRounded,
 ul.dialog-tabs .withEndContract .arrowRounded {
   background-color: #fff;
@@ -13085,6 +13127,15 @@ ul.chart-tabs .withEndContract .arrow.blue:hover {
   background-color: #4d5a75;
   border-color: #4d5a75;
   text-decoration: none;
+}
+ul.chart-tabs .withEndContract .endContractReasonListBlue,
+ul.chart-tabs .withEndContract .arrowBlue {
+  border: 0 !important;
+}
+ul.chart-tabs .withEndContract .endContractReasonListBlue.slim,
+ul.chart-tabs .withEndContract .arrowBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
 }
 ul.chart-tabs .withEndContract .endContractReasonListRounded,
 ul.chart-tabs .withEndContract .arrowRounded {
