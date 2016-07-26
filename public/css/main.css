@@ -3714,10 +3714,6 @@ td.checkboxRow {
 .listOpen .pagination {
   margin: 5px 0 10px;
 }
-.top-bar {
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
 #top-bar-createBtn {
   height: 26px;
   padding: 0 12px;
@@ -10897,11 +10893,11 @@ table#workflows tr td.edit-status {
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
   display: block;
   height: 40px;
   clear: both;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
 }
 #top-bar h3 {
   line-height: 40px;
@@ -10929,8 +10925,6 @@ table#workflows tr td.edit-status {
   display: block;
   height: 40px;
   clear: both;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
   margin-left: 0;
 }
 .projectInfoTopBar h3 {
