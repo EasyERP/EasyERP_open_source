@@ -539,6 +539,7 @@ var Module = function (models, event) {
                             'currency.obj'  : {$arrayElemAt: ['$currency.obj', 0]},
                             'currency.rate' : 1,
                             forSale         : 1,
+                            journal         : 1,
                             differenceAmount: 1,
                             paidAmount      : 1,
                             workflow        : 1,
@@ -567,6 +568,13 @@ var Module = function (models, event) {
                             as          : 'invoice.workflow'
                         }
                     }, {
+                        $lookup: {
+                            from        : 'journals',
+                            localField  : 'journal',
+                            foreignField: '_id',
+                            as          : 'journal'
+                        }
+                    }, {
                         $project: {
                             'supplier.name'   : '$supplier.name',
                             'supplier._id'    : '$supplier._id',
@@ -576,6 +584,7 @@ var Module = function (models, event) {
                             'invoice._id'     : 1,
                             'invoice.name'    : 1,
                             'invoice.workflow': {$arrayElemAt: ['$invoice.workflow', 0]},
+                            journal           : {$arrayElemAt: ['$journal', 0]},
 
                             salesmanagers: {
                                 $filter: {
@@ -604,14 +613,15 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             supplier               : 1,
-                            journal                : 1,
+                            'journal.name'         : '$journal.name',
+                            'journal._id'          : '$journal._id',
                             'currency.name'        : 1,
                             'currency._id'         : 1,
                             'currency.rate'        : 1,
                             'invoice._id'          : 1,
                             'invoice.name'         : 1,
                             'invoice.workflow.name': '$invoice.workflow.name',
-                            name                : 1,
+                            name                   : 1,
                             salesmanagers          : {$arrayElemAt: ['$salesmanagers', 0]},
                             forSale                : 1,
                             differenceAmount       : 1,
@@ -708,6 +718,7 @@ var Module = function (models, event) {
                         $project: {
                             _id             : '$root._id',
                             supplier        : '$root.supplier',
+                            journal         : '$root.journal',
                             currency        : '$root.currency',
                             invoice         : '$root.invoice',
                             assigned        : '$root.assigned',
