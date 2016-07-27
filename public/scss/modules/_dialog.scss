@@ -43,6 +43,10 @@
 }
 
 .mainTabs {
+  &.dialog-tabs-items {
+    margin-top: 10px;
+  }
+
   ul.dialog-tabs {
     padding-top: 10px;
   }
