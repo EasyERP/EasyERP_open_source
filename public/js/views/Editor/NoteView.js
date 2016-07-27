@@ -358,6 +358,8 @@ define([
         renderTimeline: function () {
             var notes = this.model.get('notes');
 
+            //console.log(notes);
+
             this.$el.find('#timeline').html(_.template(timelineTemplate, {notes: notes}));
         },
 

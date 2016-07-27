@@ -1,0 +1,34 @@
+<table id="listTable">
+    <% orders.forEach(function(order, index){ %>
+    <tr class="compactView" data-id="<%=order._id%>"
+    <%if (order.workflow && order.workflow.status === 'Done') { %>
+    class="compactView notRemovable"
+    <% } else { %>
+    class="compactView"
+    <%}%>
+    >
+        <td class="checkboxRow">
+            <label>
+                <input type="checkbox" value="<%=order._id%>" class="checkbox"
+                <%if (order.workflow && order.workflow.status === 'Done') { %>
+                disabled
+                <% } %>
+                />
+            </label>
+        </td>
+        <td>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="firstName"><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></div>
+                    <div><%=(order.salesManager) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></div>
+                    <div><%= order.orderDate %></div>
+                </div>
+                <div class="compactRow">
+                    <div class="total <%= currencyClass(order.currency._id) %>"><%= (order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00' %></div>
+                    <div><%=order.workflow ? order.workflow.name: 'undefined'%></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <% }) %>
+</table>

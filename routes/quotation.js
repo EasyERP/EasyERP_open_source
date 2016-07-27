@@ -74,6 +74,8 @@ HTTP/1.1 200 OK
      */
     router.get('/', accessStackMiddleware, handler.getByViewType);
 
+    router.get('/:id', accessStackMiddleware, handler.getById);
+
     /**
      *@api {get} /quotations/getFilterValues/ Request FilterValues
      *

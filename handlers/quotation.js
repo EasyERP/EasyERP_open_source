@@ -903,7 +903,7 @@ var Module = function (models, event) {
     }
 
     function getById(req, res, next) {
-        var id = req.query.id;
+        var id = req.query.id || req.params.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var departmentSearcher;
         var contentIdsSearcher;

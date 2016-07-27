@@ -2,9 +2,11 @@
 <tr class="productItem" data-id="<%=product.product ? product.product._id : 'err'%>">
     <td data-name="productName"><a class="productsDd" href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a></td>
     <% if (forSales) {%>
-    <td data-name="jobs" data-content="<%=product.jobs._id%>">
-        <a id="jobs" href="javascript:;"><%=product.jobs.name%></a>
-    </td>
+        <% if (product.jobs) { %>
+            <td data-name="jobs" data-content="<%=product.jobs._id%>">
+                <a id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+            </td>
+        <% } %>
     <% } else {%>
     <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>"><span><%=product.description%></span></td>
     <% } %>

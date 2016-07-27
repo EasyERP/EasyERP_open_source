@@ -9,10 +9,8 @@ define([
     'views/Opportunities/form/FormView',
     'views/Opportunities/CreateView',
     'views/Opportunities/list/ListItemView',
-    'views/Filter/filterView',
-    'common',
-    'constants'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, OpportunitiesModel, FormView, CreateView, ListItemView) {
+    'helpers'
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, OpportunitiesModel, FormView, CreateView, ListItemView, helpers) {
     'use strict';
 
     var OpportunitiesListView = TFormBaseView.extend({
@@ -30,12 +28,14 @@ define([
         ContentModel   : OpportunitiesModel,
         FormView       : FormView,
 
-        renderList: function(opportunities){
+        renderList: function (opportunities) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
-                opportunities: opportunities
+                opportunities   : opportunities,
+                currencySplitter: helpers.currencySplitter,
+                currencyClass   : helpers.currencyClass
             }));
         }
     });

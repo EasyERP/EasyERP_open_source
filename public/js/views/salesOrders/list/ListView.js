@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -15,7 +16,8 @@ define([
     'constants',
     'helpers',
     'helpers'
-], function ($,
+], function (Backbone,
+             $,
              _,
              ListViewBase,
              listTemplate,
@@ -44,10 +46,6 @@ define([
         viewType   : 'list',
         contentType: CONSTANTS.SALESORDERS, // needs in view.prototype.changeLocationHash
 
-        events: {
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog'
-        },
-
         initialize: function (options) {
             this.filter = options.filter || {};
             this.filter.forSales = {
@@ -56,6 +54,7 @@ define([
                 value: ['true']
             };
 
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
@@ -134,46 +133,19 @@ define([
             // $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        goToEditDialog: function (event) {
-            var self = this;
-            var $eventTarget = $(event.target);
-            var $closestTr = $eventTarget.closest('tr');
-            var dataId = $closestTr.data('id');
-            var isNotEditable = $closestTr.hasClass('notEditable');
-            var quotationModel = new QuotationModel({
-                validate: false
-            });
-            var onlyView;
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
 
-            event.preventDefault();
-
-            if (isNotEditable) {
-                onlyView = true;
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
             }
 
-            quotationModel.urlRoot = '/orders/';
-            quotationModel.fetch({
-                data: {
-                    contentType: self.contentType,
-                    id         : dataId
-                },
-
-                success: function (model) {
-                    return new self.EditView({
-                        model   : model,
-                        onlyView: onlyView
-                    });
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         }
-
     });
 
     return OrdersListView;

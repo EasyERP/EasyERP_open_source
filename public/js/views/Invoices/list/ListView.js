@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'Underscore',
     'jQuery',
     'views/listViewBase',
@@ -14,7 +15,7 @@ define([
     'dataService',
     'constants',
     'helpers'
-], function (_, $, ListViewBase, listTemplate, stagesTemplate, CreateView, EditView, InvoiceModel, ListItemView, ListTotalView, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
+], function (Backbone , _, $, ListViewBase, listTemplate, stagesTemplate, CreateView, EditView, InvoiceModel, ListItemView, ListTotalView, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var InvoiceListView = ListViewBase.extend({
@@ -31,6 +32,7 @@ define([
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.filter = options.filter || {};
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             this.filter.forSales = {
                 key  : 'forSales',
                 type : 'boolean',
@@ -53,7 +55,8 @@ define([
 
         events: {
             'click .stageSelect'           : 'showNewSelect',
-            'click  .list td:not(.notForm)': 'goToEditDialog',
+            //'click  .list td:not(.notForm)': 'goToEditDialog',
+            'click  .list td:not(.notForm)': 'gotoForm',
             'click .newSelectList li'      : 'chooseOption'
         },
 
@@ -127,7 +130,22 @@ define([
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+
+            Backbone.history.navigate(url, {trigger: true});
+        }
+
+        /*goToEditDialog: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
@@ -153,7 +171,7 @@ define([
                     });
                 }
             });
-        }
+        }*/
     });
     return InvoiceListView;
 });

@@ -289,6 +289,15 @@ input {
     }
   }
 
+  &Blue {
+    border: 0 !important;
+
+    &.slim {
+      height: 26px;
+      line-height: 26px !important;
+    }
+  }
+
   &Rounded {
     background-color: #fff;
     color: #000;
@@ -1206,10 +1215,6 @@ dl.payrollDateBlock {
   font-family: @fontBold;
 }
 
-#top-bar-deleteBtn {
-
-}
-
 .closeBtn {
   position: relative;
   width: 24px;
@@ -1310,6 +1315,16 @@ dl.payrollDateBlock {
   flex-grow: 1;
 }
 
+.formContent {
+  .form-holder {
+    form {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+    }
+  }
+}
+
 .listContent {
 
   table {
@@ -1389,6 +1404,10 @@ dl.payrollDateBlock {
 
 .compactRowWrap {
   padding: 12px 12px 12px 0;
+
+  .quotationsNameLeftBar {
+    margin-bottom: 10px;
+  }
 }
 
 .compactRow {
@@ -1897,6 +1916,8 @@ table {
     display: table;
     clear: both;
   }
+
+
 }
 
 .editNoteBtnBlock {
@@ -1926,4 +1947,12 @@ table {
 }
 .addTaskTitle {
   padding: 5px 0;
+}
+
+.formContent {
+  .btn.positioned {
+    position: absolute;
+    top: 5px;
+    left: 411px;
+  }
 }
