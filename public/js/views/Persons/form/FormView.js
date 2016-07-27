@@ -43,7 +43,6 @@ define([
             this.modelChanged = {};
         },
 
-
         showEdit: function () {
             this.$el.find('.upload').animate({
                 height : '20px',
@@ -157,7 +156,7 @@ define([
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
-                    }  else {
+                    } else {
                         self.editorView.renderTimeline();
                         self.renderAbout();
                         self.modelChanged = {};
@@ -189,7 +188,7 @@ define([
 
         },
 
-        renderAbout : function (){
+        renderAbout: function () {
             var self = this;
             var $thisEl = this.$el;
             $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
@@ -261,8 +260,6 @@ define([
 
             return this;
         }
-
-
 
     });
 
