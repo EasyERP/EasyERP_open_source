@@ -941,6 +941,10 @@ input {
       width: 100%;
       overflow: hidden;
 
+      &:empty {
+        display: none;
+      }
+
       span {
         box-sizing: border-box;
         display: block;
@@ -1627,6 +1631,10 @@ td.checkboxRow {
   -webkit-transition: all .3s;
   transition: all .3s;
   border-radius: 3px;
+  
+  &:hover {
+    text-decoration: none;
+  }
 
   &:after {
     content: 'Delete';
