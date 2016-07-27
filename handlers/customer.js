@@ -337,7 +337,7 @@ var Module = function (models, event) {
             });
     };
 
-    function getByCustomer (req, customer, cb) {
+    function getByCustomer(req, customer, cb) {
         var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
 
         Opportunity
@@ -352,7 +352,7 @@ var Module = function (models, event) {
 
                 customer.opportunities = opps;
 
-               cb(null, customer);
+                cb(null, customer);
             });
     }
 
@@ -360,7 +360,7 @@ var Module = function (models, event) {
         var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
         var parallelTasks;
 
-        var opps = model.opportunities.map(function(elem){
+        var opps = model.opportunities.map(function (elem) {
             return elem._id;
         });
 
@@ -370,7 +370,7 @@ var Module = function (models, event) {
 
         var historyOptions = {
             req: req,
-            id : {$in : ids}
+            id : {$in: ids}
         };
 
         function getHistoryNotes(parallelCb) {
@@ -382,7 +382,7 @@ var Module = function (models, event) {
 
                 notes = history.map(function (elem) {
 
-                    var oppObject = _.find(model.opportunities, function(opp){
+                    var oppObject = _.find(model.opportunities, function (opp) {
                         return (opp._id.toJSON() === elem.contentId.toJSON());
                     });
 
@@ -659,21 +659,19 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
-                getByCustomer (req, customer.toJSON(), function(err, customer){
-                    if (err){
+                getByCustomer(req, customer.toJSON(), function (err, customer) {
+                    if (err) {
                         return next(err);
                     }
 
-                    getTimeLine(req, customer, function(err, result){
+                    getTimeLine(req, customer, function (err, result) {
 
-                        if (err){
+                        if (err) {
                             return next(err);
                         }
                         res.status(200).send(result);
                     });
                 });
-
-
 
             });
     }
@@ -1073,21 +1071,19 @@ var Module = function (models, event) {
             };
 
             historyWriter.addEntry(historyOptions, function () {
-                getByCustomer (req, result.toJSON(), function(err, customer){
-                    if (err){
+                getByCustomer(req, result.toJSON(), function (err, customer) {
+                    if (err) {
                         return next(err);
                     }
-                    getTimeLine(req, customer, function(err, result){
+                    getTimeLine(req, customer, function (err, result) {
 
-                        if (err){
+                        if (err) {
                             return next(err);
                         }
                         res.status(200).send(result);
                     });
                 });
             });
-
-
 
         });
     };
@@ -1183,7 +1179,7 @@ var Module = function (models, event) {
             }
 
             Opportunity.update(findObject, {$set: updateObject}, {multi: true}, function (err) {
-                if (err){
+                if (err) {
                     return next(err);
                 }
                 res.status(200).send({success: 'customer removed'});

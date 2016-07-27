@@ -46,7 +46,7 @@ define([
                 this.selectView.remove();
             }
         },
-        showEdit: function () {
+        showEdit     : function () {
             this.$el.find('.upload').animate({
                 height : '20px',
                 display: 'block'
@@ -202,7 +202,7 @@ define([
 
         },
 
-        renderAbout : function (){
+        renderAbout: function () {
             var self = this;
             var $thisEl = this.$el;
             $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
@@ -283,7 +283,6 @@ define([
                     self.modelChanged['nextAction.date'] = new Date(dateText);
                     self.showButtons();
                 }
-
             });
 
             $thisEl.find('.attachments').append(

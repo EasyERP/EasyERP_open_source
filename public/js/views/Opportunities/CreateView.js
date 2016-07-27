@@ -157,7 +157,8 @@ define([
         },
 
         render: function () {
-            var formString = this.template({parentModel : this.parentModel.toJSON()});
+            var parentModel =  this.parentModel ? this.parentModel.toJSON() : '';
+            var formString = this.template({parentModel : parentModel});
             var self = this;
             var notDiv;
             var model = new OpportunityModel();
