@@ -65,5 +65,60 @@ module.exports = {
                 project   : '$tmp.name'
             }
         }
+    },
+    PERSON : {
+        collectionName: 'Persons',
+
+        map: {
+            skype: {
+                name : 'Skype',
+                isRef: false
+            },
+            email: {
+                name : 'Email',
+                isRef: false
+            },
+            'social.LI': {
+                name : 'LinkedIn',
+                isRef: false
+            },
+            'social.FB': {
+                name : 'FaceBook',
+                isRef: false
+            },
+            'dateBirth': {
+                name : 'Date of Birth',
+                isRef: false
+            },
+            'name.first': {
+                name : 'First Name',
+                isRef: false
+            },
+            'name.last': {
+                name : 'Last Name',
+                isRef: false
+            },
+            'jobPosition': {
+                name : 'Job Position',
+                isRef: false
+            },
+            'address.country': {
+                name : 'Country',
+                isRef: false
+            }
+            /*salesPerson: {
+                name      : 'Assigned To',
+                isRef     : true,
+                collection: 'Employees',
+                project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
+            },
+
+            workflow: {
+                name      : 'workflow',
+                isRef     : true,
+                collection: 'workflows',
+                project   : '$tmp.name'
+            }*/
+        }
     }
 };

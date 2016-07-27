@@ -6,6 +6,7 @@ var Module = function (models, event) {
 
     var CustomerSchema = mongoose.Schemas.Customer;
     var OpportunitySchema = mongoose.Schemas.Opportunities;
+    var TasksSchema = mongoose.Schemas.DealTasks;
 
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants');
@@ -18,6 +19,8 @@ var Module = function (models, event) {
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
     var FilterMapper = require('../helpers/filterMapper');
+    var HistoryWriter = require('../helpers/historyWriter.js');
+    var historyWriter = new HistoryWriter(models);
     //var app = require('./app');
     //var io = app.get('io');
 
@@ -334,6 +337,103 @@ var Module = function (models, event) {
             });
     };
 
+    function getByCustomer(req, customer, cb) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
+
+        Opportunity
+            .find({$or: [{company: customer._id}, {customer: customer._id}]})
+            .populate('salesPerson', 'name')
+            .populate('workflow', 'name')
+            .sort({'name.first': 1})
+            .exec(function (err, opps) {
+                if (err) {
+                    return next(err);
+                }
+
+                customer.opportunities = opps;
+
+                cb(null, customer);
+            });
+    }
+
+    function getTimeLine(req, model, cb) {
+        var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
+        var parallelTasks;
+
+        var opps = model.opportunities.map(function (elem) {
+            return elem._id;
+        });
+
+        var ids = [model._id];
+
+        ids = ids.concat(opps);
+
+        var historyOptions = {
+            req: req,
+            id : {$in: ids}
+        };
+
+        function getHistoryNotes(parallelCb) {
+            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                var notes;
+                if (err) {
+                    return parallelCb(err);
+                }
+
+                notes = history.map(function (elem) {
+
+                    var oppObject = _.find(model.opportunities, function (opp) {
+                        return (opp._id.toJSON() === elem.contentId.toJSON());
+                    });
+
+                    return {
+                        date   : elem.date,
+                        history: elem,
+                        user   : elem.editedBy,
+                        name   : oppObject ? oppObject.name : ''
+                    };
+                });
+
+                parallelCb(null, notes);
+
+            }, true);
+        }
+
+        function getTask(parallelCb) {
+            TasksSchema.find({'contact': model._id})
+                .populate('deal', '_id name')
+                .populate('company', '_id name imageSrc')
+                .populate('contact', '_id name imageSrc')
+                .populate('editedBy.user', '_id login')
+                .populate('assignedTo', '_id name fullName imageSrc')
+                .populate('workflow')
+                .exec(function (err, res) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+                    res = res.map(function (elem) {
+                        return {
+                            date: elem.contactDate,
+                            task: elem,
+                            _id : elem._id,
+                            user: elem.editedBy.user
+                        }
+                    });
+                    parallelCb(null, res);
+                });
+        }
+
+        parallelTasks = [getTask, getHistoryNotes];
+
+        async.parallel(parallelTasks, function (err, results) {
+
+            model.notes = model.notes.concat(results[0], results[1]);
+            model.notes = _.sortBy(model.notes, 'date');
+            cb(null, model);
+        });
+
+    }
+
     function getCustomers(req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
@@ -543,9 +643,10 @@ var Module = function (models, event) {
                 company       : 1,
                 createdBy     : 1,
                 editedBy      : 1,
-                imageSrc      : 1
+                imageSrc      : 1,
+                isHidden      : 1
             })
-            .populate('company', '_id name')
+            .populate('company')
             .populate('salesPurchases.salesPerson', '_id name fullName')
             .populate('salesPurchases.salesTeam', '_id name')
             .populate('salesPurchases.implementedBy', '_id name fullName')
@@ -558,8 +659,20 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
+                getByCustomer(req, customer.toJSON(), function (err, customer) {
+                    if (err) {
+                        return next(err);
+                    }
 
-                res.status(200).send(customer);
+                    getTimeLine(req, customer, function (err, result) {
+
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send(result);
+                    });
+                });
+
             });
     }
 
@@ -790,6 +903,11 @@ var Module = function (models, event) {
             obj = data.notes[data.notes.length - 1];
             obj._id = mongoose.Types.ObjectId();
             obj.date = new Date();
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
+            }
             data.notes[data.notes.length - 1] = obj;
         }
 
@@ -813,6 +931,7 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var headers = req.headers;
         var id = headers.modelid || 'empty';
+        var addNote = headers.addnote;
         var contentType = headers.modelname || 'persons';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
@@ -829,11 +948,35 @@ var Module = function (models, event) {
         }
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            var notes = [];
+
             if (err) {
                 return next(err);
             }
 
-            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+            if (addNote) {
+                notes = file.map(function (elem) {
+                    return {
+                        _id       : mongoose.Types.ObjectId(),
+                        attachment: {
+                            name    : elem.name,
+                            shortPas: elem.shortPas
+                        },
+                        user      : {
+                            _id  : req.session.uId,
+                            login: req.session.uName
+                        },
+                        date      : new Date()
+                    }
+                });
+            }
+
+            Model.findByIdAndUpdate(id, {
+                $push: {
+                    attachments: {$each: file},
+                    notes      : {$each: notes}
+                }
+            }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
                 }
@@ -860,8 +1003,10 @@ var Module = function (models, event) {
             }
             obj.date = new Date();
 
-            if (!obj.author) {
-                obj.author = req.session.uName;
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
             }
             data.notes[data.notes.length - 1] = obj;
         }
@@ -878,6 +1023,7 @@ var Module = function (models, event) {
             var osType = (os.type().split('_')[0]);
             var path;
             var dir;
+            var historyOptions;
 
             if (err) {
                 return next(err);
@@ -916,7 +1062,29 @@ var Module = function (models, event) {
 
             }
             event.emit('editModel', {id: result._id, currentUser: req.session.uId});
-            res.status(200).send({success: 'Customer updated', notes: result.notes});
+
+            historyOptions = {
+                contentType: 'person',
+                data       : data,
+                req        : req,
+                contentId  : result._id
+            };
+
+            historyWriter.addEntry(historyOptions, function () {
+                getByCustomer(req, result.toJSON(), function (err, customer) {
+                    if (err) {
+                        return next(err);
+                    }
+                    getTimeLine(req, customer, function (err, result) {
+
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send(result);
+                    });
+                });
+            });
+
         });
     };
 
@@ -1011,7 +1179,7 @@ var Module = function (models, event) {
             }
 
             Opportunity.update(findObject, {$set: updateObject}, {multi: true}, function (err) {
-                if (err){
+                if (err) {
                     return next(err);
                 }
                 res.status(200).send({success: 'customer removed'});

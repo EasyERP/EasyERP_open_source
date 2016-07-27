@@ -1,6 +1,12 @@
 .pagination {
   margin: 5px 10px 0;
 
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
   & > div {
     float: left;
     //color: @mainText-color;
@@ -163,17 +169,6 @@
       }
     }
   }
-
-  //+ #timeRecivingDataFromServer {
-  //  position: absolute;
-  //  bottom: 10px;
-  //  left: 50%;
-  //  -webkit-transform: translateX(-50%);
-  //  -moz-transform: translateX(-50%);
-  //  -ms-transform: translateX(-50%);
-  //  -o-transform: translateX(-50%);
-  //  transform: translateX(-50%);
-  //}
 }
 
 .nextPrev {

@@ -1,0 +1,53 @@
+<div class="selectCompany moduleList">
+    <div>
+        <div class="formTitle">
+            <h3>Opportunities</h3>
+        </div>
+        <% model.opportunities.forEach(function(property){ %>
+        <div class="propertyContainer">
+
+            <div class="propertyBox">
+                <div class="opportunity-header">
+                    <%if(property.expectedRevenue.value !== 0){%>
+                    <h3 class="dollar"><%=(currencySplitter(property.expectedRevenue.value.toString()))%></h3>
+                    <%} else {%>
+                    <h3></h3>
+                    <%}%>
+                    <h4 class="bold left blue" style="max-width:56%"><a href="/#easyErp/<%=property.isOpportunitie ? 'Opportunities' : 'Leads'%>/tform/<%=property._id%>"><%=property.name%></a></h4>
+
+
+
+                    <div class="clearfix">
+                    </div>
+                </div>
+                <div class="opportunity-content">
+                    <div class="half-block left">
+                        <%if (property.nextAction && property.nextAction.desc){%>
+                        <br/>
+
+                        <p class="left"><%=property.nextAction?property.nextAction.desc:''%> </p>
+                        <%}%>
+
+                        <!--  <p class="left">Project Type</p>-->
+                        <p class="left saleName"><%=(property.salesPerson) ? property.salesPerson.name.first + ' ' + property.salesPerson.name.last :
+                            ''%></p>
+                        <p class="left workflow"><%=(property.workflow) ? property.workflow.name : ''%></p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+          <!--  <div class="propertySubmit">
+                <a class="btn" title="View All Properties" href="<%='/#easyErp/Opportunies/form/'+ property._id%> "
+                   id="showMoreButton">View All Properties</a>
+            </div>-->
+
+        </div>
+        <% }) %>
+
+        <div class="align-center">
+            <a class="btn <%=model.opportunities.length ? 'smallBtn' :'largeBtn'%> addOport" title="New Opportunity" id="addProperty"><span class="fa fa-plus" aria-hidden="true"></span>New Opportunity</a>
+        </div>
+
+    </div>
+</div>
+

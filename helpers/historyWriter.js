@@ -20,7 +20,7 @@ var History = function (models) {
             var keys = keyPath.split('.');
             var val;
 
-            if (keys[0] === keyValue.key) {
+            if (keys[0] === keyValue.key && (keys.length === 1 || keys[1] === Object.keys(keyValue.value)[0]) ) {
                 val = keyValue.value;
 
                 if (keys.length > 1) {
@@ -196,7 +196,9 @@ var History = function (models) {
                         newValue    : 1,
                         prevValue   : 1,
                         date        : 1,
-                        changedField: 1
+                        changedField: 1,
+                        contentId   : 1,
+                        collectionName : 1
                     }
                 }, {
                     $project: {
@@ -205,7 +207,9 @@ var History = function (models) {
                         newValue    : project,
                         prevValue   : 1,
                         date        : 1,
-                        changedField: 1
+                        changedField: 1,
+                        contentId   : 1,
+                        collectionName : 1
                     }
                 }, {
                     $lookup: {
@@ -221,7 +225,9 @@ var History = function (models) {
                         newValue    : 1,
                         prevValue   : 1,
                         date        : 1,
-                        changedField: 1
+                        changedField: 1,
+                        contentId   : 1,
+                        collectionName : 1
                     }
                 }, {
                     $project: {
@@ -230,7 +236,9 @@ var History = function (models) {
                         prevValue   : project,
                         date        : 1,
                         changedField: 1,
-                        _id         : 0
+                        _id         : 0,
+                        contentId   : 1,
+                        collectionName : 1
                     }
                 }], function (err, result) {
                     if (typeof callback === 'function') {
@@ -260,7 +268,9 @@ var History = function (models) {
                     newValue    : 1,
                     prevValue   : 1,
                     date        : 1,
-                    changedField: 1
+                    changedField: 1,
+                    contentId   : 1,
+                    collectionName : 1
                 }
             }, {
                 $project: {
@@ -270,7 +280,9 @@ var History = function (models) {
                     prevValue   : 1,
                     date        : 1,
                     changedField: 1,
-                    _id         : 0
+                    _id         : 0,
+                    contentId   : 1,
+                    collectionName : 1
                 }
             }], function (err, result) {
                 if (typeof callback === 'function') {

@@ -8,15 +8,23 @@
     <div>
 
 
-        <div class="editNoteBtnBlock">
+
+
+        <div class="editNoteBtnBlock clearfix">
             <% if (note.attachment){%>
 
-            <div class="noteType"><a href="download/<%= note.attachment.shortPas%>" id="<%= note.attachment._id%>"><%= note.attachment.name  %></a></div>
+            <div class="noteType attachContainer">
+                <div>
+                    <a href="download/<%= note.attachment.shortPas%>" id="<%= note.attachment._id%>"><%= note.attachment.name  %></a>
+                </div>
+            </div>
             <%}%>
+
 
             <a href="javascript:;" data-id="<%=note._id%>" class=" btn btnBlue saveNote">Save</a>
 
             <a href="javascript:;" data-id="<%=note._id%>" class=" btn btnBlue cancelNote">Cancel</a>
+
 
         </div>
     </div>

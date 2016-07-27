@@ -2447,7 +2447,7 @@ input, textarea, select {
 
 .current-selected {
   // color: @tilte-color !important;
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
   line-height: 20px !important;
 }
@@ -2942,22 +2942,8 @@ dl {
 
   #content-holder {
     position: relative;
+    height: calc(~"100% - 41px");
     width: 100%;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-direction: normal;
-    -moz-box-direction: normal;
-    -webkit-box-orient: vertical;
-    -moz-box-orient: vertical;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-flex-grow: 1;
-    flex-grow: 1;
-    //overflow: auto;
   }
 }
 
@@ -3113,10 +3099,10 @@ dl {
 
   &.checked {
     display: block;
-    text-align: left !important; // need refactor important. use now because must have.
-    font-size: 14px !important; // need refactor important. use now because must have.
+    text-align: left !important;
+    font-size: 14px !important;
     line-height: 16px;
-    padding-left: 20px;
+    padding: 0 0 2px 20px;
 
     &:hover {
       cursor: pointer;
@@ -3848,6 +3834,9 @@ table#workflows {
 
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+
   .top-bar;
 }
 
@@ -4135,6 +4124,7 @@ ul.chart-tabs {
 }
 
 .chart-tabs-items {
+  text-align: center;
   .tabs-items;
   margin-bottom: 0;
 }
@@ -4264,6 +4254,7 @@ ul.chart-tabs {
   padding: 5px;
   color: @mainText-color;
   text-align: center;
+  display: inline-block;
 
   &.small {
     line-height: 26px;
@@ -5088,9 +5079,17 @@ textarea#editInput {
       &.employee {
         min-width: 140px;
         width: 140px;
+        position: relative;
+        padding-right: 20px;
+
+        span {
+          white-space: nowrap;
+        }
 
         .icon {
-          float: right;
+          position: absolute;
+          top: 1px;
+          right: 10px;
           font-size: 14px;
           line-height: 21px;
           cursor: pointer;

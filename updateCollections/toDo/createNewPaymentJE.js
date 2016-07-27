@@ -21,8 +21,8 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'alex', 28017, connectOptions);
-//var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
+//var dbObject = mongoose.createConnection('144.76.56.111', 'alex', 28017, connectOptions);
+var dbObject = mongoose.createConnection('erp.thinkmobiles.com', 'production'/*, 28017, connectOptions*/);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -207,9 +207,9 @@ dbObject.once('open', function callback() {
                     };
 
                     if (PaymRate > invoiceRate) {
-                        bodyOtherIncome.journal = '57848f8e7501f35c20bd0973';
+                        bodyOtherIncome.journal = '57907bc6b4b1bb7e016dd684';
                     } else if (PaymRate < invoiceRate) {
-                        bodyOtherIncome.journal = '57848fc57501f35c20bd0974';
+                        bodyOtherIncome.journal = '57975ceeb5a36a841895f4fe';
                     } else if (PaymRate === invoiceRate && model.currency._id.name !== 'USD') {
                         console.log(model._id);
                     }

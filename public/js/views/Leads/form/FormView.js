@@ -12,8 +12,9 @@ define([
     'views/Tags/TagView',
     'constants',
     'dataService',
-    'views/selectView/selectView'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
+    'views/selectView/selectView',
+    'populate'
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView, populate) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -135,7 +136,10 @@ define([
             holder.text(text);
 
             this.modelChanged[type] = id;
-            this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+
+            if (type === 'salesPerson') {
+                this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+            }
             this.showButtons();
         },
 
@@ -283,6 +287,7 @@ define([
                 }
 
             });
+            populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
 
             $thisEl.find('.attachments').append(
                 new AttachView({

@@ -2,9 +2,10 @@
 <tr data-id="<%=lead._id%>" class="stage-<%=(lead.workflow) ? lead.workflow.status.toLowerCase() : ''%>">
     <td class="notForm"><input type="checkbox" value="<%=lead._id%>" class="checkbox listCB"/></td>
     <td><span class="blue"><%=lead.name%></span></td>
-    <td><%= lead.contactName || ''%></td>
+    <!--<td><%= lead.contactName || ''%></td>-->
     <!--    <td><%=lead.email%></td>-->
-    <td><%=lead.address.country%></td>
+   <!-- <td><%=lead.social.LI%></td>
+    <td><%=lead.address.country%></td>-->
     <td><%=lead.source%></td>
 
     <td id='<%=lead._id%>' class="centerCell <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">

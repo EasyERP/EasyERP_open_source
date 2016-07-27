@@ -37,6 +37,13 @@ define([
                 if (response.notes) {
                     _.map(response.notes, function (note) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+
+                        if (note.history && (note.history.changedField === 'Date of Birth')){
+                            note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
+                            note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
+                            note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
+                        }
+
                         return note;
                     });
                 }
@@ -53,19 +60,19 @@ define([
 
         validate: function (attrs) {
             var errors = [];
-            Validation.checkNameField(errors, true, attrs.name.first, 'First name');
-            Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
-            Validation.checkPhoneField(errors, false, attrs.phones.phone, 'Phone');
-            Validation.checkPhoneField(errors, false, attrs.phones.mobile, 'Mobile');
-            Validation.checkPhoneField(errors, false, attrs.phones.fax, 'Fax');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.country, 'Country');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.state, 'State');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.city, 'City');
-            Validation.checkCountryCityStateField(errors, false, attrs.jobPosition, 'Job position');
+            Validation.checkNameField(errors, true, attrs['name.first'] || attrs.name.first , 'First name');
+            Validation.checkNameField(errors, true, attrs['name.last'] || attrs.name.last  , 'Last name');
+            Validation.checkPhoneField(errors, false, attrs['phones.phone']  || attrs.phones.phone, 'Phone');
+            Validation.checkPhoneField(errors, false, attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
+            Validation.checkPhoneField(errors, false, attrs['phones.fax'] || attrs.phones.fax, 'Fax');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.country'] || attrs.address.country, 'Country');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.state'] || attrs.address.state, 'State');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.city'] || attrs.address.city, 'City');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.jobPosition'] || attrs.jobPosition, 'Job position');
             Validation.checkSkypeField(errors, false, attrs.skype, 'Skype');
-            Validation.checkZipField(errors, false, attrs.address.zip, 'Zip');
-            Validation.checkStreetField(errors, false, attrs.address.street, 'Street');
-            Validation.checkEmailField(errors, false, attrs.email, 'Email');
+            Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip, 'Zip');
+            Validation.checkStreetField(errors, false, attrs['address.street'] || attrs.address.street, 'Street');
+            Validation.checkEmailField(errors, false,  attrs.email, 'Email');
 
             if (errors.length > 0) {
                 return errors;
