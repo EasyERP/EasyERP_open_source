@@ -14,8 +14,8 @@
                     <div><%= quotation.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div><%= quotation.paymentInfo.total %></div>
-                    <div><%= quotation.paymentInfo.unTaxed %></div>
+                    <div class="total <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></div>
+                    <div class="unTaxed <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.unTaxed) : '0'%></div>
                 </div>
             </div>
         </td>

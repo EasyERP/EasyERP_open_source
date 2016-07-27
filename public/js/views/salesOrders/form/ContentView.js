@@ -7,9 +7,9 @@ define([
     'text!templates/salesOrders/form/ListItemTemplate.html',
     'models/QuotationModel',
     'views/salesOrders/form/FormView',
-    'common',
-    'constants'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, common, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CONSTANTS, helpers) {
     'use strict';
 
     var QuotationsListView = TFormBaseView.extend({
@@ -30,7 +30,9 @@ define([
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
-                orders: orders
+                orders          : orders,
+                currencyClass   : helpers.currencyClass,
+                currencySplitter: helpers.currencySplitter
             }));
         },
 

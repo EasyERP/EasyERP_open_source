@@ -24,8 +24,8 @@
                     <div><%= order.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div><%= order.paymentInfo.total %></div>
-                    <div><%= order.paymentInfo.unTaxed %></div>
+                    <div class="total <%=currencyClass(order.currency._id)%>"><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00'%></div>
+                    <div class="unTaxed <%=currencyClass(order.currency._id)%>"><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.unTaxed) : '0.00'%></div>
                 </div>
             </div>
         </td>
