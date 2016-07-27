@@ -4324,6 +4324,14 @@ table.kanban tbody td:nth-child(n+2) {
 .noteBtn span + span {
   margin-left: 10px;
 }
+.noteTopBox .noteUserTitle {
+  float: left;
+  display: block;
+  line-height: 30px;
+}
+.noteTopBox .dateNote {
+  float: right;
+}
 .propertyContainer a:hover {
   text-decoration: none;
 }
@@ -4384,9 +4392,10 @@ table.kanban tbody td:nth-child(n+2) {
 .propertyFormList label,
 .propertyFormList .inputBox {
   display: table-cell !important;
+  vertical-align: bottom;
 }
 .propertyFormList label {
-  width: 90px !important;
+  width: 100px !important;
   text-align: left;
   padding-right: 15px;
 }
@@ -4672,6 +4681,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .ui-datepicker {
   min-width: 175px;
+}
+.social {
+  margin-top: 20px;
 }
 .newTasksContainer {
   padding-top: 30px !important;
