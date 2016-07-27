@@ -4344,6 +4344,12 @@ table.kanban tbody td:nth-child(n+2) {
 .noteBtn span + span {
   margin-left: 10px;
 }
+.editNewBox .noteType {
+  float: left;
+}
+.editNewBox .dateNote {
+  float: right;
+}
 .propertyContainer a:hover {
   text-decoration: none;
 }

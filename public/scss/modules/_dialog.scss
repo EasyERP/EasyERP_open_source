@@ -42,10 +42,14 @@
   }
 }
 
-.mainTabs {
-  &.dialog-tabs-items {
-    margin-top: 10px;
+.inner {
+  .right {
+    padding: 10px 0;
   }
+}
+
+
+.mainTabs {
 
   ul.dialog-tabs {
     padding-top: 10px;
