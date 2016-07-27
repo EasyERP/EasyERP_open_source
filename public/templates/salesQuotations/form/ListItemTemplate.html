@@ -3,7 +3,9 @@
     <tr class="compactView" data-id="<%=quotation._id%>">
         <td class="checkboxRow">
             <label>
-                <input type="checkbox" value="<%=quotation._id%>" class="checkbox"/>
+                <input type="checkbox" value="<%=quotation._id%>" class="checkbox listCB <%=quotation.proformaCounter ? 'notRemovable' : ''%>"  <%if (quotation.proformaCounter) { %>
+                disabled='disabled'
+                <% } %>/>
             </label>
         </td>
         <td>
