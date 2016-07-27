@@ -33,9 +33,9 @@
                                            maxlength="9"/></dd>
                                 <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="0" maxlength="32"/>%</dd>-->
                                 <dt><label for="customerDd">Contact</label></dt>
-                                <dd><a id="customerDd" class="current-selected" href="javascript:;"></a></dd>
+                                <dd><a id="customerDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Person' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Person' ? parentModel.fullName : 'Select'%></a></dd>
                                 <dt><label for="companyDd">Company</label></dt>
-                                <dd><a id="companyDd" class="current-selected" href="javascript:;"></a></dd>
+                                <dd><a id="companyDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Company' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Company' ? parentModel.fullName : 'Select'%></a></dd>
                                 <dt><label for="salesPersonDd">Assigned to</label></dt>
                                 <dd><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></dd>
                                 <!--<dt><label for="salesTeamDd">Sales Team</label></dt>-->

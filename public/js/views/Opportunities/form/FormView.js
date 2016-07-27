@@ -13,7 +13,7 @@ define([
     'constants',
     'dataService',
     'views/selectView/selectView'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -45,6 +45,21 @@ define([
             if (this.selectView) {
                 this.selectView.remove();
             }
+        },
+        showEdit     : function () {
+            this.$el.find('.upload').animate({
+                height : '20px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        hideEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '0px',
+                display: 'block'
+            }, 250);
+
         },
 
         setChangeValueToModel: function (e) {
@@ -187,7 +202,7 @@ define([
 
         },
 
-        renderAbout : function (){
+        renderAbout: function () {
             var self = this;
             var $thisEl = this.$el;
             $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
@@ -253,7 +268,7 @@ define([
 
             this.editorView = new EditorView({
                 model      : this.formModel,
-                contentType: 'opportunities'
+                contentType: 'Opportunities'
             });
 
             $thisEl.find('.notes').append(
@@ -268,7 +283,6 @@ define([
                     self.modelChanged['nextAction.date'] = new Date(dateText);
                     self.showButtons();
                 }
-
             });
 
             $thisEl.find('.attachments').append(

@@ -2,7 +2,7 @@
     <div class="opportunity-header">
         <h4 class="bold left blue" style="max-width:56%"><%=model.name%></h4>
 
-        <%if(model.expectedRevenue.value !== 0){%>
+        <%if(model.expectedRevenue.value){%>
         <h3 class="dollar"><%=(currencySplitter(model.expectedRevenue.value.toString()))%></h3>
         <%} else {%>
         <h3></h3>

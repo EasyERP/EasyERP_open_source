@@ -89,7 +89,7 @@ define([
                     saveObject.company = this.model.id;
                     saveObject.companyDate = new Date();
                     break;
-                case 'opportunities':
+                case 'Opportunities':
                     saveObject.deal = this.model.id;
                     saveObject.dealDate = new Date();
                     break;
@@ -178,7 +178,8 @@ define([
             })[0];
 
             if (currentNote.task) {
-                model = new TaskModel(currentNote.task);
+                model = new TaskModel();
+                model.set(model.parse(currentNote.task));
             }
 
             switch (type) {
@@ -241,7 +242,7 @@ define([
 
         cancelNote: function (e) {
             var $target = $(e.target);
-            var $addNote =  $target.closest('.addNote');
+            var $addNote = $target.closest('.addNote');
             var contentHolder = $target.closest('.noteContainer');
             if (contentHolder.length) {
                 contentHolder.find('.contentHolder').show();
@@ -304,9 +305,11 @@ define([
                     });
                     formModel.save({notes: editNotes},
                         {
-                            headers: {
+                            validate: false,
+                            headers : {
                                 mid: 39
                             },
+
                             patch  : true,
                             success: function () {
                                 var $contentHolder = $noteContainer.find('.contentHolder');
@@ -321,12 +324,13 @@ define([
                     noteObj.note = val;
                     notes.push(noteObj);
                     formModel.save({notes: notes}, {
-                        headers: {
+                        headers : {
                             mid: 39
                         },
-                        patch  : true,
-                        wait   : true,
-                        success: function () {
+                        patch   : true,
+                        validate: false,
+                        wait    : true,
+                        success : function () {
                             var formLeftColumn = self.$el.find('.formLeftColumn');
                             var noteWrapper = formLeftColumn.find('.noteWrapper');
 
@@ -364,7 +368,6 @@ define([
             var $thisEl = this.$el;
 
             modelObj.needNotes = this.needNotes;
-
 
             $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
 

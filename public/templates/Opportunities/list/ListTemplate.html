@@ -2,7 +2,7 @@
 <tr data-index="<%= index %>" data-id="<%=opportunity._id%>"
     class="stage-<%=(opportunity.workflow) ? opportunity.workflow.status.toLowerCase() : ''%>">
     <td class="notForm"><input type="checkbox" value="<%=opportunity._id%>" class="checkbox"/></td>
-    <td><%=opportunity.creationDate%></td>
+    <!--<td><%=opportunity.creationDate%></td>-->
     <td><span class="blue"><%=opportunity.name%></span></td>
     <td class="dollar"><%=opportunity.expectedRevenue && opportunity.expectedRevenue.value ? currencySplitter(opportunity.expectedRevenue.value.toString()) : '0'%></td>
     <td><%=(opportunity.customer && opportunity.customer.name) ? opportunity.customer.name.first + ' ' + opportunity.customer.name.last : ''%></td>

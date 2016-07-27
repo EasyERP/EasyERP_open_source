@@ -20,6 +20,8 @@ define([
             options = options || {};
 
             _.bindAll(this, 'saveItem');
+
+            this.parentModel = options.parentModel;
             this.responseObj = {};
             this.elementId = options.elementId || null;
 
@@ -155,7 +157,8 @@ define([
         },
 
         render: function () {
-            var formString = this.template();
+            var parentModel =  this.parentModel ? this.parentModel.toJSON() : '';
+            var formString = this.template({parentModel : parentModel});
             var self = this;
             var notDiv;
             var model = new OpportunityModel();
@@ -203,8 +206,8 @@ define([
                 });
                 self.responseObj['#priorityDd'] = priorities;
             });
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
-            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this);
+            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
