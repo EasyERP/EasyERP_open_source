@@ -4,8 +4,6 @@
         <fieldset>
             <div class="inner">
                 <ul class="dialog-tabs" data-class="mainTabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                         <button class="btn receiveInvoice">
@@ -154,9 +152,7 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                    <div class="dialog-tabs-item mainTabs">
-                        <div class="assignees-container"></div>
-                    </div>
+
                 </div>
                 <div class="clearfix"></div>
             </div>
