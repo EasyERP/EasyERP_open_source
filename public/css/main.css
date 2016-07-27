@@ -4094,8 +4094,8 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .formContent .btn.positioned {
   position: absolute;
-  top: 8px;
-  left: 408px;
+  top: 5px;
+  left: 411px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
