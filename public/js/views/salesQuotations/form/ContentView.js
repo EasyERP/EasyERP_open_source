@@ -8,9 +8,8 @@ define([
     'models/QuotationModel',
     'views/salesQuotations/form/FormView',
     'views/salesQuotations/CreateView',
-    'views/salesQuotations/list/ListItemView',
-    'common',
-    'constants'
+    'constants',
+    'helpers'
 ], function (Backbone,
              $,
              _,
@@ -20,16 +19,14 @@ define([
              QuotationModel,
              FormView,
              CreateView,
-             ListItemView,
-             common,
-             CONSTANTS) {
+             CONSTANTS,
+             helpers) {
     'use strict';
 
     var QuotationsListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
-        ListItemView   : ListItemView,
         listUrl        : 'easyErp/salesQuotations/list/',
         contentType    : CONSTANTS.SALESQUOTATIONS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
@@ -45,7 +42,9 @@ define([
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
-                quotations: quotations
+                quotations      : quotations,
+                currencyClass   : helpers.currencyClass,
+                currencySplitter: helpers.currencySplitter
             }));
         }
 
