@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Quotations/EditTemplate.html',
+    'text!templates/Quotations/form/FormTemplate.html',
     'views/dialogViewBase',
     'views/Projects/projectInfo/proformas/proformaView',
     'views/Assignees/AssigneesView',
@@ -67,7 +67,8 @@ define([
             'click .confirmOrder'   : 'confirmOrder',
             'click .createProforma' : 'createProforma',
             'click .cancelQuotation': 'cancelQuotation',
-            'click .setDraft'       : 'setDraft'
+            'click .setDraft'       : 'setDraft',
+            'click .saveBtn'        : 'saveQuotation'
         },
 
         chooseOption: function (e) {
@@ -300,6 +301,12 @@ define([
                     }
                 });
             });
+        },
+
+        saveQuotation: function(e){
+            e.preventDefault();
+
+            this.saveItem();
         },
 
         saveItem: function (proformaCb /* orderCb*/) {

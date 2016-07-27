@@ -11,7 +11,18 @@ define([
     'views/salesQuotations/list/ListItemView',
     'common',
     'constants'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CreateView, ListItemView, common, CONSTANTS) {
+], function (Backbone,
+             $,
+             _,
+             TFormBaseView,
+             ContentTemplate,
+             ListItemTemplate,
+             QuotationModel,
+             FormView,
+             CreateView,
+             ListItemView,
+             common,
+             CONSTANTS) {
     'use strict';
 
     var QuotationsListView = TFormBaseView.extend({
@@ -29,10 +40,6 @@ define([
         ContentModel   : QuotationModel,
         FormView       : FormView,
 
-        events: {
-            'click .saveBtn': 'saveCurrentQuotation'
-        },
-
         renderList: function (quotations) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
@@ -40,10 +47,6 @@ define([
             $listHolder.append(this.listTemplate({
                 quotations: quotations
             }));
-        },
-
-        saveCurrentQuotation: function () {
-            this.formView.saveItem();
         }
 
     });

@@ -149,6 +149,7 @@ define([
         },
 
         goToForm: function (e) {
+            var self = this;
             var $thisEl = this.$el;
             var $target = $(e.target);
             var date = new Date();
@@ -159,6 +160,8 @@ define([
             this.renderFormView(modelId, function () {
                 $thisEl.find('#timeRecivingDataFromServer').remove();
                 $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
+
+                self.changeLocationHash(self.collection.currentPage, self.collection.pageSize, self.filter);
             });
         },
 
@@ -169,6 +172,7 @@ define([
 
             model = new this.ContentModel();
             model.urlRoot = model.url() + modelId;
+
 
             model.fetch({
                 success: function (model) {

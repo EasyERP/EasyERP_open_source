@@ -17,16 +17,15 @@ define([
         contentType: 'Leads',
         template   : _.template(CreateTemplate),
 
-        initialize: function () {
-            _.bindAll(this, 'saveItem', 'render');
-            this.model = new LeadModel();
+        initialize: function (options) {
+            options = options || {};
+
+            _.bindAll(this, 'saveItem');
             this.responseObj = {};
 
             this.render();
         },
-
-        events: {
-            'change #workflowNames': 'changeWorkflows',
+        events    : {
             'click .fa-paperclip': 'clickInput'
         },
 
@@ -34,145 +33,53 @@ define([
             this.$el.find('.input-file .inputAttach').click();
         },
 
-        selectCustomer: function (id) {
-            if (id !== '') {
-                dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
-                    id: id
-                }, function (response, context) {
-                    var customer = response;
-                    if (customer.type === 'Person') {
-                        context.$el.find('#first').val(customer.name.first);
-                        context.$el.find('#last').val(customer.name.last);
-
-                        context.$el.find('#company').val('');
-                    } else {
-                        context.$el.find('#company').val(customer.name.first);
-
-                        context.$el.find('#first').val('');
-                        context.$el.find('#last').val('');
-
-                    }
-                    context.$el.find('#email').val(customer.email);
-                    context.$el.find('#phone').val(customer.phones.phone);
-                    context.$el.find('#mobile').val(customer.phones.mobile);
-                    context.$el.find('#street').val(customer.address.street);
-                    context.$el.find('#city').val(customer.address.city);
-                    context.$el.find('#state').val(customer.address.state);
-                    context.$el.find('#zip').val(customer.address.zip);
-                    context.$el.find('#country').val(customer.address.country);
-
-                }, this);
-            } else {
-                this.$el.find('#email').val('');
-                this.$el.find('#phone').val('');
-                this.$el.find('#mobile').val('');
-                this.$el.find('#street').val('');
-                this.$el.find('#city').val('');
-                this.$el.find('#state').val('');
-                this.$el.find('#zip').val('');
-                this.$el.find('#country').val('');
-                this.$el.find('#company').val('');
-                this.$el.find('#first').val('');
-                this.$el.find('#last').val('');
-            }
-
-        },
-
         chooseOption: function (e) {
-            var holder = $(e.target).parents('dd').find('.current-selected');
-            holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-            if (holder.attr('id') === 'customerDd') {
-                this.selectCustomer($(e.target).attr('id'));
+            var $target = $(e.target);
+            var holder = $target.parents('dd').find('.current-selected');
+
+            holder.text($target.text()).attr('data-id', $target.attr('id'));
+        },
+
+        keydownHandler: function (e) {
+            switch (e.which) {
+                case 27:
+                    this.hideDialog();
+                    break;
+                default:
+                    break;
             }
-        },
-
-        changeTab: function (e) {
-            var n;
-            var dialogHolder;
-            var holder = $(e.target);
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        changeWorkflows: function () {
-            var name = this.$('#workflowNames option:selected').val();
-            var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
-            // $('#selectWorkflow').html(_.template(selectTemplate, { workflows: this.getWorkflowValue(value) }));
         },
 
         saveItem: function () {
-            var afterPage = '';
-            var location = window.location.hash;
-            var pageSplited = location.split('/p=')[1];
-            var self = this;
-            var $company = this.$('#company');
-            var mid = 24;
-            var name = $.trim(this.$el.find('#name').val());
-            var company = {
-                name: $company.val(),
-                id  : $company.data('id')
+            var mid = 25;
+            var leadModel = new LeadModel();
+            var $thisEl = this.$el;
+            var name = $.trim($thisEl.find('#name').val());
+            var companyId = $thisEl.find('#companyDd').attr('data-id');
+            var customerId = $thisEl.find('#customerDd').attr('data-id');
+            var salesPersonId =$thisEl.find('#salesPersonDd').attr('data-id');
+            var salesTeamId = $thisEl.find('#salesTeamDd').attr('data-id');
+            var nextActionDesc = $.trim($thisEl.find('#nextActionDescription').val());
+            var nextAction = {
+                desc: nextActionDesc
             };
-            var idCustomer = this.$('#customerDd').data('id');
-            var address = {};
-            var salesPersonId = this.$('#salesPerson').data('id');
-            var salesTeamId = this.$('#salesTeam option:selected').val();
-            var first = $.trim(this.$el.find('#first').val());
-            var last = $.trim(this.$el.find('#last').val());
-            var contactName = {
-                first: first,
-                last : last
-            };
-            var email = $.trim(this.$el.find('#e-mail').val());
-            var func = $.trim(this.$el.find('#func').val());
-            var phone = $.trim(this.$el.find('#phone').val());
-            var mobile = $.trim(this.$el.find('#mobile').val());
-
-            var fax = $.trim(this.$el.find('#fax').val());
-            var phones = {
-                phone : phone,
-                mobile: mobile,
-                fax   : fax
-            };
-            var workflow = this.$('#workflowsDd').data('id');
-            var priority = $('#priorityDd').data('id');
-            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
-            var active = (this.$el.find('#active').is(':checked'));
-            var optout = (this.$el.find('#optout').is(':checked'));
-            var reffered = $.trim(this.$el.find('#reffered').val());
-            var skype = $.trim(this.$el.find('#skype').val());
-            var LI = $.trim(this.$el.find('#LI').val());
-            var FB = $.trim(this.$el.find('#FB').val());
-
-
+            var expectedClosing = $.trim($thisEl.find('#expectedClosing').val());
+            var priority = $.trim($thisEl.find('#priorityDd').text());
+            var internalNotes = $.trim($thisEl.find('#internalNotes').val());
             var source = $('#sourceDd').data('id');
-
+            var address = {};
+            var workflow = $thisEl.find('#workflowDd').data('id');
+            var self = this;
             var usersId = [];
             var groupsId = [];
-            var notes =[];
-            var note;
+            var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
 
-            var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-            if (internalNotes){
-                note = {
-                    title: '',
-                    note : internalNotes
-                };
-                notes.push(note);
-            }
-
-            if (pageSplited) {
-                afterPage = pageSplited.split('/')[1];
-                location = location.split('/p=')[0] + '/p=1' + '/' + afterPage;
-            }
             $('dd').find('.address').each(function () {
                 var el = $(this);
-                address[el.attr('name')] = $.trim(el.val());
+
+                address[el.attr('name')] = el.val();
             });
+
             $('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
                     usersId.push($(this).data('id'));
@@ -182,115 +89,88 @@ define([
                 }
 
             });
-            this.model.save({
-                name  : name,
-                skype : skype,
-                social: {
-                    LI: LI,
-                    FB: FB
+
+            leadModel.save(
+                {
+                    name           : name,
+                    customer       : customerId || null,
+                    salesTeam      : salesTeamId || null,
+                    salesPerson    : salesPersonId || null,
+                    nextAction     : nextAction,
+                    source         : source,
+                    expectedClosing: expectedClosing,
+                    priority       : priority,
+                    company        : companyId,
+                    workflow       : workflow,
+                    internalNotes  : internalNotes,
+                    address        : address,
+                    whoCanRW       : whoCanRW,
+                    groups         : {
+                        owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
+                        users: usersId,
+                        group: groupsId
+                    }
                 },
+                {
+                    headers: {
+                        mid: mid
+                    },
+                    wait   : true,
+                    success: function (model) {
+                        var currentModel = model.changed;
 
-                company      : company || null,
-                campaign     : $('#campaignDd').data('id'),
-                source       : source,
-                customer     : idCustomer || null,
-                address      : address,
-                salesPerson  : salesPersonId || null,
-                salesTeam    : salesTeamId,
-                contactName  : contactName,
-                email        : email,
-                func         : func,
-                phones       : phones,
-                fax          : fax,
-                priority     : priority,
-                notes        : notes,
-                active       : active,
-                optout       : optout,
-                reffered     : reffered,
-                workflow     : workflow,
-                groups       : {
-                    owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
-                    users: usersId,
-                    group: groupsId
-                },
+                        self.attachView.sendToServer(null, currentModel);
+                    },
 
-                whoCanRW: whoCanRW
-            }, {
-                headers: {
-                    mid: mid
-                },
-
-                success: function (model) {
-                    var currentModel = model.changed;
-
-                    self.attachView.sendToServer(null, currentModel);
-                    /*self.hideDialog();
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate(location, {trigger: true});*/
-                    // Backbone.history.navigate('easyErp/users', { trigger: true });
-                },
-
-                error: function (model, xhr) {
-                    self.errorNotification(xhr);
+                    error: function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
                 }
-
-            });
+            );
         },
 
         render: function () {
-            var self = this;
             var formString = this.template();
+            var self = this;
             var notDiv;
+            var model = new LeadModel();
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
                 dialogClass  : 'edit-dialog',
-                title        : 'Edit Company',
-                width        : '800',
-                buttons      : [
-                    {
+                width        : '900',
+                title        : 'Create Lead',
+                buttons      : {
+                    save: {
                         text : 'Create',
-                        click: function () {
-                            self.saveItem();
-                        }
+                        class: 'btn btnRounded btnSave',
+                        click: self.saveItem
                     },
 
-                    {
+                    cancel: {
                         text : 'Cancel',
+                        class: 'btn btnRounded',
                         click: function () {
                             self.hideDialog();
                         }
                     }
-                ]
-
+                }
             });
-
-            this.renderAssignees(this.model);
-
 
             notDiv = this.$el.find('.attach-container');
 
             this.attachView = new AttachView({
-                model      : this.model,
+                model      : model,
                 contentType: self.contentType,
                 isCreate   : true
             });
+
             notDiv.append(this.attachView.render().el);
 
-            dataService.getData('/leads/priority', {}, function (priorities) {
-                priorities = _.map(priorities.data, function (priority) {
-                    priority.name = priority.priority;
-
-                    return priority;
-                });
-                self.responseObj['#priorityDd'] = priorities;
-            });
-            populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Leads'}, 'name', this, true);
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
+            $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
+            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this, true, true);
-            populate.get('#campaignDd', '/Campaigns', {}, 'name', this, true, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
@@ -298,8 +178,13 @@ define([
                     return employee;
                 });
 
-                self.responseObj['#salesPerson'] = employees;
+                self.responseObj['#salesPersonDd'] = employees;
             });
+
+            populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Leads'}, 'name', this, true);
+            populate.get('#salesTeamDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true, true);
+            populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
+
             this.delegateEvents(this.events);
 
             return this;

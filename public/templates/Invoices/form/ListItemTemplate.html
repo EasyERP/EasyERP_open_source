@@ -1,22 +1,36 @@
 <table id="listTable">
     <% invoices.forEach(function(invoice, index){ %>
-    <tr class="compactView" data-id="<%=quotation._id%>">
+    <tr class="compactView" data-id="<%=invoice._id%>">
         <td class="checkboxRow">
             <label>
-                <input type="checkbox" value="<%=quotation._id%>" class="checkbox"/>
+                <input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"  <%if (!invoice.removable) { %>
+                disabled='disabled'
+                <% } %>/>
             </label>
         </td>
         <td>
-            <div class="compactRowWrap">
-                <div class="compactRow">
-                    <div class="firstName"><%- invoice.name%></div>
-                    <div class="country"><%= invoice.supplier.name.last %></div>
-                    <div class="country"><%= invoice.orderDate %></div>
-                </div>
-                <div class="compactRow">
-                    <div class="email"><%= invoice.paymentInfo.total %></div>
-                    <div class="phone"><%= invoice.paymentInfo.unTaxed %></div>
-                </div>
+            <div class="compactRow">
+                <div class="firstName"><%=invoice.name%></div>
+                <div class="supplier"><%= invoice.supplier.name.first %> <%= invoice.supplier.name.last %></div>
+
+            </div>
+            <div class="compactRow">
+                <div class="balance <%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance)%></div>
+                <div class="total <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ?
+                    currencySplitter(invoice.paymentInfo.total) : '0.00'%></div>
+                <div class="status"><%if(invoice.workflow){%>
+                    <%if(invoice.workflow.status === 'In Progress'){%>
+                    <span class="<%= invoice.workflow.status.toLowerCase().replace(' ', '') %>"><%= invoice.workflow.name %></span>
+                    <% } else {%>
+                    <%if(invoice.approved){%>
+                    <span class="<%=invoice.workflow.name.toLowerCase()%>"><%=invoice.workflow.name%></span>
+                    <% } else {%>
+                    <span class="notApproved">Not Approved</span>
+                    <%}%>
+                    <%}%>
+                    <% } else {%>
+                    <span> </span>
+                    <%}%></div>
             </div>
         </td>
     </tr>

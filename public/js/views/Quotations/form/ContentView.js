@@ -15,7 +15,7 @@ define([
 ], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CreateView, ListItemView, FilterView, common, CONSTANTS) {
     'use strict';
 
-    var QuotationsListView = TFormBaseView.extend({
+    var OrdersListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
@@ -30,10 +30,6 @@ define([
         ContentModel   : QuotationModel,
         FormView       : FormView,
 
-        events: {
-            'click .saveBtn': 'saveCurrentQuotation'
-        },
-
         renderList: function (quotations) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
@@ -41,12 +37,8 @@ define([
             $listHolder.append(this.listTemplate({
                 quotations: quotations
             }));
-        },
-
-        saveCurrentQuotation: function () {
-            this.formView.saveItem();
         }
     });
 
-    return QuotationsListView;
+    return OrdersListView;
 });

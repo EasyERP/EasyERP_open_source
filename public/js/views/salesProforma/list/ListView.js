@@ -68,8 +68,8 @@ define([
         },
 
         events: {
-            //'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
+            'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
+            //'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
@@ -175,7 +175,6 @@ define([
             }
 
             App.ownContentType = true;
-            console.log('url => ', url);
             Backbone.history.navigate(url, {trigger: true});
         },
 

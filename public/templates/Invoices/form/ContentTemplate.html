@@ -5,23 +5,23 @@
                 <a id="sortBy" class="icon icon-btn dropBtn">i</a>
                 <ul>
                     <li class="oe_sortable" data-sort="name">
-                        <span class="dropContent">Name</span>
+                        <span class="dropContent">Invoice Number</span>
                         <span class="sortArrow"></span>
                     </li>
-                    <li class="oe_sortable" data-sort="supplier.name.last">
+                    <li class="oe_sortable" data-sort="supplier.name.first">
                         <span class="dropContent">Supplier</span>
                         <span class="sortArrow"></span>
                     </li>
+                    <li class="oe_sortable" data-sort="paymentInfo.balance">
+                        <span class="dropContent">Balance</span>
+                        <span class="sortArrow"></span>
+                    </li>
                     <li class="oe_sortable" data-sort="paymentInfo.total">
-                        <span class="dropContent">Payment Total</span>
+                        <span class="dropContent">Total</span>
                         <span class="sortArrow"></span>
                     </li>
-                    <li class="oe_sortable" data-sort="paymentInfo.unTaxed">
-                        <span class="dropContent">Payment UnTaxed</span>
-                        <span class="sortArrow"></span>
-                    </li>
-                    <li class="oe_sortable" data-sort="orderDate">
-                        <span class="dropContent">Date</span>
+                    <li class="oe_sortable" data-sort="workflow.name">
+                        <span class="dropContent">Status</span>
                         <span class="sortArrow"></span>
                     </li>
                 </ul>
@@ -38,7 +38,6 @@
             <span class="closeBtn"></span>
         </div>
         <div id="formContent" class="formContent">
-
         </div>
     </div>
 </div>

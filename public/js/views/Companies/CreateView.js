@@ -17,11 +17,12 @@ define([
         template   : _.template(CreateTemplate),
         imageSrc   : '',
 
-        initialize: function () {
+        initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
             _.bindAll(this, 'saveItem', 'render');
             this.model = new CompanyModel();
             this.responseObj = {};
+            this.lead = options.lead;
 
             this.render();
         },
@@ -88,6 +89,7 @@ define([
                 name    : name,
                 imageSrc: this.imageSrc,
                 email   : email,
+                isHidden : this.lead ? true : false,
 
                 social: {
                     LI: LI,
@@ -133,10 +135,23 @@ define([
                     var navigateUrl;
                     self.hideDialog();
 
-                    custom.getFiltersValues(true); // added for refreshing filters after creating
+                    if (self.lead) {
+                        self.lead.save({company : res.id}, {
+                            patch : true,
+                            success : function () {
+                                Backbone.history.fragment = '';
+                                navigateUrl = '#easyErp/Leads/form/' + self.lead.id;
+                                Backbone.history.navigate(navigateUrl, {trigger: true});
+                            }
+                        });
+                    } else {
+                        custom.getFiltersValues(true); // added for refreshing filters after creating
 
-                    navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
-                    Backbone.history.navigate(navigateUrl, {trigger: true});
+                        navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                        Backbone.history.navigate(navigateUrl, {trigger: true});
+                    }
+
+
                 },
 
                 error: function (models, xhr) {
@@ -161,12 +176,14 @@ define([
                 buttons      : [
                     {
                         text : 'Create',
+                        class: 'btnRounded btnSave',
                         click: function () {
                             self.saveItem();
                         }
                     },
                     {
                         text : 'Cancel',
+                        class: 'btnRounded',
                         click: self.hideDialog
                     }]
             });

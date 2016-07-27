@@ -387,78 +387,6 @@ define([
             });
         },
 
-        renderTreemap: function () {
-
-            common.totalInvoiceBySales({
-                startDay: '',
-                endDay: ''
-            }, function (data) {
-                var margin = {top: 0, right: 10, bottom: 10, left: 10};
-                var width = 960 - margin.left - margin.right;
-                var height = 500 - margin.top - margin.bottom;
-
-                var color = d3.scale.category10();
-
-                var treemap = d3.layout.treemap()
-                    .size([width, height])
-                    .sticky(true)
-                    .value(function (d) {
-                        return d.payment;
-                    });
-
-                var div = d3.select(".treemap").append("div")
-                    .style("position", "relative");
-
-                var root = {
-                    name    : 'tree',
-                    children: data
-                };
-
-                var node = div.datum(root).selectAll(".node")
-                    .data(treemap.nodes)
-                    .enter().append("div")
-                    .attr("class", "nodeTree")
-                    .call(position)
-                    .style("background", function (d) {
-                        return color(d.name);
-                    })
-                    .text(function (d) {
-                        return d.children ? null : d.name + ',  $' + helpers.currencySplitter((d.payment / 100).toFixed(0));
-                    });
-
-                d3.selectAll("input").on("change", function change() {
-                    var value = this.value === "count"
-                        ? function () {
-                        return 1;
-                    }
-                        : function (d) {
-                        return d.size;
-                    };
-
-                    node
-                        .data(treemap.value(value).nodes)
-                        .transition()
-                        .duration(1500)
-                        .call(position);
-                });
-
-                function position() {
-                    this.style("left", function (d) {
-                        return d.x + "px";
-                    })
-                        .style("top", function (d) {
-                            return d.y + "px";
-                        })
-                        .style("width", function (d) {
-                            return Math.max(0, d.dx - 1) + "px";
-                        })
-                        .style("height", function (d) {
-                            return Math.max(0, d.dy - 1) + "px";
-                        });
-                }
-            });
-        },
-
         renderEmployeesDashbord: function () {
             var self = this;
 
@@ -799,7 +727,6 @@ define([
                 month: this.month,
                 year : this.year
             }, function (data) {
-                data = data.data;
                 dataLength = data.length;
                 globalSalary = {
                     '>=$2250'   : [],
@@ -818,40 +745,45 @@ define([
                 yLabels = ['>=$2250', '$2250-2000', '$2000-1750', '$1750-1500', '$1500-1750',
                     '$1250-1500', '$1000-1250', '$750-1000', '$500-750', '$250-500', '<$250'];
 
-            for (i = dataLength; i--;) {
+                for (i = dataLength; i--;) {
 
-                if (data[i] >= 1500) {
-                    if (data[i] >= 2250) {
-                        globalSalary['>=$2250'].push(data[i]);
-                    } else if (data[i] < 2250 && data[i] >= 2000) {
-                        globalSalary['$2250-2000'].push(data[i]);
-                    } else if (data[i] < 2000 && data[i] >= 1750) {
-                        globalSalary['$2000-1750'].push(data[i]);
-                    } else if (data[i] < 1750 && data[i] >= 1500) {
-                        globalSalary['$1750-1500'].push(data[i]);
-                    }
-                } else if (data[i] < 1500) {
-                    if (data[i] < 1500 && data[i] >= 1250) {
-                        globalSalary['$1250-1500'].push(data[i]);
-                    } else if (data[i] < 1250 && data[i] >= 1000) {
-                        globalSalary['$1000-1250'].push(data[i]);
-                    } else if (data[i] < 1000 && data[i] >= 750) {
-                        globalSalary['$750-1000'].push(data[i]);
-                    } else if (data[i] < 750 && data[i] >= 500) {
-                        globalSalary['$500-750'].push(data[i]);
-                    } else if (data[i] < 500 && data[i] >= 250) {
-                        globalSalary['$250-500'].push(data[i]);
-                    } else {
-                        globalSalary['<$250'].push(data[i]);
+                    if (data[i] >= 1500) {
+                        if (data[i] >= 2250) {
+                            globalSalary['>=$2250'].push(data[i]);
+                        } else if (data[i] < 2250 && data[i] >= 2000) {
+                            globalSalary['$2250-2000'].push(data[i]);
+                        } else if (data[i] < 2000 && data[i] >= 1750) {
+                            globalSalary['$2000-1750'].push(data[i]);
+                        } else if (data[i] < 1750 && data[i] >= 1500) {
+                            globalSalary['$1750-1500'].push(data[i]);
+                        }
+                    } else if (data[i] < 1500) {
+                        if (data[i] < 1500 && data[i] >= 1250) {
+                            globalSalary['$1250-1500'].push(data[i]);
+                        } else if (data[i] < 1250 && data[i] >= 1000) {
+                            globalSalary['$1000-1250'].push(data[i]);
+                        } else if (data[i] < 1000 && data[i] >= 750) {
+                            globalSalary['$750-1000'].push(data[i]);
+                        } else if (data[i] < 750 && data[i] >= 500) {
+                            globalSalary['$500-750'].push(data[i]);
+                        } else if (data[i] < 500 && data[i] >= 250) {
+                            globalSalary['$250-500'].push(data[i]);
+                        } else {
+                            globalSalary['<$250'].push(data[i]);
+                        }
                     }
                 }
-            }
 
                 $wrapper = $('#content-holder');
                 keys = Object.keys(globalSalary);
-                margin = {top: 20, right: 160, bottom: 30, left: 10};
-                width = ($wrapper.width() - margin.right) / 2;
-                height = keys.length * 30;
+                margin = {
+                    top   : 20,
+                    right : 160,
+                    bottom: 30,
+                    left  : 130
+                };
+                width = ($wrapper.width() - margin.right) / 2.1;
+                height = yLabels.length * 30;
                 rect = height / (keys.length);
 
                 for (j = keys.length; j--;) {
@@ -885,8 +817,7 @@ define([
                 chart = d3.select('.salaryChart')
                     .attr({
                         'width' : width + margin.left + margin.right,
-                        'height': height + margin.top + margin.bottom,
-                        'style' : 'padding: 150px'
+                        'height': height + margin.top + margin.bottom
                     })
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -965,8 +896,8 @@ define([
                         }) / 1000) * 1000;
 
                 $wrapper = $('#content-holder');
-                margin = {top: 20, right: 160, bottom: 30, left: 10};
-                width = ($wrapper.width() - margin.right) / 2;
+                margin = {top: 20, right: 160, bottom: 30, left: 130};
+                width = ($wrapper.width() - margin.right) / 2.1;
                 height = salary.length * 30;
                 rect = height / (salary.length);
 
@@ -995,8 +926,7 @@ define([
                 chart = d3.select('.salaryByDepartmentChart')
                     .attr({
                         'width' : width + margin.left + margin.right,
-                        'height': height + margin.top + margin.bottom,
-                        'style' : 'padding: 150px'
+                        'height': height + margin.top + margin.bottom
                     })
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -1126,10 +1056,8 @@ define([
             self.renderVocationDashbord();
             self.renderDepartmentsTree();
             self.renderDepartmentsTreeRadial();
-            self.renderTreemap();
-            self.renderSalaryChart();
             self.renderSalaryByDepartmentChart();
-
+            self.renderSalaryChart();
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;
         }

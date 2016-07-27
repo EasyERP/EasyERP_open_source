@@ -27,8 +27,6 @@
             var errors = [];
 
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
-            Validation.checkNameField(errors, false, attrs.contactName.first, 'Contact first name');
-            Validation.checkNameField(errors, false, attrs.contactName.last, 'Contact last name');
             // Validation.checkGroupsNameField(errors, false, attrs.company.name, 'Company'); // commented in hotFix By Liliya
             Validation.checkPhoneField(errors, false, attrs.phones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs.phones.mobile, 'Mobile');
@@ -53,9 +51,20 @@
                     response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
 
+                if (response.nextAction) {
+                    response.nextAction.date = moment(response.nextAction.date).format('DD MMM, YYYY');
+                }
+
                 if (response.notes) {
                     _.map(response.notes, function (note) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+
+                        if (note.history && (note.history.changedField === 'Close Date')){
+                            note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
+                            note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
+                            note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
+                        }
+
                         return note;
                     });
                 }

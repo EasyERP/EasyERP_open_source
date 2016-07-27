@@ -12,6 +12,10 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
+            'nextAction.date': {
+                name : 'Close Date',
+                isRef: false
+            },
 
             salesPerson: {
                 name      : 'salesPerson',

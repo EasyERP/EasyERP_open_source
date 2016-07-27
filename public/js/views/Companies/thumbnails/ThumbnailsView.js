@@ -75,19 +75,25 @@
 
         gotoForm: function (e) {
             var id = $(e.target).closest('a').data('id');
+            var url = '#easyErp/' + this.contentType + '/tform/' + id;
 
             e.preventDefault();
             App.ownContentType = true;
-            window.location.hash = '#easyErp/Companies/tform/' + id + '/filter=' + JSON.stringify(this.filter);
+
+            if (this.filter) {
+                url = '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            window.location.hash = url;
         },
 
         render: function () {
             var $currentEl = this.$el;
-            
+
             $currentEl
                 .find('#thumbnailContent')
                 .append(this.template({collection: this.collection.toJSON()}));
-            
+
 
             return this;
         },

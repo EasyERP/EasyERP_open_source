@@ -1,7 +1,6 @@
 <% paymentCollection.forEach(function(payment, index) {%>
 <tr data-id="<%=payment._id%>">
     <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox<%=payment.removable ? '' : ' notRemovable'%>"/></td>
-    <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=(payment && payment.assigned && payment.assigned.name) ? payment.assigned.name.first + ' ' + payment.assigned.name.last : ''%></td>
     <td><%=(payment.supplier && payment.supplier.name) ? payment.supplier.name.first + ' ' + payment.supplier.name.last
         : '' %>
