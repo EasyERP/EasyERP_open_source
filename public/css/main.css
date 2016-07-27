@@ -4332,6 +4332,9 @@ table.kanban tbody td:nth-child(n+2) {
 .noteTopBox .dateNote {
   float: right;
 }
+.form .personsTaskArea {
+  min-height: 95px ;
+}
 .propertyContainer a:hover {
   text-decoration: none;
 }
@@ -6785,6 +6788,9 @@ dl dd span.ui-spinner {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
+}
+.form .personsTaskArea {
+  min-height: 95px ;
 }
 .form #internalNotes {
   resize: none;
