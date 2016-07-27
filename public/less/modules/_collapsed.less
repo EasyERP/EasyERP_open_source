@@ -47,8 +47,17 @@
 
     nav {
       width: auto !important;
+
       >ul {
         height: auto;
+      }
+
+      .root {
+        &.active {
+          &:after {
+            display: none;
+          }
+        }
       }
     }
 
@@ -141,6 +150,14 @@
 
     .sidebarToggler {
       margin-left: 10px;
+    }
+  }
+
+  .grid-conatiner {
+    .statisticsAtten {
+      &.stick {
+        width: calc(~"100% - 40px");
+      }
     }
   }
 }

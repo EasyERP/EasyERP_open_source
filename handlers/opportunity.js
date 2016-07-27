@@ -4,6 +4,7 @@ var Module = function (models, event) {
 
     var opportunitiesSchema = mongoose.Schemas.Opportunitie;
     var CustomerSchema = mongoose.Schemas.Customer;
+    var TasksSchema = mongoose.Schemas.DealTasks;
     var WorkflowSchema = mongoose.Schemas.workflow;
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
@@ -36,6 +37,98 @@ var Module = function (models, event) {
     function validBody(body) {
 
         return body.name ? true : false;
+    }
+
+    this.getForDd = function (req, res, next) {
+        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var query = req.query;
+        var isOpportunitie = query.isOpportunitie;
+        var queryObject = {};
+
+        if (isOpportunitie) {
+            queryObject.isOpportunitie = isOpportunitie;
+        }
+
+        if (query && query.id) {
+            queryObject._id = objectId(query.id);
+        }
+
+        Opportunity
+            .find(queryObject)
+            .sort({name: 1})
+            .exec(function (err, opportunities) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: opportunities});
+            });
+
+    };
+
+    function getTimeLine(req, model, cb) {
+        var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
+        var parallelTasks;
+
+        var historyOptions = {
+            req: req,
+            id : model._id
+        };
+
+        function getHistoryNotes(parallelCb) {
+            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                var notes;
+                if (err) {
+                    return parallelCb(err);
+                }
+
+                notes = history.map(function (elem) {
+                    return {
+                        date   : elem.date,
+                        history: elem,
+                        user   : elem.editedBy,
+                        _id    : ''
+                    };
+                });
+
+                parallelCb(null, notes);
+
+            }, true);
+        }
+
+        function getTask(parallelCb) {
+            TasksSchema.find({'deal': model._id})
+                .populate('deal', '_id name')
+                .populate('company', '_id name')
+                .populate('contact', '_id name')
+                .populate('editedBy.user', '_id login')
+                .populate('assignedTo', '_id name fullName imageSrc')
+                .populate('workflow')
+                .exec(function (err, res) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+                    res = res.map(function (elem) {
+                        return {
+                            date: elem.dealDate,
+                            task: elem,
+                            _id : elem._id,
+                            user: elem.editedBy.user
+                        }
+                    });
+                    parallelCb(null, res);
+                });
+        }
+
+        parallelTasks = [getTask, getHistoryNotes];
+
+        async.parallel(parallelTasks, function (err, results) {
+
+            model.notes = model.notes.concat(results[0], results[1]);
+            model.notes = _.sortBy(model.notes, 'date');
+            cb(null, model);
+        });
+
     }
 
     function sendEmailToAssigned(req, opportunity) {
@@ -446,6 +539,7 @@ var Module = function (models, event) {
         var headers = req.headers;
         var id = headers.modelid || 'empty';
         var contentType = headers.modelname || 'opportunities';
+        var addNote = headers.addNote || 'opportunities';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
@@ -461,11 +555,34 @@ var Module = function (models, event) {
         }
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            var notes = [];
             if (err) {
                 return next(err);
             }
 
-            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+            if (addNote) {
+                notes = file.map(function (elem) {
+                    return {
+                        _id       : mongoose.Types.ObjectId(),
+                        attachment: {
+                            name    : elem.name,
+                            shortPas: elem.shortPas
+                        },
+                        user      : {
+                            _id  : req.session.uId,
+                            login: req.session.uName
+                        },
+                        date      : new Date()
+                    }
+                });
+            }
+
+            Model.findByIdAndUpdate(id, {
+                $push: {
+                    attachments: {$each: file},
+                    notes      : {$each: notes}
+                }
+            }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
                 }
@@ -500,8 +617,10 @@ var Module = function (models, event) {
 
             obj.date = new Date();
 
-            if (!obj.author) {
-                obj.author = req.session.uName;
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
             }
 
             data.notes[data.notes.length - 1] = obj;
@@ -534,6 +653,9 @@ var Module = function (models, event) {
                     data.sequence = sequence;
 
                     Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+
+                        var historyOptions;
+
                         if (err) {
                             return next(err);
                         }
@@ -553,6 +675,7 @@ var Module = function (models, event) {
                 Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                     var os = require('os');
                     var osType = (os.type().split('_')[0]);
+                    var historyOptions;
                     var path;
                     var dir;
 
@@ -592,10 +715,21 @@ var Module = function (models, event) {
                         });
 
                     }
-                    res.status(200).send({
-                        success : 'Opportunities updated',
-                        notes   : result.notes,
-                        sequence: result.sequence
+                    historyOptions = {
+                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                        data       : data,
+                        req        : req,
+                        contentId  : result._id
+                    };
+
+                    historyWriter.addEntry(historyOptions, function () {
+                        getTimeLine(req, result.toJSON(), function (err, model) {
+                            res.status(200).send({
+                                success : 'Opportunities updated',
+                                notes   : model.notes,
+                                sequence: model.sequence
+                            });
+                        });
                     });
                 });
             });
@@ -650,11 +784,7 @@ var Module = function (models, event) {
                         _opportunitie.notes = data.notes;
                     }
                     if (data.company) {
-                        if (data.company.id) {
-                            _opportunitie.company = data.company.id;
-                        } else if (data.company.name) {
-                            _opportunitie.tempCompanyField = data.company.name;
-                        }
+                        _opportunitie.company = data.company;
                     }
                     if (data.customer) {
                         _opportunitie.customer = data.customer;
@@ -708,7 +838,17 @@ var Module = function (models, event) {
                         _opportunitie.salesTeam = data.salesTeam;
                     }
                     if (data.internalNotes) {
-                        _opportunitie.internalNotes = data.internalNotes;
+
+                        _opportunitie.notes = [{
+                            _id : mongoose.Types.ObjectId(),
+                            date: new Date(),
+                            user: {
+                                _id  : req.session.uId,
+                                login: req.session.uName
+                            },
+                            note: data.internalNotes
+                        }];
+
                     }
                     if (data.nextAction) {
                         if (data.nextAction.desc) {
@@ -851,6 +991,8 @@ var Module = function (models, event) {
 
     this.getLeadsForChart = function (req, res, next) {
         var data = req.query;
+        var startDate = data.startDay ? new Date(data.startDay) : null;
+        var endDate = data.endDay ? new Date(data.endDay) : null;
         var response = {};
         var type = data.type || 'sale';
         var myItem = {};
@@ -888,7 +1030,12 @@ var Module = function (models, event) {
                         createdBy: {$ne: null},
                         source   : {$ne: ''},
                         $or      : [{isConverted: true}, {isOpportunitie: false}]
-                    }, {'createdBy.date': {$gte: fromDate}}]
+                    }, {
+                        'createdBy.date': {
+                            $gte: startDate,
+                            $lte: endDate
+                        }
+                    }]
                 }
             }, {
                 $group: {
@@ -918,7 +1065,12 @@ var Module = function (models, event) {
                     $and: [{
                         createdBy: {$ne: null},
                         $or      : [{isConverted: true}, {isOpportunitie: false}]
-                    }, {'createdBy.date': {$gte: fromDate}}]
+                    }, {
+                        'createdBy.date': {
+                            $gte: startDate,
+                            $lte: endDate
+                        }
+                    }]
                 }
             }, {
                 $lookup: {
@@ -946,53 +1098,6 @@ var Module = function (models, event) {
                     _id   : 0
                 }
             }).exec(function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                response.data = result;
-                res.send(response);
-            });
-        } else if (type === 'date') {
-            myItem.$project = {isOpportunitie: 1, convertedDate: 1};
-            myItem.$project.dateBy = {};
-            myItem.$project.dateBy[data.dataItem] = '$convertedDate';
-            if (data.dataItem === '$dayOfYear') {
-                myItem.$project.year = {};
-                myItem.$project.year.$year = '$convertedDate';
-            }
-            fromDateTicks = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
-            fromDate = new Date(fromDateTicks);
-            models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate(
-                {
-                    $match: {
-                        $and: [{
-                            createdBy: {$ne: null},
-                            $or      : [{isConverted: true}, {isOpportunitie: false}]
-                        },
-                            {
-                                'createdBy.date': {$gte: fromDate}
-                            }]
-                    }
-                }, myItem, {
-                    $group: {
-                        _id  : {dateBy: '$dateBy', isOpportunitie: '$isOpportunitie', year: '$year'},
-                        count: {$sum: 1},
-                        date : {$push: '$convertedDate'}
-                    }
-                }, {
-                    $project: {
-                        source: '$_id.dateBy',
-                        count : 1,
-                        date  : 1,
-                        year  : '$_id.year',
-                        isOpp : '$_id.isOpportunitie',
-                        _id   : 0
-                    }
-                }, {
-                    $sort: {year: 1, source: 1}
-                }
-            ).exec(function (err, result) {
                 if (err) {
                     return next(err);
                 }
@@ -1727,61 +1832,54 @@ var Module = function (models, event) {
             data.notes[data.notes.length - 1] = obj;
         }
 
-        historyWriter.addEntry(historyOptions);
-
         function updateOpp() {
-            var createPersonCustomer = function (company) {
-                var _person;
-                if (data.contactName && (data.contactName.first || data.contactName.last)) {
-                    _person = {
-                        name   : data.contactName,
-                        email  : data.email,
-                        phones : data.phones,
-                        company: company._id,
+            /* var createPersonCustomer = function (company) {
+             var _person;
+             if (data.contactName && (data.contactName.first || data.contactName.last)) {
+             _person = {
+             name   : data.contactName,
+             email  : data.email,
+             phones : data.phones,
+             company: company._id,
 
-                        salesPurchases: {
-                            isCustomer : true,
-                            salesPerson: data.salesPerson
-                        },
+             salesPurchases: {
+             isCustomer : true,
+             salesPerson: data.salesPerson
+             },
 
-                        type     : 'Person',
-                        createdBy: {user: req.session.uId}
-                    };
-                    Opportunity.find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
-                        var _Person;
+             type     : 'Person',
+             createdBy: {user: req.session.uId}
+             };
+             Opportunity.find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
+             var _Person;
 
-                        if (err) {
-                            return next(err);
-                        }
+             if (err) {
+             return next(err);
+             }
 
-                        if (_persons.length > 0) {
-                            if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
-                                Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                });
-                            }
-                        } else {
-                            _Person = new Customer(_person);
+             if (_persons.length > 0) {
+             if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
+             Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
+             if (err) {
+             return next(err);
+             }
+             });
+             }
+             } else {
+             _Person = new Customer(_person);
 
-                            _Person.save(function (err) {
-                                if (err) {
-                                    return next(err);
-                                }
-                            });
-                        }
-                    });
-                }
-            };
-
-            if (data.company && data.company._id) {
-                data.company = data.company._id;
-            } else if (data.company) {
-                data.tempCompanyField = data.company;
-                delete data.company;
-            } else {
-                delete data.company;
+             _Person.save(function (err) {
+             if (err) {
+             return next(err);
+             }
+             });
+             }
+             });
+             }
+             };
+             */
+            if (data.company) {
+                data.company = data.company;
             }
             if (data.groups && data.groups.group) {
                 data.groups.group.forEach(function (group, index) {
@@ -1800,94 +1898,126 @@ var Module = function (models, event) {
 
             event.emit('updateSequence', Opportunity, 'sequence', 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
                 data.sequence = sequence;
-
                 Opportunity.findById(_id, function (err, oldOpportunity) {
+
+                    if (err) {
+                        return next(err);
+                    }
+
                     Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                        var _company;
-                        var _Company;
+                        var updateCustomerArr = [];
 
                         if (err) {
                             return next(err);
                         }
 
-                        if (data.createCustomer) {
-                            if (data.tempCompanyField) {
-                                _company = {
-                                    name: {
-                                        first: data.tempCompanyField,
-                                        last : ''
-                                    },
+                        historyWriter.addEntry(historyOptions, function () {
+                            getTimeLine(req, result.toJSON(), function (err, model) {
 
-                                    address: data.address,
-
-                                    salesPurchases: {
-                                        isCustomer : true,
-                                        salesPerson: data.salesPerson
-                                    },
-
-                                    type     : 'Company',
-                                    createdBy: {user: req.session.uId}
-                                };
-
-                                Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
-                                    if (err) {
-                                        return next(err);
+                                if (data.isOpportunitie && data.isConverted) {
+                                    if (result.company) {
+                                        updateCustomerArr.push(result.company);
+                                    }
+                                    if (result.customer) {
+                                        updateCustomerArr.push(result.customer);
                                     }
 
-                                    if (companies.length > 0) {
-                                        if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
-                                            Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
-                                                if (success) {
-                                                    createPersonCustomer(companies[0]);
-                                                }
-                                            });
-                                        }
-                                    } else {
-                                        _Company = new Customer(_company);
-                                        _Company.save(function (err, _res) {
-                                            if (err) {
-                                                return next(err);
+                                    if (updateCustomerArr.length) {
+                                        Customer.update({
+                                            _id: {$in: updateCustomerArr}
+                                        }, {
+                                            $set: {
+                                                isHidden                   : false,
+                                                'salesPurchases.isCustomer': true
                                             }
-
-                                            Opportunity.update({_id: _id}, {
-                                                $set: {
-                                                    company : _res._id,
-                                                    customer: _res._id
-                                                }
-                                            }, function (err) {
-                                                if (err) {
-                                                    console.log(err);
-                                                }
-                                            });
-                                            createPersonCustomer(_res);
+                                        }, {multi: true}, function (err, res) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
                                         });
                                     }
-                                });
 
-                            } else {
-                                createPersonCustomer({});
-                            }
-                        }
+                                    /*if (data.tempCompanyField) {
+                                     _company = {
+                                     name: {
+                                     first: data.tempCompanyField,
+                                     last : ''
+                                     },
 
-                        // send email to assigned when update Lead
-                        if (result.salesPerson) {
-                            if (oldOpportunity.salesPerson) {
-                                if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
-                                    sendEmailToAssigned(req, result);
+                                     address: data.address,
+
+                                     salesPurchases: {
+                                     isCustomer : true,
+                                     salesPerson: data.salesPerson
+                                     },
+
+                                     type     : 'Company',
+                                     createdBy: {user: req.session.uId}
+                                     };
+
+                                     Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
+                                     if (err) {
+                                     return next(err);
+                                     }
+
+                                     if (companies.length > 0) {
+                                     if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
+                                     Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+                                     if (success) {
+                                     createPersonCustomer(companies[0]);
+                                     }
+                                     });
+                                     }
+                                     } else {
+                                     _Company = new Customer(_company);
+                                     _Company.save(function (err, _res) {
+                                     if (err) {
+                                     return next(err);
+                                     }
+
+                                     Opportunity.update({_id: _id}, {
+                                     $set: {
+                                     company : _res._id,
+                                     customer: _res._id
+                                     }
+                                     }, function (err) {
+                                     if (err) {
+                                     console.log(err);
+                                     }
+                                     });
+                                     createPersonCustomer(_res);
+                                     });
+                                     }
+                                     });
+
+                                     } else {
+                                     createPersonCustomer({});
+                                     }*/
                                 }
-                            } else {
-                                sendEmailToAssigned(req, result);
-                            }
-                        }
 
-                        res.status(200).send({
-                            success: 'Opportunities updated success',
-                            result : result,
-                            notes  : data.notes
+                                // send email to assigned when update Lead
+                                if (result.salesPerson) {
+                                    if (oldOpportunity.salesPerson) {
+                                        if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                            sendEmailToAssigned(req, result);
+                                        }
+                                    } else {
+                                        sendEmailToAssigned(req, result);
+                                    }
+                                }
+
+                                res.status(200).send({
+                                    success: 'Opportunities updated success',
+                                    result : result,
+                                    notes  : model.notes
+                                });
+                            });
                         });
+
                     });
                 });
             });
+
         }
 
         delete data._id;
@@ -2087,63 +2217,6 @@ var Module = function (models, event) {
      * @instance
      */
 
-    /*function caseFilterOpp(data) {
-     var filter = {};
-     var tempObj = {};
-     var query = {};
-     var ids;
-     var keys = Object.keys(data);
-     var key;
-     var i;
-
-     query.$or = [];
-     filter.$and = [];
-
-     for (i = keys.length - 1; i >= 0; i--) {
-     key = keys[i];
-     ids = [];
-
-     if ((key !== 'workflowId') && (key !== 'viewType')) {
-
-     if (key === 'contactName') {
-
-     tempObj.contactName = {$in: data[key].value};
-
-     } else if (key === 'source') {
-
-     tempObj.source = {$in: data[key].value};
-
-     } else {
-
-     data[key].value.forEach(function (id) {
-     if (id !== 'Empty') {
-     ids.push(objectId(id));
-     } else {
-     tempObj[data[key].key] = {$exists: false};
-     query.$or.push(tempObj);
-     tempObj = {};
-     }
-     });
-
-     tempObj[data[key].key] = {$in: ids};
-     }
-
-     query.$or.push(tempObj);
-     tempObj = {};
-     }
-
-     if (query.$or.length) {
-     filter.$and.push(query);
-
-     query = {};
-     query.$or = [];
-     }
-
-     }
-
-     return filter;
-     }*/
-
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var data = req.query;
@@ -2167,7 +2240,7 @@ var Module = function (models, event) {
 
         switch (contentType) {
 
-            case ('Opportunities'):
+            case ('Deals'):
                 optionsObject.push({isOpportunitie: true});
                 break;
 
@@ -2289,19 +2362,28 @@ var Module = function (models, event) {
                     aggregateQuery.push({
                         $lookup: {
                             from        : 'Customers',
-                            localField  : 'company',
+                            localField  : 'customer',
                             foreignField: '_id',
                             as          : 'customer'
                         }
                     }, {
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'company',
+                            foreignField: '_id',
+                            as          : 'company'
+                        }
+                    }, {
                         $project: {
-                            contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
                             name            : 1,
                             customer        : {$arrayElemAt: ['$customer', 0]},
+                            company         : {$arrayElemAt: ['$company', 0]},
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
                             workflow        : {$arrayElemAt: ['$workflow', 0]},
                             'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                             'createdBy.date': 1,
+                            'editedBy.date' : 1,
                             source          : 1,
                             address         : 1,
                             skype           : 1,
@@ -2323,7 +2405,7 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             _id               : '$root._id',
-                            contactName       : '$root.contactName',
+                            contactName       : {$concat: ['$root.customer.name.first', ' ', '$root.customer.name.last']},
                             'salesPerson._id' : '$root.salesPerson._id',
                             'salesPerson.name': '$root.salesPerson.name',
                             'workflow._id'    : '$root.workflow._id',
@@ -2331,11 +2413,13 @@ var Module = function (models, event) {
                             'workflow.status' : '$root.workflow.status',
                             'createdBy.user'  : '$root.createdBy.user.login',
                             'createdBy.date'  : '$root.createdBy.date',
+                            'editedBy.user'   : '$root.editedBy.user.login',
+                            'editedBy.date'   : '$root.editedBy.date',
                             name              : '$root.name',
                             source            : '$root.source',
-                            'address.country' : '$root.address.country',
-                            skype             : '$root.skype',
-                            'social.LI'       : '$root.social.LI',
+                            'address.country' : {$ifNull: ['$root.company.address.country', '$root.customer.address.country']},
+                            skype             : '$root.customer.skype',
+                            'social.LI'       : '$root.customer.social.LI',
                             total             : 1
 
                         }
@@ -2528,7 +2612,7 @@ var Module = function (models, event) {
     }
 
     function getById(req, res, next) {
-        var id = req.query.id;
+        var id = req.query.id || req.params.id;
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var query;
 
@@ -2539,6 +2623,7 @@ var Module = function (models, event) {
             salesPerson     : 1,
             nextAction      : 1,
             expectedClosing : 1,
+            isOpportunitie  : 1,
             priority        : 1,
             workflow        : 1,
             address         : 1,
@@ -2562,11 +2647,11 @@ var Module = function (models, event) {
         });
 
         query
-            .populate('company', 'name')
+            .populate('company')
             .populate('tags', 'name color')
-            .populate('customer', 'name')
+            .populate('customer')
             .populate('salesPerson', 'name')
-            .populate('workflow', 'name')
+            .populate('workflow', 'name sequence')
             .populate('groups.users')
             .populate('groups.group')
             .populate('createdBy.user', 'login')
@@ -2574,100 +2659,23 @@ var Module = function (models, event) {
             .populate('groups.owner', '_id login');
 
         query.exec(function (err, result) {
-            var historyOptions = {
-                req: req,
-                id : result._id
-            };
 
             if (err) {
                 return next(err);
             }
-
-            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
-                if (err) {
-                    return console.log(err);
-                }
-
-                result = result.toJSON();
-                result.history = history;
-                res.status(200).send(result);
-            });
-
-        });
-    }
-    
-    function getForChart(req, res, next) {
-        var query = req.query;
-        var starDate = query.startDay ? new Date(query.startDay) : null;
-        var endDate = query.endDay ? new Date(query.endDay) : null;
-        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-        var History = models.get(req.session.lastDb, 'History', historySchema);
-        var matchObj = {
-            $and: [{
-                isOpportunitie: false
-            }]
-        };
-
-        var historyMatchObj = {
-            $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
-        };
-
-        if (starDate && endDate) {
-            matchObj.$and.push({
-                creationDate: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
-            });
-
-            historyMatchObj.$and.push({
-                date: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
-            });
-        }
-
-        async
-            .parallel({
-                assignedTo: function (parCb) {
-                    History.aggregate([{
-                        $match: historyMatchObj
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$date', count: {$sum: 1}
-                        }
-                    }], parCb);
-                },
-
-                createdBy: function (parCb) {
-                    Opportunities.aggregate([{
-                        $match: matchObj
-                    }, {
-                        $sort: {'createdBy.date': 1}
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
-                        }
-                    }, {
-                        $group: {
-                            _id  : '$date',
-                            count: {$sum: 1}
-                        }
-                    }], parCb);
-                }
-            }, function (err, result) {
+            getTimeLine(req, result.toJSON(), function (err, model) {
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send(result);
+                res.status(200).send(model);
             });
+        });
     }
+
+    this.getById = function (req, res, next) {
+        getById(req, res, next);
+    };
 
     function getForChart(req, res, next) {
         var query = req.query;
@@ -2678,9 +2686,11 @@ var Module = function (models, event) {
         var stage = query.stage;
         var secondMatchObj = {};
         var matchObj = {
-            $and: [{
-                isOpportunitie: false
-            }]
+            $and: []
+        };
+
+        var historyMatchObjForAssignedTo = {
+            $and: [{"$and": [{"changedField": "salesPerson"}, {$or: [{"contentType": "opportunitie"}, {"contentType": "lead"}]}]}]
         };
 
         var historyMatchObj = {
@@ -2701,136 +2711,201 @@ var Module = function (models, event) {
                     $lte: endDate
                 }
             });
+
+            historyMatchObjForAssignedTo.$and.push({
+                date: {
+                    $gte: starDate,
+                    $lte: endDate
+                }
+            });
         }
+
+        //console.log(JSON.stringify(historyMatchObj));
+        //console.log(JSON.stringify(matchObj));
+
 
         if (stage === 'Qualified') {
             secondMatchObj = {'workflows.name': 'Qualified'};
         }
 
-        async
-            .parallel({
-                assignedTo: function (parCb) {
-                    History.aggregate([
-                        {
-                            $match: historyMatchObj
-                        },
-                        {
-                            $lookup: {
-                                from        : 'Opportunities',
-                                localField  : 'contentId',
-                                foreignField: '_id',
-                                as          : 'lead'
-                            }
-                        }, {
-                            $unwind: {
-                                path                      : '$lead',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from        : 'Employees',
-                                localField  : 'lead.salesPerson',
-                                foreignField: '_id',
-                                as          : 'sales'
-                            }
-                        },
-                        {
-                            $unwind: {
-                                path                      : '$sales',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from        : 'workflows',
-                                localField  : 'lead.workflow',
-                                foreignField: '_id',
-                                as          : 'workflows'
-                            }
-                        },
-                        {
-                            $unwind: {
-                                path                      : '$workflows',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        },
-                        {
-                            $match: secondMatchObj
-                        },
-                        {
-                            $project: {
-                                date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                                'sales._id' : 1,
-                                'sales.name': {$ifNull: ['$sales.name', 'Empty']}
-                            }
-                        }, {
-                            $project: {
-                                date       : 1,
-                                'sales._id': 1,
-                                salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]}
-                            }
-                        }, {
-                            $group: {
-                                _id  : {date: '$date', sales: '$salesPerson'},
-                                count: {$sum: 1}
-                            }
-                        }, {
-                            $project: {
-                                date       : '$_id.date',
-                                salesPerson: '$_id.sales',
-                                count      : 1,
-                                _id        : 0
-                            }
-                        }, {
-                            $group: {
-                                _id       : '$date',
-                                salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                                count     : {$sum: '$count'}
-                            }
-                        }, {
-                            $sort: {_id: -1}
-                        }
-                    ], parCb);
-                },
-
-                createdBy: function (parCb) {
-                    Opportunities.aggregate([{
-                        $match: matchObj
-                    }, {
-                        $sort: {'createdBy.date': 1}
+        async.parallel({
+            assignedTo : function (parCb) {
+                History.aggregate([
+                    {
+                        $match: historyMatchObjForAssignedTo
                     }, {
                         $lookup: {
+                            from        : 'Opportunities',
+                            localField  : 'contentId',
+                            foreignField: '_id',
+                            as          : 'lead'
+                        }
+                    }, {
+                        $unwind: {
+                            path: '$lead'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'lead.salesPerson',
+                            foreignField: '_id',
+                            as          : 'sales'
+                        }
+                    }, {
+                        $project: {
+                            date  : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
+                            isOpp : '$lead.isConverted',
+                            dateBy: {$dayOfYear: "$date"}
+                        }
+                    }, {
+                        $project: {
+                            date  : 1,
+                            isOpp : '$isOpp',
+                            dateBy: '$dateBy',
+                        }
+                    }, {
+                        $group: {
+                            _id   : {date: '$date', isOpp: '$isOpp'},
+                            count : {$sum: 1},
+                            isOpp : {$first: '$isOpp'},
+                            source: {$first: '$dateBy'}
+                        }
+                    }, {
+                        $project: {_id: "$_id.date", isOpp: "$isOpp", count: "$count", sourse: "$source"}
+                    }, {
+                        $sort: {_id: -1}
+                    }
+                ], parCb);
+            },
+            createdBy  : function (parCb) {
+                Opportunities.aggregate([{
+                    $match: matchObj
+                }, {
+                    $sort: {'createdBy.date': 1}
+                }, {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflows'
+                    }
+                }, {
+                    $unwind: {
+                        path                      : '$workflows',
+                        preserveNullAndEmptyArrays: true
+                    }
+                }, {
+                    $project: {
+                        date  : {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]},
+                        source: {$dayOfYear: "$createdBy.date"},
+                        isOpp : "$isConverted"
+                    }
+                }, {
+                    $group: {
+                        _id   : {date: '$date', isOpp: "$isOpp"},
+                        count : {$sum: 1},
+                        source: {$first: "$source"}
+                    }
+                }, {$project: {_id: "$_id.date", isOpp: "$_id.isOpp", count: "$count", source: "$source"}}
+                ], parCb);
+            },
+            salesByDate: function (parCb) {
+                History.aggregate([
+                    {
+                        $match: historyMatchObj
+                    },
+                    {
+                        $lookup: {
+                            from        : 'Opportunities',
+                            localField  : 'contentId',
+                            foreignField: '_id',
+                            as          : 'lead'
+                        }
+                    }, {
+                        $unwind: {
+                            path                      : '$lead',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'lead.salesPerson',
+                            foreignField: '_id',
+                            as          : 'sales'
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path                      : '$sales',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
                             from        : 'workflows',
-                            localField  : 'workflow',
+                            localField  : 'lead.workflow',
                             foreignField: '_id',
                             as          : 'workflows'
                         }
-                    }, {
+                    },
+                    {
                         $unwind: {
                             path                      : '$workflows',
                             preserveNullAndEmptyArrays: true
                         }
-                    }, {
+                    },
+                    {
                         $match: secondMatchObj
+                    },
+                    {
+                        $project: {
+                            date        : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
+                            'sales._id' : 1,
+                            'sales.name': {$ifNull: ['$sales.name', 'Empty']},
+                            isOpp       : '$lead.isOpportunitie',
+                            dateBy      : {$dayOfYear: "$date"}
+                        }
                     }, {
                         $project: {
-                            date: {$add: [{$multiply: [{$year: '$createdBy.date'}, 10000]}, {$add: [{$multiply: [{$month: '$createdBy.date'}, 100]}, {$dayOfMonth: '$createdBy.date'}]}]}
+                            date       : 1,
+                            'sales._id': 1,
+                            salesPerson: {$cond: [{$eq: ['$sales.name', 'Empty']}, 'Empty', {$concat: ['$sales.name.first', ' ', '$sales.name.last']}]},
+                            isOpp      : '$isOpp',
+                            dateBy     : '$dateBy'
                         }
                     }, {
                         $group: {
-                            _id  : '$date',
-                            count: {$sum: 1}
+                            _id   : {date: '$date', sales: '$salesPerson'},
+                            count : {$sum: 1},
+                            dateBy: {$first: '$dateBy'},
+                            isOpp : {$first: '$isOpp'}
                         }
-                    }], parCb);
-                }
-            }, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
+                    }, {
+                        $project: {
+                            date       : '$_id.date',
+                            salesPerson: '$_id.sales',
+                            count      : 1,
+                            _id        : 0
+                        }
+                    }, {
+                        $group: {
+                            _id       : '$date',
+                            salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
+                            count     : {$sum: '$count'},
+                        }
+                    }, {
+                        $sort: {_id: -1}
+                    }
+                ], parCb);
+            },
+        }, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-                res.status(200).send(result);
-            });
+            res.status(200).send(result);
+        });
     }
 
     this.getByViewType = function (req, res, next) {

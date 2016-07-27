@@ -21,6 +21,7 @@
 @metroicon-font: "Metrize-Icons";
 @bold-border: 3px solid;
 @thin-border: 1px solid;
+@column-box-shadow-active: #656565;
 
 .spinner {
   background-color: yellow;
@@ -362,7 +363,7 @@ input::-ms-clear {
   transform: rotate(@deg);
 }
 
-.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
+.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 18px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
   //overflow: hidden; //������ ������ attache �  Project ->add
@@ -465,11 +466,12 @@ input::-ms-clear {
   }
 
   .formTitle {
+    width: 100%;
+    border-bottom: @thin-border @border-color;
+
     &.withMargin {
       margin-bottom: 0;
     }
-    width: 100%;
-    border-bottom: @thin-border @border-color;
 
     .btnHolder {
       .right;
@@ -1255,20 +1257,20 @@ input::-ms-clear {
 
     .item {
       word-wrap: break-word;
-      margin: 5px auto;
-      width: 95%;
+      margin: 5px 15px;
+      width: calc(~"100% - 30px");
       min-height: 40px;
       text-align: left;
       border: @thin-border @border-color-main;
       background-color: @bg-main;
       color: @kanab-text-color;
       cursor: move;
-      transition: box-shadow 1s ease;
-      transition: border-color 1s ease;
-      .border-radius(0px);
+      //transition: box-shadow 1s ease;
+      transition: border-color 1s ease, box-shadow 1s ease;
+      .defaultBorRad;
 
       &.active {
-        .box-shadow(0px, 0, 10px, rgba(50, 50, 50, 0.75));
+        box-shadow: 0 1px 10px @column-box-shadow-active;
         transition: box-shadow 1s ease;
         transition: border-color 1s ease;
       }
@@ -1355,6 +1357,7 @@ input::-ms-clear {
       background: @bg-main;
       height: 35px;
       position: relative;
+
       &.task {
         height: 42px;
       }
@@ -1362,6 +1365,8 @@ input::-ms-clear {
       .columnName {
         padding-bottom: 5px;
         margin-bottom: 5px;
+        min-height: 30px;
+
         .totalCount {
           float: right;
           padding: 2px 5px;
@@ -1370,6 +1375,7 @@ input::-ms-clear {
           top: 4px;
           right: 28px;
           color: @fold-color;
+          .defaultBorRad;
         }
         .fold-unfold {
           display: block;
@@ -1805,9 +1811,9 @@ input::-ms-clear {
     background: 0;
   }
 
-  .ui-dialog-buttonpane {
-    margin-top: 30px !important;
-  }
+  //.ui-dialog-buttonpane {
+  //  margin-top: 30px !important;
+  //}
 
   .ui-dialog-titlebar {
     display: none;
@@ -1861,10 +1867,10 @@ input::-ms-clear {
     }
   }
 
-  .inner {
-    padding: 5px;
-    background: @background;
-  }
+  //.inner {
+  //  padding: 5px;
+  //  background: @background;
+  //}
 
   .form-holder {
     position: relative;
@@ -2078,13 +2084,13 @@ input::-ms-clear {
     font-weight: normal;
     border: none;
     //font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     display: inline;
     float: none;
     min-width: 80px;
   }
 
-  .dl-auto(160px, 40%, 16px, 16px, 10px);
+  .dl-auto(160px, 40%, 18px, 18px, 10px);
 
   select {
     font-family: Arial, Helvetica, sans-serif;
@@ -2121,6 +2127,9 @@ input::-ms-clear {
     &:focus {
       outline: medium none;
       border: @thin-border @border-color-selected;
+    }
+    &#editInput {
+      padding: 2px 6px;
     }
   }
 
@@ -2184,7 +2193,7 @@ input::-ms-clear {
 }
 
 .tabs(@marginTop: 0, @marginLeft: -20px) {
-  height: 35px;
+  //height: 35px;
   border-bottom: @thin-border @border-color-main;
   li {
     float: left;
@@ -2193,6 +2202,7 @@ input::-ms-clear {
       border: @thin-border rgba(0, 0, 0, 0);
       display: block;
       float: left;
+      border-radius: 3px 3px 0 0;
       padding-left: 20px;
       padding-right: 20px;
       height: 35px;
@@ -2424,7 +2434,7 @@ input::-ms-clear {
 input, textarea, select {
   &:not([type="checkbox"]) {
     padding: 0 4px; //big cells in BonusType
-    border: 1px solid @border-color-main;
+    border: 1px solid #c8c8d3;
     background-color: inherit;
     color: @mainText-color;
     &:focus {
@@ -2720,7 +2730,7 @@ dl {
   .addNote {
     margin-top: 6px;
     background-color: inherit;
-    padding: 5px 0 10px 0;
+    //padding: 5px 0 10px 0;
     //margin-bottom: 5px;
 
     label {
@@ -2773,9 +2783,23 @@ dl {
       padding: 2px 0 2px 3px;
       resize: none;
       box-sizing: border-box;
+      .defaultBorRad;
+
       &:focus {
         .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
         border: @thin-border @border-color-main;
+      }
+
+      &.noteText {
+        border-radius: 0 0 3px 3px;
+      }
+    }
+
+    .area_holder {
+      textarea {
+        height: 130px;
+        border-radius: 0 3px 3px 3px;
+        border-top: 0;
       }
     }
 
@@ -2810,7 +2834,6 @@ dl {
       }
 
       textarea {
-        height: 60px;
         resize: none;
         color: @input-text-color;
       }
@@ -2832,11 +2855,16 @@ dl {
     }
   }
 
+  .editedNote {
+    &.active {
+      padding: 0;
+    }
+  }
+
   #noteBody {
     .noteContainer {
-      padding: 10px;
-      border: @thin-border @border-color-main;
-      margin-bottom: 10px;
+      //padding: 10px;
+      margin: 10px 0;
 
       .name {
         margin-right: 15px;
@@ -2846,6 +2874,10 @@ dl {
       .date {
         font-size: 11px;
         color: #777;
+      }
+
+      .dateNote {
+        float: right;
       }
 
       .noteTitle {
@@ -2860,8 +2892,8 @@ dl {
 
       .right {
         float: right;
-        margin-right: 10px;
-        display: none;
+        //margin-right: 10px;
+        //display: none;
 
         .sep {
           padding: 0 3px;
@@ -2870,16 +2902,20 @@ dl {
         }
       }
 
-      &:hover {
-        background-color: @bg-hover-drop-down-color;
-        .right {
-          display: block;
-
-          a {
-            font-size: 11px;
-          }
-        }
+      &:after {
+        content: '';
+        display: table;
+        clear: both;
       }
+    }
+
+    //.noteBody,
+    //.noteBtnBlock {
+    //  border: @thin-border @border-color-main;
+    //}
+    .noteBody {
+      padding: 10px;
+      border: @thin-border @border-color-main;
     }
   }
 }
@@ -2906,7 +2942,7 @@ dl {
 
   #content-holder {
     position: relative;
-    height: calc(~"100% - 50px");
+    width: 100%;
     display: -webkit-box;
     display: -moz-box;
     display: -webkit-flex;
@@ -2919,14 +2955,19 @@ dl {
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    //overflow: auto;
   }
 }
 
 #startLetter {
-  margin: 0;
-  //padding: 5px 0;
+  height: 20px;
+  margin: 10px 0 -1px;
   text-align: center;
   border-bottom: @thin-border @border-color-main;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 
   .letter {
     padding: 5px 10px;
@@ -2951,8 +2992,10 @@ dl {
 .person-info, .customer-info {
   .dl-auto;
   span {
-    padding: 0 !important;
-    color: @formColum-customer-info;
+    &:not(.editTags) {
+      padding: 0 !important;
+      color: @formColum-customer-info;
+    }
   }
 }
 
@@ -3070,10 +3113,10 @@ dl {
 
   &.checked {
     display: block;
-    text-align: left !important; // need refactor important. use now because must have.
-    font-size: 14px !important; // need refactor important. use now because must have.
+    text-align: left !important;
+    font-size: 14px !important;
     line-height: 16px;
-    padding-left: 20px;
+    padding: 0 0 2px 20px;
 
     &:hover {
       cursor: pointer;
@@ -3180,6 +3223,16 @@ dl {
 
   > button {
     margin: 5px 1px 4px 1px !important;
+  }
+}
+.form {
+  .noteWrapper,
+  .moduleList {
+    .formTitle {
+      h3 {
+        padding: 0;
+      }
+    }
   }
 }
 
@@ -3330,19 +3383,6 @@ button.red, a.red {
       &:hover {
         opacity: 0.5;
       }
-    }
-  }
-}
-
-.tabs-items {
-  margin-bottom: -29px;
-
-  .dialog-tabs-item,
-  .chart-tabs-item {
-    display: none;
-
-    &.active {
-      display: block;
     }
   }
 }
@@ -3830,13 +3870,12 @@ table#workflows {
   a {
     float: left;
     display: block;
-
     overflow: hidden;
     margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @top-font-color;
-    line-height: 40px; //it was 18px
+    line-height: 25px; //it was 18px
 
     &:hover {
       color: @top-font-color + #333;
@@ -3878,7 +3917,8 @@ table#workflows {
   }
   .btnRounded {
     height: 26px;
-    line-height: 24px!important;
+    line-height: 22px!important;
+    .defaultBorRad;
   }
 }
 
@@ -3963,15 +4003,20 @@ ul.dialog-tabs {
   }
 }
 
+.attachWrapper {
+  .input-file {
+    border: 1px solid #c8c8d3;
+  }
+}
+
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
   color: @mainText-color;
-  padding-bottom: 5px;
 }
 
 .tabs-items {
-  margin-bottom: -29px;
+  //margin-bottom: -29px;
 
   .dialog-tabs-item,
   .chart-tabs-item {
@@ -4032,7 +4077,7 @@ ul.dialog-tabs {
 
 .dialog-tabs-items {
   .tabs-items;
-  padding-top: 10px;
+
 }
 
 ul.chart-tabs {
@@ -4083,22 +4128,29 @@ ul.chart-tabs {
   }
 }
 
+.noteWrapper {
+  ul.chart-tabs {
+    border-bottom: 1px solid #c8c8d3;
+  }
+}
+
 .chart-tabs-items {
+  text-align: center;
   .tabs-items;
   margin-bottom: 0;
 }
 
 .chart {
   rect {
-    fill: steelblue;
+    //fill: steelblue;
 
     &.bar2 {
-      fill: #6ec262;
+      //fill: #6ec262;
       opacity: 0.3;
     }
 
     &.bar {
-      fill: #6ec262;
+      //fill: #6ec262;
     }
   }
 
@@ -4131,17 +4183,13 @@ ul.chart-tabs {
   }
 }
 
-.bar {
-  fill: #26a7dd;
-}
+
 
 .bar2 {
-  fill: #57D0b5;
+  //fill: #57D0b5;
 }
 
-.bar3 {
-  fill: #fff;
-}
+
 
 .x.axis path {
   display: none;
@@ -4185,9 +4233,9 @@ ul.chart-tabs {
 
 .choseDateRange, .choseDateItem, .choseDateRangeSource {
   padding: 3px 10px;
-  border: @thin-border #efefef;
   float: right;
   margin-right: 10px;
+  .defaultBorRad;
 
   .item {
     margin-left: 5px;
@@ -4197,6 +4245,7 @@ ul.chart-tabs {
     background-color: #f4f4f4;
     border: @thin-border @border-color-main;
     cursor: pointer;
+    .defaultBorRad;
 
     &:first-child {
       margin-left: 0;
@@ -4210,14 +4259,15 @@ ul.chart-tabs {
 }
 
 .legend-box {
-  border: @thin-border @border-color-main;
-  width: 555px;
+  width: auto;
+  height: auto;
   margin: 0 auto;
+  padding: 5px;
   color: @mainText-color;
+  text-align: center;
+  display: inline-block;
 
   &.small {
-    width: 265px;
-    height: 28px;
     line-height: 26px;
     margin-top: 0!important;
 
@@ -4231,8 +4281,6 @@ ul.chart-tabs {
   }
 
   &.medium {
-    width: 420px;
-    height: 28px;
     line-height: 26px;
   }
 
@@ -4246,13 +4294,18 @@ ul.chart-tabs {
   }
 
   div {
-    float: left;
+    display: inline-block;
     padding: 3px 10px;
+
+    .square,
+    .text {
+      display: inline-block;
+      vertical-align: middle;
+    }
 
     .square {
       width: 20px;
       height: 20px;
-      background-color: #26A7DD;
       padding: 0;
     }
 
@@ -4264,27 +4317,27 @@ ul.chart-tabs {
 
     &.unconverted {
       .square {
-        background-color: #57D0B5;
+        //background-color: #57D0B5;
       }
     }
 
     &.total {
       .square {
-        background-color: #6EC262;
+        //background-color: #6EC262;
         opacity: 0.3;
       }
     }
 
     &.opportunities {
       .square {
-        background-color: #6EC262;
+        //background-color: #6EC262;
       }
     }
 
     &.convertRate {
       .square {
         border-radius: 20px;
-        background-color: #26A7DD;
+        //background-color: #26A7DD;
       }
     }
   }
@@ -4969,6 +5022,7 @@ textarea#editInput {
 }
 
 .openAll {
+  width: 100px;
   cursor: pointer;
   color: @mainText-color;
   .icon {
@@ -5382,6 +5436,12 @@ textarea#editInput {
 }
 
 .grid-conatiner {
+
+  .attendanceTop,
+  .attendance {
+    margin: 0 20px;
+  }
+
   .attendanceTop {
     margin-bottom: 10px;
     > div {
@@ -5401,17 +5461,24 @@ textarea#editInput {
       }
 
       &.pull-left {
+        position: relative;
         margin-right: 10px;
-        height: 20px;
+        height: 32px;
+        line-height: 20px;
+
         > div {
           display: inline-block;
         }
         .editable {
-          position: relative;
           cursor: pointer;
+        }
+        .newSelectList {
+          right: 0;
+          top: 32px;
         }
       }
     }
+
     &:after {
       display: table;
       content: " ";
@@ -5509,12 +5576,13 @@ textarea#editInput {
     &.stick {
       position: fixed;
       bottom: 0;
-      left: 0;
-      width: 100%;
+      right: 0;
+      width: calc(~"100% - 200px");
       background-color: @bg-main;
       padding-top: 10px;
     }
   }
+
   table {
     .grid {
       border-color: @border-color-main;
@@ -6144,12 +6212,16 @@ textarea#editInput {
 
   .filter-dialog-tabs {
     box-sizing: border-box;
+    position: relative;
     border: 1px solid @border-color-main;
     border-bottom: 0;
-    position: relative;
-    float: left;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    width: 100%;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    .defaultBorRad;
+
     li {
       width: 100%;
       border-radius: 0;
@@ -6188,16 +6260,19 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: @fontRegular;
-  padding: 5px 25px;
   position: absolute;
-  z-index: 10;
-  width: ~"calc(100% - 52px)";
-  min-width: 178px;
-  background-color: @bg-drop-down-color;
-  border: 1px solid @filter-border-color;
-  right: 0;
   top: ~"calc(100% - 3px)";
+  right: 0;
+  min-width: 178px;
+  width: ~"calc(100% - 52px)";
+  padding: 5px 25px;
+  background-color: @bg-drop-down-color;
+  font-family: @fontRegular;
+  border: 1px solid @filter-border-color;
+  z-index: 10;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  .defaultBorRad;
+
   #applyFilter {
     text-align: center;
     width: ~"calc(100% - 30px)";
@@ -6207,13 +6282,6 @@ textarea#editInput {
     padding: 10px;
     border-radius: 5px;
   }
-  li {
-    cursor: pointer;
-    font-size: 12px;
-    padding: 5px 15px;
-    color: @filter-text-color;
-    position: relative;
-  }
   #filtersContent {
     .filterGroup {
       overflow: hidden;
@@ -6221,6 +6289,8 @@ textarea#editInput {
       border: 1px solid @border-color-main;
       background-color: @bg-main;
       margin: 5px;
+      .defaultBorRad;
+
       &:hover {
         border-color: @filter-border-hover;
       }
@@ -6335,6 +6405,21 @@ textarea#editInput {
       }
     }
   }
+  #favoritesContent {
+    .filter_name_wrapper {
+      button.btn {
+        padding: 0 !important;
+        line-height: 25px!important;
+      }
+    }
+  }
+  li {
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 15px;
+    color: @filter-text-color;
+    position: relative;
+  }
 }
 
 .filter-icons {
@@ -6366,10 +6451,16 @@ textarea#editInput {
 
 #searchContainer {
   position: absolute;
-  top: -35px;
+  top: -40px;
   right: 0;
   width: 35%;
   margin-right: 90px;
+
+  &.dashBoardVocationSearch {
+    position: static;
+    float: right;
+    margin-right: 0;
+  }
 
   .btn {
     background: @bg-main;
@@ -6379,6 +6470,12 @@ textarea#editInput {
 
   .filter-check-list {
     margin-top: -1px;
+  }
+}
+
+.content-holder {
+  #searchContainer {
+    top: -34px;
   }
 }
 
@@ -6456,7 +6553,7 @@ textarea#editInput {
   #saveFilterButton {
     border: 1px solid @border-color-main;
     box-sizing: border-box;
-    border-radius: 0 5px 5px 0;
+    border-radius: 0 3px 3px 0;
     line-height: 14px;
     padding-top: 5px;
     background-color: @bg-main;
@@ -6633,9 +6730,9 @@ textarea#editInput {
 }
 
 .invoiceChart-legend {
-  position: absolute;
-  top: -28px;
-  left: 0;
+  //position: absolute;
+  //top: -28px;
+  //left: 0;
   width: 100%;
   text-align: center;
   .choseDateItem, .legend-box {
@@ -6648,13 +6745,13 @@ textarea#editInput {
     padding: 0;
     .invoiced {
       .square {
-        background-color: @invoiced;
+        //background-color: @invoiced;
         opacity: .4;
       }
     }
     .paid {
       .square {
-        background-color: @paid;
+        //background-color: @paid;
         opacity: .4;
       }
     }

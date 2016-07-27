@@ -67,7 +67,6 @@ module.exports = function () {
     };
 
     this.sendInvoice = function (mailOptions, cb) {
-
         mailOptions.generateTextFromHTML = true;
         mailOptions.from = 'easyerp <no-replay@easyerp.com>';
         mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendInvoice.html'), encoding = 'utf8'), {});

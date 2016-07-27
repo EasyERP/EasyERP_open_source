@@ -4,15 +4,16 @@ define([
     'Underscore',
     'views/dialogViewBase',
     'text!templates/Orders/EditTemplate.html',
+    'text!templates/salesOrders/ViewTemplate.html',
     'views/Assignees/AssigneesView',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'common',
     'custom',
     'dataService',
     'populate',
     'constants',
     'helpers'
-], function (Backbone, $, _, ParentView, EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS, helpers) {
+], function (Backbone, $, _, ParentView, EditTemplate, ViewTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
     var EditView = ParentView.extend({
         contentType: 'Orders',
@@ -30,10 +31,12 @@ define([
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.currentModel.urlRoot = '/orders';
             this.responseObj = {};
-            this.forSales = false;
-
             this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
-
+            this.forSales = false;
+            this.editable = options.editable || true;
+            this.balanceVissible = false;
+            this.service = false;
+            this.onlyView = !!options.onlyView;
             this.render(options);
         },
 
@@ -44,7 +47,21 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+            var array = this.$el.find('.' + oldCurrencyClass);
+
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
+
+            //$(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            this.hideNewSelect();
         },
 
         cancelOrder: function (e) {
@@ -83,10 +100,12 @@ define([
         receiveInvoice: function (e) {
             var self = this;
             var url = '/invoices/receive';
+            var journal = this.forSales ? CONSTANTS.INVOICE_JOURNAL : CONSTANTS.INVOICE_PURCHASE;
             var data = {
                 forSales: this.forSales,
                 orderId : this.currentModel.id,
-                currency: this.currentModel.currency
+                currency: this.currentModel.currency,
+                journal : journal
             };
 
             e.preventDefault();
@@ -165,17 +184,22 @@ define([
             var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
             var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
             var supplierReference = thisEl.find('#supplierReference').val();
-            var orderDate = thisEl.find('#orderDate').val();
+            var orderDate = thisEl.find('#orderDate').val() || thisEl.find('#orderDate').text();
             var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
-            var total = $.trim(thisEl.find('#totalAmount').text());
-            var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+            var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+            var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
+            var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
 
             var usersId = [];
             var groupsId = [];
             var whoCanRW;
             var currency;
             var i;
+
+            unTaxed = parseFloat(unTaxed) * 100;
+            total = parseFloat(total) * 100;
+            totalTaxes = parseFloat(totalTaxes) * 100;
 
             if (thisEl.find('#currencyDd').attr('data-id')) {
                 currency = {
@@ -206,13 +230,30 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {  // added more info for save
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text() || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
-                        scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                        taxes = targetEl.find('.taxes').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        quantity = $.trim(targetEl.find('[data-name="quantity"]').text()) || targetEl.find('[data-name="quantity"] input').val();
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text()) || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                        price = parseFloat(price) * 100;
+                        scheduledDate = $.trim(targetEl.find('[data-name="scheduledDate"]').text());
+                        taxes = helpers.spaceReplacer($.trim(targetEl.find('[data-name="taxes"]').text()));
+                        taxes = parseFloat(taxes) * 100;
+                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        subTotal = targetEl.find('.subtotal').text();
+                        subTotal = helpers.spaceReplacer($.trim(targetEl.find('.subtotal').text()));
+                        subTotal = parseFloat(subTotal) * 100;
+
+                        if (!quantity) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Quantity can\'t be empty'
+                            });
+                        }
+
+                        if (!price) {
+                            return App.render({
+                                type   : 'error',
+                                message: 'Unit price can\'t be empty'
+                            });
+                        }
 
                         products.push({
                             product      : productId,
@@ -222,7 +263,7 @@ define([
                             taxes        : taxes,
                             description  : description,
                             subTotal     : subTotal,
-                            jobs         : jobs
+                            jobs         : jobs || null
                         });
                     }
                 }
@@ -319,21 +360,22 @@ define([
 
         render: function () {
             var self = this;
-            var formString = this.template({
-                model  : this.currentModel.toJSON(),
-                visible: this.visible
-            });
+            var buttons;
+            var formString;
             var model;
             var productItemContainer;
 
-            this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Order',
-                width        : '900px',
-                buttons      : [
+            this.template = this.onlyView ? _.template(ViewTemplate) : _.template(EditTemplate);
+
+            formString = this.template({
+                model   : this.currentModel.toJSON(),
+                visible : this.visible,
+                onlyView: this.onlyView,
+                forSales: this.forSales
+            });
+
+            if (!this.onlyView) {
+                buttons = [
                     {
                         text : 'Save',
                         click: function () {
@@ -351,8 +393,26 @@ define([
                         text : 'Delete',
                         click: self.deleteItem
                     }
-                ]
+                ];
+            } else {
+                buttons = [
+                    {
+                        text : 'Close',
+                        click: function () {
+                            self.hideDialog();
+                        }
+                    }
+                ];
+            }
 
+            this.$el = $(formString).dialog({
+                closeOnEscape: false,
+                autoOpen     : true,
+                resizable    : true,
+                dialogClass  : 'edit-dialog',
+                title        : 'Edit Order',
+                width        : '900px',
+                buttons      : buttons
             });
 
             this.renderAssignees(this.currentModel);
@@ -378,11 +438,17 @@ define([
 
             productItemContainer = this.$el.find('#productItemsHolder');
 
+            if (this.onlyView) {
+                this.editable = false;
+            }
+
             productItemContainer.append(
                 new ProductItemView({
-                    editable: false,
-                    editablePrice: self.editablePrice,
-                    balanceVissible: false
+                    editable       : self.editable,
+                    editablePrice  : self.editablePrice,
+                    balanceVissible: self.balanceVissible,
+                    forSales       : self.forSales,
+                    service        : self.service
                 }).render({model: model}).el
             );
 

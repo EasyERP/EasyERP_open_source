@@ -10,7 +10,7 @@ var App = App || {
 
 require.config({
     // baseUrl: '../public',
-    
+
     paths: {
         async        : './libs/async/lib/async',
         jQuery       : './libs/jquery-2.1.0.min.map',
@@ -27,7 +27,6 @@ require.config({
         common       : 'common',
         helpers      : 'helpers',
         constants    : 'constants',
-        constantsDir : './constants',
         dateFormat   : './libs/date.format',
         d3           : './libs/d3.v3.min',
         topojson     : './libs/topojson.v0.min/index',
@@ -46,27 +45,27 @@ require.config({
             exports: '$'
         },
 
-        jqueryui   : ['jQuery'],
-        ajaxForm   : ['jQuery'],
-        imageCrop  : ['jQuery'],
-        spinJs     : ['jQuery'],
-        backstratch: ['jQuery'],
-        Backbone   : ['Underscore', 'jQuery'],
-        app        : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
-        d3         : {
+        jqueryui    : ['jQuery'],
+        ajaxForm    : ['jQuery'],
+        imageCrop   : ['jQuery'],
+        spinJs      : ['jQuery'],
+        backstratch : ['jQuery'],
+        Backbone    : ['Underscore', 'jQuery'],
+        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
+        d3          : {
             exports: 'd3'
         },
-        topojson: {
-            deps: ['d3'],
+        topojson   : {
+            deps   : ['d3'],
             exports: 'topojson'
         },
-        dateFormat: {
+        dateFormat : {
             exports: 'dateFormat'
         }
     }
 });
 
-require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
+require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, app) {
 
     App.render = function (data) {
         var container = this.errorContainer || $('#errorHandler');

@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -8,7 +9,7 @@ define([
     'collections/Companies/filterCollection',
     'common',
     'constants'
-], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, common, CONSTANTS) {
+], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, common, CONSTANTS) {
     'use strict';
 
     var CompaniesListView = ListViewBase.extend({
@@ -18,7 +19,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         contentType      : 'Companies',
-        formUrl          : '#easyErp/Companies/form/',
+        formUrl          : '#easyErp/Companies/tform/',
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Companies',
         exportToCsvUrl   : '/Customers/exportToCsv/?type=Companies',
         letterKey        : 'name.first',
@@ -69,6 +70,20 @@ define([
                 }
                 window.location = tempExportToCsvUrl;
             }
+        },
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         },
 
         render: function () {

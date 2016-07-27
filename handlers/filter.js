@@ -116,13 +116,103 @@ var Filters = function (models) {
         });
     };
 
+    this.getDealsTasksFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var TaskSchema = mongoose.Schemas.DealTasks;
+        var Task = models.get(lastDB, 'DealTasks', TaskSchema);
+        var pipeLine;
+        var aggregation;
+
+        pipeLine = [{
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'assignedTo',
+                foreignField: '_id',
+                as          : 'assignedTo'
+            }
+        }, {
+            $lookup: {
+                from        : 'Opportunities',
+                localField  : 'deal',
+                foreignField: '_id',
+                as          : 'deal'
+            }
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $project: {
+                description   : 1,
+                workflow  : {$arrayElemAt: ['$workflow', 0]},
+                assignedTo: {$arrayElemAt: ['$assignedTo', 0]},
+                deal      : {$arrayElemAt: ['$deal', 0]}
+            }
+        }, {
+            $group: {
+                _id    : null,
+                deal: {
+                    $addToSet: {
+                        _id : '$deal._id',
+                        name: '$deal.name'
+                    }
+                },
+                name : {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$description'
+                    }
+                },
+
+                assignedTo: {
+                    $addToSet: {
+                        _id : '$assignedTo._id',
+                        name: {
+                            $ifNull: [{
+                                $concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']
+                            }, 'None']
+                        }
+                    }
+                },
+
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: {
+                            $ifNull: ['$workflow.name', 'None']
+                        }
+                    }
+                }
+            }
+        }];
+
+        aggregation = Task.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getPersonFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var CustomerSchema = mongoose.Schemas.Customer;
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Person'};
+        var query = {type: 'Person', isHidden : false};
 
         pipeLine = [{
             $match: query
@@ -209,7 +299,7 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Company'};
+        var query = {type: 'Company', isHidden : false};
 
         pipeLine = [{
             $match: query
@@ -1207,8 +1297,8 @@ var Filters = function (models) {
 
     this.getProductsFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
-        var QuotationSchema = mongoose.Schemas.Quotation;
-        var Product = models.get(lastDB, 'Products', productSchema);
+        var ProductSchema = mongoose.Schemas.Products;
+        var Product = models.get(lastDB, 'Products', ProductSchema);
         var pipeLine;
         var aggregation;
 
@@ -1221,7 +1311,7 @@ var Filters = function (models) {
                         _id : '$_id',
                         name: '$name'
                     }
-                },
+                }/*,
 
                 productType: {
                     $addToSet: {
@@ -1230,7 +1320,7 @@ var Filters = function (models) {
                             $ifNull: ['$info.productType', 'None']
                         }
                     }
-                }
+                }*/
             }
         }];
 
@@ -1246,6 +1336,39 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+
+            result.canBePurchased = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
+
+            result.canBeSold = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
+
+            result.canBeExpensed = [
+                {
+                    name: 'True',
+                    _id: 'true'
+                },
+                {
+                    name: 'False',
+                    _id: 'false'
+                }
+            ];
 
             res.status(200).send(result);
         });
@@ -1689,20 +1812,40 @@ var Filters = function (models) {
                 as          : 'salesPerson'
             }
         }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'createdBy.user',
+                foreignField: '_id',
+                as          : 'createdBy.user'
+            }
+        }, {
             $project: {
-                workflow   : {$arrayElemAt: ['$workflow', 0]},
-                source     : 1,
-                contactName: {$concat: ['$contactName.first', ' ', '$contactName.last']},
-                salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
+                workflow        : {$arrayElemAt: ['$workflow', 0]},
+                source          : 1,
+                salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                customer        : {$arrayElemAt: ['$customer', 0]},
+                'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]}
             }
         }, {
             $project: {
                 workflow   : 1,
                 source     : 1,
-                contactName: 1,
+                contactName:  {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
                 salesPerson: {
                     _id : '$salesPerson._id',
                     name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                },
+
+                createdBy: {
+                    _id : {$ifNull: ['$createdBy.user._id', 'None']},
+                    name: {$ifNull: ['$createdBy.user.login', 'None']}
                 }
             }
         }, {
@@ -1714,9 +1857,10 @@ var Filters = function (models) {
                         _id : '$contactName',
                         name: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$contactName', ' ']
                                 },
+
                                 then: 'None',
                                 else: '$contactName'
                             }
@@ -1741,15 +1885,14 @@ var Filters = function (models) {
                 salesPerson: {
                     $addToSet: {
                         _id : '$salesPerson._id',
-                        name: {
-                            $cond: {
-                                if  : {
-                                    $eq: ['$contactName', ' ']
-                                },
-                                then: 'None',
-                                else: '$contactName'
-                            }
-                        }
+                        name: '$salesPerson.name'
+                    }
+                },
+
+                createdBy: {
+                    $addToSet: {
+                        _id : '$createdBy._id',
+                        name: '$createdBy.name'
                     }
                 }
             }
@@ -1960,7 +2103,6 @@ var Filters = function (models) {
                 month     : 1,
                 year      : 1,
                 week      : 1,
-                isPaid    : 1,
                 _type     : 1
             }
         }, {
@@ -1979,7 +2121,6 @@ var Filters = function (models) {
                 month     : 1,
                 year      : 1,
                 week      : 1,
-                isPaid    : 1,
                 _type     : 1
             }
         }, {

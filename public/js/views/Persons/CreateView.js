@@ -8,8 +8,9 @@ define([
     'models/PersonsModel',
     'common',
     'populate',
-    'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, PersonModel, common, populate, CONSTANTS) {
+    'constants',
+    'custom'
+], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, PersonModel, common, populate, CONSTANTS, custom) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -19,6 +20,8 @@ define([
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
+
+            this.lead = options.lead;
 
             _.bindAll(this, 'saveItem', 'render');
             this.model = new PersonModel();
@@ -39,22 +42,11 @@ define([
 
         },
 
-        changeTab: function (e) {
-            var $holder = $(e.target);
-            var $dialogHolder = $('.dialog-tabs-items');
-            var n;
-
-            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $holder.addClass('active');
-            n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
-            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
         saveItem: function () {
             var self = this;
             var mid = this.mId;
             var thisEl = this.$el;
+            var viewType = custom.getCurrentVT();
 
             var company = $('#companiesDd').data('id');
             var dateBirth = $('.dateBirth').val();
@@ -83,7 +75,6 @@ define([
                     first: $.trim(thisEl.find('#firstName').val()),
                     last : $.trim(thisEl.find('#lastName').val())
                 },
-
                 imageSrc  : this.imageSrc,
                 dateBirth : dateBirth,
                 company   : company,
@@ -131,6 +122,8 @@ define([
                 whoCanRW: whoCanRW
             };
 
+            data.isHidden = this.lead ? true : false;
+
             model = new PersonModel();
             model.save(data, {
                 headers: {
@@ -138,10 +131,26 @@ define([
                 },
 
                 wait   : true,
-                success: function () {
+                success: function (model, res) {
+                    var navigateUrl;
                     self.hideDialog();
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate(window.location.hash, {trigger: true});
+
+                    if (self.lead) {
+                        self.lead.save({customer : res.id}, {
+                            patch : true,
+                            success : function (){
+                                Backbone.history.fragment = '';
+                                navigateUrl = '#easyErp/Leads/form/' + self.lead.id;
+                                Backbone.history.navigate(navigateUrl, {trigger: true});
+                            }
+                        });
+                    } else {
+                        Backbone.history.fragment = '';
+
+                        navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
+                        Backbone.history.navigate(navigateUrl, {trigger: true});
+                    }
+
                 },
 
                 error: function (model, xhr) {
@@ -167,6 +176,7 @@ define([
                 buttons      : [
                     {
                         id   : 'create-person-dialog',
+                        class: 'btnRounded btnSave',
                         text : 'Create',
                         click: function () {
                             self.saveItem();
@@ -175,6 +185,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btnRounded',
                         click: function () {
                             self.hideDialog();
                         }
@@ -183,7 +194,7 @@ define([
             });
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            this.renderAssignees(personModel);
+            /*this.renderAssignees(personModel);*/
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({

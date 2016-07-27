@@ -45,7 +45,7 @@ define([
             var mid = 39;
             var categoryName = $.trim(thisEl.find('#categoryName').val());
             var parentCategory = thisEl.find('#parentCategory').data('id') || null;
-            var nestingLevel = thisEl.find('#parentCategory').data('level');
+            var nestingLevel = thisEl.find('#parentCategory').data('level') || null;
             var fullName = thisEl.find('#parentCategory').data('fullname');
             var res = _.filter(this.responseObj['#parentCategory'], function (item) {
                 return item.parentCategory === parentCategory;

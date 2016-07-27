@@ -277,32 +277,18 @@
         },
 
         gotoEditForm: function (e) {
-            var id;
-            var model;
+            var id = $(e.target).closest('.inner').attr('data-id');
+            var url = '#easyErp/Opportunities/tform/' + id;
 
             e.preventDefault();
+            App.ownContentType = true;
 
-            id = $(e.target).closest('.inner').data('id');
-            model = new CurrentModel();
-            model.urlRoot = '/Opportunities/';
+            if (!this.filter) {
+                window.location.hash = url;
+                return;
+            }
 
-            model.fetch({
-                data: {
-                    id      : id,
-                    viewType: 'form'
-                },
-
-                success: function (newModel) {
-                    return new EditView({model: newModel});
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
+            window.location.hash = url + '/filter=' + JSON.stringify(this.filter);
         },
 
         fetchFilteredOpportunities: function (e) {

@@ -7,7 +7,7 @@ module.exports = function (models) {
     var handler = new PeriodHandler(models);
 
     router.use(authStackMiddleware);
-
+    
     router.get('/', handler.getForDd);
 
     return router;

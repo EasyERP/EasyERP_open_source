@@ -67,10 +67,10 @@ define([
         editCollection   : null,
         selectedProjectId: [],
         genInvoiceEl     : null,
-        changedModels    : {},
         hasPagination    : true,
         exportToCsvUrl   : '/wTrack/exportToCsv',
         exportToXlsxUrl  : '/wTrack/exportToXlsx',
+        CurrentModel     : CurrentModel,
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -80,6 +80,8 @@ define([
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.currentPage;
+
+            this.changedModels = {};
 
             ListViewBase.prototype.initialize.call(this, options);
 
@@ -481,12 +483,12 @@ define([
                 year = year.slice(0, 4);
 
                 /* if (!isOvertime && holiday) {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please create Overtime tCard'
-                    });
-                    return false;
-                } */
+                 App.render({
+                 type   : 'error',
+                 message: 'Please create Overtime tCard'
+                 });
+                 return false;
+                 } */
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     this.wTrackId = wTrackId;
@@ -823,6 +825,45 @@ define([
             context.collection.bind('resetEditCollection', context.resetEditCollection, context);
             context.editCollection.on('saved', context.savedNewModel, context);
             context.editCollection.on('updated', context.updatedOptions, context);
+        },
+
+        savedNewModel: function (modelObjects) {
+            var $savedRow = this.$listTable.find(".false[data-id='" + modelObjects.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
+            var $checkbox = $savedRow.find('input[type=checkbox]');
+            var modelId;
+            var self = this;
+
+            // modelObject = modelObject.success;
+
+            if (modelObjects) { // now only one element from list? because we hav ot checkbox
+                modelId = modelObjects._id;
+                $savedRow.attr('data-id', modelId);
+                $savedRow.removeClass('false');
+                $checkbox.val(modelId);
+                $savedRow.removeAttr('id');
+                delete self.changedModels[modelObjects.cid];
+
+                this.editCollection.remove(modelObjects.cid);
+            }
+
+            delete modelObjects.cid;
+
+            this.changedModels = {};
+
+            this.hideSaveCancelBtns();
+            // this.hideOvertime();
+            this.resetCollection(modelObjects);
+        },
+
+        resetCollection: function (model) {
+            if (model && model._id) {
+                model = new this.CurrentModel(model);
+
+                this.collection.add(model);
+                this.editCollection.add(model);
+            } else {
+                this.collection.set(this.editCollection.models, {remove: false});
+            }
         },
 
         createItem: function () {

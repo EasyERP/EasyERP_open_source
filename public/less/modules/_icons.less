@@ -1,20 +1,22 @@
 .btn-list {
   height: 24px;
   border: @thin-border @border-color-main;
-  border-right: 0;
-  border-bottom: 0;
   float: left;
   margin: 0 12px 0 5px;
 
+  .defaultBorRad;
+
   li {
-    border-right: @thin-border @border-color-main;
-    border-bottom: @thin-border @border-color-main;
     padding: 3px;
     margin: 0;
     display: block;
     float: left;
     height: 23px;
     width: 24px;
+
+    &:nth-child(n+2) {
+      border-left: @thin-border @border-color-main;
+    }
 
     a {
       display: block;

@@ -4,9 +4,9 @@ define([
     'Underscore',
     'text!templates/Notes/AttachTemplate.html',
     'text!templates/Notes/AddAttachments.html',
-    'moment'
-
-], function (Backbone, $, _, AttachTemplate, addAttachTemplate, moment) {
+    'moment',
+    'constants'
+], function (Backbone, $, _, AttachTemplate, addAttachTemplate, moment, CONSTANTS) {
     var AttachView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -58,7 +58,7 @@ define([
 
             if (this.isCreate) {
                 currentModel = model;
-                currentModelId = currentModel.id;
+                currentModelId = currentModel.id || currentModel._id;
 
                 this.$el.find('li .inputAttach').each(function () {
                     addInptAttach = $(this)[0].files[0];
@@ -72,6 +72,12 @@ define([
                     }
                 });
                 if (this.$el.find('li .inputAttach').length === 0) {
+
+                    if (this.contentType === CONSTANTS.PRODUCTS) {
+                        self.hideDialog();
+                        return;
+                    }
+
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true});
 
@@ -137,6 +143,11 @@ define([
                         if (self.isCreate) {
                             status.hide();
                             self.hideDialog();
+
+                            if (this.contentType === CONSTANTS.PRODUCTS) {
+                                return;
+                            }
+
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else if (self.import) {

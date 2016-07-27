@@ -1,7 +1,6 @@
 <% collection.forEach(function(journalEntry, index){ %>
 <tr data-index="<%= index %>" data-id="<%=journalEntry._id%>">
     <!--<td class="notForm centerCell"><input type="checkbox" value="<%=journalEntry._id%>" class="checkbox"/></td>-->
-    <td class="centerCell"><%=index + 1 %></td>
     <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
     <td><%=journalEntry.date%></td>
     <td><%=journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name.first + ' ' + (journalEntry.sourceDocument.subject.name.last ? journalEntry.sourceDocument.subject.name.last : '') : journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name : ''%></td>

@@ -6,18 +6,17 @@
 <% overdue = new Date() - new Date(invoice.dueDate) %>
 <% } %>
 <tr data-id="<%=invoice._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
+    <td class="notForm"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
                 notRemovable
                 <% } %>"  <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
         disabled='disabled'
         <% } %>/>
-<td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' + invoice.supplier.name.last:
     ''%>
 </td>
 <td><%=invoice.name%></td>
 <td><%=invoice.paymentDate%></td>
-<td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
+<td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
 <td><% if (overdue > 0) {%>
      <span class="red"><%=Math.ceil(overdue / (1000 * 3600 * 24)) + " days"%></span>
      <% } else {%>

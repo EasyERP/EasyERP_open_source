@@ -1,4 +1,4 @@
-<div class="form-holder">
+<div class="form-holder p">
     <form method="post" action="" id="createEmployeeForm" class="form">
         <fieldset>
             <div class="inner">
@@ -17,46 +17,69 @@
                         </div>
                         <div class="avatarInfoContainer">
                             <div class="half-block left">
-                                <dl class="product-info">
-                                    <dt><label for="product">Product Name</label></dt>
-                                    <dd><input type="text" id="product" required maxlength="32"
-                                               value="<%=model.name%>"/></dd>
-                                    <dt><label for="sold">Can be Sold</label></dt>
-                                    <dd><input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
-                                        %> checked <% } %>/>
-                                    </dd>
-                                    <dt><label for="expensed">Can be Expensed</label></dt>
-                                    <dd><input type="checkbox" id="expensed" class="checkbox left" <%
-                                        if(model.canBeExpensed) { %> checked <% } %>/>
-                                    </dd>
-                                    <dt><label for="purchased">Can be Purchased</label></dt>
-                                    <dd><input type="checkbox" id="purchased" class="checkbox left" <%
-                                        if(model.canBePurchased) { %> checked <% } %>/>
-                                    </dd>
-                                </dl>
+                                <div class="product-info">
+                                    <div class="inputField">
+                                        <label for="product">
+                                            <input type="text" id="product" required maxlength="32"
+                                                   value="<%=model.name%>"/>
+                                            <span>Product Name</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label for="sold">
+                                            <input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
+                                            %> checked <% } %>/>
+                                            <span>Can be Sold</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label for="expensed">
+                                            <input type="checkbox" id="expensed" class="checkbox left" <%
+                                            if(model.canBeExpensed) { %> checked <% } %>/>
+                                            <span>Can be Expensed</span></label>
+                                    </div>
+                                    <div>
+                                        <label for="purchased">
+                                            <input type="checkbox" id="purchased" class="checkbox left" <%
+                                            if(model.canBePurchased) { %> checked <% } %>/>
+                                            <span>Can be Purchased</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="clearfix"></div>
                         <ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Information</a></li>
-                            <li><a href="javascript:;">Accounting</a></li>
+                            <!--<li><a href="javascript:;">Accounting</a></li>-->
+                            <li><a href="javascript:;">Notes</a></li>
                         </ul>
                         <div class="dialog-tabs-items childTabs">
                             <div class="dialog-tabs-item childTabs active">
                                 <div class="clearfix"></div>
                                 <div class="half-block left">
                                     <dl class="product-info">
+                                        <dt class="productCategory"><label for="productCategory">Product Category</label></dt>
+                                        <dd class="productCategory"><a id="productCategory" class="current-selected" href="javascript:;" data-id="<%model.accounting.category._id%>"><%=model.accounting.category.name%></a></dd>
+                                        <!--
                                         <dt><label for="productType">Product Type</label></dt>
                                         <dd><a id="productType"
                                                data-id="<%=(model.info.productType)?model.info.productType._id:''%>"
                                                class="current-selected" href="javascript:;"><%=(model.info.productType)?(model.info.productType.name):"Select"%></a>
                                         </dd>
-                                        <dt><label for="salePrice">Sale Price</label></dt>
-                                        <dd><input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                                   value="<%=model.info.salePrice%>"/></dd>
+                                        -->
+
                                     </dl>
                                 </div>
                                 <div class="half-block left">
+                                    <div class="inputField">
+                                        <label for="salePrice">
+                                            <input type="text" id="salePrice" class="extra-info" maxlength="10"
+                                                   value="<%=model.info.salePrice%>"/>
+                                            <span>Sale Price</span>
+                                        </label>
+                                    </div>
+                                    <!--
                                     <dt><label for="active">Active</label></dt>
                                     <dd><input type="checkbox" id="active" class="checkbox left" <%
                                         if(model.info.isActive) { %> checked <% } %>/>
@@ -68,25 +91,30 @@
                                     <dd>
                                         <div id="bcTarget"></div>
                                     </dd>
+                                    -->
                                 </div>
                                 <div class="clearfix"></div>
-                                <div class="full-width left">
+                                <!--<div class="full-width left">
                                     <div class="inner">
                                         <div class="textarea-wrapper">
                                         <textarea type="text" class="full-width productDescriptionCreate"
                                                   name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
-
+                            <!--
                             <div class="dialog-tabs-item childTabs">
+
                                 <div class="clearfix"></div>
                                 <div class="full-width left">
                                     <dl class="product-info">
+                                        <!--
                                         <dt><label for="productCategory">Product Category</label></dt>
-                                        <dd><a id="productCategory" class="current-selected" href="javascript:;"><%=model.accounting.category.name%></a>
+                                        <dd><a id="productCategory" class="current-selected" href="javascript:;" data-id="<%model.accounting.category._id%>"><%=model.accounting.category.name%></a>
                                         </dd>
+                                        -->
+                                        <!--
                                         <dt><label for="assetType">Asset Type</label></dt>
                                         <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a>
                                         </dd>
@@ -112,6 +140,26 @@
                                         <dt><label for="supplierTaxes">Supplier Taxes</label></dt>
                                         <dd><a id="supplierTaxes" class="current-selected"
                                                href="javascript:;">Select</a></dd>
+                                    </div>
+                                </div>
+                            </div>
+                            -->
+                            <div class="dialog-tabs-item childTabs">
+                                <!--<div class="clearfix"></div>-->
+                                <div class="full-width left">
+                                    <div class="inner">
+                                        <div class="textarea-wrapper inputField">
+                                                <label for="description">
+                                                    <textarea type="text" class="full-width productDescriptionCreate"
+                                                              name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
+                                                    <span>Add note...</span>
+                                                </label>
+                                        </div>
+                                        <a href="javascript:;" class="attach_file">
+                                            <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                        </a>
+                                        <div class="attach-container">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

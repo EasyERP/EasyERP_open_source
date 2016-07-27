@@ -1,0 +1,67 @@
+<div class="form-holder task-create-holder newTasksContainer">
+    <h2 class="taskTitle">Add Task</h2>
+    <form method="post" action="" id="createTaskForm" class="form notDialog">
+        <div>
+            <div class="taskTop">
+                <div class="topCell">
+                    <label for="workflowsDd">Stage</label>
+                    <div id="selectWorkflow" class="dataField">
+                        <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <div>
+                        <label for="dueDate">Due Date </label>
+                    </div>
+                    <div class="dataField">
+                        <input class="extrainfo" type="text" name="dueDate" id="dueDate" value="" readonly placeholder="Date"/>
+                    </div>
+                </div>
+
+                <div class="topCell">
+                    <label>Assigned to</label>
+                    <div class="dataField">
+                        <a id="assignedToDd" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="withPaddingLeftProject">
+                <div class="inner">
+                    <div class="textarea-wrapper">
+                        <textarea type="text" class="taskDescriptionCreate" name="description"
+                                  placeholder="Add a Description..." id="description" maxlength="500" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="withPaddingRightProject">
+                <div class="inner">
+                    <div class="taskBottom">
+                        <div class="topCell selectType" id="contactItem">
+                            <label>Contact</label>
+                            <div>
+                                <a id="contactDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Contact</a>
+                            </div>
+                        </div>
+
+                        <div class="topCell selectType" id="companyItem">
+                            <label>Company</label>
+                            <div>
+                                <a id="companyDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Company</a>
+                            </div>
+                        </div>
+
+                        <div class="topCell selectType" id="dealItem">
+                            <label>>Lead/Opportunity</label>
+                            <div>
+                                <a id="dealDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>>Add Lead/Opportunity</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

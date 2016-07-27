@@ -1,0 +1,41 @@
+<div class="inner" data-id="<%=model._id%>" data-sequence="<%=model.sequence%>">
+    <div class="task-header">
+        <div class="clearfix"></div>
+    </div>
+    <div class="task-content">
+        <div class="info">
+            <p id="<%=model._id%>" class="taskContentTitle"><%=model.description%></p>
+            <% if (new Date(model.dueDate) < new Date()) { %>
+            <h3 class="red dateLabel">Overdue : </h3>
+            <% }else {%>
+            <h3>Due : </h3>
+            <% }%>
+            <p class="dueDate"><%=model.dueDate%></p>
+        </div>
+        <div class="clearfix">
+            <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right"><img title="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>" class="person"
+                                                                                                         src=""
+                                                                                                         alt="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>"/>
+
+
+        </div>
+        <div class="sources tasksItemList">
+            <% if (model.contact) { %>
+            <a href="<%='/#easyErp/Persons/form/' + model.contact._id %>" class="tasksItemIcon" title="<%=model.contact.fullName%>"><img alt=""
+                                                                                                                                         src="<%=model.contact.imageSrc%>"/> </a>
+            <% }%>
+            <% if (model.company) { %>
+            <a href="<%='/#easyErp/Companies/form/' + model.company._id %>" class="tasksItemIcon" title="<%=model.company.fullName%>"> <img alt=""
+                                                                                                             src="<%=model.company.imageSrc%>"/> </a>
+            <% }%>
+            <% if (model.deal) { %>
+            <a href="<%='/#easyErp/' +  (model.deal.isOpportunitie ? 'Opportunities' : 'Leads') + '/form/' + model.deal._id %>" class="tasksItemIcon" title="<%=model.deal.name%>"><i class="fa fa-usd" aria-hidden="true"></i> </a>
+            <% }%>
+        </div>
+
+        <div class="bottom taskSelect">
+            <a id="type_<%=model._id%>" data-id="<%=model.type%>" class="current-selected bold" href="javascript:;"><%=model.type%></a>
+        </div>
+        </div>
+    </div>
+</div>

@@ -10,10 +10,25 @@ define([
     'views/Quotations/EditView',
     'models/QuotationModel',
     'collections/Quotations/filterCollection',
+    'services/projects',
     'dataService',
     'constants',
     'helpers'
-], function ($, _, ListViewBase, listTemplate, stagesTemplate, CreateView, ListItemView, ListTotalView, EditView, CurrentModel, contentCollection, dataService, CONSTANTS, helpers) {
+], function ($,
+             _,
+             ListViewBase,
+             listTemplate,
+             stagesTemplate,
+             CreateView,
+             ListItemView,
+             ListTotalView,
+             EditView,
+             CurrentModel,
+             contentCollection,
+             selectService,
+             dataService,
+             CONSTANTS,
+             helpers) {
     'use strict';
 
     var QuotationListView = ListViewBase.extend({
@@ -21,38 +36,41 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        contentType      : 'Quotations', // needs in view.prototype.changeLocationHash
+        contentType      : CONSTANTS.QUOTATIONS,
+        EditView         : EditView,
         viewType         : 'list', // needs in view.prototype.changeLocationHash
-
-        initialize: function (options) {
-            $(document).off('click');
-
-            this.EditView = EditView;
-            this.CreateView = CreateView;
-
-            this.startTime = options.startTime;
-            this.collection = options.collection;
-            this.parrentContentId = options.collection.parrentContentId;
-            this.sort = options.sort;
-            this.filter = options.filter || {};
-            this.filter.forSales = {
-                key  : 'forSales',
-                type : 'boolean',
-                value: ['false']
-            };
-            this.page = options.collection.currentPage;
-            this.contentCollection = contentCollection;
-
-            this.render();
-
-            this.stages = [];
-        },
+        forSales         : false,
+        hasPagination    : true,
 
         events: {
-            'click .stageSelect'                 : 'showNewSelect',
+            'click .stageSelect'                 : selectService.showStageSelect,
             'click  .list tbody td:not(.notForm)': 'goToEditDialog',
             'click .newSelectList li'            : 'chooseOption'
         },
+
+        initialize: function (options) {
+            var self = this;
+            $(document).off('click');
+
+            self.startTime = options.startTime;
+            self.collection = options.collection;
+            self.parrentContentId = options.collection.parrentContentId;
+            self.sort = options.sort;
+            self.filter = options.filter || {};
+            self.filter.forSales = {
+                key  : 'forSales',
+                type : 'boolean',
+                value: [self.forSales]
+            };
+            self.page = options.collection.currentPage;
+            self.contentCollection = contentCollection;
+
+            ListViewBase.prototype.initialize.call(self, options);
+
+            self.stages = [];
+        },
+
+        hideNewSelect: selectService.removeNewSelect,
 
         chooseOption: function (e) {
             var self = this;
@@ -71,6 +89,7 @@ define([
                 patch   : true,
                 validate: false,
                 success : function () {
+                    // self.showFilteredPage({}, self); - this code was at salesQuotation list view
                     self.showFilteredPage(self.filter, self);
                 }
             });
@@ -80,35 +99,58 @@ define([
         },
 
         recalcTotal: function () {
+            var $thisEl = this.$el;
             var total = 0;
             var unTaxed = 0;
 
             _.each(this.collection.toJSON(), function (model) {
-                total += parseFloat(model.paymentInfo.total);
-                unTaxed += parseFloat(model.paymentInfo.unTaxed);
+                var rate;
+
+                if (model.currency && model.currency.rate) {
+                    rate = model.currency.rate;
+                    total += parseFloat(model.paymentInfo.total / rate);
+                    unTaxed += parseFloat(model.paymentInfo.unTaxed / rate);
+                } else {
+                    total += parseFloat(model.paymentInfo.total);
+                    unTaxed += parseFloat(model.paymentInfo.unTaxed);
+                }
             });
 
-            this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
-            this.$el.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
+            $thisEl.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+            $thisEl.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
         },
 
-        showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
-                return false;
-            }
-            $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-            return false;
+        goToEditDialog: function (e) {
+            var self = this;
+            var id = $(e.target).closest('tr').attr('data-id');
+            var model = new CurrentModel({validate: false});
 
-        },
+            e.preventDefault();
 
-        hideNewSelect: function () {
-            $('.newSelectList').remove();
+            model.urlRoot = '/quotations/';
+            model.fetch({
+                data: {
+                    id      : id,
+                    viewType: 'form'
+                },
+                
+                success: function (model) {
+                    return new self.EditView({model: model});
+                },
+
+                error: function () {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please refresh browser'
+                    });
+                }
+            });
         },
 
         render: function () {
             var self;
             var $currentEl;
+
             $('.ui-dialog ').remove();
 
             self = this;
@@ -124,48 +166,9 @@ define([
 
             $currentEl.append(new ListTotalView({element: $currentEl.find('#listTable'), cellSpan: 4}).render());
 
-            this.renderPagination($currentEl, this);
-
             this.recalcTotal();
-
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
-            this.renderFilter();
-
-            dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
-                wId         : 'Purchase Order',
-                source      : 'purchase',
-                targetSource: 'quotation'
-            }, function (stages) {
-                self.stages = stages;
-            });
-        },
-
-        goToEditDialog: function (e) {
-            var id = $(e.target).closest('tr').data('id');
-            var model = new CurrentModel({validate: false});
-
-            e.preventDefault();
-
-            model.urlRoot = '/quotations/';
-            model.fetch({
-                data: {
-                    id      : id,
-                    viewType: 'form'
-                }
-            }, {
-                success: function (model) {
-                    return new EditView({model: model});
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
         }
     });
+
     return QuotationListView;
 });

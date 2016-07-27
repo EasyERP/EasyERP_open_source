@@ -72,24 +72,26 @@ define([
         saveItem: function () {
             var mid = 25;
             var opportunityModel = new OpportunityModel();
-            var name = $.trim(this.$el.find('#name').val());
-            var expectedRevenueValue = $.trim(this.$el.find('#expectedRevenueValue').val()) || '0';
+            var $thisEl = this.$el;
+            var name = $.trim($thisEl.find('#name').val());
+            var expectedRevenueValue = $.trim($thisEl.find('#expectedRevenueValue').val()) || '0';
             var expectedRevenue;
-            var customerId = this.$('#customerDd').data('id');
-            var salesPersonId = this.$('#salesPersonDd').data('id');
-            var nextActionDesc = $.trim(this.$el.find('#nextActionDescription').val());
+            var companyId = $thisEl.find('#companyDd').attr('data-id');
+            var customerId = $thisEl.find('#customerDd').attr('data-id');
+            var salesPersonId =$thisEl.find('#salesPersonDd').attr('data-id');
+            var nextActionDesc = $.trim($thisEl.find('#nextActionDescription').val());
             var nextAction = {
                 desc: nextActionDesc
             };
-            var expectedClosing = $.trim(this.$el.find('#expectedClosing').val());
-            var priority = $.trim(this.$el.find('#priorityDd').text());
-            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
+            var expectedClosing = $.trim($thisEl.find('#expectedClosing').val());
+            var priority = $.trim($thisEl.find('#priorityDd').text());
+            var internalNotes = $.trim($thisEl.find('#internalNotes').val());
             var address = {};
-            var workflow = this.$el.find('#workflowDd').data('id');
+            var workflow = $thisEl.find('#workflowDd').data('id');
             var self = this;
             var usersId = [];
             var groupsId = [];
-            var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+            var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
 
             $('dd').find('.address').each(function () {
                 var el = $(this);
@@ -123,12 +125,13 @@ define([
                     nextAction     : nextAction,
                     expectedClosing: expectedClosing,
                     priority       : priority,
+                    company        : companyId,
                     workflow       : workflow,
                     internalNotes  : internalNotes,
                     address        : address,
                     whoCanRW       : whoCanRW,
                     groups         : {
-                        owner: self.$el.find('#allUsersSelect').data('id') || null,
+                        owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
                         users: usersId,
                         group: groupsId
                     }
@@ -165,13 +168,13 @@ define([
                 buttons      : {
                     save: {
                         text : 'Create',
-                        class: 'btn',
+                        class: 'btn  btnRounded btnSave',
                         click: self.saveItem
                     },
 
                     cancel: {
                         text : 'Cancel',
-                        class: 'btn',
+                        class: 'btn  btnRounded',
                         click: function () {
                             self.hideDialog();
                         }
@@ -188,7 +191,7 @@ define([
             });
 
             notDiv.append(this.attachView.render().el);
-            this.renderAssignees(model);
+           /* this.renderAssignees(model);*/
 
             $('#nextActionDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
@@ -200,7 +203,8 @@ define([
                 });
                 self.responseObj['#priorityDd'] = priorities;
             });
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {}, this, true, true, (this.model) ? this.model._id : null);
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
+            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;

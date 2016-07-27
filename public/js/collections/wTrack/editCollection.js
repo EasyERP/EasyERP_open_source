@@ -50,7 +50,7 @@
                     week = modelObject.week || model.get('week');
 
                     models.push(modelObject);
-                } else if (model && !model.id) {
+                } else if (model && (!model.id)) {
                     cid = model.cid;
 
                     saveObject = {
@@ -64,8 +64,8 @@
 
                     options = {
                         success: function thisFunction(_model) {
-                            _model.cid = thisFunction.cid; // (in case of multi copying)
-                            self.trigger('saved', _model);
+                            _model[0].cid = thisFunction.cid; // (in case of multi copying)
+                            self.trigger('saved', _model[0]);
                         }
                     };
 

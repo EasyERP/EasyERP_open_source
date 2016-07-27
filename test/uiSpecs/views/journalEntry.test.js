@@ -15,7 +15,7 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai',
-    'constantsDir/filters'
+    'constants/filters'
 ], function (Backbone, _, modules, fixtures, JournalEntryCollection, MainView, ListView, TopBarView, FilterView, FilterGroup, SavedFilters, eventsBinder, $, chai, chaiJquery, sinonChai, FILTER_CONSTANTS) {
     'use strict';
     var fakeJournalEntry = {

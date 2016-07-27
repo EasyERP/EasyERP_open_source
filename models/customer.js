@@ -94,6 +94,7 @@ module.exports = (function () {
 
         type : {type: String, default: ''},
         isOwn: {type: Boolean, default: false},
+        isHidden: {type: Boolean, default: false},
 
         name: {
             first: {type: String, default: 'demo'},
@@ -180,6 +181,7 @@ module.exports = (function () {
             size    : String,
             industry: {type: ObjectId, ref: 'Industries', default: null}
         },
+        isHidden : {type: Boolean, default: false},
 
         ID: Number
     }, {collection: 'Customers'});

@@ -1,0 +1,44 @@
+@import "colors/dark_theme";
+@import "colors/white_theme";
+
+// usage: color("name_of_array", "name_of_color")
+// to avoid to repeating map-get($colors, ...)
+
+@function color($color, $type) {
+  @if map-has-key($colors, $color) {
+    $curr_color: map-get($colors, $color);
+    @if map-has-key($curr_color, $type) {
+      @return map-get($curr_color, $type);
+    }
+  }
+  @warn "Unknown `#{$type}` in #{$color}.";
+  @return null;
+}
+
+// Base ------------------
+$base-bg     : $white;
+$base-text   : $white;
+$base-link   : $white;
+$base-border : $white;
+// -----------------------
+
+// General ---------------
+
+// -----------------------
+
+// Header ---------------
+
+// -----------------------
+
+// Buttons ---------------
+
+// -----------------------
+
+// Tables ----------------
+
+// -----------------------
+
+// Forms -----------------
+$ui-dialog-bg: $white;
+// -----------------------
+

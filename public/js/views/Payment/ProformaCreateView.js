@@ -183,8 +183,14 @@ define([
                 name: $.trim(thisEl.find('#currencyDd').text())
             };
 
-            paymentMethod = paymentMethod || null;
             period = period || null;
+
+            if (!paymentMethodID) {
+                return App.render({
+                    type   : 'error',
+                    message: "Bank Account can't be empty."
+                });
+            }
 
             data = {
                 mid             : mid,
@@ -209,7 +215,19 @@ define([
                     },
                     wait   : true,
                     success: function () {
-                        var redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';
+                        var redirectUrl;
+
+                        if (mid === 97) {
+                            redirectUrl = '#easyErp/ExpensesPayments/list';
+                        } else if (mid === 100) {
+                            redirectUrl = '#easyErp/DividendPayments/list';
+                        } else if (mid === 109) {
+                            redirectUrl = '#easyErp/purchasePayments/list';
+                        } else if (mid === 95) {
+                            redirectUrl = '#easyErp/purchasePayments/list';
+                        } else {
+                            redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';
+                        }
 
                         self.hideDialog();
 

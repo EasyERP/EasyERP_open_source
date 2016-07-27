@@ -1,0 +1,23 @@
+<div class="addNote editedNote">
+    <div class="editedNoteTitle">
+        <span class="noteType">Created Note</span>
+        <span class="dateNote"><%=note.date%></span>
+    </div>
+    <textarea class="noteText" id="noteArea"><%=note.note%></textarea>
+    <div>
+
+
+        <div class="editNoteBtnBlock">
+            <% if (note.attachment){%>
+
+            <div class="noteType"><a href="download/<%= note.attachment.shortPas%>" id="<%= note.attachment._id%>"><%= note.attachment.name  %></a></div>
+            <%}%>
+
+            <a href="javascript:;" data-id="<%=note._id%>" class=" btn btnBlue saveNote">Save</a>
+
+            <a href="javascript:;" data-id="<%=note._id%>" class=" btn btnBlue cancelNote">Cancel</a>
+
+        </div>
+    </div>
+</div>
+

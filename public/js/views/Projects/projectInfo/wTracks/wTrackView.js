@@ -38,7 +38,6 @@ define([
         templateHeader      : _.template(wTrackTopBar),
         ListItemView        : listItemView,
         template            : _.template(wTrackTemplate),
-        changedModels       : {},
         preventChangLocation: true,
         cancelEdit          : cancelEdit,
 
@@ -64,6 +63,8 @@ define([
             this.project = options.project ? options.project : {};
 
             this.collection.url = CONSTANTS.URLS.WTRACK;
+
+            this.changedModels = {};
 
             eventsBinder.subscribeCollectionEvents(this.collection, this);
 
@@ -201,11 +202,6 @@ define([
             }
             this.editCollection.save();
 
-            keys.forEach(function (id) {
-                delete self.changedModels[id];
-                self.editCollection.remove(id);
-            });
-
             this.$el.find('.edited').removeClass('edited');
             this.rerenderNumbers(); // added rerender after saving too
         },
@@ -256,6 +252,7 @@ define([
             this.getAutoCalcField('monHours', '1');
             this.getAutoCalcField('tueHours', '2');
             this.getAutoCalcField('wedHours', '3');
+            this.getAutoCalcField('thuHours', '4');
             this.getAutoCalcField('thuHours', '4');
             this.getAutoCalcField('friHours', '5');
             this.getAutoCalcField('satHours', '6');
@@ -312,6 +309,7 @@ define([
             var id;
             var row;
             var model;
+            var projectWorkflow;
 
             this.createdCopied = true;
             this.changed = true;
@@ -325,32 +323,45 @@ define([
                 id = target.val();
                 row = target.closest('tr');
                 model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-
+                hours = (model && model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
                 $(selectedWtrack).attr('checked', false);
+                projectWorkflow = $.trim(row.find('[data-content="workflow"]').text());
 
-                model.set({isPaid: false});
-                model.set({amount: 0});
-                model.set({cost: 0});
-                model.set({revenue: 0});
-                model = model.toJSON();
-                delete model._id;
-                _model = new CurrentModel(model);
+                if ((model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed') || (projectWorkflow !== 'Closed')) {
+                    model.set({
+                        isPaid : false,
+                        amount : 0,
+                        cost   : 0,
+                        revenue: 0
+                    });
+                    model = model.toJSON();
 
-                this.showSaveCancelBtns();
-                this.editCollection.add(_model);
+                    delete model._id;
 
-                cid = _model.cid;
+                    _model = new CurrentModel(model);
 
-                if (!this.changedModels[cid]) {
-                    this.changedModels[cid] = model;
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(_model);
+
+                    cid = _model.cid;
+
+                    if (!this.changedModels[cid]) {
+                        this.changedModels[cid] = model;
+                    }
+
+                    this.$el.find('#listTable').prepend('<tr class="false enableEdit" data-id="' + cid + '">' + row.html() + '</tr>');
+                    row = this.$el.find('.false');
+
+                    tdsArr = row.find('td');
+                    $(tdsArr[0]).find('input').val(cid);
+                    $(tdsArr[1]).text('New');
+                } else {
+                    message = "You can't copy tCard with closed project.";
+                    App.render({
+                        type   : 'error',
+                        message: message
+                    });
                 }
-
-                this.$el.find('#listTable').prepend('<tr class="false enableEdit" data-id="' + cid + '">' + row.html() + '</tr>');
-                row = this.$el.find('.false');
-
-                tdsArr = row.find('td');
-                $(tdsArr[0]).find('input').val(cid);
-                $(tdsArr[1]).text('New');
             }
         },
 

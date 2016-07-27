@@ -1,0 +1,503 @@
+//@tree-item-bg: #E5EBFB;
+//@checkbox-border: #3e88b9;
+//@checkbox-text: #5a5a5a;
+//@input-border: #5a5a5a;
+//@input-text: #3e88b9;
+//
+//.flex {
+//  display: -webkit-box;
+//  display: -webkit-flex;
+//  display: -ms-flexbox;
+//  display: flex;
+//
+//  #productTree {
+//    margin-top: 30px;
+//    border-right: 1px solid #ddd;
+//    -webkit-box-flex: 0;
+//        -ms-flex: 0 0 250px;
+//            flex: 0 0 250px;
+//
+//    ul li {
+//      position: relative;
+//    }
+//
+//    ul {
+//      .content {
+//        padding-left: 24px;
+//      }
+//
+//      .expand {
+//        left: 4px;
+//      }
+//
+//      ul {
+//        .content {
+//          padding-left: 44px;
+//        }
+//
+//        .expand {
+//          left: 24px;
+//        }
+//
+//        ul {
+//          .content {
+//            padding-left: 64px;
+//          }
+//
+//          .expand {
+//            left: 44px;
+//          }
+//
+//          ul {
+//            .content {
+//              padding-left: 84px;
+//            }
+//
+//            .expand {
+//              left: 64px;
+//            }
+//
+//            ul {
+//              .content {
+//                padding-left: 104px;
+//              }
+//
+//              .expand {
+//                left: 84px;
+//              }
+//
+//              ul {
+//                .content {
+//                  padding-left: 124px;
+//                }
+//
+//                .expand {
+//                  left: 104px;
+//                }
+//              }
+//            }
+//          }
+//        }
+//      }
+//    }
+//
+//    .action-btn {
+//      display: none;
+//      position: absolute;
+//      top: 50%;
+//      right: 5px;
+//      -webkit-transform: translate(0, -50%);
+//          -ms-transform: translate(0, -50%);
+//              transform: translate(0, -50%);
+//
+//      span {
+//        vertical-align: middle;
+//        cursor: pointer;
+//        color: @top-font-color;
+//        font-size: 16px;
+//
+//        &:before {
+//          font-size: 16px;
+//        }
+//      }
+//    }
+//
+//    span.content {
+//      position: relative;
+//      display: block;
+//      padding: 5px 40px 5px 24px;
+//      line-height: 16px;
+//      border-bottom: 1px dotted @tree-item-bg;
+//
+//      &:hover {
+//        cursor: pointer;
+//         background-color: @tree-item-bg;
+//      }
+//
+//      &.selected {
+//        background-color: @tree-item-bg;
+//      }
+//
+//      .text {
+//        font-size: 14px;
+//        line-height: 20px;
+//      }
+//
+//      &:hover {
+//        .action-btn {
+//          display: block;
+//        }
+//      }
+//    }
+//
+//    .expand {
+//      position: absolute;
+//      top: 7px;
+//      left: 4px;
+//      width: 16px;
+//      height: 16px;
+//      border: 1px solid @border-color;
+//      font-size: 14px;
+//      padding: 2px;
+//      line-height: 9px;
+//      text-decoration: none !important;
+//      box-sizing: border-box;
+//      text-align: center;
+//    }
+//  }
+//
+//  .addProduct {
+//    position: absolute;
+//    top: 0;
+//    left: 0;
+//    margin-left: 11px;
+//
+//    a {
+//      border: 1px solid @border-color;
+//      margin: 0 12px 0 5px;
+//      padding: 0 5px;
+//      text-align: center;
+//      cursor: pointer;
+//      vertical-align: baseline;
+//      color: @top-font-color;
+//      line-height: 28px;
+//      font-size: 14px;
+//      font-family: Title;
+//
+//      &:before {
+//        font-size: 16px;
+//        padding-right: 10px;
+//        font-family: FontAwesome;
+//      }
+//
+//      &:hover {
+//        text-decoration: none;
+//      }
+//    }
+//  }
+//
+//  #thumbnailContent {
+//    padding: 35px 0 4px 12px;
+//    box-sizing: border-box;
+//    display: -webkit-box;
+//    display: -webkit-flex;
+//    display: -ms-flexbox;
+//    display: flex;
+//    -ms-flex-flow: row wrap;
+//        flex-flow: row wrap;
+//    -webkit-box-pack: start;
+//        -ms-flex-pack: start;
+//            justify-content: flex-start;
+//    -ms-flex-line-pack: stretch;
+//        align-content: stretch;
+//
+//    &:before,
+//    &:after {
+//      content: " ";
+//      display: table;
+//    }
+//
+//    &:after {
+//      clear: both;
+//    }
+//
+//    .thumbnail {
+//      &.product {
+//        position: relative;
+//        -webkit-box-flex: 1;
+//            -ms-flex: 1 1 200px;
+//                flex: 1 1 200px;
+//        box-sizing: border-box;
+//        padding: 8px;
+//        min-width: 150px;
+//        margin: 4px;
+//        background-color: white !important;
+//
+//        // reset default style for .thumbnail / removed during refactor, if there is no need
+//        float: none;
+//        display: block;
+//        width: auto;
+//        min-height: inherit;
+//
+//        .inner {
+//          float: left;
+//          width: 50px;
+//
+//          // reset default style for .thumbnail / removed during refactor, if there is no need
+//          padding: 0;
+//
+//          img {
+//            max-width: 100%;
+//            height: auto;
+//            display: inline-block;
+//          }
+//
+//          .avater {
+//            border: 1px solid @border-color-main;
+//          }
+//        }
+//
+//        .info {
+//          word-break: break-all;
+//          padding-left: 55px;
+//        }
+//      }
+//    }
+//  }
+//
+//  #productContent {
+//    position: relative;
+//    webkit-box-flex: 1;
+//    -webkit-flex-grow: 1;
+//    -ms-flex-positive: 1;
+//    flex-grow: 1;
+//  }
+//}
+//
+//.product {
+//  &Heading {
+//    margin-bottom: 5px;
+//    font-size: 13px;
+//    font-weight: 700;
+//  }
+//
+//  &Form {
+//    .inner {
+//      padding-right: 0 !important;
+//      padding-left: 0 !important;
+//
+//      input[type="checkbox"] {
+//        position: absolute;
+//        left: -9999px;
+//        padding: 0 !important;
+//        box-sizing: border-box;
+//        cursor: default;
+//        -moz-binding: none;
+//        opacity: 0;
+//
+//        + label {
+//          position: relative;
+//          height: 20px;
+//          display: block;
+//          padding-left: 25px;
+//          cursor: pointer;
+//          line-height: 20px;
+//          font-size: 13px;
+//          color: @checkbox-text;
+//          -webkit-user-select: none;
+//             -moz-user-select: none;
+//              -ms-user-select: none;
+//
+//          &:before, &:after {
+//            position: absolute;
+//            content: '';
+//            top: 0;
+//            left: 3px;
+//            width: 12px;
+//            height: 12px;
+//            border: 1px solid @checkbox-text;
+//            border-radius: 1px;
+//            margin-top: 3px;
+//            -webkit-transition: .2s;
+//               -moz-transition: .2s;
+//                 -o-transition: .2s;
+//                    transition: .2s;
+//            z-index: 0;
+//          }
+//
+//          &:after {
+//            border: 0;
+//            -webkit-transform: scale(0);
+//               -moz-transform: scale(0);
+//                    transform: scale(0);
+//          }
+//        }
+//
+//        &:checked + label:before {
+//          top: -3px;
+//          left: 0;
+//          width: 6px;
+//          height: 12px;
+//          border-top: 2px solid transparent;
+//          border-left: 2px solid transparent;
+//          border-right: 2px solid @checkbox-border;
+//          border-bottom: 2px solid @checkbox-border;
+//          -webkit-transform: rotate(45deg);
+//             -moz-transform: rotate(45deg);
+//                  transform: rotate(45deg);
+//          -webkit-backface-visibility: hidden;
+//             -moz-backface-visibility: hidden;
+//                  backface-visibility: hidden;
+//          -webkit-transform-origin: 100% 100%;
+//             -moz-transform-origin: 100% 100%;
+//                  transform-origin: 100% 100%;
+//        }
+//      }
+//
+//      dl dt:not(.productCategory) {
+//        width: 100%;
+//      }
+//
+//      .productCategory {
+//        line-height: 26px;
+//        font-size: 12px;
+//      }
+//
+//      .inputField {
+//        position: relative;
+//        display: block;
+//        width: 100%;
+//        margin: 0 0 15px 0;
+//        overflow: visible;
+//
+//        input[type="text"] {
+//          height: 20px;
+//          width: 100%;
+//          margin: 0;
+//          padding: 6px 0 0;
+//          background-color: transparent;
+//          border: none;
+//          border-bottom: 1px solid @input-border;
+//          border-radius: 0;
+//          outline: none;
+//          font-size: 12px;
+//          box-shadow: none;
+//          box-sizing: content-box;
+//          -webkit-transition: all 0.3s;
+//          -moz-transition: all 0.3s;
+//          -o-transition: all 0.3s;
+//          transition: all 0.3s;
+//
+//          + label {
+//            position: absolute;
+//            height: auto;
+//            width: auto;
+//            line-height: 1;
+//            color: @input-border;
+//            top: 50%;
+//            left: 0;
+//            font-size: 12px;
+//            cursor: text;
+//            -webkit-transition: .2s ease-out;
+//            -moz-transition: .2s ease-out;
+//            -o-transition: .2s ease-out;
+//            transition: .2s ease-out;
+//            z-index: 5;
+//            -webkit-transform: translateY(-50%);
+//            -moz-transform: translateY(-50%);
+//            transform: translateY(-50%);
+//
+//            &:after {
+//              display: block;
+//              content: "";
+//              position: absolute;
+//              top: 65px;
+//              opacity: 0;
+//              -webkit-transition: .2s opacity ease-out, .2s color ease-out;
+//              -moz-transition: .2s opacity ease-out, .2s color ease-out;
+//              -o-transition: .2s opacity ease-out, .2s color ease-out;
+//              transition: .2s opacity ease-out, .2s color ease-out;
+//            }
+//          }
+//
+//          &:focus, &:valid {
+//            border: none;
+//            border-bottom: 1px solid @input-text;
+//
+//            + label {
+//              color: @input-text;
+//              font-size: 10px;
+//              -webkit-transform: translateY(-180%);
+//              -moz-transform: translateY(-180%);
+//              transform: translateY(-180%);
+//            }
+//          }
+//        }
+//
+//        textarea {
+//          background-color: transparent;
+//          border: none;
+//          border-bottom: 1px solid @input-border;
+//          border-radius: 0;
+//          outline: none;
+//          height: 80px;
+//          width: 100%;
+//          font-size: 12px;
+//          margin: 0;
+//          padding: 0;
+//          box-shadow: none;
+//          box-sizing: content-box;
+//          -webkit-transition: all 0.3s;
+//          -moz-transition: all 0.3s;
+//          -o-transition: all 0.3s;
+//          transition: all 0.3s;
+//
+//          + label {
+//            position: absolute;
+//            height: auto;
+//            width: auto;
+//            line-height: 1;
+//            color: @input-border;
+//            top: 0;
+//            left: 0;
+//            font-size: 12px;
+//            cursor: text;
+//            -webkit-transition: .2s ease-out;
+//            -moz-transition: .2s ease-out;
+//            -o-transition: .2s ease-out;
+//            transition: .2s ease-out;
+//            z-index: 5;
+//
+//            &:after {
+//              display: block;
+//              content: "";
+//              position: absolute;
+//              top: 65px;
+//              opacity: 0;
+//              -webkit-transition: .2s opacity ease-out, .2s color ease-out;
+//              -moz-transition: .2s opacity ease-out, .2s color ease-out;
+//              -o-transition: .2s opacity ease-out, .2s color ease-out;
+//              transition: .2s opacity ease-out, .2s color ease-out;
+//            }
+//          }
+//
+//          &:focus, &:valid {
+//            border: none;
+//            border-bottom: 1px solid @input-text;
+//
+//            + label {
+//              color: @input-text;
+//              font-size: 10px;
+//              -webkit-transform: translateY(-140%);
+//              -moz-transform: translateY(-140%);
+//              transform: translateY(-140%);
+//            }
+//          }
+//        }
+//      }
+//    }
+//  }
+//}
+//
+//.ui-dialog {
+//  .productForm.form-holder {
+//    padding: 15px 20px 0;
+//
+//    form {
+//      max-width: 100%;
+//    }
+//  }
+//
+//  .ui-dialog-buttonpane {
+//    padding: 0 0 10px !important;
+//    margin-top: 0 !important;
+//    margin-right: 20px !important;
+//    margin-left: 20px !important;
+//  }
+//}
+//.mainTabs ul.dialog-tabs {
+//  padding-top: 10px;
+//}
+//.mainTabs .avatarInfoContainer {
+//  margin-left: 160px;
+//}

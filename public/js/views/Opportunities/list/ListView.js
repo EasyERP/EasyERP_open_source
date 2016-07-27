@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -11,7 +12,8 @@ define([
     'common',
     'dataService',
     'text!templates/stages.html'
-], function ($,
+], function (Backbone,
+             $,
              _,
              ListViewBase,
              listTemplate,
@@ -30,7 +32,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        formUrl          : '#easyErp/Opportunities/form/',
+        formUrl          : '#easyErp/Opportunities/tform/',
         contentType      : 'Opportunities', // needs in view.prototype.changeLocationHash
         hasPagination    : true,
 
@@ -137,30 +139,19 @@ define([
             // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
+
         gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
-            var model = new CurrentModel({validate: false});
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
 
-            e.preventDefault();
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
 
-            model.urlRoot = '/Opportunities';
-            model.fetch({
-                data: {
-                    id      : id,
-                    viewType: 'form'
-                },
-
-                success: function (model) {
-                    return new EditView({model: model});
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         }
 
     });

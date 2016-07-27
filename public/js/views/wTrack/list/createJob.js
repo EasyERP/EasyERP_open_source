@@ -9,7 +9,23 @@ define([
     var CreateView = Backbone.View.extend({
         template   : _.template(generateTemplate),
         responseObj: {},
-        events     : {},
+
+        events: {
+            keydown: 'keyDownHandler'
+        },
+
+        keyDownHandler: function (e) {
+            switch (e.which) {
+                case 27:
+                    this.hideDialog();
+                    break;
+                case 13:
+                    this.generateItems(e);
+                    break;
+                default:
+                    break;
+            }
+        },
 
         initialize: function (options) {
             this.model = options.model;

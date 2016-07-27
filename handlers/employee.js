@@ -944,7 +944,6 @@ var Employee = function (event, models) {
     };
 
     this.updateTransfer = function (req, res, next) {
-
         var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
         var body = req.body;
 
@@ -952,7 +951,33 @@ var Employee = function (event, models) {
             var id = data._id;
 
             delete data._id;
-            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+            Model.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, updatedDoc) {
+                var transferKey = updatedDoc ? updatedDoc.transferKey : null;
+                var transferDate;
+                var employee;
+
+                if (err) {
+                    return cb(err);
+                }
+
+                if (!transferKey) {
+                    return cb();
+                }
+
+                transferDate = moment(new Date(updatedDoc.date)).subtract(1, 'days');
+                transferDate = transferDate.toDate();
+                employee = updatedDoc.employee;
+
+                Model.update({
+                    transferKey: transferKey,
+                    employee   : employee,
+                    status     : 'transfer'
+                }, {
+                    $set: {
+                        date: transferDate
+                    }
+                }, {new: true}, cb);
+            });
         }, function (err) {
             if (err) {
                 return next(err);
@@ -963,7 +988,6 @@ var Employee = function (event, models) {
     };
 
     this.removeTransfer = function (req, res, next) {
-
         var TransferModel = models.get(req.session.lastDb, 'Transfers', TransferSchema);
         var body = req.body;
         var removeIdArray = body.removeTransfer;
@@ -978,11 +1002,11 @@ var Employee = function (event, models) {
                     return cb(err);
                 }
 
-                transferKey = result.transferKey;
+                transferKey = result ? result.transferKey : null;
 
                 if (transferKey) {
                     employee = result.employee;
-                    TransferModel.remove({employee: employee, transferKey: transferKey}, cb);
+                    TransferModel.remove({employee: employee, transferKey: transferKey, status: 'transfer'}, cb);
                 }
             });
 
@@ -1571,13 +1595,11 @@ var Employee = function (event, models) {
         var dbName = req.session.lastDb;
         var Model = models.get(dbName, 'Employees', EmployeeSchema);
         var _id = req.params.id;
-        var profileId = req.session.profileId;
         var UsersSchema = mongoose.Schemas.User;
         var UsersModel = models.get(dbName, 'Users', UsersSchema);
         var Department = models.get(dbName, 'Department', DepartmentSchema);
         var data = req.body;
         var fileName = data.fileName;
-        var query = {};
         var obj;
 
         var remove = req.headers.remove;
@@ -1600,7 +1622,6 @@ var Employee = function (event, models) {
             data.notes[data.notes.length - 1] = obj;
         }
 
-        delete data.depForTransfer;
         delete data.fileName;
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
@@ -1649,127 +1670,67 @@ var Employee = function (event, models) {
                 data.age = getAge(data.dateBirth);
             }
 
-            if (data.relatedUser) {
-                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
-            }
+            Model.update({_id: _id}, {$set: data}, function (err, result) {
+                var os = require('os');
+                var osType = (os.type().split('_')[0]);
+                var path;
+                var dir;
+                var newDirname;
 
-            Department.aggregate([{
-                $match: {
-                    parentDepartment: {$ne: null}
-                }
-            }, {
-                $group: {
-                    _id        : '$parentDepartment',
-                    sublingDeps: {$push: '$_id'}
-                }
-            }], function (error, deps) {
-                var adminDeps;
-
-                if (error) {
-                    return console.dir(error);
+                if (err) {
+                    return next(err);
                 }
 
-                adminDeps = deps[0]._id.toString === objectId(CONSTANTS.ADMIN_DEPARTMENTS) ? deps[0].sublingDeps : deps[1].sublingDeps;
-                adminDeps = adminDeps.map(function (depId) {
-                    return depId.toString();
-                });
+                if (data.relatedUser) {
+                    UsersModel.findByIdAndUpdate(data.relatedUser, {$set: {relatedEmployee: _id}}, function (error) {
+                        if (error) {
+                            return next(error);
+                        }
+                    });
+                }
 
-                /* if (data.transfer) {
-                 data.transfer = data.transfer.map(function (tr) {
+                if (data.dateBirth || data.hired) {
+                    event.emit('recalculate', req, null, next);
+                }
 
-                 if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                 tr.isDeveloper = false;
-                 } else {
-                 tr.isDeveloper = true;
-                 }
-                 return tr;
-                 });
-                 }*/
-
-                Model.findById(_id, query, {new: true}, function (err, emp) {
-                    if (err) {
-                        return next(err);
+                if (fileName) {
+                    switch (osType) {
+                        case 'Windows':
+                            newDirname = __dirname.replace('\\Modules', '');
+                            while (newDirname.indexOf('\\') !== -1) {
+                                newDirname = newDirname.replace('\\', '\/');
+                            }
+                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                            dir = newDirname + '\/uploads\/' + _id;
+                            break;
+                        case 'Linux':
+                            newDirname = __dirname.replace('/Modules', '');
+                            while (newDirname.indexOf('\\') !== -1) {
+                                newDirname = newDirname.replace('\\', '\/');
+                            }
+                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                            dir = newDirname + '\/uploads\/' + _id;
+                            break;
+                        // skip default;
                     }
 
-                    /* if (!accessEmployeeSalary(profileId)) {
-                     data.transfer = data.transfer.map(function (tr, i) {
-                     if (i !== 0) {
-                     if (emp.transfer[i] && emp.transfer[i].salary) {
-                     tr.salary = emp.transfer[i].salary;
-                     } else if (emp.transfer[i - 1] && emp.transfer[i - 1].salary) {
-                     tr.salary = emp.transfer[i - 1].salary;
-                     }
-                     } else {
-                     tr.salary = 0;
-                     }
-
-                     return tr;
-                     });
-                     }*/
-
-                    Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                        var os = require('os');
-                        var osType = (os.type().split('_')[0]);
-                        var path;
-                        var dir;
-                        var newDirname;
-
-                        if (err) {
-                            return next(err);
-                        }
-
-                        if (data.relatedUser) {
-                            UsersModel.findByIdAndUpdate(data.relatedUser, {$set: {relatedEmployee: _id}}, function (error) {
-                                if (error) {
-                                    return next(error);
-                                }
-                            });
-                        }
-
-                        if (data.dateBirth || data.hired) {
-                            event.emit('recalculate', req, null, next);
-                        }
-
-                        if (fileName) {
-                            switch (osType) {
-                                case 'Windows':
-                                    newDirname = __dirname.replace('\\Modules', '');
-                                    while (newDirname.indexOf('\\') !== -1) {
-                                        newDirname = newDirname.replace('\\', '\/');
-                                    }
-                                    path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                                    dir = newDirname + '\/uploads\/' + _id;
-                                    break;
-                                case 'Linux':
-                                    newDirname = __dirname.replace('/Modules', '');
-                                    while (newDirname.indexOf('\\') !== -1) {
-                                        newDirname = newDirname.replace('\\', '\/');
-                                    }
-                                    path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                                    dir = newDirname + '\/uploads\/' + _id;
-                                    break;
-                                // skip default;
-                            }
-
-                            fs.unlink(path, function (err) {
-                                console.log(err);
-                                fs.readdir(dir, function (err, files) {
-                                    if (files && files.length === 0) {
-                                        fs.rmdir(dir, function () {
-                                        });
-                                    }
+                    fs.unlink(path, function (err) {
+                        console.log(err);
+                        fs.readdir(dir, function (err, files) {
+                            if (files && files.length === 0) {
+                                fs.rmdir(dir, function () {
                                 });
-                            });
-
-                        }
-
-                        event.emit('recollectVacationDash', {dbName: dbName});
-
-                        res.status(200).send(result);
-
-                        payrollHandler.composeSalaryReport(req);
+                            }
+                        });
                     });
-                });
+
+                }
+
+                event.emit('recollectVacationDash', {dbName: dbName});
+
+                res.status(200).send(result);
+
+                payrollHandler.composeSalaryReport(req);
             });
         }
     };
@@ -1792,12 +1753,12 @@ var Employee = function (event, models) {
             event.emit('recalculate', req, null, next);
             event.emit('recollectVacationDash', {dbName: dbName});
 
-            res.status(200).send({success: 'Employees removed'});
-
             TransferModel.remove({employee: objectId(_id)}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
+
+                res.status(200).send({success: 'Employees removed'});
             });
         });
     };
@@ -2116,6 +2077,7 @@ var Employee = function (event, models) {
 
             return next(err);
         }
+
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
             if (err) {

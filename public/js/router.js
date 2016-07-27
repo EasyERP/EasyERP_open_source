@@ -63,6 +63,7 @@ define([
 
 
     };
+
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
@@ -71,10 +72,12 @@ define([
         view       : null,
 
         routes: {
-            home                                                                                            : 'any',
+            home                                                                                            : 'login',
+            'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
+            'easyErp/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)': 'goToList',
             'easyErp/Revenue(/filter=:filter)'                                                              : 'revenue',
@@ -562,7 +565,7 @@ define([
                 var startTime = new Date();
                 var contentViewUrl = 'views/settingsProduct/ContentView';
                 var topBarViewUrl = 'views/settingsProduct/TopBarView';
-                var collectionUrl = 'collections/Product/ProductCategories';
+                var collectionUrl = 'collections/Products/ProductCategories';
                 var self = context;
 
                 if (context.mainView === null) {
@@ -593,6 +596,98 @@ define([
                         context.changeTopBarView(topbarView);
 
                         url = '#easyErp/productSettings';
+
+                        Backbone.history.navigate(url, {replace: true});
+                    }
+                });
+            }
+        },
+
+        goToProduct: function (countPerPage, filter) {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goProduct(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goProduct(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/Products/IndexView';
+                var topBarViewUrl = 'views/Products/category/TopBarView';
+                var collectionUrl = 'collections/Products/ProductCategories';
+                var self = context;
+                var contentType = 'Products';
+
+                if (context.mainView === null) {
+                    context.main(contentType);
+                } else {
+                    context.mainView.updateMenu(contentType);
+                }
+
+                if (countPerPage) {
+                    countPerPage = parseInt(countPerPage, 10);
+
+                    if (isNaN(countPerPage)) {
+                        countPerPage = 0;
+                    }
+                }
+
+                if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
+
+                    filter = {
+                        canBePurchased: {
+                            key  : 'canBePurchased',
+                            value: ['true']
+                        }
+                    };
+
+                } else {
+                    filter = JSON.parse(filter);
+                }
+
+                require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
+                    var collection = new ContentCollection();
+
+                    App.filtersObject.filter = filter;
+
+                    collection.bind('reset', _.bind(createViews, self));
+                    custom.setCurrentVT('thumbnails');
+
+                    function createViews() {
+                        var url;
+                        var contentView;
+                        var topBarView;
+
+                        collection.unbind('reset');
+
+                        contentView = new ContentView({
+                            collection  : collection,
+                            startTime   : startTime,
+                            countPerPage: countPerPage,
+                            filter      : filter
+                        });
+                        topBarView = new TopBarView({actionType: 'Content'});
+
+                        topBarView.bind('createEvent', contentView.createItem, contentView);
+                        topBarView.bind('editEvent', contentView.editItem, contentView);
+                        topBarView.bind('deleteEvent', contentView.deleteItems, contentView);
+                        topBarView.bind('saveEvent', contentView.saveItem, contentView);
+
+                        context.changeView(contentView);
+                        context.changeTopBarView(topBarView);
+
+                        url = '#easyErp/Products';
 
                         Backbone.history.navigate(url, {replace: true});
                     }
@@ -975,6 +1070,152 @@ define([
             }
         },
 
+        goToTForm: function (contentType, modelId, page, countPerPage, filter) {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                self.checkDatabase(response);
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goTForm(self);
+                        });
+                    } else {
+                        goTForm(self);
+                    }
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goTForm(context) {
+                var self = context;
+                var currentContentType = context.testContent(contentType);
+                var location = window.location.hash;
+                var startTime = new Date();
+                var url;
+                var savedFilter;
+                var startDate;
+                var endDate;
+                var contentViewUrl;
+                var topBarViewUrl;
+                var collectionUrl;
+                var navigatePage;
+                var count;
+
+                contentViewUrl = 'views/' + contentType + '/form/ContentView';
+                topBarViewUrl = 'views/' + contentType + '/TopBarView';
+                collectionUrl = context.buildCollectionRoute(contentType);
+                page = parseInt(page, 10);
+                count = parseInt(countPerPage, 10);
+
+                if (isNaN(page)) {
+                    page = 1;
+                }
+                if (isNaN(count)) {
+                    count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
+                }
+
+                if (!filter) {
+
+                    filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
+
+                    if (filter) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
+
+                    if (contentType === 'salesProduct') {
+                        filter = {
+                            'canBeSold': {
+                                key  : 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
+
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    } else if (contentType === 'Product') {
+                        filter = {
+                            canBePurchased: {
+                                key  : 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                    }
+                } else if (filter) {
+                    filter = JSON.parse(filter);
+                }
+
+                //savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = filter;
+
+                if (context.mainView === null) {
+                    context.main(contentType);
+                } else {
+                    context.mainView.updateMenu(contentType);
+                }
+                require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
+                    var collection;
+
+                    App.filtersObject.filter = filter;
+
+                    collection = new contentCollection({
+                        viewType   : 'tform',
+                        page       : page,
+                        reset      : true,
+                        count      : count,
+                        filter     : filter,
+                        contentType: contentType,
+                        showMore   : false
+                    });
+
+                    collection.bind('reset', _.bind(createViews, self));
+                    custom.setCurrentVT('tform');
+
+                    function createViews() {
+                        var topbarView;
+                        var contentview;
+
+                        collection.unbind('reset');
+
+                        topbarView = new topBarView({
+                            actionType: 'Content',
+                            collection: collection
+                        });
+
+                        contentview = new contentView({
+                            collection: collection,
+                            startTime : startTime,
+                            viewType  : 'tform',
+                            filter    : filter,
+                            modelId   : modelId
+                        });
+
+                        eventsBinder.subscribeTopBarEvents(topbarView, contentview);
+                        eventsBinder.subscribeCollectionEvents(collection, contentview);
+
+                        collection.trigger('fetchFinished', {
+                            totalRecords: collection.totalRecords,
+                            currentPage : collection.currentPage,
+                            pageSize    : collection.pageSize
+                        });
+
+                        context.changeView(contentview);
+                        context.changeTopBarView(topbarView);
+                    }
+                });
+            }
+        },
+
         goToForm: function (contentType, modelId) {
             var self = this;
 
@@ -1110,6 +1351,7 @@ define([
                     var startTime = new Date();
 
                     var collection = new workflowsCollection({id: contentType});
+
                     var url = 'easyErp/' + contentType + '/kanban';
 
                     collection.bind('reset', _.bind(createViews, self));
@@ -1205,14 +1447,14 @@ define([
                         Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
 
-                    if (contentType === 'salesProduct') {
+                    if (contentType === 'salesProducts') {
                         filter = {
                             canBeSold: {
                                 key  : 'canBeSold',
                                 value: ['true']
                             }
                         };
-                    } else if (contentType === 'Product') {
+                    } else if (contentType === 'Products') {
                         filter = {
                             canBePurchased: {
                                 key  : 'canBePurchased',

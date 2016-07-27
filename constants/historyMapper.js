@@ -12,6 +12,10 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
+            'nextAction.date': {
+                name : 'Close Date',
+                isRef: false
+            },
 
             salesPerson: {
                 name      : 'salesPerson',
@@ -42,9 +46,13 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
+            'nextAction.date': {
+                name : 'Close Date',
+                isRef: false
+            },
 
             salesPerson: {
-                name      : 'salesPerson',
+                name      : 'Assigned To',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}

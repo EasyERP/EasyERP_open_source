@@ -11,7 +11,7 @@ var app;
 require('pmx').init();
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-require('./config/' + process.env.NODE_ENV);
+require('./config/environment/' + process.env.NODE_ENV);
 
 // replset & mongos are needed when database was split in to replSet and shards
 connectOptions = {

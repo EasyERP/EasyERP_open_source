@@ -81,8 +81,8 @@ define([
                 week : self.week,
 
                 department: {
-                    _id           : self.department,
-                    departmentName: options.departmentName
+                    _id : self.department,
+                    name: options.departmentName
                 },
 
                 employee: {
@@ -159,26 +159,26 @@ define([
             var pm;
             var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
             var fullName;
-/*
-            if (currentModel.projectmanager && currentModel.projectmanager._id) {
-                pm = currentModel.projectmanager._id;
-            } else {
-                pm = currentModel.projectmanager;
-            }
-            if (pm) {
-                if (currentModel.projectmanager && currentModel.projectmanager.name) {
-                    fullName = currentModel.projectmanager.name.first + ' ' + currentModel.projectmanager.name.last;
-                } else {
-                    fullName = '';
-                }
-                self.$el.find('#projectManager').text(fullName);
+            /*
+             if (currentModel.projectmanager && currentModel.projectmanager._id) {
+             pm = currentModel.projectmanager._id;
+             } else {
+             pm = currentModel.projectmanager;
+             }
+             if (pm) {
+             if (currentModel.projectmanager && currentModel.projectmanager.name) {
+             fullName = currentModel.projectmanager.name.first + ' ' + currentModel.projectmanager.name.last;
+             } else {
+             fullName = '';
+             }
+             self.$el.find('#projectManager').text(fullName);
 
-                common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
-                    var res = result.data[0];
+             common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
+             var res = result.data[0];
 
-                    self.$el.find('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
-                });
-            }*/
+             self.$el.find('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
+             });
+             }*/
 
             if (customer) {
                 if (currentModel.customer && currentModel.customer.name) {
@@ -383,42 +383,42 @@ define([
             });
         },
 
-       /* autoHoursPerDay: function (e) {
-            var targetEl = $(e.target);
-            var isInput = targetEl.prop('tagName') === 'INPUT';
-            var tr = targetEl.closest('tr');
-            var edited = tr.find('input.editing');
-            var days = tr.find('.autoCalc');
-            var editedCol = edited.closest('td');
-            var worked = edited.val();
-            var value;
-            var intValue;
-            var calcEl;
-            var workedEl = tr.find('[data-content="worked"]');
-            var i;
+        /* autoHoursPerDay: function (e) {
+         var targetEl = $(e.target);
+         var isInput = targetEl.prop('tagName') === 'INPUT';
+         var tr = targetEl.closest('tr');
+         var edited = tr.find('input.editing');
+         var days = tr.find('.autoCalc');
+         var editedCol = edited.closest('td');
+         var worked = edited.val();
+         var value;
+         var intValue;
+         var calcEl;
+         var workedEl = tr.find('[data-content="worked"]');
+         var i;
 
-            if (worked) {
-                intValue = worked / 7;
-                intValue = Math.floor(intValue);
+         if (worked) {
+         intValue = worked / 7;
+         intValue = Math.floor(intValue);
 
-                for (i = days.length - 1; i >= 0; i--) {
-                    value = worked - intValue;
-                    calcEl = $(days[i]);
+         for (i = days.length - 1; i >= 0; i--) {
+         value = worked - intValue;
+         calcEl = $(days[i]);
 
-                    if (value <= 0 || ((value - intValue) > 0 && (value - intValue) < intValue)) {
-                        calcEl.val(value);
-                    } else {
+         if (value <= 0 || ((value - intValue) > 0 && (value - intValue) < intValue)) {
+         calcEl.val(value);
+         } else {
 
-                        calcEl.val(intValue);
-                    }
-                }
-            }
+         calcEl.val(intValue);
+         }
+         }
+         }
 
-            editedCol.text(edited.val());
-            edited.remove();
+         editedCol.text(edited.val());
+         edited.remove();
 
-            workedEl.text(worked);
-        },*/
+         workedEl.text(worked);
+         },*/
 
         editRow: function (e) {
             var self = this;

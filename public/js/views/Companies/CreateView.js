@@ -17,11 +17,12 @@ define([
         template   : _.template(CreateTemplate),
         imageSrc   : '',
 
-        initialize: function () {
+        initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
             _.bindAll(this, 'saveItem', 'render');
             this.model = new CompanyModel();
             this.responseObj = {};
+            this.lead = options.lead;
 
             this.render();
         },
@@ -60,6 +61,7 @@ define([
             var isCustomer = this.$el.find('#isCustomer').is(':checked');
             var isSupplier = this.$el.find('#isSupplier').is(':checked');
             var LI = $.trim(this.$el.find('#LI').val());
+            var viewType = custom.getCurrentVT();
             var FB = $.trim(this.$el.find('#FB').val());
 
             var active = this.$el.find('#active').is(':checked');
@@ -87,6 +89,7 @@ define([
                 name    : name,
                 imageSrc: this.imageSrc,
                 email   : email,
+                isHidden : this.lead ? true : false,
 
                 social: {
                     LI: LI,
@@ -128,13 +131,27 @@ define([
 
                 wait: true,
 
-                success: function () {
-
+                success: function (model, res) {
+                    var navigateUrl;
                     self.hideDialog();
 
-                    custom.getFiltersValues(true); // added for refreshing filters after creating
+                    if (self.lead) {
+                        self.lead.save({company : res.id}, {
+                            patch : true,
+                            success : function () {
+                                Backbone.history.fragment = '';
+                                navigateUrl = '#easyErp/Leads/form/' + self.lead.id;
+                                Backbone.history.navigate(navigateUrl, {trigger: true});
+                            }
+                        });
+                    } else {
+                        custom.getFiltersValues(true); // added for refreshing filters after creating
 
-                    Backbone.history.navigate('easyErp/Companies', {trigger: true});
+                        navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                        Backbone.history.navigate(navigateUrl, {trigger: true});
+                    }
+
+
                 },
 
                 error: function (models, xhr) {
@@ -159,19 +176,21 @@ define([
                 buttons      : [
                     {
                         text : 'Create',
+                        class: 'btnRounded btnSave',
                         click: function () {
                             self.saveItem();
                         }
                     },
                     {
                         text : 'Cancel',
+                        class: 'btnRounded',
                         click: self.hideDialog
                     }]
             });
 
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-            this.renderAssignees(this.currentModel);
+           /* this.renderAssignees(this.currentModel);*/
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({
