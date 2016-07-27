@@ -4972,7 +4972,6 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .quotationsTabs {
   border-top: 1px solid #7f7f80;
-  margin-top: 30px;
   padding-top: 10px;
 }
 .quotationsTabs a {
