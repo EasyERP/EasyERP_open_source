@@ -89,7 +89,7 @@ define([
                     saveObject.company = this.model.id;
                     saveObject.companyDate = new Date();
                     break;
-                case 'opportunities':
+                case 'Opportunities':
                     saveObject.deal = this.model.id;
                     saveObject.dealDate = new Date();
                     break;
@@ -178,7 +178,8 @@ define([
             })[0];
 
             if (currentNote.task) {
-                model = new TaskModel(currentNote.task);
+                model = new TaskModel();
+                model.set(model.parse(currentNote.task));
             }
 
             switch (type) {

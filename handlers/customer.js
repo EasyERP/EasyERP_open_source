@@ -402,8 +402,8 @@ var Module = function (models, event) {
         function getTask(parallelCb) {
             TasksSchema.find({'contact': model._id})
                 .populate('deal', '_id name')
-                .populate('company', '_id name')
-                .populate('contact', '_id name')
+                .populate('company', '_id name imageSrc')
+                .populate('contact', '_id name imageSrc')
                 .populate('editedBy.user', '_id login')
                 .populate('assignedTo', '_id name fullName imageSrc')
                 .populate('workflow')

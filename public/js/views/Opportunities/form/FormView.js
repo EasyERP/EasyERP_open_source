@@ -268,7 +268,7 @@ define([
 
             this.editorView = new EditorView({
                 model      : this.formModel,
-                contentType: 'Persons'
+                contentType: 'Opportunities'
             });
 
             $thisEl.find('.notes').append(
