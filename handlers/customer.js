@@ -337,102 +337,143 @@ var Module = function (models, event) {
             });
     };
 
-    function getByCustomer(req, customer, cb) {
-        var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
-
-        Opportunity
-            .find({$or: [{company: customer._id}, {customer: customer._id}]})
-            .populate('salesPerson', 'name')
-            .populate('workflow', 'name')
-            .sort({'name.first': 1})
-            .exec(function (err, opps) {
-                if (err) {
-                    return next(err);
-                }
-
-                customer.opportunities = opps;
-
-                cb(null, customer);
-            });
-    }
-
-    function getTimeLine(req, model, cb) {
+    function getData(req, customer, cb) {
         var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
-        var parallelTasks;
+        var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
+        var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
-        var opps = model.opportunities.map(function (elem) {
-            return elem._id;
-        });
+        function getContactsByCompany(parallelCb) {
 
-        var ids = [model._id];
-
-        ids = ids.concat(opps);
-
-        var historyOptions = {
-            req: req,
-            id : {$in: ids}
-        };
-
-        function getHistoryNotes(parallelCb) {
-            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
-                var notes;
-                if (err) {
-                    return parallelCb(err);
-                }
-
-                notes = history.map(function (elem) {
-
-                    var oppObject = _.find(model.opportunities, function (opp) {
-                        return (opp._id.toJSON() === elem.contentId.toJSON());
-                    });
-
-                    return {
-                        date   : elem.date,
-                        history: elem,
-                        user   : elem.editedBy,
-                        name   : oppObject ? oppObject.name : ''
-                    };
-                });
-
-                parallelCb(null, notes);
-
-            }, true);
-        }
-
-        function getTask(parallelCb) {
-            TasksSchema.find({'contact': model._id})
-                .populate('deal', '_id name')
-                .populate('company', '_id name imageSrc')
-                .populate('contact', '_id name imageSrc')
-                .populate('editedBy.user', '_id login')
-                .populate('assignedTo', '_id name fullName imageSrc')
-                .populate('workflow')
-                .exec(function (err, res) {
+            Customers
+                .find({$or: [{company: customer._id}]})
+                .sort({'name.first': 1})
+                .exec(function (err, contacts) {
                     if (err) {
                         return parallelCb(err);
                     }
-                    res = res.map(function (elem) {
-                        return {
-                            date: elem.contactDate,
-                            task: elem,
-                            _id : elem._id,
-                            user: elem.editedBy.user
-                        }
-                    });
-                    parallelCb(null, res);
+
+                    customer.contacts = contacts;
+
+                    parallelCb(null, customer);
                 });
         }
 
-        parallelTasks = [getTask, getHistoryNotes];
+        function getOppByCustomer(parallelCb) {
 
-        async.parallel(parallelTasks, function (err, results) {
+            Opportunity
+                .find({$or: [{company: customer._id}, {customer: customer._id}]})
+                .populate('salesPerson', 'name')
+                .populate('workflow', 'name')
+                .sort({'name.first': 1})
+                .exec(function (err, opps) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
 
-            model.notes = model.notes.concat(results[0], results[1]);
-            model.notes = _.sortBy(model.notes, 'date');
-            cb(null, model);
+                    customer.opportunities = opps;
+
+                    parallelCb(null, customer);
+                });
+        }
+
+        var parallelTasks = [getContactsByCompany, getOppByCustomer];
+
+        async.parallel(parallelTasks, function (err, result) {
+            var parallelTasks;
+
+            var opps = customer.opportunities.map(function (elem) {
+                return elem._id;
+            });
+
+            var contacts = customer.contacts.map(function (elem) {
+                return elem._id;
+            });
+
+
+            var ids = [customer._id];
+
+            ids = ids.concat(opps, contacts);
+
+            var historyOptions = {
+                req: req,
+                id : {$in: ids}
+            };
+
+            function getHistoryNotes(parallelCb) {
+                historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                    var notes;
+                    if (err) {
+                        return parallelCb(err);
+                    }
+
+                    notes = history.map(function (elem) {
+                        var name;
+
+                        switch (elem.collectionName) {
+                            case 'Opportunities' :
+                                name = _.find(customer.opportunities, function (opp) {
+                                    return (opp._id.toJSON() === elem.contentId.toJSON());
+                                }).name;
+                                break;
+
+                            case 'Persons' :
+                                name = _.find(customer.contacts, function (contact) {
+                                    return (contact._id.toJSON() === elem.contentId.toJSON());
+                                }).fullName;
+                                break;
+
+                        }
+
+                        return {
+                            date   : elem.date,
+                            history: elem,
+                            user   : elem.editedBy,
+                            name   : name
+                        };
+                    });
+
+                    parallelCb(null, notes);
+
+                }, true);
+            }
+
+            function getTask(parallelCb) {
+                TasksSchema.find({'contact': customer._id})
+                    .populate('deal', '_id name')
+                    .populate('company', '_id name imageSrc')
+                    .populate('contact', '_id name imageSrc')
+                    .populate('editedBy.user', '_id login')
+                    .populate('assignedTo', '_id name fullName imageSrc')
+                    .populate('workflow')
+                    .exec(function (err, res) {
+                        if (err) {
+                            return parallelCb(err);
+                        }
+                        res = res.map(function (elem) {
+                            return {
+                                date: elem.contactDate,
+                                task: elem,
+                                _id : elem._id,
+                                user: elem.editedBy.user
+                            }
+                        });
+                        parallelCb(null, res);
+                    });
+            }
+
+            parallelTasks = [getTask, getHistoryNotes];
+
+            async.parallel(parallelTasks, function (err, results) {
+
+                customer.notes = customer.notes.concat(results[0], results[1]);
+                customer.notes = _.sortBy(customer.notes, 'date');
+                cb(null, customer);
+            });
+
         });
-
     }
+
+
 
     function getCustomers(req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
@@ -659,18 +700,11 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
-                getByCustomer(req, customer.toJSON(), function (err, customer) {
+                getData(req, customer.toJSON(), function (err, customer) {
                     if (err) {
                         return next(err);
                     }
-
-                    getTimeLine(req, customer, function (err, result) {
-
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send(result);
-                    });
+                    res.status(200).send(customer);
                 });
 
             });
@@ -695,7 +729,7 @@ var Module = function (models, event) {
         var query = {};
         var countQuery;
         var getData;
-        var getTotal
+        var getTotal;
         var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
@@ -1024,67 +1058,66 @@ var Module = function (models, event) {
             var path;
             var dir;
             var historyOptions;
-
             if (err) {
                 return next(err);
             }
 
-            if (fileName) {
+            result.populate('salesPurchases.salesPerson', function (err){
 
-                switch (osType) {
-                    case 'Windows':
-                        newDirname = __dirname.replace('\\Modules', '');
-                        while (newDirname.indexOf('\\') !== -1) {
-                            newDirname = newDirname.replace('\\', '\/');
-                        }
-                        path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                        dir = newDirname + '\/uploads\/' + _id;
-                        break;
-                    case 'Linux':
-                        newDirname = __dirname.replace('/Modules', '');
-                        while (newDirname.indexOf('\\') !== -1) {
-                            newDirname = newDirname.replace('\\', '\/');
-                        }
-                        path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                        dir = newDirname + '\/uploads\/' + _id;
-                        break;
-                    // skip default
+                if (err) {
+                    return next(err);
                 }
 
-                fs.unlink(path, function () {
-                    fs.readdir(dir, function (err, files) {
-                        if (files && files.length === 0) {
-                            fs.rmdir(dir, function () {
-                            });
-                        }
-                    });
-                });
+                if (fileName) {
 
-            }
-            event.emit('editModel', {id: result._id, currentUser: req.session.uId});
-
-            historyOptions = {
-                contentType: 'person',
-                data       : data,
-                req        : req,
-                contentId  : result._id
-            };
-
-            historyWriter.addEntry(historyOptions, function () {
-                getByCustomer(req, result.toJSON(), function (err, customer) {
-                    if (err) {
-                        return next(err);
+                    switch (osType) {
+                        case 'Windows':
+                            newDirname = __dirname.replace('\\Modules', '');
+                            while (newDirname.indexOf('\\') !== -1) {
+                                newDirname = newDirname.replace('\\', '\/');
+                            }
+                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                            dir = newDirname + '\/uploads\/' + _id;
+                            break;
+                        case 'Linux':
+                            newDirname = __dirname.replace('/Modules', '');
+                            while (newDirname.indexOf('\\') !== -1) {
+                                newDirname = newDirname.replace('\\', '\/');
+                            }
+                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                            dir = newDirname + '\/uploads\/' + _id;
+                            break;
+                        // skip default
                     }
-                    getTimeLine(req, customer, function (err, result) {
 
+                    fs.unlink(path, function () {
+                        fs.readdir(dir, function (err, files) {
+                            if (files && files.length === 0) {
+                                fs.rmdir(dir, function () {
+                                });
+                            }
+                        });
+                    });
+
+                }
+                event.emit('editModel', {id: result._id, currentUser: req.session.uId});
+
+                historyOptions = {
+                    contentType: result.type,
+                    data       : data,
+                    req        : req,
+                    contentId  : result._id
+                };
+
+                historyWriter.addEntry(historyOptions, function () {
+                    getData(req, result.toJSON(), function (err, customer) {
                         if (err) {
                             return next(err);
                         }
-                        res.status(200).send(result);
+                        res.status(200).send(customer);
                     });
                 });
             });
-
         });
     };
 

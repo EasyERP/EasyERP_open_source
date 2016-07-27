@@ -1,0 +1,36 @@
+<div class="selectCompany moduleList">
+    <div>
+        <div class="formTitle">
+            <h3>Contacts</h3>
+        </div>
+        <% data.forEach(function(property) {%>
+        <div class="propertyContainer">
+
+            <div class="propertyBox">
+                <div class="propertyImg">
+                    <img alt="" src="<%=property.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-avatar.gif'%>"/>
+                </div>
+                <div class="propertyBody">
+                    <a  class="propertyFullName" href="<%='/#easyErp/Persons/tform/'+ property._id%> "><%=property.fullName%></a>
+                    <a href="<%=property.email%>"><%=property.email%></a>
+                </div>
+
+                <a href="javascript:;" class="removeProperty" title="Remove Contact" id="removeProperty">
+                    <span class="fa fa-times" aria-hidden="true"></span>
+                </a>
+            </div>
+            <!--<div class="propertySubmit">
+                <a class="btn" title="View All Properties"
+                   id="showMoreButton">View All Properties</a>
+            </div>-->
+
+        </div>
+        <%})%>
+        <div class="align-center">
+        <a class="btn <%=data.length ? 'smallBtn' :'largeBtn'%>" title="Add Contact" id="addProperty"><i class="fa fa-plus" aria-hidden="true"></i>Add Contact</a>
+        </div>
+
+
+    </div>
+</div>
+

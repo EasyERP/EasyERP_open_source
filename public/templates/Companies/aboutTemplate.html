@@ -1,0 +1,119 @@
+<div class="formTitle">
+    <h3>About <%=name.first%></h3>
+</div>
+<div class="person-info">
+    <div class="avatar">
+        <div class="upload">Edit
+            <input type="file" value="Edit" id="inputImg">
+        </div>
+        <canvas id="avatar"
+                width="140"
+                height="140">
+        </canvas>
+    </div>
+
+    <div class="propertyFormList">
+        <label>Name</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="name_first" value="<%=name.first%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Website</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="jobPosition" value="<%=jobPosition%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Email</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="email" value="<%=email%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>LinkedIn</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="social_LI" value="<%=social.LI%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Facebook</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="social_FB" value="<%=social.FB%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Phone</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="phones_phone" value="<%=phones.phone%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Mobile</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="phones_mobile" value="<%=phones.mobile%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Street</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="address_street" value="<%=address.street%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>City</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="address_city" value="<%=address.city%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>State</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="address_state" value="<%=address.state%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Zip</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="address_zip" value="<%=address.zip%>"/>
+        </div>
+    </div>
+
+    <div class="propertyFormList">
+        <label>Country</label>
+        <div  class="inputBox">
+            <input class="editable"  data-id="address_country" value="<%=address.country%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Assigned To</label>
+        <div  class="inputBox">
+            <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPurchases_salesPerson"><%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last : 'Select'%></a>
+        </div>
+    </div>
+    <div class="social">
+        <% if (social.FB){%><a class="facebook" href="<%=social.FB%>"></a><%}%>
+        <% if (social.LI){%><a class="linkedin" href="<%=social.LI%>"></a><%}%>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<div class="cropImages form" style="display:none;">
+    <div class="formTitle">
+        <h3 class="left">Crop Images</h3>
+
+        <div class="clearfix"></div>
+    </div>
+    <br/>
+
+    <div class="image_input" style="float: left;margin-right: 20px;"></div>
+    <img class="image_output"/>
+
+    <div class="clearfix"></div>
+</div>
+<div class="propertyEditBtn" id="formBtnBlock">
+
+    <a href="javascript:;" id="saveBtn" class=" btn btnRounded btnSave">Save</a>
+
+    <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
+</div>
