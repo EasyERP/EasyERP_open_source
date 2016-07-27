@@ -65,7 +65,7 @@ define([
                         self.formView.undelegateEvents();
                     }
 
-                    self.formView = new self.FormView({model: model, el: '#formContent'});
+                    self.formView = new self.FormView({model: model, el: '#formContent', forSales: self.forSales});
                     self.formView.render();
 
                     $thisEl.find('#listContent .selected').removeClass('selected');

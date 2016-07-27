@@ -42,7 +42,7 @@ define([
         template   : _.template(EditTemplate),
 
         events: {
-            'click #saveBtn'      : 'saveItem',
+            'click .saveBtn'      : 'saveItem',
             'click .details'      : 'showDetailsBox',
             'click .newPayment'   : 'newPayment',
             'click .approve'      : 'approve',
@@ -417,7 +417,8 @@ define([
                     success: function (err, result) {
                         var $dueDateEl;
                         var url = window.location.hash;
-                        var redirectUrl = self.forSales ? 'easyErp/salesProforma' : 'easyErp/proforma';
+                        var redirectUrl;
+                        //var redirectUrl = self.forSales ? 'easyErp/salesProforma' : 'easyErp/proforma';
 
                         self.hideDialog();
 
@@ -428,6 +429,10 @@ define([
                         if (self.eventChannel) {
                             self.eventChannel.trigger('savedProforma');
                         }
+
+                        redirectUrl = window.location.hash;
+
+                        Backbone.history.fragment = '';
 
                         Backbone.history.navigate(redirectUrl, {trigger: true});
                     },
