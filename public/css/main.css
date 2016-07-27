@@ -4004,7 +4004,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteBtnBlock,
 .editNoteBtnBlock {
-  height: 0;
+  height: auto;
   margin-top: -1px;
   border: 1px solid #7f7f80;
   border-top: none;
@@ -4060,7 +4060,7 @@ table.kanban tbody td:nth-child(n+2) {
   clear: both;
 }
 .editNoteBtnBlock {
-  height: 44px;
+  min-height: 44px;
   border: none;
 }
 .contentHolder.showButtons .noteBtnBlock {
@@ -4331,9 +4331,28 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteTopBox .dateNote {
   float: right;
+  font-size: 13px !important;
 }
 .form .personsTaskArea {
   min-height: 95px ;
+}
+.attachContainer {
+  padding: 7px 0;
+  width: 100%;
+}
+.opportunity-header h3,
+.opportunity-header h4 {
+  float: none;
+  display: inline-block !important;
+  vertical-align: middle;
+  max-width: 49%;
+  margin-bottom: 0 !important;
+}
+.opportunity-header h3 + h4 {
+  padding-left: 5px;
+}
+.addOport span {
+  margin-right: 10px;
 }
 .propertyContainer a:hover {
   text-decoration: none;
