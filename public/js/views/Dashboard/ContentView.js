@@ -80,7 +80,14 @@ define([
         },
 
         toggleDateFilter: function(e){
-           $(e.target).closest('.dropDownDateRangeContainer').find('.dropDownDateRange').toggleClass('open');
+            var $target = $(e.target);
+            if($target.hasClass('active')){
+
+              e.stopPropagation();
+                e.preventDefault();
+            }
+
+            $target.closest('.dropDownDateRangeContainer').find('.dropDownDateRange').toggleClass('open');
         },
 
         toggleDateRange: function (e, type) {
@@ -226,11 +233,16 @@ define([
         },
 
         newRange: function (e) {
-            var $parent = $(e.target).closest('.choseDateRange');
+            var $target = $(e.target);
+            var $parent = $target.closest('.choseDateRange');
             var type = $parent.attr('data-type');
 
-            $(e.target).parent().find('.active').removeClass('active');
-            $(e.target).addClass('active');
+            if($target.hasClass('active')){
+                return;
+            }
+
+            $target.parent().find('.active').removeClass('active');
+            $target.addClass('active');
             this.dateRange[type] = $(e.target).data('day');
 
             switch (type) {
@@ -254,11 +266,16 @@ define([
         },
 
         newItem: function (e) {
+            var $target = $(e.target);
             var $parent = $(e.target).closest('.choseDateItem');
             var type = $parent.attr('data-type');
 
-            $(e.target).parent().find('.active').removeClass('active');
-            $(e.target).addClass('active');
+            if($target.hasClass('active')){
+                return;
+            }
+
+            $target.parent().find('.active').removeClass('active');
+            $target.addClass('active');
             this.dateItem[type] = $(e.target).data('item');
 
             switch (type) {
