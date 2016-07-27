@@ -4251,6 +4251,12 @@ table.kanban tbody td:nth-child(n+2) {
 .task-edit-dialog .ui-widget-content {
   border-top: none !important;
 }
+.smallTd tbody tr td {
+  height: 23px;
+}
+.smallTr td {
+  height: 23px !important;
+}
 @media screen and (max-width: 1490px) {
   .holidays.projectTimeCardCustomList {
     margin-top: 20px;
