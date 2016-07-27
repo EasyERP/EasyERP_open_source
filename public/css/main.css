@@ -4004,7 +4004,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteBtnBlock,
 .editNoteBtnBlock {
-  height: auto;
+  height: 0;
   margin-top: -1px;
   border: 1px solid #7f7f80;
   border-top: none;
@@ -4022,6 +4022,9 @@ table.kanban tbody td:nth-child(n+2) {
 .noteBtnBlock .btn:hover,
 .editNoteBtnBlock .btn:hover {
   text-decoration: none;
+}
+.editNoteBtnBlock {
+  height: auto;
 }
 .noteBtnBlock .btnBlue {
   width: 47px;
