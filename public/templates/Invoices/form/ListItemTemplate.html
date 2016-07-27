@@ -9,28 +9,30 @@
             </label>
         </td>
         <td>
-            <div class="compactRow">
-                <div class="firstName"><%=invoice.name%></div>
-                <div class="supplier"><%= invoice.supplier.name.first %> <%= invoice.supplier.name.last %></div>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="firstName"><%=invoice.name%></div>
+                    <div class="supplier"><%= invoice.supplier.name.first %> <%= invoice.supplier.name.last %></div>
 
-            </div>
-            <div class="compactRow">
-                <div class="balance <%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance)%></div>
-                <div class="total <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ?
-                    currencySplitter(invoice.paymentInfo.total) : '0.00'%></div>
-                <div class="status"><%if(invoice.workflow){%>
-                    <%if(invoice.workflow.status === 'In Progress'){%>
-                    <span class="<%= invoice.workflow.status.toLowerCase().replace(' ', '') %>"><%= invoice.workflow.name %></span>
-                    <% } else {%>
-                    <%if(invoice.approved){%>
-                    <span class="<%=invoice.workflow.name.toLowerCase()%>"><%=invoice.workflow.name%></span>
-                    <% } else {%>
-                    <span class="notApproved">Not Approved</span>
-                    <%}%>
-                    <%}%>
-                    <% } else {%>
-                    <span> </span>
-                    <%}%></div>
+                </div>
+                <div class="compactRow">
+                    <div class="balance <%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance)%></div>
+                    <div class="total <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ?
+                        currencySplitter(invoice.paymentInfo.total) : '0.00'%></div>
+                    <div class="status"><%if(invoice.workflow){%>
+                        <%if(invoice.workflow.status === 'In Progress'){%>
+                        <span class="<%= invoice.workflow.status.toLowerCase().replace(' ', '') %>"><%= invoice.workflow.name %></span>
+                        <% } else {%>
+                        <%if(invoice.approved){%>
+                        <span class="<%=invoice.workflow.name.toLowerCase()%>"><%=invoice.workflow.name%></span>
+                        <% } else {%>
+                        <span class="notApproved">Not Approved</span>
+                        <%}%>
+                        <%}%>
+                        <% } else {%>
+                        <span> </span>
+                        <%}%></div>
+                </div>
             </div>
         </td>
     </tr>
