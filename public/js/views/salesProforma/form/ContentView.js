@@ -31,17 +31,17 @@ define([
         ContentModel   : InvoiceModel,
         FormView       : FormView,
         forSales       : true,
-        renderList: function(proforms) {
+
+        renderList     : function (proforms) {
             var $thisEl = this.$el;
             var $listHolder = $thisEl.find('#listContent');
 
             $listHolder.append(this.listTemplate({
-                proforms: proforms,
-                currencySplitter : helpers.currencySplitter,
-                currencyClass    : helpers.currencyClass
-            }))
+                proforms        : proforms,
+                currencySplitter: helpers.currencySplitter,
+                currencyClass   : helpers.currencyClass
+            }));
         },
-
 
         renderFormView: function (modelId, cb) {
             var $thisEl = this.$el;
@@ -50,12 +50,11 @@ define([
             var data;
 
             model = new this.ContentModel();
-            //model.urlRoot = model.url() + modelId;
 
             data = {
-                viewType   : 'form',
-                id         : modelId,
-                forSales   : this.forSales
+                viewType: 'form',
+                id      : modelId,
+                forSales: this.forSales
             };
 
             model.fetch({
@@ -86,10 +85,6 @@ define([
                     });
                 }
             });
-        },
-
-        saveCurrentQuotation: function () {
-            this.formView.saveItem();
         }
     });
 
