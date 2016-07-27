@@ -120,6 +120,7 @@
   }
 }
 
+
 .selectCompany {
   .addCompanyBtn {
     width: 100%;
@@ -419,6 +420,7 @@
   }
 }
 
+
 .amountBox {
   position: relative;
 
@@ -448,14 +450,9 @@
 
 .dropDownDateRangeContainer {
   position: relative;
-  height: 22px;
   width: 110px;
+  height: 35px;
   float: right;
-  margin: 7px 20px 0;
-
-  &.left {
-    float: left;
-  }
 }
 
 .choseDateRange.dropDownDateRange {
@@ -463,14 +460,11 @@
   display: flex;
   flex-direction: column;
   height: 22px;
-  min-width: 110px;
+  width: 110px;
   border: 1px solid @dateRageBorderColor;
   padding: 1px 33px 3px 10px;
   margin-right: 0;
-  background: @white;
-  cursor: pointer;
   overflow: hidden;
-  z-index: 10;
 
   &.open {
     height: auto;
@@ -490,7 +484,6 @@
     text-align: center;
     border: none;
     background: none;
-    white-space: nowrap;
     order: 1;
 
     &.active {
@@ -512,4 +505,5 @@
     cursor: pointer;
   }
 }
+
 
