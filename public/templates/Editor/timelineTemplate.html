@@ -19,9 +19,7 @@
                 <div class="assignedTo">Assigned To <b><%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></b></div>
                 <%} else if (val.history) {%>
                 <div class="itemCircle">
-                    <span class="fa fa-usd" aria-hidden="true"></span>
-                    <span class="fa fa-user" aria-hidden="true"></span>
-                    <span class="fa fa-building-o" aria-hidden="true"></span>
+                    <span class="fa <%=val.history.collectionName==='Opportunities' ? 'fa-usd' : val.history.collectionName==='Persons' ? 'fa-user' : 'fa-building-o'%> " aria-hidden="true"></span>
                 </div>
                 <div class="history_body">
                     <div class="history_changed singleNote clearfix">

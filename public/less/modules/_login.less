@@ -1817,12 +1817,14 @@ table {
 
 .noteBtnBlock,
 .editNoteBtnBlock {
-  height: auto;
+  height: 0;
   margin-top: -1px;
   border: @thin-border @border-color-main;
   border-top: none;
   overflow: hidden;
   transition: all .2s ease;
+
+
 
   .btn {
     border: 0 !important;
@@ -1835,6 +1837,10 @@ table {
       text-decoration: none;
     }
   }
+}
+
+.editNoteBtnBlock {
+  height: auto;
 }
 
 .noteBtnBlock {
