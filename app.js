@@ -12,14 +12,8 @@ module.exports = function (mainDb, dbsNames) {
     var consolidate = require('consolidate');
     var app = express();
     var dbsObject = mainDb.dbsObject;
-    var httpServer;
-    var io;
-
     var MemoryStore = require('connect-mongo')(session);
-
-    var sessionConfig = {
-        mongooseConnection: mainDb
-    };
+    var sessionConfig = require('./config/session')(mainDb, MemoryStore);
 
     var allowCrossDomain = function (req, res, next) {
         var browser = req.headers['user-agent'];
@@ -27,10 +21,9 @@ module.exports = function (mainDb, dbsNames) {
         if (/Trident|Edge/.test(browser)) {
             res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         }
-
         next();
-    };
 
+    };
     var chackMobile = function (req, res, next) {
         var client = req.headers['user-agent'];
         var regExp = /mobile/i;
@@ -38,9 +31,11 @@ module.exports = function (mainDb, dbsNames) {
         if (req.session && !(req.session.isMobile === false || req.session.isMobile === true)) {
             req.session.isMobile = regExp.test(client);
         }
-
         next();
+
     };
+    var httpServer;
+    var io;
 
     app.set('dbsObject', dbsObject);
     app.set('dbsNames', dbsNames);
@@ -60,19 +55,7 @@ module.exports = function (mainDb, dbsNames) {
     // todo comment it in production
     app.use(express.static(path.join(__dirname, 'public')));
 
-    app.use(session({
-        name             : 'crm',
-        key              : 'CRMkey',
-        secret           : '1q2w3e4r5tdhgkdfhgejflkejgkdlgh8j0jge4547hh',
-        resave           : false,
-        rolling          : true,
-        saveUninitialized: true,
-        store            : new MemoryStore(sessionConfig),
-
-        cookie: {
-            maxAge: 31 * 24 * 60 * 60 * 1000 // One month
-        }
-    }));
+    app.use(session(sessionConfig));
 
     app.use(allowCrossDomain);
     app.use(chackMobile);

@@ -4,7 +4,7 @@ var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-require('../../config/development');
+require('.././development');
 
 describe('jobs Specs', function () {
     'use strict';
