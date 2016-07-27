@@ -603,7 +603,7 @@ define([
             var self = this;
             var currency;
 
-            this.$dialogContainer = $('#dialogContainer');
+            this.$dialogContainer = $('#dialogContainer').html() ? $('#dialogContainer') : $('#formContent');
 
             if (options && options.model) {
                 products = options.model.products;

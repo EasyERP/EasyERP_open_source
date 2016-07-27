@@ -3,325 +3,166 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Persons/form/FormTemplate.html',
-    'views/Persons/EditView',
-    'views/Opportunities/compactContent',
-    'views/Notes/NoteView',
-    'views/Notes/AttachView',
-    'views/Opportunities/CreateView',
+    'text!templates/Persons/aboutTemplate.html',
+    'views/Editor/NoteView',
+    'views/Editor/AttachView',
+    'views/Companies/formPropertyView',
+    'views/Opportunities/formProperty/formPropertyView',
     'common',
-    'constants'
+    'constants',
+    'dataService',
+    'views/selectView/selectView'
 ], function (Backbone,
              $,
              _,
              personFormTemplate,
-             EditView,
-             OpportunitiesCompactContentView,
-             NoteView,
+             aboutTemplate,
+             EditorView,
              AttachView,
-             CreateViewOpportunities,
+             CompanyFormProperty,
+             OpportunityFormProperty,
              common,
-             CONSTANTS) {
+             CONSTANTS,
+             dataService,
+             SelectView) {
     'use strict';
 
     var personTasksView = Backbone.View.extend({
         el: '#content-holder',
 
-        events: {
-            'click .checkbox'                                                         : 'checked',
-            'click .person-checkbox:not(.disabled)'                                   : 'personsSalesChecked',
-            'click .details'                                                          : 'toggle',
-            'click .company'                                                          : 'gotoCompanyForm',
-            'mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)': 'quickEdit',
-            'mouseleave .editable'                                                    : 'removeEdit',
-            'click #editSpan'                                                         : 'editClick',
-            'click #cancelSpan'                                                       : 'cancelClick',
-            'click #saveSpan'                                                         : 'saveClick',
-            'click .btnHolder .add.opportunities'                                     : 'addOpportunities',
-            'change .sale-purchase input'                                             : 'saveCheckboxChange',
-            'click .miniPagination .next:not(.not-active)'                            : 'nextMiniPage',
-            'click .miniPagination .prev:not(.not-active)'                            : 'prevMiniPage',
-            'click .miniPagination .first:not(.not-active)'                           : 'firstMiniPage',
-            'click .miniPagination .last:not(.not-active)'                            : 'lastMiniPage'
-        },
-
         initialize: function (options) {
-            var self = this;
-            var formModel;
-            var $thisEl = this.$el;
 
             App.currentPerson = options.model.get('id');
 
-            this.io = App.socket;
             this.mId = CONSTANTS.MID[this.contentType];
             this.formModel = options.model;
-            this.formModel.on('change', this.render, this);
             this.formModel.urlRoot = '/Persons';
-            this.pageMini = 1;
-            this.pageCount = 4;
-            this.allMiniOpp = 0;
-            this.allPages = 2;
+            _.bindAll(this, 'saveModel');
 
-            formModel = this.formModel.toJSON();
+            this.modelChanged = {};
+        },
 
-            common.populateOpportunitiesForMiniView('/opportunities/OpportunitiesForMiniView', formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
-                self.allMiniOpp = opps.listLength;
-                self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
+        showEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '20px',
+                display: 'block'
+            }, 250);
 
-                if (self.allPages === self.pageMini) {
-                    $thisEl.find('.miniPagination .next').addClass('not-active');
-                    $thisEl.find('.miniPagination .last').addClass('not-active');
-                }
+        },
 
-                if (self.allPages === 1 || self.allPages === 0) {
-                    $thisEl.find('.miniPagination').hide();
-                }
+        hideEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '0px',
+                display: 'block'
+            }, 250);
+
+        },
+
+        events: {
+            click                                              : 'hideNewSelect',
+            'mouseenter .avatar'                               : 'showEdit',
+            'mouseleave .avatar'                               : 'hideEdit',
+            'click #tabList a'                                 : 'switchTab',
+            'keyup .editable'                                  : 'setChangeValueToModel',
+            'click #cancelBtn'                                 : 'cancelChanges',
+            'click #saveBtn'                                   : 'saveChanges',
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+        },
+
+        hideNewSelect: function () {
+            this.$el.find('.newSelectList').hide();
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+        },
+
+        setChangeValueToModel: function (e) {
+            var $target = $(e.target);
+            var property = $target.attr('data-id').replace('_', '.');
+            var value = $target.val();
+
+            $target.closest('.propertyFormList').addClass('active');
+
+            this.modelChanged[property] = value;
+            this.showButtons();
+        },
+
+        showButtons: function () {
+            this.$el.find('#formBtnBlock').addClass('showButtons');
+        },
+
+        hideButtons: function () {
+            this.$el.find('#formBtnBlock').removeClass('showButtons');
+        },
+
+        saveChanges: function (e) {
+            e.preventDefault();
+            this.saveModel(this.modelChanged);
+        },
+
+        cancelChanges: function (e) {
+            e.preventDefault();
+            this.modelChanged = {};
+            this.renderAbout();
+        },
+
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new SelectView({
+                e          : e,
+                responseObj: this.responseObj
             });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
         },
 
-        nextMiniPage: function () {
-            this.pageMini += 1;
-            this.renderMiniOpp();
-        },
-        prevMiniPage: function () {
-            this.pageMini -= 1;
-            this.renderMiniOpp();
+        chooseOption: function (e) {
+            var $target = $(e.target);
+            var holder = $target.parents('.inputBox').find('.current-selected');
+            var type = $target.closest('a').attr('data-id');
+            var text = $target.text();
+            var id = $target.attr('id');
+
+            holder.text($target.text());
+
+            this.modelChanged[type] = id;
+            this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+            this.showButtons();
         },
 
-        firstMiniPage: function () {
-            this.pageMini = 1;
-            this.renderMiniOpp();
-        },
-
-        lastMiniPage: function () {
-            this.pageMini = this.allPages;
-            this.renderMiniOpp();
-        },
-
-        renderMiniOpp: function () {
+        saveModel: function (changedAttrs, type) {
             var self = this;
-            var formModel = this.formModel.toJSON();
 
-            common.populateOpportunitiesForMiniView('/opportunities/OpportunitiesForMiniView', formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, false, function (collection) {
-                var oppElem = self.$el.find('#opportunities');
-                var isLast = self.pageMini === self.allPages;
-
-                oppElem.empty();
-
-                oppElem.append(
-                    new OpportunitiesCompactContentView({
-                        collection: collection.data
-                    }).render({first: self.pageMini === 1, last: isLast, all: self.allPages}).el
-                );
-            });
-        },
-
-        addOpportunities: function (e) {
-            var model;
-
-            e.preventDefault();
-
-            model = this.formModel.toJSON();
-            new CreateViewOpportunities({
-                model    : model,
-                elementId: 'personAttach'
-            });
-        },
-
-        quickEdit: function (e) {
-            var trId = $(e.target).closest('dd');
-            var $thisEl = this.$el;
-
-            if ($thisEl.find('#' + trId.attr('id')).find('#editSpan').length === 0) {
-                $thisEl.find('#' + trId.attr('id')).append('<span id="editSpan" class=""><a href="#">e</a></span>');
-                if ($thisEl.find('#' + trId.attr('id')).width() - 30 < $thisEl.find('#' + trId.attr('id')).find('.no-long').width()) {
-                    $thisEl.find('#' + trId.attr('id')).find('.no-long').width($thisEl.find('#' + trId.attr('id')).width() - 30);
-                }
-            }
-        },
-
-        removeEdit: function () {
-            var $thisEl = this.$el;
-            $thisEl.find('#editSpan').remove();
-            $thisEl.find('dd .no-long').css({width: 'auto'});
-        },
-
-        cancelClick: function (e) {
-            var $thisEl = this.$el;
-
-            e.preventDefault();
-
-            $thisEl.find('.quickEdit #editInput').remove();
-            $thisEl.find('.quickEdit #cancelSpan').remove();
-            $thisEl.find('.quickEdit #saveSpan').remove();
-
-            if (this.prevQuickEdit) {
-                if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('quickEdit')) {
-                    if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('with-checkbox')) {
-                        $thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
-                        $thisEl.find('.quickEdit').removeClass('quickEdit');
-                    } else if (this.prevQuickEdit.id === 'email') {
-                        $thisEl.find('#' + this.prevQuickEdit.id).append('<a href="mailto:' + this.text + '">' + this.text + '</a>');
-                        $thisEl.find('.quickEdit').removeClass('quickEdit');
-                    } else {
-                        $thisEl.find('.quickEdit').text(this.text || '').removeClass('quickEdit');
-                    }
-                }
-            }
-
-            /*
-            App.render({
-                type   : 'notify',
-                message: "Canceled is successfully"
-            });
-            */
-            //Backbone.history.fragment = '';
-            //Backbone.history.navigate('#easyErp/Persons/form/' + this.formModel.id, {trigger: true});
-        },
-
-        editClick: function (e) {
-            var maxlength = $('#' + $(e.target).parent().parent()[0].id).find('.no-long').attr('data-maxlength') || 32;
-            var $thisEl = this.$el;
-            var parent;
-            var objIndex;
-
-            //console.log(e);
-
-            e.preventDefault();
-            $thisEl.find('.quickEdit #editInput').remove();
-            $thisEl.find('.quickEdit #cancelSpan').remove();
-            $thisEl.find('.quickEdit #saveSpan').remove();
-
-            if (this.prevQuickEdit) {
-                if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('quickEdit')) {
-                    if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('with-checkbox')) {
-                        $thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
-                        $thisEl.find('.quickEdit').removeClass('quickEdit');
-                    } else if (this.prevQuickEdit.id === 'email') {
-                        $thisEl.find('#' + this.prevQuickEdit.id).append('<a href="mailto:' + this.text + '">' + this.text + '</a>');
-                        $thisEl.find('.quickEdit').removeClass('quickEdit');
-                    } else {
-                        $thisEl.find('.quickEdit').text(this.text || '').removeClass('quickEdit');
-                    }
-                }
-            }
-
-            parent = $(e.target).parent().parent();
-            $thisEl.find('#' + parent[0].id).addClass('quickEdit');
-            $thisEl.find('#editSpan').remove();
-            objIndex = parent[0].id.split('_');
-
-            if (objIndex.length > 1) {
-                this.text = this.formModel.get(objIndex[0])[objIndex[1]];
-            } else {
-                this.text = this.formModel.get(objIndex[0]);
-            }
-
-            if (parent[0].id === 'dateBirth') {
-                $thisEl.find('#' + parent[0].id).text('');
-                $thisEl.find('#' + parent[0].id).append('<input id="editInput" maxlength="48" type="text" readonly class="left has-datepicker"/>');
-                $thisEl.find('.has-datepicker').datepicker({
-                    dateFormat : 'd M, yy',
-                    changeMonth: true,
-                    changeYear : true,
-                    yearRange  : '-100y:c+nn',
-                    maxDate    : '-18y',
-                    minDate    : null
-                });
-            } else if ($thisEl.find('#' + parent[0].id).hasClass('with-checkbox')) {
-                $thisEl.find('#' + parent[0].id + ' input').removeAttr('disabled');
-            } else {
-                $thisEl.find('#' + parent[0].id).text('');
-                $thisEl.find('#' + parent[0].id).append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
-            }
-
-            $thisEl.find('#editInput').val(this.text);
-            this.prevQuickEdit = parent[0];
-            $thisEl.find('#' + parent[0].id).append('<span id="saveSpan"><a href="#">c</a></span>');
-            $thisEl.find('#' + parent[0].id).append('<span id="cancelSpan"><a href="#">x</a></span>');
-            $thisEl.find('#' + parent[0].id).find('#editInput').width($thisEl.find('#' + parent[0].id).find('#editInput').width() - 50);
-        },
-
-        saveCheckboxChange: function (e) {
-            var parent = $(e.target).parent();
-            var objIndex = parent[0].id.replace('_', '.');
-            var currentModel = this.model;
-
-            currentModel[objIndex] = ($('#' + parent[0].id + ' input').prop('checked'));
-            this.formModel.save(currentModel, {
-                headers: {
-                    mid: this.mId
-                },
-
-                patch: true
-            });
-        },
-
-        saveClick: function (e) {
-            var parent = $(e.target).parent().parent();
-            var objIndex = parent[0].id.split('_'); // replace change to split;
-            var currentModel = this.model;
-            var newModel = {};
-            var oldvalue = {};
-            var $thisEl = this.$el;
-            var self = this;
-            var param;
-            var valid;
-            var i;
-
-            e.preventDefault();
-
-            if (objIndex.length > 1) {
-                for (i in this.formModel.toJSON()[objIndex[0]]) {
-                    oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
-                }
-
-                param = currentModel.get(objIndex[0]) || {};
-                param[objIndex[1]] = $('#editInput').val();
-                newModel[objIndex[0]] = param;
-            } else {
-                oldvalue = this.formModel.toJSON()[objIndex[0]];
-                newModel[objIndex[0]] = $('#editInput').val();
-            }
-
-            //console.log(newModel);
-
-
-
-            valid = this.formModel.save(newModel, {
-                headers: {
-                    mid: this.mId
-                },
-
+            this.formModel.save(changedAttrs, {
+                wait   : true,
                 patch  : true,
-                success: function (model) {
-                    App.render({
-                        type   : 'notify',
-                        message: "Saving is successfully"
-                    });
-                    $thisEl.find('.quickEdit #editInput').remove();
-                    $thisEl.find('.quickEdit #cancelSpan').remove();
-                    $thisEl.find('.quickEdit #saveSpan').remove();
-
-                    if (self.prevQuickEdit) {
-                        if ($thisEl.find('#' + self.prevQuickEdit.id).hasClass('quickEdit')) {
-                            if ($thisEl.find('#' + self.prevQuickEdit.id).hasClass('with-checkbox')) {
-                                $thisEl.find('#' + self.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($thisEl.find('#' + self.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
-                                $thisEl.find('.quickEdit').removeClass('quickEdit');
-                            } else if (self.prevQuickEdit.id === 'email') {
-                                $thisEl.find('#' + self.prevQuickEdit.id).append('<a href="mailto:' + self.text + '">' + self.text + '</a>');
-                                $thisEl.find('.quickEdit').removeClass('quickEdit');
-                            } else {
-                                $thisEl.find('.quickEdit').text(self.text || '').removeClass('quickEdit');
-                            }
-                        }
+                success: function () {
+                    if (type === 'formProperty') {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
+                    } else {
+                        self.editorView.renderTimeline();
+                        self.renderAbout();
+                        self.modelChanged = {};
+                        self.hideButtons();
                     }
-
-                    //self.io.emit('editPerson');
-                    //Backbone.history.fragment = '';
-                    //Backbone.history.navigate('#easyErp/Persons/form/' + model.id, {trigger: true});
                 },
-
-                error: function (model, response) {
+                error  : function (model, response) {
                     if (response) {
                         App.render({
                             type   : 'error',
@@ -330,91 +171,95 @@ define([
                     }
                 }
             });
-
-            if (!valid) {
-                newModel[objIndex[0]] = oldvalue;
-                this.formModel.set(newModel);
-            }
         },
 
-        personsSalesChecked: function (e) {
-            if ($(e.target).get(0).tagName.toLowerCase() === 'span') {
-                $(e.target).parent().toggleClass('active');
-            } else {
-                $(e.target).toggleClass('active');
-            }
+        deleteItems: function () {
+            var mid = 39;
+
+            this.formModel.destroy({
+                headers: {
+                    mid: mid
+                },
+                success: function () {
+                    Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
+                }
+            });
+
         },
 
-        gotoCompanyForm: function (e) {
-            var id = $(e.target).closest('a').attr('data-id');
-
-            e.preventDefault();
-            window.location.hash = '#easyErp/Companies/tform/' + id;
-        },
-
-        toggle: function () {
-            this.$('#details').animate({
-                height: 'toggle'
-            }, 250, function () {
+        renderAbout: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            common.canvasDraw({model: this.formModel.toJSON()}, this);
+            $thisEl.find('#dateBirth').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged.dateBirth = new Date(dateText);
+                    self.showButtons();
+                }
 
             });
         },
 
         render: function () {
             var formModel = this.formModel.toJSON();
+            var self = this;
             var $thisEl = this.$el;
 
             $thisEl.html(_.template(personFormTemplate, formModel));
-            this.renderMiniOpp();
-            $thisEl.find('.formLeftColumn').append(
-                new NoteView({
-                    model: this.formModel,
+
+            this.formProperty = new CompanyFormProperty({
+                parentModel: this.formModel,
+                attribute  : 'company',
+                saveDeal   : self.saveModel
+            });
+
+            $thisEl.find('#companyHolder').html(
+                this.formProperty.render().el
+            );
+
+            $thisEl.find('#opportunitiesHolder').html(
+                new OpportunityFormProperty({
+                    parentModel: this.formModel,
+                    attribute  : 'contact',
+                    saveModel  : self.saveModel
+                }).render().el
+            );
+
+            this.editorView = new EditorView({
+                model      : this.formModel,
+                contentType: 'Persons'
+            });
+
+            $thisEl.find('.notes').append(
+                this.editorView.render().el
+            );
+            common.canvasDraw({model: this.formModel.toJSON()}, this);
+
+            $thisEl.find('#dateBirth').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged.dateBirth = new Date(dateText);
+                    self.showButtons();
+                }
+
+            });
+
+            $thisEl.find('.attachments').append(
+                new AttachView({
+                    model      : this.formModel,
                     contentType: 'Persons'
                 }).render().el
             );
 
-            $(window).on('resize', function () {
-                $('#editInput').width($('#editInput').parent().width() - 55);
-
-            });
             return this;
-        },
-
-        editItem: function () {
-            // create editView in dialog here
-            new EditView({model: this.formModel});
-        },
-
-        deleteItems: function () {
-            var mid = this.mId;
-            var answer;
-
-            answer = confirm('Really DELETE item ?!');
-
-            if (answer === false) {
-                return false;
-            }
-            
-            this.formModel.destroy({
-                headers: {
-                    mid: mid
-                },
-
-                success: function () {
-                    Backbone.history.navigate('#easyErp/Persons/thumbnails', {trigger: true});
-
-                },
-
-                error: function (model, err) {
-                    if (err.status === 403) {
-                        App.render({
-                            type   : 'error',
-                            message: 'You do not have permission to perform this action'
-                        });
-                    }
-                }
-            });
         }
+
     });
 
     return personTasksView;

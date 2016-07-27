@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -13,7 +14,8 @@ define([
     'dataService',
     'helpers',
     'constants'
-], function ($,
+], function (Backbone,
+             $,
              _,
              listViewBase,
              listTemplate,
@@ -48,6 +50,7 @@ define([
         initialize: function (options) {
             $(document).off('click');
 
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             this.EditView = EditView;
             this.CreateView = CreateView;
 
@@ -64,7 +67,8 @@ define([
         },
 
         events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
+            'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
+            //'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
@@ -149,6 +153,21 @@ define([
 
                 self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
             });
+        },
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+
+            Backbone.history.navigate(url, {trigger: true});
         },
 
         goToEditDialog: function (e) {

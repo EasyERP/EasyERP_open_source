@@ -10,6 +10,7 @@
   }
 }
 
+
 .ui-dialog {
   &-buttonpane {
     padding: 0 0 10px !important;
@@ -42,7 +43,15 @@
   }
 }
 
+.inner {
+  .right {
+    padding: 10px 0;
+  }
+}
+
+
 .mainTabs {
+
   ul.dialog-tabs {
     padding-top: 10px;
   }

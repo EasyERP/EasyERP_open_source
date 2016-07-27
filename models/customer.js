@@ -163,7 +163,17 @@ module.exports = (function () {
             group: [{type: ObjectId, ref: 'Department', default: null}]
         },
 
-        notes      : {type: Array, default: []},
+        notes        : [{
+            note        : String,
+            title       : String,
+            task        : {type: ObjectId, ref: 'DealTasks', default: null},
+            attachment  : {},
+            date        : {type: Date, default: Date.now},
+            user        : {
+                _id : {type: ObjectId, ref: 'Users', default: null},
+                login : String
+            }
+        }],
         attachments: {type: Array, default: []},
         history    : {type: Array, default: []},
 

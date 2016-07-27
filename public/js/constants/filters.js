@@ -591,7 +591,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['supplier', 'workflow']
         },
 
         Invoices: {
@@ -608,7 +610,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['supplier', 'workflow']
         },
 
         salesQuotations: {
@@ -683,7 +687,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['workflow', 'supplier']
         },
 
         PayrollExpenses: {

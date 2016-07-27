@@ -29,7 +29,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        formUrl          : '#easyErp/Leads/form/',
+        formUrl          : '#easyErp/Leads/tform/',
         contentType      : CONSTANTS.LEADS,
         hasPagination    : true,
 
@@ -131,6 +131,20 @@ define([
             }
             $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
             return false;
+        },
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         }
 
         /*gotoForm: function (e) {

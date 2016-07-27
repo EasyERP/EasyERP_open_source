@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -14,7 +15,8 @@ define([
     'dataService',
     'constants',
     'helpers'
-], function ($,
+], function (Backbone,
+             $,
              _,
              ListViewBase,
              listTemplate,
@@ -44,7 +46,6 @@ define([
 
         events: {
             'click .stageSelect'                 : selectService.showStageSelect,
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
             'click .newSelectList li'            : 'chooseOption'
         },
 
@@ -52,6 +53,7 @@ define([
             var self = this;
             $(document).off('click');
 
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             self.startTime = options.startTime;
             self.collection = options.collection;
             self.parrentContentId = options.collection.parrentContentId;
@@ -120,7 +122,22 @@ define([
             $thisEl.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
         },
 
-        goToEditDialog: function (e) {
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
+        },
+
+        /*goToEditDialog: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').attr('data-id');
             var model = new CurrentModel({validate: false});
@@ -145,7 +162,7 @@ define([
                     });
                 }
             });
-        },
+        },*/
 
         render: function () {
             var self;

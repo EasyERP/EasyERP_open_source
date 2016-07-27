@@ -188,7 +188,7 @@ input {
     &.inputField {
       height: 34px;
       width: 100%;
-      padding: 10px 0;
+      //padding: 10px 0;
       border: 0;
       border-bottom: 1px solid #a0a9b4;
       border-radius: 0!important;
@@ -286,6 +286,15 @@ input {
       background-color: #4d5a75;
       border-color: #4d5a75;
       text-decoration: none;
+    }
+  }
+
+  &Blue {
+    border: 0 !important;
+
+    &.slim {
+      height: 26px;
+      line-height: 26px !important;
     }
   }
 
@@ -559,7 +568,7 @@ input {
   z-index: 200;
 
   .topbarLogo {
-    float: left;
+    float: @left;
     display: block;
     width: 200px;
     height: 40px;
@@ -1206,10 +1215,6 @@ dl.payrollDateBlock {
   font-family: @fontBold;
 }
 
-#top-bar-deleteBtn {
-
-}
-
 .closeBtn {
   position: relative;
   width: 24px;
@@ -1248,6 +1253,7 @@ dl.payrollDateBlock {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  height: 100%;
   border-bottom: 1px solid #ededed;
 
   &.personList {
@@ -1309,9 +1315,17 @@ dl.payrollDateBlock {
   flex-grow: 1;
 }
 
+.formContent {
+  .form-holder {
+    form {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+    }
+  }
+}
+
 .listContent {
-  width: 400px;
-  border-right: 1px solid #ededed;
 
   table {
     width: 100%;
@@ -1319,6 +1333,10 @@ dl.payrollDateBlock {
 }
 
 .listContentWrap {
+  width: 400px;
+  border-right: 1px solid #ededed;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 
   .listContentTitle {
     position: relative;
@@ -1376,7 +1394,7 @@ dl.payrollDateBlock {
 
 .content-holder {
   .formContentTitle {
-    border-left: 1px solid #ededed;
+    //border-left: 1px solid #ededed;
 
     .closeBtn {
       float: right;
@@ -1386,6 +1404,10 @@ dl.payrollDateBlock {
 
 .compactRowWrap {
   padding: 12px 12px 12px 0;
+
+  .quotationsNameLeftBar {
+    margin-bottom: 10px;
+  }
 }
 
 .compactRow {
@@ -1479,10 +1501,12 @@ td.checkboxRow {
 }
 
 #top-bar {
+
   #createBtnHolder,
   .createBtnHolder {
     margin-top: 6px;
   }
+
   &.position {
     position: absolute;
     left: 35px;
@@ -1496,10 +1520,11 @@ td.checkboxRow {
       margin-top: 8px;
     }
   }
+
   #createBtnHolder {
     .btnBlue {
       height: 26px;
-      width: 67px;
+      width: 68px;
       border: 0;
       line-height: 26px !important;
       font-size: 13px;
@@ -1837,6 +1862,10 @@ table {
   }
 }
 
+.editNoteBtnBlock {
+  height: auto;
+}
+
 .noteBtnBlock {
   .btnBlue {
     width: 47px;
@@ -1887,10 +1916,12 @@ table {
     display: table;
     clear: both;
   }
+
+
 }
 
 .editNoteBtnBlock {
-  height: 44px;
+  min-height: 44px;
   border: none;
 }
 
@@ -1916,4 +1947,12 @@ table {
 }
 .addTaskTitle {
   padding: 5px 0;
+}
+
+.formContent {
+  .btn.positioned {
+    position: absolute;
+    top: 5px;
+    left: 411px;
+  }
 }

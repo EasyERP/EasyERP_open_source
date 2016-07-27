@@ -1969,6 +1969,11 @@ body {
 .pagination {
   margin: 5px 10px 0;
 }
+.pagination:after {
+  content: '';
+  display: table;
+  clear: both;
+}
 .pagination > div {
   float: left;
   padding: 0 5px;
@@ -2743,7 +2748,6 @@ h2.green {
 input:not([type="checkbox"]).inputField {
   height: 34px;
   width: 100%;
-  padding: 10px 0;
   border: 0;
   border-bottom: 1px solid #a0a9b4;
   border-radius: 0!important;
@@ -2834,6 +2838,13 @@ input:not([type="checkbox"]).inputBordered:focus {
   background-color: #4d5a75;
   border-color: #4d5a75;
   text-decoration: none;
+}
+.btnBlue {
+  border: 0 !important;
+}
+.btnBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
 }
 .btnRounded {
   background-color: #fff;
@@ -3572,6 +3583,7 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  height: 100%;
   border-bottom: 1px solid #ededed;
 }
 .listWrap.personList .firstName {
@@ -3614,12 +3626,19 @@ dl.payrollDateBlock dt {
   -webkit-flex-grow: 1;
   flex-grow: 1;
 }
-.listContent {
-  width: 400px;
-  border-right: 1px solid #ededed;
+.formContent .form-holder form {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
 }
 .listContent table {
   width: 100%;
+}
+.listContentWrap {
+  width: 400px;
+  border-right: 1px solid #ededed;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 .listContentWrap .listContentTitle {
   position: relative;
@@ -3665,14 +3684,14 @@ dl.payrollDateBlock dt {
 .listContentTitle #createBtnHolder .fa {
   margin-right: 0;
 }
-.content-holder .formContentTitle {
-  border-left: 1px solid #ededed;
-}
 .content-holder .formContentTitle .closeBtn {
   float: right;
 }
 .compactRowWrap {
   padding: 12px 12px 12px 0;
+}
+.compactRowWrap .quotationsNameLeftBar {
+  margin-bottom: 10px;
 }
 .compactRow > div:nth-child(odd) {
   float: left;
@@ -3752,7 +3771,7 @@ td.checkboxRow {
 }
 #top-bar #createBtnHolder .btnBlue {
   height: 26px;
-  width: 67px;
+  width: 68px;
   border: 0;
   line-height: 26px !important;
   font-size: 13px;
@@ -4023,6 +4042,9 @@ table.kanban tbody td:nth-child(n+2) {
 .editNoteBtnBlock .btn:hover {
   text-decoration: none;
 }
+.editNoteBtnBlock {
+  height: auto;
+}
 .noteBtnBlock .btnBlue {
   width: 47px;
 }
@@ -4060,7 +4082,7 @@ table.kanban tbody td:nth-child(n+2) {
   clear: both;
 }
 .editNoteBtnBlock {
-  height: 44px;
+  min-height: 44px;
   border: none;
 }
 .contentHolder.showButtons .noteBtnBlock {
@@ -4076,6 +4098,11 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .addTaskTitle {
   padding: 5px 0;
+}
+.formContent .btn.positioned {
+  position: absolute;
+  top: 5px;
+  left: 411px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -4324,6 +4351,42 @@ table.kanban tbody td:nth-child(n+2) {
 .noteBtn span + span {
   margin-left: 10px;
 }
+.editNewBox .noteType {
+  float: left;
+}
+.editNewBox .dateNote {
+  float: right;
+}
+.noteTopBox .noteUserTitle {
+  float: left;
+  display: block;
+  line-height: 30px;
+}
+.noteTopBox .dateNote {
+  float: right;
+  font-size: 13px !important;
+}
+.form .personsTaskArea {
+  min-height: 95px ;
+}
+.attachContainer {
+  padding: 7px 0;
+  width: 100%;
+}
+.opportunity-header h3,
+.opportunity-header h4 {
+  float: none;
+  display: inline-block !important;
+  vertical-align: middle;
+  max-width: 49%;
+  margin-bottom: 0 !important;
+}
+.opportunity-header h3 + h4 {
+  padding-left: 5px;
+}
+.addOport span {
+  margin-right: 10px;
+}
 .propertyContainer a:hover {
   text-decoration: none;
 }
@@ -4384,9 +4447,10 @@ table.kanban tbody td:nth-child(n+2) {
 .propertyFormList label,
 .propertyFormList .inputBox {
   display: table-cell !important;
+  vertical-align: bottom;
 }
 .propertyFormList label {
-  width: 90px !important;
+  width: 100px !important;
   text-align: left;
   padding-right: 15px;
 }
@@ -4673,6 +4737,9 @@ table.kanban tbody td:nth-child(n+2) {
 .ui-datepicker {
   min-width: 175px;
 }
+.social {
+  margin-top: 20px;
+}
 .dropDownDateRangeContainer {
   position: relative;
   width: 110px;
@@ -4952,14 +5019,41 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .vocationFilter .frameDetail {
   position: absolute;
-  top: 30px;
+  top: 24px;
+  left: -1px;
+  width: 210px;
   background: #ffffff;
   padding: 10px;
   border: 1px solid #000000;
   z-index: 10;
 }
 .vocationFilter .frameDetail .buttons {
+  width: 100%;
   margin-top: 10px;
+}
+.top-bar .vocationFilter {
+  padding: 0;
+  height: 26px;
+  margin-top: 7px;
+}
+.customTimeLeadsBySource .customTimeItem,
+.customTimeLeadsBySale .customTimeItem {
+  padding: 4px 20px;
+}
+.customTimeLeadsBySource .customTimeItem > label,
+.customTimeLeadsBySale .customTimeItem > label {
+  float: left;
+}
+.customTimeLeadsBySource .customTimeItem > input,
+.customTimeLeadsBySale .customTimeItem > input {
+  width: 110px;
+  float: right;
+}
+.customTimeLeadsBySource .customTimeItem:after,
+.customTimeLeadsBySale .customTimeItem:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 .chartTopBox {
   position: relative;
@@ -4977,9 +5071,6 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .legend-box.medium {
   height: auto;
-}
-.wonLegend {
-  margin-top: 20px !important;
 }
 .wonLegend .legendCircle {
   border-radius: 50%;
@@ -5000,6 +5091,52 @@ table.kanban tbody td:nth-child(n+2) {
 .salesTab .vocationFilter {
   display: inline-block;
   vertical-align: middle;
+}
+.quotationsTabs {
+  border-top: 1px solid #7f7f80;
+  padding-top: 10px;
+}
+.quotationsTabs a {
+  color: #3e88b9;
+}
+.quotationsTabs .half-block {
+  margin-right: 0;
+}
+.quotationsTabs .list2 td,
+.quotationsTabs .list2 th {
+  text-align: right;
+}
+.quotationsTabs .list2 .statusInfo {
+  text-align: right;
+}
+.quotationsTabs .list2 thead tr {
+  border-top: none;
+}
+.quotationsTabs .list2 thead th {
+  font-size: 12px;
+}
+.quotationsTabs .list2 .productDescr {
+  border: none;
+  min-height: 10px;
+  font-size: 12px;
+  padding: 14px 5px 5px;
+  text-align: right;
+}
+.quotationsTabs .forNum {
+  position: relative;
+}
+.quotationsTabs .forNum:before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -50%);
+}
+.quotationsTabs .selectJobTd {
+  position: relative;
+  overflow: visible;
+}
+.quotationsTabs .selectJobTd .newSelectList {
+  right: 0;
 }
 .btn {
   border: 1px solid #c8c8d3;
@@ -6829,6 +6966,9 @@ dl dd span.ui-spinner {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
+}
+.form .personsTaskArea {
+  min-height: 95px ;
 }
 .form #internalNotes {
   resize: none;
@@ -9245,21 +9385,8 @@ dl dd span.ui-spinner {
 }
 #wrapper #content-holder {
   position: relative;
+  height: calc(100% - 41px);
   width: 100%;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-direction: normal;
-  -moz-box-direction: normal;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
 }
 #startLetter {
   height: 20px;
@@ -9664,7 +9791,7 @@ dl dd span.ui-spinner {
   text-align: left !important;
   font-size: 14px !important;
   line-height: 16px;
-  padding-left: 20px;
+  padding: 0 0 2px 20px;
 }
 .filterValues.checked:hover {
   cursor: pointer;
@@ -9818,6 +9945,13 @@ button.blue:hover {
   border-color: #4d5a75;
   text-decoration: none;
 }
+buttonBlue {
+  border: 0 !important;
+}
+buttonBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
+}
 buttonRounded {
   background-color: #fff;
   color: #000;
@@ -9935,6 +10069,15 @@ a.red.blue:hover {
   background-color: #4d5a75;
   border-color: #4d5a75;
   text-decoration: none;
+}
+button.redBlue,
+a.redBlue {
+  border: 0 !important;
+}
+button.redBlue.slim,
+a.redBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
 }
 button.redRounded,
 a.redRounded {
@@ -10964,6 +11107,8 @@ table#workflows tr td.edit-status {
 }
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
   display: block;
   height: 40px;
   clear: both;
@@ -10983,8 +11128,10 @@ table#workflows tr td.edit-status {
 #top-bar #reconcileDate {
   color: #000000;
 }
-#top-bar .btn {
-  margin-top: 4px;
+#top-bar .vocationFilter {
+  padding: 0;
+  height: 26px;
+  margin-top: 7px;
 }
 .dashBoardVocationSearch {
   margin-top: 7px !important;
@@ -11011,8 +11158,10 @@ table#workflows tr td.edit-status {
 .projectInfoTopBar #reconcileDate {
   color: #000000;
 }
-.projectInfoTopBar .btn {
-  margin-top: 4px;
+.projectInfoTopBar .vocationFilter {
+  padding: 0;
+  height: 26px;
+  margin-top: 7px;
 }
 .noPadding {
   padding: 0 !important;
@@ -12878,6 +13027,15 @@ ul.dialog-tabs .withEndContract .arrow.blue:hover {
   border-color: #4d5a75;
   text-decoration: none;
 }
+ul.dialog-tabs .withEndContract .endContractReasonListBlue,
+ul.dialog-tabs .withEndContract .arrowBlue {
+  border: 0 !important;
+}
+ul.dialog-tabs .withEndContract .endContractReasonListBlue.slim,
+ul.dialog-tabs .withEndContract .arrowBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
+}
 ul.dialog-tabs .withEndContract .endContractReasonListRounded,
 ul.dialog-tabs .withEndContract .arrowRounded {
   background-color: #fff;
@@ -13095,6 +13253,15 @@ ul.chart-tabs .withEndContract .arrow.blue:hover {
   border-color: #4d5a75;
   text-decoration: none;
 }
+ul.chart-tabs .withEndContract .endContractReasonListBlue,
+ul.chart-tabs .withEndContract .arrowBlue {
+  border: 0 !important;
+}
+ul.chart-tabs .withEndContract .endContractReasonListBlue.slim,
+ul.chart-tabs .withEndContract .arrowBlue.slim {
+  height: 26px;
+  line-height: 26px !important;
+}
 ul.chart-tabs .withEndContract .endContractReasonListRounded,
 ul.chart-tabs .withEndContract .arrowRounded {
   background-color: #fff;
@@ -13185,6 +13352,7 @@ ul.chart-tabs .withEndContract .arrow {
   border-bottom: 1px solid #c8c8d3;
 }
 .chart-tabs-items {
+  text-align: center;
   margin-bottom: 0;
 }
 .chart-tabs-items .dialog-tabs-item,
@@ -13285,6 +13453,7 @@ ul.chart-tabs .withEndContract .arrow {
   padding: 5px;
   color: #000000;
   text-align: center;
+  display: inline-block;
 }
 .legend-box.small {
   line-height: 26px;

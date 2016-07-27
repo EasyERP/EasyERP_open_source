@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -14,7 +15,7 @@ define([
     'dataService',
     'helpers',
     'constants'
-], function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, common, dataService, helpers, CONSTANTS) {
+], function (Backbone, $, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, common, dataService, helpers, CONSTANTS) {
     'use strict';
     var OrdersListView = listViewBase.extend({
         CreateView       : createView,
@@ -23,10 +24,6 @@ define([
         contentCollection: contentCollection,
         contentType      : 'Orders',
         hasPagination    : true,
-
-        events: {
-            'click .list tbody td:not(.notForm)': 'goToEditDialog'
-        },
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -37,6 +34,7 @@ define([
                 type : 'boolean',
                 value: ['false']
             };
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             this.forSales = false;
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -97,6 +95,20 @@ define([
 
         },
 
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
+        },
+
         hideNewSelect: function () {
             $('.newSelectList').remove();
         },
@@ -132,9 +144,10 @@ define([
             });
         },
 
-        goToEditDialog: function (e) {
+       /* goToEditDialog: function (e) {
             var tr = $(e.target).closest('tr');
             var id = tr.data('id');
+            var url = 'easyErp/' + this.contentType + '/form/' + id;
             var notEditable = tr.hasClass('notEditable');
             var model = new QuotationModel({validate: false});
             var onlyView = false;
@@ -145,7 +158,8 @@ define([
                 onlyView = true;
             }
 
-            model.urlRoot = '/orders/';
+
+            /!*model.urlRoot = '/orders/';
             model.fetch({
                 data: {
                     id      : id,
@@ -162,8 +176,10 @@ define([
                         message: 'Please refresh browser'
                     });
                 }
-            });
-        }
+            });*!/
+
+            Backbone.history.navigate(url, {trigger: true});
+        }*/
 
     });
     return OrdersListView;
