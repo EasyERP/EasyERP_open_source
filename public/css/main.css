@@ -4188,11 +4188,9 @@ table.kanban tbody td:nth-child(n+2) {
   width: calc(100% - 40px);
 }
 .holidays.projectTimeCardCustomList {
-  left: 50%;
+  float: none;
+  margin: -30px auto 20px;
   width: 415px !important;
-  margin-top: -31px;
-  margin-bottom: 10px;
-  margin-left: -180px;
 }
 #searchContainer.projectTimeCardCustomSearch {
   top: -32px;
@@ -4201,6 +4199,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .kanban .column h2 span.text {
   margin-right: 70px !important;
+}
+.list tbody td.errorContent {
+  border: 1px double #ff0000;
 }
 .deleteTasks span {
   margin-left: 5px;
@@ -4223,10 +4224,9 @@ table.kanban tbody td:nth-child(n+2) {
 .task-edit-dialog .ui-widget-content {
   border-top: none !important;
 }
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 1490px) {
   .holidays.projectTimeCardCustomList {
-    margin-top: 15px;
-    margin-left: -207px;
+    margin-top: 20px;
   }
 }
 .noteMainContainer {
@@ -4675,27 +4675,20 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .dropDownDateRangeContainer {
   position: relative;
-  height: 22px;
   width: 110px;
+  height: 35px;
   float: right;
-  margin: 7px 20px 0;
-}
-.dropDownDateRangeContainer.left {
-  float: left;
 }
 .choseDateRange.dropDownDateRange {
   position: absolute;
   display: flex;
   flex-direction: column;
   height: 22px;
-  min-width: 110px;
+  width: 110px;
   border: 1px solid #333333;
   padding: 1px 33px 3px 10px;
   margin-right: 0;
-  background: #ffffff;
-  cursor: pointer;
   overflow: hidden;
-  z-index: 10;
 }
 .choseDateRange.dropDownDateRange.open {
   height: auto;
@@ -4713,7 +4706,6 @@ table.kanban tbody td:nth-child(n+2) {
   text-align: center;
   border: none;
   background: none;
-  white-space: nowrap;
   order: 1;
 }
 .choseDateRange.dropDownDateRange .item.active {
@@ -4960,36 +4952,14 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .vocationFilter .frameDetail {
   position: absolute;
-  top: 24px;
-  left: -1px;
-  width: 210px;
+  top: 30px;
   background: #ffffff;
   padding: 10px;
   border: 1px solid #000000;
   z-index: 10;
 }
 .vocationFilter .frameDetail .buttons {
-  width: 100%;
   margin-top: 10px;
-}
-.customTimeLeadsBySource .customTimeItem,
-.customTimeLeadsBySale .customTimeItem {
-  padding: 4px 20px;
-}
-.customTimeLeadsBySource .customTimeItem > label,
-.customTimeLeadsBySale .customTimeItem > label {
-  float: left;
-}
-.customTimeLeadsBySource .customTimeItem > input,
-.customTimeLeadsBySale .customTimeItem > input {
-  width: 110px;
-  float: right;
-}
-.customTimeLeadsBySource .customTimeItem:after,
-.customTimeLeadsBySale .customTimeItem:after {
-  content: '';
-  display: table;
-  clear: both;
 }
 .chartTopBox {
   position: relative;
@@ -5007,6 +4977,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .legend-box.medium {
   height: auto;
+}
+.wonLegend {
+  margin-top: 20px !important;
 }
 .wonLegend .legendCircle {
   border-radius: 50%;
@@ -5168,9 +5141,8 @@ table.kanban tbody td:nth-child(n+2) {
 /*== End Input type number =============*/
 .tableResponsive {
   min-height: .01%;
-  overflow-x: auto;
+  overflow: auto;
   width: 100%;
-  overflow-y: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 .tableResponsiveNew {
@@ -5199,6 +5171,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .list2 tr td.centerCell {
   text-align: center;
+}
+.list2 tbody td.errorContent {
+  border: 1px double #ff0000;
 }
 .list2 td,
 .list2 th {
@@ -5308,6 +5283,9 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .list2 tr td.centerCell {
   text-align: center;
+}
+.list2 tbody td.errorContent {
+  border: 1px double #ff0000;
 }
 .list2 td,
 .list2 th {
@@ -6642,7 +6620,7 @@ select:not([type="checkbox"]) {
   color: #000000;
 }
 .current-selected {
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
   line-height: 20px !important;
 }
@@ -9686,7 +9664,7 @@ dl dd span.ui-spinner {
   text-align: left !important;
   font-size: 14px !important;
   line-height: 16px;
-  padding: 0 0 2px 20px;
+  padding-left: 20px;
 }
 .filterValues.checked:hover {
   cursor: pointer;
@@ -11288,6 +11266,9 @@ ul.dialog-tabs li.right button {
 }
 .list tr td.centerCell {
   text-align: center;
+}
+.list tbody td.errorContent {
+  border: 1px double #ff0000;
 }
 .list td,
 .list th {
@@ -13204,7 +13185,6 @@ ul.chart-tabs .withEndContract .arrow {
   border-bottom: 1px solid #c8c8d3;
 }
 .chart-tabs-items {
-  text-align: center;
   margin-bottom: 0;
 }
 .chart-tabs-items .dialog-tabs-item,
@@ -13305,7 +13285,6 @@ ul.chart-tabs .withEndContract .arrow {
   padding: 5px;
   color: #000000;
   text-align: center;
-  display: inline-block;
 }
 .legend-box.small {
   line-height: 26px;
@@ -14679,10 +14658,18 @@ textarea#editInput {
 .grid tr th.employee {
   min-width: 140px;
   width: 140px;
+  position: relative;
+  padding-right: 20px;
+}
+.grid tr td.employee span,
+.grid tr th.employee span {
+  white-space: nowrap;
 }
 .grid tr td.employee .icon,
 .grid tr th.employee .icon {
-  float: right;
+  position: absolute;
+  top: 1px;
+  right: 10px;
   font-size: 14px;
   line-height: 21px;
   cursor: pointer;
