@@ -15,7 +15,7 @@
 
                 </div>
                 <div class="compactRow">
-                    <div class="revenue"><%= opportunity.expectedRevenue.value %></div>
+                    <div><%=opportunity.expectedRevenue && opportunity.expectedRevenue.value ? currencySplitter(opportunity.expectedRevenue.value.toString()) : ''%></div>
                     <div class="stage"><%= opportunity.workflow.name %></div>
                 </div>
             </div>

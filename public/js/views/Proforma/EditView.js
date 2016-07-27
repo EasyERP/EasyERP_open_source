@@ -543,7 +543,7 @@ define([
 
             formString = this.template({
                 model           : this.currentModel.toJSON(),
-                isWtrack        : self.isWtrack,
+                isWtrack        : this.isWtrack,
                 isPaid          : this.isPaid,
                 notAddItem      : this.notAddItem,
                 approved        : this.currentModel.get('approved'),
