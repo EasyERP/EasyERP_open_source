@@ -21,15 +21,18 @@
         </div>
         <div class="sources tasksItemList">
             <% if (model.contact) { %>
-            <a href="<%='/#easyErp/Persons/tform/' + model.contact._id %>" class="tasksItemIcon" title="<%=model.contact.fullName%>"><img alt=""
-                                                                                                                                         src="<%=model.contact.imageSrc%>"/> </a>
+            <a href="<%='/#easyErp/Persons/tform/' + model.contact._id %>" class="tasksItemIcon"
+               title="<%=model.contact.fullName%>"><img alt=""
+                                                        src="<%=model.contact.imageSrc%>"/> </a>
             <% }%>
             <% if (model.company) { %>
-            <a href="<%='/#easyErp/Companies/tform/' + model.company._id %>" class="tasksItemIcon" title="<%=model.company.fullName%>"> <img alt=""
-                                                                                                             src="<%=model.company.imageSrc%>"/> </a>
+            <a href="<%='/#easyErp/Companies/tform/' + model.company._id %>" class="tasksItemIcon"
+               title="<%=model.company.fullName%>"> <img alt=""
+                                                         src="<%=model.company.imageSrc%>"/> </a>
             <% }%>
             <% if (model.deal) { %>
-            <a href="<%='/#easyErp/' +  (model.deal.isOpportunitie ? 'Opportunities' : 'Leads') + '/tform/' + model.deal._id %>" class="tasksItemIcon" title="<%=model.deal.name%>"><i class="fa fa-usd" aria-hidden="true"></i> </a>
+            <a href="<%='/#easyErp/' +  (model.deal.isOpportunitie ? 'Opportunities' : 'Leads') + '/tform/' + model.deal._id %>"
+               class="tasksItemIcon" title="<%=model.deal.name%>"><i class="fa fa-usd" aria-hidden="true"></i> </a>
             <% }%>
         </div>
 
