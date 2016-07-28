@@ -48,7 +48,7 @@
         client.del(name, redis.print);
     }
 
-    function removeAllStorages(name) {
+    function removeAllStorages(callback) {
 
         client.keys('*', function (err, keys) {
             if (err) {
@@ -64,9 +64,10 @@
                 });
             }, function (err) {
                 if (err) {
-                    console.log(err);
+                   return callback(err);
                 }
                 console.log('---------- Removed All from Redish ---------');
+                callback();
             });
 
         });

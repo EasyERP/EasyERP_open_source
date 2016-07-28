@@ -126,10 +126,13 @@ module.exports = function (app, mainDb) {
     });
 
     app.get('/clearCashStorage', function (req, res, next) {
-        redisStore.removeAllStorages();
-
-        event.emit('clearAllCashedData');
-        res.status(200).send({success: 'All cash cleaned success'});
+        redisStore.removeAllStorages(function (err){
+            if (err){
+                return next(err);
+            }
+            event.emit('clearAllCashedData');
+            res.status(200).send({success: 'All cash cleaned success'});
+        });
     });
 
     app.use('/filter', filterRouter);
