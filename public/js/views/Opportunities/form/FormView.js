@@ -67,6 +67,13 @@ define([
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
 
+            if (!value && !$target.hasClass('hideLine')) {
+                $target.addClass('hideLine');
+            }
+            if (value){
+                $target.removeClass('hideLine');
+            }
+
             this.modelChanged[property] = value;
             this.showButtons();
         },
