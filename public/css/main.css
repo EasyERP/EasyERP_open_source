@@ -4534,10 +4534,11 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .propertyFormList .inputBox input:not([type=checkbox]) {
   border: none;
+  border-bottom: none;
   outline: none;
   width: 100%;
   padding: 6px 0;
-  border-bottom: none;
+  border-bottom: 1px solid #c8c8d3;
 }
 .propertyFormList .inputBox input:not([type=checkbox]):focus {
   background: #fafafa;
@@ -4545,7 +4546,7 @@ table.kanban tbody td:nth-child(n+2) {
   border-bottom: 1px solid #c8c8d3;
 }
 .propertyFormList .inputBox input:not([type=checkbox]).hideLine {
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: none;
 }
 .propertySubmit {
   text-align: center;
