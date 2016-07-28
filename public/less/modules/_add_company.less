@@ -66,9 +66,16 @@
 }
 
 .propertyFormList {
-  display: table !important;
-  width: 100%;
-  border-left: 1px solid transparent;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 
   &.active {
     border-left-color: @blue-3;
@@ -87,6 +94,7 @@
   }
 
   .inputBox {
+
     input:not([type=checkbox]) {
       border: none;
       border-bottom: 1px solid #c8c8d3;
@@ -138,6 +146,15 @@
   }
 }
 
+.selectCompany,
+.attachments {
+
+  .tagsTitle,
+  .formTitle {
+    margin-bottom: 13px;
+  }
+}
+
 .tagsRow,
 .attachWrapper,
 .selectCompany,
@@ -147,7 +164,6 @@
   .tagsTitle,
   .formTitle {
     border-bottom: none !important;
-    margin-bottom: 13px;
   }
 }
 
@@ -315,9 +331,19 @@
   }
 }
 
+.noteWrapper,
+.moduleList {
+  .formTitle {
+    h3 {
+      color: #000;
+      font-size: 14px;
+      font-family: @fontSemiBold;
+    }
+  }
+}
+
 .tagsLabel {
   display: inline-block;
-  padding-right: 10px;
   color: #000;
 }
 
@@ -438,10 +464,17 @@
 .assignName {
   padding-left: 13px;
 }
+
 .propertyFormList {
+  white-space: nowrap;
+
   .assignName {
     padding-left: 0;
   }
+}
+
+.tags-container {
+  margin-right: 5px;
 }
 
 .ui-datepicker {
