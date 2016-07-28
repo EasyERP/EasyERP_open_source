@@ -20,6 +20,9 @@ define([
         this.remove = function (name) {
             localStorage.removeItem(name);
         };
+        this.clear = function () {
+            localStorage.clear();
+        };
     };
 
     var runApplication = function (success) {
