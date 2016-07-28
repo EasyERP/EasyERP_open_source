@@ -6863,7 +6863,7 @@ select:not([type="checkbox"]) {
 .current-selected {
   font-size: 13px;
   text-decoration: none;
-  line-height: 30px !important;
+  line-height: 26px !important;
 }
 .newSelectList {
   position: absolute !important;
