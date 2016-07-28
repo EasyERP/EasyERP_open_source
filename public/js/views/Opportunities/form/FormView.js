@@ -67,10 +67,10 @@ define([
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
 
-            if (value && !$target.hasClass('hideLine')) {
+            if (!value && !$target.hasClass('hideLine')) {
                 $target.addClass('hideLine');
             }
-            if (!value){
+            if (value){
                 $target.removeClass('hideLine');
             }
 
