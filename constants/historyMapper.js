@@ -120,5 +120,41 @@ module.exports = {
                 project   : '$tmp.name'
             }*/
         }
+    },
+    COMPANY : {
+        collectionName: 'Companies',
+
+        map: {
+            email: {
+                name : 'Email',
+                isRef: false
+            },
+            'social.LI': {
+                name : 'LinkedIn',
+                isRef: false
+            },
+            'website': {
+                name : 'Website',
+                isRef: false
+            },
+            'social.FB': {
+                name : 'FaceBook',
+                isRef: false
+            },
+            'name.first': {
+                name : 'Name',
+                isRef: false
+            },
+            'address.country': {
+                name : 'Country',
+                isRef: false
+            },
+            'salesPurchases.salesPerson': {
+                name      : 'Assigned To',
+                isRef     : true,
+                collection: 'Employees',
+                project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
+            }
+        }
     }
 };
