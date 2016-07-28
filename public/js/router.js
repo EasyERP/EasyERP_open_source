@@ -73,6 +73,7 @@ define([
 
         routes: {
             home                                                                                            : 'login',
+            'clearCash'                                                                                     : 'clearAllCashedData',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
@@ -126,6 +127,30 @@ define([
                      }*/
                 });
             }
+        },
+
+        clearAllCashedData: function () {
+            var self = this;
+            App.cashedData = {};
+            App.storage.clear();
+            App.filtersObject = {};
+
+
+            dataService.getData('/clearRedisStorage', null, function (response) {
+                if (response && response.error) {
+                    App.render({
+                        type   : 'error',
+                        message: 'Error removing cash :' + err
+                    });
+                } else {
+                    App.render({
+                        type   : 'notify',
+                        message: 'All cash removed'
+                    });
+                }
+
+                self.redirectTo();
+            });
         },
 
         dashBoardVacation: function (filter) {
