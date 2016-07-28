@@ -481,8 +481,8 @@ input::-ms-clear {
     h3 {
       color: @captionColor !important;
       margin: 0;
-      font-family: @title-font;
-      font-size: 18px;
+      font-family: @fontSemiBold;
+      font-size: 14px;
       .text-overflow;
       padding: 4px;
 
@@ -734,7 +734,7 @@ input::-ms-clear {
     float: left;
     .bold;
     width: 90%;
-    height: 30px;
+    //height: 30px;
     line-height: 26px;
     color: @mainText-color;
   }
@@ -2087,7 +2087,7 @@ input::-ms-clear {
     font-size: 13px;
     display: inline;
     float: none;
-    min-width: 80px;
+    min-width: 10px;
   }
 
   .dl-auto(160px, 40%, 18px, 18px, 10px);
@@ -2368,13 +2368,13 @@ input::-ms-clear {
     font-size: 10px;
   }
 
-  .form {
-    p {
-      label {
-        line-height: 30px;
-      }
-    }
-  }
+  //.form {
+  //  p {
+  //    label {
+  //      line-height: 30px;
+  //    }
+  //  }
+  //}
 }
 
 #modulesAccessTable {
@@ -2447,7 +2447,7 @@ input, textarea, select {
   // color: @tilte-color !important;
   font-size: 13px;
   text-decoration: none;
-  line-height: 20px !important;
+  line-height: 30px !important;
 }
 
 .newSelectList {
@@ -2701,12 +2701,15 @@ dl {
 
 .noteWrapper {
   width: 100%;
+
   .noteText {
     word-wrap: break-word;
   }
+
   .noteTitle {
     word-wrap: break-word;
   }
+
   &.projects-dialog {
     width: 98%;
     margin: 0 auto;
@@ -2715,15 +2718,15 @@ dl {
       resize: none;
     }
   }
+
   &.full-width {
     width: 100%;
   }
+
   > label {
     font-size: 16px;
     color: @formColum-main-text-color;
   }
-
-
 
   .addNote {
     margin-top: 6px;
@@ -2916,6 +2919,11 @@ dl {
       border: @thin-border @border-color-main;
     }
   }
+
+  .attachContainer {
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .text-overflow {
@@ -2973,8 +2981,9 @@ dl {
   }
 }
 
-.person-info, .customer-info {
-  .dl-auto;
+.person-info,
+.customer-info {
+
   span {
     &:not(.editTags) {
       padding: 0 !important;

@@ -3270,14 +3270,26 @@ input:not([type="checkbox"]).inputBordered:focus {
 .createNewTag {
   line-height: 25px;
 }
+.tags-container {
+  margin-top: 5px;
+}
 .tags-container .editTags {
   display: inline-block;
   vertical-align: middle;
-  min-height: 18px;
-  padding: 2px 8px;
+  height: 20px;
+  line-height: 16px;
   margin-bottom: 5px;
+  padding: 2px 5px;
   cursor: pointer;
+  font-size: 12px;
+  color: #fff;
   border-radius: 3px;
+}
+.tags-container .editTags:before {
+  color: #000;
+}
+.tags-container .editTags.fa-plus {
+  margin-bottom: 0;
 }
 .taskArea {
   border-radius: 3px;
@@ -3647,12 +3659,31 @@ dl.payrollDateBlock dt {
   position: relative;
 }
 .listContentWrap .listContentTitle #searchContainer {
-  position: relative;
   top: -26px;
+}
+.listContentWrap #searchContainer {
+  position: relative;
   right: auto;
   float: right;
-  width: 230px;
+  width: 277px;
   margin-right: 0;
+}
+.listContentWrap .search-options {
+  min-width: 277px;
+}
+@media (max-width: 1350px) {
+  .listContentWrap {
+    width: 350px;
+  }
+  .listContentWrap .listContentTitle #searchContainer {
+    width: 228px;
+  }
+  .listContentWrap .search-options {
+    min-width: 228px;
+  }
+  .listContentWrap .compactRow {
+    width: 280px;
+  }
 }
 .formContentWrap,
 .listContentWrap {
@@ -3696,20 +3727,36 @@ dl.payrollDateBlock dt {
 .compactRowWrap .quotationsNameLeftBar {
   margin-bottom: 10px;
 }
-.compactRow > div:nth-child(odd) {
-  float: left;
-  clear: both;
+.textEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.compactRow > div:nth-child(even) {
-  float: right;
+.compactRow {
+  width: 330px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+.compactRow div {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+.compactRow div:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1 2 auto;
 }
 .compactRow:nth-child(n+2) {
   margin-top: 10px;
-}
-.compactRow:after {
-  content: '';
-  display: table;
-  clear: both;
 }
 td.checkboxRow {
   width: 40px;
@@ -4022,10 +4069,10 @@ table.kanban tbody td:nth-child(n+2) {
   width: 50%;
 }
 .col1-3 {
-  width: 35%;
+  width: 30%;
 }
 .col2-3 {
-  width: 65%;
+  width: 70%;
 }
 .noteBtnBlock,
 .editNoteBtnBlock {
@@ -4293,7 +4340,7 @@ table.kanban tbody td:nth-child(n+2) {
   background: #c8c8d3;
 }
 .timeNote .noteContainer:first-child {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 .timeNote .noteContainer:first-child:before {
   top: -10px;
@@ -4302,7 +4349,7 @@ table.kanban tbody td:nth-child(n+2) {
   height: 25px;
 }
 .timeNote .noteContainer .noteTopBox {
-  padding: 10px 15px;
+  padding: 6px 12px;
   border-bottom: 1px solid #c8c8d3;
 }
 .timeNote .noteContainer .loadAttach {
@@ -4321,36 +4368,39 @@ table.kanban tbody td:nth-child(n+2) {
   line-height: 28px;
   text-align: center;
   color: #c8c8d3;
-  z-index: 10;
+  z-index: 1;
 }
 .timeNote .noteContainer .noteBody {
-  padding: 0 0 17px !important;
   border-radius: 3px;
   border: 1px solid #c8c8d3 !important;
-  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1), 0 2px 10px 0 rgba(0, 0, 0, 0.08);
+  font-size: 13px;
+}
+.timeNote .noteContainer .noteBody p {
+  line-height: normal;
+  min-height: 1px;
+}
+.timeNote .noteContainer .noteBody b {
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
 }
 .timeNote .noteContainer .noteBtnBlock {
   border: none;
 }
 .timeNote .noteContainer .noteText,
 .timeNote .noteContainer .noteContent,
-.timeNote .noteContainer .changed_field,
+.timeNote .noteContainer .singleNote,
 .timeNote .noteContainer .assignedTo {
-  padding: 10px 15px 0;
-}
-.timeNote .noteContainer .singleNote {
-  padding: 7px 15px 0 0;
+  padding: 6px 12px;
 }
 .timeNote .noteContainer .singleNote .dateNote {
   float: right;
-  padding-top: 11px;
   padding-left: 5px;
 }
 .timeNote .noteContainer .noteText:last-child {
   margin-bottom: 0 !important;
 }
-.timeNote .noteContainer .noteContent {
-  margin-bottom: 10px;
+.timeNote .noteContainer .noteText:empty {
+  display: none;
 }
 .timeNote .historyContent:first-child {
   padding-top: 8px;
@@ -4379,7 +4429,7 @@ table.kanban tbody td:nth-child(n+2) {
 .noteTopBox .noteUserTitle {
   float: left;
   display: block;
-  line-height: 30px;
+  line-height: normal;
 }
 .noteTopBox .dateNote {
   float: right;
@@ -4456,9 +4506,18 @@ table.kanban tbody td:nth-child(n+2) {
   color: #3291c8;
 }
 .propertyFormList {
-  display: table !important;
-  width: 100%;
-  border-left: 1px solid transparent;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  float: left;
+  clear: both;
 }
 .propertyFormList.active {
   border-left-color: #3291c8;
@@ -4473,16 +4532,22 @@ table.kanban tbody td:nth-child(n+2) {
   text-align: left;
   padding-right: 15px;
 }
+.propertyFormList .inputBox {
+  height: 30px;
+}
 .propertyFormList .inputBox input:not([type=checkbox]) {
   border: none;
-  border-bottom: 1px solid #c8c8d3;
   outline: none;
   width: 100%;
   padding: 6px 0;
+  border-bottom: none;
 }
 .propertyFormList .inputBox input:not([type=checkbox]):focus {
   background: #fafafa;
   border: none ;
+  border-bottom: 1px solid #c8c8d3;
+}
+.propertyFormList .inputBox input:not([type=checkbox]).hideLine {
   border-bottom: 1px solid #c8c8d3;
 }
 .propertySubmit {
@@ -4511,6 +4576,12 @@ table.kanban tbody td:nth-child(n+2) {
   background: #f2f2f2;
   text-decoration: none;
 }
+.selectCompany .tagsTitle,
+.attachments .tagsTitle,
+.selectCompany .formTitle,
+.attachments .formTitle {
+  margin-bottom: 13px;
+}
 .tagsRow,
 .attachWrapper,
 .selectCompany,
@@ -4526,7 +4597,6 @@ table.kanban tbody td:nth-child(n+2) {
 .selectCompany .formTitle,
 .moduleList .formTitle {
   border-bottom: none !important;
-  margin-bottom: 13px;
 }
 .tagsRow .editTags:hover {
   background: none;
@@ -4649,13 +4719,22 @@ table.kanban tbody td:nth-child(n+2) {
 .attachments {
   border-radius: 5px;
   border: 1px solid #c8c8d3;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1), 0 2px 10px 0 rgba(0, 0, 0, 0.08);
+}
+.moduleList .tags-container {
+  float: left;
 }
 .moduleList .tags-container label {
   float: left;
 }
+.noteWrapper .formTitle h3,
+.moduleList .formTitle h3 {
+  color: #000;
+  font-size: 14px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+}
 .tagsLabel {
   display: inline-block;
-  padding-right: 10px;
   color: #000;
 }
 .moduleList .largeBtn,
@@ -4714,9 +4793,11 @@ table.kanban tbody td:nth-child(n+2) {
 .addTask.active .buttons {
   display: block;
 }
-.addNote.active textarea,
-.addTask.active textarea {
+.addNote textarea,
+.addTask textarea {
   padding: 10px 22px 15px 10px !important;
+  width: 100%;
+  resize: none;
 }
 .addTask .hasDatepicker {
   float: right;
@@ -4750,8 +4831,15 @@ table.kanban tbody td:nth-child(n+2) {
 .assignName {
   padding-left: 13px;
 }
+.propertyFormList {
+  white-space: nowrap;
+  height: 30px;
+}
 .propertyFormList .assignName {
   padding-left: 0;
+}
+.tags-container {
+  margin-right: 5px;
 }
 .ui-datepicker {
   min-width: 175px;
@@ -6725,9 +6813,6 @@ input::-ms-clear {
   body {
     font-size: 10px;
   }
-  .form p label {
-    line-height: 30px;
-  }
 }
 #modulesAccessTable {
   display: none;
@@ -6778,7 +6863,7 @@ select:not([type="checkbox"]) {
 .current-selected {
   font-size: 13px;
   text-decoration: none;
-  line-height: 20px !important;
+  line-height: 30px !important;
 }
 .newSelectList {
   position: absolute !important;
@@ -7349,8 +7434,8 @@ dl dd span.ui-spinner {
 .form .formTitle h3 {
   color: #000000 !important;
   margin: 0;
-  font-family: Title;
-  font-size: 18px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-size: 14px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -7605,7 +7690,6 @@ dl dd span.ui-spinner {
   display: block;
   float: left;
   width: 90%;
-  height: 30px;
   line-height: 26px;
   color: #000000;
 }
@@ -8252,8 +8336,8 @@ dl dd span.ui-spinner {
 .formLeftColumn .form .formTitle h3 {
   color: #000000 !important;
   margin: 0;
-  font-family: Title;
-  font-size: 18px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-size: 14px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -8508,7 +8592,6 @@ dl dd span.ui-spinner {
   display: block;
   float: left;
   width: 90%;
-  height: 30px;
   line-height: 26px;
   color: #000000;
 }
@@ -8909,8 +8992,8 @@ dl dd span.ui-spinner {
 .formRightColumn .form .formTitle h3 {
   color: #000000 !important;
   margin: 0;
-  font-family: Title;
-  font-size: 18px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-size: 14px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -9165,7 +9248,6 @@ dl dd span.ui-spinner {
   display: block;
   float: left;
   width: 90%;
-  height: 30px;
   line-height: 26px;
   color: #000000;
 }
@@ -9372,6 +9454,10 @@ dl dd span.ui-spinner {
   padding: 10px;
   border: 1px solid #7f7f80;
 }
+.noteWrapper .attachContainer {
+  padding: 0;
+  margin: 0;
+}
 .text-overflow {
   overflow: hidden;
   white-space: nowrap;
@@ -9428,73 +9514,6 @@ dl dd span.ui-spinner {
 }
 #startLetter .letter.empty:hover {
   text-decoration: none;
-}
-.person-info,
-.customer-info {
-  clear: both;
-  font-size: 14px;
-}
-.person-info dt,
-.customer-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 35%;
-  max-width: 120px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.person-info dt p,
-.customer-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.person-info dt:first-child,
-.customer-info dt:first-child {
-  margin-top: 0;
-}
-.person-info dd,
-.customer-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.person-info dd p,
-.customer-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.person-info dd:nth-child(2),
-.customer-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.person-info dd input:not([type='checkbox']),
-.customer-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.person-info dd input.pikerSize,
-.customer-info dd input.pikerSize {
-  width: 137px;
-}
-.person-info dd a.formLink,
-.customer-info dd a.formLink {
-  line-height: 0;
-}
-.person-info dd span.ui-spinner,
-.customer-info dd span.ui-spinner {
-  width: 100%;
 }
 .person-info span:not(.editTags),
 .customer-info span:not(.editTags) {
@@ -12775,7 +12794,7 @@ ul.dialog-tabs li.right button {
   font-size: 13px;
   display: inline;
   float: none;
-  min-width: 80px;
+  min-width: 10px;
 }
 .form-holder form dt {
   padding: 1px;
