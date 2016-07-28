@@ -3354,6 +3354,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: 100%;
   overflow: hidden;
 }
+.kanban .item .tags:empty {
+  display: none;
+}
 .kanban .item .tags span {
   box-sizing: border-box;
   display: block;
@@ -3850,6 +3853,9 @@ td.checkboxRow {
   transition: all .3s;
   border-radius: 3px;
 }
+.top-bar-deleteBtn:hover {
+  text-decoration: none;
+}
 .top-bar-deleteBtn:after {
   content: 'Delete';
 }
@@ -4227,6 +4233,13 @@ table.kanban tbody td:nth-child(n+2) {
 .kanban .column h2 span.text {
   margin-right: 70px !important;
 }
+.kanban .column .right {
+  padding: 0;
+}
+.kanban .column .opportunity-header h3,
+.kanban .column .opportunity-header h4 {
+  width: 49%;
+}
 .list tbody td.errorContent {
   border: 1px double #ff0000;
 }
@@ -4250,6 +4263,12 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .task-edit-dialog .ui-widget-content {
   border-top: none !important;
+}
+.smallTd tbody tr td {
+  height: 23px;
+}
+.smallTr td {
+  height: 23px !important;
 }
 @media screen and (max-width: 1490px) {
   .holidays.projectTimeCardCustomList {
