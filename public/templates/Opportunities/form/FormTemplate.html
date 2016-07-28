@@ -19,7 +19,7 @@
                         <div class="propertyFormList">
                             <label>Amount</label>
                             <div class="inputBox amountBox">
-                                <input class="editable dealTitlePrice <%=expectedRevenue && !expectedRevenue.value.toString() ? 'hideLine' : ''%>" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span class="amountDollar"> <%=expectedRevenue.currency%></span>
+                                <input class="editable dealTitlePrice <%=expectedRevenue && !expectedRevenue.value && expectedRevenue.value !== 0  ? 'hideLine' : ''%>" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span class="amountDollar"> <%=expectedRevenue.currency%></span>
                             </div>
                         </div>
                         <div class="propertyFormList">
