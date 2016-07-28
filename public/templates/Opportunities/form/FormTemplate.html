@@ -13,13 +13,13 @@
                         <div class="propertyFormList">
                             <label>Name</label>
                             <div  class="inputBox">
-                                <input class="editable <%=!name : 'hideLine' : ''%>"  data-id="name" value="<%=name%>"/>
+                                <input class="editable <%=!name ? 'hideLine' : ''%>"  data-id="name" value="<%=name%>"/>
                             </div>
                         </div>
                         <div class="propertyFormList">
                             <label>Amount</label>
                             <div class="inputBox amountBox">
-                                <input class="editable dealTitlePrice <%=!name : 'expectedRevenue.value' : ''%>" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span class="amountDollar"> <%=expectedRevenue.currency%></span>
+                                <input class="editable dealTitlePrice <%=expectedRevenue && !expectedRevenue.value.toString() ? 'hideLine' : ''%>" data-id="expectedRevenue_value" value="<%=expectedRevenue.value%>"/><span class="amountDollar"> <%=expectedRevenue.currency%></span>
                             </div>
                         </div>
                         <div class="propertyFormList">
