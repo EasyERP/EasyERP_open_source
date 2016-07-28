@@ -6,6 +6,7 @@ module.exports = function (connection, Store) {
         key              : 'CRMkey',
         secret           : '1q2w3e4r5tdhgkdfhgejflkejgkdlgh8j0jge4547hh',
         resave           : false,
+        rolling          : true,
         saveUninitialized: false,
         store            : new Store({
             mongooseConnection: connection
