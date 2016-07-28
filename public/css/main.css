@@ -4532,13 +4532,15 @@ table.kanban tbody td:nth-child(n+2) {
   text-align: left;
   padding-right: 15px;
 }
+.propertyFormList .inputBox {
+  height: 30px;
+}
 .propertyFormList .inputBox input:not([type=checkbox]) {
   border: none;
-  border-bottom: none;
   outline: none;
   width: 100%;
   padding: 6px 0;
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: none;
 }
 .propertyFormList .inputBox input:not([type=checkbox]):focus {
   background: #fafafa;
@@ -4546,7 +4548,7 @@ table.kanban tbody td:nth-child(n+2) {
   border-bottom: 1px solid #c8c8d3;
 }
 .propertyFormList .inputBox input:not([type=checkbox]).hideLine {
-  border-bottom: none;
+  border-bottom: 1px solid #c8c8d3;
 }
 .propertySubmit {
   text-align: center;
@@ -4718,6 +4720,9 @@ table.kanban tbody td:nth-child(n+2) {
   border-radius: 5px;
   border: 1px solid #c8c8d3;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1), 0 2px 10px 0 rgba(0, 0, 0, 0.08);
+}
+.moduleList .tags-container {
+  float: left;
 }
 .moduleList .tags-container label {
   float: left;
@@ -6858,7 +6863,7 @@ select:not([type="checkbox"]) {
 .current-selected {
   font-size: 13px;
   text-decoration: none;
-  line-height: 20px !important;
+  line-height: 30px !important;
 }
 .newSelectList {
   position: absolute !important;
@@ -12789,7 +12794,7 @@ ul.dialog-tabs li.right button {
   font-size: 13px;
   display: inline;
   float: none;
-  min-width: 80px;
+  min-width: 10px;
 }
 .form-holder form dt {
   padding: 1px;
