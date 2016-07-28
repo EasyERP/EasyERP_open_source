@@ -175,7 +175,7 @@ define([
             });
         },
 
-        deleteItems: function () {
+        /*deleteItems: function () {
             var mid = 39;
 
             this.formModel.destroy({
@@ -187,7 +187,7 @@ define([
                 }
             });
 
-        },
+        },*/
 
         renderAbout: function () {
             var self = this;
@@ -240,17 +240,6 @@ define([
                 this.editorView.render().el
             );
             common.canvasDraw({model: this.formModel.toJSON()}, this);
-
-            /*$thisEl.find('#dateBirth').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true,
-                onSelect   : function (dateText) {
-                    self.modelChanged.dateBirth = new Date(dateText);
-                    self.showButtons();
-                }
-
-            });*/
 
             $thisEl.find('.attachments').append(
                 new AttachView({
