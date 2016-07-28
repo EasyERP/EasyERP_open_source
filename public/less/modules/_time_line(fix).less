@@ -1,180 +1,180 @@
-@note-border-color: #7f7f80;
-
-.noteMainContainer {
-  position: relative;
-}
-
-.timeNote {
-  .noteContainer {
-    position: relative;
-    padding-left: 50px;
-    margin-top: 20px;
-
-    &:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 25px;
-      width: 1px;
-      height: calc(~"100% + 30px");
-      background: @lightgrey;
-    }
-
-    &:first-child {
-      margin-top: 12px;
-
-      &:before {
-        top: -10px;
-      }
-    }
-
-    &:last-child {
-      &:before {
-        height: 25px;
-      }
-    }
-
-    .noteTopBox {
-      padding: 10px 15px;
-      border-bottom: 1px solid @lightgrey;
-    }
-
-    .loadAttach {
-      padding: 10px 15px 0;
-    }
-
-    .itemCircle {
-      position: absolute;
-      left: 11px;
-      top: 10px;
-      height: 28px;
-      width: 28px;
-      border: 1px solid @lightgrey;
-      border-radius: 50%;
-      background: @white;
-      font-size: 10px;
-      line-height: 28px;
-      text-align: center;
-      color: @lightgrey;
-      z-index: 10;
-    }
-
-    .noteBody {
-      padding: 0 0 17px !important;
-      border-radius: 3px;
-      border: 1px solid @lightgrey !important;
-      box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
-    }
-
-    .noteBtnBlock {
-      border: none;
-    }
-
-    .noteText,
-    .noteContent,
-    .changed_field,
-    .assignedTo {
-      padding: 10px 15px 0;
-    }
-
-    .singleNote {
-      padding: 7px 15px 0 0;
-
-      .dateNote {
-        float: right;
-        padding-top: 11px;
-        padding-left: 5px;
-      }
-    }
-
-    .noteText {
-      &:last-child {
-        margin-bottom: 0 !important;
-      }
-    }
-
-    .noteContent {
-      margin-bottom: 10px;
-    }
-  }
-
-  .historyContent {
-    &:first-child {
-      padding-top: 8px;
-    }
-  }
-}
-
-.noteInner {
-  border: 1px solid @note-border-color;
-  padding: 5px 20px 20px;
-
-  .dateNote {
-    float: none !important;
-    margin-left: 5px;
-  }
-}
-
-.noteBtn {
-  margin-top: 15px;
-  text-align: right;
-
-  span + span {
-    margin-left: 10px;
-  }
-}
-
-.editNewBox {
-  .noteType {
-    float: left;
-  }
-
-  .dateNote {
-    float: right;
-  }
-}
-
-.noteTopBox {
-  .noteUserTitle {
-    float: left;
-    display: block;
-    line-height: 30px;
-  }
-
-  .dateNote {
-    float: right;
-    font-size: 13px !important;
-  }
-}
-
-.form {
-  .personsTaskArea {
-    min-height: 95px ;
-  }
-}
-
-.attachContainer {
-  padding: 7px 0;
-  width: 100%;
-}
-
-.opportunity-header {
-  h3,
-  h4 {
-    float: none;
-    display: inline-block !important;
-    vertical-align: middle;
-    max-width: 49%;
-    margin-bottom: 0 !important;
-  }
-
-  h3 + h4 {
-    padding-left: 5px;
-  }
-}
-
-.addOport {
-  span {
-    margin-right: 10px;
-  }
-}
+//@note-border-color: #7f7f80;
+//
+//.noteMainContainer {
+//  position: relative;
+//}
+//
+//.timeNote {
+//  .noteContainer {
+//    position: relative;
+//    padding-left: 50px;
+//    margin-top: 20px;
+//
+//    &:before {
+//      content: '';
+//      position: absolute;
+//      top: 0;
+//      left: 25px;
+//      width: 1px;
+//      height: calc(~"100% + 30px");
+//      background: @lightgrey;
+//    }
+//
+//    &:first-child {
+//      margin-top: 12px;
+//
+//      &:before {
+//        top: -10px;
+//      }
+//    }
+//
+//    &:last-child {
+//      &:before {
+//        height: 25px;
+//      }
+//    }
+//
+//    .noteTopBox {
+//      padding: 10px 15px;
+//      border-bottom: 1px solid @lightgrey;
+//    }
+//
+//    .loadAttach {
+//      padding: 10px 15px 0;
+//    }
+//
+//    .itemCircle {
+//      position: absolute;
+//      left: 11px;
+//      top: 10px;
+//      height: 28px;
+//      width: 28px;
+//      border: 1px solid @lightgrey;
+//      border-radius: 50%;
+//      background: @white;
+//      font-size: 10px;
+//      line-height: 28px;
+//      text-align: center;
+//      color: @lightgrey;
+//      z-index: 10;
+//    }
+//
+//    .noteBody {
+//      padding: 0 0 17px !important;
+//      border-radius: 3px;
+//      border: 1px solid @lightgrey !important;
+//      box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05);
+//    }
+//
+//    .noteBtnBlock {
+//      border: none;
+//    }
+//
+//    .noteText,
+//    .noteContent,
+//    .changed_field,
+//    .assignedTo {
+//      padding: 10px 15px 0;
+//    }
+//
+//    .singleNote {
+//      padding: 7px 15px 0 0;
+//
+//      .dateNote {
+//        float: right;
+//        padding-top: 11px;
+//        padding-left: 5px;
+//      }
+//    }
+//
+//    .noteText {
+//      &:last-child {
+//        margin-bottom: 0 !important;
+//      }
+//    }
+//
+//    .noteContent {
+//      margin-bottom: 10px;
+//    }
+//  }
+//
+//  .historyContent {
+//    &:first-child {
+//      padding-top: 8px;
+//    }
+//  }
+//}
+//
+//.noteInner {
+//  border: 1px solid @note-border-color;
+//  padding: 5px 20px 20px;
+//
+//  .dateNote {
+//    float: none !important;
+//    margin-left: 5px;
+//  }
+//}
+//
+//.noteBtn {
+//  margin-top: 15px;
+//  text-align: right;
+//
+//  span + span {
+//    margin-left: 10px;
+//  }
+//}
+//
+//.editNewBox {
+//  .noteType {
+//    float: left;
+//  }
+//
+//  .dateNote {
+//    float: right;
+//  }
+//}
+//
+//.noteTopBox {
+//  .noteUserTitle {
+//    float: left;
+//    display: block;
+//    line-height: 30px;
+//  }
+//
+//  .dateNote {
+//    float: right;
+//    font-size: 13px !important;
+//  }
+//}
+//
+//.form {
+//  .personsTaskArea {
+//    min-height: 95px ;
+//  }
+//}
+//
+//.attachContainer {
+//  padding: 7px 0;
+//  width: 100%;
+//}
+//
+//.opportunity-header {
+//  h3,
+//  h4 {
+//    float: none;
+//    display: inline-block !important;
+//    vertical-align: middle;
+//    max-width: 49%;
+//    margin-bottom: 0 !important;
+//  }
+//
+//  h3 + h4 {
+//    padding-left: 5px;
+//  }
+//}
+//
+//.addOport {
+//  span {
+//    margin-right: 10px;
+//  }
+//}
