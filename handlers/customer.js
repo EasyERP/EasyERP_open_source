@@ -342,6 +342,9 @@ var Module = function (models, event) {
         var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
+        customer.opportunities = [];
+        customer.contacts = [];
+
         function getContactsByCompany(parallelCb) {
 
             Customers
@@ -376,7 +379,11 @@ var Module = function (models, event) {
                 });
         }
 
-        var parallelTasks = [getContactsByCompany, getOppByCustomer];
+        var parallelTasks = [ getOppByCustomer];
+
+        if (customer.type === 'Company') {
+            parallelTasks.push(getContactsByCompany);
+        }
 
         async.parallel(parallelTasks, function (err, result) {
             var parallelTasks;
@@ -389,10 +396,7 @@ var Module = function (models, event) {
                 return elem._id;
             });
 
-
-            var ids = [customer._id];
-
-            ids = ids.concat(opps, contacts);
+            var ids = [customer._id].concat(opps, contacts);
 
             var historyOptions = {
                 req: req,
@@ -413,15 +417,18 @@ var Module = function (models, event) {
                             case 'Opportunities' :
                                 name = _.find(customer.opportunities, function (opp) {
                                     return (opp._id.toJSON() === elem.contentId.toJSON());
-                                }).name;
+                                });
+
+                                name = name ? 'opportunity ' + name.name : '';
                                 break;
 
                             case 'Persons' :
                                 name = _.find(customer.contacts, function (contact) {
                                     return (contact._id.toJSON() === elem.contentId.toJSON());
-                                }).fullName;
-                                break;
+                                });
 
+                                name = name ? 'contact ' + name.fullName : '';
+                                break;
                         }
 
                         return {
@@ -464,6 +471,10 @@ var Module = function (models, event) {
             parallelTasks = [getTask, getHistoryNotes];
 
             async.parallel(parallelTasks, function (err, results) {
+
+                if (err) {
+                    cb(err);
+                }
 
                 customer.notes = customer.notes.concat(results[0], results[1]);
                 customer.notes = _.sortBy(customer.notes, 'date');
@@ -667,26 +678,7 @@ var Module = function (models, event) {
         var id = req.query.id || req.params.id;
 
         Model
-            .findById(id, {
-                name          : 1,
-                website       : 1,
-                attachments   : 1,
-                notes         : 1,
-                email         : 1,
-                social        : 1,
-                phones        : 1,
-                salesPurchases: 1,
-                address       : 1,
-                groups        : 1,
-                jobPosition   : 1,
-                dateBirth     : 1,
-                skype         : 1,
-                company       : 1,
-                createdBy     : 1,
-                editedBy      : 1,
-                imageSrc      : 1,
-                isHidden      : 1
-            })
+            .findById(id)
             .populate('company')
             .populate('salesPurchases.salesPerson', '_id name fullName')
             .populate('salesPurchases.salesTeam', '_id name')

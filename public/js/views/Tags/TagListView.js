@@ -69,10 +69,6 @@ define([
         },
 
         events: {
-            'click'                                                           : "click",
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             'click .editTag'                                                  : 'editTag',
             'click #newTag'                                                   : 'createTag',
             'click li'                                                        : 'changeSelected'
@@ -89,14 +85,6 @@ define([
                 collection: this.filteredCollection.toJSON(),
                 model     : this.model.toJSON()
             }));
-        },
-
-        click: function () {
-            this.$el.find('.input-file .inputAttach').click();
-        },
-
-        clickInput: function () {
-            this.$el.find('.input-file .inputAttach').click();
         },
 
         createTag: function (e) {

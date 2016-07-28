@@ -16,7 +16,8 @@ define([
         },
 
         initialize: function (options) {
-            var person;
+           this.model = new PersonsModel();
+
             this.attribute = options.attribute;
             this.parentModel = options.parentModel;
             this.saveDeal = options.saveDeal;
@@ -26,8 +27,8 @@ define([
 
         addProperty: function () {
             new FilterView({
-                model    : this.parentModel,
-                attribute: this.attribute,
+                model    : this.model,
+                company  : this.parentModel.id,
                 saveDeal : this.saveDeal,
                 isLead   : this.isLead
             });
@@ -35,18 +36,18 @@ define([
 
         removeProperty: function (e) {
             var $target = $(e.target);
-            var id = $target.attr('data-id');
-            var saveObject = {};
-            var self = this;
-            var person;
+            var id = $target.closest('.propertyBox').attr('data-id');
 
             e.preventDefault();
 
-            person = new PersonsModel({id : id});
-            person.save({company : null}, function (err, res){
+            this.model.set({_id : id});
+            this.model.save({company : null}, {
+                validate : false,
+                patch : true,
+                success : function (err, res){
                 Backbone.history.fragment = '';
                 Backbone.history.navigate(window.location.hash, {trigger: true});
-            });
+            }});
         },
 
         render: function () {

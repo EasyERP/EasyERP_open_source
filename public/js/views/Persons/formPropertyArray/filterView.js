@@ -7,7 +7,7 @@ define([
     'views/Persons/CreateView',
     'dataService',
     'collections/Filter/filterCollection'
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView,dataService, FilterCollection) {
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, dataService, FilterCollection) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -25,9 +25,10 @@ define([
             }
 
             this.attribute = options.attribute;
+            this.company = options.company;
             this.saveDeal = options.saveDeal;
 
-            dataService.getData('/Persons/', {type : 'Person'}, function (res) {
+            dataService.getData('/Persons/', {type: 'Person'}, function (res) {
                 res = _.map(res.data, function (elem) {
                     elem.name = elem.fullName;
 
@@ -81,7 +82,7 @@ define([
 
         createCustomer: function () {
             $('.tag-list-dialog').remove();
-            var optionsObject= {};
+            var optionsObject = {};
 
             if (this.isLead) {
                 optionsObject.lead = this.model;
@@ -93,10 +94,18 @@ define([
         changeSelected: function (e) {
             var $target = $(e.target);
             var id = $target.closest('li').attr('data-id');
-            var saveObject = {};
 
-            saveObject[this.attribute] = id;
-            this.saveDeal(saveObject, 'formProperty');
+            e.preventDefault();
+
+            this.model.set({_id: id});
+            this.model.save({company: this.company}, {
+                validate : false,
+                patch : true,
+                success: function (err, res) {
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(window.location.hash, {trigger: true});
+                }
+            });
         },
 
         renderContent: function () {

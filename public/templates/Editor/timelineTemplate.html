@@ -19,9 +19,9 @@
                 <div class="noteContent"><a href="javascript:;" ><%=val.task.description  %></a></div>
                 <div class="assignedTo">Assigned To <b><%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></b></div>
                 <%} else if (val.history) {%>
-                <% var name = val.history.collectionName === 'Opportunities' ? 'opportunity' : val.history.collectionName === 'Persons' ? 'contact' : 'company' %>
+                <%var name = val.history.collectionName%>
                 <div class="itemCircle">
-                    <span class="fa <%=name === 'opportunity' ? 'fa-usd' : name ==='contact' ? 'fa-user' : 'fa-building-o'%> "
+                    <span class="fa <%=name === 'Opportunities' ? 'fa-usd' : name ==='Persons' ? 'fa-user' : 'fa-building-o'%> "
                           aria-hidden="true"></span>
                 </div>
                 <div class="history_body">
@@ -29,11 +29,11 @@
                         <span class="dateNote"><%=val.date%></span>
                         <div class="changed_field">
                             <%if (val.history.prevValue){%>
-                            <span class="changedFieldName"><b><%= login %></b> changed <%= val.name ? 'on ' + name  + ' ' + val.name + ' : ' : '' %><b><%= val.history.changedField %></b></span>
+                            <span class="changedFieldName"><b><%= login %></b> changed <%= val.name ? 'on ' + val.name + ' : ' : '' %><b><%= val.history.changedField %></b></span>
                             <span>from <b><%= val.history.prevValue %></b></span>
                             <span> to </span>
                             <%} else {%>
-                            <span class="changedFieldName"><b><%= login %></b> added <%= val.name ? 'on ' + name  + ' ' + val.name + ' : ' : '' %> <b><%= val.history.changedField %></b></span>
+                            <span class="changedFieldName"><b><%= login %></b> added <%= val.name ? 'on ' + val.name + ' : ' : '' %> <b><%= val.history.changedField %></b></span>
                             <%}%>
                             <span><b><%= val.history.newValue %></b></span>
                         </div>

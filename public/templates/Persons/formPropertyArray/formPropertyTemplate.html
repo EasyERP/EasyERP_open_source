@@ -6,7 +6,7 @@
         <% data.forEach(function(property) {%>
         <div class="propertyContainer">
 
-            <div class="propertyBox">
+            <div class="propertyBox" data-id="<%=property._id%>">
                 <div class="propertyImg">
                     <img alt="" src="<%=property.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-avatar.gif'%>"/>
                 </div>
