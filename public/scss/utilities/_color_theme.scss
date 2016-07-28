@@ -42,3 +42,38 @@ $base-border : $white;
 $ui-dialog-bg: $white;
 // -----------------------
 
+// Opportunities  -------
+$dateRage-border-color:  map-get($colors-dark, 'darker-gray');
+$property-box-border-color:  map-get($erp-colors, 'light-gray');
+$property-text-color: map-get($erp-colors, 'light-gray');
+$property-text-color: map-get($erp-colors, 'light-gray');
+$property-link-color: map-get($erp-colors, 'blue');
+$property-link-color: map-get($erp-colors, 'blue');
+$drop-down-list-bg: map-get($erp-colors, 'lighter-gray');
+$add-company-btn-hover-bg: map-get($erp-colors, 'lighter-gray');
+$create-bg: map-get($erp-colors, 'lighter-gray');
+$note-border-color: map-get($erp-colors, 'light-gray');
+$note-inner-border-color: map-get($erp-colors, 'dark-gray');
+$note-bg: map-get($erp-colors, 'light-gray');
+// -----------------------
+
+// Holidays --------------
+$error-content-border:  map-get($colors-dark, 'red');
+$delete-asks-border-color: $black;
+// -----------------------
+
+// Dashboard -------------
+$vocation-filter-border-color: $black;
+$frame-detail-bg: $white;
+// -----------------------
+
+// Create Tasks -------------
+$tasks-border-color: map-get($erp-colors, 'lighter-gray');
+$remove-select-color-hover: map-get($erp-colors, 'lighter-gray');
+$tab-list-color: map-get($erp-colors, 'dark-gray');
+$tab-list-color-active: $white;
+$tasks-item-color: map-get($erp-colors, 'blue');
+$tasks-item-bg: map-get($erp-colors, 'lighter-gray');
+$passed-bg: map-get($erp-colors, 'green');
+// -----------------------
+

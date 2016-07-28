@@ -1,278 +1,278 @@
-.newTasksContainer {
-  padding-top: 30px !important;
-
-  .taskTitle {
-    font-size: 23px;
-    padding-left: 26px;
-    margin-bottom: 25px;
-  }
-
-  .taskTop,
-  .taskBottom {
-    width: 100%;
-    margin-bottom: 25px;
-    border-bottom: 1px solid @lightgrey;
-    font-size: 0;
-  }
-
-  .taskBottom {
-    border-top: 1px solid @lightgrey;
-    margin-top: 30px;
-
-
-    .hasDatepicker,
-    .current-selected {
-      text-align: center;
-
-    }
-  }
-
-  .taskTop {
-    .hasDatepicker,
-    .current-selected {
-      padding-left: 10px;
-    }
-  }
-
-  .topCell {
-    display: inline-block;
-    vertical-align: middle;
-    width: 33%;
-    padding: 15px;
-    font-size: 14px;
-
-    & + .topCell {
-      border-left: 1px solid @lightgrey;
-    }
-
-    .hasDatepicker,
-    .current-selected {
-      height: 40px;
-      width: 100%;
-      border: 1px solid @lightgrey;
-      margin-top: 10px;
-      display: block;
-      line-height: 38px !important;
-      cursor: pointer;
-      color: @black;
-      border-radius: 3px;
-
-      i {
-        margin-right: 5px;
-      }
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-  }
-
-  .textarea-wrapper {
-    textarea {
-      padding: 15px;
-    }
-  }
-
-  .ui-dialog {
-    .ui-dialog-buttonpane {
-
-    }
-  }
-
-  .showSelect {
-    position: relative;
-    width: 100%;
-    margin-top: 10px;
-
-    .imgContainer,
-    .bodyContainer {
-      display: table-cell;
-      vertical-align: middle;
-      font-size: 14px;
-    }
-
-    .imgContainer {
-      max-width: 55px;
-
-      img {
-        width: 40px;
-        margin-right: 15px;
-      }
-
-      & + .bodyContainer {
-        span {
-          display: block;
-          width: 90px;
-          overflow: hidden;
-          padding: 2px 0;
-        }
-      }
-    }
-
-    .bodyContainer {
-      padding-right: 5px;
-    }
-
-    .removeSelect {
-      position: absolute;
-      right: -15px;
-      top: 50%;
-      width: 25px;
-      height: 25px;
-      border: none;
-      padding: 3px !important;
-      line-height: 13px !important;
-      transform: translate(0, -50%);
-      background: none;
-
-      &:hover {
-        background: none;
-        color: @lightgrey;
-      }
-    }
-  }
-}
-
-.ui-dialog-buttonset {
-  border: none !important;
-}
-
-.task-dialog {
-
-}
-
-.task-content {
-  padding: 5px;
-  color: @black;
-
-  .info {
-    margin-bottom: 10px;
-  }
-
-  .taskContentTitle {
-    margin-bottom: 5px;
-  }
-
-  .dateLabel {
-    font-size: 13px;
-    font-weight: bold;
-  }
-}
-
-.tasksItemList {
-  margin-top: 9px;
-}
-
-.tasksItemIcon {
-  display: inline-block;
-  vertical-align: middle;
-  color: @blue-3;
-
-  & + .tasksItemIcon {
-    margin-left: 8px;
-  }
-
-  img {
-    width: 20px;
-  }
-}
-
-.tabListWrap {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  padding: 0 10px;
-  margin-bottom: 10px;
-
-  .tabListItem {
-    position: relative;
-    padding: 11px 15px;
-    margin: 0;
-    text-align: center;
-    font-size: 11px;
-    cursor: pointer;
-    overflow: visible;
-    background: @lightgrey;
-    -webkit-flex-grow: 1;
-    flex-grow: 1;
-    width: 10px;
-
-    &.active {
-      background: @blue;
-
-      span {
-        color: @white;
-      }
-
-      &:after {
-        border-left-color: @blue;
-      }
-    }
-
-    & + .tabListItem {
-      padding-left: 33px;
-    }
-
-    &.passed {
-      background: @green-2;
-
-      &:after {
-        border-left-color: @green-2;
-      }
-
-      span {
-        color: #fff;
-      }
-    }
-
-    &:before,
-    &:after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 0;
-    }
-
-    &:before {
-      top: -4px;
-      right: -22px;
-      border-top: 21px solid transparent;
-      border-bottom: 21px solid transparent;
-      border-left: 22px solid #ffffff;
-      z-index: 1;
-    }
-
-    &:after {
-      top: 0;
-      right: -18px;
-      border-top: 17px solid transparent;
-      border-bottom: 17px solid transparent;
-      border-left: 18px solid @lightgrey;
-      z-index: 2;
-    }
-
-    span {
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-transform: uppercase;
-      font-size: 12px;
-      color: #666;
-    }
-
-    &:first-child {
-      border-radius: 30px 0 0 30px;
-    }
-
-    &:last-child {
-      border-radius: 0 30px 30px 0;
-
-      &:before,
-      &:after {
-        content: none;
-      }
-    }
-  }
-}
+//.newTasksContainer {
+//  padding-top: 30px !important;
+//
+//  .taskTitle {
+//    font-size: 23px;
+//    padding-left: 26px;
+//    margin-bottom: 25px;
+//  }
+//
+//  .taskTop,
+//  .taskBottom {
+//    width: 100%;
+//    margin-bottom: 25px;
+//    border-bottom: 1px solid @lightgrey;
+//    font-size: 0;
+//  }
+//
+//  .taskBottom {
+//    border-top: 1px solid @lightgrey;
+//    margin-top: 30px;
+//
+//
+//    .hasDatepicker,
+//    .current-selected {
+//      text-align: center;
+//
+//    }
+//  }
+//
+//  .taskTop {
+//    .hasDatepicker,
+//    .current-selected {
+//      padding-left: 10px;
+//    }
+//  }
+//
+//  .topCell {
+//    display: inline-block;
+//    vertical-align: middle;
+//    width: 33%;
+//    padding: 15px;
+//    font-size: 14px;
+//
+//    & + .topCell {
+//      border-left: 1px solid @lightgrey;
+//    }
+//
+//    .hasDatepicker,
+//    .current-selected {
+//      height: 40px;
+//      width: 100%;
+//      border: 1px solid @lightgrey;
+//      margin-top: 10px;
+//      display: block;
+//      line-height: 38px !important;
+//      cursor: pointer;
+//      color: @black;
+//      border-radius: 3px;
+//
+//      i {
+//        margin-right: 5px;
+//      }
+//
+//      &:hover {
+//        text-decoration: none;
+//      }
+//    }
+//  }
+//
+//  .textarea-wrapper {
+//    textarea {
+//      padding: 15px;
+//    }
+//  }
+//
+//  .ui-dialog {
+//    .ui-dialog-buttonpane {
+//
+//    }
+//  }
+//
+//  .showSelect {
+//    position: relative;
+//    width: 100%;
+//    margin-top: 10px;
+//
+//    .imgContainer,
+//    .bodyContainer {
+//      display: table-cell;
+//      vertical-align: middle;
+//      font-size: 14px;
+//    }
+//
+//    .imgContainer {
+//      max-width: 55px;
+//
+//      img {
+//        width: 40px;
+//        margin-right: 15px;
+//      }
+//
+//      & + .bodyContainer {
+//        span {
+//          display: block;
+//          width: 90px;
+//          overflow: hidden;
+//          padding: 2px 0;
+//        }
+//      }
+//    }
+//
+//    .bodyContainer {
+//      padding-right: 5px;
+//    }
+//
+//    .removeSelect {
+//      position: absolute;
+//      right: -15px;
+//      top: 50%;
+//      width: 25px;
+//      height: 25px;
+//      border: none;
+//      padding: 3px !important;
+//      line-height: 13px !important;
+//      transform: translate(0, -50%);
+//      background: none;
+//
+//      &:hover {
+//        background: none;
+//        color: @lightgrey;
+//      }
+//    }
+//  }
+//}
+//
+//.ui-dialog-buttonset {
+//  border: none !important;
+//}
+//
+//.task-dialog {
+//
+//}
+//
+//.task-content {
+//  padding: 5px;
+//  color: @black;
+//
+//  .info {
+//    margin-bottom: 10px;
+//  }
+//
+//  .taskContentTitle {
+//    margin-bottom: 5px;
+//  }
+//
+//  .dateLabel {
+//    font-size: 13px;
+//    font-weight: bold;
+//  }
+//}
+//
+//.tasksItemList {
+//  margin-top: 9px;
+//}
+//
+//.tasksItemIcon {
+//  display: inline-block;
+//  vertical-align: middle;
+//  color: @blue-3;
+//
+//  & + .tasksItemIcon {
+//    margin-left: 8px;
+//  }
+//
+//  img {
+//    width: 20px;
+//  }
+//}
+//
+//.tabListWrap {
+//  display: -webkit-box;
+//  display: -webkit-flex;
+//  display: -ms-flexbox;
+//  display: flex;
+//  padding: 0 10px;
+//  margin-bottom: 10px;
+//
+//  .tabListItem {
+//    position: relative;
+//    padding: 11px 15px;
+//    margin: 0;
+//    text-align: center;
+//    font-size: 11px;
+//    cursor: pointer;
+//    overflow: visible;
+//    background: @lightgrey;
+//    -webkit-flex-grow: 1;
+//    flex-grow: 1;
+//    width: 10px;
+//
+//    &.active {
+//      background: @blue;
+//
+//      span {
+//        color: @white;
+//      }
+//
+//      &:after {
+//        border-left-color: @blue;
+//      }
+//    }
+//
+//    & + .tabListItem {
+//      padding-left: 33px;
+//    }
+//
+//    &.passed {
+//      background: @green-2;
+//
+//      &:after {
+//        border-left-color: @green-2;
+//      }
+//
+//      span {
+//        color: #fff;
+//      }
+//    }
+//
+//    &:before,
+//    &:after {
+//      content: '';
+//      position: absolute;
+//      width: 0;
+//      height: 0;
+//    }
+//
+//    &:before {
+//      top: -4px;
+//      right: -22px;
+//      border-top: 21px solid transparent;
+//      border-bottom: 21px solid transparent;
+//      border-left: 22px solid #ffffff;
+//      z-index: 1;
+//    }
+//
+//    &:after {
+//      top: 0;
+//      right: -18px;
+//      border-top: 17px solid transparent;
+//      border-bottom: 17px solid transparent;
+//      border-left: 18px solid @lightgrey;
+//      z-index: 2;
+//    }
+//
+//    span {
+//      display: block;
+//      overflow: hidden;
+//      text-overflow: ellipsis;
+//      white-space: nowrap;
+//      text-transform: uppercase;
+//      font-size: 12px;
+//      color: #666;
+//    }
+//
+//    &:first-child {
+//      border-radius: 30px 0 0 30px;
+//    }
+//
+//    &:last-child {
+//      border-radius: 0 30px 30px 0;
+//
+//      &:before,
+//      &:after {
+//        content: none;
+//      }
+//    }
+//  }
+//}

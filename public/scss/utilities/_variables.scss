@@ -13,6 +13,7 @@ $small-container    : 576px;
 $medium-container   : 720px;
 $large-container    : 940px;
 $xlarge-container   : 1140px;
+$extra-large-screen : 1490px;
 
 $small-screen       : map_get($screen-breakpoints, 'small');
 $medium-screen      : map_get($screen-breakpoints, 'medium');
