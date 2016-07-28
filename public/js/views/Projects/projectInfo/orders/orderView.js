@@ -25,9 +25,9 @@ define([
         templateHeader      : _.template(lisHeader),
 
         events: {
-            'click .checkbox'                    : 'checked',
-            'click #removeOrder'                 : 'removeItems',
-            'click  .list tbody td:not(.notForm)': 'goToEditDialog'
+            'click .checkbox'                        : 'checked',
+            'click #removeOrder'                     : 'removeItems',
+            'click .list td:not(.notForm, .checkbox)': 'goToEditDialog'
         },
 
         initialize: function (options) {

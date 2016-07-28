@@ -55,8 +55,6 @@ define([
 
         events: {
             'click .stageSelect'           : 'showNewSelect',
-            //'click  .list td:not(.notForm)': 'goToEditDialog',
-            'click  .list td:not(.notForm)': 'gotoForm',
             'click .newSelectList li'      : 'chooseOption'
         },
 
