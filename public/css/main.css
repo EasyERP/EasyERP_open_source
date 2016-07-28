@@ -11232,9 +11232,6 @@ table#workflows tr td.edit-status {
 }
 /*----------------------------- Login Form --------------------------------*/
 /*----------------------------- Tabs ------------------------------------*/
-ul.dialog-tabs {
-  border-bottom: 1px solid #7f7f80;
-}
 ul.dialog-tabs li {
   float: left;
 }
@@ -12907,9 +12904,6 @@ ul.dialog-tabs li.right button {
 .tabs-items .chart-tabs-item.active {
   display: block;
 }
-ul.dialog-tabs {
-  border-bottom: 1px solid #7f7f80;
-}
 ul.dialog-tabs li {
   float: left;
 }
@@ -13122,6 +13116,9 @@ ul.dialog-tabs .withEndContract .arrow {
   min-height: 17px;
   display: block;
 }
+.dialog-tabs-items {
+  border-top: none;
+}
 .dialog-tabs-items .dialog-tabs-item,
 .dialog-tabs-items .chart-tabs-item {
   display: none;
@@ -13129,9 +13126,6 @@ ul.dialog-tabs .withEndContract .arrow {
 .dialog-tabs-items .dialog-tabs-item.active,
 .dialog-tabs-items .chart-tabs-item.active {
   display: block;
-}
-ul.chart-tabs {
-  border-bottom: 1px solid #7f7f80;
 }
 ul.chart-tabs li {
   float: left;
