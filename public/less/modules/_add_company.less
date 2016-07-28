@@ -77,6 +77,9 @@
   -ms-flex-align: center;
   align-items: center;
 
+  float: left;
+  clear: both;
+
   &.active {
     border-left-color: @blue-3;
   }
@@ -97,15 +100,20 @@
 
     input:not([type=checkbox]) {
       border: none;
-      border-bottom: 1px solid #c8c8d3;
+      border-bottom: none;
       outline: none;
       width: 100%;
       padding: 6px 0;
+      border-bottom: 1px solid #c8c8d3;
 
       &:focus {
         background: @lightgray-2;
         border: none ;
         border-bottom: 1px solid @lightgrey;
+      }
+
+      &.hideLine {
+        border-bottom: none;
       }
     }
   }
@@ -416,9 +424,11 @@
       display: block;
     }
 
-    textarea {
-      padding: 10px 22px 15px 10px !important;
-    }
+  }
+  textarea {
+    padding: 10px 22px 15px 10px !important;
+    width: 100%;
+    resize: none;
   }
 }
 

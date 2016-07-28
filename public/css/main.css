@@ -4368,7 +4368,7 @@ table.kanban tbody td:nth-child(n+2) {
   line-height: 28px;
   text-align: center;
   color: #c8c8d3;
-  z-index: 10;
+  z-index: 1;
 }
 .timeNote .noteContainer .noteBody {
   border-radius: 3px;
@@ -4516,6 +4516,8 @@ table.kanban tbody td:nth-child(n+2) {
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
+  float: left;
+  clear: both;
 }
 .propertyFormList.active {
   border-left-color: #3291c8;
@@ -4532,15 +4534,19 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .propertyFormList .inputBox input:not([type=checkbox]) {
   border: none;
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: none;
   outline: none;
   width: 100%;
   padding: 6px 0;
+  border-bottom: 1px solid #c8c8d3;
 }
 .propertyFormList .inputBox input:not([type=checkbox]):focus {
   background: #fafafa;
   border: none ;
   border-bottom: 1px solid #c8c8d3;
+}
+.propertyFormList .inputBox input:not([type=checkbox]).hideLine {
+  border-bottom: none;
 }
 .propertySubmit {
   text-align: center;
@@ -4782,9 +4788,11 @@ table.kanban tbody td:nth-child(n+2) {
 .addTask.active .buttons {
   display: block;
 }
-.addNote.active textarea,
-.addTask.active textarea {
+.addNote textarea,
+.addTask textarea {
   padding: 10px 22px 15px 10px !important;
+  width: 100%;
+  resize: none;
 }
 .addTask .hasDatepicker {
   float: right;
@@ -7047,6 +7055,899 @@ dl dd span.ui-spinner {
 .scroll {
   height: 200px;
   overflow-y: auto;
+}
+.form {
+  width: 860px;
+  max-width: 860px;
+  margin: 0 auto;
+  background: #ffffff;
+  min-height: 150px;
+  display: block;
+  position: relative;
+  border: 1px solid #7f7f80;
+}
+.form .personsTaskArea {
+  min-height: 95px ;
+}
+.form #internalNotes {
+  resize: none;
+}
+.form #differenceAmount {
+  line-height: 26px;
+}
+.form.employee {
+  width: 100%;
+  max-width: 100%;
+}
+.form .compactList li {
+  border-bottom: 1px solid #7f7f80;
+}
+.form .compactList li.inner {
+  margin: 0 !important;
+  padding: 4px 10px;
+}
+.form .compactList li.inner:hover p {
+  color: #000000;
+}
+.form .compactList li p {
+  line-height: 20px !important;
+  min-height: 20px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .formTitle {
+  width: 100%;
+  border-bottom: 1px solid #7f7f80;
+}
+.form .formTitle.withMargin {
+  margin-bottom: 0;
+}
+.form .formTitle .btnHolder {
+  float: right;
+  height: 26px;
+}
+.form .formTitle .btnHolder .calculateTotal {
+  width: 50%;
+  text-align: right;
+}
+.form .formTitle .btnHolder .calculateTotal .totalAmount {
+  border-top: 1px solid grey;
+}
+.form .formTitle h3 {
+  color: #000000 !important;
+  margin: 0;
+  font-family: Title;
+  font-size: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 4px;
+}
+.form .formTitle h3 span {
+  width: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #000000;
+}
+.form h3 {
+  margin-bottom: 10px;
+  display: block;
+  color: #000000;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form h3 span {
+  padding: 0;
+  width: 99%;
+  display: block;
+  float: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .mainInfo {
+  margin-left: 156px;
+  width: auto;
+  display: block;
+}
+.form .mainInfo h3 {
+  color: #000000;
+  font-size: 24px;
+  line-height: 30px;
+  min-height: 24px;
+  font: 'Open Sans Regular', sans-serif, Verdana;
+}
+.form .mainInfo p {
+  height: 20px !important;
+  line-height: 20px !important;
+  min-height: 20px !important;
+}
+.form .details {
+  border: 1px solid #7f7f80;
+  background: #cecece;
+  padding: 2px 3px;
+  line-height: 5px;
+  text-align: center;
+  color: #999;
+  cursor: pointer;
+  width: 12px;
+  height: 6px;
+}
+.form .details.center {
+  margin: 0 auto;
+}
+.form .details.person {
+  margin-top: -30px;
+  margin-right: -15px;
+  z-index: 100;
+  position: relative;
+}
+.form #details {
+  display: none;
+}
+.form .details-box {
+  display: none;
+}
+.form .social {
+  clear: both;
+}
+.form .social a {
+  display: block;
+  height: 28px;
+  width: 28px;
+  float: left;
+  margin-right: 5px;
+  background-position: top;
+  -webkit-transition: background-position 0.1s ease-in;
+  -moz-transition: background-position 0.1s ease-in;
+  -o-transition: background-position 0.1s ease-in;
+  transition: background-position 0.1s ease-in;
+}
+.form .social a:hover {
+  background-position: bottom;
+}
+.form .social .facebook {
+  background: url("../images/facebook.png");
+}
+.form .social .linkedin {
+  background: url("../images/linkedin.png");
+}
+.form .social .skype {
+  background: url("../images/skype.png");
+}
+.form .avatar {
+  display: block;
+  overflow: hidden;
+  width: 140px;
+  height: 140px;
+  margin: 10px 0 10px 0;
+  float: left;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+  border: none;
+}
+.form .avatar img {
+  height: auto;
+  width: 100%;
+}
+.form .avatar canvas {
+  height: auto;
+  width: 100%;
+}
+.form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 20px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 20px;
+}
+.form .inner .half-block textarea {
+  width: 99%;
+  resize: none;
+  padding: 10px 5px;
+}
+.form > #tabList li {
+  float: left;
+  margin: 0 2px 5px 0;
+}
+.form h2 {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 24px !important;
+  margin-bottom: 12px;
+}
+.form h2:first-of-type {
+  font-size: 26px;
+  color: #000000;
+  margin: 0 0 8px;
+}
+.form p {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 13px;
+  line-height: 30px;
+  min-height: 30px;
+}
+.form p label {
+  margin-bottom: 2px;
+}
+.form p input {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.form p select {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.form span#saveSpan a,
+.form span#cancelSpan a,
+.form span#editSpan a {
+  margin-left: 5px;
+  width: 16px;
+  height: 20px;
+  font-size: 16px;
+  background: no-repeat 0 50%;
+  margin-right: 5px;
+  font-family: Icons;
+}
+.form span#saveSpan i,
+.form span#cancelSpan i,
+.form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.form #cancelSpan a,
+.form #saveSpan a,
+.form #editSpan a {
+  color: #3e88b9;
+}
+.form label {
+  display: block;
+  float: left;
+  width: 90%;
+  height: 30px;
+  line-height: 26px;
+  color: #000000;
+}
+.form input {
+  margin: 2px 2px 2px 0;
+}
+.form textarea {
+  width: 99%;
+  min-height: 160px;
+  resize: none;
+}
+.form .job-create-info textarea {
+  width: 99%;
+  height: 160px;
+  resize: none;
+  line-height: 20px;
+}
+.form #internalNotes {
+  resize: none;
+}
+.form #differenceAmount {
+  line-height: 26px;
+}
+.form.employee {
+  width: 100%;
+  max-width: 100%;
+}
+.form .compactList li {
+  border-bottom: 1px solid #7f7f80;
+}
+.form .compactList li.inner {
+  margin: 0 !important;
+  padding: 4px 10px;
+}
+.form .compactList li.inner:hover p {
+  color: #000000;
+}
+.form .compactList li p {
+  line-height: 20px !important;
+  min-height: 20px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .formTitle {
+  width: 100%;
+  border-bottom: 1px solid #7f7f80;
+}
+.form .formTitle.withMargin {
+  margin-bottom: 0;
+}
+.form .formTitle .btnHolder {
+  float: right;
+  height: 26px;
+}
+.form .formTitle .btnHolder .calculateTotal {
+  width: 50%;
+  text-align: right;
+}
+.form .formTitle .btnHolder .calculateTotal .totalAmount {
+  border-top: 1px solid grey;
+}
+.form .formTitle h3 {
+  color: #000000 !important;
+  margin: 0;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-size: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 4px;
+}
+.form .formTitle h3 span {
+  width: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #000000;
+}
+.form .formTitle .area_holder {
+  position: relative;
+}
+.form .formTitle .area_holder .attach_file {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 18px;
+  color: #000000;
+}
+.form h3 {
+  margin-bottom: 10px;
+  display: block;
+  color: #000000;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form h3 span {
+  padding: 0;
+  width: 99%;
+  display: block;
+  float: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .mainInfo {
+  margin-left: 156px;
+  width: auto;
+  display: block;
+}
+.form .mainInfo h3 {
+  color: #000000;
+  font-size: 24px;
+  line-height: 30px;
+  min-height: 24px;
+  font: 'Open Sans Regular', sans-serif, Verdana;
+}
+.form .mainInfo p {
+  height: 20px !important;
+  line-height: 20px !important;
+  min-height: 20px !important;
+}
+.form .details {
+  border: 1px solid #7f7f80;
+  background: #cecece;
+  padding: 2px 3px;
+  line-height: 5px;
+  text-align: center;
+  color: #999;
+  cursor: pointer;
+  width: 12px;
+  height: 6px;
+}
+.form .details.center {
+  margin: 0 auto;
+}
+.form .details.person {
+  margin-top: -30px;
+  margin-right: -15px;
+  z-index: 100;
+  position: relative;
+}
+.form #details {
+  display: none;
+}
+.form .details-box {
+  display: none;
+}
+.form .social {
+  clear: both;
+}
+.form .social a {
+  display: block;
+  height: 28px;
+  width: 28px;
+  float: left;
+  margin-right: 5px;
+  background-position: top;
+  -webkit-transition: background-position 0.1s ease-in;
+  -moz-transition: background-position 0.1s ease-in;
+  -o-transition: background-position 0.1s ease-in;
+  transition: background-position 0.1s ease-in;
+}
+.form .social a:hover {
+  background-position: bottom;
+}
+.form .social .facebook {
+  background: url("../images/facebook.png");
+}
+.form .social .linkedin {
+  background: url("../images/linkedin.png");
+}
+.form .social .skype {
+  background: url("../images/skype.png");
+}
+.form .avatar {
+  display: block;
+  overflow: hidden;
+  width: 140px;
+  height: 140px;
+  margin: 10px 0 10px 0;
+  float: left;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+  border: none;
+}
+.form .avatar img {
+  height: auto;
+  width: 100%;
+}
+.form .avatar canvas {
+  height: auto;
+  width: 100%;
+}
+.form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 20px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.form .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.form .avatar .upload input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 20px;
+}
+.form .inner .half-block textarea {
+  width: 99%;
+  resize: none;
+  padding: 10px 5px;
+}
+.form > #tabList li {
+  float: left;
+  margin: 0 2px 5px 0;
+}
+.form h2 {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 24px !important;
+  margin-bottom: 12px;
+}
+.form h2:first-of-type {
+  font-size: 26px;
+  color: #000000;
+  margin: 0 0 8px;
+}
+.form p {
+  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  color: #000000;
+  font-size: 13px;
+  line-height: 30px;
+  min-height: 30px;
+}
+.form p label {
+  margin-bottom: 2px;
+}
+.form p input {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.form p select {
+  margin-bottom: 2px;
+  width: 90%;
+}
+.form span#saveSpan a,
+.form span#cancelSpan a,
+.form span#editSpan a {
+  margin-left: 5px;
+  width: 16px;
+  height: 20px;
+  font-size: 16px;
+  background: no-repeat 0 50%;
+  margin-right: 5px;
+  font-family: Icons;
+}
+.form span#saveSpan i,
+.form span#cancelSpan i,
+.form span#editSpan i {
+  margin: 0 5px;
+  line-height: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.form #cancelSpan a,
+.form #saveSpan a,
+.form #editSpan a {
+  color: #3e88b9;
+}
+.form label {
+  display: block;
+  float: left;
+  width: 90%;
+  line-height: 26px;
+  color: #000000;
+}
+.form input {
+  margin: 2px 2px 2px 0;
+}
+.form textarea {
+  width: 99%;
+  min-height: 60px;
+  resize: none;
+}
+.form .job-create-info textarea {
+  width: 99%;
+  height: 160px;
+  resize: none;
+  line-height: 20px;
+}
+.form .noteWrapper .formTitle h3,
+.form .moduleList .formTitle h3 {
+  padding: 0;
+}
+.form .job-info {
+  clear: both;
+  font-size: 14px;
+  color: #000000;
+}
+.form .job-info dt {
+  padding: 1px;
+  margin: -1px;
+  width: 30%;
+  max-width: 300px;
+  float: left;
+  clear: both;
+  line-height: 30px;
+  min-height: 18px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .job-info dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .job-info dt:first-child {
+  margin-top: 0;
+}
+.form .job-info dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 30px;
+  min-height: 18px;
+  float: left;
+  width: 70%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .job-info dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .job-info dd:nth-child(2) {
+  margin-top: 0;
+}
+.form .job-info dd input:not([type='checkbox']) {
+  width: 100%;
+}
+.form .job-info dd input.pikerSize {
+  width: 137px;
+}
+.form .job-info dd a.formLink {
+  line-height: 30px;
+}
+.form .job-info dd span.ui-spinner {
+  width: 100%;
+}
+.form .opp-info {
+  clear: both;
+  font-size: 14px;
+}
+.form .opp-info dt {
+  padding: 1px;
+  margin: -1px;
+  width: 40%;
+  max-width: 300px;
+  float: left;
+  clear: both;
+  line-height: 30px;
+  min-height: 18px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .opp-info dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .opp-info dt:first-child {
+  margin-top: 0;
+}
+.form .opp-info dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 30px;
+  min-height: 18px;
+  float: left;
+  width: 60%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .opp-info dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .opp-info dd:nth-child(2) {
+  margin-top: 0;
+}
+.form .opp-info dd input:not([type='checkbox']) {
+  width: 100%;
+}
+.form .opp-info dd input.pikerSize {
+  width: 137px;
+}
+.form .opp-info dd a.formLink {
+  line-height: 30px;
+}
+.form .opp-info dd span.ui-spinner {
+  width: 100%;
+}
+.form .opp-info input {
+  width: 80% !important;
+}
+.form .internal-info {
+  clear: both;
+  font-size: 14px;
+}
+.form .internal-info dt {
+  padding: 1px;
+  margin: -1px;
+  width: 20%;
+  max-width: 132px;
+  float: left;
+  clear: both;
+  line-height: 30px;
+  min-height: 18px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .internal-info dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .internal-info dt:first-child {
+  margin-top: 0;
+}
+.form .internal-info dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 30px;
+  min-height: 18px;
+  float: left;
+  width: 80%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .internal-info dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .internal-info dd:nth-child(2) {
+  margin-top: 0;
+}
+.form .internal-info dd input:not([type='checkbox']) {
+  width: 100%;
+}
+.form .internal-info dd input.pikerSize {
+  width: 137px;
+}
+.form .internal-info dd a.formLink {
+  line-height: 30px;
+}
+.form .internal-info dd span.ui-spinner {
+  width: 100%;
+}
+.form .internal-info textarea {
+  width: 94%;
+  resize: none;
+  padding: 5px;
+}
+.form .assignees-info {
+  clear: both;
+  font-size: 14px;
+}
+.form .assignees-info dt {
+  padding: 1px;
+  margin: -1px;
+  width: 20%;
+  max-width: 200px;
+  float: left;
+  clear: both;
+  line-height: 0;
+  min-height: 18px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .assignees-info dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .assignees-info dt:first-child {
+  margin-top: 0;
+}
+.form .assignees-info dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 0;
+  min-height: 18px;
+  float: left;
+  width: 80%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form .assignees-info dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form .assignees-info dd:nth-child(2) {
+  margin-top: 0;
+}
+.form .assignees-info dd input:not([type='checkbox']) {
+  width: 100%;
+}
+.form .assignees-info dd input.pikerSize {
+  width: 137px;
+}
+.form .assignees-info dd a.formLink {
+  line-height: 0;
+}
+.form .assignees-info dd span.ui-spinner {
+  width: 100%;
+}
+.form .assignees-info input {
+  max-width: 180px !important;
+}
+.form .assignees-info select {
+  max-width: 190px !important;
+}
+.form .assignees-info .current-selected {
+  line-height: 27px !important;
+  color: #3e88b9;
 }
 .hidden {
   display: none !important;
