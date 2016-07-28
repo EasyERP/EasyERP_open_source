@@ -207,12 +207,13 @@ define([
                     },
                     wait: true,
                     success: function (savedModel) {
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+                        //var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
                         self.attachView.sendToServer(null, savedModel.changed);
 
                         self.hideDialog();
-                        Backbone.history.navigate(redirectUrl, {trigger: true});
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
                     },
 
                     error: function (model, xhr) {

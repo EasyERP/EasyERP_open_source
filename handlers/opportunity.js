@@ -2299,6 +2299,10 @@ var Module = function (models, event) {
 
                 case ('Opportunities'):
                     aggregateQuery.push({
+                        $match: {
+                            $and: optionsObject
+                        }
+                    }, {
                         $lookup: {
                             from        : 'Customers',
                             localField  : 'customer',
@@ -2317,13 +2321,8 @@ var Module = function (models, event) {
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
                             'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                            'createdBy.date': 1,
                             'editedBy.date' : 1,
                             isOpportunitie  : 1
-                        }
-                    }, {
-                        $match: {
-                            $and: optionsObject
                         }
                     }, {
                         $group: {
@@ -2349,7 +2348,6 @@ var Module = function (models, event) {
                             'salesPerson.name': '$root.salesPerson.name',
                             'createdBy.user'  : '$root.createdBy.user.login',
                             'editedBy.user'   : '$root.editedBy.user.login',
-                            'createdBy.date'  : '$root.createdBy.date',
                             'editedBy.date'   : '$root.editedBy.date',
                             total             : 1
 
