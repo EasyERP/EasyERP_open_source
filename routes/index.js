@@ -125,9 +125,11 @@ module.exports = function (app, mainDb) {
         res.sendfile('index.html');
     });
 
-    app.get('/clearRedisStorage', function (req, res, next) {
-        redisStore.removeAllFromStorage();
-        res.status(200).send({success: 'Redis cleaned success'});
+    app.get('/clearCashStorage', function (req, res, next) {
+        redisStore.removeAllStorages();
+
+        event.emit('clearAllCashedData');
+        res.status(200).send({success: 'All cash cleaned success'});
     });
 
     app.use('/filter', filterRouter);

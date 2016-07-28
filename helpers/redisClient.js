@@ -7,6 +7,7 @@
     };
     var redis = require('redis');
     var client = redis.createClient(config.port, config.host, {});
+    var async = require('async');
 
     client.select(config.db, function (err) {
         if (err) {
@@ -47,10 +48,35 @@
         client.del(name, redis.print);
     }
 
+    function removeAllStorages(name) {
+
+        client.keys('*', function (err, keys) {
+            if (err) {
+                return console.log(err);
+            }
+
+            async.each(keys, function (elem, cb) {
+                client.del(elem, function (err) {
+                    if (err) {
+                        cb(err);
+                    }
+                    cb();
+                });
+            }, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+                console.log('---------- Removed All from Redish ---------');
+            });
+
+        });
+    }
+
     return {
         writeToStorage      : writeToStorage,
         removeFromStorage   : removeFromStorage,
         removeAllFromStorage: removeAllFromStorage,
-        readFromStorage     : readFromStorage
+        readFromStorage     : readFromStorage,
+        removeAllStorages   : removeAllStorages
     };
 })();
