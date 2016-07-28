@@ -67,8 +67,6 @@ define([
         },
 
         events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
-            //'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {

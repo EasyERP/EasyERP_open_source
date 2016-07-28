@@ -3,342 +3,168 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Companies/form/FormTemplate.html',
-    'views/Companies/EditView',
-    'views/Opportunities/compactContent',
-    'views/Persons/compactContent',
-    'custom',
+    'text!templates/Companies/aboutTemplate.html',
+    'views/Editor/NoteView',
+    'views/Editor/AttachView',
+    'views/Persons/formPropertyArray/formPropertyView',
+    'views/Opportunities/formProperty/formPropertyView',
     'common',
+    'constants',
     'dataService',
-    'views/Notes/NoteView',
-    'views/Opportunities/CreateView',
-    'views/Persons/CreateView',
-    'constants'
+    'views/selectView/selectView'
 ], function (Backbone,
              $,
              _,
-             CompaniesFormTemplate,
-             EditView,
-             OpportunitiesCompactContentView,
-             PersonsCompactContentView,
-             Custom,
+             companyFormTemplate,
+             aboutTemplate,
+             EditorView,
+             AttachView,
+             PersonFormProperty,
+             OpportunityFormProperty,
              common,
+             CONSTANTS,
              dataService,
-             NoteView,
-             CreateViewOpportunities,
-             CreateViewPersons,
-             CONSTANTS) {
+             SelectView) {
     'use strict';
 
-    var FormCompaniesView = Backbone.View.extend({
-        el         : '#content-holder',
-        contentType: 'Companies',
-        flag       : true,
+    var personTasksView = Backbone.View.extend({
+        el: '#content-holder',
 
         initialize: function (options) {
-            var self = this;
-            var formModel;
 
+            App.currentPerson = options.model.get('id');
+
+            this.io = App.socket;
             this.mId = CONSTANTS.MID[this.contentType];
-            _.bindAll(this, 'render');
             this.formModel = options.model;
-
-            App.currentCompany = options.model.get('id');
-
-
+            this.responseObj = {};
             this.formModel.urlRoot = '/Companies';
-            this.pageMini = 1;
-            this.pageCount = 4;
-            this.allMiniOpp = 0;
-            this.allPages = 0;
+            _.bindAll(this, 'saveModel');
 
-            this.pageMiniPersons = 1;
-            this.pageCountPersons = 4;
-            this.allMiniPersons = 0;
-            this.allPagesPersons = 0;
+            this.modelChanged = {};
+        },
 
-            formModel = this.formModel.toJSON();
-            common.populateOpportunitiesForMiniView('/opportunities/OpportunitiesForMiniView', null, formModel._id, this.pageMini, this.pageCount, true, function (count) {
-                self.allMiniOpp = count.listLength;
-                self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
+        showEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '20px',
+                display: 'block'
+            }, 250);
 
-                if (self.allPages === self.pageMini) {
-                    $('.miniPagination .next').addClass('not-active');
-                    $('.miniPagination .last').addClass('not-active');
-                }
+        },
 
-                if (self.allPages === 1) {
-                    $('.miniPagination').hide();
-                }
-            });
-            this.populatePersonsForMiniView('/persons/getPersonsForMiniView', formModel._id, this.pageMiniPersons, this.pageCountPersons, true, function (count) {
-                self.allMiniPersons = count.listLength;
-                self.allPagesPersons = Math.ceil(self.allMiniPersons / self.pageCountPersons);
+        hideEdit: function () {
+            this.$el.find('.upload').animate({
+                height : '0px',
+                display: 'block'
+            }, 250);
 
-                if (self.allPagesPersons === self.pageMiniPersons) {
-                    $('.miniPaginationPersons .next').addClass('not-active');
-                    $('.miniPaginationPersons .last').addClass('not-active');
-                }
-
-                if (self.allPagesPersons === 1) {
-                    $('.miniPaginationPersons').hide();
-                }
-            });
         },
 
         events: {
-            'click #tabList a'                                           : 'switchTab',
-            'click .details'                                             : 'toggle',
-            'mouseover .social a'                                        : 'socialActive',
-            'mouseout .social a'                                         : 'socialNotActive',
-            'mouseenter .editable:not(.quickEdit)'                       : 'quickEdit',
-            'mouseleave .editable'                                       : 'removeEdit',
-            'click #editSpan'                                            : 'editClick',
-            'click #cancelSpan'                                          : 'cancelClick',
-            'click #saveSpan'                                            : 'saveClick',
-            'click .btnHolder .add.opportunities'                        : 'addOpportunities',
-            'click .btnHolder .add.persons'                              : 'addPersons',
-            'click .miniPagination .next:not(.not-active)'               : 'nextMiniPage',
-            'click .miniPagination .prev:not(.not-active)'               : 'prevMiniPage',
-            'click .miniPagination .first:not(.not-active)'              : 'firstMiniPage',
-            'click .miniPagination .last:not(.not-active)'               : 'lastMiniPage',
-            'click .miniPaginationPersons .nextPersons:not(.not-active)' : 'nextMiniPagePersons',
-            'click .miniPaginationPersons .prevPersons:not(.not-active)' : 'prevMiniPagePersons',
-            'click .miniPaginationPersons .firstPersons:not(.not-active)': 'firstMiniPagePersons',
-            'click .miniPaginationPersons .lastPersons:not(.not-active)' : 'lastMiniPagePersons'
+            click                                              : 'hideNewSelect',
+            'mouseenter .avatar'                               : 'showEdit',
+            'mouseleave .avatar'                               : 'hideEdit',
+            'click #tabList a'                                 : 'switchTab',
+            'keyup .editable'                                  : 'setChangeValueToModel',
+            'click #cancelBtn'                                 : 'cancelChanges',
+            'click #saveBtn'                                   : 'saveChanges',
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
-        nextMiniPagePersons: function () {
-            this.pageMiniPersons += 1;
-            this.renderMiniPersons();
-        },
+        hideNewSelect: function () {
+            this.$el.find('.newSelectList').hide();
 
-        prevMiniPagePersons: function () {
-            this.pageMiniPersons -= 1;
-            this.renderMiniPersons();
-        },
-
-        firstMiniPagePersons: function () {
-            this.pageMiniPersons = 1;
-            this.renderMiniPersons();
-        },
-
-        lastMiniPagePersons: function () {
-            this.pageMiniPersons = this.allPagesPersons;
-            this.renderMiniPersons();
-        },
-
-        nextMiniPage: function () {
-            this.pageMini += 1;
-            this.renderMiniOpp();
-        },
-
-        prevMiniPage: function () {
-            this.pageMini -= 1;
-            this.renderMiniOpp();
-        },
-
-        firstMiniPage: function () {
-            this.pageMini = 1;
-            this.renderMiniOpp();
-        },
-
-        lastMiniPage: function () {
-            this.pageMini = this.allPages;
-            this.renderMiniOpp();
-        },
-
-        populatePersonsForMiniView: function (url, companyId, page, count, onlyCount, callback) {
-            dataService.getData(url, {
-                companyId: companyId,
-                page     : page,
-                count    : count,
-                onlyCount: onlyCount
-            }, function (response) {
-                if (callback) {
-                    callback(response);
-                }
-            });
-        },
-
-        renderMiniPersons: function () {
-            var self = this;
-            var formModel = this.formModel.toJSON();
-
-            this.populatePersonsForMiniView('/persons/getPersonsForMiniView', formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
-                var isLast = self.pageMiniPersons === self.allPagesPersons;
-                var perElem = self.$el.find('#persons');
-                perElem.empty();
-                perElem.append(
-                    new PersonsCompactContentView({
-                        collection: collection.data
-                    }).render({
-                        first: self.pageMiniPersons === 1,
-                        last : isLast,
-                        all  : self.allPagesPersons
-                    }).el
-                );
-            });
-        },
-
-        renderMiniOpp: function () {
-            var self = this;
-            var formModel = this.formModel.toJSON();
-            common.populateOpportunitiesForMiniView('/opportunities/OpportunitiesForMiniView', null, formModel._id, this.pageMini, this.pageCount, false, function (collection) {
-                var isLast = self.pageMini === self.allPages || false;
-                var oppElem = self.$el.find('#opportunities');
-                oppElem.empty();
-                oppElem.prepend(
-                    new OpportunitiesCompactContentView({
-                        collection: collection.data
-                    }).render({
-                        first: self.pageMini === 1,
-                        last : isLast,
-                        all  : self.allPages
-                    }).el
-                );
-            });
-        },
-
-        render: function () {
-            var formModel = this.formModel.toJSON();
-            this.$el.html(_.template(CompaniesFormTemplate, formModel));
-            this.renderMiniOpp();
-            this.renderMiniPersons();
-            this.$el.find('.formLeftColumn').append(
-                new NoteView({
-                    model: this.formModel,
-                    contentType: 'Companies'
-                }).render().el
-            );
-
-            $(window).on('resize', function () {
-                $('#editInput').width($('#editInput').parent().width() - 55);
-
-            });
-            return this;
-        },
-
-        editItem: function () {
-            return new EditView({model: this.formModel});
-        },
-
-        quickEdit: function (e) {
-            var trId = $(e.target).closest('dd');
-            if ($('#' + trId.attr('id')).find('#editSpan').length === 0) {
-                $('#' + trId.attr('id')).append('<span id="editSpan" class=""><a href="#">e</a></span>');
-                if ($('#' + trId.attr('id')).width() - 40 < $('#' + trId.attr('id')).find('.no-long').width()) {
-                    $('#' + trId.attr('id')).find('.no-long').width($('#' + trId.attr('id')).width() - 40);
-                }
+            if (this.selectView) {
+                this.selectView.remove();
             }
         },
 
-        addOpportunities: function (e) {
-            var model;
+        setChangeValueToModel: function (e) {
+            var $target = $(e.target);
+            var property = $target.attr('data-id').replace('_', '.');
+            var value = $target.val();
 
-            e.preventDefault();
-            model = this.formModel.toJSON();
+            $target.closest('.propertyFormList').addClass('active');
 
-            return new CreateViewOpportunities({
-                model    : model,
-                elementId: 'companyAttach'
-            });
+            this.modelChanged[property] = value;
+            this.showButtons();
         },
 
-        addPersons: function (e) {
-            var model = this.formModel.toJSON();
-
-            e.preventDefault();
-            return new CreateViewPersons({model: model});
+        showButtons: function () {
+            this.$el.find('#formBtnBlock').addClass('showButtons');
         },
 
-        removeEdit: function () {
-            $('#editSpan').remove();
-            $('dd .no-long').css({width: 'auto'});
+        hideButtons: function () {
+            this.$el.find('#formBtnBlock').removeClass('showButtons');
         },
 
-        cancelClick: function (e) {
+        saveChanges: function (e) {
             e.preventDefault();
-
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
-            $('.quickEdit').text(this.text).removeClass('quickEdit');
-            //Backbone.history.fragment = '';
-            //Backbone.history.navigate('#easyErp/Companies/form/' + this.formModel.id, {trigger: true});
+            this.saveModel(this.modelChanged);
         },
 
-        editClick: function (e) {
-            var maxlength = $('#' + $(e.target).parent().parent()[0].id).find('.no-long').attr('data-maxlength') || 32;
-            var parent;
-
+        cancelChanges: function (e) {
             e.preventDefault();
-
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
-            $('.quickEdit').text(this.text).removeClass('quickEdit');
-
-            parent = $(e.target).parent().parent();
-            $('#' + parent[0].id).addClass('quickEdit');
-            $('#editSpan').remove();
-            this.text = $('#' + parent[0].id).text();
-            $('#' + parent[0].id).text('');
-            $('#' + parent[0].id).append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
-            $('#editInput').val(this.text);
-            $('#' + parent[0].id).append('<span id="saveSpan"><a href="#">c</a></span>');
-            $('#' + parent[0].id).append('<span id="cancelSpan"><a href="#">x</a></span>');
-            $('#' + parent[0].id).find('#editInput').width($('#' + parent[0].id).find('#editInput').width() - 50);
+            this.modelChanged = {};
+            this.renderAbout();
         },
 
-        saveClick: function (e) {
-            var parent = $(e.target).parent().parent();
-            var objIndex = parent[0].id.split('_');
-            var currentModel = this.formModel;
-            var newModel = {};
-            var oldvalue = {};
-            var mid = this.mId;
-            var self = this;
-            var param;
-            var valid;
-            var i;
+        showNewSelect: function (e) {
+            var $target = $(e.target);
 
-            this.text = $('#' + parent[0].id).find('#editInput').val();
+            e.stopPropagation();
 
-            e.preventDefault();
-
-            if (objIndex.length > 1) {
-                for (i in this.formModel.toJSON()[objIndex[0]]) {
-                    oldvalue[i] = this.formModel.toJSON()[objIndex[0]][i];
-                }
-                param = currentModel.get(objIndex[0]) || {};
-                param[objIndex[1]] = $('#editInput').val().replace('http://', '');
-                newModel[objIndex[0]] = param;
-            } else {
-                oldvalue = this.formModel.toJSON()[objIndex[0]];
-                newModel[objIndex[0]] = $('#editInput').val().replace('http://', '');
+            if ($target.attr('id') === 'selectInput') {
+                return false;
             }
 
-            valid = this.formModel.save(newModel, {
-                headers: {
-                    mid: mid
-                },
+            if (this.selectView) {
+                this.selectView.remove();
+            }
 
+            this.selectView = new SelectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
+        },
+
+        chooseOption: function (e) {
+            var $target = $(e.target);
+            var holder = $target.parents('.inputBox').find('.current-selected');
+            var type = $target.closest('a').attr('data-id').replace('_', '.');
+            var text = $target.text();
+            var id = $target.attr('id');
+
+            holder.text($target.text());
+
+            this.modelChanged[type] = id;
+            this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+            this.showButtons();
+        },
+
+        saveModel: function (changedAttrs, type) {
+            var self = this;
+
+            this.formModel.save(changedAttrs, {
+                wait   : true,
                 patch  : true,
-                success: function (model) {
-                    App.render({
-                        type   : 'notify',
-                        message: "Saving is successfully"
-                    });
-
-                    $('.quickEdit #editInput').remove();
-                    $('.quickEdit #cancelSpan').remove();
-                    $('.quickEdit #saveSpan').remove();
-                    $('.quickEdit').text(self.text).removeClass('quickEdit');
-                    //Backbone.history.fragment = '';
-                    //Backbone.history.navigate('#easyErp/Companies/form/' + model.id, {trigger: true});
+                success: function () {
+                    if (type === 'formProperty') {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
+                    } else {
+                        self.editorView.renderTimeline();
+                        self.renderAbout();
+                        self.modelChanged = {};
+                        self.hideButtons();
+                    }
                 },
-
-                error: function (model, response) {
+                error  : function (model, response) {
                     if (response) {
                         App.render({
                             type   : 'error',
@@ -347,83 +173,85 @@ define([
                     }
                 }
             });
-
-            if (!valid) {
-                newModel[objIndex[0]] = oldvalue;
-                this.formModel.set(newModel);
-            }
         },
 
-        toggle: function () {
-            this.$('#details').animate({
-                height: 'toggle'
-            }, 250, function () {
-            });
-        },
+        /*deleteItems: function () {
+            var mid = 39;
 
-        socialActive: function (e) {
-            e.preventDefault();
-
-            $(e.target).stop().animate({
-                'background-position-y': '-38px'
-            }, 300);
-        },
-
-        socialNotActive: function (e) {
-            e.preventDefault();
-
-            $(e.target).stop().animate({
-                'background-position-y': '0px'
-
-            }, 300);
-        },
-
-        switchTab: function (e) {
-            var $link = this.$('#tabList a');
-            var index;
-
-            e.preventDefault();
-
-            if ($link.hasClass('selected')) {
-                $link.removeClass('selected');
-            }
-
-            index = $link.index($(e.target).addClass('selected'));
-            this.$('.tab').hide().eq(index).show();
-        },
-
-        deleteItems: function () {
-            var mid = this.mId;
-            var answer;
-            
-            answer = confirm('Really DELETE item ?!');
-
-            if (answer === false) {
-                return false;
-            }
-            
             this.formModel.destroy({
                 headers: {
                     mid: mid
                 },
-
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Companies/thumbnails', {trigger: true});
-                },
-
-                error: function (model, err) {
-                    if (err.status === 403) {
-                        App.render({
-                            type   : 'error',
-                            message: 'You do not have permission to perform this action'
-                        });
-                    }
+                    Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
                 }
-
             });
 
+        },*/
+
+        renderAbout: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            common.canvasDraw({model: this.formModel.toJSON()}, this);
+        },
+
+        render: function () {
+            var formModel = this.formModel.toJSON();
+            var self = this;
+            var $thisEl = this.$el;
+
+            $thisEl.html(_.template(companyFormTemplate, formModel));
+
+            dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
+
+                    return employee;
+                });
+
+                self.responseObj['#salesPersonDd'] = employees;
+            });
+
+            this.formProperty = new PersonFormProperty({
+                parentModel: this.formModel,
+                attribute  : 'company',
+                saveDeal   : self.saveModel
+            });
+
+            $thisEl.find('#contactsHolder').html(
+                this.formProperty.render().el
+            );
+
+            $thisEl.find('#opportunitiesHolder').html(
+                new OpportunityFormProperty({
+                    parentModel: this.formModel,
+                    attribute  : 'company',
+                    saveModel  : self.saveModel
+                }).render().el
+            );
+
+            this.editorView = new EditorView({
+                model      : this.formModel,
+                contentType: 'Companies'
+            });
+
+            $thisEl.find('.notes').append(
+                this.editorView.render().el
+            );
+            common.canvasDraw({model: this.formModel.toJSON()}, this);
+
+            $thisEl.find('.attachments').append(
+                new AttachView({
+                    model      : this.formModel,
+                    contentType: 'Companies'
+                }).render().el
+            );
+
+            return this;
         }
+
     });
 
-    return FormCompaniesView;
+    return personTasksView;
 });

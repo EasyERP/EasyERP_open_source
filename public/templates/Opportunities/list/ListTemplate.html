@@ -16,9 +16,6 @@
     <td><%=(opportunity.salesPerson && opportunity.salesPerson.name) ? opportunity.salesPerson.name.first + ' ' +
         opportunity.salesPerson.name.last : ''%>
     </td>
-    <td><%=opportunity.createdBy.user?(opportunity.createdBy.date + ' (' + opportunity.createdBy.user +
-        ')'):(opportunity.createdBy.date?opportunity.createdBy.date:'')%>
-    </td>
     <td><%=(opportunity.editedBy&&opportunity.editedBy.date)?( opportunity.editedBy.date + ((opportunity.editedBy.user)
         ?(' (' + opportunity.editedBy.user + ')') : '')):''%>
     </td>
