@@ -1939,6 +1939,9 @@
 .social {
   margin-top: 20px; }
 
+.ui-dialog .ui-dialog-buttonpane {
+  border-top: none; }
+
 .ui-dialog ._salesModal {
   padding: 10px 20px; }
   .ui-dialog ._salesModal .modal_title {
