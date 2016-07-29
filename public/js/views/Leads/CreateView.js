@@ -138,7 +138,7 @@ define([
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 dialogClass  : 'edit-dialog',
-                width        : '900',
+                width        : '450px',
                 title        : 'Create Lead',
                 buttons      : {
                     save: {
