@@ -1002,7 +1002,7 @@ var Module = function (models, event) {
         };
 
         var historyMatchObjForAssignedTo = {
-            $and: [{'$and': [{'changedField': 'salesPerson'}, {$or: [{'contentType': 'opportunitie'}, {'contentType': 'lead'}]}]}]
+            $and: [{$and: [{changedField: 'salesPerson'}, {$or: [{contentType: 'opportunitie'}, {contentType: 'lead'}]}]}]
         };
 
         var historyMatchObj = {
@@ -1032,7 +1032,7 @@ var Module = function (models, event) {
             });
         }
 
-        if (stage === 'Qualified') {
+        if (stage === 'Qualified' ||  stage === 'qualifiedFrom') {
             secondMatchObj = {'workflows.name': 'Qualified'};
         }
 
@@ -1191,12 +1191,6 @@ var Module = function (models, event) {
                             _id        : 0
                         }
                     }, {
-                        $group: {
-                            _id       : '$salesPerson',
-                            salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                            count     : {$sum: '$count'}
-                        }
-                    }, {
                         $sort: {_id: -1}
                     }
                 ], parCb);
@@ -1249,8 +1243,7 @@ var Module = function (models, event) {
                             date  : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
                             isOpp : '$lead.isOpportunitie',
                             dateBy: {$dayOfYear: '$date'},
-                            isNull: {ifNull: ['$lead.source', '']},
-                            source: '$lead.source'
+                            source: {$ifNull: ['$lead.source', '']}
                         }
                     }, {
                         $project: {
