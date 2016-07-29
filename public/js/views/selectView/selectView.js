@@ -205,9 +205,20 @@ define([
                         case ('jobPositionDd') :
                             type = 'JobPositions';
                             break;
-                        case ('departmentsDd') :
+                        case ('departmentsDd' || 'department') :
                             type = 'Departments';
                             break;
+                        case ('projectDd') :
+                            type = 'Projects';
+                            break;
+                        case ('paymentMethod') :
+                            type = 'Accounts';
+                            break;
+                        case ('chartAccount') :
+                            type = 'ChartOfAccount';
+                            break;
+                        case ('employee') :
+                            type = 'Employees';
                     }
 
                     if (type) {
