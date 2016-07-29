@@ -2335,3 +2335,81 @@
       border-radius: 0 30px 30px 0; }
       .tabListWrap .tabListItem:last-child:before, .tabListWrap .tabListItem:last-child:after {
         content: none; }
+
+._filterDropDownWrap {
+  position: relative;
+  height: 26px;
+  width: 240px;
+  z-index: 2000; }
+  ._filterDropDownWrap > ul {
+    position: absolute;
+    width: 100%;
+    background-color: #fff; }
+  ._filterDropDownWrap li {
+    position: relative;
+    display: block;
+    line-height: 25px; }
+
+._filterDropDownWrap .dateRangeLeadsBySale {
+  text-align: right;
+  color: #333;
+  cursor: pointer; }
+
+._filterDropDownBody {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #eee;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
+  ._filterDropDownBody:after {
+    position: absolute;
+    top: -5px;
+    right: 10px;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #fff;
+    border-left: 6px solid transparent;
+    content: ''; }
+  ._filterDropDownBody:before {
+    position: absolute;
+    top: -6px;
+    right: 9px;
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #e4e4e4;
+    border-left: 7px solid transparent;
+    content: ''; }
+  ._filterDropDownBody .filterValues {
+    font-size: 13px;
+    background: #f5f5f5;
+    border: 1px solid #f5f5f5;
+    color: #333;
+    padding: 0 12px;
+    margin-bottom: 8px;
+    text-align: left; }
+    ._filterDropDownBody .filterValues:hover, ._filterDropDownBody .filterValues.checkedValue {
+      background: #7eadcc;
+      border: 1px solid #7eadcc;
+      color: #fff; }
+  ._filterDropDownBody .buttons {
+    width: 100%;
+    background-color: #fff;
+    border: 0;
+    text-align: center; }
+  ._filterDropDownBody .customTimeLeadsBySale .customTimeItem {
+    margin-bottom: 7px; }
+    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem > label {
+      float: left;
+      clear: both;
+      line-height: 26px; }
+    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem > input {
+      height: 26px;
+      width: 165px;
+      float: right;
+      cursor: pointer; }
+    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem:after {
+      content: '';
+      display: table;
+      clear: both; }
+
+.chartTopBox ._filterDropDownWrap {
+  margin-top: 9px; }

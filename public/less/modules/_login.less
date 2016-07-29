@@ -1460,6 +1460,7 @@ dl.payrollDateBlock {
 }
 
 .compactRow {
+  min-height: 20px;
   width: 330px;
   display: -webkit-box;
   display: -moz-box;
@@ -1472,17 +1473,15 @@ dl.payrollDateBlock {
   -webkit-justify-content: space-between;
   justify-content: space-between;
 
-  div {
+  .firstName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 2 auto;
+  }
+  .country {
     -webkit-flex-shrink: 0;
     flex-shrink: 0;
-
-    &:first-child {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex: 1 2 auto;
-    }
-
   }
 
   //> div {
