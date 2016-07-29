@@ -87,7 +87,7 @@ define([
             var optionsObject = {};
 
             if (this.isLead) {
-                optionsObject.lead = this.model;
+                optionsObject.saveDeal = this.saveDeal;
             }
 
             new CreateView(optionsObject);
@@ -98,15 +98,14 @@ define([
             var id = $target.closest('li').attr('data-id');
             var saveObject = {};
 
-            saveObject[this.attribute] = id;
+            saveObject.company = id;
             this.saveDeal(saveObject, 'formProperty');
         },
 
         renderContent: function () {
             var contentHolder = this.$el.find('#companyList');
             contentHolder.html(this.contentTemplate({
-                collection: this.filteredCollection.toJSON(),
-                model     : this.model.toJSON()
+                collection: this.filteredCollection.toJSON()
             }));
         },
 
@@ -117,9 +116,7 @@ define([
         render: function () {
             var self = this;
 
-            var formString = this.template({
-                isLead: this.isLead
-            });
+            var formString = this.template();
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
