@@ -1002,7 +1002,7 @@ var Module = function (models, event) {
         };
 
         var historyMatchObjForAssignedTo = {
-            $and: [{'$and': [{'changedField': 'salesPerson'}, {$or: [{'contentType': 'opportunitie'}, {'contentType': 'lead'}]}]}]
+            $and: [{$and: [{changedField: 'salesPerson'}, {$or: [{contentType: 'opportunitie'}, {contentType: 'lead'}]}]}]
         };
 
         var historyMatchObj = {
@@ -1032,7 +1032,7 @@ var Module = function (models, event) {
             });
         }
 
-        if (stage === 'Qualified') {
+        if (stage === 'Qualified' || stage === 'qualifiedFrom') {
             secondMatchObj = {'workflows.name': 'Qualified'};
         }
 
@@ -1069,7 +1069,7 @@ var Module = function (models, event) {
                         $project: {
                             date  : 1,
                             isOpp : '$isOpp',
-                            dateBy: '$dateBy',
+                            dateBy: '$dateBy'
                         }
                     }, {
                         $group: {
@@ -1191,12 +1191,6 @@ var Module = function (models, event) {
                             _id        : 0
                         }
                     }, {
-                        $group: {
-                            _id       : '$salesPerson',
-                            salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                            count     : {$sum: '$count'}
-                        }
-                    }, {
                         $sort: {_id: -1}
                     }
                 ], parCb);
@@ -1249,8 +1243,7 @@ var Module = function (models, event) {
                             date  : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
                             isOpp : '$lead.isOpportunitie',
                             dateBy: {$dayOfYear: '$date'},
-                            isNull: {ifNull: ['$lead.source', '']},
-                            source: '$lead.source'
+                            source: {$ifNull: ['$lead.source', '']}
                         }
                     }, {
                         $project: {
@@ -1261,10 +1254,14 @@ var Module = function (models, event) {
                         }
                     }, {
                         $group: {
-                            _id   : '$source',
-                            count : {$sum: 1},
-                            dateBy: {$first: '$dateBy'},
-                            isOpp : {$first: '$isOpp'}
+                            _id  : '$source',
+                            count: {$sum: 1}
+                        }
+                    }, {
+                        $project: {
+                            salesPerson: '$_id',
+                            count      : 1,
+                            _id: 0
                         }
                     }, {
                         $sort: {_id: -1}
