@@ -1670,20 +1670,29 @@ input::-ms-clear {
 .thumbnail-text(@defaultColor: #4c4c4c, @font-size: 13px) {
   color: @defaultColor;
   font-size: @font-size;
-  //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .ui-datepicker {
   padding: .2em .2em 0;
   background-color: @bg-main;
+  border: 1px solid #eee;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
 
   .ui-datepicker-header {
     .ui-datepicker-prev,
     .ui-datepicker-next {
       position: absolute;
       top: 2px;
-      width: 1.8em;
-      height: 1.8em;
+      width: 2em;
+      height: 2em;
+      line-height: 2em;
+      text-align: center;
+      font-family: 'FontAwesome';
+      font-size: 14px;
+
+      &:hover {
+        text-decoration: none;
+      }
 
       span {
         width: 7px;
@@ -1692,7 +1701,7 @@ input::-ms-clear {
         margin-left: -3px;
         text-indent: -99999px;
         overflow: hidden;
-        background: url("../images/datepicker-sprite_black.png") no-repeat; /*/images/datepicker-sprite_black.png*/
+        //background: url("../images/datepicker-sprite_black.png") no-repeat; /*/images/datepicker-sprite_black.png*/
         display: block;
         .position(absolute, 50%, 50%);
         cursor: pointer;
@@ -1702,17 +1711,18 @@ input::-ms-clear {
     .ui-datepicker-prev {
       left: 2px;
 
-      span {
-        background-position: 3px 0;
+      &:before {
+        content: '\f104';
       }
     }
 
     .ui-datepicker-next {
       right: 2px;
 
-      span {
-        background-position: -5px -0;
+      &:before {
+        content: '\f105';
       }
+
     }
 
     .ui-datepicker-title {
@@ -1721,9 +1731,9 @@ input::-ms-clear {
       text-align: center;
 
       select {
-        width: 49%;
-        color: @data-font-color;
-        background-color: @bg-main;
+        width: 50%;
+        border: 0;
+        border-bottom: 1px solid #4d5a75;
         option {
           background-color: @selected-data-color;
           &:hover {
@@ -1740,6 +1750,7 @@ input::-ms-clear {
         padding: .7em .3em;
         text-align: center;
         color: @mainText-color;
+        font-family: @fontSemiBold;
       }
 
       td {
@@ -1751,17 +1762,23 @@ input::-ms-clear {
           color: @data-font-color;
         }
         a, span {
-          margin: 0 auto;
-          width: 20px;
           display: block;
-          padding: .4em;
+          height: 26px;
+          width: 26px;
+          line-height: 26px;
+          //padding: .4em;
+          margin: 0 auto;
+          text-align: center;
 
           &:hover {
             text-decoration: none;
-            background-color: @selected-data-color;
+            background-color: #7eadcc;
+            color: #fff;
+            transition: all .2s ease;
           }
           &.ui-state-active {
-            background-color: @selected-data-color;
+            background-color: #7eadcc;
+            color: #fff;
           }
         }
 
@@ -3114,18 +3131,6 @@ dl {
       cursor: pointer;
     }
   }
-
-  &.checkedValue {
-    position: relative;
-    &:before {
-      content: '\2713';
-      color: @mainText-color;
-      position: absolute;
-      top: 0;
-      right: 4px;
-    }
-    // need refactor before. use now because must have.
-  }
 }
 
 .removeValues {
@@ -3825,7 +3830,7 @@ table#workflows {
   }
 }
 
-#allUsers, .buttons, #targetUsers {
+#allUsers, #targetUsers {
   float: left;
 }
 
@@ -3968,9 +3973,8 @@ ul.dialog-tabs {
 
 #ui-datepicker-div {
   border-radius: 0 !important;
-  font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
   margin-top: 2px;
-  border: 1px solid @border-color-main !important;
+  //border: 1px solid @border-color-main !important;
   display: none;
 }
 
