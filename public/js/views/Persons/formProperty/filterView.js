@@ -24,7 +24,6 @@ define([
                 self.renderContent(self.e);
             }
 
-            this.attribute = options.attribute;
             this.saveDeal = options.saveDeal;
 
             dataService.getData('/Persons/', {type : 'Person'}, function (res) {
@@ -80,11 +79,13 @@ define([
         },
 
         createCustomer: function () {
+            var optionsObject = {};
+
             $('.tag-list-dialog').remove();
-            var optionsObject= {};
+
 
             if (this.isLead) {
-                optionsObject.lead = this.model;
+                optionsObject.saveDeal = this.saveDeal;
             }
 
             new CreateView(optionsObject);
@@ -95,15 +96,14 @@ define([
             var id = $target.closest('li').attr('data-id');
             var saveObject = {};
 
-            saveObject[this.attribute] = id;
+            saveObject.customer = id;
             this.saveDeal(saveObject, 'formProperty');
         },
 
         renderContent: function () {
             var contentHolder = this.$el.find('#contactList');
             contentHolder.html(this.contentTemplate({
-                collection: this.filteredCollection.toJSON(),
-                model     : this.model.toJSON()
+                collection: this.filteredCollection.toJSON()
             }));
         },
 

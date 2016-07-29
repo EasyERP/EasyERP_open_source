@@ -253,8 +253,7 @@ define([
             });
 
             this.formProperty = new CompanyFormProperty({
-                parentModel: this.formModel,
-                attribute  : 'company',
+                data       : formModel.company,
                 saveDeal   : self.saveDeal
             });
 
@@ -266,9 +265,7 @@ define([
 
             $thisEl.find('#contactHolder').html(
                 new ContactFormProperty({
-                    parentModel: this.formModel,
                     data       : formModel.customer,
-                    attribute  : 'customer',
                     saveDeal   : self.saveDeal
                 }).render().el
             );

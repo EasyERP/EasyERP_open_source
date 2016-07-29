@@ -5,9 +5,11 @@ define([
     'views/Companies/filterView',
     'models/CompaniesModel',
     'text!templates/Companies/formPropertyTemplate.html'
-], function (Backbone, $, _, FilterView, CompaniesModel,  propertyTemplate) {
+], function (Backbone, $, _, FilterView, CompaniesModel, propertyTemplate) {
+    'use strict';
+
     var selectView = Backbone.View.extend({
-        template       : _.template(propertyTemplate),
+        template: _.template(propertyTemplate),
 
         events: {
             'keyup .editable'      : 'setChangeValueToModel',
@@ -18,46 +20,38 @@ define([
         },
 
         initialize: function (options) {
-            var company;
+            this.data = options.data;
 
-            this.attribute = options.attribute;
-            this.parentModel = options.parentModel;
             this.saveDeal = options.saveDeal;
             this.isLead = options.isLead;
-
-            company = this.parentModel.get(this.attribute);
-
-            if (company){
-                this.model = new CompaniesModel(company);
-            }
         },
 
-        setChangeValueToModel: function (e){
+        setChangeValueToModel: function (e) {
             var $target = $(e.target);
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
 
             $target.closest('.propertyFormList').addClass('active');
 
-            if (!this.modelChanged){
+            if (!this.modelChanged) {
                 this.modelChanged = {};
             }
+
             this.modelChanged[property] = value;
             this.showButtons();
         },
 
-        showButtons : function (){
+        showButtons: function () {
             this.$el.find('.btnBlock').addClass('showButtons');
         },
 
-        hideButtons : function (){
+        hideButtons: function () {
             this.$el.find('.btnBlock').removeClass('showButtons');
         },
 
         addProperty: function () {
             new FilterView({
-                model    : this.parentModel,
-                attribute: this.attribute,
+                attribute: 'company',
                 saveDeal : this.saveDeal,
                 isLead   : this.isLead
             });
@@ -65,37 +59,45 @@ define([
 
         saveChanges: function (e) {
             var self = this;
+
+            e.preventDefault();
+
             this.model.save(this.modelChanged, {
-                patch: true,
-                success : function (){
-                    self.modelChanged = '';
+                patch  : true,
+                success: function () {
+                    self.modelChanged = {};
                     self.hideButtons();
                 }
             });
             this.$el.find('.active').removeClass('active');
         },
 
-        cancelChanges : function (e) {
-            this.modelChanged = '';
+        cancelChanges: function (e) {
+            e.preventDefault();
+
+            this.modelChanged = {};
             this.render();
         },
 
         removeProperty: function () {
             var saveObject = {};
             var self = this;
+            var model = new CompaniesModel(this.data);
 
-            saveObject[this.attribute] = null;
+            saveObject.company = null;
             self.saveDeal(saveObject, 'formProperty');
 
-            if (this.isLead && this.model.get('isHidden')){
-                this.model.destroy();
+            if (this.isLead && this.data.isHidden){
+                model.destroy({success : function (){
+                    self.saveDeal(saveObject, 'formProperty');
+                }});
+            } else {
+                this.saveDeal(saveObject, 'formProperty');
             }
         },
 
         render: function () {
-            var property = this.model ? this.model.toJSON() : '';
-
-            this.$el.html(_.template(propertyTemplate, {property: property}));
+            this.$el.html(_.template(propertyTemplate, {property: this.data}));
             return this;
         }
     });
