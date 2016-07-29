@@ -212,9 +212,8 @@ define([
             $thisEl.html(_.template(personFormTemplate, formModel));
 
             this.formProperty = new CompanyFormProperty({
-                parentModel: this.formModel,
-                attribute  : 'company',
-                saveDeal   : self.saveModel
+                data      : formModel.company,
+                saveDeal  : self.saveModel
             });
 
             $thisEl.find('#companyHolder').html(
