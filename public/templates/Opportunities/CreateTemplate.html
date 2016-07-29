@@ -1,7 +1,7 @@
 <div class="form-holder">
     <form method="post" action="" id="createOpportunities" class="form notDialog">
         <fieldset>
-            <div class="inner">
+            <div class="inner _salesModal">
                <!-- <ul class="dialog-tabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     &lt;!&ndash;<li><a href="javascript:;">Lead</a></li>
@@ -10,63 +10,70 @@
               <!--  <div class="clearfix"></div>
                 <div class="dialog-tabs-items">
                     <div class="dialog-tabs-item active">-->
-                        <dl class="subject-info clearfix">
-                            <!--<dt><label for="name">Subject</label></dt>-->
-                            <dd><input type="text" class="title-input" placeholder="Subject" id="name" required maxlength="48"/></dd>
+                    <h2 class="modal_title">Add a deal</h2>
+                        <div class="subject-info _modalList">
+                            <!--<div class="_modalLabel"><label for="name">Subject</label></div>-->
+                            <div class="_modalSelect"><input type="text" class="title-input" placeholder="Subject" id="name" required maxlength="48"/></div>
 
-                        </dl>
+                        </div>
 
-                        <div class="half-block left">
+
+                        <div class="opprtunitie-info">
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label for="expectedRevenueValue">Expected Revenue</label></div>
+                                <div class="_modalSelect"><input type="text" id="expectedRevenueValue" class="onlyNumber date-min" value="0"
+                                           maxlength="9"/></div>
+                            </div>
+                            <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="0" maxlength="32"/>%</dd>-->
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label for="customerDd">Contact</label></div>
+                                <div class="_modalSelect"><a id="customerDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Person' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Person' ? parentModel.fullName : 'Select'%></a></div>
+                            </div>
+
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label for="companyDd">Company</label></div>
+                                <div class="_modalSelect"><a id="companyDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Company' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Company' ? parentModel.fullName : 'Select'%></a></div>
+                            </div>
+
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label for="salesPersonDd">Assigned to</label></div>
+                                <div class="_modalSelect"><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></div>
+                            </div>
+
+                            <!--<dt><label for="salesTeamDd">Sales Team</label></dt>-->
+                            <!--<dd><a id="salesTeamDd" class="current-selected" href="javascript:;"></a></dd>-->
+
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label for="workflowDd">Stages</label></div>
+                                <div class="_modalSelect" id="selectWorkflow"><a id="workflowDd" class="current-selected" href="javascript:;"></a></div>
+                            </div>
+
+                            <!--<dt><label for="nextActionDate">Next Action</label></dt>-->
+                            <!--<dd><input type="text" id="nextActionDate" maxlength="32" placeholder="Date" readonly/>-->
+                            <!--</dd>-->
+                            <!-- <dt><label for="nextActionDescription">Next Description</label></dt>
+                             <dd><input type="text" id="nextActionDescription" placeholder="Description"
+                                        maxlength="32"/></dd>-->
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label for="expectedClosing">Expected Closing</label></div>
+                                <div class="_modalSelect"><input type="text" id="expectedClosing" maxlength="32" placeholder="Date" readonly/> </div>
+                            </div>
+                            <!--<dt><label for="priorityDd">Priority</label></dt>
+                            <dd>
+                                <a id="priorityDd" class="current-selected" href="javascript:;">Select</a></dd>
+                            <dt><label for="sourceDd">Source</label></dt>
+                            <dd>
+                                <a id="sourceDd"
+                                   class="current-selected" href="javascript:;">Select</a>
+                            </dd>-->
                             <div class="area_holder">
-                                 <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
-                                           class="opp-internal-create"></textarea>
+                                         <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
+                                                   class="opp-internal-create"></textarea>
                                 <a href="javascript:;" class="attach_file">
                                     <i class="fa fa-paperclip" aria-hidden="true"></i>
                                 </a>
                             </div>
-
                         </div>
-                        <div class="half-block left">
-                            <dl class="opprtunitie-info">
-                                <dt><label for="expectedRevenueValue">Expected Revenue</label></dt>
-                                <dd><input type="text" id="expectedRevenueValue" class="onlyNumber date-min" value="0"
-                                           maxlength="9"/></dd>
-                                <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="0" maxlength="32"/>%</dd>-->
-                                <dt><label for="customerDd">Contact</label></dt>
-                                <dd><a id="customerDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Person' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Person' ? parentModel.fullName : 'Select'%></a></dd>
-                                <dt><label for="companyDd">Company</label></dt>
-                                <dd><a id="companyDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Company' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Company' ? parentModel.fullName : 'Select'%></a></dd>
-                                <dt><label for="salesPersonDd">Assigned to</label></dt>
-                                <dd><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></dd>
-                                <!--<dt><label for="salesTeamDd">Sales Team</label></dt>-->
-                                <!--<dd><a id="salesTeamDd" class="current-selected" href="javascript:;"></a></dd>-->
-                                <dt><label for="workflowDd">Stages</label></dt>
-                                <dd id="selectWorkflow"><a id="workflowDd" class="current-selected"
-                                                           href="javascript:;"></a></dd>
-
-                                <!--<dt><label for="nextActionDate">Next Action</label></dt>-->
-                                <!--<dd><input type="text" id="nextActionDate" maxlength="32" placeholder="Date" readonly/>-->
-                                </dd>
-                               <!-- <dt><label for="nextActionDescription">Next Description</label></dt>
-                                <dd><input type="text" id="nextActionDescription" placeholder="Description"
-                                           maxlength="32"/></dd>-->
-                                <dt><label for="expectedClosing">Expected Closing</label></dt>
-                                <dd><input type="text" id="expectedClosing" maxlength="32" placeholder="Date" readonly/>
-                                </dd>
-                                <!--<dt><label for="priorityDd">Priority</label></dt>
-                                <dd>
-                                    <a id="priorityDd" class="current-selected" href="javascript:;">Select</a></dd>
-                                <dt><label for="sourceDd">Source</label></dt>
-                                <dd>
-                                    <a id="sourceDd"
-                                       class="current-selected" href="javascript:;">Select</a>
-                                </dd>-->
-                            </dl>
-                        </div>
-                        <div class="clearfix"></div>
-
-                        <div class="attach-container"></div>
-                        <div class="clearfix"></div>
                     </div>
                   <!--  <div class="dialog-tabs-item">
                         <div class="half-block left withPaddingLeft">

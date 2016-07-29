@@ -1939,6 +1939,28 @@
 .social {
   margin-top: 20px; }
 
+.ui-dialog ._salesModal {
+  padding: 10px 20px; }
+  .ui-dialog ._salesModal .modal_title {
+    margin-bottom: 20px; }
+  .ui-dialog ._salesModal ._modalList {
+    margin-bottom: 15px; }
+  .ui-dialog ._salesModal ._modalLabel {
+    margin-bottom: 10px; }
+  .ui-dialog ._salesModal ._modalSelect a,
+  .ui-dialog ._salesModal ._modalSelect input {
+    display: block;
+    padding: 5px;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 35px;
+    border: 1px solid #c8c8d3;
+    border-radius: 3px;
+    cursor: pointer; }
+    .ui-dialog ._salesModal ._modalSelect a:hover,
+    .ui-dialog ._salesModal ._modalSelect input:hover {
+      text-decoration: none; }
+
 .dropDownDateRangeContainer {
   position: relative;
   width: 110px;

@@ -452,6 +452,43 @@
   margin-top: 20px;
 }
 
+.ui-dialog {
+  ._salesModal {
+    padding: 10px 20px;
+
+    .modal_title {
+      margin-bottom: 20px;
+    }
+
+    ._modalList {
+      margin-bottom: 15px;
+    }
+
+    ._modalLabel {
+      margin-bottom: 10px;
+    }
+
+    ._modalSelect {
+      a,
+      input {
+        display: block;
+        padding: 5px;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 35px;
+        border: 1px solid $sales-modal-select-border-color;
+        border-radius: 3px;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+
+
 
 
 
