@@ -88,11 +88,21 @@ define([
         //custom.removeFromCash('projectInfo');
     }
 
+    function clearAllCashedData () {
+
+        App.cashedData = {};
+        App.storage.clear();
+        App.filtersObject = {};
+
+        App.render({type: 'notify', message: 'All cash cleaned'});
+    }
+
     socket.on('recollectVacationDash', _.debounce(fetchData, 1000));
     socket.on('fetchJobsCollection', _.debounce(fetchJobs, 1000));
     socket.on('fetchInvoiceCollection', _.debounce(fetchInvoice, 1000));
     socket.on('sendMessage', _.debounce(sendMessage, 1000));
     socket.on('editModel', _.debounce(editModel, 1000));
+    socket.on('clearAllCashedData', _.debounce(clearAllCashedData, 1000));
 
     socket.emit('custom');
 

@@ -267,6 +267,10 @@ eventsHandler = function (app, mainDb) {
         redisStore.removeAllFromStorage('dashboardVacation');
     });
 
+    event.on('clearAllCashedData', function () {
+        io.emit('clearAllCashedData');
+    });
+
     event.on('fetchJobsCollection', function (options) {
         io.emit('fetchJobsCollection', options);
     });
