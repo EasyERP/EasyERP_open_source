@@ -839,14 +839,28 @@ input {
 }
 
 .tags-container {
+  margin-top: 5px;
+
   .editTags {
     display: inline-block;
     vertical-align: middle;
-    min-height: 18px;
-    padding: 2px 8px;
+    height: 20px;
+    line-height: 16px;
     margin-bottom: 5px;
+    padding: 2px 5px;
     cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+    color: #fff;
     .defaultBorRad;
+
+    &:before {
+      color: #000;
+    }
+
+    &.fa-plus {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -1346,12 +1360,37 @@ dl.payrollDateBlock {
     position: relative;
 
     #searchContainer {
-      position: relative;
       top: -26px;
-      right: auto;
-      float: right;
-      width: 230px;
-      margin-right: 0;
+    }
+  }
+  #searchContainer {
+    position: relative;
+    right: auto;
+    float: right;
+    width: 277px;
+    margin-right: 0;
+  }
+  .search-options {
+    min-width: 277px;
+  }
+}
+
+@media (max-width: 1350px) {
+  .listContentWrap {
+    width: 350px;
+
+    .listContentTitle {
+      #searchContainer {
+        width: 228px;
+      }
+    }
+
+    .search-options {
+      min-width: 228px;
+    }
+
+    .compactRow {
+      width: 280px;
     }
   }
 }
@@ -1414,26 +1453,56 @@ dl.payrollDateBlock {
   }
 }
 
-.compactRow {
+.textEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  > div {
-    &:nth-child(odd) {
-      float: left;
-      clear: both;
+.compactRow {
+  width: 330px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+
+  div {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+
+    &:first-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1 2 auto;
     }
-    &:nth-child(even) {
-      float: right;
-    }
+
   }
+
+  //> div {
+  //  &:nth-child(odd) {
+  //    float: left;
+  //    clear: both;
+  //  }
+  //  &:nth-child(even) {
+  //    float: right;
+  //  }
+  //}
   &:nth-child(n+2) {
     margin-top: 10px;
   }
 
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
-  }
+  //&:after {
+  //  content: '';
+  //  display: table;
+  //  clear: both;
+  //}
 }
 
 td.checkboxRow {
@@ -1631,7 +1700,7 @@ td.checkboxRow {
   -webkit-transition: all .3s;
   transition: all .3s;
   border-radius: 3px;
-  
+
   &:hover {
     text-decoration: none;
   }
@@ -1844,10 +1913,10 @@ table {
   width: 50%;
 }
 .col1-3 {
-  width: 35%;
+  width: 30%;
 }
 .col2-3 {
-  width: 65%;
+  width: 70%;
 }
 
 .noteBtnBlock,

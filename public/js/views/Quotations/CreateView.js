@@ -168,7 +168,7 @@ define([
                     });
                 }
 
-                quantity = targetEl.find('[data-name="quantity"] input').val();
+                quantity = targetEl.find('[data-name="quantity"] input').val() || targetEl.find('[data-name="quantity"] span').text();
                 price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) * 100;
 
                 if (isNaN(price) || price <= 0) {
@@ -271,10 +271,10 @@ define([
         },
 
         redirectAfterSave: function (content) {
-            var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
+            //var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
 
-            content.hideDialog();
-            Backbone.history.navigate(redirectUrl, {trigger: true});
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(window.location.hash, {trigger: true});
         },
 
         createProductView: function () {

@@ -25,6 +25,7 @@ define([
         initialize : function (options) {
             this.leadsCollection = new LeadsCollection();
             this.startTime = options.startTime;
+            this.leadsByNamesChartType = 'leadsBySales';
             this.startTime = new Date();
             this.buildTime = 0;
             this.dateRange = {
@@ -292,6 +293,7 @@ define([
                     this.renderOpportunitiesWinAndLost();
                     break;
                 case 'leadsByName':
+                    this.leadsByNamesChartType = 'leadsBySales';
                     this.renderLeadsChartByName();
                     break;
                 case 'leadsChart':
@@ -502,9 +504,8 @@ define([
 
         renderLeadsChartByName: function () {
             var $wrapper = $('#content-holder');
-            var parsedData = {};
-            var dataObj = [];
             var padding = 15;
+            var self = this;
             var offset = 2;
             var barChart;
             var gradient;
@@ -515,11 +516,12 @@ define([
             var xAxis;
             var yAxis;
             var width;
-            var keys;
             var rect;
             var max;
-            var i;
-            var j;
+
+            if(this.dateItem.leadsByName === 'qualifiedFrom'){
+                this.leadsByNamesChartType = 'leadsBySources';
+            }
 
             d3.selectAll('svg.leadsByNameBarChart > *').remove();
 
@@ -529,32 +531,10 @@ define([
                 stage   : this.dateItem.leadsByName
             }, function (data) {
 
-                data = data.salesByDate;
-
-                for (i = data.length; i--;) {
-
-                    for (j = data[i].salesByDay.length; j--;) {
-
-                        if (!parsedData[data[i].salesByDay[j].salesPerson]) {
-                            parsedData[data[i].salesByDay[j].salesPerson] = data[i].salesByDay[j].count;
-                        } else {
-                            parsedData[data[i].salesByDay[j].salesPerson] += data[i].salesByDay[j].count;
-                        }
-                    }
-                }
-
-                keys = Object.keys(parsedData);
-
-                for (i = 0; i < keys.length; i++) {
-                    dataObj.push({
-                        name : keys[i],
-                        count: parsedData[keys[i]]
-                    })
-                }
-
+                data = data[self.leadsByNamesChartType];
                 margin = {top: 50, right: 150, bottom: 30, left: 140};
                 width = ($wrapper.width() - margin.right /*- margin.left*/);
-                height = keys.length * 20;
+                height = data.length * 20;
 
                 barChart = d3.select('svg.leadsByNameBarChart')
                     .attr({
@@ -564,7 +544,7 @@ define([
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                max = d3.max(dataObj, function (d) {
+                max = d3.max(data, function (d) {
                     return d.count;
                 });
 
@@ -575,10 +555,10 @@ define([
                     .range([0, (width - margin.left)]);
 
                 yScale = d3.scale.linear()
-                    .domain([0, dataObj.length])
+                    .domain([0, data.length])
                     .range([0, height]);
 
-                rect = height / (dataObj.length);
+                rect = height / (data.length);
 
                 gradient = d3.select('svg.leadsByNameBarChart').append("linearGradient")
                     .attr({
@@ -605,7 +585,7 @@ define([
                     });
 
                 barChart.selectAll('rect')
-                    .data(dataObj)
+                    .data(data)
                     .enter()
                     .append('rect')
                     .attr({
@@ -632,9 +612,9 @@ define([
                     .tickSize(0)
                     .tickPadding(offset)
                     .tickFormat(function (d, i) {
-                        return keys[i];
+                        return data[i].salesPerson;
                     })
-                    .tickValues(d3.range(dataObj.length));
+                    .tickValues(d3.range(data.length));
 
                 barChart.append('g')
                     .attr({

@@ -79,6 +79,7 @@ module.exports = function (app, mainDb) {
     var logger = require('../helpers/logger');
     var async = require('async');
     var ModulesHandler = require('../handlers/modules');
+    var redisStore = require('../helpers/redisClient');
     var modulesHandler = new ModulesHandler(models);
 
     var sessionValidator = function (req, res, next) {
@@ -122,6 +123,16 @@ module.exports = function (app, mainDb) {
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
+    });
+
+    app.get('/clearCashStorage', function (req, res, next) {
+        redisStore.removeAllStorages(function (err){
+            if (err){
+                return next(err);
+            }
+            event.emit('clearAllCashedData');
+            res.status(200).send({success: 'All cash cleaned success'});
+        });
     });
 
     app.use('/filter', filterRouter);
