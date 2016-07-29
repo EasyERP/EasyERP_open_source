@@ -5,8 +5,9 @@ define([
     'views/listViewBase',
     'views/Filter/filterView',
     'common',
-    'constants'
-], function (Backbone, $, _, BaseView, FilterView, common, CONSTANTS) {
+    'constants',
+    'dataService'
+], function (Backbone, $, _, BaseView, FilterView, common, CONSTANTS, dataService) {
     'use strict';
 
     var TFormBaseView = BaseView.extend({
@@ -25,8 +26,7 @@ define([
         },
 
         initialize: function (options) {
-            var modelId = options.modelId;
-
+            this.selectedId = options.modelId;
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -39,7 +39,7 @@ define([
 
             BaseView.prototype.initialize.call(this, options);
 
-            this.addFormView(modelId);
+            this.addFormView();
         },
 
         openSortDrop: function (e) {
@@ -144,8 +144,8 @@ define([
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        addFormView: function (modelId) {
-            this.renderFormView(modelId);
+        addFormView: function () {
+            this.renderFormView();
         },
 
         goToForm: function (e) {
@@ -157,7 +157,12 @@ define([
 
             e.preventDefault();
 
-            this.renderFormView(modelId, function () {
+            if (modelId === this.selectedId){
+                return false;
+            }
+
+            this.selectedId = modelId;
+            this.renderFormView(function () {
                 $thisEl.find('#timeRecivingDataFromServer').remove();
                 $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
 
@@ -165,7 +170,8 @@ define([
             });
         },
 
-        renderFormView: function (modelId, cb) {
+        renderFormView: function (cb) {
+            var modelId = this.selectedId;
             var $thisEl = this.$el;
             var self = this;
             var model;
@@ -199,6 +205,70 @@ define([
                         type   : 'error',
                         message: 'Server error'
                     });
+                }
+            });
+        },
+
+        deleteItems: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var collection = this.collection;
+            var url = collection.url;
+            var $checkedInputs;
+            var ids = [];
+            var answer;
+            var edited = this.edited || $thisEl.find('tr.false, #false');
+            var collectionObj = this.collection.toJSON();
+            var collIds = _.pluck(collectionObj, '_id');
+            var diffIds;
+            var needId;
+            var needReset = false;
+
+            if (!edited.length) { // ToDo refactor
+                this.changed = false;
+            }
+
+            if (this.changed) {
+                return this.cancelChanges();
+            }
+
+            answer = confirm('Really DELETE items ?!');
+
+            if (answer === false) {
+                return false;
+            }
+
+            $checkedInputs = $table.find('input:checked');
+
+            $.each($checkedInputs, function () {
+                var $el = $(this);
+
+                ids.push($el.val());
+            });
+
+            ids = _.compact(ids);
+
+            if (ids.indexOf(this.selectedId) !== -1) {
+                diffIds = _.difference(collIds, ids);
+                needId = diffIds[0];
+
+                this.selectedId = needId;
+                needReset = !needReset;
+            }
+
+            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err) {
+                if (err) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Can\'t remove items'
+                    });
+                }
+
+                self.getPage();
+
+                if (needReset) {
+                    self.renderFormView();
                 }
             });
         },
