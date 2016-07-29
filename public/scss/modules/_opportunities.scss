@@ -464,6 +464,7 @@
 
     .modal_title {
       margin-bottom: 20px;
+      color: $sales-modal-select-text-color;
     }
 
     ._modalList {
@@ -472,6 +473,11 @@
 
     ._modalLabel {
       margin-bottom: 10px;
+
+      label {
+        color: $sales-modal-select-text-color;
+        font-weight: bold;
+      }
     }
 
     ._modalSelect {

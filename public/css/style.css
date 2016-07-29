@@ -1945,11 +1945,15 @@
 .ui-dialog ._salesModal {
   padding: 10px 20px; }
   .ui-dialog ._salesModal .modal_title {
-    margin-bottom: 20px; }
+    margin-bottom: 20px;
+    color: #7f7f80; }
   .ui-dialog ._salesModal ._modalList {
     margin-bottom: 15px; }
   .ui-dialog ._salesModal ._modalLabel {
     margin-bottom: 10px; }
+    .ui-dialog ._salesModal ._modalLabel label {
+      color: #7f7f80;
+      font-weight: bold; }
   .ui-dialog ._salesModal ._modalSelect a,
   .ui-dialog ._salesModal ._modalSelect input {
     display: block;
