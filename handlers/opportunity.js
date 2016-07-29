@@ -1032,7 +1032,7 @@ var Module = function (models, event) {
             });
         }
 
-        if (stage === 'Qualified' ||  stage === 'qualifiedFrom') {
+        if (stage === 'Qualified' || stage === 'qualifiedFrom') {
             secondMatchObj = {'workflows.name': 'Qualified'};
         }
 
@@ -1254,10 +1254,14 @@ var Module = function (models, event) {
                         }
                     }, {
                         $group: {
-                            _id   : '$source',
-                            count : {$sum: 1},
-                            dateBy: {$first: '$dateBy'},
-                            isOpp : {$first: '$isOpp'}
+                            _id  : '$source',
+                            count: {$sum: 1}
+                        }
+                    }, {
+                        $project: {
+                            salesPerson: '$_id',
+                            count      : 1,
+                            _id: 0
                         }
                     }, {
                         $sort: {_id: -1}
