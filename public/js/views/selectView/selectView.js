@@ -14,7 +14,7 @@ define([
             'click .newSelectList li.miniStylePagination'                     : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click #createNewEl '                                             : 'createNewElement'
+            'click #createNewEl'                                              : 'createNewElement'
         },
 
         createNewElement: function (e) {
