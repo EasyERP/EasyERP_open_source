@@ -1,0 +1,79 @@
+.holidays.projectTimeCardCustomList {
+  float: none;
+  margin: -30px auto 20px;
+  width: 415px !important;
+}
+
+#searchContainer.projectTimeCardCustomSearch {
+  top: -32px;
+  margin-right: 23px;
+  width: 20%;
+}
+
+.kanban {
+  .column {
+    h2 {
+      span.text {
+        margin-right: 70px !important;
+      }
+    }
+  }
+}
+
+
+.list {
+  tbody {
+    td.errorContent {
+      border: 1px double $error-content-border;
+    }
+  }
+}
+
+
+.deleteTasks {
+  span {
+    margin-left: 5px;
+  }
+}
+
+.tasksView {
+  .deleteTasks {
+    height: 26px;
+    font-size: 16px;
+    padding: 0 12px;
+    border: 1px solid $black;
+  }
+}
+
+.task-list {
+  &.withCheckbox {
+    th,
+    td {
+      &:first-child {
+        width: 50px;
+        text-align: center;
+      }
+    }
+  }
+
+  &.leadsCheckbox {
+    th,
+    td {
+      &:first-child {
+        min-width: 50px;
+      }
+    }
+  }
+}
+
+.task-edit-dialog {
+  .ui-widget-content {
+    border-top: none !important;
+  }
+}
+
+@media screen and (max-width: $extra-large-screen) {
+  .holidays.projectTimeCardCustomList {
+    margin-top: 20px;
+  }
+}

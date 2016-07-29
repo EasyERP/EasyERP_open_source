@@ -9,7 +9,7 @@
     <td><%=lead.source%></td>
 
     <td id='<%=lead._id%>' class="centerCell <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">
-        <a href="javascript:;" class="stageSelect blue"><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></a>
+        <a href="javascript:;" class="stageSelect blue"><%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%></a>
     </td>
     <td><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></td>
     <td><%=lead.createdBy.user?(lead.createdBy.date + ' (' + lead.createdBy.user +
