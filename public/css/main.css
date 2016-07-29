@@ -2518,7 +2518,6 @@ body {
   left: 0;
   z-index: 10;
   background-color: #ffffff;
-  padding: 0 5px;
 }
 .vocationFilter .dateFilter li,
 .vocationFilter .dateFilterLeadsByName li {
@@ -3731,32 +3730,20 @@ dl.payrollDateBlock dt {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.compactRow {
-  min-height: 20px;
-  width: 330px;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-pack: justify;
-  -moz-box-pack: justify;
-  -ms-flex-pack: justify;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
+.compactRow > div:nth-child(odd) {
+  float: left;
+  clear: both;
 }
-.compactRow .firstName {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1 2 auto;
-}
-.compactRow .country {
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
+.compactRow > div:nth-child(even) {
+  float: right;
 }
 .compactRow:nth-child(n+2) {
   margin-top: 10px;
+}
+.compactRow:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 td.checkboxRow {
   width: 40px;

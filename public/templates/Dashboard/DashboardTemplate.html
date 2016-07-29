@@ -73,15 +73,16 @@
         <div class="clearfix"></div>
         <h3 class="dashboard">What are our best primary campaigs?</h3>
         <div class="dashbordActions chartTopBox">
-            <div class="vocationFilter">
+            <div class="vocationFilter _filterDropDownWrap">
 
                 <ul class="dateFilterLeadsBySource">
                     <li class="dateRangeLeadsBySource">
+                        <span class="icon-calendar"></span>
                         <span id="startTimeLeadsBySource"><%= startDateLeadsBySource%></span> - <span id="endTimeLeadsBySource"><%= endDateLeadsBySource%></span>
-                        <i class="fa fa-caret-down"></i>
+                        <span class="fa fa-angle-down"></span>
                     </li>
                     <li>
-                        <ul class="frameDetail hidden">
+                        <ul class="frameDetail _filterDropDownBody hidden">
                             <li id="thisMonthLeadsBySource" class="filterValues checked checkedValue" data-type="leadsSource">This Month</li>
                             <li id="thisYearLeadsBySource" class="filterValues checked" data-type="leadsSource">This Financial Year</li>
                             <li id="lastMonthLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Month</li>
@@ -339,15 +340,16 @@
     <div class="chart-tabs-item">
         <div class="filterWrap salesTab">
             <h3 class="tabTitle">Sales by country</h3>
-            <div class="vocationFilter small">
+            <div class="vocationFilter _filterDropDownWrap small">
 
                 <ul class="dateFilter">
                     <li class="dateRange">
+                        <span class="icon-calendar"></span>
                         <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
-                        <i class="fa fa-caret-down"></i>
+                        <span class="fa fa-angle-down"></span>
                     </li>
                     <li>
-                        <ul class="frameDetail hidden">
+                        <ul class="frameDetail _filterDropDownBody hidden">
                             <li id="thisMonth" class="filterValues checked checkedValue" data-type="">This Month</li>
                             <li id="thisYear" class="filterValues checked" data-type="">This Financial Year</li>
                             <li id="lastMonth" class="filterValues checked" data-type="">Last Month</li>
@@ -388,14 +390,15 @@
         <h3>Leads</h3>
         <div class="leadsTop align-left clearfix">
             <div class="col xs-4">
-                <div class="vocationFilter">
+                <div class="vocationFilter _filterDropDownWrap">
                     <ul class="dateFilterLeads">
                         <li class="dateRangeLeads">
+                            <span class="icon-calendar"></span>
                             <span id="startTimeLeads"><%= startDateLeads%></span> - <span id="endTimeLeads"><%= endDateLeads%></span>
-                            <i class="fa fa-caret-down"></i>
+                            <span class="fa fa-angle-down"></span>
                         </li>
                         <li>
-                            <ul class="frameDetail hidden">
+                            <ul class="frameDetail _filterDropDownBody hidden">
                                 <li id="thisMonthLeads" class="leads filterValues checked checkedValue" data-type="leads">This Month</li>
                                 <li id="thisYearLeads" class="leads filterValues checked" data-type="leads">This Financial Year</li>
                                 <li id="lastMonthLeads" class="leads filterValues checked" data-type="leads">Last Month</li>
@@ -464,14 +467,15 @@
 
         <h3>Leads By Names</h3>
         <div class="leadsTop align-left">
-            <div class="vocationFilter">
+            <div class="vocationFilter _filterDropDownWrap">
                 <ul class="dateFilterLeadsByName">
                     <li class="dateRangeLeadsByName">
+                        <span class="icon-calendar"></span>
                         <span id="startTimeLeadsByName"><%= startDateLeadsByNames%></span> - <span id="endTimeLeadsByName"><%= endDateLeadsByNames%></span>
-                        <i class="fa fa-caret-down"></i>
+                        <span class="fa fa-angle-down"></span>
                     </li>
                     <li>
-                        <ul class="frameDetail hidden">
+                        <ul class="frameDetail _filterDropDownBody hidden">
                             <li id="thisMonthLeadsByName" class="leadsName filterValues checked checkedValue" data-type="leadsName">This Month</li>
                             <li id="thisYearLeadsByName" class="leadsName filterValues checked" data-type="leadsName">This Financial Year</li>
                             <li id="lastMonthLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Month</li>

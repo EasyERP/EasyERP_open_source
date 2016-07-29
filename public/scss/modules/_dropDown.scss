@@ -4,12 +4,12 @@
   width: 240px;
   z-index: 2000;
 
-  >ul {
+  > ul {
     position: absolute;
     width: 100%;
     background-color: #fff;
   }
-  
+
   li {
     position: relative;
     display: block;
@@ -17,10 +17,14 @@
   }
 }
 ._filterDropDownWrap {
-  .dateRangeLeadsBySale {
-    text-align: right;
-    color: #333;
-    cursor: pointer;
+  > ul {
+    > li {
+      &:first-child {
+        text-align: right;
+        color: #333;
+        cursor: pointer;
+      }
+    }
   }
 }
 ._filterDropDownBody {

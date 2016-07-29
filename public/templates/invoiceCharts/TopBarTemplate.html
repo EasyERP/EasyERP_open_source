@@ -1,13 +1,14 @@
 <h3>Invoice Charts</h3>
 
-<div class="vocationFilter">
+<div class="vocationFilter _filterDropDownWrap">
     <ul class="dateFilter">
         <li class="dateRange">
+            <span class="icon-calendar"></span>
             <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
-            <i class="fa fa-caret-down"></i>
+            <span class="fa fa-angle-down"></span>
         </li>
         <li>
-            <ul class="frameDetail hidden">
+            <ul class="frameDetail _filterDropDownBody hidden">
                 <li class="customTime">
                     <span>
                         <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>

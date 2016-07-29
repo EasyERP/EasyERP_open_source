@@ -2344,7 +2344,7 @@
     display: block;
     line-height: 25px; }
 
-._filterDropDownWrap .dateRangeLeadsBySale {
+._filterDropDownWrap > ul > li:first-child {
   text-align: right;
   color: #333;
   cursor: pointer; }
