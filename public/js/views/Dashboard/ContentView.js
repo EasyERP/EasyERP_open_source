@@ -612,7 +612,7 @@ define([
                     .tickSize(0)
                     .tickPadding(offset)
                     .tickFormat(function (d, i) {
-                        return data[i]._id;
+                        return data[i].salesPerson;
                     })
                     .tickValues(d3.range(data.length));
 
