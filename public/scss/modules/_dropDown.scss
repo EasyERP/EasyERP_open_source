@@ -1,0 +1,75 @@
+._filterDropDownWrap {
+  position: relative;
+  height: 26px;
+  width: 240px;
+  z-index: 2000;
+
+  >ul {
+    position: absolute;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #eeeeee;
+  }
+  li {
+    line-height: 25px;
+    display: block;
+  }
+}
+._filterDropDownBody {
+  width: 100%;
+  padding: 0 14px 14px;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  .filterValues {
+    font-size: 13px;
+    background: #f5f5f5;
+    border: 1px solid #f5f5f5;
+    color: #333;
+    padding: 0 12px;
+    margin-bottom: 8px;
+    text-align: left;
+
+    &:hover {
+      background: #4b8df8;
+      border: 1px solid #4b8df8;
+      color: #fff;
+    }
+  }
+
+  .buttons {
+    width: 100%;
+    background-color: #fff;
+    border: 0;
+    text-align: center;
+  }
+
+  .customTimeLeadsBySale {
+
+    .customTimeItem {
+      margin-bottom: 7px;
+
+      > label {
+        float: left;
+        clear: both;
+        line-height: 26px;
+      }
+      > input {
+        height: 26px;
+        width: 165px;
+        float: right;
+        cursor: pointer;
+      }
+      &:after {
+        content: '';
+        display: table;
+        clear: both;
+      }
+    }
+  }
+}
