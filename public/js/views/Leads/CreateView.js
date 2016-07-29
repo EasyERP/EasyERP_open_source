@@ -35,7 +35,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.parents('._modalSelect').find('.current-selected');
 
             holder.text($target.text()).attr('data-id', $target.attr('id'));
         },
