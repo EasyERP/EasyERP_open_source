@@ -94,7 +94,7 @@ define([
         App.storage.clear();
         App.filtersObject = {};
 
-        App.render({type: 'notify', message: 'All cash cleaned'});
+        App.render({type: 'notify', message: 'Cash was cleaned. Please refresh your browser.'});
     }
 
     socket.on('recollectVacationDash', _.debounce(fetchData, 1000));
