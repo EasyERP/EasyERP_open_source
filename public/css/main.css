@@ -4144,6 +4144,9 @@ table.kanban tbody td:nth-child(n+2) {
   top: 5px;
   left: 411px;
 }
+.search-view {
+  position: relative;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;

@@ -2402,6 +2402,7 @@
   width: 100%;
   padding: 7px 0;
   border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #4d4d4d;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
   ._filterDropDownBody .listLine {
     height: 1px;
@@ -2410,7 +2411,6 @@
     margin: 8px 0; }
   ._filterDropDownBody .filterValues {
     font-size: 13px;
-    color: #4d4d4d;
     padding: 3px 25px;
     text-align: left;
     white-space: nowrap; }
@@ -2435,15 +2435,35 @@
     background-color: #fff;
     border: 0;
     text-align: center; }
-  ._filterDropDownBody .customTimeLeadsBySale .customTimeItem {
-    margin-bottom: 7px; }
-    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem > label {
-      display: block;
-      line-height: 26px; }
-    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem > input {
-      height: 26px;
-      width: 100%;
-      cursor: pointer; }
+  ._filterDropDownBody .customTime {
+    padding: 0 10px; }
+    ._filterDropDownBody .customTime .customTimeItem {
+      position: relative;
+      margin-bottom: 7px;
+      color: #4d4d4d; }
+      ._filterDropDownBody .customTime .customTimeItem:after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 10px;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-bottom: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #4d4d4d; }
+      ._filterDropDownBody .customTime .customTimeItem > label {
+        display: block;
+        line-height: 26px;
+        font-family: "OpenSans SemiBold", sans-serif;
+        text-align: left; }
+      ._filterDropDownBody .customTime .customTimeItem > input {
+        height: 26px;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #cfcfcf;
+        cursor: pointer; }
 
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }

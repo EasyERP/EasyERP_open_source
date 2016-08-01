@@ -29,6 +29,7 @@
   width: 100%;
   padding: 7px 0;
   border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #4d4d4d;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
 
   //&:after {
@@ -62,7 +63,6 @@
   
   .filterValues {
     font-size: 13px;
-    color: #4d4d4d;
     padding: 3px 25px;
     text-align: left;
     white-space: nowrap;
@@ -101,18 +101,38 @@
     text-align: center;
   }
 
-  .customTimeLeadsBySale {
-
+  .customTime {
+    padding: 0 10px;
     .customTimeItem {
+      position: relative;
       margin-bottom: 7px;
+      color: #4d4d4d;
+
+      &:after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 10px;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-bottom: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #4d4d4d;
+      }
 
       > label {
         display: block;
         line-height: 26px;
+        font-family: $semibold-font-family;
+        text-align: left;
       }
       > input {
         height: 26px;
         width: 100%;
+        border: none;
+        border-bottom: 1px solid #cfcfcf;
         cursor: pointer;
       }
     }
