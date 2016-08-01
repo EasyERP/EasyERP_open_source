@@ -37,13 +37,9 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.parents('._modalSelect').find('.current-selected');
 
             holder.text($target.text()).attr('data-id', $target.attr('id'));
-
-            if (holder.attr('id') === 'customerDd') {
-                this.selectCustomer($target.attr('id'));
-            }
         },
 
         keydownHandler: function (e) {
@@ -54,21 +50,6 @@ define([
                 default:
                     break;
             }
-        },
-
-        selectCustomer: function (id) {
-            dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
-                id: id
-            }, function (response, context) {
-                var customer = response;
-
-                context.$el.find('#street').val(customer.address.street);
-                context.$el.find('#city').val(customer.address.city);
-                context.$el.find('#state').val(customer.address.state);
-                context.$el.find('#zip').val(customer.address.zip);
-                context.$el.find('#country').val(customer.address.country);
-            }, this);
-
         },
 
         saveItem: function () {
@@ -166,7 +147,7 @@ define([
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 dialogClass  : 'edit-dialog',
-                width        : '900',
+                width        : '450px',
                 title        : 'Create Opportunity',
                 buttons      : {
                     save: {
