@@ -53,8 +53,9 @@
 
         <tbody id="projectTeam">
         <%var firstJob = jobs && jobs.length ? jobs[0] : null;%>
+
         <% jobs.forEach(function(element,i){ %>
-            <% var adr = (element.totalRevenue/(100 * (element.totalWorked.toFixed() - element.totalQAWorked.toFixed() - element.totalDesignWorked.toFixed()))).toFixed(2)%>
+            <% var adr = (element.totalRevenue/(100 * (element.totalWorked - element.totalQAWorked - element.totalDesignWorked))).toFixed(2)%>
             <tr data-id="<%=element._id%>" id="jobsItem">
 
                 <td class="remove"><a
