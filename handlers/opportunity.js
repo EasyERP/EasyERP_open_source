@@ -2859,6 +2859,7 @@ var Module = function (models, event) {
                     name           : 1,
                     sequence       : 1,
                     expectedRevenue: 1,
+                    expectedClosing: 1,
                     customer       : 1,
                     salesPerson    : 1,
                     nextAction     : 1,
