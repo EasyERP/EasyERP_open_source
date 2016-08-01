@@ -3732,31 +3732,20 @@ dl.payrollDateBlock dt {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.compactRow {
-  width: 330px;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-pack: justify;
-  -moz-box-pack: justify;
-  -ms-flex-pack: justify;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
+.compactRow > div:nth-child(odd) {
+  float: left;
+  clear: both;
 }
-.compactRow div {
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-.compactRow div:first-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1 2 auto;
+.compactRow > div:nth-child(even) {
+  float: right;
 }
 .compactRow:nth-child(n+2) {
   margin-top: 10px;
+}
+.compactRow:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 td.checkboxRow {
   width: 40px;

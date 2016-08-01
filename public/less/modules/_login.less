@@ -1460,49 +1460,49 @@ dl.payrollDateBlock {
 }
 
 .compactRow {
-  width: 330px;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-pack: justify;
-  -moz-box-pack: justify;
-  -ms-flex-pack: justify;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-
-  div {
-    -webkit-flex-shrink: 0;
-    flex-shrink: 0;
-
-    &:first-child {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex: 1 2 auto;
-    }
-
-  }
-
-  //> div {
-  //  &:nth-child(odd) {
-  //    float: left;
-  //    clear: both;
+  //width: 330px;
+  //display: -webkit-box;
+  //display: -moz-box;
+  //display: -ms-flexbox;
+  //display: -webkit-flex;
+  //display: flex;
+  //-webkit-box-pack: justify;
+  //-moz-box-pack: justify;
+  //-ms-flex-pack: justify;
+  //-webkit-justify-content: space-between;
+  //justify-content: space-between;
+  //
+  //div {
+  //  -webkit-flex-shrink: 0;
+  //  flex-shrink: 0;
+  //
+  //  &:first-child {
+  //    overflow: hidden;
+  //    text-overflow: ellipsis;
+  //    white-space: nowrap;
+  //    flex: 1 2 auto;
   //  }
-  //  &:nth-child(even) {
-  //    float: right;
-  //  }
+  //
   //}
+
+  > div {
+    &:nth-child(odd) {
+      float: left;
+      clear: both;
+    }
+    &:nth-child(even) {
+      float: right;
+    }
+  }
   &:nth-child(n+2) {
     margin-top: 10px;
   }
 
-  //&:after {
-  //  content: '';
-  //  display: table;
-  //  clear: both;
-  //}
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
 }
 
 td.checkboxRow {
