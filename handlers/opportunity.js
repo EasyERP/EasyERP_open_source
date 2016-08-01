@@ -944,7 +944,7 @@ var Module = function (models, event) {
 
                             historyOptions = {
                                 contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                                data       : data,
+                                data       : result.toJSON(),
                                 req        : req,
                                 contentId  : result._id
                             };
