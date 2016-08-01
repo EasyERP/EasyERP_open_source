@@ -539,7 +539,7 @@ var Module = function (models, event) {
         var headers = req.headers;
         var id = headers.modelid || 'empty';
         var contentType = headers.modelname || 'opportunities';
-        var addNote = headers.addNote;
+        var addNote = headers.addnote;
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
@@ -944,7 +944,7 @@ var Module = function (models, event) {
 
                             historyOptions = {
                                 contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                                data       : data,
+                                data       : result.toJSON(),
                                 req        : req,
                                 contentId  : result._id
                             };

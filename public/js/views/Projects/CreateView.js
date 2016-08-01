@@ -165,9 +165,6 @@ define([
                     },
                     wait   : true,
                     success: function (model) {
-
-                        customFile.getFiltersValues(true); // added for refreshing filters after creating
-
                         self.attachView.sendToServer(null, model.changed);
                     },
 

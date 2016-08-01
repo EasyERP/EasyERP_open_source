@@ -300,7 +300,7 @@ define([
                     editNotes = _.map(notes, function (note) {
                         if (note._id === targetId) {
                             note.note = val;
-                            note.title = title;
+                         /*   note.title = title;*/
                         }
                         return note;
                     });
@@ -315,8 +315,8 @@ define([
                             success: function () {
                                 var $contentHolder = $noteContainer.find('.contentHolder');
                                 $contentHolder.removeClass('showButtons');
-                                /* $contentHolder.find('.noteTitle').text(title);*/
-                                $contentHolder.find('.noteText').text(val);
+                              /*  $contentHolder.find('.noteTitle').text(title);*/
+                                $contentHolder.find('.noteText').text(val).removeClass('hidden');
                                 $contentHolder.show();
                                 $target.closest('.addNote').remove();
 

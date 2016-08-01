@@ -138,9 +138,8 @@ define([
                     if (self.saveDeal && (typeof self.saveDeal === 'function')) {
                         self.saveDeal({company : res.id}, 'formProperty');
                     } else {
-                        custom.getFiltersValues(true); // added for refreshing filters after creating
-
                         navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                        Backbone.history.fragment = '';
                         Backbone.history.navigate(navigateUrl, {trigger: true});
                     }
 

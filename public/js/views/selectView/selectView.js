@@ -13,7 +13,16 @@ define([
         events: {
             'click .newSelectList li.miniStylePagination'                     : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
+            'click #createNewEl'                                              : 'createNewElement'
+        },
+
+        createNewElement: function (e) {
+            var target = $(e.target);
+            var type = target.attr('data-level');
+
+            Backbone.history.fragment = '';
+            Backbone.history.navigate('#easyErp/' + type, {trigger: true});
         },
 
         chooseOption: function (e) {
@@ -66,7 +75,7 @@ define([
             this.attr = $target.attr('id') || $target.attr('class');
             data = this.responseObj['#' + this.attr] || this.responseObj['.' + this.attr];
 
-            if (!data || !data.length) {
+            if (!data || !data.length && ($target.attr('data-content') || $target.parent().attr('data-content'))) {
                 this.attr = $target.attr('data-content') || $target.parent().attr('data-content');
                 data = this.responseObj['#' + this.attr];
             }
@@ -130,6 +139,7 @@ define([
             var targetParent = this.$el;
             var elementVisible = this.number;
             var newSel;
+            var type;
             var start;
             var end;
             var allPages;
@@ -189,6 +199,39 @@ define([
                 }));
 
             } else {
+                if (!data.length) {
+
+                    switch (this.attr) {
+                        case ('jobPositionDd') :
+                            type = 'JobPositions';
+                            break;
+                        case ('departmentsDd' || 'department') :
+                            type = 'Departments';
+                            break;
+                        case ('projectDd') :
+                            type = 'Projects';
+                            break;
+                        case ('paymentMethod') :
+                            type = 'Accounts';
+                            break;
+                        case ('chartAccount') :
+                            type = 'ChartOfAccount';
+                            break;
+                        case ('employee') :
+                            type = 'Employees';
+                    }
+
+                    if (type) {
+                        data.push({
+                            _id  : 'createNewEl',
+                            name : 'Create New',
+                            level: type
+                        });
+                        end = 1;
+                    }
+
+                }
+
                 contentHolder.html(_.template(selectContent, {
                     collection    : data.slice(start, end),
                     currentPage   : this.currentPage,

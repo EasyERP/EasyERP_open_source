@@ -38,7 +38,7 @@ define([
 
         events: {
             'click .addProductItem a'                                                 : 'getProducts',
-            'click .newSelectList li:not(.miniStylePagination)'                       : 'chooseOption',
+            'click .newSelectList li:not(.miniStylePagination, #createNewEl)'         : 'chooseOption',
             'click .newSelectList li.miniStylePagination'                             : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)'        : 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)'        : 'prevSelect',
@@ -52,7 +52,16 @@ define([
             'click .fa-trash-o'                                                       : 'deleteRow',
             'keyup td[data-name=price],td[data-name=quantity] input'                  : 'priceChange',
             'keypress  .forNum'                                                       : 'keypressHandler',
-            'click .productItem'                                                      : 'renderMessage'
+            'click .productItem'                                                      : 'renderMessage',
+            'click li#createNewEl'                                                    : 'createNewElement'
+        },
+
+        createNewElement: function (e) {
+            var target = $(e.target);
+            var type = target.attr('data-level');
+
+            Backbone.history.fragment = '';
+            Backbone.history.navigate('#easyErp/Products', {trigger: true});
         },
 
         template: _.template(productItemTemplate),
