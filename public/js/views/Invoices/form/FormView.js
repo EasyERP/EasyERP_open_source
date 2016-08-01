@@ -291,8 +291,10 @@ define([
             var balance = parseFloat($thisEl.find('#balance').text());
 
             var salesPersonId = $thisEl.find('#salesPerson').attr('data-id') || null;
-            var paymentTermId = $thisEl.find('#payment_terms').attr('data-id') || null;
+            var paymentTermId = $thisEl.find('#paymentTerm').attr('data-id') || null;
+            var paymentMethodId = $thisEl.find('#paymentMethod').attr('data-id') || null;
             var journalId = this.$el.find('#journal').attr('data-id') || null;
+
 
             var usersId = [];
             var groupsId = [];
@@ -355,6 +357,7 @@ define([
 
                 salesPerson : salesPersonId,
                 paymentTerms: paymentTermId,
+                paymentMethod: paymentMethodId,
 
                 groups: {
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
@@ -366,6 +369,8 @@ define([
                 workflow: workflow._id || null
 
             };
+
+            console.log(data);
 
             if (supplier) {
                 this.model.save(data, {
@@ -506,7 +511,7 @@ define([
             }
 
             isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
-
+            
             formString = this.template({
                 model             : this.currentModel.toJSON(),
                 isWtrack          : self.isWtrack,

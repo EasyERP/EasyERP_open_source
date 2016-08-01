@@ -1002,7 +1002,7 @@ var Module = function (models, event) {
         };
 
         var historyMatchObjForAssignedTo = {
-            $and: [{'$and': [{'changedField': 'salesPerson'}, {$or: [{'contentType': 'opportunitie'}, {'contentType': 'lead'}]}]}]
+            $and: [{$and: [{changedField: 'salesPerson'}, {$or: [{contentType: 'opportunitie'}, {contentType: 'lead'}]}]}]
         };
 
         var historyMatchObj = {
@@ -1032,7 +1032,7 @@ var Module = function (models, event) {
             });
         }
 
-        if (stage === 'Qualified') {
+        if (stage === 'Qualified' || stage === 'qualifiedFrom') {
             secondMatchObj = {'workflows.name': 'Qualified'};
         }
 
@@ -1205,7 +1205,7 @@ var Module = function (models, event) {
             leadsBySources: function (parCb) {
                 History.aggregate([
                     {
-                        $match: historyMatchObj
+                        $match: historyMatchObjForAssignedTo
                     }, {
                         $lookup: {
                             from        : 'Opportunities',
@@ -1216,18 +1216,6 @@ var Module = function (models, event) {
                     }, {
                         $unwind: {
                             path                      : '$lead',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'lead.salesPerson',
-                            foreignField: '_id',
-                            as          : 'sales'
-                        }
-                    }, {
-                        $unwind: {
-                            path                      : '$sales',
                             preserveNullAndEmptyArrays: true
                         }
                     }, {
@@ -1246,28 +1234,39 @@ var Module = function (models, event) {
                         $match: secondMatchObj
                     }, {
                         $project: {
-                            date  : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                            isOpp : '$lead.isOpportunitie',
-                            dateBy: {$dayOfYear: '$date'},
-                            isNull: {ifNull: ['$lead.source', '']},
-                            source: '$lead.source'
+                            date     : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
+                            isOpp    : '$lead.isConverted',
+                            dateBy   : {$dayOfYear: '$date'},
+                            createdBy: '$lead.createdBy'
                         }
                     }, {
                         $project: {
-                            date  : 1,
-                            isOpp : '$isOpp',
-                            dateBy: '$dateBy',
-                            source: {$cond: [{$or: [{$eq: ['$isNull', '']}, {$eq: ['$source', '']}]}, 'Empty', '$source']}
+                            date     : 1,
+                            isOpp    : '$isOpp',
+                            dateBy   : '$dateBy',
+                            createdBy: '$createdBy'
                         }
                     }, {
                         $group: {
-                            _id   : '$source',
+                            _id   : '$createdBy.user',
                             count : {$sum: 1},
-                            dateBy: {$first: '$dateBy'},
-                            isOpp : {$first: '$isOpp'}
+                            isOpp : {$first: '$isOpp'},
+                            source: {$first: '$dateBy'}
                         }
                     }, {
-                        $sort: {_id: -1}
+                        $lookup: {
+                            from        : 'Users',
+                            localField  : '_id',
+                            foreignField: '_id',
+                            as          : 'user'
+                        }
+                    }, {
+                        $unwind: {
+                            path                      : '$user',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    }, {
+                        $project: {_id: 0, count: '$count', salesPerson: '$user.login'}
                     }
                 ], parCb);
             }
