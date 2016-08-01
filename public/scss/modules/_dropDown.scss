@@ -1,19 +1,15 @@
 ._filterDropDownWrap {
-  position: relative;
-  height: 26px;
-  width: 240px;
-  z-index: 2000;
+
 
   > ul {
     position: absolute;
-    width: 100%;
     background-color: #fff;
   }
 
   li {
     position: relative;
     display: block;
-    line-height: 25px;
+    line-height: 18px;
   }
 }
 ._filterDropDownWrap {
@@ -23,57 +19,83 @@
         text-align: right;
         color: #333;
         cursor: pointer;
+        line-height: 26px;
       }
     }
   }
 }
+
 ._filterDropDownBody {
   width: 100%;
-  padding: 14px;
-  border: 1px solid #eee;
+  padding: 7px 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
 
-  &:after {
-    position: absolute;
-    top: -5px;
-    right: 10px;
-    display: inline-block;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid #fff;
-    border-left: 6px solid transparent;
-    content: '';
-  }
+  //&:after {
+  //  position: absolute;
+  //  top: -5px;
+  //  right: 10px;
+  //  display: inline-block;
+  //  border-right: 6px solid transparent;
+  //  border-bottom: 6px solid #fff;
+  //  border-left: 6px solid transparent;
+  //  content: '';
+  //}
+  //
+  //&:before {
+  //  position: absolute;
+  //  top: -6px;
+  //  right: 9px;
+  //  display: inline-block;
+  //  border-right: 7px solid transparent;
+  //  border-bottom: 7px solid #e4e4e4;
+  //  border-left: 7px solid transparent;
+  //  content: '';
+  //}
 
-  &:before {
-    position: absolute;
-    top: -6px;
-    right: 9px;
-    display: inline-block;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid #e4e4e4;
-    border-left: 7px solid transparent;
-    content: '';
+  .listLine {
+    height: 1px;
+    display: block;
+    background-color: #e5e5e5;
+    margin: 8px 0;
   }
-
+  
   .filterValues {
     font-size: 13px;
-    background: #f5f5f5;
-    border: 1px solid #f5f5f5;
-    color: #333;
-    padding: 0 12px;
-    margin-bottom: 8px;
+    color: #4d4d4d;
+    padding: 3px 25px;
     text-align: left;
+    white-space: nowrap;
 
-    &:hover,
+    &:hover {
+      background: #f5f5f5;
+    }
+
     &.checkedValue {
-      background: #7eadcc;
-      border: 1px solid #7eadcc;
-      color: #fff;
+      font-family: $semibold-font-family;
+      cursor: pointer;
+
+      &:before {
+        font-family: 'FontAwesome';
+        position: absolute;
+        left: 6px;
+        content: "\f00c";
+      }
+    }
+  }
+  #customLeadsBySale {
+    &.checkedValue {
+      font-family: $base-font-family;
+      background-color: #fff;
+      &:before {
+        display: none;
+      }
     }
   }
 
   .buttons {
     width: 100%;
+    margin-top: 7px;
     background-color: #fff;
     border: 0;
     text-align: center;
@@ -85,20 +107,13 @@
       margin-bottom: 7px;
 
       > label {
-        float: left;
-        clear: both;
+        display: block;
         line-height: 26px;
       }
       > input {
         height: 26px;
-        width: 165px;
-        float: right;
+        width: 100%;
         cursor: pointer;
-      }
-      &:after {
-        content: '';
-        display: table;
-        clear: both;
       }
     }
   }

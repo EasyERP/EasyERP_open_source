@@ -25,14 +25,14 @@ $xlarge-screen      : map_get($screen-breakpoints, 'xlarge');
 $small-screen-down  : (map_get($screen-breakpoints, 'small') - 1);
 $medium-screen-down : (map_get($screen-breakpoints, 'medium') - 1);
 $large-screen-down  : (map_get($screen-breakpoints, 'large') - 1);
-$xlarge-screen-down  : (map_get($screen-breakpoints, 'xlarge') - 1);
+$xlarge-screen-down : (map_get($screen-breakpoints, 'xlarge') - 1);
 // ----------------------
 
 // Grid vars +1 ---------
 $small-screen-up    : (map_get($screen-breakpoints, 'small') + 1);
 $medium-screen-up   : (map_get($screen-breakpoints, 'medium') + 1);
 $large-screen-up    : (map_get($screen-breakpoints, 'large') + 1);
-$xlarge-screen-up    : (map_get($screen-breakpoints, 'xlarge') + 1);
+$xlarge-screen-up   : (map_get($screen-breakpoints, 'xlarge') + 1);
 // ----------------------
 
 // Header ---------------
@@ -71,13 +71,13 @@ $vars : (
 // flexgrid variables
 
 $container-width: 100%;
-$sm-break: 30em;  // 480px
-$md-break: 45em;  // 720px
-$lg-break: 60em;  // 960px
-$xl-break: 90em;  // 1440px
-$gutter: 16px;
-$cols: 12;
+$sm-break       : 30em;  // 480px
+$md-break       : 45em;  // 720px
+$lg-break       : 60em;  // 960px
+$xl-break       : 90em;  // 1440px
+$gutter         : 16px;
+$cols           : 12;
 
-$small-spacing: 4px;
-$medium-spacing: 16px;
-$large-spacing: 24px;
+$small-spacing  : 4px;
+$medium-spacing : 16px;
+$large-spacing  : 24px;

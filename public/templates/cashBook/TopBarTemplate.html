@@ -10,15 +10,19 @@
             <ul class="frameDetail _filterDropDownBody hidden">
                 <li id="thisMonth" class="filterValues checked">This Month</li>
                 <li id="thisYear" class="filterValues checked">This Financial Year</li>
+                <li class="listLine"></li>
                 <li id="lastMonth" class="filterValues checked">Last Month</li>
                 <li id="lastQuarter" class="filterValues checked">Last Quarter</li>
                 <li id="lastYear" class="filterValues checked">Last Financial Year</li>
+                <li class="listLine"></li>
                 <li id="custom" class="filterValues checked">Custom Dates</li>
                 <li class="customTime hidden">
-                    <span>
-                        <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>
+                    <div class="customTimeItem">
+                        <label for="startDate">From </label><input readonly type="text" id="startDate">
+                    </div>
+                    <div class="customTimeItem">
                         <label for="endDate">To </label><input readonly type="text" id="endDate">
-                    </span>
+                    </div>
                 </li>
                 <li class="buttons hidden">
                     <button id="updateDate" class="btn">
