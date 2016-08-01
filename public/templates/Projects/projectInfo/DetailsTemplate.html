@@ -44,6 +44,7 @@
             <th>Invoice</th>
             <th>Employees</th>
             <th>Hours</th>
+            <th>ADR</th>
             <th>Cost</th>
             <th>Revenue</th>
             <th>Profit</th>
@@ -52,7 +53,9 @@
 
         <tbody id="projectTeam">
         <%var firstJob = jobs && jobs.length ? jobs[0] : null;%>
+
         <% jobs.forEach(function(element,i){ %>
+            <% var adr = (element.totalRevenue/(100 * (element.totalWorked - element.totalQAWorked - element.totalDesignWorked))).toFixed(2)%>
             <tr data-id="<%=element._id%>" id="jobsItem">
 
                 <td class="remove"><a
@@ -80,6 +83,7 @@
                 </td>
                 <td><%= element.revenue ? element.revenue.length : 0 %></td>
                 <td><%= currencySplitter(element.totalWorked.toFixed()) || 0%></td>
+                <td><%= isFinite(adr) ? adr : 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.cost/100).toFixed()) || 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.totalRevenue/100).toFixed()) || 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.profit/100).toFixed()) || 0%></td>
@@ -103,6 +107,7 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td id="totalHours" data-value="<%=firstJob ? firstJob.workedTotal: 0%>"><%= firstJob ? currencySplitter(firstJob.workedTotal.toFixed()): 0%></td>
+            <td>&nbsp</td>
             <td id="totalCost" class="dollar" data-value="<%=firstJob ? firstJob.costTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.costTotal/100).toFixed()): 0%></td>
             <td id="totalRevenue" class="dollar" data-value="<%=firstJob ? firstJob.revenueTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.revenueTotal/100).toFixed()): 0%></td>
             <td id="totalProfit" class="dollar" data-value="<%=firstJob ? firstJob.profitTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.profitTotal/100).toFixed()): 0%></td>

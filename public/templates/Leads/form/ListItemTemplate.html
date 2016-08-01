@@ -10,8 +10,7 @@
             <div class="compactRowWrap">
                 <div class="compactRow">
                     <div class="name"><%= lead.name%></div>
-                    <div class="stage"><%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%></div>
-
+                    <div class="stage <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">        <span ><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></span></div>
                 </div>
                 <div class="compactRow">
                     <div class="assignedTo"><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></div>

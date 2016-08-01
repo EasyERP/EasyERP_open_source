@@ -69,7 +69,6 @@ define([
         },
 
         events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
         },
 
         saveItem: function () {
@@ -192,21 +191,6 @@ define([
 
             this.recalcTotal();
 
-        },
-
-        gotoForm: function (e) {
-            var id = $(e.target).closest('tr').data('id');
-            var page = this.collection.currentPage;
-            var countPerPage = this.collection.pageSize;
-            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
-
-            if (this.filter) {
-                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
-            }
-
-            App.ownContentType = true;
-            console.log('url => ', url);
-            Backbone.history.navigate(url, {trigger: true});
         }
 
         /*goToEditDialog: function (e) {

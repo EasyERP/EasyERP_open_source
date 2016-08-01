@@ -100,6 +100,8 @@ define([
             var noteObj;
             var editNotes;
 
+
+
             if ($(e.target).parents('.addNote').find('#noteArea').val().replace(/ /g, '') || $(e.target).parents('.addNote').find('#noteTitleArea').val().replace(/ /g, '')) {
                 $(e.target).parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
                 this.$el.find('.title-wrapper').hide();
@@ -141,9 +143,13 @@ define([
                                 },
                                 patch  : true,
                                 success: function () {
+                                    var $formLeftColumn = self.$el.find('.formLeftColumn');
+                                    var $noteWrapper = $formLeftColumn.find('.noteWrapper');
                                     self.$el.find('#noteBody').val($('#' + arrKeyStr).find('.noteText').html(val));
                                     self.$el.find('#noteBody').val($('#' + arrKeyStr).find('.noteTitle').html(title));
                                     self.$el.find('#getNoteKey').attr('value', '');
+                                    $noteWrapper.empty();
+                                    $formLeftColumn.append(self.render());
                                 }
                             });
                     } else {
@@ -161,8 +167,10 @@ define([
                                 var formLeftColumn = self.$el.find('.formLeftColumn');
                                 var noteWrapper = formLeftColumn.find('.noteWrapper');
 
+
                                 noteWrapper.empty();
                                 formLeftColumn.append(self.render());
+
                             },
 
                             error: function (models, xhr) {
@@ -171,8 +179,7 @@ define([
                             }
                         });
                     }
-                    /*this.$el.find('#noteArea').val('');
-                     this.$el.find('#noteTitleArea').val('');*/
+
                 } else {
                     return false;
                 }
@@ -189,7 +196,7 @@ define([
 
 
             if (!modelObj.notes) {
-                modelObj.notes = 0
+                modelObj.notes = 0;
             }
 
             modelObj.needNotes = this.needNotes;
@@ -197,13 +204,11 @@ define([
             this.$el.html(this.template(modelObj));
             notDiv = this.$el.find('.attachments');
 
-
-
             notDiv.html(
                 new AttachView({
                     model      : this.model,
                     contentType: this.contentType,
-                    isCreate   : this.isCreate,
+                    isCreate   : this.isCreate
                 }).render().el
             );
             return this;

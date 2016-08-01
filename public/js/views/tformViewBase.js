@@ -5,8 +5,9 @@ define([
     'views/listViewBase',
     'views/Filter/filterView',
     'common',
-    'constants'
-], function (Backbone, $, _, BaseView, FilterView, common, CONSTANTS) {
+    'constants',
+    'dataService'
+], function (Backbone, $, _, BaseView, FilterView, common, CONSTANTS, dataService) {
     'use strict';
 
     var TFormBaseView = BaseView.extend({
@@ -26,7 +27,6 @@ define([
 
         initialize: function (options) {
             var modelId = options.modelId;
-
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -40,6 +40,7 @@ define([
             BaseView.prototype.initialize.call(this, options);
 
             this.addFormView(modelId);
+            this.selectedId = modelId;
         },
 
         openSortDrop: function (e) {
@@ -157,6 +158,12 @@ define([
 
             e.preventDefault();
 
+            if (modelId === this.selectedId) {
+                return false;
+            }
+
+            this.selectedId = modelId;
+
             this.renderFormView(modelId, function () {
                 $thisEl.find('#timeRecivingDataFromServer').remove();
                 $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
@@ -200,6 +207,70 @@ define([
                         message: 'Server error'
                     });
                 }
+            });
+        },
+
+        deleteItems: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var collection = this.collection;
+            var url = collection.url;
+            var $checkedInputs;
+            var ids = [];
+            var answer;
+            var edited = this.edited || $thisEl.find('tr.false, #false');
+            var collectionObj;
+            var collIds;
+            var diffIds;
+            var needId;
+
+            if (!edited.length) { // ToDo refactor
+                this.changed = false;
+            }
+
+            if (this.changed) {
+                return this.cancelChanges();
+            }
+
+            answer = confirm('Really DELETE items ?!');
+
+            if (answer === false) {
+                return false;
+            }
+
+            $checkedInputs = $table.find('input:checked');
+
+            $.each($checkedInputs, function () {
+                var $el = $(this);
+
+                ids.push($el.val());
+            });
+
+            ids = _.compact(ids);
+
+            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err) {
+                if (err) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Can\'t remove items'
+                    });
+                }
+
+                self.getPage({
+                    success: function () {
+                        if (ids.indexOf(self.selectedId) !== -1) {
+                            collectionObj = self.collection.toJSON();
+                            collIds = _.pluck(collectionObj, '_id');
+
+                            diffIds = _.difference(collIds, ids);
+                            needId = diffIds[0];
+
+                            self.selectedId = needId;
+                            self.renderFormView(needId);
+                        }
+                    }
+                });
             });
         },
 
