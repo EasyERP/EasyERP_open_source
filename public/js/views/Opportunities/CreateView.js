@@ -62,10 +62,6 @@ define([
             var companyId = $thisEl.find('#companyDd').attr('data-id');
             var customerId = $thisEl.find('#customerDd').attr('data-id');
             var salesPersonId =$thisEl.find('#salesPersonDd').attr('data-id');
-            var nextActionDesc = $.trim($thisEl.find('#nextActionDescription').val());
-            var nextAction = {
-                desc: nextActionDesc
-            };
             var expectedClosing = $.trim($thisEl.find('#expectedClosing').val());
             var priority = $.trim($thisEl.find('#priorityDd').text());
             var internalNotes = $.trim($thisEl.find('#internalNotes').val());
@@ -105,7 +101,6 @@ define([
                     expectedRevenue: expectedRevenue,
                     customer       : customerId || null,
                     salesPerson    : salesPersonId || null,
-                    nextAction     : nextAction,
                     expectedClosing: expectedClosing,
                     priority       : priority,
                     company        : companyId,
