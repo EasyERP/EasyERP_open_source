@@ -1199,7 +1199,7 @@ var Module = function (models, event) {
             leadsBySources: function (parCb) {
                 History.aggregate([
                     {
-                        $match: historyMatchObj
+                        $match: historyMatchObjForAssignedTo
                     }, {
                         $lookup: {
                             from        : 'Opportunities',
@@ -1210,18 +1210,6 @@ var Module = function (models, event) {
                     }, {
                         $unwind: {
                             path                      : '$lead',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'lead.salesPerson',
-                            foreignField: '_id',
-                            as          : 'sales'
-                        }
-                    }, {
-                        $unwind: {
-                            path                      : '$sales',
                             preserveNullAndEmptyArrays: true
                         }
                     }, {
@@ -1240,31 +1228,39 @@ var Module = function (models, event) {
                         $match: secondMatchObj
                     }, {
                         $project: {
-                            date  : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                            isOpp : '$lead.isOpportunitie',
-                            dateBy: {$dayOfYear: '$date'},
-                            source: {$ifNull: ['$lead.source', '']}
+                            date     : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
+                            isOpp    : '$lead.isConverted',
+                            dateBy   : {$dayOfYear: '$date'},
+                            createdBy: '$lead.createdBy'
                         }
                     }, {
                         $project: {
-                            date  : 1,
-                            isOpp : '$isOpp',
-                            dateBy: '$dateBy',
-                            source: {$cond: [{$or: [{$eq: ['$isNull', '']}, {$eq: ['$source', '']}]}, 'Empty', '$source']}
+                            date     : 1,
+                            isOpp    : '$isOpp',
+                            dateBy   : '$dateBy',
+                            createdBy: '$createdBy'
                         }
                     }, {
                         $group: {
-                            _id  : '$source',
-                            count: {$sum: 1}
+                            _id   : '$createdBy.user',
+                            count : {$sum: 1},
+                            isOpp : {$first: '$isOpp'},
+                            source: {$first: '$dateBy'}
                         }
                     }, {
-                        $project: {
-                            salesPerson: '$_id',
-                            count      : 1,
-                            _id: 0
+                        $lookup: {
+                            from        : 'Users',
+                            localField  : '_id',
+                            foreignField: '_id',
+                            as          : 'user'
                         }
                     }, {
-                        $sort: {_id: -1}
+                        $unwind: {
+                            path                      : '$user',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    }, {
+                        $project: {_id: 0, count: '$count', salesPerson: '$user.login'}
                     }
                 ], parCb);
             }
