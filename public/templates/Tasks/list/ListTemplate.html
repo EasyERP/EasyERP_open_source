@@ -5,10 +5,10 @@
     <td><%=(task.project) ? task.project.name : ''%><%=task.taskCount%></td>
     <td><%=task.summary%></td>
     <td>
-        <a href="javascript:;" data-id="<%=task.project._id%>" class="project"><%=task.project.name%></a>
+        <a href="/#easyErp/Projects/form/<%= task.project._id%>" data-id="<%=task.project._id%>" class="project"><%=task.project.name%></a>
     </td>
     <td id='stages_<%=task._id%>'>
-        <a href="javascript:;" class="stageSelect"><%=(task.workflow) ? task.workflow.name : 'Undefinded'%></a>
+        <a href="javascripet:;" class="stageSelect"><%=(task.workflow) ? task.workflow.name : 'Undefinded'%></a>
     </td>
     <td><%=(task.assignedTo) ? task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></td>
     <td><%=task.estimated%></td>

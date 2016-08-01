@@ -28,11 +28,10 @@ define([
         // formUrl                 : "#easyErp/Tasks/form/",
 
         events: {
-            'click td:not(:has("input[type="checkbox"]"))': 'goToEditDialog',
-            'click .project'                              : 'goToProject',
-            'click .stageSelect'                          : 'showNewSelect',
-            'click .stageSelectType'                      : 'showNewSelectType',
-            'click .newSelectList li'                     : 'chooseOption'
+            'click td:not(:has("input[type="checkbox"]"), .project)': 'goToEditDialog',
+            'click .stageSelect'                                    : 'showNewSelect',
+            'click .stageSelectType'                                : 'showNewSelectType',
+            'click .newSelectList li'                               : 'chooseOption'
         },
 
         initialize: function (options) {
@@ -52,26 +51,26 @@ define([
             ListViewBase.prototype.initialize.call(this, options);
         },
 
-        goToProject: function (e) {
-            var projectId = $(e.target).data('id');
-            var model = new ProjectModel({validate: false});
+        /*goToProject: function (e) {
+         var projectId = $(e.target).data('id');
+         var model = new ProjectModel({validate: false});
 
-            model.urlRoot = '/Projects/' + projectId;
-            model.fetch({
-                success: function (newModel) {
-                    new ProjectEditView({model: newModel});
-                },
+         model.urlRoot = '/Projects/' + projectId;
+         model.fetch({
+         success: function (newModel) {
+         new ProjectEditView({model: newModel});
+         },
 
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
+         error: function () {
+         App.render({
+         type   : 'error',
+         message: 'Please refresh browser'
+         });
+         }
+         });
 
-            return false;
-        },
+         return false;
+         },*/
 
         goToEditDialog: function (e) {
             var id;
