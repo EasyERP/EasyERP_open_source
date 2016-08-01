@@ -51,7 +51,8 @@ define([
 
             $(document).off('click');
 
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';            this.EditView = EditView;
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.EditView = EditView;
             this.CreateView = CreateView;
 
             this.startTime = options.startTime;
@@ -67,10 +68,7 @@ define([
             this.stages = [];
         },
 
-        events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'gotoForm'
-            //'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
-        },
+        events: {},
 
         saveItem: function () {
             var model;

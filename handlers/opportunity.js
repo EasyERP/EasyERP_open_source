@@ -1069,7 +1069,7 @@ var Module = function (models, event) {
                         $project: {
                             date  : 1,
                             isOpp : '$isOpp',
-                            dateBy: '$dateBy',
+                            dateBy: '$dateBy'
                         }
                     }, {
                         $group: {

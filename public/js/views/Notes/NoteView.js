@@ -189,7 +189,7 @@ define([
 
 
             if (!modelObj.notes) {
-                modelObj.notes = 0
+                modelObj.notes = 0;
             }
 
             modelObj.needNotes = this.needNotes;
@@ -197,13 +197,11 @@ define([
             this.$el.html(this.template(modelObj));
             notDiv = this.$el.find('.attachments');
 
-
-
             notDiv.html(
                 new AttachView({
                     model      : this.model,
                     contentType: this.contentType,
-                    isCreate   : this.isCreate,
+                    isCreate   : this.isCreate
                 }).render().el
             );
             return this;

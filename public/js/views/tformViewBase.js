@@ -26,7 +26,7 @@ define([
         },
 
         initialize: function (options) {
-            this.selectedId = options.modelId;
+            var modelId = options.modelId;
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -39,7 +39,8 @@ define([
 
             BaseView.prototype.initialize.call(this, options);
 
-            this.addFormView();
+            this.addFormView(modelId);
+            this.selectedId = modelId;
         },
 
         openSortDrop: function (e) {
@@ -144,8 +145,8 @@ define([
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        addFormView: function () {
-            this.renderFormView();
+        addFormView: function (modelId) {
+            this.renderFormView(modelId);
         },
 
         goToForm: function (e) {
@@ -157,12 +158,13 @@ define([
 
             e.preventDefault();
 
-            if (modelId === this.selectedId){
+            if (modelId === this.selectedId) {
                 return false;
             }
 
             this.selectedId = modelId;
-            this.renderFormView(function () {
+
+            this.renderFormView(modelId, function () {
                 $thisEl.find('#timeRecivingDataFromServer').remove();
                 $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
 
@@ -170,8 +172,7 @@ define([
             });
         },
 
-        renderFormView: function (cb) {
-            var modelId = this.selectedId;
+        renderFormView: function (modelId, cb) {
             var $thisEl = this.$el;
             var self = this;
             var model;
@@ -219,11 +220,10 @@ define([
             var ids = [];
             var answer;
             var edited = this.edited || $thisEl.find('tr.false, #false');
-            var collectionObj = this.collection.toJSON();
-            var collIds = _.pluck(collectionObj, '_id');
+            var collectionObj;
+            var collIds;
             var diffIds;
             var needId;
-            var needReset = false;
 
             if (!edited.length) { // ToDo refactor
                 this.changed = false;
@@ -249,14 +249,6 @@ define([
 
             ids = _.compact(ids);
 
-            if (ids.indexOf(this.selectedId) !== -1) {
-                diffIds = _.difference(collIds, ids);
-                needId = diffIds[0];
-
-                this.selectedId = needId;
-                needReset = !needReset;
-            }
-
             dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err) {
                 if (err) {
                     return App.render({
@@ -265,11 +257,20 @@ define([
                     });
                 }
 
-                self.getPage();
+                self.getPage({
+                    success: function () {
+                        if (ids.indexOf(self.selectedId) !== -1) {
+                            collectionObj = self.collection.toJSON();
+                            collIds = _.pluck(collectionObj, '_id');
 
-                if (needReset) {
-                    self.renderFormView();
-                }
+                            diffIds = _.difference(collIds, ids);
+                            needId = diffIds[0];
+
+                            self.selectedId = needId;
+                            self.renderFormView(needId);
+                        }
+                    }
+                });
             });
         },
 

@@ -596,7 +596,7 @@ define([
             notDiv.append(
                 new NoteView({
                     model      : this.currentModel,
-                    contentType: CONSTANTS.INVOICES,
+                    contentType: this.contentType,
                     needNotes  : needNotes
                 }).render().el
             );
