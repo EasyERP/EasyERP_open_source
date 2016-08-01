@@ -22,12 +22,6 @@
                 </div>
                 <div class="opportunity-content">
                     <div class="half-block left">
-                        <%if (property.nextAction && property.nextAction.desc){%>
-                        <br/>
-
-                        <p class="left"><%=property.nextAction?property.nextAction.desc:''%> </p>
-                        <%}%>
-
                         <!--  <p class="left">Project Type</p>-->
                         <p class="left saleName"><%=(property.salesPerson) ? property.salesPerson.name.first + ' ' + property.salesPerson.name.last :
                             ''%></p>

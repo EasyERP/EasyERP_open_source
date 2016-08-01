@@ -16,7 +16,7 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
-            'nextAction.date': {
+            'expectedClosing': {
                 name : 'Close Date',
                 isRef: false
             },
@@ -50,7 +50,7 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
-            'nextAction.date': {
+            'expectedClosing': {
                 name : 'Close Date',
                 isRef: false
             },
