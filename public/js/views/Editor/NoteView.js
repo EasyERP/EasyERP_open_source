@@ -256,6 +256,7 @@ define([
         },
 
         saveNote: function (e) {
+            //console.log('save Note');
             var self = this;
             var $target = $(e.target);
             var $noteArea = $target.parents('.addNote').find('#noteArea');
@@ -318,6 +319,9 @@ define([
                                 $contentHolder.find('.noteText').text(val);
                                 $contentHolder.show();
                                 $target.closest('.addNote').remove();
+
+                                /*console.log('note is changed 1');
+                                $noteArea.html('');*/
                             }
                         });
                 } else {
@@ -336,6 +340,9 @@ define([
 
                             noteWrapper.empty();
                             formLeftColumn.append(self.render());
+
+                            /*console.log('note is changed 2');
+                            $noteArea.html('');*/
                         },
 
                         error: function (models, xhr) {
