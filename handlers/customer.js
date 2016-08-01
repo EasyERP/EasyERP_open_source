@@ -638,11 +638,29 @@ var Module = function (models, event) {
         person.editedBy.date = new Date();
 
         person.save(function (err, result) {
+            var historyOptions;
+
             if (err) {
                 return next(err);
             }
 
-            res.status(201).send({success: 'A new Person crate success', id: result._id});
+            historyOptions = {
+                contentType: result.type,
+                data       : result.toJSON(),
+                req        : req,
+                contentId  : result._id
+            };
+
+            historyWriter.addEntry(historyOptions, function () {
+                getData(req, result.toJSON(), function (err, customer) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(201).send({success: 'A new Person crate success', id: customer._id});
+                });
+            });
+
+
         });
     };
 
@@ -1093,6 +1111,10 @@ var Module = function (models, event) {
 
                 }
                 event.emit('editModel', {id: result._id, currentUser: req.session.uId});
+
+                if (data['name.first'] || data['name.last']) {
+                    data.fullName = result.fullName;
+                }
 
                 historyOptions = {
                     contentType: result.type,
