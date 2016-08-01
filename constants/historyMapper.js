@@ -100,8 +100,12 @@ module.exports = {
                 name : 'Date of Birth',
                 isRef: false
             },
-            'fullName': {
-                name : 'Name',
+            'name.first': {
+                name : 'First Name',
+                isRef: false
+            },
+            'name.last': {
+                name : 'Last Name',
                 isRef: false
             },
             'jobPosition': {

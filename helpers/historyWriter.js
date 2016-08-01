@@ -72,6 +72,7 @@ var History = function (models) {
         var key;
         var i;
         var keyArray;
+        var arrayDataKey;
         for (i = dataKeys.length - 1; i >= 0; i--) {
             key = dataKeys[i];
 
@@ -84,27 +85,52 @@ var History = function (models) {
 
             if (key.indexOf('.') !== -1) {
                 keyArray = key.split('.');
-                data[keyArray[0]] = {};
+                if (!data[keyArray[0]]){
+                    data[keyArray[0]] = {};
+                }
+
                 data[keyArray[0]][keyArray[1]] = data[key];
                 dataKeys.unshift(keyArray[0]);
                 i++;
                 continue;
             }
-
             keyValue = {
                 key  : key,
                 value: data[key]
             };
-            historyEntry = generateHistoryEntry(contentType, keyValue);
 
-            if (historyEntry) {
 
-                historyEntry.editedBy = objectId(options.req.session.uId);
-                historyEntry.contentId = objectId(options.contentId);
-                historyEntry.date = date;
+            arrayDataKey = Object.keys(data[key]);
+            if (typeof data[key] === 'object' && arrayDataKey.length) {
+                arrayDataKey.forEach(function(elem, index){
+                    var name = arrayDataKey[index];
 
-                historyRecords.push(historyEntry);
+                    keyValue.value = {};
+                    keyValue.value[name] = data[key][name];
+                    historyEntry = generateHistoryEntry(contentType, keyValue);
+
+                    if (historyEntry) {
+
+                        historyEntry.editedBy = objectId(options.req.session.uId);
+                        historyEntry.contentId = objectId(options.contentId);
+                        historyEntry.date = date;
+
+                        historyRecords.push(historyEntry);
+                    }
+                });
+            } else {
+                historyEntry = generateHistoryEntry(contentType, keyValue);
+
+                if (historyEntry) {
+
+                    historyEntry.editedBy = objectId(options.req.session.uId);
+                    historyEntry.contentId = objectId(options.contentId);
+                    historyEntry.date = date;
+
+                    historyRecords.push(historyEntry);
+                }
             }
+
         }
 
         if (historyRecords.length) {

@@ -1112,10 +1112,6 @@ var Module = function (models, event) {
                 }
                 event.emit('editModel', {id: result._id, currentUser: req.session.uId});
 
-                if (data['name.first'] || data['name.last']) {
-                    data.fullName = result.fullName;
-                }
-
                 historyOptions = {
                     contentType: result.type,
                     data       : data,
