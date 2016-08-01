@@ -54,6 +54,7 @@
         <tbody id="projectTeam">
         <%var firstJob = jobs && jobs.length ? jobs[0] : null;%>
         <% jobs.forEach(function(element,i){ %>
+            <% var adr = (element.totalRevenue/(100 * (element.totalWorked.toFixed() - element.totalQAWorked.toFixed() - element.totalDesignWorked.toFixed()))).toFixed(2)%>
             <tr data-id="<%=element._id%>" id="jobsItem">
 
                 <td class="remove"><a
@@ -81,7 +82,7 @@
                 </td>
                 <td><%= element.revenue ? element.revenue.length : 0 %></td>
                 <td><%= currencySplitter(element.totalWorked.toFixed()) || 0%></td>
-                <td><%= (element.totalRevenue/(100 * (element.totalWorked.toFixed() - element.totalQAWorked.toFixed() - element.totalDesignWorked.toFixed()))).toFixed(2)%></td>
+                <td><%= isFinite(adr) ? adr : 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.cost/100).toFixed()) || 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.totalRevenue/100).toFixed()) || 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.profit/100).toFixed()) || 0%></td>

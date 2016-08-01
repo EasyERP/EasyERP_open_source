@@ -1191,12 +1191,6 @@ var Module = function (models, event) {
                             _id        : 0
                         }
                     }, {
-                        $group: {
-                            _id       : '$salesPerson',
-                            salesByDay: {$push: {salesPerson: '$salesPerson', count: '$count'}},
-                            count     : {$sum: '$count'}
-                        }
-                    }, {
                         $sort: {_id: -1}
                     }
                 ], parCb);
