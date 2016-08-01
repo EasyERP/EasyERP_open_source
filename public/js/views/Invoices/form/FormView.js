@@ -370,8 +370,6 @@ define([
 
             };
 
-            console.log(data);
-
             if (supplier) {
                 this.model.save(data, {
                     headers: {
@@ -511,7 +509,7 @@ define([
             }
 
             isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
-            
+
             formString = this.template({
                 model             : this.currentModel.toJSON(),
                 isWtrack          : self.isWtrack,
