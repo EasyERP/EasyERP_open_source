@@ -372,6 +372,7 @@
                 patch  : true,
                 success: function (model) {
                     var viewType = custom.getCurrentVT();
+                    var url = window.location.hash;
 
                     model = model.toJSON();
 
@@ -391,6 +392,9 @@
                             break;
                         // skip default;
                     }
+
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(url, {trigger: true});
                     self.hideDialog();
                 },
 
