@@ -22,14 +22,15 @@ define([
         },
 
         render: function () {
+            var model = this.model.toJSON();
             this.$el.html(this.template(
                 {
                     model           : this.model.toJSON(),
                     currencySplitter: helpers.currencySplitter
                 }));
 
-            if ((this.model.toJSON().workflow.status !== 'Done') && (this.model.toJSON().workflow.status !== 'Cancelled')) {
-                if (this.model.toJSON().nextAction.date && moment(new Date(this.model.toJSON().nextAction.date)).isBefore(this.date)) {
+            if ((model.workflow.status !== 'Done') && (model.workflow.status !== 'Cancelled')) {
+                if (model.expectedClosing && moment(new Date(model.expectedClosing)).isBefore(this.date)) {
                     this.$el.addClass('errorContent');
                 }
             }
