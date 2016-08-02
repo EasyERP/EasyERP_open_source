@@ -2392,10 +2392,11 @@
 
 ._filterDropDownWrap {
   height: 26px;
-  width: 240px; }
+  width: 200px; }
   ._filterDropDownWrap > ul {
     position: absolute;
-    background-color: #fff; }
+    background-color: #fff;
+    z-index: 1; }
   ._filterDropDownWrap li {
     position: relative;
     display: block;
@@ -2464,6 +2465,26 @@
         border-bottom: 1px solid #cfcfcf;
         color: #4d4d4d;
         cursor: pointer; }
+
+._filterArrow:before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-right: 0;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid #4d4d4d; }
+._filterArrow.checkedArrow:before {
+  left: 8px;
+  bottom: 11px;
+  border-top: 4px solid #4d4d4d;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  border-bottom: 0; }
 
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }
