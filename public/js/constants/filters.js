@@ -106,6 +106,10 @@
                 displayName: 'Name',
                 backend    : '_id'
             },
+            category: {
+                displayName: 'Category',
+                backend    : 'category'
+            },
             assignedTo: {
                 displayName: 'Assigned To',
                 backend    : 'assignedTo'
@@ -119,7 +123,8 @@
                 backend    : 'deal'
             },
 
-            array: ['name', 'assignedTo', 'workflow', 'deal']
+
+            array: ['name', 'assignedTo', 'workflow', 'deal', 'category' ]
         },
 
         Companies: {

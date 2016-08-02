@@ -323,9 +323,18 @@ var Module = function (models, event) {
                     }
                 },
                 {
+                    $lookup: {
+                        from        : 'tags',
+                        localField  : 'category',
+                        foreignField: '_id',
+                        as          : 'category'
+                    }
+                },
+                {
                     $project: {
                         _id             : 1,
                         workflow        : {$arrayElemAt: ['$workflow', 0]},
+                        category        : {$arrayElemAt: ['$category', 0]},
                         assignedTo      : {$arrayElemAt: ['$assignedTo', 0]},
                         description     : 1,
                         deal            : {$arrayElemAt: ['$deal', 0]},
@@ -350,6 +359,7 @@ var Module = function (models, event) {
                     $project: {
                         _id             : '$root._id',
                         workflow        : '$root.workflow',
+                        category        : '$root.category',
                         assignedTo      : '$root.assignedTo',
                         description     : '$root.description',
                         dueDate         : '$root.dueDate',
