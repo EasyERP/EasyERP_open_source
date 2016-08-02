@@ -26,6 +26,7 @@
     }
   }
 }
+
 ._filterDropDownBody {
   padding: 7px 0;
   color: #4d4d4d;
@@ -34,8 +35,7 @@
 
   .filterValues {
     font-size: 13px;
-    padding: 0 12px;
-    margin-bottom: 8px;
+    padding: 0 25px;
     text-align: left;
 
     &:hover {
@@ -43,7 +43,15 @@
     }
 
     &.checkedValue {
+      position: relative;
       font-family: $semibold-font-family;
+
+      &:before {
+        font-family: FontAwesome;
+        position: absolute;
+        left: 6px;
+        content: "\f00c";
+      }
     }
   }
 
