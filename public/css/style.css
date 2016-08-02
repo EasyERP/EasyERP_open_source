@@ -2448,9 +2448,10 @@
       ._filterDropDownBody .customTime .customTimeItem > input {
         height: 26px;
         width: 165px;
-        cursor: pointer;
         border: none;
-        border-bottom: 1px solid #cfcfcf; }
+        border-bottom: 1px solid #cfcfcf;
+        color: #4d4d4d;
+        cursor: pointer; }
 
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }
