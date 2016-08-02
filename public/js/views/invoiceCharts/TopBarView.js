@@ -25,21 +25,36 @@ define([
         },
 
         changeDateRange: function (e) {
-            var targetEl = $(e.target);
-            var dateFilter = targetEl.closest('ul.dateFilter');
-            var startDate = dateFilter.find('#startDate');
-            var endDate = dateFilter.find('#endDate');
-            var startTime = dateFilter.find('#startTime');
-            var endTime = dateFilter.find('#endTime');
+            var $targetEl = $(e.target);
+            var $dateFilterEl = $targetEl.closest('ul.dateFilter');
+            var $startDateEl = $dateFilterEl.find('#startDate');
+            var $endDateEl = $dateFilterEl.find('#endDate');
+            var $startTimeEl = $dateFilterEl.find('#startTime');
+            var $endTimeEl = $dateFilterEl.find('#endTime');
+            var startDateText;
+            var endDateText;
 
-            startDate = startDate.val();
-            endDate = endDate.val();
+            var startDate;
+            var endDate;
 
-            startTime.text(startDate);
-            endTime.text(endDate);
+            startDateText = $startDateEl.val();
+            endDateText = $endDateEl.val();
 
-            this.trigger('changeDateRange');
-            this.toggleDateRange(e);
+            startDate = new Date(startDateText);
+            endDate = new Date(endDateText);
+
+            if (startDate <= endDate) {
+                $startTimeEl.text(startDateText);
+                $endTimeEl.text(endDateText);
+
+                this.trigger('changeDateRange');
+                this.toggleDateRange(e);
+            } else {
+                App.render({
+                    message: 'Value of field "End date" can`t be less then value of field "StartDate"!'
+                });
+            }
+
         },
 
         toggleDateRange: function (e) {
