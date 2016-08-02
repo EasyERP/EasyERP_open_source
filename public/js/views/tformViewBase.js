@@ -26,7 +26,12 @@ define([
         },
 
         initialize: function (options) {
+            var eventChannel = {};
             var modelId = options.modelId;
+
+            _.extend(eventChannel, Backbone.Events);
+            this.eventChannel = eventChannel;
+
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -41,6 +46,8 @@ define([
 
             this.addFormView(modelId);
             this.selectedId = modelId;
+
+            this.listenTo(eventChannel, 'itemChanged', this.renderFilteredContent);
         },
 
         openSortDrop: function (e) {
@@ -188,7 +195,7 @@ define([
                         self.formView.undelegateEvents();
                     }
 
-                    self.formView = new self.FormView({model: model, el: '#formContent'});
+                    self.formView = new self.FormView({model: model, el: '#formContent', eventChannel: self.eventChannel});
                     self.formView.render();
 
                     $thisEl.find('#listContent .selected').removeClass('selected');
