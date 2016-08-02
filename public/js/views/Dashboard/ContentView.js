@@ -41,10 +41,10 @@ define([
             this.dateItem = {
                 date       : 'D',
                 winLost    : 'D',
-                leadsByName: '',
-                leadsChart : 'createdBy'
+                leadsByName: 'leadsBySales'
             };
 
+            this.dataForLeadsChart = [];
             this.numberToDate = {};
             this.source = null;
             this.resizeHandler = _.debounce(this.resizeHandler, 500);
@@ -129,7 +129,7 @@ define([
                 case 'LeadsByName':
                     this.startDateLeadsByName = startDate;
                     this.endDateLeadsByName = endDate;
-                    this.renderLeadsChartByName();
+                    this.getDataForLeadsChart();
                     this.toggleDateRange(null, type);
                     break;
                 case 'LeadsBySale':
@@ -293,7 +293,6 @@ define([
                     this.renderOpportunitiesWinAndLost();
                     break;
                 case 'leadsByName':
-                    this.leadsByNamesChartType = 'leadsBySales';
                     this.renderLeadsChartByName();
                     break;
                 case 'leadsChart':
@@ -460,7 +459,7 @@ define([
             this.renderOpportunitiesWinAndLost();
             this.renderOpportunitiesConversion();
             this.renderOpportunitiesAging();
-            this.renderLeadsChartByName();
+            this.getDataForLeadsChart();
             this.renderSalesByCountry();
             this.renderOpportunities();
             this.renderLeadsChart();
@@ -501,11 +500,25 @@ define([
                 })
                 .datepicker('setDate', endDate);
         },
+        
+        getDataForLeadsChart: function(){
+            var self = this;
+
+            common.getLeads({
+                    startDay: this.startDateLeadsByName,
+                    endDay  : this.endDateLeadsByName
+                }, function (data) {
+
+                self.dataForLeadsChart = data;
+
+                self.renderLeadsChartByName();
+            });
+
+        },
 
         renderLeadsChartByName: function () {
             var $wrapper = $('#content-holder');
             var padding = 15;
-            var self = this;
             var offset = 2;
             var barChart;
             var gradient;
@@ -517,125 +530,116 @@ define([
             var yAxis;
             var width;
             var rect;
+            var data;
             var max;
-
-            if(this.dateItem.leadsByName === 'qualifiedFrom'){
-                this.leadsByNamesChartType = 'leadsBySources';
-            }
 
             d3.selectAll('svg.leadsByNameBarChart > *').remove();
 
-            common.getLeads({
-                startDay: this.startDateLeadsByName,
-                endDay  : this.endDateLeadsByName,
-                stage   : this.dateItem.leadsByName
-            }, function (data) {
+            data = this.dataForLeadsChart[this.dateItem.leadsByName];
+            margin = {top: 50, right: 150, bottom: 30, left: 140};
+            width = ($wrapper.width() - margin.right /*- margin.left*/);
+            height = data.length * 20;
 
-                data = data[self.leadsByNamesChartType];
-                margin = {top: 50, right: 150, bottom: 30, left: 140};
-                width = ($wrapper.width() - margin.right /*- margin.left*/);
-                height = data.length * 20;
+            barChart = d3.select('svg.leadsByNameBarChart')
+                .attr({
+                    'width' : width + margin.left / 2,
+                    'height': height + margin.bottom + margin.top
+                })
+                .append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                barChart = d3.select('svg.leadsByNameBarChart')
-                    .attr({
-                        'width' : width + margin.left / 2,
-                        'height': height + margin.bottom + margin.top
-                    })
-                    .append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            max = d3.max(data, function (d) {
+                return d.count;
+            });
 
-                max = d3.max(data, function (d) {
-                    return d.count;
+            max = Math.ceil(max / 10) * 10;
+
+            xScale = d3.scale.linear()
+                .domain([0, max])
+                .range([0, (width - margin.left)]);
+
+            yScale = d3.scale.linear()
+                .domain([0, data.length])
+                .range([0, height]);
+
+            rect = height / (data.length);
+
+            gradient = d3.select('svg.leadsByNameBarChart').append("linearGradient")
+                .attr({
+                    'y1'           : 0,
+                    'y2'           : 0,
+                    'x1'           : '0',
+                    'x2'           : width - 30,
+                    'id'           : 'gradientBarForLeads',
+                    'gradientUnits': 'userSpaceOnUse'
                 });
 
-                max = Math.ceil(max / 10) * 10;
+            gradient
+                .append('stop')
+                .attr({
+                    'offset'    : '0',
+                    'stop-color': '#FFA17F'
+                });
 
-                xScale = d3.scale.linear()
-                    .domain([0, max])
-                    .range([0, (width - margin.left)]);
+            gradient
+                .append('stop')
+                .attr({
+                    'offset'    : '0.5',
+                    'stop-color': '#ACC7F2'
+                });
 
-                yScale = d3.scale.linear()
-                    .domain([0, data.length])
-                    .range([0, height]);
+            barChart.selectAll('rect')
+                .data(data)
+                .enter()
+                .append('rect')
+                .attr({
+                    x     : function () {
+                        return 0;
+                    },
+                    y     : function (d, i) {
+                        return yScale(i) + offset;
+                    },
+                    width : function (d) {
+                        return xScale(d.count);
+                    },
+                    height: rect - 2 * offset,
+                    fill  : 'url(#gradientBarForLeads)'
+                });
 
-                rect = height / (data.length);
+            xAxis = d3.svg.axis()
+                .scale(xScale)
+                .orient('bottom');
 
-                gradient = d3.select('svg.leadsByNameBarChart').append("linearGradient")
-                    .attr({
-                        'y1'           : 0,
-                        'y2'           : 0,
-                        'x1'           : '0',
-                        'x2'           : width - 30,
-                        'id'           : 'gradientBarForLeads',
-                        'gradientUnits': 'userSpaceOnUse'
-                    });
+            yAxis = d3.svg.axis()
+                .scale(yScale)
+                .orient('left')
+                .tickSize(0)
+                .tickPadding(offset)
+                .tickFormat(function (d, i) {
+                    return data[i].salesPerson;
+                })
+                .tickValues(d3.range(data.length));
 
-                gradient
-                    .append('stop')
-                    .attr({
-                        'offset'    : '0',
-                        'stop-color': '#FFA17F'
-                    });
+            barChart.append('g')
+                .attr({
+                    'class'    : 'x axis',
+                    'transform': 'translate(0,' + height + ')'
+                })
+                .call(xAxis);
 
-                gradient
-                    .append('stop')
-                    .attr({
-                        'offset'    : '0.5',
-                        'stop-color': '#ACC7F2'
-                    });
+            barChart.append('g')
+                .attr({
+                    'class'    : 'y axis',
+                    'transform': 'translate(0,' + (padding - 2 * offset) + ')'
+                })
+                .call(yAxis);
 
-                barChart.selectAll('rect')
-                    .data(data)
-                    .enter()
-                    .append('rect')
-                    .attr({
-                        x     : function () {
-                            return 0;
-                        },
-                        y     : function (d, i) {
-                            return yScale(i) + offset;
-                        },
-                        width : function (d) {
-                            return xScale(d.count);
-                        },
-                        height: rect - 2 * offset,
-                        fill  : 'url(#gradientBarForLeads)'
-                    });
+            barChart.selectAll('.x .tick line')
+                .attr({
+                    'y2'   : -height,
+                    'style': 'stroke: #f2f2f2'
+                });
 
-                xAxis = d3.svg.axis()
-                    .scale(xScale)
-                    .orient('bottom');
-
-                yAxis = d3.svg.axis()
-                    .scale(yScale)
-                    .orient('left')
-                    .tickSize(0)
-                    .tickPadding(offset)
-                    .tickFormat(function (d, i) {
-                        return data[i].salesPerson;
-                    })
-                    .tickValues(d3.range(data.length));
-
-                barChart.append('g')
-                    .attr({
-                        'class'    : 'x axis',
-                        'transform': 'translate(0,' + height + ')'
-                    })
-                    .call(xAxis);
-
-                barChart.append('g')
-                    .attr({
-                        'class'    : 'y axis',
-                        'transform': 'translate(0,' + (padding - 2 * offset) + ')'
-                    })
-                    .call(yAxis);
-
-                barChart.selectAll('.x .tick line')
-                    .attr({
-                        'y2'   : -height,
-                        'style': 'stroke: #f2f2f2'
-                    });
-            })
         },
 
         renderLeadsChart: function () {
