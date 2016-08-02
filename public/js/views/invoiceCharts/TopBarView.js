@@ -49,8 +49,7 @@ define([
 
                 this.trigger('changeDateRange');
                 this.toggleDateRange(e);
-            }
-            else {
+            } else {
                 App.render({
                     message: 'Value of field "End date" can`t be less then value of field "StartDate"!'
                 });
