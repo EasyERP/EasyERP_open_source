@@ -183,7 +183,8 @@
         },
 
         saveKanbanSettings: function () {
-            var countPerPage = $(this).find('#cPerPage').val();
+            var $thisEl = this.$el;
+            var countPerPage = $thisEl.find('#cPerPage').val();
             var id;
             var url;
             var self = this;
