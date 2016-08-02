@@ -157,7 +157,6 @@ define([
             var changedAttributesForEvent = ['name', 'expectedRevenue.value', 'salesPerson', 'workflow'];
             var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
             var sendEvent = !!(changedListAttr.length);
-            var changedObj = {};
 
             this.formModel.save(changedAttrs, {
                 patch  : true,

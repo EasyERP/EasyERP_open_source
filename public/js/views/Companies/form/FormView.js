@@ -149,6 +149,9 @@ define([
 
         saveModel: function (changedAttrs, type) {
             var self = this;
+            var changedAttributesForEvent = ['name.first', 'email', 'phones.phone', 'address.country'];
+            var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
+            var sendEvent = !!(changedListAttr.length);
 
             this.formModel.save(changedAttrs, {
                 wait   : true,
@@ -162,6 +165,10 @@ define([
                         self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();
+
+                        if (sendEvent) {
+                            self.trigger('itemChanged', changedAttrs);
+                        }
                     }
                 },
                 error  : function (model, response) {

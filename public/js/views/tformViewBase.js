@@ -194,6 +194,7 @@ define([
                         el   : '#formContent'
                     });
                     self.formView.render();
+
                     self.listenTo(self.formView, 'itemChanged', self.changeList);
 
                     $thisEl.find('#listContent .selected').removeClass('selected');
