@@ -10,7 +10,8 @@
     'common',
     'populate',
     'custom',
-    'constants'
+    'constants',
+    'moment'
 ], function (Backbone,
              _,
              $,
@@ -22,7 +23,8 @@
              common,
              populate,
              custom,
-             CONSTANTS) {
+             CONSTANTS,
+             moment) {
 
     var EditView = ParentView.extend({
         contentType: 'DealTasks',
@@ -32,7 +34,8 @@
         events: {
             'keypress #logged, #estimated': 'isNumberKey',
             'click #projectTopName'       : 'useProjectFilter',
-            'click .removeSelect'         : 'removeSelect'
+            'click .removeSelect'         : 'removeSelect',
+            'keyup .time'                 : 'validateInput'
         },
 
         initialize: function (options) {
@@ -42,6 +45,19 @@
             this.currentModel.on('change:category', this.renderCategory, this);
 
             this.render();
+        },
+
+
+        validateInput : function(e) {
+            var $target = $(e.target);
+            var maxVal = ($target.attr('id') === 'dueDateHours') ? 23 : 59;
+
+            e.preventDefault();
+
+            if ($target.val() > maxVal) {
+                $target.val('' + maxVal);
+            }
+
         },
 
         removeSelect: function (e) {
@@ -104,7 +120,11 @@
             var company = this.$el.find('#companyItem .showSelect').attr('data-id');
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
-            var category = modelJSON.category._id;
+            var dueDate = $.trim(this.$el.find('#dueDate').val());
+            var hours = $.trim(this.$el.find('#dueDateHours').val()) || 0;
+            var minutes = $.trim(this.$el.find('#dueDateMinutes').val()) || 0;
+            var seconds = $.trim(this.$el.find('#dueDateSeconds').val()) || 0;
+            var category = modelJSON.category ? modelJSON.category._id : null;
 
             event.preventDefault();
 
@@ -118,7 +138,11 @@
                 sequence = null;
             }
 
-            if (!description){
+            if (dueDate) {
+                dueDate = moment(dueDate).hours(hours).minutes(minutes).seconds(seconds).toDate();
+            }
+
+            if (!description) {
                 return App.render({
                     type   : 'error',
                     message: 'Please add Description'
@@ -130,7 +154,7 @@
             data = {
                 assignedTo   : assignedTo || null,
                 description  : description,
-                dueDate      : $.trim(holder.find('#dueDate').val()),
+                dueDate      : dueDate,
                 sequenceStart: modelJSON.sequence,
                 company      : company || null,
                 category     : category || null,
@@ -224,7 +248,8 @@
 
         render: function () {
             var formString = this.template({
-                model: this.currentModel.toJSON()
+                model: this.currentModel.toJSON(),
+                moment : moment
             });
             var self = this;
             var notDiv;
@@ -273,6 +298,15 @@
             this.delegateEvents(this.events);
 
             this.$el.find('#dueDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            this.$el.find('#dueDateHours').spinner({
+                min: 1,
+                max: 23
+            });
+            this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
+                min: 1,
+                max: 59,
+                numberFormat: "n"
+            });
 
             return this;
         }
