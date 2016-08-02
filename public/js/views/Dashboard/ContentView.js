@@ -503,16 +503,17 @@ define([
         
         getDataForLeadsChart: function(){
             var self = this;
-            
+
             common.getLeads({
                     startDay: this.startDateLeadsByName,
                     endDay  : this.endDateLeadsByName
                 }, function (data) {
 
                 self.dataForLeadsChart = data;
+
+                self.renderLeadsChartByName();
             });
 
-            this.renderLeadsChartByName();
         },
 
         renderLeadsChartByName: function () {

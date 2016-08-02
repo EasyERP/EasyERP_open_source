@@ -995,54 +995,32 @@ var Module = function (models, event) {
         var endDate = query.endDay ? new Date(query.endDay) : null;
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var History = models.get(req.session.lastDb, 'History', historySchema);
-        var stage = query.stage;
-        var secondMatchObj = {};
         var matchObj = {
             $and: [{isOpportunitie: false}]
         };
-
         var historyMatchObjForAssignedTo = {
             $and: [{$and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]}]
         };
-
-        var historyMatchObj = {
-            $and: [{changedField: 'salesPerson'}, {contentType: 'lead'}]
-        };
-
         var qualifiedMatch = {
             $and: [{changedField: 'workflow', newValue: objectId('574ff52cf44dcec01dbb6e16')}]
+        };
+        var dateRange = {
+            $gte: starDate,
+            $lte: endDate
         };
 
         if (starDate && endDate) {
             matchObj.$and.push({
-                creationDate: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
-            });
-
-            historyMatchObj.$and.push({
-                date: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
+                creationDate: dateRange
             });
 
             historyMatchObjForAssignedTo.$and.push({
-                date: {
-                    $gte: starDate,
-                    $lte: endDate
-                }
+                date: dateRange
             });
 
-            qualifiedMatch.$and.push({date: {
-                $gte: starDate,
-                $lte: endDate
-            }});
-        }
-
-        if (stage === 'Qualified' || stage === 'qualifiedFrom') {
-            secondMatchObj = {'workflows.name': 'Qualified'};
+            qualifiedMatch.$and.push({
+                date: dateRange
+            });
         }
 
         async.parallel({
@@ -1176,28 +1154,24 @@ var Module = function (models, event) {
                 History.aggregate([
                     {
                         $match: qualifiedMatch
-                    },
-                    {
+                    }, {
                         $lookup: {
                             from        : 'Users',
                             localField  : 'editedBy',
                             foreignField: '_id',
                             as          : 'editedBy'
                         }
-                    },
-                    {
+                    }, {
                         $unwind: {
                             path                      : '$editedBy',
                             preserveNullAndEmptyArrays: true
                         }
-                    },
-                    {
+                    }, {
                         $group: {
                             _id  : '$editedBy.login',
                             count: {$sum: 1}
                         }
-                    },
-                    {
+                    }, {
                         $project: {
                             salesPerson: '$_id',
                             count      : 1,
@@ -1211,66 +1185,57 @@ var Module = function (models, event) {
                 History.aggregate([
                     {
                         $match: qualifiedMatch
-                    },
-                    {
+                    }, {
                         $lookup: {
-                            from: 'Users',
+                            from        : 'Users',
                             localField  : 'editedBy',
                             foreignField: '_id',
                             as          : 'editedBy'
                         }
-                    },
-                    {
+                    }, {
                         $unwind: {
                             path                      : '$editedBy',
                             preserveNullAndEmptyArrays: true
                         }
-                    },
-                    {
+                    }, {
                         $lookup: {
-                            from: 'Opportunities',
+                            from        : 'Opportunities',
                             localField  : 'contentId',
                             foreignField: '_id',
                             as          : 'leads'
                         }
-                    },
-                    {
+                    }, {
                         $unwind: {
                             path                      : '$leads',
                             preserveNullAndEmptyArrays: true
                         }
-                    },
-                    {
+                    }, {
                         $lookup: {
-                            from: 'Users',
+                            from        : 'Users',
                             localField  : 'leads.createdBy.user',
                             foreignField: '_id',
                             as          : 'createdBy'
                         }
-                    },
-                    {
+                    }, {
                         $unwind: {
                             path                      : '$createdBy',
                             preserveNullAndEmptyArrays: true
                         }
-                    },
-                    {
+                    }, {
                         $group: {
-                            _id: '$createdBy.login',
+                            _id  : '$createdBy.login',
                             count: {$sum: 1}
                         }
-                    },
-                    {
+                    }, {
                         $project: {
-                            _id: {$ifNull: ['$_id', 'Empty']},
+                            _id  : {$ifNull: ['$_id', 'Empty']},
                             count: 1
                         }
-                    },
-                    {
+                    }, {
                         $project: {
-                            _id: 0,
+                            _id        : 0,
                             salesPerson: '$_id',
-                            count:1
+                            count      : 1
                         }
 
                     }
