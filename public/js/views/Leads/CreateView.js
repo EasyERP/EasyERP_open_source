@@ -167,7 +167,7 @@ define([
 
             notDiv.append(this.attachView.render().el);
 
-            $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            this.$el.find('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
             populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this, true, true);

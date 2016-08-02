@@ -51,8 +51,8 @@
                     response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
 
-                if (response.nextAction) {
-                    response.nextAction.date = moment(response.nextAction.date).format('DD MMM, YYYY');
+                if (response.expectedClosing) {
+                    response.expectedClosing = moment(response.expectedClosing).format('DD MMM, YYYY');
                 }
 
                 if (response.notes) {

@@ -42,16 +42,20 @@
                         <ul class="frameDetail _filterDropDownBody hidden">
                             <li id="thisMonthLeadsBySale" class="filterValues checked checkedValue" data-type="leadsSale">This Month</li>
                             <li id="thisYearLeadsBySale" class="filterValues checked" data-type="leadsSale">This Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="lastMonthLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Month</li>
                             <li id="lastQuarterLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Quarter</li>
                             <li id="lastYearLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="customLeadsBySale" class="filterValues checked" data-type="leadsSale">Custom Dates</li>
-                            <li class="customTimeLeadsBySale hidden">
+                            <li class="customTimeLeadsBySale customTime hidden">
                                 <div class="customTimeItem">
-                                    <label for="startDateLeadsBySale">From </label><input readonly type="text" id="startDateLeadsBySale">
+                                    <label for="startDateLeadsBySale">Start Date: </label>
+                                    <input readonly type="text" id="startDateLeadsBySale">
                                 </div>
                                 <div class="customTimeItem">
-                                    <label for="endDateLeadsBySale">To </label><input readonly type="text" id="endDateLeadsBySale">
+                                    <label for="endDateLeadsBySale">End Date: </label>
+                                    <input readonly type="text" id="endDateLeadsBySale">
                                 </div>
                             </li>
                             <li class="buttons">
@@ -85,16 +89,20 @@
                         <ul class="frameDetail _filterDropDownBody hidden">
                             <li id="thisMonthLeadsBySource" class="filterValues checked checkedValue" data-type="leadsSource">This Month</li>
                             <li id="thisYearLeadsBySource" class="filterValues checked" data-type="leadsSource">This Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="lastMonthLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Month</li>
                             <li id="lastQuarterLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Quarter</li>
                             <li id="lastYearLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="customLeadsBySource" class="filterValues checked" data-type="leadsSource">Custom Dates</li>
-                            <li class="customTimeLeadsBySource hidden">
+                            <li class="customTimeLeadsBySource customTime hidden">
                                 <div  class="customTimeItem">
-                                    <label for="startDateLeadsBySource">From </label><input readonly type="text" id="startDateLeadsBySource"><br/>
+                                    <label for="startDateLeadsBySource">Start Date: </label>
+                                    <input readonly type="text" id="startDateLeadsBySource">
                                 </div>
                                 <div class="customTimeItem">
-                                    <label for="endDateLeadsBySource">To </label><input readonly type="text" id="endDateLeadsBySource">
+                                    <label for="endDateLeadsBySource">End Date: </label>
+                                    <input readonly type="text" id="endDateLeadsBySource">
                                 </div>
                             </li>
                             <li class="buttons">
@@ -352,15 +360,21 @@
                         <ul class="frameDetail _filterDropDownBody hidden">
                             <li id="thisMonth" class="filterValues checked checkedValue" data-type="">This Month</li>
                             <li id="thisYear" class="filterValues checked" data-type="">This Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="lastMonth" class="filterValues checked" data-type="">Last Month</li>
                             <li id="lastQuarter" class="filterValues checked" data-type="">Last Quarter</li>
                             <li id="lastYear" class="filterValues checked" data-type="">Last Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="custom" class="filterValues checked" data-type="">Custom Dates</li>
                             <li class="customTime hidden">
-                    <span>
-                        <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>
-                        <label for="endDate">To </label><input readonly type="text" id="endDate">
-                    </span>
+                                <div  class="customTimeItem">
+                                    <label for="startDate">Start Date: </label>
+                                    <input readonly type="text" id="startDate">
+                                </div>
+                                <div  class="customTimeItem">
+                                    <label for="endDate">End Date: </label>
+                                    <input readonly type="text" id="endDate">
+                                </div>
                             </li>
                             <li class="buttons">
                                 <button id="updateDate" class="btn">
@@ -401,15 +415,21 @@
                             <ul class="frameDetail _filterDropDownBody hidden">
                                 <li id="thisMonthLeads" class="leads filterValues checked checkedValue" data-type="leads">This Month</li>
                                 <li id="thisYearLeads" class="leads filterValues checked" data-type="leads">This Financial Year</li>
+                                <li class="listLine"></li>
                                 <li id="lastMonthLeads" class="leads filterValues checked" data-type="leads">Last Month</li>
                                 <li id="lastQuarterLeads" class="leads filterValues checked" data-type="leads">Last Quarter</li>
                                 <li id="lastYearLeads" class="leads filterValues checked" data-type="leads">Last Financial Year</li>
+                                <li class="listLine"></li>
                                 <li id="customLeads" class="leads filterValues checked" data-type="leads">Custom Dates</li>
-                                <li class="customTimeLeads hidden">
-                    <span>
-                        <label for="startDate">From </label><input readonly type="text" id="startDateLeads"><br/>
-                        <label for="endDate">To </label><input readonly type="text" id="endDateLeads">
-                    </span>
+                                <li class="customTimeLeads customTime hidden">
+                                    <div class="customTimeItem">
+                                        <label for="startDate">Start Date: </label>
+                                        <input readonly type="text" id="startDateLeads">
+                                    </div>
+                                    <div class="customTimeItem">
+                                        <label for="endDate">End Date: </label>
+                                        <input readonly type="text" id="endDateLeads">
+                                    </div>
                                 </li>
                                 <li class="buttons">
                                     <button id="updateDateLeads" class="btn">
@@ -478,15 +498,21 @@
                         <ul class="frameDetail _filterDropDownBody hidden">
                             <li id="thisMonthLeadsByName" class="leadsName filterValues checked checkedValue" data-type="leadsName">This Month</li>
                             <li id="thisYearLeadsByName" class="leadsName filterValues checked" data-type="leadsName">This Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="lastMonthLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Month</li>
                             <li id="lastQuarterLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Quarter</li>
                             <li id="lastYearLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Financial Year</li>
+                            <li class="listLine"></li>
                             <li id="customLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Custom Dates</li>
                             <li class="customTimeLeadsByName hidden">
-                    <span>
-                        <label for="startDateLeadsByName">From </label><input readonly type="text" id="startDateLeadsByName"><br/>
-                        <label for="endDateLeadsByName">To </label><input readonly type="text" id="endDateLeadsByName">
-                    </span>
+                                <div class="customTimeItem">
+                                    <label for="startDateLeadsByName">Start Date: </label>
+                                    <input readonly type="text" id="startDateLeadsByName">
+                                </div>
+                                <div class="customTimeItem">
+                                    <label for="endDateLeadsByName">End Date: </label>
+                                    <input readonly type="text" id="endDateLeadsByName">
+                                </div>
                             </li>
                             <li class="buttons">
                                 <button id="updateDateLeadsByName" class="btn">

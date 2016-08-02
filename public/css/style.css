@@ -13,6 +13,31 @@
 .clearfix:after, .container:after, .container-full:after, .row:after, .flex #thumbnailContent:after {
   clear: both; }
 
+@font-face {
+  font-family: "OpenSans Light";
+  src: url("../fonts/opensans/opensans-light.eot");
+  src: url("../fonts/opensans/opensans-light.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-light.woff2") format("woff2"), url("../fonts/opensans/opensans-light.woff") format("woff"), url("../fonts/opensans/opensans-light.ttf") format("truetype"), url("../fonts/opensans/opensans-light.svg#opensans-light") format("svg");
+  font-weight: 300; }
+@font-face {
+  font-family: "OpenSans Regular";
+  src: url("../fonts/opensans/opensans-regular.eot");
+  src: url("../fonts/opensans/opensans-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-regular.woff2") format("woff2"), url("../fonts/opensans/opensans-regular.woff") format("woff"), url("../fonts/opensans/opensans-regular.ttf") format("truetype"), url("../fonts/opensans/opensans-regular.svg#opensans-regular") format("svg");
+  font-weight: 400; }
+@font-face {
+  font-family: "OpenSans Bold";
+  src: url("../fonts/opensans/opensans-semibold.eot");
+  src: url("../fonts/opensans/opensans-semibold.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-semibold.woff2") format("woff2"), url("../fonts/opensans/opensans-semibold.woff") format("woff"), url("../fonts/opensans/opensans-semibold.ttf") format("truetype"), url("../fonts/opensans/opensans-semibold.svg#opensans-semibold") format("svg");
+  font-weight: 600; }
+@font-face {
+  font-family: "OpenSans SemiBold";
+  src: url("../fonts/opensans/opensans-bold.eot");
+  src: url("../fonts/opensans/opensans-bold.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-bold.woff2") format("woff2"), url("../fonts/opensans/opensans-bold.woff") format("woff"), url("../fonts/opensans/opensans-bold.ttf") format("truetype"), url("../fonts/opensans/opensans-bold.svg#opensans-bold") format("svg");
+  font-weight: 700; }
+@font-face {
+  font-family: "OpenSans ExtraBold";
+  src: url("../fonts/opensans/opensans-extrabold.eot");
+  src: url("../fonts/opensans/opensans-extrabold.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans/opensans-extrabold.woff2") format("woff2"), url("../fonts/opensans/opensans-extrabold.woff") format("woff"), url("../fonts/opensans/opensans-extrabold.ttf") format("truetype"), url("../fonts/opensans/opensans-extrabold.svg#opensans-extrabold") format("svg");
+  font-weight: 800; }
 * {
   box-sizing: border-box; }
   *:before, *:after {
@@ -1937,33 +1962,22 @@
   margin-top: 20px; }
 
 .ui-dialog .ui-dialog-buttonpane {
-    border-top: none;
-}
+  border-top: none; }
 
 .ui-dialog ._salesModal {
-    padding: 10px 20px;
-}
-
-.ui-dialog ._salesModal .modal_title {
+  padding: 10px 20px; }
+  .ui-dialog ._salesModal .modal_title {
     margin-bottom: 20px;
-    color: #7f7f80;
-}
-
-.ui-dialog ._salesModal ._modalList {
-    margin-bottom: 15px;
-}
-
-.ui-dialog ._salesModal ._modalLabel {
-    margin-bottom: 10px;
-}
-
-.ui-dialog ._salesModal ._modalLabel label {
-    color: #7f7f80;
-    font-weight: bold;
-}
-
-.ui-dialog ._salesModal ._modalSelect a,
-.ui-dialog ._salesModal ._modalSelect input {
+    color: #7f7f80; }
+  .ui-dialog ._salesModal ._modalList {
+    margin-bottom: 15px; }
+  .ui-dialog ._salesModal ._modalLabel {
+    margin-bottom: 10px; }
+    .ui-dialog ._salesModal ._modalLabel label {
+      color: #7f7f80;
+      font-weight: bold; }
+  .ui-dialog ._salesModal ._modalSelect a,
+  .ui-dialog ._salesModal ._modalSelect input {
     display: block;
     padding: 5px;
     width: 100% !important;
@@ -1971,13 +1985,10 @@
     min-height: 35px;
     border: 1px solid #c8c8d3;
     border-radius: 3px;
-    cursor: pointer;
-}
-
-.ui-dialog ._salesModal ._modalSelect a:hover,
-.ui-dialog ._salesModal ._modalSelect input:hover {
-    text-decoration: none;
-}
+    cursor: pointer; }
+    .ui-dialog ._salesModal ._modalSelect a:hover,
+    .ui-dialog ._salesModal ._modalSelect input:hover {
+      text-decoration: none; }
 
 .dropDownDateRangeContainer {
   position: relative;
@@ -2373,86 +2384,91 @@
       .tabListWrap .tabListItem:last-child:before, .tabListWrap .tabListItem:last-child:after {
         content: none; }
 
-._filterDropDownWrap {
+._filterDropDownWrap > ul {
+  position: absolute;
+  background-color: #fff; }
+._filterDropDownWrap li {
   position: relative;
-  height: 26px;
-  width: 240px;
-  z-index: 2000; }
-  ._filterDropDownWrap > ul {
-    position: absolute;
-    width: 100%;
-    background-color: #fff; }
-  ._filterDropDownWrap li {
-    position: relative;
-    display: block;
-    line-height: 25px; }
+  display: block;
+  line-height: 18px; }
 
 ._filterDropDownWrap > ul > li:first-child {
   text-align: right;
   color: #333;
-  cursor: pointer; }
+  cursor: pointer;
+  line-height: 26px; }
 
 ._filterDropDownBody {
   width: 100%;
-  padding: 14px;
-  border: 1px solid #eee;
+  padding: 7px 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #4d4d4d;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
-  ._filterDropDownBody:after {
-    position: absolute;
-    top: -5px;
-    right: 10px;
-    display: inline-block;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid #fff;
-    border-left: 6px solid transparent;
-    content: ''; }
-  ._filterDropDownBody:before {
-    position: absolute;
-    top: -6px;
-    right: 9px;
-    display: inline-block;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid #e4e4e4;
-    border-left: 7px solid transparent;
-    content: ''; }
+  ._filterDropDownBody .listLine {
+    height: 1px;
+    display: block;
+    background-color: #e5e5e5;
+    margin: 8px 0; }
   ._filterDropDownBody .filterValues {
     font-size: 13px;
-    background: #f5f5f5;
-    border: 1px solid #f5f5f5;
-    color: #333;
-    padding: 0 12px;
-    margin-bottom: 8px;
-    text-align: left; }
-    ._filterDropDownBody .filterValues:hover, ._filterDropDownBody .filterValues.checkedValue {
-      background: #7eadcc;
-      border: 1px solid #7eadcc;
-      color: #fff; }
+    padding: 3px 25px;
+    text-align: left;
+    white-space: nowrap; }
+    ._filterDropDownBody .filterValues:hover {
+      background: #f5f5f5; }
+    ._filterDropDownBody .filterValues.checkedValue {
+      font-family: "OpenSans SemiBold", sans-serif;
+      cursor: pointer; }
+      ._filterDropDownBody .filterValues.checkedValue:before {
+        font-family: 'FontAwesome';
+        position: absolute;
+        left: 6px;
+        content: "\f00c"; }
+  ._filterDropDownBody #customLeadsBySale.checkedValue {
+    font-family: "OpenSans Regular", sans-serif;
+    background-color: #fff; }
+    ._filterDropDownBody #customLeadsBySale.checkedValue:before {
+      display: none; }
   ._filterDropDownBody .buttons {
     width: 100%;
+    margin-top: 7px;
     background-color: #fff;
     border: 0;
     text-align: center; }
-  ._filterDropDownBody .customTimeLeadsBySale .customTimeItem {
-    margin-bottom: 7px; }
-    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem > label {
-      float: left;
-      clear: both;
-      line-height: 26px; }
-    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem > input {
-      height: 26px;
-      width: 165px;
-      float: right;
-      cursor: pointer; }
-    ._filterDropDownBody .customTimeLeadsBySale .customTimeItem:after {
-      content: '';
-      display: table;
-      clear: both; }
+  ._filterDropDownBody .customTime {
+    padding: 0 10px; }
+    ._filterDropDownBody .customTime .customTimeItem {
+      position: relative;
+      margin-bottom: 7px;
+      color: #4d4d4d; }
+      ._filterDropDownBody .customTime .customTimeItem:after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 10px;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-bottom: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #4d4d4d; }
+      ._filterDropDownBody .customTime .customTimeItem > label {
+        display: block;
+        line-height: 26px;
+        font-family: "OpenSans SemiBold", sans-serif;
+        text-align: left; }
+      ._filterDropDownBody .customTime .customTimeItem > input {
+        height: 26px;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #cfcfcf;
+        cursor: pointer; }
 
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }
 
 .notFoundItems {
-    text-align: center;
-    margin: 100px 0;
-    font-size: 20px;
-}
+  text-align: center;
+  margin: 100px 0;
+  font-size: 20px; }

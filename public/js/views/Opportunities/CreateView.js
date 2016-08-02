@@ -62,10 +62,6 @@ define([
             var companyId = $thisEl.find('#companyDd').attr('data-id');
             var customerId = $thisEl.find('#customerDd').attr('data-id');
             var salesPersonId =$thisEl.find('#salesPersonDd').attr('data-id');
-            var nextActionDesc = $.trim($thisEl.find('#nextActionDescription').val());
-            var nextAction = {
-                desc: nextActionDesc
-            };
             var expectedClosing = $.trim($thisEl.find('#expectedClosing').val());
             var priority = $.trim($thisEl.find('#priorityDd').text());
             var internalNotes = $.trim($thisEl.find('#internalNotes').val());
@@ -105,7 +101,6 @@ define([
                     expectedRevenue: expectedRevenue,
                     customer       : customerId || null,
                     salesPerson    : salesPersonId || null,
-                    nextAction     : nextAction,
                     expectedClosing: expectedClosing,
                     priority       : priority,
                     company        : companyId,
@@ -177,8 +172,7 @@ define([
             notDiv.append(this.attachView.render().el);
            /* this.renderAssignees(model);*/
 
-            $('#nextActionDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
-            $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            this.$el.find('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             dataService.getData('/opportunities/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {
                     priority.name = priority.priority;
