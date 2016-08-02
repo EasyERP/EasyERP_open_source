@@ -47,7 +47,6 @@
             this.responseObj = {};
             this.foldWorkflows = [];
 
-            _.bindAll(this, 'saveKanbanSettings');
             this.render();
             this.asyncFetch(options.workflowCollection.toJSON());
            /* this.filterView.trigger('filter', App.filtersObject.filter);*/
@@ -213,8 +212,8 @@
             return !(charCode > 31 && (charCode < 48 || charCode > 57));
         },
 
-        saveKanbanSettings: function () {
-            var countPerPage = $(this).find('#cPerPage').val();
+        saveKanbanSettings: function (context) {
+            var countPerPage = context.$el.find('#cPerPage').val();
             var id;
             var url;
             var self = this;
@@ -224,7 +223,7 @@
             }
 
             id = window.location.hash.split('/')[3];
-            url = (id && id.length === 24) ? 'easyErp/Tasks/kanban/' + id : 'easyErp/Tasks/kanban';
+            url = (id && id.length === 24) ? 'easyErp/DealTasks/kanban/' + id : 'easyErp/DealTasks/kanban';
 
             dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.tasks.countPerPage': countPerPage}, function (error, success) {
                 if (success) {
@@ -251,7 +250,10 @@
                         save: {
                             text : 'Save',
                             class: 'btn',
-                            click: context.saveKanbanSettings
+                            click: function () {
+                                context.saveKanbanSettings(context);
+                            }
+
                         },
 
                         cancel: {
@@ -271,7 +273,7 @@
         },
 
         getCollectionLengthByWorkflows: function (context, parrentContentId) {
-            dataService.getData('/tasks/getLengthByWorkflows', {parrentContentId: parrentContentId}, function (data) {
+            dataService.getData('/DealTasks/getLengthByWorkflows', {parrentContentId: parrentContentId}, function (data) {
                 data.arrayOfObjects.forEach(function (object) {
                     var column = context.$el.find('#' + object._id);
 
@@ -280,7 +282,7 @@
                 });
 
                 if (data.showMore) {
-                    context.$el.append('<div id="showMoreDiv" title="To show mor ellements per column, please change kanban settings">And More</div>');
+                    context.$el.append('<div id="showMoreDiv" title="To show more elements per column, please change kanban settings">And More</div>');
                 }
             });
         },
@@ -370,10 +372,6 @@
             if (response.fold) {
                 context.foldUnfoldKanban(null, response.workflowId);
             }
-
-
-
-
 
             column.find('.totalCount').html(parseInt(column.find('.totalCount').html(), 10) + contentCollection.models.length);
             _.each(contentCollection.models, function (wfModel) {
@@ -590,7 +588,7 @@
                     }
                     if (model) {
                         secStart = parseInt($('.inner[data-id="' + model.toJSON()._id + '"]').attr('data-sequence'), 10);
-                        workStart = model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow;
+                        workStart = model.toJSON().workflow ? model.toJSON().workflow._id : model.toJSON().workflow;
 
                         model.save(
                             {
