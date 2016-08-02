@@ -15,18 +15,12 @@
         <div class="half-block left">
             <p class="left customerName"><%=(model.customer) && (model.customer.name) ? model.customer.name.first + ' ' +
                 model.customer.name.last : ''%></p>
-            <%if (model.nextAction&&model.nextAction.desc){%>
-            <br/>
-
-            <p class="left"><%=model.nextAction?model.nextAction.desc:''%> </p>
-            <%}%>
-
           <!--  <p class="left">Project Type</p>-->
             <p class="left saleName"><%=(model.salesPerson) ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last :
                 ''%></p>
         </div>
         <div class="half-block right">
-            <p class="right projectType" style="text-align:right;"> <%=model.nextAction?model.nextAction.date:''%></p>
+            <p class="right projectType" style="text-align:right;"> <%=model.expectedClosing || ''%></p>
 
           <!--  <p class="right"><a data-id="<%=model.projectType?model.projectType:''%>"
                                 class="current-selected" href="javascript:;"><%=model.projectType?

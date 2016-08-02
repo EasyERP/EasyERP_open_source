@@ -172,8 +172,7 @@ define([
             notDiv.append(this.attachView.render().el);
            /* this.renderAssignees(model);*/
 
-            $('#nextActionDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
-            $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            this.$el.find('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             dataService.getData('/opportunities/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {
                     priority.name = priority.priority;

@@ -6,7 +6,7 @@
     <td><span class="blue"><%=opportunity.name%></span></td>
     <td class="dollar"><%=opportunity.expectedRevenue && opportunity.expectedRevenue.value ? currencySplitter(opportunity.expectedRevenue.value.toString()) : '0'%></td>
     <td><%=(opportunity.customer && opportunity.customer.name) ? opportunity.customer.name.first + ' ' + opportunity.customer.name.last : ''%></td>
-    <td><%=(opportunity.nextAction) ? opportunity.nextAction.date : ''%></td>
+    <td><%=opportunity.expectedClosing || ''%></td>
     <td id='<%=opportunity._id%>' data-sequence='<%=opportunity.sequence%>'>
         <a href="javascript:;" class="stageSelect blue"
            data-id="<%=(opportunity.workflow) ? opportunity.workflow._id : ''%>"><%=(opportunity.workflow) ?

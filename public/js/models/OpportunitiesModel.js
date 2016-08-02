@@ -148,9 +148,6 @@
         validate: function (attrs) {
             var errors = [];
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
-            if (attrs.expectedClosing && attrs.nextAction) {
-                Validation.checkFirstDateIsGreater(errors, attrs.expectedClosing, 'expected closing date', attrs.nextAction.date, 'Next action date');
-            }
             Validation.checkCountryCityStateField(errors, false, attrs.address.country, 'Country');
             Validation.checkCountryCityStateField(errors, false, attrs.address.state, 'State');
             Validation.checkCountryCityStateField(errors, false, attrs.address.city, 'City');
