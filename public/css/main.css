@@ -2522,7 +2522,6 @@ body {
 .vocationFilter .dateFilter li,
 .vocationFilter .dateFilterLeadsByName li {
   font-size: 12px;
-  text-align: center;
   color: #000000;
 }
 .vocationFilter .dateFilter li #startTime,
@@ -2549,7 +2548,6 @@ body {
 .vocationFilter .dateFilter .buttons,
 .vocationFilter .dateFilterLeadsByName .buttons {
   width: 100%;
-  margin: 15px 0;
   text-align: center;
 }
 .settings_modal .check_wrap {
