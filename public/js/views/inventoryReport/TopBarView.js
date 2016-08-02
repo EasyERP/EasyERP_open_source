@@ -97,7 +97,6 @@ define([
             var $target = $(e.target);
 
             this.removeAllChecked();
-
             if ($target.text() !== "Custom Dates") {
                 $target.toggleClass('checkedValue');
             } else {
