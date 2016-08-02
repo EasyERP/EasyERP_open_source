@@ -373,7 +373,7 @@
                 context.foldUnfoldKanban(null, response.workflowId);
             }
 
-            column.find('.totalCount').html(parseInt(column.find('.totalCount').html(), 10) + contentCollection.models.length);
+            column.find('.totalCount').html(/*parseInt(column.find('.totalCount').html(), 10)*/ + contentCollection.models.length);
             _.each(contentCollection.models, function (wfModel) {
                 var $curEl;
 
