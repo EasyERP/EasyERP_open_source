@@ -1937,33 +1937,22 @@
   margin-top: 20px; }
 
 .ui-dialog .ui-dialog-buttonpane {
-    border-top: none;
-}
+  border-top: none; }
 
 .ui-dialog ._salesModal {
-    padding: 10px 20px;
-}
-
-.ui-dialog ._salesModal .modal_title {
+  padding: 10px 20px; }
+  .ui-dialog ._salesModal .modal_title {
     margin-bottom: 20px;
-    color: #7f7f80;
-}
-
-.ui-dialog ._salesModal ._modalList {
-    margin-bottom: 15px;
-}
-
-.ui-dialog ._salesModal ._modalLabel {
-    margin-bottom: 10px;
-}
-
-.ui-dialog ._salesModal ._modalLabel label {
-    color: #7f7f80;
-    font-weight: bold;
-}
-
-.ui-dialog ._salesModal ._modalSelect a,
-.ui-dialog ._salesModal ._modalSelect input {
+    color: #7f7f80; }
+  .ui-dialog ._salesModal ._modalList {
+    margin-bottom: 15px; }
+  .ui-dialog ._salesModal ._modalLabel {
+    margin-bottom: 10px; }
+    .ui-dialog ._salesModal ._modalLabel label {
+      color: #7f7f80;
+      font-weight: bold; }
+  .ui-dialog ._salesModal ._modalSelect a,
+  .ui-dialog ._salesModal ._modalSelect input {
     display: block;
     padding: 5px;
     width: 100% !important;
@@ -1971,13 +1960,10 @@
     min-height: 35px;
     border: 1px solid #c8c8d3;
     border-radius: 3px;
-    cursor: pointer;
-}
-
-.ui-dialog ._salesModal ._modalSelect a:hover,
-.ui-dialog ._salesModal ._modalSelect input:hover {
-    text-decoration: none;
-}
+    cursor: pointer; }
+    .ui-dialog ._salesModal ._modalSelect a:hover,
+    .ui-dialog ._salesModal ._modalSelect input:hover {
+      text-decoration: none; }
 
 .dropDownDateRangeContainer {
   position: relative;
@@ -2452,7 +2438,6 @@
   margin-top: 9px; }
 
 .notFoundItems {
-    text-align: center;
-    margin: 100px 0;
-    font-size: 20px;
-}
+  text-align: center;
+  margin: 100px 0;
+  font-size: 20px; }
