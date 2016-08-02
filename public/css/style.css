@@ -2447,7 +2447,7 @@
         font-family: "OpenSans SemiBold", sans-serif; }
       ._filterDropDownBody .customTime .customTimeItem > input {
         height: 26px;
-        width: 165px;
+        width: 100%;
         border: none;
         border-bottom: 1px solid #cfcfcf;
         color: #4d4d4d;
