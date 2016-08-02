@@ -141,6 +141,7 @@ define([
             $listHolder.empty();
 
             this.renderList(collectionObj);
+            this.selectItem(this.selectedId);
 
             $holder.find('#timeRecivingDataFromServer').remove();
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
@@ -164,7 +165,6 @@ define([
             }
 
             this.selectedId = modelId;
-
             this.renderFormView(modelId, function () {
                 $thisEl.find('#timeRecivingDataFromServer').remove();
                 $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
@@ -173,8 +173,14 @@ define([
             });
         },
 
-        renderFormView: function (modelId, cb) {
+        selectItem: function (modelId) {
             var $thisEl = this.$el;
+
+            $thisEl.find('#listContent .selected').removeClass('selected');
+            $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
+        },
+
+        renderFormView: function (modelId, cb) {
             var self = this;
             var model;
 
@@ -195,11 +201,9 @@ define([
                     });
                     self.formView.render();
 
+                    self.selectItem(modelId);
+
                     self.listenTo(self.formView, 'itemChanged', self.changeList);
-
-                    $thisEl.find('#listContent .selected').removeClass('selected');
-                    $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
-
                     self.selectedId = model.id;
 
                     if (cb && typeof cb === 'function') {
