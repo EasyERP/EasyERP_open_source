@@ -154,8 +154,9 @@ define([
             var sendEvent = !!(changedListAttr.length);
 
             this.formModel.save(changedAttrs, {
-                wait   : true,
-                patch  : true,
+                wait : true,
+                patch: true,
+
                 success: function () {
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
@@ -171,7 +172,8 @@ define([
                         }
                     }
                 },
-                error  : function (model, response) {
+
+                error: function (model, response) {
                     if (response) {
                         App.render({
                             type   : 'error',
@@ -183,18 +185,18 @@ define([
         },
 
         /*deleteItems: function () {
-            var mid = 39;
+         var mid = 39;
 
-            this.formModel.destroy({
-                headers: {
-                    mid: mid
-                },
-                success: function () {
-                    Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
-                }
-            });
+         this.formModel.destroy({
+         headers: {
+         mid: mid
+         },
+         success: function () {
+         Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
+         }
+         });
 
-        },*/
+         },*/
 
         renderAbout: function () {
             var self = this;
