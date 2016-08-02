@@ -70,7 +70,7 @@ define([
             if (!value && !$target.hasClass('hideLine')) {
                 $target.addClass('hideLine');
             }
-            if (value){
+            if (value) {
                 $target.removeClass('hideLine');
             }
 
@@ -152,7 +152,12 @@ define([
         },
 
         saveDeal: function (changedAttrs, type) {
+            var $thisEl = this.$el;
             var self = this;
+            var changedAttributesForEvent = ['name', 'expectedRevenue.value', 'salesPerson', 'workflow'];
+            var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
+            var sendEvent = !!(changedListAttr.length);
+            var changedObj = {};
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
@@ -166,9 +171,23 @@ define([
                         self.editorView.renderTimeline();
                         self.modelChanged = {};
                         self.hideButtons();
+
+                        if (sendEvent){
+
+                            if (changedAttrs.hasOwnProperty('salesPerson')) {
+                                changedAttrs.salesPerson = $thisEl.find('#salesPersonDd').text().trim();
+                            }
+
+                            if(changedAttrs.hasOwnProperty('workflow')) {
+                                changedAttrs.workflow = $thisEl.find('.tabListItem.active span').text().trim();
+                            }
+
+                            self.trigger('itemChanged', changedAttrs);
+                        }
                     }
                 },
-                error  : function (model, response) {
+
+                error: function (model, response) {
                     if (response) {
                         App.render({
                             type   : 'error',
@@ -253,8 +272,8 @@ define([
             });
 
             this.formProperty = new CompanyFormProperty({
-                data       : formModel.company,
-                saveDeal   : self.saveDeal
+                data    : formModel.company,
+                saveDeal: self.saveDeal
             });
 
             this.renderTags();
@@ -265,8 +284,8 @@ define([
 
             $thisEl.find('#contactHolder').html(
                 new ContactFormProperty({
-                    data       : formModel.customer,
-                    saveDeal   : self.saveDeal
+                    data    : formModel.customer,
+                    saveDeal: self.saveDeal
                 }).render().el
             );
 
