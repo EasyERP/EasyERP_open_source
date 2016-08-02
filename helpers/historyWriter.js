@@ -117,6 +117,7 @@ var History = function (models) {
 
                             historyRecords.push(historyEntry);
                         }
+                        delete data[key][name];
                     });
                 } else {
                     historyEntry = generateHistoryEntry(contentType, keyValue);
