@@ -4,7 +4,7 @@
     <td class="centerCell"><input type="checkbox" value="<%=task._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=task.dueDate%></td>
-    <td><%=task.description%></td>
+    <td><div class="dealTableDescription"><%=task.description%></div></td>
     <td id='stages_<%=task._id%>'>
         <a href="javascript:;" class="stageSelect"><%=(task.workflow) ? task.workflow.name : 'Undefinded'%></a>
     </td>
