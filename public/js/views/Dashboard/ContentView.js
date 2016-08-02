@@ -101,6 +101,15 @@ define([
             }
         },
 
+        changeClass: function($target) {
+            if ($target.text() !== "Custom Dates") {
+                $target.toggleClass('checkedValue');
+                return;
+            }
+
+            $target.toggleClass('checkedArrow')
+        },
+
         changeDateRange: function (e, type) {
             var self = this;
             var dateFilter;
@@ -325,7 +334,7 @@ define([
             var $target = $(e.target);
             this.removeAllChecked('LeadsByName');
 
-            $target.toggleClass('checkedValue');
+            this.changeClass($target);
             this.$el.find('.customTimeLeadsByName').toggleClass('hidden');
         },
 
@@ -333,7 +342,7 @@ define([
             var $target = $(e.target);
             this.removeAllChecked('LeadsBySale');
 
-            $target.toggleClass('checkedValue');
+            this.changeClass($target);
             this.$el.find('.customTimeLeadsBySale').toggleClass('hidden');
         },
 
@@ -341,7 +350,7 @@ define([
             var $target = $(e.target);
             this.removeAllChecked('LeadsBySource');
 
-            $target.toggleClass('checkedValue');
+            this.changeClass($target);
             this.$el.find('.customTimeLeadsBySource').toggleClass('hidden');
         },
 
@@ -349,7 +358,7 @@ define([
             var $target = $(e.target);
             this.removeAllChecked('Leads');
 
-            $target.toggleClass('checkedValue');
+            this.changeClass($target);
             this.$el.find('.customTimeLeads').toggleClass('hidden');
         },
 
