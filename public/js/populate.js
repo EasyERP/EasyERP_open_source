@@ -465,6 +465,16 @@ define([
             end = Math.min(currentPage * elementVisible, data.length);
             allPages = Math.ceil(data.length / elementVisible);
 
+            if (!data.length) {
+                data.push({
+                    _id  : 'createNewEl',
+                    name : 'Create New'
+                });
+                end = 1;
+            }
+
+
+
             parent.append(_.template(selectTemplate, {
                 collection    : data.slice(start, end),
                 currentPage   : currentPage,

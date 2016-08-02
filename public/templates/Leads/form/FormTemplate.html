@@ -4,7 +4,7 @@
 
         </div>
         <div class="inner">
-            <div class="floatColumn halfColumn">
+            <div class="floatColumn col1-3">
                 <div class="moduleList aboutHolder">
                     <div class="right">
                         <button class="btn" id="convertToOpportunity"><span>Convert to Opportunity</span></button>
@@ -22,7 +22,7 @@
                         <div class="propertyFormList">
                             <label>Close Date</label>
                             <div  class="inputBox">
-                                <input class="extrainfo" type="text" name="Close Date" id="nextAction" value="<%=(nextAction && nextAction.date) ? nextAction.date : ''%>"
+                                <input class="extrainfo" type="text" name="Close Date" id="expectedClosing" value="<%=expectedClosing || ''%>"
                                        readonly="">
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                         <div class="propertyFormList">
                             <label>Source</label>
                             <div  class="inputBox">
-                                <a  class="current-selected assignName"  href="javascript:;" id="sourceDd"  data-id="source"><%=source%></a>
+                                <a  class="current-selected assignName"  href="javascript:;" id="sourceDd"  data-id="source"><%=source || 'Select'%></a>
                             </div>
                         </div>
                         <div class="tags-container propertyFormList"></div>
@@ -52,8 +52,7 @@
                 <div id="contactHolder"></div>
                 <div class="attachments"></div>
             </div>
-
-            <div class="floatColumn halfColumn">
+            <div class="floatColumn col2-3">
                 <div class="notes">
                 </div>
             </div>

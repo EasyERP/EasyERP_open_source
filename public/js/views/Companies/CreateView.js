@@ -22,7 +22,7 @@ define([
             _.bindAll(this, 'saveItem', 'render');
             this.model = new CompanyModel();
             this.responseObj = {};
-            this.lead = options.lead;
+            this.saveDeal = options.saveDeal;
 
             this.render();
         },
@@ -89,7 +89,7 @@ define([
                 name    : name,
                 imageSrc: this.imageSrc,
                 email   : email,
-                isHidden : this.lead ? true : false,
+                isHidden : this.saveDeal ? true : false,
 
                 social: {
                     LI: LI,
@@ -135,19 +135,11 @@ define([
                     var navigateUrl;
                     self.hideDialog();
 
-                    if (self.lead) {
-                        self.lead.save({company : res.id}, {
-                            patch : true,
-                            success : function () {
-                                Backbone.history.fragment = '';
-                                navigateUrl = '#easyErp/Leads/form/' + self.lead.id;
-                                Backbone.history.navigate(navigateUrl, {trigger: true});
-                            }
-                        });
+                    if (self.saveDeal && (typeof self.saveDeal === 'function')) {
+                        self.saveDeal({company : res.id}, 'formProperty');
                     } else {
-                        custom.getFiltersValues(true); // added for refreshing filters after creating
-
                         navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                        Backbone.history.fragment = '';
                         Backbone.history.navigate(navigateUrl, {trigger: true});
                     }
 

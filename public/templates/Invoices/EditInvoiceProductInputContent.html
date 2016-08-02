@@ -19,8 +19,12 @@
            <%=product.quantity ? product.quantity : ''%>
         </span>
     </td>
-    <%var currencyClassVal;%>
-    <%currencyClassVal = currencyClass(currency._id._id)%>
+    <%var currencyClassVal = '';%>
+    <% if (currency._id) { %>
+        <%currencyClassVal = currencyClass(currency._id._id)%>
+    <% } %>
+
+
     <td data-name="price" class="<%=currencyClassVal%>"><span><%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%>
         </span>
     </td>

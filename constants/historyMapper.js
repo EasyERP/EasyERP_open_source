@@ -7,12 +7,16 @@ module.exports = {
                 name : 'isOpportunitie',
                 isRef: false
             },
+            'createdBy.date' : {
+                name : 'Creation Date',
+                isRef: false
+            },
 
             'expectedRevenue.value': {
                 name : 'expectedRevenue',
                 isRef: false
             },
-            'nextAction.date': {
+            'expectedClosing': {
                 name : 'Close Date',
                 isRef: false
             },
@@ -46,23 +50,25 @@ module.exports = {
                 name : 'expectedRevenue',
                 isRef: false
             },
-            'nextAction.date': {
+            'expectedClosing': {
                 name : 'Close Date',
                 isRef: false
             },
-
             salesPerson: {
                 name      : 'Assigned To',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
-
             workflow: {
                 name      : 'workflow',
                 isRef     : true,
                 collection: 'workflows',
                 project   : '$tmp.name'
+            },
+            'createdBy.date' : {
+                name : 'Creation Date',
+                isRef: false
             }
         }
     },
@@ -72,6 +78,10 @@ module.exports = {
         map: {
             skype: {
                 name : 'Skype',
+                isRef: false
+            },
+            'createdBy.date' : {
+                name : 'Creation Date',
                 isRef: false
             },
             email: {
@@ -154,6 +164,10 @@ module.exports = {
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
+            },
+            'createdBy.date' : {
+                name : 'Creation Date',
+                isRef: false
             }
         }
     }

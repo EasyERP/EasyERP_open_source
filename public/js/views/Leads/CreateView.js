@@ -35,7 +35,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.parents('._modalSelect').find('.current-selected');
 
             holder.text($target.text()).attr('data-id', $target.attr('id'));
         },
@@ -138,7 +138,7 @@ define([
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 dialogClass  : 'edit-dialog',
-                width        : '900',
+                width        : '450px',
                 title        : 'Create Lead',
                 buttons      : {
                     save: {
@@ -167,7 +167,7 @@ define([
 
             notDiv.append(this.attachView.render().el);
 
-            $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            this.$el.find('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
             populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this, true, true);

@@ -340,7 +340,12 @@
 
                                             <dt><label for="paymentTerm">Payment Terms</label></dt>
                                             <dd>
-                                                <a id="paymentTerm" class="current-selected" href="javascript:;"><%=model.paymentTerms || 'Select'%></a>
+                                                <a id="paymentTerm" class="current-selected" href="javascript:;"><% if (model.paymentTerms) { %>
+                                                        <%=model.paymentTerms.name || 'Select'%>
+                                                    <% } else { %>
+                                                        <%=model.paymentTerms || 'Select'%>
+                                                    <% } %>
+                                                </a>
                                             </dd>
                                         </dl>
                                     </div>

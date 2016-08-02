@@ -37,13 +37,9 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.parents('._modalSelect').find('.current-selected');
 
             holder.text($target.text()).attr('data-id', $target.attr('id'));
-
-            if (holder.attr('id') === 'customerDd') {
-                this.selectCustomer($target.attr('id'));
-            }
         },
 
         keydownHandler: function (e) {
@@ -56,21 +52,6 @@ define([
             }
         },
 
-        selectCustomer: function (id) {
-            dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
-                id: id
-            }, function (response, context) {
-                var customer = response;
-
-                context.$el.find('#street').val(customer.address.street);
-                context.$el.find('#city').val(customer.address.city);
-                context.$el.find('#state').val(customer.address.state);
-                context.$el.find('#zip').val(customer.address.zip);
-                context.$el.find('#country').val(customer.address.country);
-            }, this);
-
-        },
-
         saveItem: function () {
             var mid = 25;
             var opportunityModel = new OpportunityModel();
@@ -81,10 +62,6 @@ define([
             var companyId = $thisEl.find('#companyDd').attr('data-id');
             var customerId = $thisEl.find('#customerDd').attr('data-id');
             var salesPersonId =$thisEl.find('#salesPersonDd').attr('data-id');
-            var nextActionDesc = $.trim($thisEl.find('#nextActionDescription').val());
-            var nextAction = {
-                desc: nextActionDesc
-            };
             var expectedClosing = $.trim($thisEl.find('#expectedClosing').val());
             var priority = $.trim($thisEl.find('#priorityDd').text());
             var internalNotes = $.trim($thisEl.find('#internalNotes').val());
@@ -124,7 +101,6 @@ define([
                     expectedRevenue: expectedRevenue,
                     customer       : customerId || null,
                     salesPerson    : salesPersonId || null,
-                    nextAction     : nextAction,
                     expectedClosing: expectedClosing,
                     priority       : priority,
                     company        : companyId,
@@ -166,7 +142,7 @@ define([
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 dialogClass  : 'edit-dialog',
-                width        : '900',
+                width        : '450px',
                 title        : 'Create Opportunity',
                 buttons      : {
                     save: {
@@ -196,8 +172,7 @@ define([
             notDiv.append(this.attachView.render().el);
            /* this.renderAssignees(model);*/
 
-            $('#nextActionDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
-            $('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            this.$el.find('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             dataService.getData('/opportunities/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {
                     priority.name = priority.priority;

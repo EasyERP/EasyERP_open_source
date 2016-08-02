@@ -11,8 +11,8 @@ define([
         parse: function (response) {
             if (response && response.data) {
                 _.map(response.data, function (opportunity) {
-                    if (opportunity.nextAction) {
-                        opportunity.nextAction.date = (opportunity.nextAction) ? common.utcDateToLocaleDate(opportunity.nextAction.date) : '';
+                    if (opportunity.expectedClosing) {
+                        opportunity.expectedClosing =  common.utcDateToLocaleDate(opportunity.expectedClosing) || '';
                     }
                     return opportunity;
                 });

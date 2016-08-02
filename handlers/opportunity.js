@@ -539,7 +539,7 @@ var Module = function (models, event) {
         var headers = req.headers;
         var id = headers.modelid || 'empty';
         var contentType = headers.modelname || 'opportunities';
-        var addNote = headers.addNote;
+        var addNote = headers.addnote;
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
@@ -944,7 +944,7 @@ var Module = function (models, event) {
 
                             historyOptions = {
                                 contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                                data       : data,
+                                data       : result.toJSON(),
                                 req        : req,
                                 contentId  : result._id
                             };
@@ -1199,7 +1199,7 @@ var Module = function (models, event) {
             leadsBySources: function (parCb) {
                 History.aggregate([
                     {
-                        $match: historyMatchObj
+                        $match: historyMatchObjForAssignedTo
                     }, {
                         $lookup: {
                             from        : 'Opportunities',
@@ -1210,18 +1210,6 @@ var Module = function (models, event) {
                     }, {
                         $unwind: {
                             path                      : '$lead',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'lead.salesPerson',
-                            foreignField: '_id',
-                            as          : 'sales'
-                        }
-                    }, {
-                        $unwind: {
-                            path                      : '$sales',
                             preserveNullAndEmptyArrays: true
                         }
                     }, {
@@ -1240,31 +1228,39 @@ var Module = function (models, event) {
                         $match: secondMatchObj
                     }, {
                         $project: {
-                            date  : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
-                            isOpp : '$lead.isOpportunitie',
-                            dateBy: {$dayOfYear: '$date'},
-                            source: {$ifNull: ['$lead.source', '']}
+                            date     : {$add: [{$multiply: [{$year: '$date'}, 10000]}, {$add: [{$multiply: [{$month: '$date'}, 100]}, {$dayOfMonth: '$date'}]}]},
+                            isOpp    : '$lead.isConverted',
+                            dateBy   : {$dayOfYear: '$date'},
+                            createdBy: '$lead.createdBy'
                         }
                     }, {
                         $project: {
-                            date  : 1,
-                            isOpp : '$isOpp',
-                            dateBy: '$dateBy',
-                            source: {$cond: [{$or: [{$eq: ['$isNull', '']}, {$eq: ['$source', '']}]}, 'Empty', '$source']}
+                            date     : 1,
+                            isOpp    : '$isOpp',
+                            dateBy   : '$dateBy',
+                            createdBy: '$createdBy'
                         }
                     }, {
                         $group: {
-                            _id  : '$source',
-                            count: {$sum: 1}
+                            _id   : '$createdBy.user',
+                            count : {$sum: 1},
+                            isOpp : {$first: '$isOpp'},
+                            source: {$first: '$dateBy'}
                         }
                     }, {
-                        $project: {
-                            salesPerson: '$_id',
-                            count      : 1,
-                            _id: 0
+                        $lookup: {
+                            from        : 'Users',
+                            localField  : '_id',
+                            foreignField: '_id',
+                            as          : 'user'
                         }
                     }, {
-                        $sort: {_id: -1}
+                        $unwind: {
+                            path                      : '$user',
+                            preserveNullAndEmptyArrays: true
+                        }
+                    }, {
+                        $project: {_id: 0, count: '$count', salesPerson: '$user.login'}
                     }
                 ], parCb);
             }
@@ -2604,6 +2600,7 @@ var Module = function (models, event) {
                             expectedRevenue : 1,
                             customer        : {$arrayElemAt: ['$customer', 0]},
                             nextAction      : 1,
+                            expectedClosing : 1,
                             sequence        : 1,
                             workflow        : {$arrayElemAt: ['$workflow', 0]},
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
@@ -2632,6 +2629,7 @@ var Module = function (models, event) {
                             'workflow._id'    : '$root.workflow._id',
                             'workflow.name'   : '$root.workflow.name',
                             'workflow.status' : '$root.workflow.status',
+                            expectedClosing   : '$root.expectedClosing',
                             'salesPerson._id' : '$root.salesPerson._id',
                             'salesPerson.name': '$root.salesPerson.name',
                             'createdBy.user'  : '$root.createdBy.user.login',
@@ -2669,6 +2667,7 @@ var Module = function (models, event) {
                             'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                             'createdBy.date': 1,
+                            expectedClosing : 1,
                             'editedBy.date' : 1,
                             source          : 1,
                             address         : 1,
@@ -2700,6 +2699,7 @@ var Module = function (models, event) {
                             'createdBy.user'  : '$root.createdBy.user.login',
                             'createdBy.date'  : '$root.createdBy.date',
                             'editedBy.user'   : '$root.editedBy.user.login',
+                            expectedClosing   : '$root.expectedClosing',
                             'editedBy.date'   : '$root.editedBy.date',
                             name              : '$root.name',
                             source            : '$root.source',
@@ -2863,6 +2863,7 @@ var Module = function (models, event) {
                     name           : 1,
                     sequence       : 1,
                     expectedRevenue: 1,
+                    expectedClosing: 1,
                     customer       : 1,
                     salesPerson    : 1,
                     nextAction     : 1,

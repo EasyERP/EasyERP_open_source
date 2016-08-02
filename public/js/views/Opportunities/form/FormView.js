@@ -214,12 +214,12 @@ define([
             var $thisEl = this.$el;
             $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
             this.renderTags();
-            $thisEl.find('#nextAction').datepicker({
+            $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function (dateText) {
-                    self.modelChanged['nextAction.date'] = new Date(dateText);
+                    self.modelChanged['expectedClosing'] = new Date(dateText);
                     self.showButtons();
                 }
 
@@ -253,8 +253,7 @@ define([
             });
 
             this.formProperty = new CompanyFormProperty({
-                parentModel: this.formModel,
-                attribute  : 'company',
+                data       : formModel.company,
                 saveDeal   : self.saveDeal
             });
 
@@ -266,9 +265,7 @@ define([
 
             $thisEl.find('#contactHolder').html(
                 new ContactFormProperty({
-                    parentModel: this.formModel,
                     data       : formModel.customer,
-                    attribute  : 'customer',
                     saveDeal   : self.saveDeal
                 }).render().el
             );
@@ -282,12 +279,12 @@ define([
                 this.editorView.render().el
             );
 
-            $thisEl.find('#nextAction').datepicker({
+            $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function (dateText) {
-                    self.modelChanged['nextAction.date'] = new Date(dateText);
+                    self.modelChanged['expectedClosing'] = new Date(dateText);
                     self.showButtons();
                 }
             });

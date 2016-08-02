@@ -8,7 +8,7 @@ define(
         var groupsNameRegExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/;
         var loginRegExp = /[\w\.@]{4,100}$/;
         var passRegExp = /^[\w\.@]{3,100}$/;
-        var skypeRegExp = /^[\w\._@]{6,100}$/;
+        var skypeRegExp = /^[\w\.\-@]{6,100}$/;
         var workflowRegExp = /^[a-zA-Z0-9\s]{2,100}$/;
         var invalidCharsRegExp = /[~<>\^\*₴]/;
         var countryRegExp = /[a-zA-Z\s-]+/;

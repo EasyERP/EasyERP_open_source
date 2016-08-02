@@ -1,48 +1,58 @@
 <div class="form-holder">
     <form method="post" action="" id="leadForm" class="form notDialog">
         <fieldset>
-            <div class="inner">
+            <div class="inner _salesModal">
+                <h2 class="modal_title">Add a Lead</h2>
                 <div class="clearfix"></div>
-                        <dl class="subject-info clearfix">
+                        <div class="subject-info _modalList clearfix">
+                            <div class="_modalLabel"><label for="name">Subject</label></div>
+                            <div class="_modalSelect"><input type="text" class="title-input"  id="name" required maxlength="48"/></div>
+                        </div>
 
-                            <dd><input type="text" class="title-input" placeholder="Subject" id="name" required maxlength="48"/></dd>
 
-                        </dl>
+                        <div class="">
+                            <div class="opprtunitie-info">
+                                <div class="_modalList">
+                                    <div class="_modalLabel"><label for="customerDd">Contact</label></div>
+                                    <div class="_modalSelect"><a id="customerDd" class="current-selected" href="javascript:;"></a></div>
+                                </div>
 
-                        <div class="half-block left">
-                            <div class="area_holder">
+                               <div class="_modalList">
+                                   <div class="_modalLabel"><label for="companyDd">Company</label></div>
+                                   <div class="_modalSelect"><a id="companyDd" class="current-selected" href="javascript:;"></a></div>
+                               </div>
+
+                                <div class="_modalList">
+                                    <div class="_modalLabel"><label for="salesPersonDd">Assigned to</label></div>
+                                    <div class="_modalSelect"><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></div>
+                                </div>
+
+                                <div class="_modalList">
+                                    <div class="_modalLabel"><label for="workflowDd">Stages</label></div>
+                                    <div class="_modalSelect" id="selectWorkflow"><a id="workflowDd" class="current-selected" href="javascript:;"></a></div>
+                                </div>
+
+                                <div class="_modalList">
+                                    <div class="_modalLabel"><label for="sourceDd">Source</label></div>
+                                    <div class="_modalSelect"><a id="sourceDd" class="current-selected" href="javascript:;"></a></div>
+                                </div>
+
+                                <div class="_modalList">
+                                    <div class="_modalLabel"><label for="expectedClosing">Expected Closing</label></div>
+                                    <div class="_modalSelect"><input type="text" id="expectedClosing" maxlength="32" placeholder="Date" readonly/></div>
+                                </div>
+                            </div>
+                            <div class="_modalList">
+                                <div class="area_holder">
                                  <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
                                            class="opp-internal-create"></textarea>
-                                <a href="javascript:;" class="attach_file">
-                                    <i class="fa fa-paperclip" aria-hidden="true"></i>
-                                </a>
+                                    <a href="javascript:;" class="attach_file">
+                                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+
                             </div>
-
                         </div>
-                        <div class="half-block left">
-                            <dl class="opprtunitie-info">
-                                <dt><label for="customerDd">Contact</label></dt>
-                                <dd><a id="customerDd" class="current-selected" href="javascript:;"></a></dd>
-                                <dt><label for="companyDd">Company</label></dt>
-                                <dd><a id="companyDd" class="current-selected" href="javascript:;"></a></dd>
-                                <dt><label for="salesPersonDd">Assigned to</label></dt>
-                                <dd><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></dd>
-                                <dt><label for="workflowDd">Stages</label></dt>
-                                <dd id="selectWorkflow"><a id="workflowDd" class="current-selected"
-                                                           href="javascript:;"></a></dd>
-                                <dt><label for="sourceDd">Source</label></dt>
-                                <dd>
-                                    <a id="sourceDd" class="current-selected" href="javascript:;"></a>
-                                </dd>
-                                <dt><label for="expectedClosing">Expected Closing</label></dt>
-                                <dd><input type="text" id="expectedClosing" maxlength="32" placeholder="Date" readonly/>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="clearfix"></div>
-
-                        <div class="attach-container"></div>
-                        <div class="clearfix"></div>
                     </div>
             <div class="clearfix"></div>
         </fieldset>

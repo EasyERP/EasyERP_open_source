@@ -69,6 +69,7 @@
     "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^0.9.1",
+    "grunt-contrib-watch": "^1.0.0",
     "grunt-jsdoc": "^0.6.8",
     "grunt-karma": "^0.12.1",
     "grunt-modernizr": "^1.0.1",

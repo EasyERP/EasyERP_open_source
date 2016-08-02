@@ -97,18 +97,17 @@ define([
 
             $currentEl.html('');
             $currentEl.append(_.template(this.listTemplate));
+
+            if (!this.collection.length) {
+                $currentEl.append('<h2 class="notFoundItems">No persons found</h2>');
+                return;
+            }
+
             $currentEl.append(new this.ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.pageSize
             }).render());
-
-            // this.renderAlphabeticalFilter(this);
-            // this.renderPagination($currentEl, this);
-
-            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
-            // this.renderFilter();
         }
     });
 
