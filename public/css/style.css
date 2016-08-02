@@ -2407,13 +2407,18 @@
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
   ._filterDropDownBody .filterValues {
     font-size: 13px;
-    padding: 0 12px;
-    margin-bottom: 8px;
+    padding: 0 25px;
     text-align: left; }
     ._filterDropDownBody .filterValues:hover {
       background-color: #f5f5f5; }
     ._filterDropDownBody .filterValues.checkedValue {
+      position: relative;
       font-family: "OpenSans SemiBold", sans-serif; }
+      ._filterDropDownBody .filterValues.checkedValue:before {
+        font-family: FontAwesome;
+        position: absolute;
+        left: 6px;
+        content: "\f00c"; }
   ._filterDropDownBody .listLine {
     margin: 7px 0;
     height: 1px;
@@ -2447,10 +2452,11 @@
         font-family: "OpenSans SemiBold", sans-serif; }
       ._filterDropDownBody .customTime .customTimeItem > input {
         height: 26px;
-        width: 165px;
-        cursor: pointer;
+        width: 100%;
         border: none;
-        border-bottom: 1px solid #cfcfcf; }
+        border-bottom: 1px solid #cfcfcf;
+        color: #4d4d4d;
+        cursor: pointer; }
 
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }
