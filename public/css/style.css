@@ -1844,7 +1844,7 @@
 
 .tagsLabel {
   display: inline-block;
-  padding-right: 10px;
+  line-height: 18px;
   color: #000; }
 
 .moduleList .largeBtn,
@@ -1937,33 +1937,22 @@
   margin-top: 20px; }
 
 .ui-dialog .ui-dialog-buttonpane {
-    border-top: none;
-}
+  border-top: none; }
 
 .ui-dialog ._salesModal {
-    padding: 10px 20px;
-}
-
-.ui-dialog ._salesModal .modal_title {
+  padding: 10px 20px; }
+  .ui-dialog ._salesModal .modal_title {
     margin-bottom: 20px;
-    color: #7f7f80;
-}
-
-.ui-dialog ._salesModal ._modalList {
-    margin-bottom: 15px;
-}
-
-.ui-dialog ._salesModal ._modalLabel {
-    margin-bottom: 10px;
-}
-
-.ui-dialog ._salesModal ._modalLabel label {
-    color: #7f7f80;
-    font-weight: bold;
-}
-
-.ui-dialog ._salesModal ._modalSelect a,
-.ui-dialog ._salesModal ._modalSelect input {
+    color: #7f7f80; }
+  .ui-dialog ._salesModal ._modalList {
+    margin-bottom: 15px; }
+  .ui-dialog ._salesModal ._modalLabel {
+    margin-bottom: 10px; }
+    .ui-dialog ._salesModal ._modalLabel label {
+      color: #7f7f80;
+      font-weight: bold; }
+  .ui-dialog ._salesModal ._modalSelect a,
+  .ui-dialog ._salesModal ._modalSelect input {
     display: block;
     padding: 5px;
     width: 100% !important;
@@ -1971,13 +1960,10 @@
     min-height: 35px;
     border: 1px solid #c8c8d3;
     border-radius: 3px;
-    cursor: pointer;
-}
-
-.ui-dialog ._salesModal ._modalSelect a:hover,
-.ui-dialog ._salesModal ._modalSelect input:hover {
-    text-decoration: none;
-}
+    cursor: pointer; }
+    .ui-dialog ._salesModal ._modalSelect a:hover,
+    .ui-dialog ._salesModal ._modalSelect input:hover {
+      text-decoration: none; }
 
 .dropDownDateRangeContainer {
   position: relative;
@@ -2192,15 +2178,28 @@
 .addOport span {
   margin-right: 10px; }
 
+.col1-4 {
+  width: 25%; }
+
+.col1-3 {
+  width: 33%; }
+
 .newTasksContainer {
   padding-top: 30px !important; }
+  .newTasksContainer .taskTop .editTags {
+    padding: 0 5px;
+    float: right;
+    height: 20px;
+    line-height: 18px;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 3px; }
   .newTasksContainer .taskTitle {
     font-size: 23px;
     padding-left: 26px;
     margin-bottom: 25px; }
   .newTasksContainer .taskTop,
   .newTasksContainer .taskBottom {
-    width: 100%;
     margin-bottom: 25px;
     border-bottom: 1px solid #f2f2f2;
     font-size: 0; }
@@ -2216,7 +2215,6 @@
   .newTasksContainer .topCell {
     display: inline-block;
     vertical-align: middle;
-    width: 33%;
     padding: 15px;
     font-size: 14px; }
     .newTasksContainer .topCell + .topCell {
@@ -2452,7 +2450,6 @@
   margin-top: 9px; }
 
 .notFoundItems {
-    text-align: center;
-    margin: 100px 0;
-    font-size: 20px;
-}
+  text-align: center;
+  margin: 100px 0;
+  font-size: 20px; }

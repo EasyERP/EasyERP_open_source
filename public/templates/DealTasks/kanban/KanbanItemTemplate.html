@@ -12,36 +12,34 @@
             <% }%>
             <p class="dueDate"><%=model.dueDate%></p>
         </div>
-        <div class="clearfix">
-            <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right"><img title="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>" class="person"
-                                                                                                         src=""
-                                                                                                         alt="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>"/>
-
-
-        </div>
         <div class="sources tasksItemList">
             <% if (model.category) { %>
-            <span class="left" data-id="<%=model.category._id%>" data-color="<%=model.category.color%>"><%=model.category.name%> </span>
+            <span class="_tagSmall" data-id="<%=model.category._id%>" data-color="<%=model.category.color%>"><%=model.category.name%> </span>
             <% }%>
-            <% if (model.contact) { %>
-            <a href="<%='/#easyErp/Persons/tform/' + model.contact._id %>" class="tasksItemIcon"
-               title="<%=model.contact.fullName%>"><img alt=""
-                                                        src="<%=model.contact.imageSrc%>"/> </a>
-            <% }%>
-            <% if (model.company) { %>
-            <a href="<%='/#easyErp/Companies/tform/' + model.company._id %>" class="tasksItemIcon"
-               title="<%=model.company.fullName%>"> <img alt=""
-                                                         src="<%=model.company.imageSrc%>"/> </a>
-            <% }%>
-            <% if (model.deal) { %>
-            <a href="<%='/#easyErp/' +  (model.deal.isOpportunitie ? 'Opportunities' : 'Leads') + '/tform/' + model.deal._id %>"
-               class="tasksItemIcon" title="<%=model.deal.name%>"><i class="fa fa-usd" aria-hidden="true"></i> </a>
-            <% }%>
+            <div class="_sourceInfo">
+                <% if (model.contact) { %>
+                <a href="<%='/#easyErp/Persons/tform/' + model.contact._id %>" class="tasksItemIcon" title="<%=model.contact.fullName%>">
+                    <img alt="" src="<%=model.contact.imageSrc%>"/>
+                </a>
+                <% }%>
+                <% if (model.company) { %>
+                <a href="<%='/#easyErp/Companies/tform/' + model.company._id %>" class="tasksItemIcon" title="<%=model.company.fullName%>">
+                    <img alt="" src="<%=model.company.imageSrc%>"/>
+                </a>
+                <% }%>
+                <% if (model.deal) { %>
+                <a href="<%='/#easyErp/' +  (model.deal.isOpportunitie ? 'Opportunities' : 'Leads') + '/tform/' + model.deal._id %>"
+                   class="tasksItemIcon" title="<%=model.deal.name%>">
+                    <span class="fa fa-usd" aria-hidden="true"></span>
+                </a>
+                <% }%>
+            </div>
         </div>
-
         <div class="bottom taskSelect">
             <a id="type_<%=model._id%>" data-id="<%=model.type%>" class="current-selected bold" href="javascript:;"><%=model.type%></a>
         </div>
+        <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right">
+            <img title="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>" class="person" src="" alt="<%=(model.assignedTo) ? model.assignedTo.name.first + ' ' + model.assignedTo.name.last : ''%>"/>
         </div>
     </div>
 </div>
