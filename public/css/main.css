@@ -781,31 +781,31 @@
   font-family: 'Open Sans ExtraBold';
   font-style: normal;
   font-weight: 800;
-  src: local('Open Sans ExtraBold'), local('opensans-extrabold'), url(../font/opensans-extrabold.woff) format('woff');
+  src: local('Open Sans ExtraBold'), local('opensans-extrabold'), url(../font/opensans/opensans-extrabold.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans Bold';
   font-style: normal;
   font-weight: 700;
-  src: local('Open Sans Bold'), local('opensans-bold'), url(../font/opensans-bold.woff) format('woff');
+  src: local('Open Sans Bold'), local('opensans-bold'), url(../font/opensans/opensans-bold.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans SemiBold';
   font-style: normal;
   font-weight: 600;
-  src: local('Open Sans SemiBold'), local('opensans-semibold'), url(../font/opensans-semibold.woff) format('woff');
+  src: local('Open Sans SemiBold'), local('opensans-semibold'), url(../font/opensans/opensans-semibold.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans Regular';
   font-style: normal;
   font-weight: 400;
-  src: local('Open Sans Regular'), local('opensans-regular'), url(../font/opensans-regular.woff) format('woff');
+  src: local('Open Sans Regular'), local('opensans-regular'), url(../font/opensans/opensans-regular.woff) format('woff');
 }
 @font-face {
   font-family: 'Open Sans Light';
   font-style: normal;
   font-weight: 300;
-  src: local('Open Sans Light'), local('opensans-light'), url(../font/opensans-light.woff) format('woff');
+  src: local('Open Sans Light'), local('opensans-light'), url(../font/opensans/opensans-light.woff) format('woff');
 }
 html {
   font-family: sans-serif;
@@ -3648,7 +3648,7 @@ dl.payrollDateBlock dt {
   width: 100%;
 }
 .listContentWrap {
-  width: 400px;
+  width: 300px;
   border-right: 1px solid #ededed;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
@@ -3663,25 +3663,11 @@ dl.payrollDateBlock dt {
   position: relative;
   right: auto;
   float: right;
-  width: 277px;
+  width: 177px;
   margin-right: 0;
 }
 .listContentWrap .search-options {
   min-width: 277px;
-}
-@media (max-width: 1350px) {
-  .listContentWrap {
-    width: 350px;
-  }
-  .listContentWrap .listContentTitle #searchContainer {
-    width: 228px;
-  }
-  .listContentWrap .search-options {
-    min-width: 228px;
-  }
-  .listContentWrap .compactRow {
-    width: 280px;
-  }
 }
 .formContentWrap,
 .listContentWrap {
@@ -4056,10 +4042,10 @@ table.kanban tbody td:nth-child(n+2) {
   width: 50%;
 }
 .col1-3 {
-  width: 30%;
+  width: 40%;
 }
 .col2-3 {
-  width: 70%;
+  width: 60%;
 }
 .noteBtnBlock,
 .editNoteBtnBlock {
