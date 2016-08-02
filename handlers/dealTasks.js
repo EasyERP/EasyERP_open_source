@@ -198,8 +198,8 @@ var Module = function (models, event) {
         }
 
         query.find(optionsObject)
-            .select('_id assignedTo deal company contact workflow editedBy.date taskCount sequence dueDate description')
             .populate('assignedTo', 'name')
+            .populate('category')
             .populate('company', 'name imageSrc')
             .populate('contact', 'name imageSrc')
             .populate('assignedTo', 'name')
@@ -234,6 +234,7 @@ var Module = function (models, event) {
             .populate('deal', '_id name')
             .populate('company', '_id name imageSrc')
             .populate('contact', '_id name imageSrc')
+            .populate('category')
             .populate(' assignedTo', '_id name imageSrc')
             .populate('createdBy.user')
             .populate('editedBy.user')

@@ -16,6 +16,7 @@ define([
             _.bindAll(this, 'render', 'saveItem');
             this.collection = options.collection;
             this.render(options);
+            this.type = options.type;
         },
 
         events: {
@@ -94,7 +95,8 @@ define([
             var self = this;
             var model = this.model.toJSON();
             var formString = this.template({
-                model: model
+                model: model,
+                type : this.type
             });
 
             this.$el = $(formString).dialog({

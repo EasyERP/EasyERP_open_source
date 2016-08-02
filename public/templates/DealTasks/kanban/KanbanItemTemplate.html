@@ -20,6 +20,9 @@
 
         </div>
         <div class="sources tasksItemList">
+            <% if (model.category) { %>
+            <span class="left" data-id="<%=model.category._id%>" data-color="<%=model.category.color%>"><%=model.category.name%> </span>
+            <% }%>
             <% if (model.contact) { %>
             <a href="<%='/#easyErp/Persons/tform/' + model.contact._id %>" class="tasksItemIcon"
                title="<%=model.contact.fullName%>"><img alt=""

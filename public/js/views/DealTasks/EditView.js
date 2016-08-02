@@ -6,6 +6,7 @@
     'text!templates/DealTasks/EditTemplate.html',
     'text!templates/selectView/showSelectTemplate.html',
     'views/Notes/NoteView',
+    'views/Category/TagView',
     'common',
     'populate',
     'custom',
@@ -17,6 +18,7 @@
              EditTemplate,
              showSelectTemplate,
              NoteView,
+             CategoryView,
              common,
              populate,
              custom,
@@ -37,6 +39,7 @@
             _.bindAll(this, 'render', 'saveItem', 'deleteItem');
             this.currentModel = (options.model) || options.collection.getElement();
             this.currentModel.urlRoot = CONSTANTS.URLS.DEALTASKS;
+            this.currentModel.on('change:category', this.renderCategory, this);
 
             this.render();
         },
@@ -96,10 +99,12 @@
             var workflow;
             var data;
             var currentWorkflow;
+            var modelJSON = this.currentModel.toJSON();
             var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
             var company = this.$el.find('#companyItem .showSelect').attr('data-id');
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
+            var category = modelJSON.category._id;
 
             event.preventDefault();
 
@@ -125,9 +130,10 @@
             data = {
                 assignedTo   : assignedTo || null,
                 description  : description,
-                dueDate    : $.trim(holder.find('#dueDate').val()),
-                sequenceStart: this.currentModel.toJSON().sequence,
+                dueDate      : $.trim(holder.find('#dueDate').val()),
+                sequenceStart: modelJSON.sequence,
                 company      : company || null,
+                category     : category || null,
                 companyDate  : company ? new Date() : null,
                 contact      : contact || null,
                 contactDate  : contact ? new Date() : null,
@@ -135,86 +141,40 @@
                 dealDate     : deal ? new Date() : null
             };
 
-            currentWorkflow = this.currentModel.get('workflow');
+            currentWorkflow = modelJSON.workflow;
 
             if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
                 data.workflow = workflow;
                 data.sequence = -1;
-                data.workflowStart = this.currentModel.toJSON().workflow._id;
+                data.workflowStart = modelJSON.workflow._id;
             }
 
             this.currentModel.save(data, {
                 patch  : true,
                 success: function (model, res) {
                     var redirectUrl = window.location.hash;
-                    var ids = [];
-                    var result;
-                    var $trHolder;
-                    var editHolder = self.$el;
-                    var $kanbanHolder;
-                    var counter;
-                    var $workflowStart;
-                    var $workflow;
-
-                    model = model.toJSON();
-                    ids.push(assignedTo);
-                    ids.task_id = model._id;
-                    common.getImages(ids, '/employees/getEmployeesImages');
-                    result = res.result;
                     self.hideDialog();
 
-                    switch (viewType) {
-                        case 'list':
-                            $trHolder = $("tr[data-id='" + model._id + "'] td");
-                            $trHolder.eq(3).text(summary);
-                            $trHolder.eq(4).find('a').data('id', project).text(editHolder.find('#projectDd').text());
-                            $trHolder.eq(5).find('a').text(editHolder.find('#workflowsDd').text());
-                            $trHolder.eq(6).text(editHolder.find('#assignedToDd').text());
-
-                            break;
-                        /*case 'kanban':
-                            /!*$kanbanHolder = $('#' + model._id);
-                            $kanbanHolder.find('#' + model._id).text(model.description);
-                            $kanbanHolder.find('.dueDate').text(model.dueDate);
-                            $workflowStart = $('#' + data.workflowStart);
-                            $workflow = $('#' + data.workflow);
-
-                            $workflowStart.find('.item').each(function () {
-                                var seq = $(this).find('.inner').data('sequence');
-
-                                if (seq > data.sequenceStart) {
-                                    $(this).find('.inner').attr('data-sequence', seq - 1);
-                                }
-                            });
-
-                            if (result && result.sequence) {
-                                $kanbanHolder.find('.inner').attr('data-sequence', result.sequence);
-                            }
-
-                            $workflow.find('.columnNameDiv').after($kanbanHolder);
-
-                            if (data.workflow) {
-                                $workflow.find('.columnNameDiv').after($kanbanHolder);
-                                counter = $workflow.closest('.column').find('.totalCount');
-                                counter.html(parseInt(counter.html(), 10) + 1);
-                                counter = $workflowStart.closest('.column').find('.totalCount');
-                                counter.html(parseInt(counter.html(), 10) - 1);
-                            }*!/
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
-                            break;*/
-                        default :
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
-
-                            break;
-                    }
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(redirectUrl, {trigger: true});
                 },
 
                 error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
             });
+        },
+
+        renderCategory: function () {
+            var notDiv = this.$el.find('#categoryHolder');
+            notDiv.empty();
+
+            notDiv.append(
+                new CategoryView({
+                    model      : this.currentModel,
+                    contentType: 'DealTasks'
+                }).render().el
+            );
         },
 
         deleteItem: function (event) {
@@ -238,7 +198,11 @@
 
                         switch (viewType) {
                             case 'list':
-                                $("tr[data-id='" + model._id + "'] td").remove();
+                                var redirectUrl = window.location.hash;
+                                self.hideDialog();
+
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
                                 break;
                             case 'kanban':
                                 $('#' + model._id).remove();
@@ -247,9 +211,6 @@
 
                                 newTotal = ($totalCount.html() - 1);
                                 $totalCount.html(newTotal);
-                            case 'form':
-                                $('#' + model._id).remove();
-                                break;
                         }
                         self.hideDialog();
                     },
@@ -300,6 +261,8 @@
                 }).render().el);
 
             this.renderAssignees(this.currentModel);
+
+            this.renderCategory();
 
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);

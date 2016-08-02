@@ -1,8 +1,6 @@
 <div class="tagsLabel">Category</div>
-<%  tags.forEach(function(elem,index){ %>
-<span data-id="<%= elem._id%>" class="<%= elem.color%> editTags"><%=elem.name %></span>
-<% }) %>
 
+<span data-id="<%=category ? category._id : ''%>" class="editTags <%= category ? category.color : 'bgGrey'%>"><%=category ? category.name : 'None'%></span>
 
 
 

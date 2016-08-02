@@ -2,8 +2,8 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Tags/TagsListTemplate.html',
-    'text!templates/Tags/TagsContentTemplate.html',
+    'text!templates/Category/TagsListTemplate.html',
+    'text!templates/Category/TagsContentTemplate.html',
     'collections/Tags/TagsCollection',
     'views/Tags/createView',
     'views/Tags/editView'
@@ -24,8 +24,8 @@ define([
             }
 
             this.contentType = options.contentType;
-            this.collection = new TagsCollection();
-            this.filteredCollection = new TagsCollection();
+            this.collection = new TagsCollection({type : 'Category'});
+            this.filteredCollection = new TagsCollection({type : 'Category'});
             this.filteredCollection.unbind();
             this.filteredCollection.bind('reset', resetCollection);
             this.collection.on('change add destroy', this.changeFilter, this);
@@ -76,9 +76,17 @@ define([
 
         changeSelected: function (e) {
             var $target = $(e.target);
-            var id = $target.attr('data-id');
+            var id = $target.closest('li').attr('data-id');
+            var color = $target.attr('data-color');
+            var text = $target.text();
 
-            this.model.set({category: id});
+
+            this.model.set({category: {
+                _id : id,
+                color : color,
+                name  : text
+            }});
+            $('.tag-list-dialog').remove();
         },
 
         renderContent: function () {
@@ -92,7 +100,7 @@ define([
         createTag: function (e) {
             e.preventDefault();
             $('.tag-list-dialog').hide();
-            return new CreateView({collection: this.collection});
+            return new CreateView({collection: this.collection, type : 'Category'});
         },
 
         editTag: function (e) {
@@ -105,7 +113,7 @@ define([
             e.preventDefault();
 
             if (model) {
-                return new EditView({model: model, collection: this.collection});
+                return new EditView({model: model, collection: this.collection, type : 'Category'});
             }
         },
 
