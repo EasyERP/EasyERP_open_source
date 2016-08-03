@@ -36,6 +36,8 @@ module.exports = (function () {
         salesPerson : {type: ObjectId, ref: 'Employees', default: null},
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
+        paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
+
         paymentInfo: payments,
         payments   : [{type: ObjectId, ref: 'Payment', default: null}],
 

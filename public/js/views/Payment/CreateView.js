@@ -299,7 +299,13 @@ define([
 
             populate.get2name('#supplierDd', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             populate.get('#period', '/period', {}, 'name', this, true, true);
-            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, null);
+
+            if (!model.paymentMethod && model.project && model.project.paymentMethod) {
+                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.project.paymentMethod);
+            } else {
+                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.paymentMethod, null, this.$el);
+            }
+
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
 
             this.$el.find('#journalDiv').hide();
