@@ -2,8 +2,8 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Tags/tagTemplate.html',
-    'views/Tags/TagListView'
+    'text!templates/Category/categoryTemplate.html',
+    'views/Category/TagListView'
 
 ], function (Backbone, $, _, tagTemplate, TagListView) {
     var TagView = Backbone.View.extend({
@@ -27,9 +27,9 @@ define([
         },
 
         render: function () {
-            var modelObj = this.model.toJSON();
+            var category = this.model.get('category');
 
-            this.$el.html(this.template(modelObj));
+            this.$el.html(this.template({category : category}));
 
             return this;
         }

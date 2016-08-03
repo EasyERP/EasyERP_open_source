@@ -1,15 +1,19 @@
 ﻿<div class="form-holder task-create-holder newTasksContainer">
+
     <form method="post" action="" id="createTaskForm" class="form notDialog">
         <div>
+
             <div class="taskTop">
-                <div class="topCell">
+                <div class="topCell col1-4" id="categoryHolder"></div>
+
+                <div class="topCell col1-4">
                     <label for="workflowsDd">Stage</label>
                     <div id="selectWorkflow" class="dataField">
                         <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefined'%></a>
                     </div>
                 </div>
 
-                <div class="topCell">
+                <div class="topCell col1-4">
                     <div>
                         <label for="dueDate">Due Date </label>
                     </div>
@@ -18,7 +22,7 @@
                     </div>
                 </div>
 
-                <div class="topCell">
+                <div class="topCell col1-4">
                     <label>Assigned to</label>
                     <div class="dataField">
                         <a id="assignedToDd" data-id="<%=(model.assignedTo) ? model.assignedTo._id : ''%>" class="current-selected" href="javascript:;"><%=(model.assignedTo)?(model.assignedTo.name.first+' '+model.assignedTo.name.last):'Select'%></a>
@@ -37,7 +41,7 @@
                 <div class="inner">
 
                     <div class="taskBottom">
-                        <div class="topCell selectType" id="contactItem">
+                        <div class="topCell selectType col1-3" id="contactItem">
                             <label>Contact</label>
                             <div>
 
@@ -61,7 +65,7 @@
                             </div>
                         </div>
 
-                        <div class="topCell selectType" id="companyItem">
+                        <div class="topCell selectType col1-3" id="companyItem">
                             <label>Company</label>
                             <div>
                                 <%if (model.company) {%>
@@ -84,7 +88,7 @@
                             </div>
                         </div>
 
-                        <div class="topCell selectType" id="dealItem">
+                        <div class="topCell selectType col1-3" id="dealItem">
                             <label>Lead/Opportunity</label>
                             <div>
 
@@ -99,6 +103,7 @@
                                 <%}%>
                             </div>
                         </div>
+
 
                     </div>
                 </div>

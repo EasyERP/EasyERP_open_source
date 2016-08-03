@@ -198,8 +198,8 @@ var Module = function (models, event) {
         }
 
         query.find(optionsObject)
-            .select('_id assignedTo deal company contact workflow editedBy.date taskCount sequence dueDate description')
             .populate('assignedTo', 'name')
+            .populate('category')
             .populate('company', 'name imageSrc')
             .populate('contact', 'name imageSrc')
             .populate('assignedTo', 'name')
@@ -234,6 +234,7 @@ var Module = function (models, event) {
             .populate('deal', '_id name')
             .populate('company', '_id name imageSrc')
             .populate('contact', '_id name imageSrc')
+            .populate('category')
             .populate(' assignedTo', '_id name imageSrc')
             .populate('createdBy.user')
             .populate('editedBy.user')
@@ -322,9 +323,18 @@ var Module = function (models, event) {
                     }
                 },
                 {
+                    $lookup: {
+                        from        : 'tags',
+                        localField  : 'category',
+                        foreignField: '_id',
+                        as          : 'category'
+                    }
+                },
+                {
                     $project: {
                         _id             : 1,
                         workflow        : {$arrayElemAt: ['$workflow', 0]},
+                        category        : {$arrayElemAt: ['$category', 0]},
                         assignedTo      : {$arrayElemAt: ['$assignedTo', 0]},
                         description     : 1,
                         deal            : {$arrayElemAt: ['$deal', 0]},
@@ -349,6 +359,7 @@ var Module = function (models, event) {
                     $project: {
                         _id             : '$root._id',
                         workflow        : '$root.workflow',
+                        category        : '$root.category',
                         assignedTo      : '$root.assignedTo',
                         description     : '$root.description',
                         dueDate         : '$root.dueDate',

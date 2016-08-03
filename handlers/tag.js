@@ -34,8 +34,10 @@ var Module = function (models) {
     this.getForList = function (req, res, next) {
         var Tag = models.get(req.session.lastDb, 'tags', TagsSchema);
 
+        var type = req.query.type;
+
         Tag
-            .find()
+            .find({type : type})
             .sort({name: 1})
             .exec(function (err, methods) {
                 if (err) {

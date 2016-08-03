@@ -27,11 +27,6 @@ $base-font-name  : (
         3: 'OpenSans Bold',
         5: 'OpenSans ExtraBold'
 );
-
-//$extra-font-name : (
-//    1: 'Raleway Regular',
-//    2: 'Raleway Bold'
-//);
 // ----------------------
 // Fonts svg id ---------
 $base-font-svg-id  : (
@@ -56,10 +51,15 @@ $base-font : (
         'regular'  : 'OpenSans Regular',
         'semibold' : 'OpenSans SemiBold',
         'bold'     : 'OpenSans Bold',
+        'extrabold': 'OpenSans ExtraBold'
+);
+// ----------------------
+=======
         'exrtabold': 'OpenSans ExtraBold'
 );
 
 
+>>>>>>> Temporary merge branch 2
 // All fonts array
 $fonts: (
         "base-font"  : $base-font

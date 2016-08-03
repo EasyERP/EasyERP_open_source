@@ -838,6 +838,16 @@ input {
   line-height: 25px;
 }
 
+._tagSmall {
+  display: inline-block;
+  float: left;
+  padding: 0 5px;
+  height: 14px;
+  line-height: 14px;
+  font-size: 10px;
+  .defaultBorRad;
+}
+
 .tags-container {
   margin-top: 8px;
 
@@ -850,6 +860,7 @@ input {
     padding: 2px 5px;
     cursor: pointer;
     font-size: 12px;
+    border-radius: 3px;
     color: #fff;
     .defaultBorRad;
 
@@ -1993,8 +2004,6 @@ table {
     display: table;
     clear: both;
   }
-
-
 }
 
 .editNoteBtnBlock {
@@ -2032,6 +2041,20 @@ table {
     top: 5px;
     left: 411px;
   }
+}
+
+.dealTableDescription {
+  max-width: 800px;
+  overflow: hidden;
+  float: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+._sourceInfo {
+  margin-top: 5px;
+  float: left;
+  clear: both;
 }
 
 .search-view {

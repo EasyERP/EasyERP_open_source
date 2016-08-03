@@ -144,50 +144,65 @@ var Filters = function (models) {
                 foreignField: '_id',
                 as          : 'workflow'
             }
-        }, {
-            $project: {
-                description   : 1,
-                workflow  : {$arrayElemAt: ['$workflow', 0]},
-                assignedTo: {$arrayElemAt: ['$assignedTo', 0]},
-                deal      : {$arrayElemAt: ['$deal', 0]}
-            }
-        }, {
-            $group: {
-                _id    : null,
-                deal: {
-                    $addToSet: {
-                        _id : '$deal._id',
-                        name: '$deal.name'
-                    }
-                },
-                name : {
-                    $addToSet: {
-                        _id : '$_id',
-                        name: '$description'
-                    }
-                },
-
-                assignedTo: {
-                    $addToSet: {
-                        _id : '$assignedTo._id',
-                        name: {
-                            $ifNull: [{
-                                $concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']
-                            }, 'None']
+        },
+            {
+                $lookup: {
+                    from        : 'tags',
+                    localField  : 'category',
+                    foreignField: '_id',
+                    as          : 'category'
+                }
+            }, {
+                $project: {
+                    description: 1,
+                    workflow   : {$arrayElemAt: ['$workflow', 0]},
+                    assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
+                    deal       : {$arrayElemAt: ['$deal', 0]},
+                    category       : {$arrayElemAt: ['$category', 0]}
+                }
+            }, {
+                $group: {
+                    _id : null,
+                    deal: {
+                        $addToSet: {
+                            _id : '$deal._id',
+                            name: '$deal.name'
                         }
-                    }
-                },
+                    },
+                    category: {
+                        $addToSet: {
+                            _id : '$category._id',
+                            name: '$category.name'
+                        }
+                    },
+                    name: {
+                        $addToSet: {
+                            _id : '$_id',
+                            name: '$description'
+                        }
+                    },
 
-                workflow: {
-                    $addToSet: {
-                        _id : '$workflow._id',
-                        name: {
-                            $ifNull: ['$workflow.name', 'None']
+                    assignedTo: {
+                        $addToSet: {
+                            _id : '$assignedTo._id',
+                            name: {
+                                $ifNull: [{
+                                    $concat: ['$assignedTo.name.first', ' ', '$assignedTo.name.last']
+                                }, 'None']
+                            }
+                        }
+                    },
+
+                    workflow: {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: {
+                                $ifNull: ['$workflow.name', 'None']
+                            }
                         }
                     }
                 }
-            }
-        }];
+            }];
 
         aggregation = Task.aggregate(pipeLine);
 

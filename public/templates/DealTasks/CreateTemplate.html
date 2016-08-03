@@ -3,14 +3,16 @@
     <form method="post" action="" id="createTaskForm" class="form notDialog">
         <div>
             <div class="taskTop">
-                <div class="topCell">
+                <div class="topCell col1-4" id="categoryHolder"></div>
+
+                <div class="topCell col1-4">
                     <label for="workflowsDd">Stage</label>
                     <div id="selectWorkflow" class="dataField">
                         <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
                     </div>
                 </div>
 
-                <div class="topCell">
+                <div class="topCell col1-4">
                     <div>
                         <label for="dueDate">Due Date </label>
                     </div>
@@ -19,7 +21,7 @@
                     </div>
                 </div>
 
-                <div class="topCell">
+                <div class="topCell col1-4">
                     <label>Assigned to</label>
                     <div class="dataField">
                         <a id="assignedToDd" class="current-selected" href="javascript:;">Select</a>
@@ -38,24 +40,24 @@
             <div class="withPaddingRightProject">
                 <div class="inner">
                     <div class="taskBottom">
-                        <div class="topCell selectType" id="contactItem">
+                        <div class="topCell selectType col1-3" id="contactItem">
                             <label>Contact</label>
                             <div>
                                 <a id="contactDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Contact</a>
                             </div>
                         </div>
 
-                        <div class="topCell selectType" id="companyItem">
+                        <div class="topCell selectType col1-3" id="companyItem">
                             <label>Company</label>
                             <div>
                                 <a id="companyDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Company</a>
                             </div>
                         </div>
 
-                        <div class="topCell selectType" id="dealItem">
-                            <label>>Lead/Opportunity</label>
+                        <div class="topCell selectType col1-3" id="dealItem">
+                            <label>Lead/Opportunity</label>
                             <div>
-                                <a id="dealDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>>Add Lead/Opportunity</a>
+                                <a id="dealDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Lead/Opportunity</a>
                             </div>
                         </div>
 

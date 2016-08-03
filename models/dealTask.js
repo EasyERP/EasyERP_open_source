@@ -7,7 +7,7 @@ module.exports = (function () {
         deal       : {type: ObjectId, ref: 'Opportunities', default: null},
         dealDate   : Date,
         assignedTo : {type: ObjectId, ref: 'Employees', default: null},
-        tags       : [String],
+        category   : {type: ObjectId, ref: 'tags', default: null},
         description: String,
         sequence   : {type: Number, default: 0},
         company    : {type: ObjectId, ref: 'Customers', default: null},
