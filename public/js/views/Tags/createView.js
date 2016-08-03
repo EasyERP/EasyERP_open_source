@@ -17,6 +17,7 @@ define([
             _.bindAll(this, 'render', 'saveItem');
             this.currentModel = new Model();
             this.render(options);
+            this.type = options.type;
         },
 
         events: {
@@ -39,7 +40,8 @@ define([
 
             var data = {
                 name : name,
-                color: color
+                color: color,
+                type : this.type
             };
             if (!name){
                 return App.render({
@@ -69,7 +71,8 @@ define([
         render: function () {
             var self = this;
             var formString = this.template({
-                model: this.currentModel.toJSON()
+                model: this.currentModel.toJSON(),
+                type : this.type
             });
 
             this.$el = $(formString).dialog({

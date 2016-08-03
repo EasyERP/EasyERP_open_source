@@ -1238,22 +1238,14 @@ input::-ms-clear {
     }
   }
 
-  //tr {
-  //  &:last-child {
-  //    border-right: 10px solid @defaultBgHover-color;
-  //  }
-  //}
-
   .column {
-    //border-left: 10px solid @defaultBgHover-color; for darck Theme
-    //vertical-align: text-top;
     min-height: 100%;
     width: auto;
     min-width: 160px;
+    max-width: 400px;
     height: auto;
     vertical-align: top;
     .cell-bg;
-    //background: url("@{imagesfolder}/form_sheetbg.png");
 
     .item {
       word-wrap: break-word;
@@ -1310,6 +1302,12 @@ input::-ms-clear {
       .task-content {
         position: relative;
 
+        &:after {
+          content: '';
+          display: table;
+          clear: both;
+        }
+
         .info {
           padding: 5px 5px 2px 0;
           width: auto;
@@ -1324,7 +1322,14 @@ input::-ms-clear {
         }
 
         .avatar-small {
-          .avatar(26px, 5px, 0, 0, 0);
+          overflow: hidden;
+          position: relative;
+          width: 26px;
+          height: 26px;
+          img {
+            width: 100%;
+            height: auto;
+          }
         }
       }
     }

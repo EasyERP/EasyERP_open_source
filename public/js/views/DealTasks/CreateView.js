@@ -9,9 +9,9 @@ define([
     'common',
     'populate',
     'views/Notes/AttachView',
-    'views/selectView/selectView',
+    'views/Category/TagView',
     'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, SelectView, CONSTANTS) {
+], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -20,7 +20,6 @@ define([
         responseObj: {},
 
         events: {
-            'click #deadline'    : 'showDatePicker',
             'click .removeSelect': 'removeSelect'
         },
 
@@ -29,6 +28,7 @@ define([
             this.model = new TaskModel();
             this.render();
             this.responseObj = {};
+            this.model.on('change:category', this.renderCategory, this);
         },
 
         removeSelect: function (e) {
@@ -36,40 +36,6 @@ define([
             var $div = $target.closest('.selectType');
             $div.find('.showSelect').remove();
             $div.find('a').show();
-        },
-
-        addAttach: function () {
-            var $inputFile = this.$el.find('.input-file');
-            var $attachContainer = this.$el.find('.attachContainer');
-            var $inputAttach = this.$el.find('.inputAttach:last');
-            var s = $inputAttach.val().split('\\')[$inputAttach.val().split('\\').length - 1];
-
-            $attachContainer.append('<li class="attachFile">' +
-                '<a href="javascript:;">' + s + '</a>' +
-                '<a href="javascript:;" class="deleteAttach">Delete</a></li>'
-            );
-
-            $attachContainer.find('.attachFile:last').append($inputFile.find('.inputAttach').attr('hidden', 'hidden'));
-            $inputFile.append('<input type="file" value="Choose File" class="inputAttach" name="attachfile">');
-        },
-
-        deleteAttach: function (e) {
-            $(e.target).closest('.attachFile').remove();
-        },
-
-        fileSizeIsAcceptable: function (file) {
-            if (!file) {
-                return false;
-            }
-            return file.size < App.File.MAXSIZE;
-        },
-
-        showDatePicker: function () {
-            var $createDatePicker = $('.createFormDatepicker');
-
-            if ($createDatePicker.find('.arrow').length === 0) {
-                $createDatePicker.append('<div class="arrow"></div>');
-            }
         },
 
         saveItem: function () {
@@ -81,6 +47,7 @@ define([
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
+            var category = this.model.get('category');
             var saveObject;
 
             if (!description) {
@@ -95,7 +62,8 @@ define([
 
                 description: description,
                 dueDate    : dueDate || new Date(),
-                workflow   : workflow
+                workflow   : workflow,
+                category   : category ? category._id : null
             };
 
             if (company) {
@@ -111,8 +79,7 @@ define([
                 saveObject.dealDate = new Date();
             }
 
-            this.model.save(saveObject
-                , {
+            this.model.save(saveObject, {
                     wait   : true,
                     success: function (model) {
                         var currentModel = model.changed;
@@ -125,6 +92,18 @@ define([
                     }
 
                 });
+        },
+
+        renderCategory: function () {
+            var notDiv = this.$el.find('#categoryHolder');
+            notDiv.empty();
+
+            notDiv.append(
+                new CategoryView({
+                    model      : this.model,
+                    contentType: 'DealTasks'
+                }).render().el
+            );
         },
 
         chooseOption: function (e) {
@@ -146,14 +125,8 @@ define([
         },
 
         render: function () {
-            var afterPid = (window.location.hash).split('pId=')[1];
-            var forKanban = (window.location.hash).split('kanban/')[1];
-            var projectID = afterPid ? afterPid.split('/')[0] : forKanban;
             var formString = this.template();
             var self = this;
-            var notDiv;
-            var filterHash;
-            var filter;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -175,21 +148,21 @@ define([
                 }
             });
 
-            notDiv = this.$el.find('.attach-container');
-
             this.attachView = new AttachView({
                 model      : new TaskModel(),
                 contentType: self.contentType,
                 isCreate   : true
             });
 
-            notDiv.append(this.attachView.render().el);
-
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this, true);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
             populate.get('#dealDd', 'opportunities/getForDd', {}, 'name', this, false);
             populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'}, 'fullName', this, false);
             populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'}, 'fullName', this, false);
+
+
+            this.renderCategory();
+
             this.$el.find('#dueDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,

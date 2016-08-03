@@ -7,10 +7,11 @@ define(['Backbone',
         model: PaymentModel,
         url  : '/tags/getForList',
 
-        initialize: function () {
+        initialize: function (options) {
 
             this.fetch({
                 reset  : true,
+                data : options || {},
                 success: function () {
                 },
 
