@@ -144,7 +144,11 @@ define([
         },
 
         saveDeal: function (changedAttrs, type) {
+            var $thisEl = this.$el;
             var self = this;
+            var changedAttributesForEvent = ['name', 'source', 'salesPerson', 'workflow'];
+            var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
+            var sendEvent = !!(changedListAttr.length);
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
@@ -154,13 +158,30 @@ define([
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else if (type === 'tags') {
                         self.renderTags();
-                    } else if (type === 'converted'){
+                    } else if (type === 'converted') {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
                     } else {
                         self.editorView.renderTimeline();
                         self.modelChanged = {};
                         self.hideButtons();
+
+                        if (sendEvent){
+
+                            if (changedAttrs.hasOwnProperty('salesPerson')) {
+                                changedAttrs.salesPerson = $thisEl.find('#salesPersonDd').text().trim();
+                            }
+
+                            if (changedAttrs.hasOwnProperty('source')) {
+                                changedAttrs.source = $thisEl.find('#sourceDd').text().trim();
+                            }
+
+                            if(changedAttrs.hasOwnProperty('workflow')) {
+                                changedAttrs.workflow = $thisEl.find('.tabListItem.active span').text().trim();
+                            }
+
+                            self.trigger('itemChanged', changedAttrs);
+                        }
                     }
                 },
                 error  : function (model, response) {

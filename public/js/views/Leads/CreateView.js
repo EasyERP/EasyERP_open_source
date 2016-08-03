@@ -25,7 +25,8 @@ define([
 
             this.render();
         },
-        events    : {
+
+        events: {
             'click .fa-paperclip': 'clickInput'
         },
 
@@ -57,7 +58,7 @@ define([
             var name = $.trim($thisEl.find('#name').val());
             var companyId = $thisEl.find('#companyDd').attr('data-id');
             var customerId = $thisEl.find('#customerDd').attr('data-id');
-            var salesPersonId =$thisEl.find('#salesPersonDd').attr('data-id');
+            var salesPersonId = $thisEl.find('#salesPersonDd').attr('data-id');
             var salesTeamId = $thisEl.find('#salesTeamDd').attr('data-id');
             var nextActionDesc = $.trim($thisEl.find('#nextActionDescription').val());
             var nextAction = {
@@ -168,8 +169,8 @@ define([
             notDiv.append(this.attachView.render().el);
 
             this.$el.find('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
-            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Person'}, this, true, true);
+            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, true, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this, true, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {

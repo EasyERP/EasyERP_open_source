@@ -200,7 +200,7 @@ define([
                         message: 'Filter with same name already exists! Please, change filter name.'
                     });
                 }
-                if ((Object.keys(App.filtersObject.filter)).length === 0) {
+                if (!App.filtersObject || !App.filtersObject.filter || (Object.keys(App.filtersObject.filter)).length === 0) {
                     return App.render({type: 'error', message: 'Please, use some filter!'});
                 }
 

@@ -633,6 +633,7 @@ define([
             var itemsNumber = $(e.target).text();
             var filter = this.filter;
 
+
             this.startTime = new Date();
 
             e.preventDefault();

@@ -541,8 +541,9 @@ define([
             if (!model.paymentMethod && model.project && model.project.paymentMethod) {
                 populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.project.paymentMethod);
             } else {
-                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true);
+                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.paymentMethod);
             }
+
             if (!model.paymentTerms && model.project && model.project.paymentTerms) {
                 populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, true, true, model.project.paymentTerms);
             } else {

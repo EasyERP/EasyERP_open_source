@@ -146,7 +146,11 @@ define([
         },
 
         saveModel: function (changedAttrs, type) {
+            var $thisEl = this.$el;
             var self = this;
+            var changedAttributesForEvent = ['name.first', 'name.last', 'email', 'phones.phone', 'address.country'];
+            var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
+            var sendEvent = !!(changedListAttr.length);
 
             this.formModel.save(changedAttrs, {
                 wait   : true,
@@ -160,6 +164,14 @@ define([
                         self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();
+
+                        if (sendEvent) {
+                            if (changedAttrs.hasOwnProperty('name.first') || changedAttrs.hasOwnProperty('name.last')) {
+                                changedAttrs.fullName = $thisEl.find('[data-id="name_first"]').val().trim() + ' ' + $thisEl.find('[data-id="name_last"]').val().trim();
+                            }
+
+                            self.trigger('itemChanged', changedAttrs);
+                        }
                     }
                 },
                 error  : function (model, response) {
@@ -212,8 +224,8 @@ define([
             $thisEl.html(_.template(personFormTemplate, formModel));
 
             this.formProperty = new CompanyFormProperty({
-                data      : formModel.company,
-                saveDeal  : self.saveModel
+                data    : formModel.company,
+                saveDeal: self.saveModel
             });
 
             $thisEl.find('#companyHolder').html(

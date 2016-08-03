@@ -9,12 +9,12 @@
         <td>
             <div class="compactRowWrap">
                 <div class="compactRow">
-                    <div class="firstName"><%- company.fullName %></div>
-                    <div class="country"><%= company.address.country %></div>
+                    <div class="firstName" data-key="name.first"><%- company.fullName %></div>
+                    <div class="country" data-key="address.country"><%= company.address.country %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="email"><%= company.email %></div>
-                    <div class="phone"><%= company.phones.phone %></div>
+                    <div class="email" data-key="email"><%= company.email %></div>
+                    <div class="phone" data-key="phones.phone"><%= company.phones.phone %></div>
                 </div>
             </div>
         </td>

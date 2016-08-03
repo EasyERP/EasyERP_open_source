@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -14,7 +15,7 @@ define([
     'collections/Tasks/filterCollection',
     'views/Filter/filterView',
     'common'
-], function ($, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, FilterView, common) {
+], function (Backbone, $, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, FilterView, common) {
     var TasksListView = ListViewBase.extend({
 
         CreateView              : CreateView,
@@ -28,10 +29,10 @@ define([
         // formUrl                 : "#easyErp/Tasks/form/",
 
         events: {
-            'click td:not(:has("input[type="checkbox"]"), .project)': 'goToEditDialog',
-            'click .stageSelect'                                    : 'showNewSelect',
-            'click .stageSelectType'                                : 'showNewSelectType',
-            'click .newSelectList li'                               : 'chooseOption'
+            'click td:not(:has("input[type="checkbox"]"), :has(.project))': 'goToEditDialog',
+            'click .stageSelect'                                          : 'showNewSelect',
+            'click .stageSelectType'                                      : 'showNewSelectType',
+            'click .newSelectList li'                                     : 'chooseOption'
         },
 
         initialize: function (options) {
@@ -49,6 +50,10 @@ define([
             this.contentCollection = ContentCollection;
 
             ListViewBase.prototype.initialize.call(this, options);
+        },
+
+        goToProject: function (e) {
+
         },
 
         /*goToProject: function (e) {
@@ -72,13 +77,19 @@ define([
          return false;
          },*/
 
+
+
         goToEditDialog: function (e) {
             var id;
-            var model;
+            var projectId;
 
             e.preventDefault();
 
+
             id = $(e.target).closest('tr').data('id');
+            //projectId = this.collection.get({'id': id}).toJSON().project._id;
+            //Backbone.history.navigate('easyErp/Projects/form/' + projectId, {trigger: true});
+
             model = new CurrentModel({validate: false});
 
             model.urlRoot = '/Tasks/';

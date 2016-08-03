@@ -26,11 +26,7 @@ define([
         },
 
         initialize: function (options) {
-            var eventChannel = {};
             var modelId = options.modelId;
-
-            _.extend(eventChannel, Backbone.Events);
-            this.eventChannel = eventChannel;
 
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
@@ -46,8 +42,6 @@ define([
 
             this.addFormView(modelId);
             this.selectedId = modelId;
-
-            this.listenTo(eventChannel, 'itemChanged', this.renderFilteredContent);
         },
 
         openSortDrop: function (e) {
@@ -147,6 +141,7 @@ define([
             $listHolder.empty();
 
             this.renderList(collectionObj);
+            this.selectItem(this.selectedId);
 
             $holder.find('#timeRecivingDataFromServer').remove();
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
@@ -170,7 +165,6 @@ define([
             }
 
             this.selectedId = modelId;
-
             this.renderFormView(modelId, function () {
                 $thisEl.find('#timeRecivingDataFromServer').remove();
                 $thisEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - date) + ' ms</div>');
@@ -179,8 +173,14 @@ define([
             });
         },
 
-        renderFormView: function (modelId, cb) {
+        selectItem: function (modelId) {
             var $thisEl = this.$el;
+
+            $thisEl.find('#listContent .selected').removeClass('selected');
+            $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
+        },
+
+        renderFormView: function (modelId, cb) {
             var self = this;
             var model;
 
@@ -195,12 +195,15 @@ define([
                         self.formView.undelegateEvents();
                     }
 
-                    self.formView = new self.FormView({model: model, el: '#formContent', eventChannel: self.eventChannel});
+                    self.formView = new self.FormView({
+                        model: model,
+                        el   : '#formContent'
+                    });
                     self.formView.render();
 
-                    $thisEl.find('#listContent .selected').removeClass('selected');
-                    $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
+                    self.selectItem(modelId);
 
+                    self.listenTo(self.formView, 'itemChanged', self.changeList);
                     self.selectedId = model.id;
 
                     if (cb && typeof cb === 'function') {
@@ -215,6 +218,15 @@ define([
                     });
                 }
             });
+        },
+
+        changeList: function (options) {
+            var $thisEl = this.$el;
+            var $currentEl = $thisEl.find('[data-id="' + this.selectedId +  '"]');
+
+            for (var i in options) {
+                $currentEl.find('[data-key="' + i + '"]').html(options[i]);
+            }
         },
 
         deleteItems: function () {
