@@ -74,6 +74,7 @@ define([
         routes: {
             home                                                                                            : 'login',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
+            'easyErp/import'                                                                                : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
@@ -464,6 +465,39 @@ define([
                     var topBar = new topBarView({actionType: "Content"});
                     self.changeView(contentview);
                     self.changeTopBarView(topBar);
+                });
+            }
+        },
+
+        goToImport: function () {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goImport(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goImport(context) {
+                var startTime = new Date();
+                if (context.mainView === null) {
+                    context.main('import');
+                } else {
+                    context.mainView.updateMenu('import');
+                }
+
+                var contentViewUrl = 'views/Import/ContentView';
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview = new contentView({startTime: startTime});
+                    var url = '#easyErp/Profiles';
+
+                    custom.setCurrentVT('list');
+
+                    context.changeView(contentview);
+                    Backbone.history.navigate(url, {replace: true});
                 });
             }
         },
