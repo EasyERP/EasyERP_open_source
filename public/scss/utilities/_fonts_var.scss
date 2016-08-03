@@ -1,6 +1,6 @@
 // General variables ----
 $serif: sans-serif;
-$font-path: '../fonts/';
+$font-path: '../font/';
 // ----------------------
 
 // Fonts path -----------
@@ -18,6 +18,7 @@ $base-font-file  : (
         5: 'opensans-extrabold'
 );
 // ----------------------
+
 // Fonts name -----------
 $base-font-name  : (
         1: 'OpenSans Light',
@@ -26,6 +27,11 @@ $base-font-name  : (
         3: 'OpenSans Bold',
         5: 'OpenSans ExtraBold'
 );
+
+//$extra-font-name : (
+//    1: 'Raleway Regular',
+//    2: 'Raleway Bold'
+//);
 // ----------------------
 // Fonts svg id ---------
 $base-font-svg-id  : (
@@ -58,7 +64,7 @@ $base-font : (
 $fonts: (
         "base-font"  : $base-font
 );
-
+// ----------------------
 // usage: font("type_of_font", "name_of_font")
 // to avoid to repeating map-get($fonts, ...)
 
@@ -74,12 +80,12 @@ $fonts: (
 }
 
 // Fonts family variables
-$light-font-family : font("base-font", "light"), $serif !default;
-$base-font-family  : font("base-font", "regular"), $serif !default;
-$bold-font-family  : font("base-font", "bold"), $serif !default;
+$light-font-family     : font("base-font", "light"), $serif !default;
+$base-font-family      : font("base-font", "regular"), $serif !default;
 $semibold-font-family  : font("base-font", "semibold"), $serif !default;
-$extrabold-font-family  : font("base-font", "extrabold"), $serif !default;
-
+$bold-font-family      : font("base-font", "bold"), $serif !default;
+$extrabold-font-family : font("base-font", "extrabold"), $serif !default;
+// ----------------------
 // Typography -----------
 @function lineHeight($x, $y) {
   @return $x / $y; // values in px

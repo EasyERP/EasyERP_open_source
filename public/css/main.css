@@ -2511,47 +2511,6 @@ body {
   height: 100%;
   width: 210px;
 }
-.vocationFilter .dateFilter,
-.vocationFilter .dateFilterLeadsByName {
-  width: 200px;
-  top: 8px;
-  left: 0;
-  z-index: 10;
-  background-color: #ffffff;
-}
-.vocationFilter .dateFilter li,
-.vocationFilter .dateFilterLeadsByName li {
-  font-size: 12px;
-  text-align: center;
-  color: #000000;
-}
-.vocationFilter .dateFilter li #startTime,
-.vocationFilter .dateFilterLeadsByName li #startTime,
-.vocationFilter .dateFilter li #endTime,
-.vocationFilter .dateFilterLeadsByName li #endTime {
-  line-height: 24px;
-}
-.vocationFilter .dateFilter .frameDetail label,
-.vocationFilter .dateFilterLeadsByName .frameDetail label {
-  display: inline-block;
-  min-width: 15%;
-  margin-right: 2%;
-  text-align: left;
-}
-.vocationFilter .dateFilter .frameDetail input,
-.vocationFilter .dateFilterLeadsByName .frameDetail input {
-  width: 75%;
-}
-.vocationFilter .dateFilter .customTime label + input[type='text'],
-.vocationFilter .dateFilterLeadsByName .customTime label + input[type='text'] {
-  margin-bottom: 5px;
-}
-.vocationFilter .dateFilter .buttons,
-.vocationFilter .dateFilterLeadsByName .buttons {
-  width: 100%;
-  margin: 15px 0;
-  text-align: center;
-}
 .settings_modal .check_wrap {
   float: left;
   width: 20px;
@@ -3269,7 +3228,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   line-height: 25px;
 }
 .tags-container {
-  margin-top: 8px;
+  margin-top: 5px;
 }
 .tags-container .editTags {
   display: inline-block;
@@ -3648,7 +3607,7 @@ dl.payrollDateBlock dt {
   width: 100%;
 }
 .listContentWrap {
-  width: 400px;
+  width: 300px;
   border-right: 1px solid #ededed;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
@@ -3663,25 +3622,11 @@ dl.payrollDateBlock dt {
   position: relative;
   right: auto;
   float: right;
-  width: 277px;
+  width: 177px;
   margin-right: 0;
 }
 .listContentWrap .search-options {
   min-width: 277px;
-}
-@media (max-width: 1350px) {
-  .listContentWrap {
-    width: 350px;
-  }
-  .listContentWrap .listContentTitle #searchContainer {
-    width: 228px;
-  }
-  .listContentWrap .search-options {
-    min-width: 228px;
-  }
-  .listContentWrap .compactRow {
-    width: 280px;
-  }
 }
 .formContentWrap,
 .listContentWrap {
@@ -4056,10 +4001,10 @@ table.kanban tbody td:nth-child(n+2) {
   width: 50%;
 }
 .col1-3 {
-  width: 30%;
+  width: 40%;
 }
 .col2-3 {
-  width: 70%;
+  width: 60%;
 }
 .noteBtnBlock,
 .editNoteBtnBlock {
@@ -4112,7 +4057,7 @@ table.kanban tbody td:nth-child(n+2) {
   margin-top: 10px;
 }
 .editedNoteTitle {
-  padding: 10px;
+  padding: 10px 15px;
   border: 1px solid #C8C9D3;
   border-radius: 3px 3px 0 0;
 }
@@ -5724,6 +5669,9 @@ input::-ms-clear {
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
 }
+.dialog-buttons {
+  text-align: center;
+}
 .dialog-buttons input {
   height: 25px !important;
   line-height: 15px !important;
@@ -6757,14 +6705,10 @@ dl dd span.ui-spinner {
   margin: 2px 2px 2px 0;
 }
 .form textarea {
-  width: 99%;
-  min-height: 60px;
   resize: none;
 }
 .form .job-create-info textarea {
-  width: 99%;
-  height: 160px;
-  resize: none;
+  height: 130px;
   line-height: 20px;
 }
 .form .noteWrapper .formTitle h3,
@@ -7659,14 +7603,10 @@ dl dd span.ui-spinner {
   margin: 2px 2px 2px 0;
 }
 .formLeftColumn .form textarea {
-  width: 99%;
-  min-height: 60px;
   resize: none;
 }
 .formLeftColumn .form .job-create-info textarea {
-  width: 99%;
-  height: 160px;
-  resize: none;
+  height: 130px;
   line-height: 20px;
 }
 .formLeftColumn .edited-block p,
@@ -8315,14 +8255,10 @@ dl dd span.ui-spinner {
   margin: 2px 2px 2px 0;
 }
 .formRightColumn .form textarea {
-  width: 99%;
-  min-height: 60px;
   resize: none;
 }
 .formRightColumn .form .job-create-info textarea {
-  width: 99%;
-  height: 160px;
-  resize: none;
+  height: 130px;
   line-height: 20px;
 }
 .noteWrapper {
@@ -8395,7 +8331,6 @@ dl dd span.ui-spinner {
   border-radius: 0;
 }
 .noteWrapper .addNote textarea {
-  min-height: 25px;
   width: 100%;
   padding: 2px 0 2px 3px;
   resize: none;
@@ -8423,6 +8358,7 @@ dl dd span.ui-spinner {
 }
 .noteWrapper .addNote.active .buttons {
   margin-top: 3px;
+  text-align: center;
 }
 .noteWrapper .addNote.active .buttons input {
   height: 25px !important;
@@ -8865,6 +8801,26 @@ dl dd span.ui-spinner {
   text-align: center;
   margin-right: 3px;
   border-right: 1px solid #7f7f80;
+}
+.filterValues {
+  display: inline-block;
+  height: 100%;
+  vertical-align: top;
+}
+.filterValues > span {
+  padding: 0 2px;
+  border-left: 1px solid #afafb6;
+  height: 100%;
+  display: inline-block;
+}
+.filterValues > span:first-child {
+  border: none;
+}
+.filterValues > span:last-child {
+  padding-right: 16px;
+}
+.filterValues.checked:hover {
+  cursor: pointer;
 }
 .removeValues {
   position: absolute;
@@ -11789,6 +11745,9 @@ ul.dialog-tabs li.right button {
 }
 .form-holder form #description {
   margin-top: 15px;
+}
+.form-holder form .buttons {
+  text-align: center;
 }
 .form-holder form .buttons input {
   height: 25px !important;

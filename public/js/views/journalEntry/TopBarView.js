@@ -54,7 +54,13 @@ define([
 
             this.removeAllChecked();
 
-            $target.toggleClass('checkedValue');
+
+            if ($target.text() !== "Custom Dates") {
+                $target.toggleClass('checkedValue');
+            } else {
+                $target.toggleClass('checkedArrow')
+            }
+            //$target.toggleClass('checkedValue');
 
             switch (id) {
                 case 'thisMonth':
@@ -92,7 +98,13 @@ define([
 
             this.removeAllChecked();
 
-            $target.toggleClass('checkedValue');
+            if ($target.text() !== "Custom Dates") {
+                $target.toggleClass('checkedValue');
+            } else {
+                $target.toggleClass('checkedArrow')
+            }
+
+            //$target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
             this.$el.find('.buttons').toggleClass('hidden');
         },

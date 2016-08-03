@@ -14,7 +14,7 @@
       top: 0;
       left: 25px;
       width: 1px;
-      height: calc(100% + 30px);
+      height: calc(100% + 32px);
       background: $note-bg;
     }
 
@@ -22,7 +22,7 @@
       margin-top: 12px;
 
       &:before {
-        top: -10px;
+        top: -12px;
       }
     }
 
