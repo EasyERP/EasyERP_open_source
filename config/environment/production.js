@@ -1,6 +1,6 @@
 // process.env.HOST = 'http://localhost:8089/';
-process.env.HOST = 'http://erp.thinkmobiles.com/';
-// process.env.HOST = 'http://testdemo.easyerp.com/';
+// process.env.HOST = 'http://erp.thinkmobiles.com/';
+process.env.HOST = 'http://testdemo.easyerp.com/';
 process.env.TRACKER_HOST = 'http://projects.thinkmobiles.com:8091';
 // process.env.TRACKER_HOST = 'http://localhost:8091';
 process.env.MAIN_DB_HOST = 'localhost';
@@ -10,7 +10,7 @@ process.env.DB_USER = 'easyErp';
 process.env.DB_PASS = '1q2w3e!@#';
 
 process.env.OXR_APP_ID = '90432684fb4f46f483317e4ec2cd8bcc';
-process.env.SERVER_TYPE = 'production';
+process.env.SERVER_TYPE = 'test_demo';
 process.env.SERVER_PLATFORM = 'hetzner:germany';
 process.env.SOCKET_DB_PORT = 6379;
 process.env.SOCKET_DB_HOST = 'localhost';
