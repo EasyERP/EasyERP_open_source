@@ -115,3 +115,68 @@
     margin-top: 9px;
   }
 }
+
+._modalList {
+  position: relative;
+}
+
+.newSelectList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border: solid 1px #7f7f80;
+  background-color: #fff;
+  z-index: 100;
+
+  li {
+    margin: 0;
+    padding: 3px 16px 5px;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+    color: #4d5a75;
+
+    &.testing,
+    &.analysis {
+      background-color: #D9FFC8 !important;
+    }
+
+    &.merge {
+      color: #C00 !important;
+      background-color: #FFE3E3 !important;
+    }
+
+    &.design {
+      color: #000 !important;
+      background-color: #FFEA73 !important;
+    }
+
+    &.cancelled {
+      color: #FFF !important;
+      background-color: #C00 !important;
+    }
+
+    &.done {
+      color: #000 !important;
+      background-color: #BEF624 !important;
+    }
+
+    &.selected {
+      color: #f3f3f3;
+      background-color: #545454;
+    }
+
+    &:hover {
+      border: 0 !important;
+      color: #7eadcc !important;
+    }
+  }
+
+  &.stage {
+    left: 0;
+  }
+
+  &.taskPriority {
+    left: -15px;
+  }
+}
