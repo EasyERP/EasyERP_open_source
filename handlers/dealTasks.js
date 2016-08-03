@@ -1,6 +1,7 @@
 /*TODO remove caseFilter methid after testing filters*/
 
 var mongoose = require('mongoose');
+var moment = require('../public/js/libs/moment/moment');
 var RESPONSES = require('../constants/responses');
 var tasksSchema = mongoose.Schemas.DealTasks;
 var department = mongoose.Schemas.Department;
@@ -22,8 +23,6 @@ var Module = function (models, event) {
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
     var FilterMapper = require('../helpers/filterMapper');
-
-
 
     this.createTask = function (req, res, next) {
         var body = req.body;
@@ -58,8 +57,6 @@ var Module = function (models, event) {
                         res.status(201).send({success: 'New Task created success', id: result._id});
                     });
                 });
-
-
 
             });
 
@@ -332,17 +329,17 @@ var Module = function (models, event) {
                 },
                 {
                     $project: {
-                        _id             : 1,
-                        workflow        : {$arrayElemAt: ['$workflow', 0]},
-                        category        : {$arrayElemAt: ['$category', 0]},
-                        assignedTo      : {$arrayElemAt: ['$assignedTo', 0]},
-                        description     : 1,
-                        deal            : {$arrayElemAt: ['$deal', 0]},
-                        contact         : {$arrayElemAt: ['$contact', 0]},
-                        company         : {$arrayElemAt: ['$company', 0]},
-                        dueDate         : 1,
-                        sequence        : 1,
-                        taskCount       : 1
+                        _id        : 1,
+                        workflow   : {$arrayElemAt: ['$workflow', 0]},
+                        category   : {$arrayElemAt: ['$category', 0]},
+                        assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
+                        description: 1,
+                        deal       : {$arrayElemAt: ['$deal', 0]},
+                        contact    : {$arrayElemAt: ['$contact', 0]},
+                        company    : {$arrayElemAt: ['$company', 0]},
+                        dueDate    : 1,
+                        sequence   : 1,
+                        taskCount  : 1
                     }
                 },
                 {
@@ -357,17 +354,17 @@ var Module = function (models, event) {
                 },
                 {
                     $project: {
-                        _id             : '$root._id',
-                        workflow        : '$root.workflow',
-                        category        : '$root.category',
-                        assignedTo      : '$root.assignedTo',
-                        description     : '$root.description',
-                        dueDate         : '$root.dueDate',
-                        taskCount       : '$root.taskCount',
-                        company         : '$root.company',
-                        contact         : '$root.contact',
-                        deal            : '$root.deal',
-                        total           : 1
+                        _id        : '$root._id',
+                        workflow   : '$root.workflow',
+                        category   : '$root.category',
+                        assignedTo : '$root.assignedTo',
+                        description: '$root.description',
+                        dueDate    : '$root.dueDate',
+                        taskCount  : '$root.taskCount',
+                        company    : '$root.company',
+                        contact    : '$root.contact',
+                        deal       : '$root.deal',
+                        total      : 1
                     }
                 },
                 {
@@ -394,6 +391,176 @@ var Module = function (models, event) {
 
     }
 
+    function getTasksForDateList(req, res, next) {
+        var data = req.query;
+        var limit = parseInt(data.count, 10);
+        var obj = {};
+        var addObj = {};
+        var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
+        var filterMapper = new FilterMapper();
+
+        if (data.parrentContentId) {
+            addObj._id = objectId(data.parrentContentId);
+        }
+
+        if (data && data.filter) {
+            obj.$and = [];
+            obj.$and.push(filterMapper.mapFilter(data.filter, 'DealTasks'));
+        }
+
+        Task
+            .aggregate([{
+                $match: obj
+            },
+                {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'assignedTo',
+                        foreignField: '_id',
+                        as          : 'assignedTo'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'contact',
+                        foreignField: '_id',
+                        as          : 'contact'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'company',
+                        foreignField: '_id',
+                        as          : 'company'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Opportunities',
+                        localField  : 'deal',
+                        foreignField: '_id',
+                        as          : 'deal'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflow'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'tags',
+                        localField  : 'category',
+                        foreignField: '_id',
+                        as          : 'category'
+                    }
+                },
+                {
+                    $project: {
+                        _id        : 1,
+                        workflow   : {$arrayElemAt: ['$workflow', 0]},
+                        category   : {$arrayElemAt: ['$category', 0]},
+                        assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
+                        description: 1,
+                        deal       : {$arrayElemAt: ['$deal', 0]},
+                        contact    : {$arrayElemAt: ['$contact', 0]},
+                        company    : {$arrayElemAt: ['$company', 0]},
+                        dueDate    : 1,
+                        sequence   : 1,
+                        taskCount  : 1
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        doc: {$push : '$$ROOT'}
+                    }
+                }, {
+                    $project: {
+                        _id : 0,
+                        overdue : {
+                            $filter: {
+                                input: '$doc',
+                                as   : 'task',
+                                cond : {
+                                    $lt: ['$$task.dueDate', moment().startOf('day').toDate()]
+                                }
+                            }
+                        },
+                        today   : {
+                            $filter: {
+                                input: '$doc',
+                                as   : 'task',
+                                cond : {
+                                    $and: [{$gte: ['$$task.dueDate', moment().startOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().endOf('day').toDate()]}
+                                    ]
+                                }
+                            }
+                        },
+                        tomorrow: {
+                            $filter: {
+                                input: '$doc',
+                                as   : 'task',
+                                cond : {
+                                    $and: [{$gte: ['$$task.dueDate', moment().add(1, 'days').startOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().add(1, 'days').endOf('day').toDate()]}
+                                    ]
+
+                                }
+                            }
+                        },
+                        thisWeek: {
+                            $filter: {
+                                input: '$doc',
+                                as   : 'task',
+                                cond : {
+                                    $and: [
+                                        {$gte: ['$$task.dueDate', moment().startOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().add(7, 'days').endOf('day').toDate()]}
+                                    ]
+                                }
+                            }
+                        }
+                    }  }/*,
+                {
+                    $project : {
+                        thisWeek : {
+                            count : {$sum: '$thisWeek'},
+                            data  : '$thisWeek'
+                        },
+                        tomorrow : {
+                            count : {$sum: '$tomorrow'},
+                            data  : '$tomorrow'
+                        },
+                        today : {
+                            count : {$sum: '$today'},
+                            data  : '$today'
+                        },
+                        overdue : {
+                            count : {$sum: '$overdue'},
+                            data  : '$overdue'
+                        }
+                    }
+                }*/
+
+
+            ], function (err, result) {
+                var count;
+
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data : result[0]});
+            });
+
+    }
+
     this.getTasks = function (req, res, next) {
         var viewType = req.query.viewType;
 
@@ -403,6 +570,9 @@ var Module = function (models, event) {
                 break;
             case 'list':
                 getTasksForList(req, res, next);
+                break;
+            case 'dateList':
+                getTasksForDateList(req, res, next);
                 break;
             default :
                 getTasksForKanban(req, res, next);
@@ -526,7 +696,6 @@ var Module = function (models, event) {
                 res.send(data);
             }
         );
-
 
     };
 

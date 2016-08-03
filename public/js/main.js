@@ -134,6 +134,23 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
         }
     };
 
+    if (!window.Globalize) { // todo
+        window.Globalize = {
+            format: function(number, format) {
+                var m;
+                var i;
+                number = String(this.parseFloat(number, 10) * 1);
+                format = (m = String(format).match(/^[nd](\d+)$/)) ? m[1] : 2;
+                for (i = 0; i < format - number.length; i++)
+                    number = '0'+number;
+                return number;
+            },
+            parseFloat: function(number, radix) {
+                return parseFloat(number, radix || 10);
+            }
+        };
+    }
+
     Date.prototype.getWeek = function () {
         // Create a copy of this date object
         var target = new Date(this.valueOf());

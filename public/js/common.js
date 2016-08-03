@@ -37,6 +37,12 @@
         return utcDateString;
     };
 
+    var utcDateToLocaleHours = function (utcDateString, notHours) {
+        utcDateString = utcDateString ? moment(utcDateString).format('hh:mm') : null;
+
+        return utcDateString;
+    };
+
     var ISODateToDate = function (ISODate) {
         return ISODate.split('T')[0];
     };
@@ -1250,6 +1256,7 @@
         getSalesByCountry                 : getSalesByCountry,
         getSalary                         : getSalary,
         getSalaryByDepartment             : getSalaryByDepartment,
+        utcDateToLocaleHours              : utcDateToLocaleHours,
         getLeads                          : getLeads
     }
 });
