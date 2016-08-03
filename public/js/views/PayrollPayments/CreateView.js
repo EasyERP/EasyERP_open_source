@@ -20,7 +20,7 @@ define([
 
         initialize: function (options) {
             this.editCollection = options.collection;
-            this.editCollection.url = 'payment/salary';
+            this.editCollection.url = 'payments/salary';
             this.editCollection.on('saved', this.savedNewModel, this);
             this.responseObj = {};
 
