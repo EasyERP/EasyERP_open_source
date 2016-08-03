@@ -35,8 +35,8 @@ module.exports = function (mainDb) {
             console.log('Request for new db ' + targetDb);
             adminDB.command({
                 copydb: 1,
-                fromdb: "liveErp",
-                todb: targetDb
+                fromdb: 'liveErp',
+                todb  : targetDb
             }, function (err, result) {
                 var dbConnection;
 
@@ -52,18 +52,18 @@ module.exports = function (mainDb) {
                     var customerCreator = function (body, user, callback) {
                         var type = body.type || 'Company';
                         var saveObject = {
-                            type: type,
-                            isOwn: true,
-                            name: {
+                            type     : type,
+                            isOwn    : true,
+                            name     : {
                                 first: body.name
                             },
-                            groups: {
+                            groups   : {
                                 owner: user._id
                             },
                             createdBy: {
                                 user: user._id
                             },
-                            editedBy: {
+                            editedBy : {
                                 user: user._id
                             }
                         };
@@ -86,7 +86,7 @@ module.exports = function (mainDb) {
                     UserModel.findOneAndUpdate({login: 'superAdmin'}, {
                         login: userName,
                         email: email,
-                        pass: password
+                        pass : password
                     }, function (err, _user) {
                         if (err) {
                             callback(err);
@@ -100,14 +100,14 @@ module.exports = function (mainDb) {
                                     return callback(err);
                                 } else if (customer && customer._id) {
                                     customerCreator({
-                                        type: 'Person',
-                                        name: {
+                                        type       : 'Person',
+                                        name       : {
                                             first: body.firstName,
-                                            last: body.lastName
+                                            last : body.lastName
                                         },
-                                        email: email,
+                                        email      : email,
                                         accountName: targetDb,
-                                        company: customer._id
+                                        company    : customer._id
                                     }, _user, function (err, customer) {
                                         if (err) {
                                             return callback(err);
