@@ -486,8 +486,10 @@ var Module = function (models, event) {
                             $filter: {
                                 input: '$doc',
                                 as   : 'task',
-                                cond : {
+                                cond : { $and: [{
                                     $lt: ['$$task.dueDate', moment().startOf('day').toDate()]
+                                }, {$ne : ['$$task.workflow.status', 'Done']}]
+
                                 }
                             }
                         },
@@ -502,26 +504,14 @@ var Module = function (models, event) {
                                 }
                             }
                         },
-                        tomorrow: {
-                            $filter: {
-                                input: '$doc',
-                                as   : 'task',
-                                cond : {
-                                    $and: [{$gte: ['$$task.dueDate', moment().add(1, 'days').startOf('day').toDate()]},
-                                        {$lte: ['$$task.dueDate', moment().add(1, 'days').endOf('day').toDate()]}
-                                    ]
-
-                                }
-                            }
-                        },
-                        thisWeek: {
+                        next7days: {
                             $filter: {
                                 input: '$doc',
                                 as   : 'task',
                                 cond : {
                                     $and: [
-                                        {$gte: ['$$task.dueDate', moment().startOf('day').toDate()]},
-                                        {$lte: ['$$task.dueDate', moment().add(7, 'days').endOf('day').toDate()]}
+                                        {$gte: ['$$task.dueDate', moment().endOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().add(8, 'days').endOf('day').toDate()]}
                                     ]
                                 }
                             }

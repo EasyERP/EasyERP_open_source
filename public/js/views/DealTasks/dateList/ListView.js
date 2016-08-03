@@ -5,7 +5,6 @@ define([
     'text!templates/Pagination/PaginationTemplate.html',
     'text!templates/DealTasks/dateList/ListHeader.html',
     'text!templates/DealTasks/dateList/dateItemTemplate.html',
-    'text!templates/stages.html',
     'views/DealTasks/CreateView',
     'views/DealTasks/EditView',
     'models/DealTasksModel',
@@ -23,7 +22,8 @@ define([
         events: {
             'click td:not(:has("input[type="checkbox"]"))': 'goToEditDialog',
             'click .stageSelectType'                      : 'showNewSelectType',
-            'click .newSelectList li'                     : 'chooseOption'
+            'click .newSelectList li'                     : 'chooseOption',
+            'click .checkbox '              : 'checked'
         },
 
         initialize: function (options) {
@@ -41,7 +41,7 @@ define([
 
             e.preventDefault();
 
-            id = $(e.target).closest('tr').data('id');
+            id = $(e.target).closest('tr').attr('data-id');
             model = new CurrentModel({validate: false});
 
             model.urlRoot = '/dealTasks/';
@@ -60,8 +60,41 @@ define([
             });
         },
 
-        pushStages: function (stages) {
-            this.stages = stages;
+        checked: function (e) {
+            var $target = $(e.target);
+            var id = $(e.target).closest('tr').attr('data-id');
+            var model = new CurrentModel({_id : id});
+            e.preventDefault();
+
+            if ($target.attr('checked')=== 'chc'){
+                return false;
+            }
+
+            model.save({workflow : '5783b351df8b918c31af24ab'},{patch : true, validate: false})
+
+        },
+
+        createItem: function () {
+            var CreateView = this.CreateView || Backbone.View.extend({});
+            var startData = {};
+            var cid;
+            var model;
+
+            this.CurrentModel = this.CurrentModel || Backbone.Model.extend();
+            model = new this.CurrentModel();
+
+            cid = model.cid;
+
+            startData.cid = cid;
+
+            if (this.editCollection) {
+                this.changed = true;
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
+            }
+
+
+            return new CreateView(model);
         },
 
         showNewSelectType: function (e) {
