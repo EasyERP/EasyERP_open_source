@@ -2789,9 +2789,11 @@ var Module = function (models, event) {
     };
 
     function getForKanban(req, res, next) {
-        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
-        var contentSearcher;
+        var session = req.session;
+        var Opportunities = models.get(session.lastDb, 'Opportunities', opportunitiesSchema);
+        var limit = session.kanbanSettings && session.kanbanSettings.opportunities ? session.kanbanSettings.opportunities.countPerPage : 10;
         var waterfallTasks;
+        var contentSearcher;
         var accessRollSearcher;
 
         var or;
@@ -2855,7 +2857,7 @@ var Module = function (models, event) {
                 .populate('tags', 'color name')
                 .populate('workflow', '_id')
                 .sort({sequence: -1})
-                .limit(req.session.kanbanSettings.opportunities.countPerPage);
+                .limit(limit);
 
             query.exec(waterfallCallback);
         };
