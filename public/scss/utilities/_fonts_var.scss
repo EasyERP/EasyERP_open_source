@@ -18,13 +18,23 @@ $base-font-file  : (
         5: 'opensans-extrabold'
 );
 // ----------------------
+
 // Fonts name -----------
 $base-font-name  : (
         1: 'OpenSans Light',
         2: 'OpenSans Regular',
-        3: 'OpenSans SemiBold',
-        4: 'OpenSans Bold',
+        4: 'OpenSans SemiBold',
+        3: 'OpenSans Bold',
         5: 'OpenSans ExtraBold'
+);
+// ----------------------
+// Fonts svg id ---------
+$base-font-svg-id  : (
+        1: 'opensans-light',
+        2: 'opensans-regular',
+        3: 'opensans-semibold',
+        4: 'opensans-bold',
+        5: 'opensans-extrabold'
 );
 // ----------------------
 // Fonts weight ---------
@@ -44,6 +54,12 @@ $base-font : (
         'extrabold': 'OpenSans ExtraBold'
 );
 // ----------------------
+=======
+        'exrtabold': 'OpenSans ExtraBold'
+);
+
+
+>>>>>>> Temporary merge branch 2
 // All fonts array
 $fonts: (
         "base-font"  : $base-font
