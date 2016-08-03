@@ -3228,7 +3228,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   line-height: 25px;
 }
 .tags-container {
-  margin-top: 5px;
+  margin-top: 8px;
 }
 .tags-container .editTags {
   display: inline-block;
@@ -5668,9 +5668,6 @@ input::-ms-clear {
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
-}
-.dialog-buttons {
-  text-align: center;
 }
 .dialog-buttons input {
   height: 25px !important;
@@ -8358,7 +8355,6 @@ dl dd span.ui-spinner {
 }
 .noteWrapper .addNote.active .buttons {
   margin-top: 3px;
-  text-align: center;
 }
 .noteWrapper .addNote.active .buttons input {
   height: 25px !important;
@@ -8801,26 +8797,6 @@ dl dd span.ui-spinner {
   text-align: center;
   margin-right: 3px;
   border-right: 1px solid #7f7f80;
-}
-.filterValues {
-  display: inline-block;
-  height: 100%;
-  vertical-align: top;
-}
-.filterValues > span {
-  padding: 0 2px;
-  border-left: 1px solid #afafb6;
-  height: 100%;
-  display: inline-block;
-}
-.filterValues > span:first-child {
-  border: none;
-}
-.filterValues > span:last-child {
-  padding-right: 16px;
-}
-.filterValues.checked:hover {
-  cursor: pointer;
 }
 .removeValues {
   position: absolute;
@@ -11745,9 +11721,6 @@ ul.dialog-tabs li.right button {
 }
 .form-holder form #description {
   margin-top: 15px;
-}
-.form-holder form .buttons {
-  text-align: center;
 }
 .form-holder form .buttons input {
   height: 25px !important;
